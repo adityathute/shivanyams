@@ -3,3 +3,60 @@
 @media(max-width:1100px){.portal-header{padding:0 18px;gap:15px}.brand{min-width:190px}.brand-mark{font-size:36px}.top-nav{gap:12px}.top-nav a,.top-nav button{font-size:11px}main{padding:0 18px}.ticker{margin:0 18px}.hero{padding-left:4%;height:280px}.hero-art{width:37%;opacity:.8}.category-grid{gap:9px}.category-card{min-height:105px}.category-card strong{font-size:14px}.content-layout{grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr)}.update-row{grid-template-columns:75px minmax(0,1fr) 78px 35px;gap:8px}.popular-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.footer-main{gap:22px}}
 @media(max-width:760px){.portal-header{height:auto;min-height:64px;padding:9px 14px;flex-wrap:wrap;gap:5px 12px;position:relative}.brand{min-width:0;flex:1}.brand-mark{font-size:35px}.brand strong{font-size:16px}.top-nav{order:3;flex-basis:100%;height:38px;justify-content:flex-start;overflow-x:auto;gap:18px}.top-nav a,.top-nav button{font-size:12px;flex-shrink:0}.search-icon{font-size:26px}.ticker{margin:0 10px;height:39px}.ticker-label{padding:0 10px;font-size:10px}.ticker-track button{padding:0 10px;font-size:10px}main{padding:0 10px}.hero{margin-top:9px;padding:23px 18px;height:auto;min-height:285px;align-items:flex-start}.hero-copy{max-width:100%}.eyebrow{font-size:9px}.hero h1{font-size:27px;max-width:470px;margin-top:10px}.hero p{font-size:12px;max-width:420px}.hero-art{width:48%;opacity:.23}.search-form{height:42px}.search-form button{padding:0 13px}.popular{gap:5px}.popular button{padding:5px 8px;font-size:10px}.category-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.category-card{min-height:96px}.category-icon{font-size:24px}.category-card strong{font-size:14px}.category-card small{font-size:10px}.content-layout{grid-template-columns:1fr;gap:10px}.section-heading{padding:11px 12px}.section-heading h2{font-size:19px}.filter-row{padding:9px 10px 0}.update-list{padding:0 10px 6px}.update-row{grid-template-columns:65px minmax(0,1fr) 36px;gap:7px;min-height:57px}.update-title{font-size:13px}.update-title small,.update-row time{display:none}.new-pill{font-size:8px}.update-badge{font-size:11px}.video-section{margin-top:10px}.video-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;padding:12px}.video-card>strong{font-size:13px}.video-tags span{font-size:9px}.popular-section{margin:15px 0}.popular-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.popular-grid button{min-height:74px;font-size:11px}.popular-grid button span{font-size:20px}.portal-footer{padding:22px 15px 0}.footer-main{grid-template-columns:1fr 1fr;gap:23px 18px;padding-bottom:20px}.footer-brand{grid-column:1/-1}.footer-main h3{font-size:14px}.footer-main>div>a:not(.brand),.footer-main>div>button,.footer-main p{font-size:11px}.footer-bottom{align-items:flex-start;flex-direction:column;justify-content:center;padding:12px 0;gap:9px}.footer-bottom>div{flex-wrap:wrap;gap:13px}}
 @media(max-width:390px){.hero h1{font-size:24px}.hero{padding:20px 14px}.hero p{font-size:11px}.ticker-label{font-size:9px;padding:0 7px}.ticker-track button{padding:0 7px}.category-card strong{font-size:12px}.update-row{grid-template-columns:58px minmax(0,1fr) 31px;gap:5px}.update-title{font-size:12px}.section-heading h2{font-size:17px}.popular-grid button{font-size:10px}}
+
+
+.portal-shell-actions{display:flex;align-items:center;gap:12px}
+.portal-theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid var(--color-border,#dce3ec);border-radius:10px;background:var(--color-surface,#fff);color:var(--color-text,#172943);cursor:pointer}
+.portal-theme-toggle:hover{border-color:var(--blue);color:var(--blue)}
+.shivanya-dashboard-shell .shivanya-shell-main{min-width:0}
+.shivanya-dashboard-shell .shivanya-shell-content{padding:0}
+.portal{max-width:1600px;width:100%;margin:0 auto;min-height:100vh}
+.portal-header{z-index:10}
+[data-theme="dark"] body{background:#0d1117;color:#e6edf3}
+[data-theme="dark"] .portal{color:#e6edf3}
+[data-theme="dark"] .portal-header,
+[data-theme="dark"] .ticker,
+[data-theme="dark"] .ticker-arrow,
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .popular-grid button,
+[data-theme="dark"] .portal-footer{background:#151b23;color:#e6edf3;border-color:#293544}
+[data-theme="dark"] .portal-header{border-bottom-color:#293544}
+[data-theme="dark"] .top-nav a,
+[data-theme="dark"] .top-nav button,
+[data-theme="dark"] .search-icon,
+[data-theme="dark"] .ticker-track button,
+[data-theme="dark"] .important-link,
+[data-theme="dark"] .update-title,
+[data-theme="dark"] .popular-grid button{color:#e6edf3}
+[data-theme="dark"] .brand small,
+[data-theme="dark"] .category-card small,
+[data-theme="dark"] .update-title small,
+[data-theme="dark"] .section-heading>span,
+[data-theme="dark"] .portal-footer p,
+[data-theme="dark"] .portal-footer a,
+[data-theme="dark"] .portal-footer button{color:#a9b7c8}
+[data-theme="dark"] .hero{background:linear-gradient(100deg,#15253b,#1b304a 57%,#243d58)}
+[data-theme="dark"] .hero:after{background:linear-gradient(90deg,rgba(21,37,59,.98),rgba(27,48,74,.93) 48%,rgba(36,61,88,.12))}
+[data-theme="dark"] .hero h1,
+[data-theme="dark"] .hero p{color:#f0f6fc}
+[data-theme="dark"] .search-form,
+[data-theme="dark"] .search-form input,
+[data-theme="dark"] .popular button{background:#0d1117;color:#e6edf3;border-color:#344154}
+[data-theme="dark"] .update-row,
+[data-theme="dark"] .important-link{border-color:#293544}
+[data-theme="dark"] .update-row:hover,
+[data-theme="dark"] .important-link:hover,
+[data-theme="dark"] .popular-grid button:hover{background:#1c2633}
+[data-theme="dark"] .filter-row button{background:#1c2633;color:#d7e2ef;border-color:#344154}
+[data-theme="dark"] .filter-row button.selected{background:#075be8;color:#fff;border-color:#075be8}
+[data-theme="dark"] .subscribe-panel{background:linear-gradient(145deg,#142d4d,#19263b);border-color:#2d4563;color:#e6edf3}
+[data-theme="dark"] .subscribe-panel p{color:#c0ccda}
+[data-theme="dark"] .footer-bottom{border-color:#293544}
+[data-theme="dark"] .blue,
+[data-theme="dark"] .green,
+[data-theme="dark"] .purple,
+[data-theme="dark"] .red,
+[data-theme="dark"] .orange,
+[data-theme="dark"] .youtube-card{background:#171f2a}
+@media(max-width:900px){.portal-shell-actions{gap:7px}.portal-header{position:relative}.portal{width:100%}}

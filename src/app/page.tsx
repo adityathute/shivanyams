@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { HomeIcon, SettingsIcon, SunIcon, MoonIcon } from "shivanya-ui";
+import { DashboardShell } from "shivanya-shell";
+import { AuthProvider, AuthModal, AccountModal, UserDropdown, type AccountView } from "shivanya-auth";
+import SiteMobileFooter from "../components/SiteMobileFooter";
 import "./portal.css";
 
 type ItemType = "job" | "scheme" | "result" | "admit" | "guide";
@@ -217,10 +221,34 @@ function loadData(): Data {
   return initial;
 }
 
-export default function Home() {
+function PortalContent() {
   const [data, setData] = useState<Data>(initial);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<ItemType | "all">("all");
+  const [authView, setAuthView] = useState<"login" | "register" | null>(null);
+  const [accountView, setAccountView] = useState<AccountView | null>(null);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("shivanya-theme");
+    const nextTheme = saved === "dark" || saved === "light"
+      ? saved
+      : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    setTheme(nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    document.documentElement.dataset.theme = nextTheme;
+    window.localStorage.setItem("shivanya-theme", nextTheme);
+  };
+
+  const navigation = [
+    { label: "Home", href: "/", icon: <HomeIcon /> },
+    { label: "Settings", href: "#contact", icon: <SettingsIcon /> },
+  ];
 
   useEffect(() => {
     setData(loadData());
@@ -255,6 +283,33 @@ export default function Home() {
   }, [data.items, query, active]);
 
   return (
+    <>
+      <DashboardShell
+        branding={{
+          name: "ShivanyaMS",
+          subtitle: "Govt Jobs, Schemes & Updates",
+          src: "/logo.png",
+          alt: "ShivanyaMS",
+          href: "/",
+        }}
+        navigation={navigation}
+        pathname="/"
+        headerEnd={
+          <div className="portal-shell-actions">
+            <button className="portal-theme-toggle" onClick={toggleTheme} aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"} title={theme === "light" ? "Dark theme" : "Light theme"}>
+              {theme === "light" ? <MoonIcon size="sm" /> : <SunIcon size="sm" />}
+            </button>
+            <UserDropdown
+              onLogin={() => setAuthView("login")}
+              onRegister={() => setAuthView("register")}
+              onNavigate={(view) => setAccountView(view)}
+            />
+          </div>
+        }
+        sidebarFooter={<SiteMobileFooter />}
+        footer={<SiteMobileFooter />}
+        contentPadding={0}
+      >
     <div className="portal">
       <header className="portal-header">
         <a className="brand" href="/" aria-label="ShivanyaMS Home">
@@ -698,5 +753,30 @@ export default function Home() {
         </div>
       </footer>
     </div>
+      </DashboardShell>
+      <AuthModal
+        open={authView !== null}
+        initialView={authView ?? "login"}
+        onClose={() => setAuthView(null)}
+      />
+      <AccountModal
+        open={accountView !== null}
+        initialView={accountView ?? "overview"}
+        onClose={() => setAccountView(null)}
+      />
+    </>
+  );
+}
+
+export default function Home() {
+  return (
+    <AuthProvider
+      config={{
+        baseUrl: process.env.NEXT_PUBLIC_AUTH_BASE_URL ?? "http://localhost:8000",
+        mode: "token",
+      }}
+    >
+      <PortalContent />
+    </AuthProvider>
   );
 }

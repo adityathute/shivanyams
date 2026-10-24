@@ -1,91 +1,49 @@
 "use client";
 
-import { useState } from "react";
-import { Button, HomeIcon, SettingsIcon } from "shivanya-ui";
-import { DashboardShell } from "shivanya-shell";
-import SiteMobileFooter from "../components/SiteMobileFooter";
-import {
-  AuthProvider,
-  AuthModal,
-  AccountModal,
-  UserDropdown,
-  type AccountView,
-} from "shivanya-auth";
+import { useEffect, useMemo, useState } from "react";
+import "./portal.css";
 
-const navigation = [
-  {
-    label: "Home",
-    href: "/",
-    icon: <HomeIcon />,
-  },
-  {
-    label: "Settings",
-    href: "/settings",
-    icon: <SettingsIcon />,
-  },
-];
-
-function DashboardContent() {
-  const [authView, setAuthView] = useState<"login" | "register" | null>(null);
-
-  const [accountView, setAccountView] = useState<AccountView | null>(null);
-
-  return (
-    <>
-      <DashboardShell
-        branding={{
-          name: "ShivanyaMS",
-          subtitle: "Govt Jobs, Schemes & Updates",
-          src: "/logo.png",
-          alt: "ShivanyaMS",
-          href: "/",
-        }}
-        navigation={navigation}
-        pathname="/"
-        headerEnd={
-          <UserDropdown
-            onLogin={() => setAuthView("login")}
-            onRegister={() => setAuthView("register")}
-            onNavigate={(view) => setAccountView(view)}
-          />
-        }
-        sidebarFooter={<SiteMobileFooter />}
-        footer={<SiteMobileFooter />}
-      >
-        <main>
-          <h1>Shivanya Dashboard</h1>
-          <p style={{ marginTop: "10px" }}>Full DashboardShell test</p>
-          <div style={{ marginTop: "24px" }}>
-            <Button>Test Shivanya UI</Button>
-          </div>
-        </main>
-      </DashboardShell>
-
-      <AuthModal
-        open={authView !== null}
-        initialView={authView ?? "login"}
-        onClose={() => setAuthView(null)}
-      />
-
-      <AccountModal
-        open={accountView !== null}
-        initialView={accountView ?? "overview"}
-        onClose={() => setAccountView(null)}
-      />
-    </>
-  );
-}
+type Item = { id: string; title: string; category: string; date: string; description: string; link: string; type: "job" | "scheme" | "result" | "admit" | "guide" };
+type Video = { id: string; title: string; url: string; thumbnail: string; language: string };
+type Data = { items: Item[]; videos: Video[] };
+const KEY = "shivanyams-portal-data";
+const initial: Data = {
+  items: [
+    {id:"1",title:"MahaDBT 2.0 नवीन अपडेट – नोंदणी प्रक्रिया आणि महत्त्वाची माहिती",category:"योजना",date:"2026-10-22",description:"MahaDBT पोर्टलवरील नवीन अपडेट्स, अर्ज प्रक्रिया आणि आवश्यक कागदपत्रांची माहिती.",link:"https://mahadbt.maharashtra.gov.in/",type:"scheme"},
+    {id:"2",title:"पोलीस भरती 2026 – पात्रता, वय आणि अर्ज प्रक्रिया",category:"नोकरी",date:"2026-10-21",description:"पोलीस भरतीसंबंधी अधिकृत जाहिरात आणि अर्जाची माहिती.",link:"https://www.mahapolice.gov.in/",type:"job"},
+    {id:"3",title:"MPSC परीक्षा निकाल आणि अधिकृत सूचना",category:"निकाल",date:"2026-10-20",description:"निकाल आणि पुढील प्रक्रियेबाबत अधिकृत संकेतस्थळ तपासा.",link:"https://mpsc.gov.in/",type:"result"},
+    {id:"4",title:"तलाठी भरती – प्रवेशपत्र आणि परीक्षा सूचना",category:"प्रवेशपत्र",date:"2026-10-19",description:"प्रवेशपत्र उपलब्धता आणि परीक्षेच्या सूचनांसाठी अधिकृत पोर्टल.",link:"https://mahabhumi.gov.in/",type:"admit"},
+    {id:"5",title:"Aadhaar Card Download कसे करावे? | संपूर्ण माहिती",category:"मार्गदर्शक",date:"2026-10-18",description:"आधार कार्ड डाउनलोड करण्याची सोपी पद्धत आणि PDF पासवर्डबद्दल माहिती.",link:"https://myaadhaar.uidai.gov.in/",type:"guide"},
+    {id:"6",title:"PM Kisan 20वा हप्ता – अधिकृत अपडेट",category:"योजना",date:"2026-10-17",description:"PM Kisan योजनेचे तपशील आणि लाभार्थी स्थिती अधिकृत वेबसाइटवर तपासा.",link:"https://pmkisan.gov.in/",type:"scheme"},
+    {id:"7",title:"जिल्हा परिषद भरती – पदे आणि अर्जासंबंधी माहिती",category:"नोकरी",date:"2026-10-16",description:"जिल्हा परिषद भरतीच्या अधिकृत सूचना आणि अर्ज तपशील.",link:"https://www.maharashtra.gov.in/",type:"job"},
+    {id:"8",title:"रेशन कार्ड e-KYC – प्रक्रिया आणि महत्त्वाची माहिती",category:"योजना",date:"2026-10-15",description:"रेशन कार्ड आणि e-KYC संदर्भात अधिकृत माहिती व सेवा.",link:"https://mahafood.gov.in/",type:"scheme"}
+  ],
+  videos: [
+    {id:"v1",title:"Aadhaar Card Download कसे करावे? | संपूर्ण माहिती",url:"",thumbnail:"https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=700&q=80",language:"मराठी"},
+    {id:"v2",title:"MahaDBT 2.0 नवीन अपडेट | संपूर्ण माहिती",url:"",thumbnail:"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=700&q=80",language:"मराठी"},
+    {id:"v3",title:"महत्त्वाच्या Online Services घरबसल्या कशा करायच्या",url:"",thumbnail:"https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=700&q=80",language:"मराठी"},
+    {id:"v4",title:"PM Kisan योजना | लाभार्थी माहिती",url:"",thumbnail:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80",language:"मराठी"}
+  ]
+};
+const cats = [{title:"सरकारी नोकरी",sub:"Latest Govt Jobs",icon:"▣",type:"job" as const,color:"blue"},{title:"शासकीय योजना",sub:"Govt Schemes",icon:"▤",type:"scheme" as const,color:"green"},{title:"निकाल",sub:"Results",icon:"◆",type:"result" as const,color:"purple"},{title:"प्रवेशपत्र",sub:"Admit Cards",icon:"▣",type:"admit" as const,color:"red"},{title:"लेख / मार्गदर्शक",sub:"Guides & Articles",icon:"▥",type:"guide" as const,color:"orange"}];
+const links = [["MahaDBT Portal","https://mahadbt.maharashtra.gov.in/"],["Aadhaar Official Website","https://myaadhaar.uidai.gov.in/"],["Ration Card Maharashtra","https://mahafood.gov.in/"],["PM Kisan Portal","https://pmkisan.gov.in/"],["MPSC Official Website","https://mpsc.gov.in/"],["MH Police Recruitment","https://www.mahapolice.gov.in/"],["Maharashtra Government","https://www.maharashtra.gov.in/"],["Scholarship Portal","https://mahadbt.maharashtra.gov.in/"]];
+function loadData(): Data { try { const saved=localStorage.getItem(KEY); return saved ? JSON.parse(saved) as Data : initial; } catch { return initial; } }
 
 export default function Home() {
-  return (
-    <AuthProvider
-      config={{
-        baseUrl:
-          process.env.NEXT_PUBLIC_AUTH_BASE_URL ?? "http://localhost:8000",
-        mode: "token",
-      }}
-    >
-      <DashboardContent />
-    </AuthProvider>
-  );
+ const [data,setData]=useState<Data>(initial),[query,setQuery]=useState(""),[active,setActive]=useState<Item["type"]|"all">("all");
+ useEffect(()=>{setData(loadData());const update=()=>setData(loadData());window.addEventListener("storage",update);window.addEventListener("shivanyams-content-updated",update);return()=>{window.removeEventListener("storage",update);window.removeEventListener("shivanyams-content-updated",update)}},[]);
+ const filtered=useMemo(()=>data.items.filter(i=>(active==="all"||i.type===active)&&(!query.trim()||[i.title,i.category,i.description].some(v=>v.toLowerCase().includes(query.trim().toLowerCase()))),[data.items,query,active]);
+ return <div className="portal">
+ <header className="portal-header"><a className="brand" href="/"><span className="brand-mark">S</span><span><strong>ShivanyaMS</strong><small>Govt Jobs, Schemes & Updates</small></span></a><nav className="top-nav"><a className="active" href="/">⌂ Home</a>{cats.map(c=><button key={c.type} onClick={()=>setActive(c.type)}>{c.title}</button>)}<a className="video-nav" href="#videos">▶ Videos</a><a href="#contact">Contact</a></nav><button className="search-icon" onClick={()=>document.getElementById("portal-search")?.focus()}>⌕</button></header>
+ <div className="ticker"><span className="ticker-label">⚑ Latest Updates</span><div className="ticker-track">{data.items.slice(0,5).map(i=><button key={i.id} onClick={()=>setQuery(i.title)}>{i.title}</button>)}</div><button className="ticker-arrow" onClick={()=>{setActive("all");setQuery("")}}>›</button></div>
+ <main>
+ <section className="hero"><div className="hero-copy"><span className="eyebrow">SHIVANYAMS • YOUR INFORMATION GUIDE</span><h1>सरकारी नोकरी, योजना आणि<br/>महत्त्वाच्या अपडेट्स एकाच ठिकाणी</h1><p>Latest Govt Jobs, Schemes, Results, Admit Cards and Useful Guides in Marathi & English</p><form className="search-form" onSubmit={e=>{e.preventDefault();document.getElementById("updates")?.scrollIntoView({behavior:"smooth"})}}><input id="portal-search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search jobs, schemes, results, exams..."/><button>⌕ Search</button></form><div className="popular"><strong>Popular:</strong>{["MahaDBT","पोलीस भरती","तलाठी","Aadhaar","Ration Card","PM Kisan"].map(t=><button key={t} onClick={()=>setQuery(t)}>{t}</button>)}</div></div><div className="hero-art" aria-hidden="true"><div className="hero-sun"/><div className="hero-building"><span>🇮🇳</span><i/><i/><i/><i/><b/></div><div className="hero-hill"/></div></section>
+ <section className="category-grid">{cats.map(c=><button key={c.type} className={`category-card ${c.color}`} onClick={()=>setActive(c.type)}><span className="category-icon">{c.icon}</span><strong>{c.title}</strong><small>{c.sub}</small></button>)}<a className="category-card youtube-card" href="#videos"><span className="category-icon">▶</span><strong>YouTube व्हिडिओ</strong><small>Watch & Learn</small></a></section>
+ <div className="content-layout"><section className="updates-panel panel" id="updates"><div className="section-heading"><h2>ताज्या अपडेट्स</h2><button onClick={()=>{setActive("all");setQuery("")}}>सर्व पहा →</button></div><div className="filter-row"><button className={active==="all"?"selected":""} onClick={()=>setActive("all")}>सर्व</button>{cats.map(c=><button key={c.type} className={active===c.type?"selected":""} onClick={()=>setActive(c.type)}>{c.title}</button>)}</div><div className="update-list">{filtered.length?filtered.map(i=><a className="update-row" key={i.id} href={i.link||"#"} target={i.link?"_blank":undefined} rel={i.link?"noreferrer":undefined}><span className={`update-badge ${i.type}`}>{i.category}</span><span className="update-title">{i.title}<small>{i.description}</small></span><time>{i.date?new Date(i.date+"T12:00:00").toLocaleDateString("mr-IN",{day:"numeric",month:"short",year:"numeric"}):"नवीन"}</time><span className="new-pill">New</span></a>):<div className="empty-state">या शोधासाठी अपडेट्स सापडले नाहीत.</div>}</div></section>
+ <aside className="right-column"><section className="panel important-panel"><div className="section-heading"><h2>महत्त्वाच्या लिंक्स</h2><span>Useful links</span></div>{links.map(([label,url])=><a className="important-link" href={url} key={label} target="_blank" rel="noreferrer"><span>✦</span>{label}<b>›</b></a>)}</section><section className="subscribe-panel"><span className="subscribe-icon">✉</span><h3>नवीन अपडेट्ससाठी तयार राहा</h3><p>नोकरी, योजना आणि महत्त्वाच्या अपडेट्ससाठी आमच्याशी जोडलेले राहा.</p><a href="#contact">संपर्क साधा →</a></section></aside></div>
+ <section className="video-section panel" id="videos"><div className="section-heading"><h2><span className="youtube-icon">▶</span> YouTube व्हिडिओ – नवीन मार्गदर्शिका आणि अपडेट्स</h2><a href="#videos">सर्व व्हिडिओ पहा →</a></div><div className="video-grid">{data.videos.map(v=><a className="video-card" key={v.id} href={v.url||"#videos"} target={v.url?"_blank":undefined} rel={v.url?"noreferrer":undefined} onClick={e=>{if(!v.url){e.preventDefault();window.alert("या व्हिडिओची YouTube लिंक Admin पॅनेलमधून जोडा.")}}}><div className="video-thumb" style={{backgroundImage:`linear-gradient(0deg,rgba(4,20,45,.62),transparent 65%),url("${v.thumbnail}")`}}><span className="play-button">▶</span><span className="video-time">Watch video</span></div><strong>{v.title}</strong><div className="video-tags"><span>{v.language}</span><span>Guide</span></div></a>)}</div></section>
+ <section className="popular-section"><div className="section-heading"><h2>लोकप्रिय श्रेणी</h2><button onClick={()=>setActive("all")}>सर्व श्रेणी →</button></div><div className="popular-grid">{["पोलीस भरती","तलाठी भरती","MPSC","जिल्हा परिषद","शिक्षक भरती","बँक भरती","रेल्वे भरती","सर्व नोकऱ्या"].map((t,i)=><button key={t} onClick={()=>{setActive("job");setQuery(i===7?"":t);document.getElementById("updates")?.scrollIntoView({behavior:"smooth"})}}><span>{["♢","▤","✥","▦","♙","▥","▣","▦"][i]}</span>{t}</button>)}</div></section>
+ </main>
+ <footer className="portal-footer" id="contact"><div className="footer-main"><div className="footer-brand"><a className="brand" href="/"><span className="brand-mark">S</span><span><strong>ShivanyaMS</strong><small>Govt Jobs, Schemes & Updates</small></span></a><p>सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि महत्त्वाच्या अपडेट्सची माहिती – मराठी आणि English मध्ये.</p><div className="social-links"><a href="#contact">▶</a><a href="#contact">◎</a><a href="#contact">➤</a><a href="#contact">f</a></div></div><div><h3>महत्त्वाचे विभाग</h3>{cats.map(c=><button key={c.type} onClick={()=>{setActive(c.type);document.getElementById("updates")?.scrollIntoView({behavior:"smooth"})}}>{c.title}</button>)}<a href="#videos">YouTube व्हिडिओ</a></div><div><h3>उपयुक्त लिंक्स</h3>{links.slice(0,5).map(([l,u])=><a key={l} href={u} target="_blank" rel="noreferrer">{l}</a>)}</div><div><h3>आमच्याशी संपर्क साधा</h3><p>✉ support@shivanyams.com</p><p>⌖ Buldana, Maharashtra</p><a className="contact-button" href="mailto:support@shivanyams.com">संपर्क साधा →</a></div></div><div className="footer-bottom"><span>© 2026 ShivanyaMS. All rights reserved.</span><div><a href="#contact">Privacy Policy</a><a href="#contact">Terms of Use</a><a href="#contact">Disclaimer</a><a href="/admin" className="admin-link">Admin</a></div></div></footer>
+ </div>
 }

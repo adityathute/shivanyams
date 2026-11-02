@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --blue: #075be8;
+  --navy: #10233f;
+  --line: #e3eaf3;
+  --shadow: 0 3px 12px rgba(23, 53, 92, 0.07);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--navy);
+  font-family: Inter, Hind, sans-serif;
+  font-size: 14px;
+}
+
+button, input {
+  font: inherit;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+main {
+  padding: 0 16px;
+}
+
+.blue {
+  background: linear-gradient(145deg, #f4f8ff, #fff);
+}
+
+.green {
+  background: linear-gradient(145deg, #f0fbf5, #fff);
+}
+
+.purple {
+  background: linear-gradient(145deg, #f8f3ff, #fff);
+}
+
+.red {
+  background: linear-gradient(145deg, #fff4f5, #fff);
+}
+
+.orange {
+  background: linear-gradient(145deg, #fff8ee, #fff);
+}
+
+.new-pill {
+  background: #fce9eb;
+  color: #db2838;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  padding: 4px 5px;
+}
+
+.subscribe-icon {
+  display: inline-flex;
+  background: #e4efff;
+  color: #075be8;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+}
+
+@media (max-width: 1100px) {
+main {
+  padding: 0 18px;
+}
+}
+
+@media (max-width: 760px) {
+main {
+  padding: 0 10px;
+}
+.new-pill {
+  font-size: 8px;
+}
+}
+
+[data-theme="dark"] body {
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .blue, [data-theme="dark"] .green, [data-theme="dark"] .purple, [data-theme="dark"] .red, [data-theme="dark"] .orange {
+  background: #171f2a;
+}

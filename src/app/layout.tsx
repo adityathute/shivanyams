@@ -1,41 +1,20 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
+import { PortalLayout } from "../components/portal/PortalLayout";
 import "./globals.css";
+import "./portal-base.css";
 
 export const metadata: Metadata = {
-  title: "ShivanyaMS | सरकारी नोकरी, योजना आणि अपडेट्स",
-  description: "महाराष्ट्र सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि उपयुक्त मार्गदर्शक.",
+  title: "ShivanyaMS | Govt Jobs, Schemes & Updates",
+  description: "सरकारी नोकरी, योजना, निकाल आणि महत्त्वाच्या अपडेट्स.",
 };
 
-const themeScript = `
-(function () {
-  try {
-    var savedTheme = localStorage.getItem("shivanya-theme");
-    var theme;
-
-    if (savedTheme === "dark" || savedTheme === "light") {
-      theme = savedTheme;
-    } else {
-      theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-    }
-
-    document.documentElement.dataset.theme = theme;
-  } catch {
-    document.documentElement.dataset.theme = "light";
-  }
-})();
-`;
-
-export default function RootLayout({
-  children,
-}: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="mr" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body>{children}</body>
+    <html lang="mr">
+      <body>
+        <PortalLayout>{children}</PortalLayout>
+      </body>
     </html>
   );
 }

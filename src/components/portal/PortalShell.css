@@ -7,9 +7,9 @@
 }
 
 @media (max-width: 900px) {
-.portal {
-  width: 100%;
-}
+  .portal {
+    width: 100%;
+  }
 }
 
 .portal-header {
@@ -44,7 +44,7 @@
 
 .brand strong {
   display: block;
-  font-size: 17px;
+  font-size: 15px;
   letter-spacing: -0.5px;
 }
 
@@ -52,7 +52,6 @@
   display: block;
   color: #52647b;
   font-size: 11px;
-  margin-top: 3px;
 }
 
 .top-nav {
@@ -152,22 +151,74 @@
   text-align: left;
 }
 
+/* Replace your existing .social-links block with this */
+
 .social-links {
   display: flex;
-  gap: 9px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .social-links a {
-  width: 27px;
-  height: 27px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0872e8;
+
+  /* Updated to a subtle glass/dark background instead of solid blue */
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font-size: 12px;
-  font-weight: 700;
+
+  transition: all 0.2s ease;
+}
+
+/* Make sure the SVG inside takes the color of the anchor tag */
+.social-links a svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Hover effect */
+.social-links a:hover {
+  background: var(--blue, #0872e8);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(8, 114, 232, 0.3);
+}
+
+/* Optional: specific brand colors on hover if you prefer */
+.social-links a[aria-label="Facebook"]:hover {
+  background: #1877f2;
+}
+.social-links a[aria-label="Instagram"]:hover {
+  background: #e1306c;
+}
+.social-links a[aria-label="Twitter"]:hover {
+  background: #000000;
+}
+.social-links a[aria-label="YouTube"]:hover {
+  background: #ff0000;
+}
+.social-links a[aria-label="WhatsApp"]:hover {
+  background: #25d366;
+}
+.social-links a[aria-label="Telegram"]:hover {
+  background: #229ed9;
+}
+.social-links a[aria-label="Threads"]:hover {
+  background: #000000;
+}
+
+/* Dark mode adjustments (if needed) */
+[data-theme="dark"] .social-links a {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .social-links a:hover {
+  border-color: transparent;
 }
 
 .contact-button {
@@ -280,7 +331,7 @@
     font-size: 11px;
   }
   .footer-bottom {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     justify-content: center;
     padding: 12px 0;
@@ -362,5 +413,124 @@
   }
   .portal-header {
     position: relative;
+  }
+}
+
+/* Add this to your .portal.css */
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  margin: 0 0 8px 0; /* Space between each contact line */
+}
+
+/* Optional: Make the icon slightly dimmer so the text stands out */
+.footer-contact-item svg {
+  opacity: 0.8;
+  flex-shrink: 0; /* Prevents the icon from getting squished if the text wraps */
+}
+
+/* Style for the PNG Logo */
+.brand-logo-img {
+  width: 32px; /* Adjust this to make the logo bigger or smaller */
+  height: 32px;
+  object-fit: contain; /* Ensures the image doesn't get stretched */
+  border-radius: 8px; /* Optional: rounds the corners slightly */
+}
+
+/* Ensure the text alignment stays perfect next to the image */
+.footer-brand .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .portal-header {
+    height: auto;
+    min-height: 64px;
+    padding: 9px 14px;
+    flex-wrap: wrap;
+    gap: 5px 12px;
+    position: relative;
+  }
+  .brand {
+    min-width: 0;
+    flex: 1;
+  }
+  .brand-mark {
+    font-size: 35px;
+  }
+  .brand strong {
+    font-size: 16px;
+  }
+  .top-nav {
+    order: 3;
+    flex-basis: 100%;
+    height: 38px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 18px;
+  }
+  .top-nav a,
+  .top-nav button {
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .search-icon {
+    font-size: 26px;
+  }
+  .portal-footer {
+    padding: 22px 15px 0;
+  }
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 23px 18px;
+    padding-bottom: 20px;
+  }
+  .footer-brand {
+    grid-column: 1/-1;
+  }
+  .footer-main h3 {
+    font-size: 14px;
+    margin: 0;
+  }
+  .footer-main > div > a:not(.brand),
+  .footer-main > div > button,
+  .footer-main p {
+    font-size: 11px;
+  }
+
+  /* -------------------------------------
+     NEW: Only center the contact column 
+  ------------------------------------- */
+  .contact-col {
+    grid-column: 1 / -1; /* Makes it span full width */
+    align-items: center !important; /* Centers the flex items */
+    text-align: center; /* Centers the text */
+    margin-top: 10px;
+  }
+  .social-links {
+    justify-content: center; /* Centers the social icons */
+  }
+  .contact-col .footer-contact-item {
+    justify-content: center; /* Centers the mail/pin icons with text */
+    margin: 0;
+  }
+  /* ------------------------------------- */
+
+  .footer-bottom {
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 0;
+    gap: 9px;
+  }
+  .footer-bottom > div {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 13px;
   }
 }

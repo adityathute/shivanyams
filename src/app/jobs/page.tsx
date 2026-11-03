@@ -1,5 +1,5 @@
-import { CategoryPage } from "../../components/portal/CategoryPage";
+import { JobsPage } from "../../components/portal/JobsPage";
 
-export default function JobsPage() {
-  return <CategoryPage type="job" />;
+export default function Page() {
+  return <JobsPage />;
 }

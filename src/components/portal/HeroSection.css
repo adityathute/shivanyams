@@ -118,9 +118,9 @@
 }
 
 .hero.scene-day {
-  --sky-top: #78b9f6;
-  --sky-middle: #c6e5ff;
-  --sky-bottom: #edf7ff;
+  --sky-top: #dff3ff;
+  --sky-middle: #eff9ff;
+  --sky-bottom: #ffffff;
 
   --sun-color: #fff5bf;
   --sun-glow: rgba(255, 220, 130, 0.7);
@@ -1434,9 +1434,9 @@
   .hero {
     background: linear-gradient(
       135deg,
-      #78b9f6 0%,
-      #c6e5ff 55%,
-      #edf7ff 100%
+      #dff3ff 0%,
+      #eff9ff 55%,
+      #ffffff 100%
     ) !important;
   }
 
@@ -1482,10 +1482,8 @@
   }
 }
 
-
 @media (max-width: 760px) {
   .ticker {
     display: none;
   }
 }
-

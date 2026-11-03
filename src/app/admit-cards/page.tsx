@@ -1,5 +1,5 @@
-import { CategoryPage } from "../../components/portal/CategoryPage";
+import { AdmitCardsPage } from "../../components/portal/AdmitCardsPage";
 
-export default function AdmitCardsPage() {
-  return <CategoryPage type="admit" />;
+export default function AdmitCardsPageRoute() {
+  return <AdmitCardsPage />;
 }

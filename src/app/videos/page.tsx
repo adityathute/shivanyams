@@ -1,5 +1,5 @@
-import { CategoryPage } from "../../components/portal/CategoryPage";
+import { VideosPage } from "../../components/portal/VideosPage";
 
-export default function VideosPage() {
-  return <CategoryPage type="video" />;
+export default function VideosPageRoute() {
+  return <VideosPage />;
 }

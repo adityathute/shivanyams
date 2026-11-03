@@ -1,5 +1,5 @@
-import { CategoryPage } from "../../components/portal/CategoryPage";
+import { GuidesPage } from "../../components/portal/GuidesPage";
 
-export default function GuidesPage() {
-  return <CategoryPage type="guide" />;
+export default function GuidesPageRoute() {
+  return <GuidesPage />;
 }

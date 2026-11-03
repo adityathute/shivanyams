@@ -1,5 +1,5 @@
-import { CategoryPage } from "../../components/portal/CategoryPage";
+import { ResultsPage } from "../../components/portal/ResultsPage";
 
-export default function ResultsPage() {
-  return <CategoryPage type="result" />;
+export default function ResultsPageRoute() {
+  return <ResultsPage />;
 }

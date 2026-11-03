@@ -135,7 +135,7 @@ export function PortalFooter() {
             <MapPinIcon size={16} />
             <span>Buldana, Maharashtra, India</span>
           </p>
-          <a className="contact-button" href="mailto:hello@shivanyams.com">
+          <a className="contact-button" href="contact">
             संपर्क साधा →
           </a>
         </div>
@@ -143,14 +143,17 @@ export function PortalFooter() {
 
       <div className="footer-bottom">
         <div>
-          <a href="#contact">Privacy Policy</a>
-          <a href="#contact">Terms of Use</a>
-          <a href="#contact">Disclaimer</a>
+          <a href="/about">About Us</a>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Use</a>
+          <a href="/feedback">Feedback</a>
+          <a href="/disclaimer">Disclaimer</a>
+          <a href="/contact">Contact Us</a>
           <a href="/admin" className="admin-link">
             Admin
           </a>
         </div>
-        <span>© 2026 ShivanyaMS. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} ShivanyaMS. All rights reserved.</span>
       </div>
     </footer>
   );

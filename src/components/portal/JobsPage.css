@@ -3,14 +3,10 @@
   color: var(--text, #172b45);
 }
 
-.jobs-page main {
-  padding: 0 28px;
-}
-
 .jobs-hero {
   min-height: 250px;
   margin-top: 10px;
-  padding: 28px 5%;
+  padding: 28px 5% 28px 2%;
   border-radius: 12px;
   background: #f1f6ff;
   border: 1px solid #e0eafa;
@@ -56,23 +52,27 @@
 .jobs-search {
   display: flex;
   align-items: center;
+  gap: 0;
   height: 44px;
   max-width: 540px;
+  padding: 0 4px 0 12px;
   background: #fff;
   border: 1px solid #dbe4f0;
   border-radius: 7px;
   overflow: hidden;
 }
 
-.jobs-search > span {
-  padding-left: 13px;
-  font-size: 22px;
+.jobs-search > svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
   color: #64748b;
 }
 
 .jobs-search input {
   flex: 1;
   min-width: 0;
+  height: 100%;
   border: 0;
   outline: 0;
   padding: 0 12px;
@@ -82,7 +82,8 @@
 
 .jobs-search button {
   height: 36px;
-  margin: 4px;
+  flex-shrink: 0;
+  margin: 0;
   padding: 0 16px;
   border: 0;
   border-radius: 5px;
@@ -232,10 +233,6 @@
 }
 
 @media (max-width: 760px) {
-  .jobs-page main {
-    padding: 0 14px;
-  }
-
   .jobs-hero {
     min-height: auto;
     padding: 24px 20px;

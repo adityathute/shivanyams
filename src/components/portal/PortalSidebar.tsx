@@ -21,6 +21,5 @@ export const portalNavigation = [
   {
     divider: true,
   },
-  { label: "संपर्क", href: "/#contact", icon: <MailIcon /> },
-  { label: "सेटिंग्ज", href: "/#settings", icon: <SettingsIcon /> },
+  { label: "संपर्क", href: "/contact", icon: <MailIcon /> },
 ];

@@ -1,0 +1,283 @@
+/* Terms page layout */
+
+.terms-page {
+  width: 100%;
+  min-width: 0;
+  padding: 28px 24px;
+  color: var(--text-primary, #172033);
+  background: var(--surface-secondary, #f6f8fc);
+  box-sizing: border-box;
+}
+
+/* Header */
+
+.terms-page .document-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.terms-page .document-page-title {
+  margin: 0;
+  font-size: clamp(30px, 3vw, 40px);
+  font-weight: 750;
+  letter-spacing: -1.2px;
+  line-height: 1.2;
+}
+
+.terms-page .document-page-description {
+  margin: 0;
+  color: var(--text-secondary, #64748b);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Main document card */
+
+.terms-page .document-content {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 34px 36px;
+  overflow: hidden;
+
+  border: 1px solid var(--border, #e2e8f0);
+  border-left: 4px solid #3b82f6;
+  border-radius: 16px;
+
+  background: var(--surface, #ffffff);
+  box-shadow:
+    0 2px 8px rgb(15 23 42 / 2%),
+    0 12px 30px rgb(15 23 42 / 3%);
+
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.terms-page .document-content:hover {
+  box-shadow:
+    0 4px 12px rgb(15 23 42 / 3%),
+    0 16px 36px rgb(15 23 42 / 5%);
+}
+
+/* Small label */
+
+.terms-page .contact-card-label {
+  display: inline-block;
+  margin-bottom: 12px;
+
+  color: var(--primary, #2563eb);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Main title */
+
+.terms-page .document-content > h2 {
+  margin: 0 0 16px;
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+  line-height: 1.35;
+}
+
+/* Section headings */
+
+.terms-page .document-content h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 30px 0 12px;
+  padding-bottom: 9px;
+
+  border-bottom: 1px solid var(--border, #e2e8f0);
+
+  color: var(--text-primary, #172033);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  line-height: 1.5;
+}
+
+.terms-page .document-content h3:first-of-type {
+  margin-top: 22px;
+}
+
+/* Paragraphs */
+
+.terms-page .document-content p {
+  margin: 0 0 16px;
+
+  color: var(--text-secondary, #64748b);
+  font-size: 14px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+.terms-page .document-content p:last-child {
+  margin-bottom: 0;
+}
+
+.terms-page .terms-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-bottom: 18px;
+  padding: 7px 11px;
+
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+
+  background: var(--surface-secondary, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  font-size: 12px;
+}
+
+/* Lists */
+
+.terms-page .terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  margin: 0 0 18px;
+  padding: 0 0 0 22px;
+
+  color: var(--text-secondary, #64748b);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.terms-page .terms-list li {
+  padding-left: 4px;
+}
+
+.terms-page .terms-list li::marker {
+  color: var(--primary, #2563eb);
+}
+
+/* Links */
+
+.terms-page .document-content a {
+  color: var(--primary, #2563eb);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.terms-page .document-content a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Dividers */
+
+.terms-page .document-divider {
+  height: 1px;
+  margin: 24px 0;
+  background: var(--border, #e2e8f0);
+}
+
+/* Important notice */
+
+.terms-page .document-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  margin-top: 28px;
+  padding: 18px 20px;
+
+  border: 1px solid rgb(59 130 246 / 15%);
+  border-left: 3px solid #3b82f6;
+  border-radius: 10px;
+
+  background: rgb(59 130 246 / 5%);
+}
+
+.terms-page .document-notice p {
+  margin: 0;
+  color: var(--text-primary, #172033);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* Dark theme */
+
+[data-theme="dark"] .terms-page .document-content {
+  background: var(--surface, #111827);
+  border-color: var(--border, #374151);
+  border-left-color: #60a5fa;
+}
+
+[data-theme="dark"] .terms-page .document-content h3 {
+  border-bottom-color: var(--border, #374151);
+}
+
+[data-theme="dark"] .terms-page .terms-updated {
+  background: var(--surface-secondary, #1f2937);
+}
+
+[data-theme="dark"] .terms-page .document-notice {
+  background: rgb(59 130 246 / 10%);
+  border-color: rgb(96 165 250 / 20%);
+  border-left-color: #60a5fa;
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .terms-page {
+    padding: 24px 16px;
+  }
+
+  .terms-page .document-page-header {
+    margin-bottom: 20px;
+  }
+
+  .terms-page .document-page-title {
+    font-size: 30px;
+  }
+
+  .terms-page .document-content {
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+
+  .terms-page .document-content > h2 {
+    font-size: 22px;
+  }
+
+  .terms-page .document-content h3 {
+    margin-top: 24px;
+    font-size: 16px;
+  }
+
+  .terms-page .document-content p,
+  .terms-page .terms-list {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .terms-page .document-notice {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 380px) {
+  .terms-page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .terms-page .document-content {
+    padding: 20px 16px;
+  }
+}

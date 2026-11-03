@@ -1,0 +1,156 @@
+.disclaimer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Disclaimer Cards */
+
+.disclaimer-card {
+  position: relative;
+  min-width: 0;
+  padding: 28px 30px;
+  overflow: hidden;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  box-shadow: 0 3px 12px rgb(15 23 42 / 3%);
+}
+
+.disclaimer-card:first-child {
+  border-left: 4px solid var(--primary, #2563eb);
+}
+
+.disclaimer-card h2 {
+  margin: 0 0 18px;
+  color: var(--text-primary, #172033);
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Labels */
+
+.disclaimer-card .contact-card-label {
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+
+/* Content */
+
+.disclaimer-card p {
+  margin: 0 0 15px;
+  color: var(--text-secondary, #64748b);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.disclaimer-card p:last-child {
+  margin-bottom: 0;
+}
+
+/* Important Notice */
+
+.disclaimer-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 22px 24px;
+  border: 1px solid #fde68a;
+  border-radius: 14px;
+  background: #fffbeb;
+}
+
+.disclaimer-notice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #fef3c7;
+  font-size: 21px;
+}
+
+.disclaimer-notice h2 {
+  margin: 0 0 8px;
+  color: #92400e;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.disclaimer-notice p {
+  margin: 0;
+  color: #92400e;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* Contact Link */
+
+.disclaimer-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--primary, #2563eb);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: gap 0.2s ease;
+}
+
+.disclaimer-contact-link:hover {
+  gap: 12px;
+}
+
+/* Dark Theme */
+
+[data-theme="dark"] .disclaimer-notice {
+  border-color: rgb(245 158 11 / 25%);
+  background: rgb(245 158 11 / 8%);
+}
+
+[data-theme="dark"] .disclaimer-notice-icon {
+  background: rgb(245 158 11 / 15%);
+}
+
+[data-theme="dark"] .disclaimer-notice h2,
+[data-theme="dark"] .disclaimer-notice p {
+  color: #fcd34d;
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .disclaimer-content {
+    gap: 16px;
+  }
+
+  .disclaimer-card {
+    padding: 22px 20px;
+    border-radius: 14px;
+  }
+
+  .disclaimer-card h2 {
+    font-size: 20px;
+  }
+
+  .disclaimer-card p {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .disclaimer-notice {
+    gap: 12px;
+    padding: 18px;
+  }
+
+  .disclaimer-notice-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+

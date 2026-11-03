@@ -1,5 +1,5 @@
-import { CategoryPage } from "../../components/portal/CategoryPage";
+import { SchemesPage } from "../../components/portal/SchemesPage";
 
-export default function SchemesPage() {
-  return <CategoryPage type="scheme" />;
+export default function SchemesPageRoute() {
+  return <SchemesPage />;
 }

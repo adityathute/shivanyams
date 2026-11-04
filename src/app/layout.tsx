@@ -26,7 +26,7 @@ const themeScript = `
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="mr">
+    <html lang="mr" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

@@ -5,18 +5,53 @@ import {
   ResultIcon,
   AdmitCardIcon,
   GuideIcon,
-  SettingsIcon,
   VideoIcon,
   MailIcon,
 } from "shivanya-ui";
 
-export const portalNavigation = [
-  { label: "मुख्यपृष्ठ", href: "/", icon: <HomeIcon /> },
-  { label: "सरकारी नोकरी", href: "/jobs", icon: <GovernmentJobIcon /> },
-  { label: "शासकीय योजना", href: "/schemes", icon: <GovernmentSchemeIcon /> },
-  { label: "निकाल", href: "/results", icon: <ResultIcon /> },
-  { label: "प्रवेशपत्र", href: "/admit-cards", icon: <AdmitCardIcon /> },
-  { label: "लेख आणि मार्गदर्शक", href: "/guides", icon: <GuideIcon /> },
-  { label: "व्हिडिओ", href: "/videos", icon: <VideoIcon /> },
-  { label: "संपर्क", href: "/contact", icon: <MailIcon /> },
-];
+import { translate, type Language } from "shivanya-i18n";
+
+export function getPortalNavigation(language: Language) {
+  return [
+    {
+      label: translate(language, "home"),
+      href: "/",
+      icon: <HomeIcon />,
+    },
+    {
+      label: translate(language, "governmentJobs"),
+      href: "/jobs",
+      icon: <GovernmentJobIcon />,
+    },
+    {
+      label: translate(language, "governmentSchemes"),
+      href: "/schemes",
+      icon: <GovernmentSchemeIcon />,
+    },
+    {
+      label: translate(language, "results"),
+      href: "/results",
+      icon: <ResultIcon />,
+    },
+    {
+      label: translate(language, "admitCards"),
+      href: "/admit-cards",
+      icon: <AdmitCardIcon />,
+    },
+    {
+      label: translate(language, "guides"),
+      href: "/guides",
+      icon: <GuideIcon />,
+    },
+    {
+      label: translate(language, "videos"),
+      href: "/videos",
+      icon: <VideoIcon />,
+    },
+    {
+      label: translate(language, "contact"),
+      href: "/contact",
+      icon: <MailIcon />,
+    },
+  ];
+}

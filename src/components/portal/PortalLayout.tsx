@@ -7,13 +7,36 @@ import { DashboardShell } from "shivanya-shell";
 import { AuthProvider, useAuth } from "shivanya-auth";
 import SiteMobileFooter from "../SiteMobileFooter";
 import { PortalHeader } from "./PortalHeader";
-import { portalNavigation } from "./PortalSidebar";
+import { getPortalNavigation } from "./PortalSidebar";
 import { PortalDataProvider } from "./portal-data";
 import Link from "next/link";
+import type { Language } from "shivanya-i18n";
 
-function PortalShell({ children }: { children: ReactNode }) {
+function PortalShell({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage: Language;
+}) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
+
+  const language = user?.settings?.language ?? initialLanguage;
+
+  useEffect(() => {
+    if (loading) return;
+
+    const language = user?.settings?.language ?? "en";
+
+    document.documentElement.lang = language;
+
+    try {
+      if (user) {
+        localStorage.setItem("shivanya-language", language);
+      }
+    } catch {}
+  }, [user?.settings?.language, user, loading]);
 
   useEffect(() => {
     if (loading) return;
@@ -54,7 +77,7 @@ function PortalShell({ children }: { children: ReactNode }) {
         alt: "ShivanyaMS",
         href: "/",
       }}
-      navigation={portalNavigation}
+      navigation={getPortalNavigation(language)}
       pathname={pathname}
       linkComponent={Link}
       headerEnd={<PortalHeader />}
@@ -66,7 +89,13 @@ function PortalShell({ children }: { children: ReactNode }) {
   );
 }
 
-export function PortalLayout({ children }: { children: ReactNode }) {
+export function PortalLayout({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage: Language;
+}) {
   return (
     <AuthProvider
       config={{
@@ -76,7 +105,9 @@ export function PortalLayout({ children }: { children: ReactNode }) {
       }}
     >
       <PortalDataProvider>
-        <PortalShell>{children}</PortalShell>
+        <PortalShell initialLanguage={initialLanguage}>
+          {children}
+        </PortalShell>
       </PortalDataProvider>
     </AuthProvider>
   );

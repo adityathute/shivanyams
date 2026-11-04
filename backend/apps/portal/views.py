@@ -1,7 +1,7 @@
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import generics,permissions,status,viewsets
+from rest_framework import generics,permissions,viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -10,8 +10,7 @@ from .serializers import CategorySerializer,CompanySerializer,JobSerializer,JobW
 from .permissions import IsPortalIdentity
 class Categories(generics.ListAPIView): queryset=Category.objects.filter(active=True); serializer_class=CategorySerializer; permission_classes=[permissions.AllowAny]
 class PublicJobs(viewsets.ReadOnlyModelViewSet):
- serializer_class=JobSerializer; permission_classes=[permissions.AllowAny]; lookup_field='slug'
- search_fields=['title','description','company__name','location','state']; filterset_fields=['category__slug','employment_type','location','state','remote']; ordering_fields=['published_at','salary_min','salary_max']
+ serializer_class=JobSerializer; permission_classes=[permissions.AllowAny]; lookup_field='slug'; search_fields=['title','description','company__name','location','state']; filterset_fields=['category__slug','employment_type','location','state','remote']; ordering_fields=['published_at','salary_min','salary_max']
  def get_queryset(self): return Job.objects.filter(status=Job.Status.PUBLISHED,published_at__isnull=False).filter(Q(deadline__isnull=True)|Q(deadline__gte=timezone.localdate())).select_related('company','category')
  def retrieve(self,request,*args,**kwargs):
   obj=self.get_object(); Job.objects.filter(pk=obj.pk).update(views=F('views')+1); return Response(self.get_serializer(obj).data)
@@ -25,7 +24,8 @@ class EmployerJobs(viewsets.ModelViewSet):
  def perform_create(self,serializer):
   company=get_object_or_404(Company,pk=self.request.data.get('company'),owner_auth_id=str(self.request.user.id)); serializer.save(company=company,owner_auth_id=str(self.request.user.id))
  def perform_update(self,serializer):
-  if serializer.instance.owner_auth_id!=str(self.request.user.id): raise PermissionDenied('Not permitted to manage this job.')
+  company=serializer.validated_data.get('company',serializer.instance.company)
+  if company.owner_auth_id!=str(self.request.user.id): raise PermissionDenied('Cannot assign a company you do not own.')
   serializer.save()
  @action(detail=True,methods=['post'])
  def publish(self,request,pk=None):
@@ -48,9 +48,9 @@ class ApplyJob(generics.CreateAPIView): serializer_class=ApplySerializer; permis
   return Response(ApplicationSerializer(app).data,status=201)
 class CandidateApplications(generics.ListAPIView): serializer_class=ApplicationSerializer; permission_classes=[IsPortalIdentity]
  def get_queryset(self): return Application.objects.filter(candidate_auth_id=str(self.request.user.id)).select_related('job','job__company','job__category')
-class SavedJobs(generics.ListAPIView): serializer_class=JobSerializer; permission_classes=[IsPortalIdentity]
+class SavedJobs(generics.ListCreateAPIView): serializer_class=JobSerializer; permission_classes=[IsPortalIdentity]
  def get_queryset(self): return Job.objects.filter(saved_jobs__candidate_auth_id=str(self.request.user.id)).select_related('company','category')
- def post(self,request,*args,**kwargs):
+ def create(self,request,*args,**kwargs):
   job=get_object_or_404(Job,pk=request.data.get('job_id'),status=Job.Status.PUBLISHED); SavedJob.objects.get_or_create(candidate_auth_id=str(request.user.id),job=job); return Response({'saved':True},status=201)
 class UnsaveJob(generics.GenericAPIView): permission_classes=[IsPortalIdentity]
  def delete(self,request,job_id): SavedJob.objects.filter(candidate_auth_id=str(request.user.id),job_id=job_id).delete(); return Response(status=204)

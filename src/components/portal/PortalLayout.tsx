@@ -16,9 +16,28 @@ function PortalShell({ children }: { children: ReactNode }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    document.documentElement.dataset.theme =
-      user?.settings?.theme === "dark" ? "dark" : "light";
-  }, [user?.settings?.theme]);
+    const preference = user?.settings?.theme;
+    const theme =
+      preference === "dark"
+        ? "dark"
+        : preference === "system"
+          ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
+          : "light";
+
+    document.documentElement.dataset.theme = theme;
+
+    if (user) {
+      try {
+        localStorage.setItem("shivanya-theme", theme);
+      } catch {}
+    } else {
+      try {
+        localStorage.removeItem("shivanya-theme");
+      } catch {}
+    }
+  }, [user]);
 
   return (
     <DashboardShell

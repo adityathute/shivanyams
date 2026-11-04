@@ -46,7 +46,7 @@ export function HomePage() {
 
       <main>
         <HeroSection onSearch={setSearch} />
-        <CategoryGrid onSelect={setActive} />
+        <CategoryGrid />
 
         <div className="content-layout">
           <UpdatesSection

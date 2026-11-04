@@ -1,6 +1,6 @@
 # ShivanyaMS Job Portal API
 
-Django REST API for Job Portal business logic only. This service has no login, registration, password reset, Django Admin, or local user-account model. Shivanya Auth remains the authentication provider.
+Django REST API for Job Portal business logic only. This service has no login, registration, password reset, or local account/credential model. Shivanya Auth remains the single identity provider.
 
 ## Setup (PowerShell)
 
@@ -12,23 +12,38 @@ pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Configure PostgreSQL and `AUTH_JWT_SIGNING_KEY` in `.env`.
+Configure the Portal PostgreSQL database and Django secret in `.env`.
 
 ```powershell
 python manage.py makemigrations portal
 python manage.py migrate
 python manage.py check
-python manage.py runserver
+python manage.py runserver 8001
 ```
 
-## Auth
-Send `Authorization: Bearer <access_token>` from Shivanya Auth. Cookies are intentionally not used. The API verifies JWT signature and expiry and extracts the Auth user ID from `AUTH_JWT_USER_ID_CLAIM`. It does not issue or refresh tokens.
+## Authentication
 
-The existing Auth service currently signs JWTs with HS256. `AUTH_JWT_SIGNING_KEY` must match its signing secret. Keep it in environment/secret management and never commit it. Since this is stateless JWT validation, logout/session revocation is not checked by this API yet; add an Auth-side introspection/revocation endpoint if immediate revocation is required.
+The Portal API accepts:
+
+```http
+Authorization: Bearer <Shivanya Auth access_token>
+```
+
+For each authenticated request, Portal calls `AUTH_ME_URL` (default `http://127.0.0.1:8000/api/v1/auth/me/`) and forwards the access token. Auth validates the JWT, expiry, and active session, including logout/revocation. Portal does not decode JWTs, share Auth's signing secret, issue tokens, or refresh tokens.
+
+Set `AUTH_ME_URL` to the Auth service URL reachable **from the Portal backend process**. The frontend does not call this URL directly. If Auth is unreachable, Portal returns `503`; invalid/expired sessions return `401`.
+
+## Separate databases and user identity
+
+- Auth database: one canonical account record per person, credentials, OAuth identity, and sessions.
+- Portal database: job portal business data only.
+- Portal records reference the Auth identity using its external user ID (for example, `owner_auth_id` or `candidate_auth_id`). These are ownership references, not duplicate user accounts.
+- The same Auth account can be used by other ShivanyaMS services. Each service keeps its own domain data/database.
 
 ## API base: `/api/v1/portal/`
+
 - Public: `GET jobs/`, `GET jobs/{slug}/`, `GET categories/`, `GET content/{kind}/`, `GET content/{kind}/{slug}/`
 - Employer: companies CRUD, employer jobs CRUD, `publish/`, `close/`
 - Candidate: profile, apply to job, list applications, save/list/unsave jobs
 
-Portal content kinds: `scheme`, `result`, `admit_card`, `guide`, `video`, `update`. Auth user IDs are external references only; no duplicate account model is stored.
+Portal content kinds: `scheme`, `result`, `admit_card`, `guide`, `video`, `update`.

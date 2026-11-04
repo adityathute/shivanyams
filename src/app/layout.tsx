@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { PortalLayout } from "../components/portal/PortalLayout";
 import "./globals.css";
 import "./portal-base.css";
@@ -28,7 +29,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="mr" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <Script
+          id="shivanya-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
       </head>
       <body>
         <PortalLayout>{children}</PortalLayout>

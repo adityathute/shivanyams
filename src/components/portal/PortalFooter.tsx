@@ -1,3 +1,5 @@
+import { useAuth } from "shivanya-auth";
+
 import {
   FacebookIcon,
   InstagramIcon,
@@ -20,6 +22,10 @@ const links: [string, string][] = [
 ];
 
 export function PortalFooter() {
+  const { user, loading } = useAuth();
+
+  const isAdmin = user?.roles?.includes("admin") === true;
+
   return (
     <footer className="portal-footer" id="contact">
       <div className="footer-main">
@@ -149,11 +155,15 @@ export function PortalFooter() {
           <a href="/feedback">Feedback</a>
           <a href="/disclaimer">Disclaimer</a>
           <a href="/contact">Contact Us</a>
-          <a href="/admin" className="admin-link">
-            Admin
-          </a>
+          {!loading && isAdmin && (
+            <a href="/admin" className="admin-link">
+              Admin
+            </a>
+          )}
         </div>
-        <span>© {new Date().getFullYear()} ShivanyaMS. All rights reserved.</span>
+        <span>
+          © {new Date().getFullYear()} ShivanyaMS. All rights reserved.
+        </span>
       </div>
     </footer>
   );

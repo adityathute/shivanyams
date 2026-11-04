@@ -40,12 +40,14 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STATIC_URL = "static/"
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="", cast=Csv())
-AUTH_JWT_SIGNING_KEY = config("AUTH_JWT_SIGNING_KEY")
-AUTH_JWT_ALGORITHM = config("AUTH_JWT_ALGORITHM", default="HS256")
-AUTH_JWT_USER_ID_CLAIM = config("AUTH_JWT_USER_ID_CLAIM", default="user_id")
+AUTH_ME_URL = config(
+    "AUTH_ME_URL",
+    default="http://127.0.0.1:8000/api/v1/auth/me/",
+)
+AUTH_REQUEST_TIMEOUT = config("AUTH_REQUEST_TIMEOUT", default=4, cast=int)
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "apps.portal.authentication.ShivanyaJWTAuthentication",
+        "apps.portal.authentication.ShivanyaAuthAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],

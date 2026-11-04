@@ -18,8 +18,5 @@ export const portalNavigation = [
   { label: "प्रवेशपत्र", href: "/admit-cards", icon: <AdmitCardIcon /> },
   { label: "लेख आणि मार्गदर्शक", href: "/guides", icon: <GuideIcon /> },
   { label: "व्हिडिओ", href: "/videos", icon: <VideoIcon /> },
-  {
-    divider: true,
-  },
   { label: "संपर्क", href: "/contact", icon: <MailIcon /> },
 ];

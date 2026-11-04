@@ -1,10 +1,10 @@
 "use client";
 import "./PortalShell.css";
 
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { DashboardShell } from "shivanya-shell";
-import { AuthProvider } from "shivanya-auth";
+import { AuthProvider, useAuth } from "shivanya-auth";
 import SiteMobileFooter from "../SiteMobileFooter";
 import { PortalHeader } from "./PortalHeader";
 import { portalNavigation } from "./PortalSidebar";
@@ -13,6 +13,12 @@ import Link from "next/link";
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    document.documentElement.dataset.theme =
+      user?.settings?.theme === "dark" ? "dark" : "light";
+  }, [user?.settings?.theme]);
 
   return (
     <DashboardShell

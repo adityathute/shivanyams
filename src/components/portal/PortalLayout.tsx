@@ -1,7 +1,7 @@
 "use client";
 import "./PortalShell.css";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { DashboardShell } from "shivanya-shell";
 import { AuthProvider } from "shivanya-auth";
@@ -13,27 +13,6 @@ import Link from "next/link";
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("shivanya-theme");
-    const nextTheme =
-      saved === "dark" || saved === "light"
-        ? saved
-        : window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
-
-    setTheme(nextTheme);
-    document.documentElement.dataset.theme = nextTheme;
-  }, []);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
-    setTheme(nextTheme);
-    document.documentElement.dataset.theme = nextTheme;
-    window.localStorage.setItem("shivanya-theme", nextTheme);
-  };
 
   return (
     <DashboardShell
@@ -47,7 +26,7 @@ function PortalShell({ children }: { children: ReactNode }) {
       navigation={portalNavigation}
       pathname={pathname}
       linkComponent={Link}
-      headerEnd={<PortalHeader theme={theme} onToggleTheme={toggleTheme} />}
+      headerEnd={<PortalHeader />}
       sidebarFooter={<SiteMobileFooter />}
       contentPadding={0}
     >

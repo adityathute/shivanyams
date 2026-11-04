@@ -38,21 +38,97 @@ class EmployerJobs(viewsets.ModelViewSet):
 class CandidateProfileView(generics.RetrieveUpdateAPIView):
  serializer_class=CandidateSerializer; permission_classes=[IsPortalIdentity]
  def get_object(self): return CandidateProfile.objects.get_or_create(auth_user_id=str(self.request.user.id))[0]
-class ApplyJob(generics.CreateAPIView): serializer_class=ApplySerializer; permission_classes=[IsPortalIdentity]
- def create(self,request,*args,**kwargs):
-  job=get_object_or_404(Job,slug=kwargs['slug'],status=Job.Status.PUBLISHED)
-  if job.deadline and job.deadline<timezone.localdate(): return Response({'detail':'Application deadline has passed.'},status=400)
-  ser=self.get_serializer(data=request.data); ser.is_valid(raise_exception=True)
-  app,created=Application.objects.get_or_create(job=job,candidate_auth_id=str(request.user.id),defaults=ser.validated_data)
-  if not created: return Response({'detail':'Already applied to this job.'},status=409)
-  return Response(ApplicationSerializer(app).data,status=201)
-class CandidateApplications(generics.ListAPIView): serializer_class=ApplicationSerializer; permission_classes=[IsPortalIdentity]
- def get_queryset(self): return Application.objects.filter(candidate_auth_id=str(self.request.user.id)).select_related('job','job__company','job__category')
-class SavedJobs(generics.ListCreateAPIView): serializer_class=JobSerializer; permission_classes=[IsPortalIdentity]
- def get_queryset(self): return Job.objects.filter(saved_jobs__candidate_auth_id=str(self.request.user.id)).select_related('company','category')
- def create(self,request,*args,**kwargs):
-  job=get_object_or_404(Job,pk=request.data.get('job_id'),status=Job.Status.PUBLISHED); SavedJob.objects.get_or_create(candidate_auth_id=str(request.user.id),job=job); return Response({'saved':True},status=201)
-class UnsaveJob(generics.GenericAPIView): permission_classes=[IsPortalIdentity]
- def delete(self,request,job_id): SavedJob.objects.filter(candidate_auth_id=str(request.user.id),job_id=job_id).delete(); return Response(status=204)
-class PublicContent(viewsets.ReadOnlyModelViewSet): serializer_class=ContentSerializer; permission_classes=[permissions.AllowAny]; lookup_field='slug'
- def get_queryset(self): return PortalContent.objects.filter(kind=self.kwargs['kind'],status=PortalContent.Status.PUBLISHED,published_at__isnull=False)
+class ApplyJob(generics.CreateAPIView):
+    serializer_class = ApplySerializer
+    permission_classes = [IsPortalIdentity]
+
+    def create(self, request, *args, **kwargs):
+        job = get_object_or_404(
+            Job,
+            slug=kwargs["slug"],
+            status=Job.Status.PUBLISHED,
+        )
+
+        if job.deadline and job.deadline < timezone.localdate():
+            return Response(
+                {"detail": "Application deadline has passed."},
+                status=400,
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        application, created = Application.objects.get_or_create(
+            job=job,
+            candidate_auth_id=str(request.user.id),
+            defaults=serializer.validated_data,
+        )
+
+        if not created:
+            return Response(
+                {"detail": "Already applied to this job."},
+                status=409,
+            )
+
+        return Response(
+            ApplicationSerializer(application).data,
+            status=201,
+        )
+
+
+class CandidateApplications(generics.ListAPIView):
+    serializer_class = ApplicationSerializer
+    permission_classes = [IsPortalIdentity]
+
+    def get_queryset(self):
+        return Application.objects.filter(
+            candidate_auth_id=str(self.request.user.id)
+        ).select_related("job", "job__company", "job__category")
+
+
+class SavedJobs(generics.ListCreateAPIView):
+    serializer_class = JobSerializer
+    permission_classes = [IsPortalIdentity]
+
+    def get_queryset(self):
+        return Job.objects.filter(
+            saved_jobs__candidate_auth_id=str(self.request.user.id)
+        ).select_related("company", "category")
+
+    def create(self, request, *args, **kwargs):
+        job = get_object_or_404(
+            Job,
+            pk=request.data.get("job_id"),
+            status=Job.Status.PUBLISHED,
+        )
+
+        SavedJob.objects.get_or_create(
+            candidate_auth_id=str(request.user.id),
+            job=job,
+        )
+
+        return Response({"saved": True}, status=201)
+    
+class UnsaveJob(generics.GenericAPIView):
+    permission_classes = [IsPortalIdentity]
+
+    def delete(self, request, job_id):
+        SavedJob.objects.filter(
+            candidate_auth_id=str(request.user.id),
+            job_id=job_id,
+        ).delete()
+
+        return Response(status=204)
+
+
+class PublicContent(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ContentSerializer
+    permission_classes = [permissions.AllowAny]
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return PortalContent.objects.filter(
+            kind=self.kwargs["kind"],
+            status=PortalContent.Status.PUBLISHED,
+            published_at__isnull=False,
+        )

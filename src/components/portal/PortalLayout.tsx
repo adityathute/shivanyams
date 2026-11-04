@@ -13,10 +13,22 @@ import Link from "next/link";
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const preference = user?.settings?.theme;
+    if (loading) return;
+
+    if (!user) {
+      document.documentElement.dataset.theme = "light";
+
+      try {
+        localStorage.removeItem("shivanya-theme");
+      } catch {}
+
+      return;
+    }
+
+    const preference = user.settings?.theme;
     const theme =
       preference === "dark"
         ? "dark"
@@ -28,16 +40,10 @@ function PortalShell({ children }: { children: ReactNode }) {
 
     document.documentElement.dataset.theme = theme;
 
-    if (user) {
-      try {
-        localStorage.setItem("shivanya-theme", theme);
-      } catch {}
-    } else {
-      try {
-        localStorage.removeItem("shivanya-theme");
-      } catch {}
-    }
-  }, [user]);
+    try {
+      localStorage.setItem("shivanya-theme", theme);
+    } catch {}
+  }, [user, loading]);
 
   return (
     <DashboardShell

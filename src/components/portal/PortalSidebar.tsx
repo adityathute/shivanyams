@@ -8,12 +8,22 @@ import {
   GuideIcon,
   VideoIcon,
   MailIcon,
+  ShieldCheckIcon,
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";
 import { sidebarTranslations } from "@/i18n/dictionaries/sidebar";
 
-export function getPortalNavigation(language: Language) {
+type PortalUser = {
+  roles?: string[];
+} | null;
+
+export function getPortalNavigation(
+  language: Language,
+  user: PortalUser = null,
+) {
+  const isAdmin = user?.roles?.includes("admin") === true;
+
   return [
     {
       label: translate(language, sidebarTranslations, "home"),
@@ -56,6 +66,15 @@ export function getPortalNavigation(language: Language) {
       icon: <VideoIcon />,
     },
     { label: "", divider: true },
+    ...(isAdmin
+      ? [
+          {
+            label: "Admin",
+            href: "/admin",
+            icon: <ShieldCheckIcon />,
+          },
+        ]
+      : []),
     {
       label: translate(language, sidebarTranslations, "contact"),
       href: "/contact",

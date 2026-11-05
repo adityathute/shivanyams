@@ -56,7 +56,7 @@ export const categories: {
     href: "/admit-cards",
   },
   {
-    title: "लेख / मार्गदर्शक",
+    title: "लेख आणि मार्गदर्शक",
     sub: "Guides & Articles",
     type: "guide",
     color: "orange",
@@ -64,7 +64,7 @@ export const categories: {
     href: "/guides",
   },
   {
-    title: "YouTube व्हिडिओ",
+    title: "व्हिडिओ",
     sub: "Watch & Learn",
     type: "video",
     color: "red",

@@ -1,7 +1,5 @@
 "use client";
 
-import { useAuth } from "shivanya-auth";
-
 import {
   FacebookIcon,
   InstagramIcon,
@@ -11,6 +9,7 @@ import {
   TelegramIcon,
   MapPinIcon,
   MailIcon,
+  ThreadsIcon,
 } from "shivanya-ui";
 
 const links: [string, string][] = [
@@ -24,10 +23,6 @@ const links: [string, string][] = [
 ];
 
 export function PortalFooter() {
-  const { user, loading } = useAuth();
-
-  const isAdmin = user?.roles?.includes("admin") === true;
-
   return (
     <footer className="portal-footer" id="contact">
       <div className="footer-main">
@@ -45,7 +40,7 @@ export function PortalFooter() {
           </a>
           <p>
             सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि महत्त्वाच्या अपडेट्सची
-            माहिती – मराठी आणि English मध्ये.
+            माहिती – मराठी, हिंदी आणि इंग्रजीमध्ये.
           </p>
 
           <div className="social-links">
@@ -103,14 +98,14 @@ export function PortalFooter() {
               <TelegramIcon size={20} />
             </a>
 
-            {/* <a
+            <a
               href="https://threads.net/@your-page"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Threads"
             >
               <ThreadsIcon size={20} />
-            </a> */}
+            </a>
           </div>
         </div>
 
@@ -157,11 +152,6 @@ export function PortalFooter() {
           <a href="/feedback">Feedback</a>
           <a href="/disclaimer">Disclaimer</a>
           <a href="/contact">Contact Us</a>
-          {!loading && isAdmin && (
-            <a href="/admin" className="admin-link">
-              Admin
-            </a>
-          )}
         </div>
         <span>
           © {new Date().getFullYear()} ShivanyaMS. All rights reserved.

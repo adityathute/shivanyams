@@ -150,10 +150,9 @@
   text-align: left;
 }
 
-/* Replace your existing .social-links block with this */
-
 .social-links {
   display: flex;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -162,52 +161,56 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  /* Updated to a subtle glass/dark background instead of solid blue */
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-
-  transition: all 0.2s ease;
+  flex-shrink: 0;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* Make sure the SVG inside takes the color of the anchor tag */
 .social-links a svg {
   width: 18px;
   height: 18px;
-  fill: currentColor;
+  display: block;
+  fill: none;
+  stroke: currentColor;
 }
 
-/* Hover effect */
 .social-links a:hover {
-  background: var(--blue, #0872e8);
   transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(8, 114, 232, 0.3);
 }
 
-/* Optional: specific brand colors on hover if you prefer */
+/* Brand hover colors */
 .social-links a[aria-label="Facebook"]:hover {
   background: #1877f2;
 }
+
 .social-links a[aria-label="Instagram"]:hover {
   background: #e1306c;
 }
+
 .social-links a[aria-label="Twitter"]:hover {
-  background: #000000;
+  background: #000;
 }
+
 .social-links a[aria-label="YouTube"]:hover {
   background: #ff0000;
 }
+
 .social-links a[aria-label="WhatsApp"]:hover {
   background: #25d366;
 }
+
 .social-links a[aria-label="Telegram"]:hover {
   background: #229ed9;
 }
+
 .social-links a[aria-label="Threads"]:hover {
-  background: #000000;
+  background: #000;
 }
 
 /* Dark mode adjustments (if needed) */

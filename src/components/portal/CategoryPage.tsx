@@ -26,7 +26,7 @@ const pageInfo: Record<ItemType, { title: string; subtitle: string }> = {
     subtitle: "Useful Guides, Tutorials and Articles",
   },
   video: {
-    title: "YouTube व्हिडिओ",
+    title: "व्हिडिओ",
     subtitle: "सरकारी योजना, नोकरी आणि ऑनलाइन सेवांचे व्हिडिओ मार्गदर्शन",
   },
 };

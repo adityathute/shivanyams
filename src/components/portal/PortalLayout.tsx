@@ -1,16 +1,19 @@
 "use client";
+
 import "./PortalShell.css";
 
 import { type ReactNode, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+
 import { DashboardShell } from "shivanya-shell";
 import { AuthProvider, useAuth } from "shivanya-auth";
+import type { Language } from "shivanya-i18n";
+
 import SiteMobileFooter from "../SiteMobileFooter";
 import { PortalHeader } from "./PortalHeader";
 import { getPortalNavigation } from "./PortalSidebar";
 import { PortalDataProvider } from "./portal-data";
-import Link from "next/link";
-import type { Language } from "shivanya-i18n";
 
 function PortalShell({
   children,
@@ -27,8 +30,6 @@ function PortalShell({
   useEffect(() => {
     if (loading) return;
 
-    const language = user?.settings?.language ?? initialLanguage;
-
     document.documentElement.lang = language;
 
     try {
@@ -36,7 +37,12 @@ function PortalShell({
 
       document.cookie = `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch {}
-  }, [user?.settings?.language, user, loading, initialLanguage]);
+  }, [language, loading]);
+
+  const navigation = getPortalNavigation(
+    language,
+    loading ? null : user,
+  );
 
   return (
     <DashboardShell
@@ -47,7 +53,7 @@ function PortalShell({
         alt: "ShivanyaMS",
         href: "/",
       }}
-      navigation={getPortalNavigation(language)}
+      navigation={navigation}
       pathname={pathname}
       linkComponent={Link}
       headerEnd={<PortalHeader />}
@@ -71,12 +77,15 @@ export function PortalLayout({
     <AuthProvider
       config={{
         baseUrl:
-          process.env.NEXT_PUBLIC_AUTH_BASE_URL ?? "http://localhost:8000",
+          process.env.NEXT_PUBLIC_AUTH_BASE_URL ??
+          "http://localhost:8000",
         mode: "token",
       }}
     >
       <PortalDataProvider>
-        <PortalShell initialLanguage={initialLanguage}>{children}</PortalShell>
+        <PortalShell initialLanguage={initialLanguage}>
+          {children}
+        </PortalShell>
       </PortalDataProvider>
     </AuthProvider>
   );

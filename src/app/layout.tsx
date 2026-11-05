@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import Script from "next/script";
 import type { Language } from "shivanya-i18n";
 
 import { PortalLayout } from "../components/portal/PortalLayout";
@@ -21,7 +20,9 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   const cookieStore = await cookies();
+
   const savedLanguage = cookieStore.get("shivanya-language")?.value;
+  const savedTheme = cookieStore.get("shivanya-theme")?.value;
 
   const initialLanguage: Language = supportedLanguages.includes(
     savedLanguage as Language,
@@ -29,30 +30,15 @@ export default async function RootLayout({
     ? (savedLanguage as Language)
     : "en";
 
-  return (
-    <html lang={initialLanguage} suppressHydrationWarning>
-      <head>
-        <Script
-          id="shivanya-theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-      (() => {
-        try {
-          const theme = localStorage.getItem("shivanya-theme");
-          const resolvedTheme = theme === "dark" ? "dark" : "light";
+  const initialTheme = savedTheme === "dark" ? "dark" : "light";
 
-          document.documentElement.dataset.theme = resolvedTheme;
-          document.documentElement.style.colorScheme = resolvedTheme;
-        } catch {
-          document.documentElement.dataset.theme = "light";
-          document.documentElement.style.colorScheme = "light";
-        }
-      })();
-    `,
-          }}
-        />
-      </head>
+  return (
+    <html
+      lang={initialLanguage}
+      data-theme={initialTheme}
+      style={{ colorScheme: initialTheme }}
+      suppressHydrationWarning
+    >
       <body>
         <PortalLayout initialLanguage={initialLanguage}>
           {children}

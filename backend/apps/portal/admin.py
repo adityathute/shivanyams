@@ -13,11 +13,31 @@ from .models import (
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "active", "created_at", "updated_at")
+    list_display = (
+        "name_en",
+        "name_mr",
+        "name_hi",
+        "slug",
+        "active",
+        "created_at",
+        "updated_at",
+    )
+
     list_filter = ("active",)
-    search_fields = ("name", "slug", "description")
-    prepopulated_fields = {"slug": ("name",)}
-    ordering = ("name",)
+
+    search_fields = (
+        "name_en",
+        "name_mr",
+        "name_hi",
+        "slug",
+        "description_en",
+        "description_mr",
+        "description_hi",
+    )
+
+    prepopulated_fields = {"slug": ("name_en",)}
+
+    ordering = ("name_en",)
 
 
 @admin.register(Company)

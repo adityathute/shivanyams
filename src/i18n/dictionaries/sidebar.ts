@@ -13,7 +13,7 @@ export const sidebarTranslations = {
   mr: {
     home: "मुख्यपृष्ठ",
     governmentJobs: "सरकारी नोकरी",
-    governmentSchemes: "शासकीय योजना",
+    governmentSchemes: "सरकारी योजना",
     examination: "परीक्षा",
     results: "निकाल",
     admitCards: "प्रवेशपत्र",
@@ -27,7 +27,7 @@ export const sidebarTranslations = {
     governmentSchemes: "सरकारी योजनाएँ",
     examination: "परीक्षा",
     results: "परिणाम",
-    admitCards: "प्रवेश पत्र",
+    admitCards: "प्रवेशपत्र",
     guides: "लेख और मार्गदर्शक",
     videos: "वीडियो",
     contact: "संपर्क",

@@ -1,14 +1,9 @@
 (() => {
   try {
-    const hasAuthToken = sessionStorage.getItem("shivanya.auth.access");
     const savedTheme = localStorage.getItem("shivanya-theme");
 
-    const theme =
-      hasAuthToken && (savedTheme === "dark" || savedTheme === "light")
-        ? savedTheme
-        : "light";
-
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.theme =
+      savedTheme === "dark" ? "dark" : "light";
   } catch {
     document.documentElement.dataset.theme = "light";
   }

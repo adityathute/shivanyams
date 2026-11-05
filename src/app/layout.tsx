@@ -34,8 +34,23 @@ export default async function RootLayout({
       <head>
         <Script
           id="shivanya-theme-init"
-          src="/theme-init.js"
           strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+      (() => {
+        try {
+          const theme = localStorage.getItem("shivanya-theme");
+          const resolvedTheme = theme === "dark" ? "dark" : "light";
+
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+          document.documentElement.style.colorScheme = "light";
+        }
+      })();
+    `,
+          }}
         />
       </head>
       <body>

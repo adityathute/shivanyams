@@ -92,7 +92,7 @@
 .portal-footer {
   background: #0c1c34;
   color: #eaf1ff;
-  margin-top: 16px;
+  margin-top: auto;
 }
 
 .footer-main {
@@ -342,18 +342,43 @@
   }
 }
 
-.portal-shell-actions {
+.portal-shell {
+  min-height: 100vh;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
 }
 
+.portal-shell main {
+  flex: 1;
+}
+
+/* DashboardShell wrapper */
+.shivanya-dashboard-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shell content area */
 .shivanya-dashboard-shell .shivanya-shell-main {
-  min-width: 0;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Content */
 .shivanya-dashboard-shell .shivanya-shell-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 0;
+}
+
+/* Footer */
+.portal-footer {
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .portal-header {

@@ -5,7 +5,6 @@
 
 .jobs-hero {
   min-height: 250px;
-  margin-top: 10px;
   padding: 28px 5% 28px 2%;
   border-radius: 12px;
   background: #f1f6ff;
@@ -221,7 +220,7 @@
 }
 
 .jobs-updates {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 @media (max-width: 900px) {

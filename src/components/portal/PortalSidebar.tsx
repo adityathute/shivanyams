@@ -2,6 +2,7 @@ import {
   HomeIcon,
   GovernmentJobIcon,
   GovernmentSchemeIcon,
+  ExaminationIcon,
   ResultIcon,
   AdmitCardIcon,
   GuideIcon,
@@ -30,6 +31,11 @@ export function getPortalNavigation(language: Language) {
       icon: <GovernmentSchemeIcon />,
     },
     {
+      label: translate(language, sidebarTranslations, "examination"),
+      href: "/examination",
+      icon: <ExaminationIcon />,
+    },
+    {
       label: translate(language, sidebarTranslations, "results"),
       href: "/results",
       icon: <ResultIcon />,
@@ -49,7 +55,7 @@ export function getPortalNavigation(language: Language) {
       href: "/videos",
       icon: <VideoIcon />,
     },
-    { divider: true },
+    { label: "", divider: true },
     {
       label: translate(language, sidebarTranslations, "contact"),
       href: "/contact",

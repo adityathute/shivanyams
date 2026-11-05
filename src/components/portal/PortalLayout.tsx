@@ -52,7 +52,7 @@ function PortalShell({
       linkComponent={Link}
       headerEnd={<PortalHeader />}
       sidebarFooter={<SiteMobileFooter />}
-      sidebarWidth={220}
+      sidebarWidth={245}
       contentPadding={0}
     >
       {children}

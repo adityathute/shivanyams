@@ -27,16 +27,16 @@ function PortalShell({
   useEffect(() => {
     if (loading) return;
 
-    const language = user?.settings?.language ?? "en";
+    const language = user?.settings?.language ?? initialLanguage;
 
     document.documentElement.lang = language;
 
     try {
-      if (user) {
-        localStorage.setItem("shivanya-language", language);
-      }
+      localStorage.setItem("shivanya-language", language);
+
+      document.cookie = `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch {}
-  }, [user?.settings?.language, user, loading]);
+  }, [user?.settings?.language, user, loading, initialLanguage]);
 
   return (
     <DashboardShell

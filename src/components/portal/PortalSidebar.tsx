@@ -48,6 +48,7 @@ export function getPortalNavigation(language: Language) {
       href: "/videos",
       icon: <VideoIcon />,
     },
+    {divider: true},
     {
       label: translate(language, "contact"),
       href: "/contact",

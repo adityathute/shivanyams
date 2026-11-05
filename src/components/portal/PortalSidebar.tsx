@@ -10,47 +10,48 @@ import {
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";
+import { sidebarTranslations } from "@/i18n/dictionaries/sidebar";
 
 export function getPortalNavigation(language: Language) {
   return [
     {
-      label: translate(language, "home"),
+      label: translate(language, sidebarTranslations, "home"),
       href: "/",
       icon: <HomeIcon />,
     },
     {
-      label: translate(language, "governmentJobs"),
+      label: translate(language, sidebarTranslations, "governmentJobs"),
       href: "/jobs",
       icon: <GovernmentJobIcon />,
     },
     {
-      label: translate(language, "governmentSchemes"),
+      label: translate(language, sidebarTranslations, "governmentSchemes"),
       href: "/schemes",
       icon: <GovernmentSchemeIcon />,
     },
     {
-      label: translate(language, "results"),
+      label: translate(language, sidebarTranslations, "results"),
       href: "/results",
       icon: <ResultIcon />,
     },
     {
-      label: translate(language, "admitCards"),
+      label: translate(language, sidebarTranslations, "admitCards"),
       href: "/admit-cards",
       icon: <AdmitCardIcon />,
     },
     {
-      label: translate(language, "guides"),
+      label: translate(language, sidebarTranslations, "guides"),
       href: "/guides",
       icon: <GuideIcon />,
     },
     {
-      label: translate(language, "videos"),
+      label: translate(language, sidebarTranslations, "videos"),
       href: "/videos",
       icon: <VideoIcon />,
     },
-    {divider: true},
+    { divider: true },
     {
-      label: translate(language, "contact"),
+      label: translate(language, sidebarTranslations, "contact"),
       href: "/contact",
       icon: <MailIcon />,
     },

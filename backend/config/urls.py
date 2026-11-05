@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.urls import include, path
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -11,6 +12,7 @@ def health(request):
 
 
 urlpatterns = [
+    path("admin/", admin.site.urls),
     path("health/", health),
     path("api/v1/portal/", include("apps.portal.urls")),
 ]

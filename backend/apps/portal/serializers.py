@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Company, Job, CandidateProfile, Application, PortalContent
+from .models import Category, ImportantLink, Company, Job, CandidateProfile, Application, PortalContent
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -16,6 +16,12 @@ class CategorySerializer(serializers.ModelSerializer):
             "description_hi",
             "active",
         ]
+
+
+class ImportantLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImportantLink
+        fields = ["id", "name_en", "name_mr", "name_hi", "url", "sort_order", "active"]
 
 
 class CompanySerializer(serializers.ModelSerializer):

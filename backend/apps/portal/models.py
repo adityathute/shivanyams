@@ -26,6 +26,21 @@ class Category(Timestamped):
         return self.name_en
 
 
+class ImportantLink(Timestamped):
+    name_en = models.CharField(max_length=240)
+    name_mr = models.CharField(max_length=240)
+    name_hi = models.CharField(max_length=240)
+    url = models.URLField(max_length=1000)
+    sort_order = models.PositiveIntegerField(default=0)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["sort_order", "name_en"]
+
+    def __str__(self):
+        return self.name_en
+
+
 class Company(Timestamped):
     owner_auth_id = models.CharField(max_length=128, db_index=True)
     name = models.CharField(max_length=180)

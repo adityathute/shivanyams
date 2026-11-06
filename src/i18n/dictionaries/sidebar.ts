@@ -1,8 +1,8 @@
 export const sidebarTranslations = {
   en: {
     home: "Home",
-    governmentJobs: "Government Jobs",
-    governmentSchemes: "Government Schemes",
+    jobs: "Jobs",
+    schemes: "Schemes",
     examination: "Examination",
     results: "Results",
     admitCards: "Admit Cards",
@@ -12,8 +12,8 @@ export const sidebarTranslations = {
   },
   mr: {
     home: "मुख्यपृष्ठ",
-    governmentJobs: "सरकारी नोकरी",
-    governmentSchemes: "सरकारी योजना",
+    jobs: "सरकारी नोकरी",
+    schemes: "सरकारी योजना",
     examination: "परीक्षा",
     results: "निकाल",
     admitCards: "प्रवेशपत्र",
@@ -23,8 +23,8 @@ export const sidebarTranslations = {
   },
   hi: {
     home: "मुखपृष्ठ",
-    governmentJobs: "सरकारी नौकरी",
-    governmentSchemes: "सरकारी योजनाएँ",
+    jobs: "सरकारी नौकरी",
+    schemes: "सरकारी योजनाएँ",
     examination: "परीक्षा",
     results: "परिणाम",
     admitCards: "प्रवेशपत्र",

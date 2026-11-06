@@ -13,9 +13,14 @@ import {
   AdmitCardIcon,
   GuideIcon,
   VideoIcon,
+  ExaminationIcon,
 } from "shivanya-ui";
 
 import type { ItemType } from "./portal-data";
+
+export function getCategorySubtitle(category: Category, language: Language) {
+  return language === "en" ? category.name_mr : category.name_en;
+}
 
 export type Language = "en" | "mr" | "hi";
 
@@ -39,22 +44,22 @@ interface CategoryConfig {
 }
 
 export const categoryConfig: Record<string, CategoryConfig> = {
-  "government-jobs": {
+  jobs: {
     type: "job",
     color: "blue",
     icon: <GovernmentJobIcon />,
     href: "/jobs",
   },
-  "government-schemes": {
+  schemes: {
     type: "scheme",
     color: "green",
     icon: <GovernmentSchemeIcon />,
     href: "/schemes",
   },
   examination: {
-    type: "result",
-    color: "purple",
-    icon: <ResultIcon />,
+    type: "examination" as ItemType,
+    color: "indigo",
+    icon: <ExaminationIcon />,
     href: "/examination",
   },
   results: {
@@ -82,6 +87,16 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     href: "/videos",
   },
 };
+
+const categoryOrder = [
+  "jobs",
+  "schemes",
+  "examination",
+  "results",
+  "admit-cards",
+  "guides",
+  "videos",
+];
 
 const API_URL =
   process.env.NEXT_PUBLIC_PORTAL_API_URL ??
@@ -138,7 +153,14 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
 
         const data = Array.isArray(payload) ? payload : (payload.results ?? []);
 
-        setCategories(data.filter((category) => category.active));
+        setCategories(
+          data
+            .filter((category) => category.active)
+            .sort(
+              (a, b) =>
+                categoryOrder.indexOf(a.slug) - categoryOrder.indexOf(b.slug),
+            ),
+        );
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category loading failed:", error);
@@ -176,9 +198,7 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
 
             <span className="category-content">
               <strong>{getCategoryTitle(category, language)}</strong>
-              <small>
-                {getCategoryDescription(category, language) || category.name_en}
-              </small>
+              <small>{getCategorySubtitle(category, language)}</small>
             </span>
           </button>
         );

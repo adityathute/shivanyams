@@ -9,8 +9,13 @@ import type { ItemType } from "./portal-data";
 import { usePortalData } from "./portal-data";
 import { PortalFooter } from "./PortalFooter";
 import { MailIcon } from "shivanya-ui";
+import type { Language } from "./CategoryGrid";
 
-export function HomePage() {
+interface HomePageProps {
+  selectedLanguage: Language;
+}
+
+export function HomePage({ selectedLanguage }: HomePageProps) {
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");
   const { data } = usePortalData();
@@ -46,7 +51,7 @@ export function HomePage() {
 
       <main>
         <HeroSection onSearch={setSearch} />
-        <CategoryGrid />
+        <CategoryGrid language={selectedLanguage} />
 
         <div className="content-layout">
           <UpdatesSection

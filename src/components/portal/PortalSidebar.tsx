@@ -31,12 +31,12 @@ export function getPortalNavigation(
       icon: <HomeIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "governmentJobs"),
+      label: translate(language, sidebarTranslations, "jobs"),
       href: "/jobs",
       icon: <GovernmentJobIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "governmentSchemes"),
+      label: translate(language, sidebarTranslations, "schemes"),
       href: "/schemes",
       icon: <GovernmentSchemeIcon />,
     },

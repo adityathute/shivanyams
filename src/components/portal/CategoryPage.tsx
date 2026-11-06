@@ -21,6 +21,14 @@ const pageInfo: Record<ItemType, { title: string; subtitle: string }> = {
     title: "प्रवेशपत्र",
     subtitle: "Admit Cards and Examination Instructions",
   },
+  exam: {
+    title: "परीक्षा",
+    subtitle: "परीक्षा सूचना, वेळापत्रक आणि महत्त्वाचे अपडेट्स",
+  },
+  "batch-exam": {
+    title: "बॅच परीक्षा",
+    subtitle: "बॅच परीक्षांचे वेळापत्रक, सूचना आणि अपडेट्स",
+  },
   guide: {
     title: "लेख / मार्गदर्शक",
     subtitle: "Useful Guides, Tutorials and Articles",

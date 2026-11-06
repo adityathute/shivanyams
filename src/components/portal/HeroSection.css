@@ -73,9 +73,17 @@
   --text-color: #142c49;
   --muted-color: #526982;
 
+  --flower-1-color: #ff9fbd;
+  --flower-2-color: #ffd166;
+  --flower-3-color: #b9a0ff;
+  --flower-4-color: #ffad86;
+
+  --flower-center: #fff2a6;
+  --flower-stem: #3f8750;
+
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 
   min-height: 390px;
   margin-top: 12px;
@@ -103,18 +111,26 @@
 ------------------------------ */
 
 .hero.scene-dawn {
-  --sky-top: #f2a982;
-  --sky-middle: #f8d3b4;
-  --sky-bottom: #fff1d8;
+  --sky-top: #ffd9bd;
+  --sky-middle: #ffe9d5;
+  --sky-bottom: #fff8ed;
 
-  --sun-color: #fff0a8;
-  --sun-glow: rgba(255, 163, 75, 0.65);
+  --sun-color: #fff4c7;
+  --sun-glow: rgba(255, 195, 125, 0.4);
 
-  --land-back: #b5b89a;
-  --land-front: #7f9f7d;
+  --land-back: #c8d5b5;
+  --land-front: #a3c39a;
 
-  --text-color: #432b32;
-  --muted-color: #65484b;
+  --text-color: #49363a;
+  --muted-color: #755c5c;
+
+  --flower-1-color: #ff91ad;
+  --flower-2-color: #ffc078;
+  --flower-3-color: #d1a5ff;
+  --flower-4-color: #ff9e8c;
+
+  --flower-center: #fff0a3;
+  --flower-stem: #6b9959;
 }
 
 .hero.scene-day {
@@ -130,21 +146,37 @@
 
   --text-color: #143252;
   --muted-color: #36546f;
+
+  --flower-1-color: #ff7fa8;
+  --flower-2-color: #ffd34e;
+  --flower-3-color: #a995ff;
+  --flower-4-color: #ff986b;
+
+  --flower-center: #fff8d5;
+  --flower-stem: #287a43;
 }
 
 .hero.scene-sunset {
-  --sky-top: #e58b75;
-  --sky-middle: #f2b9a0;
-  --sky-bottom: #f8dfbd;
+  --sky-top: #f6c3ad;
+  --sky-middle: #f9d9c4;
+  --sky-bottom: #fff0dc;
 
-  --sun-color: #ffe1a0;
-  --sun-glow: rgba(255, 126, 78, 0.65);
+  --sun-color: #fff0bd;
+  --sun-glow: rgba(255, 175, 125, 0.4);
 
-  --land-back: #a7a18a;
-  --land-front: #617f70;
+  --land-back: #c5c3a8;
+  --land-front: #9eb5a0;
 
-  --text-color: #432c35;
-  --muted-color: #674b50;
+  --text-color: #49363a;
+  --muted-color: #755c5c;
+
+  --flower-1-color: #ff8b9e;
+  --flower-2-color: #ffb45c;
+  --flower-3-color: #c39aff;
+  --flower-4-color: #ff806d;
+
+  --flower-center: #ffe58a;
+  --flower-stem: #597d53;
 }
 
 .hero.scene-night {
@@ -160,6 +192,112 @@
 
   --text-color: #f2f7ff;
   --muted-color: #c0d0e5;
+
+  --flower-1-color: #d18cff;
+  --flower-2-color: #f4c2ff;
+  --flower-3-color: #9baeff;
+  --flower-4-color: #ffb4d9;
+
+  --flower-center: #fff2d0;
+  --flower-stem: #365b52;
+}
+
+.hill-flowers {
+  position: absolute;
+  top: -12px;
+  left: 5%;
+  right: 5%;
+  height: 100px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+.hill-flower {
+  position: absolute;
+  bottom: 18px;
+  width: 3px;
+  height: var(--stem-height, 34px);
+  background: var(--flower-stem);
+  border-radius: 4px;
+  transform: rotate(var(--flower-rotation, 0deg));
+  transform-origin: bottom center;
+  transition: background 5s ease;
+}
+
+/* Flower head */
+.hill-flower::before {
+  content: "";
+  position: absolute;
+  top: -17px;
+  left: -9px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at center,
+      var(--flower-center) 0 20%,
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 50% 0%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 100% 50%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 0% 50%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    );
+  transition: background 5s ease;
+}
+
+/* Leaves */
+.hill-flower::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 15px;
+  width: 12px;
+  height: 6px;
+  background: var(--flower-stem);
+  border-radius: 100% 0 100% 0;
+  transform: rotate(-25deg);
+}
+
+.flower-1 {
+  left: 12%;
+  --stem-height: 28px;
+  --flower-rotation: -8deg;
+}
+
+.flower-2 {
+  left: 25%;
+  --stem-height: 42px;
+  --flower-rotation: 7deg;
+}
+
+.flower-3 {
+  left: 40%;
+  --stem-height: 32px;
+  --flower-rotation: -5deg;
+}
+
+.flower-4 {
+  left: 55%;
+  --stem-height: 46px;
+  --flower-rotation: 8deg;
 }
 
 /* ------------------------------
@@ -170,7 +308,7 @@
   position: relative;
   z-index: 5;
   width: 60%;
-  max-width: 650px;
+  max-width: 685px;
   color: var(--text-color);
 }
 
@@ -202,7 +340,7 @@
 }
 
 .hero p {
-  max-width: 650px;
+  max-width: 685px;
 
   font-size: 14px;
   line-height: 1.7;
@@ -333,45 +471,69 @@
    Preview controls
 ------------------------------ */
 
+/* Developer scene tester */
 .scene-tester {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  z-index: 20;
+
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.377);
+  border: 1px solid rgba(120, 152, 183, 0.158);
+  padding: 3px 6px;
+  border-radius: 6px;
 
-  gap: 5px;
-
-  margin-top: 18px;
-
-  font-size: 10px;
+  font-size: 9px;
 }
 
 .scene-tester-label {
-  margin-right: 5px;
+  font-size: 9px;
+}
+
+.scene-tester select {
+  max-width: 65px;
+  padding: 2px;
+  font-size: 9px;
+}
+
+.scene-tester-label {
   color: var(--muted-color);
   font-weight: 600;
 }
 
-.scene-tester button {
-  border: 1px solid rgba(130, 155, 180, 0.35);
-  border-radius: 6px;
+.scene-tester select {
+  border: 0;
+  outline: none;
 
-  background: rgba(255, 255, 255, 0.4);
+  background: transparent;
   color: var(--text-color);
 
-  padding: 5px 9px;
-
-  font-size: 10px;
-
+  font-size: 11px;
   cursor: pointer;
-
-  transition: all 0.3s ease;
 }
 
-.scene-tester button:hover,
-.scene-tester button.active {
-  background: #1766e8;
-  color: #fff;
-  border-color: #1766e8;
+.scene-tester select option {
+  color: #142c49;
+  background: #ffffff;
+}
+
+[data-theme="dark"] .scene-tester {
+  background: rgba(13, 17, 23, 0.8);
+  border-color: #344154;
+}
+
+[data-theme="dark"] .scene-tester select {
+  color: var(--text-color);
+}
+
+@media (max-width: 760px) {
+  .scene-tester {
+    top: 10px;
+    right: 10px;
+  }
 }
 
 /* ------------------------------
@@ -518,7 +680,7 @@
   height: 75px;
 
   top: 55px;
-  right: 28%;
+  right: 27%;
 
   border-radius: 50%;
 
@@ -1206,8 +1368,24 @@
   }
 
   .scene-tester {
-    position: relative;
-    z-index: 10;
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    left: auto;
+    z-index: 20;
+
+    padding: 3px 5px;
+    gap: 2px;
+    font-size: 9px;
+  }
+
+  .scene-tester-label {
+    display: none;
+  }
+
+  .scene-tester select {
+    width: 58px;
+    font-size: 9px;
   }
 
   .scene-label {
@@ -1254,11 +1432,14 @@
   }
 
   .scene-tester {
-    gap: 4px;
+    top: 28px;
+    right: 8px;
+    padding: 2px 5px;
   }
 
-  .scene-tester button {
-    padding: 4px 7px;
+  .scene-tester select {
+    max-width: 58px;
+    font-size: 8px;
   }
 }
 
@@ -1432,29 +1613,14 @@
 ------------------------------ */
 
 @media (max-width: 760px) {
-  .hero {
-    background: linear-gradient(
-      135deg,
-      #dff3ff 0%,
-      #eff9ff 55%,
-      #ffffff 100%
-    ) !important;
-  }
-
-  /* Keep the scene and landscape visible */
   .hero-art,
   .landscape {
     display: block !important;
   }
 
-  /* Hide sky decorations */
+  /* Hide sky decorations except sun and moon */
   .sky-glow,
   .sky-horizon,
-  .sun-orbit,
-  .sun-rays,
-  .sun,
-  .moon,
-  .moon-crater,
   .stars,
   .cloud,
   .mountain,
@@ -1463,21 +1629,61 @@
     display: none !important;
   }
 
-  /* Keep building visible */
-  .building-realistic {
+  /* Keep sun visible */
+  .sun-orbit,
+  .sun-rays,
+  .sun {
     display: block !important;
-    right: 4%;
-    bottom: 5;
-    z-index: 5;
   }
 
-  /* Keep front hill visible */
+  /* Keep moon visible */
+  .moon {
+    display: block !important;
+  }
+
+  /* Mobile sun position */
+  .sun-orbit {
+    width: 100%;
+    right: 0;
+    top: 0;
+  }
+
+  .sun-rays {
+    width: 150px;
+    height: 150px;
+    top: 15px;
+    right: 8%;
+    transform: scale(0.7);
+  }
+
+  .sun {
+    width: 75px;
+    height: 75px;
+    top: 37px;
+    left: 37px;
+  }
+
+  /* Mobile moon position */
+  .moon {
+    width: 50px;
+    height: 50px;
+    top: 30px;
+    right: 10%;
+  }
+
+  /* Keep building visible */
+  /* .building-realistic {
+    display: block !important;
+    right: 4%;
+    bottom: 5px;
+    z-index: 5;
+  } */
+
   .hill-front {
     display: block !important;
     z-index: 4;
   }
 
-  /* Keep grass around the building */
   .ground-grass {
     display: block !important;
   }
@@ -1487,4 +1693,258 @@
   .ticker {
     display: none;
   }
+}
+
+/* Fixed sun and moon position on mobile */
+@media (max-width: 760px) {
+  .sun-orbit {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sun-rays {
+    top: 37%;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    transform: none;
+  }
+
+  .sun {
+    position: absolute;
+    top: 34%;
+    left: auto;
+    right: 25%;
+    width: 65px;
+    height: 65px;
+
+    transform: none !important;
+  }
+
+  .scene-dawn .sun,
+  .scene-day .sun,
+  .scene-sunset .sun {
+    transform: none !important;
+  }
+
+  .moon {
+    position: absolute;
+    top: 50%;
+    right: 9%;
+    width: 55px;
+    height: 55px;
+
+    transform: translateY(0) !important;
+  }
+
+  .crater-one {
+    width: 10px;
+    height: 10px;
+    top: 10px;
+    left: 12px;
+  }
+
+  .crater-two {
+    width: 5px;
+    height: 5px;
+    top: 35px;
+    left: 20px;
+  }
+
+  .crater-three {
+    width: 12px;
+    height: 12px;
+    top: 15px;
+    left: 30px;
+  }
+
+  .scene-night .moon {
+    transform: translateY(0) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .flower-4,
+  .flower-3 {
+    display: none;
+  }
+
+  .flower-1 {
+    left: 20%;
+  }
+
+  .flower-2 {
+    left: 35%;
+  }
+}
+
+.flower-1 {
+  --flower-petal-color: var(--flower-1-color);
+}
+
+.flower-2 {
+  --flower-petal-color: var(--flower-2-color);
+}
+
+.flower-3 {
+  --flower-petal-color: var(--flower-3-color);
+}
+
+.flower-4 {
+  --flower-petal-color: var(--flower-4-color);
+}
+
+/* Banyan tree */
+.banyan-tree {
+  position: absolute;
+  left: 40%;
+  bottom: 5px;
+  width: 350px;
+  height: 320px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.banyan-tree svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Scene-dependent colors */
+.hero {
+  --banyan-canopy: #4d9258;
+  --banyan-leaves: #65a96d;
+  --banyan-trunk: #795335;
+  --banyan-root: #795335;
+}
+
+.hero.scene-dawn {
+  --banyan-canopy: #63966a;
+  --banyan-leaves: #8dbb83;
+  --banyan-trunk: #8c684d;
+  --banyan-root: #8c684d;
+}
+
+.hero.scene-day {
+  --banyan-canopy: #39834a;
+  --banyan-leaves: #60a963;
+  --banyan-trunk: #795335;
+  --banyan-root: #795335;
+}
+
+.hero.scene-sunset {
+  --banyan-canopy: #6f7650;
+  --banyan-leaves: #a08a58;
+  --banyan-trunk: #79503c;
+  --banyan-root: #79503c;
+}
+
+.hero.scene-night {
+  --banyan-canopy: #203d37;
+  --banyan-leaves: #2b5145;
+  --banyan-trunk: #3e3a35;
+  --banyan-root: #3e3a35;
+}
+
+/* SVG colors and smooth scene transition */
+.banyan-canopy {
+  fill: var(--banyan-canopy);
+  transition: fill 5s ease;
+}
+
+.banyan-leaves {
+  fill: var(--banyan-leaves);
+  opacity: 0.65;
+  transition: fill 5s ease;
+}
+
+.banyan-trunk {
+  fill: var(--banyan-trunk);
+  transition: fill 5s ease;
+}
+
+.banyan-trunk-detail {
+  fill: none;
+  stroke: var(--banyan-root);
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke 5s ease;
+}
+
+.banyan-roots {
+  fill: none;
+  stroke: var(--banyan-trunk);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke 5s ease;
+}
+
+@media (max-width: 760px) {
+  .banyan-tree {
+    left: 30%;
+    top: -18%;
+    width: 190px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .building-realistic {
+    display: none;
+  }
+}
+
+/* Shooting star — appears only during night */
+.shooting-star {
+  position: absolute;
+  top: 75%;
+  left: 65%;
+
+  width: 110px;
+  height: 2px;
+
+  background: linear-gradient(
+    -90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.45)
+  );
+
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.2));
+
+  border-radius: 50%;
+  opacity: 0;
+
+  transform: rotate(-35deg);
+  transform-origin: left center;
+
+  filter: drop-shadow(0 0 5px #ffffff);
+
+  animation: shooting-star 10s linear infinite;
+}
+
+@keyframes shooting-star {
+  0%,
+  86% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(-35deg);
+  }
+
+  88% {
+    opacity: 1;
+  }
+
+  94%,
+  100% {
+    opacity: 0;
+    transform: translate(360px, -240px) rotate(-35deg);
+  }
+}
+
+/* Disable outside night */
+.hero:not(.scene-night) .shooting-star {
+  display: none;
 }

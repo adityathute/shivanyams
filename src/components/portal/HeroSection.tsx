@@ -2,17 +2,12 @@
 
 import "./HeroSection.css";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { PortalClock } from "../Clock/PortalClock";
+import { useEffect, useState } from "react";
 import type { Language } from "shivanya-i18n";
 import { usePortalLanguage } from "../portal/PortalLanguageContext";
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
-
-type Props = {
-  onSearch: (value: string) => void;
-};
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
+import { BanyanTree } from "./BanyanTree";
 
 type SceneTime = "dawn" | "day" | "sunset" | "night";
 type PreviewTime = SceneTime | "auto";
@@ -27,44 +22,45 @@ function getSceneTime(): SceneTime {
   return "night";
 }
 
-export function HeroSection({ onSearch }: Props) {
-    const { language } = usePortalLanguage();
+const ENABLE_SCENE_TESTER = false; // Set to true to enable the scene tester dropdown for testing different scenes
+
+export function HeroSection() {
+  const { language } = usePortalLanguage();
 
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
-  const [value, setValue] = useState("");
   const [sceneTime, setSceneTime] = useState<SceneTime>(getSceneTime);
   const [preview, setPreview] = useState<PreviewTime>("auto");
 
   const activeScene = preview === "auto" ? sceneTime : preview;
 
   useEffect(() => {
-    const updateScene = () => setSceneTime(getSceneTime());
-
-    updateScene();
-
-    const interval = window.setInterval(updateScene, 60_000);
+    const interval = window.setInterval(() => {
+      setSceneTime(getSceneTime());
+    }, 60_000);
 
     return () => window.clearInterval(interval);
   }, []);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    onSearch(value);
-
-    document.getElementById("updates")?.scrollIntoView({
-      behavior: "smooth",
-    });
-  };
-
-  const selectPreview = (scene: PreviewTime) => {
-    setPreview(scene);
-  };
-
   return (
     <section className={`hero scene-${activeScene}`}>
+      {ENABLE_SCENE_TESTER && (
+        <div className="scene-tester">
+          <select
+            value={preview}
+            onChange={(event) => setPreview(event.target.value as PreviewTime)}
+            aria-label="Preview scene"
+          >
+            <option value="auto">Auto</option>
+            <option value="dawn">Sunrise</option>
+            <option value="day">Day</option>
+            <option value="sunset">Sunset</option>
+            <option value="night">Night</option>
+          </select>
+        </div>
+      )}
+
       <div className="hero-copy">
         <span className="eyebrow">{t("heroEyebrow")}</span>
 
@@ -75,29 +71,7 @@ export function HeroSection({ onSearch }: Props) {
         </h1>
 
         <p>{t("heroDescription")}</p>
-
-        <div className="scene-tester">
-          <span className="scene-tester-label">Scene preview</span>
-
-          {(
-            [
-              ["auto", "Auto"],
-              ["dawn", "Sunrise"],
-              ["day", "Day"],
-              ["sunset", "Sunset"],
-              ["night", "Night"],
-            ] as const
-          ).map(([scene, label]) => (
-            <button
-              key={scene}
-              type="button"
-              className={preview === scene ? "active" : ""}
-              onClick={() => selectPreview(scene)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <PortalClock />
       </div>
 
       <div className="hero-art" aria-hidden="true">
@@ -120,6 +94,7 @@ export function HeroSection({ onSearch }: Props) {
           {Array.from({ length: 35 }, (_, i) => (
             <i key={i} className={`star star-${i + 1}`} />
           ))}
+            <i className="shooting-star" />
         </div>
 
         <div className="cloud cloud-one">
@@ -177,10 +152,6 @@ export function HeroSection({ onSearch }: Props) {
                   <stop offset="0%" stopColor="#e8d5b5" />
                   <stop offset="100%" stopColor="#a98a64" />
                 </linearGradient>
-
-                <filter id="gov-shadow">
-                  <feGaussianBlur stdDeviation="9" />
-                </filter>
               </defs>
 
               {/* Foundation */}
@@ -388,11 +359,11 @@ export function HeroSection({ onSearch }: Props) {
               <path d="M250 420 H570 L590 438 H230 Z" fill="#b99a72" />
 
               {/* Indian flag */}
-              <rect x="550" y="65" width="4" height="100" fill="#8d704c" />
+              {/* <rect x="550" y="65" width="4" height="100" fill="#8d704c" />
               <rect x="554" y="68" width="48" height="11" fill="#ff9933" />
               <rect x="554" y="79" width="48" height="11" fill="#ffffff" />
               <rect x="554" y="90" width="48" height="11" fill="#138808" />
-              <circle cx="578" cy="84" r="3.5" fill="#000080" />
+              <circle cx="578" cy="84" r="3.5" fill="#000080" /> */}
 
               {/* Wing windows */}
               {[100, 145, 655, 700].map((x) => (
@@ -417,7 +388,16 @@ export function HeroSection({ onSearch }: Props) {
           </div>
 
           <div className="hill hill-back" />
-          <div className="hill hill-front" />
+          <div className="hill hill-front">
+            {/* <div className="hill-flowers">
+              {Array.from({ length: 4 }, (_, i) => (
+                <span key={i} className={`hill-flower flower-${i + 1}`} />
+              ))}
+            </div> */}
+          </div>
+          <div className="banyan-tree">
+            <BanyanTree />
+          </div>
         </div>
 
         <div className="scene-label">

@@ -17,6 +17,8 @@ const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
   scheme: "schemes",
   examination: "examination",
+  exam: "exam",
+  "batch-exam": "batch-exam",
   result: "results",
   admit: "admit-cards",
   guide: "guides",
@@ -25,9 +27,8 @@ const categorySlugByType: Record<ItemType, string> = {
 
 const categoryTypeBySlug: Record<string, ItemType> = {
   jobs: "job",
-  examination: "examination",
-  examinations: "examination",
-  exam: "examination",
+  exam: "exam",
+  "batch-exam": "batch-exam",
   schemes: "scheme",
   results: "result",
   "admit-cards": "admit",
@@ -41,15 +42,18 @@ const categoryTypeBySlug: Record<string, ItemType> = {
   video: "video",
 };
 
-const pageCopy: Record<Language, {
-  eyebrow: string;
-  search: string;
-  updates: string;
-  updateCount: string;
-  empty: string;
-  newest: string;
-  searchButton: string;
-}> = {
+const pageCopy: Record<
+  Language,
+  {
+    eyebrow: string;
+    search: string;
+    updates: string;
+    updateCount: string;
+    empty: string;
+    newest: string;
+    searchButton: string;
+  }
+> = {
   en: {
     eyebrow: "SHIVANYAMS • INFORMATION PORTAL",
     search: "Search",
@@ -62,35 +66,12 @@ const pageCopy: Record<Language, {
   mr: {
     eyebrow: "SHIVANYAMS • माहिती पोर्टल",
     search: "शोधा",
-    updates: "नवीन अपडेट्स",
+    updates: "नवीनतम अपडेट्स",
     updateCount: "अपडेट्स",
     empty: "या श्रेणीमध्ये सध्या अपडेट्स उपलब्ध नाहीत.",
     newest: "नवीन",
     searchButton: "⌕ शोधा",
   },
-  result: {
-    title: "निकाल",
-    subtitle: "Exam Results, Merit Lists and Official Notifications",
-  },
-  admit: {
-    title: "प्रवेशपत्र",
-    subtitle: "Admit Cards and Examination Instructions",
-  },
-  exam: {
-    title: "परीक्षा",
-    subtitle: "परीक्षा सूचना, वेळापत्रक आणि महत्त्वाचे अपडेट्स",
-  },
-  "batch-exam": {
-    title: "बॅच परीक्षा",
-    subtitle: "बॅच परीक्षांचे वेळापत्रक, सूचना आणि अपडेट्स",
-  },
-  guide: {
-    title: "लेख / मार्गदर्शक",
-    subtitle: "Useful Guides, Tutorials and Articles",
-  },
-  video: {
-    title: "YouTube व्हिडिओ",
-    subtitle: "सरकारी योजना, नोकरी आणि ऑनलाइन सेवांचे व्हिडिओ मार्गदर्शन",
   hi: {
     eyebrow: "SHIVANYAMS • सूचना पोर्टल",
     search: "खोजें",

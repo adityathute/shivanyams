@@ -117,6 +117,10 @@
   background: #059669; /* Green */
 }
 
+.update-badge.exam {
+  background: #4f46e5; /* Indigo */
+}
+
 .update-badge.result {
   background: #7c3aed; /* Purple */
 }

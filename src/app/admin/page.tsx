@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import "./admin.css";
@@ -13,7 +12,7 @@ type Item = {
   date: string;
   description: string;
   link: string;
-  type: "job" | "scheme" | "result" | "admit" | "guide" | "video";
+  type: "job" | "scheme" | "exam" | "result" | "admit" | "guide" | "video";
 };
 type Video = {
   id: string;
@@ -28,6 +27,7 @@ const defaults: Data = { items: [], videos: [] };
 const typeLabels: Record<Item["type"], string> = {
   job: "नोकरी",
   scheme: "योजना",
+  exam: "परीक्षा",
   result: "निकाल",
   admit: "प्रवेशपत्र",
   guide: "मार्गदर्शक",

@@ -196,11 +196,12 @@ const fallbackCategories: Category[] = [
   },
 ];
 
-const API_URL =
+export const API_URL =
   process.env.NEXT_PUBLIC_PORTAL_API_URL ??
   "http://localhost:8001/api/v1/portal";
 
 export const categoriesApi = `${API_URL}/categories/`;
+export const importantLinksApi = `${API_URL}/important-links/`;
 
 export function getCategoryTitle(
   category: Category,

@@ -9,13 +9,10 @@ import type { ItemType } from "./portal-data";
 import { usePortalData } from "./portal-data";
 import { PortalFooter } from "./PortalFooter";
 import { MailIcon } from "shivanya-ui";
-import type { Language } from "./CategoryGrid";
+import { usePortalLanguage } from "./PortalLanguageContext";
 
-interface HomePageProps {
-  selectedLanguage: Language;
-}
-
-export function HomePage({ selectedLanguage }: HomePageProps) {
+export function HomePage() {
+  const selectedLanguage = usePortalLanguage();
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");
   const { data } = usePortalData();

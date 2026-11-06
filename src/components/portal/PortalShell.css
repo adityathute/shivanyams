@@ -588,3 +588,18 @@
     font-size: 12px;
   }
 }
+
+.footer-category-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-category-link svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.footer-category-link:hover svg {
+  opacity: 1;
+}

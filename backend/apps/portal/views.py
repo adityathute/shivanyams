@@ -5,10 +5,17 @@ from rest_framework import generics,permissions,viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from .models import Category,Company,Job,CandidateProfile,Application,SavedJob,PortalContent
-from .serializers import CategorySerializer,CompanySerializer,JobSerializer,JobWriteSerializer,CandidateSerializer,ApplySerializer,ApplicationSerializer,ContentSerializer
+from .models import Category,ImportantLink,Company,Job,CandidateProfile,Application,SavedJob,PortalContent
+from .serializers import CategorySerializer,ImportantLinkSerializer,CompanySerializer,JobSerializer,JobWriteSerializer,CandidateSerializer,ApplySerializer,ApplicationSerializer,ContentSerializer
 from .permissions import IsPortalIdentity
 class Categories(generics.ListAPIView): queryset=Category.objects.filter(active=True); serializer_class=CategorySerializer; permission_classes=[permissions.AllowAny]
+class ImportantLinks(generics.ListAPIView):
+    queryset = ImportantLink.objects.filter(active=True)
+    serializer_class = ImportantLinkSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None
+
+
 class PublicJobs(viewsets.ReadOnlyModelViewSet):
  serializer_class=JobSerializer; permission_classes=[permissions.AllowAny]; lookup_field='slug'; search_fields=['title','description','company__name','location','state']; filterset_fields=['category__slug','employment_type','location','state','remote']; ordering_fields=['published_at','salary_min','salary_max']
  def get_queryset(self): return Job.objects.filter(status=Job.Status.PUBLISHED,published_at__isnull=False).filter(Q(deadline__isnull=True)|Q(deadline__gte=timezone.localdate())).select_related('company','category')

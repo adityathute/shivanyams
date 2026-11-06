@@ -13,6 +13,8 @@ export type ItemType =
   | "scheme"
   | "result"
   | "admit"
+  | "exam"
+  | "batch-exam"
   | "guide"
   | "video";
 

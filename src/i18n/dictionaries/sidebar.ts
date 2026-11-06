@@ -12,8 +12,8 @@ export const sidebarTranslations = {
   },
   mr: {
     home: "मुख्यपृष्ठ",
-    jobs: "सरकारी नोकरी",
-    schemes: "सरकारी योजना",
+    jobs: "नोकरी",
+    schemes: "योजना",
     examination: "परीक्षा",
     results: "निकाल",
     admitCards: "प्रवेशपत्र",
@@ -23,8 +23,8 @@ export const sidebarTranslations = {
   },
   hi: {
     home: "मुखपृष्ठ",
-    jobs: "सरकारी नौकरी",
-    schemes: "सरकारी योजनाएँ",
+    jobs: "नौकरी",
+    schemes: "योजनाएँ",
     examination: "परीक्षा",
     results: "परिणाम",
     admitCards: "प्रवेशपत्र",

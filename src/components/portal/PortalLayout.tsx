@@ -14,31 +14,37 @@ import SiteMobileFooter from "../SiteMobileFooter";
 import { PortalHeader } from "./PortalHeader";
 import { getPortalNavigation } from "./PortalSidebar";
 import { PortalDataProvider } from "./portal-data";
-import { PortalLanguageProvider } from "./PortalLanguageContext";
+import {
+  PortalLanguageProvider,
+  usePortalLanguage,
+} from "./PortalLanguageContext";
 
 function PortalShell({
   children,
-  initialLanguage,
 }: {
   children: ReactNode;
-  initialLanguage: Language;
 }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
+  const { language, setLanguage } = usePortalLanguage();
 
-  const language = user?.settings?.language ?? initialLanguage;
-
+  // A saved account preference takes precedence once authentication is loaded.
   useEffect(() => {
-    if (loading) return;
+    if (loading || !user?.settings?.language) return;
 
+    setLanguage(user.settings.language);
+  }, [loading, user?.settings?.language, setLanguage]);
+
+  // Keep the browser preference in sync for logged-in and anonymous visitors.
+  useEffect(() => {
     document.documentElement.lang = language;
 
     try {
       localStorage.setItem("shivanya-language", language);
-
-      document.cookie = `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      document.cookie =
+        `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch {}
-  }, [language, loading]);
+  }, [language]);
 
   const navigation = getPortalNavigation(
     language,
@@ -48,9 +54,7 @@ function PortalShell({
   return (
     <DashboardShell
       branding={{
-        name: "ShivanyaMS",
-        subtitle: "Govt Jobs, Schemes & Updates",
-        src: "/logo.png",
+        src: "/shivanya-logo-light.png",
         alt: "ShivanyaMS",
         href: "/",
       }}
@@ -62,9 +66,7 @@ function PortalShell({
       sidebarWidth={245}
       contentPadding={0}
     >
-      <PortalLanguageProvider value={language}>
-        {children}
-      </PortalLanguageProvider>
+      {children}
     </DashboardShell>
   );
 }
@@ -86,9 +88,9 @@ export function PortalLayout({
       }}
     >
       <PortalDataProvider>
-        <PortalShell initialLanguage={initialLanguage}>
-          {children}
-        </PortalShell>
+        <PortalLanguageProvider initialLanguage={initialLanguage}>
+          <PortalShell>{children}</PortalShell>
+        </PortalLanguageProvider>
       </PortalDataProvider>
     </AuthProvider>
   );

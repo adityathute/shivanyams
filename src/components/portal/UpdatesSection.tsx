@@ -12,6 +12,8 @@ import {
   type Language,
 } from "./CategoryGrid";
 
+import { getPortalText } from "../../i18n/dictionaries/portal-dictionary";
+
 import type { ItemType } from "./portal-data";
 import { usePortalData } from "./portal-data";
 
@@ -31,7 +33,7 @@ interface CategoryApiResponse {
 
 export function UpdatesSection({
   type = "all",
-  title = "ताज्या अपडेट्स",
+  title,
   query = "",
   language = "mr",
   onQueryChange,
@@ -41,6 +43,9 @@ export function UpdatesSection({
   const { data } = usePortalData();
 
   const [categories, setCategories] = useState<Category[]>([]);
+
+  const sectionTitle =
+    title ?? getPortalText("updatesTitle", language);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,11 +60,12 @@ export function UpdatesSection({
           throw new Error("Failed to fetch categories");
         }
 
-        const payload: Category[] | CategoryApiResponse = await response.json();
+        const payload: Category[] | CategoryApiResponse =
+          await response.json();
 
         const result = Array.isArray(payload)
           ? payload
-          : (payload.results ?? []);
+          : payload.results ?? [];
 
         setCategories(result.filter((category) => category.active));
       } catch (error) {
@@ -91,15 +97,23 @@ export function UpdatesSection({
       })
       .sort(
         (a, b) =>
-          new Date(b.date || "").getTime() - new Date(a.date || "").getTime(),
+          new Date(b.date || "").getTime() -
+          new Date(a.date || "").getTime(),
       )
       .slice(0, 20);
   }, [data.items, query, type]);
 
+  const dateLocale =
+    language === "en"
+      ? "en-IN"
+      : language === "hi"
+        ? "hi-IN"
+        : "mr-IN";
+
   return (
     <section className="updates-panel panelin" id="updates">
       <div className="section-heading">
-        <h2>{title}</h2>
+        <h2>{sectionTitle}</h2>
 
         <button
           onClick={() => {
@@ -107,7 +121,7 @@ export function UpdatesSection({
             onTypeChange?.("all");
           }}
         >
-          सर्व पहा →
+          {getPortalText("viewAll", language)} →
         </button>
       </div>
 
@@ -117,7 +131,7 @@ export function UpdatesSection({
             className={type === "all" ? "selected" : ""}
             onClick={() => onTypeChange?.("all")}
           >
-            सर्व
+            {getPortalText("all", language)}
           </button>
 
           {categories.map((category) => {
@@ -160,34 +174,24 @@ export function UpdatesSection({
               <time>
                 {item.date
                   ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                      language === "en"
-                        ? "en-IN"
-                        : language === "hi"
-                          ? "hi-IN"
-                          : "mr-IN",
+                      dateLocale,
                       {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       },
                     )
-                  : language === "en"
-                    ? "New"
-                    : language === "hi"
-                      ? "नया"
-                      : "नवीन"}
+                  : getPortalText("new", language)}
               </time>
 
-              <span className="new-pill">New</span>
+              <span className="new-pill">
+                {getPortalText("new", language)}
+              </span>
             </a>
           ))
         ) : (
           <div className="empty-state">
-            {language === "en"
-              ? "No updates found for this search."
-              : language === "hi"
-                ? "इस खोज के लिए कोई अपडेट नहीं मिला।"
-                : "या शोधासाठी अपडेट्स सापडले नाहीत."}
+            {getPortalText("emptyUpdates", language)}
           </div>
         )}
       </div>

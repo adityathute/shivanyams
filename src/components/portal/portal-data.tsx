@@ -11,6 +11,7 @@ import {
 export type ItemType =
   | "job"
   | "scheme"
+  | "examination"
   | "result"
   | "admit"
   | "guide"
@@ -298,6 +299,66 @@ export const initialData: PortalData = {
         "सरकारी योजनांसाठी लागणारी महत्त्वाची कागदपत्रे आणि त्यांची माहिती.",
       link: "https://www.youtube.com/",
       type: "video",
+    },
+    {
+      id: "28",
+      title: "MPSC राज्यसेवा परीक्षा – अभ्यासक्रम आणि परीक्षा पद्धती",
+      category: "परीक्षा",
+      date: "2026-10-23",
+      description:
+        "MPSC राज्यसेवा परीक्षेचा अभ्यासक्रम, परीक्षा टप्पे आणि तयारीसाठी अधिकृत माहिती.",
+      link: "https://mpsc.gov.in/",
+      type: "examination",
+    },
+    {
+      id: "29",
+      title: "महाराष्ट्र बोर्ड परीक्षा – वेळापत्रक आणि परीक्षेच्या सूचना",
+      category: "परीक्षा",
+      date: "2026-10-24",
+      description:
+        "SSC आणि HSC परीक्षांचे वेळापत्रक व सूचनांसाठी महाराष्ट्र बोर्डाचे अधिकृत संकेतस्थळ तपासा.",
+      link: "https://mahahsscboard.in/",
+      type: "examination",
+    },
+    {
+      id: "30",
+      title: "UPSC परीक्षा – पात्रता, परीक्षा टप्पे आणि अभ्यासक्रम",
+      category: "परीक्षा",
+      date: "2026-10-25",
+      description:
+        "UPSC नागरी सेवा परीक्षेची पात्रता, परीक्षा पद्धती आणि अभ्यासक्रमाची माहिती.",
+      link: "https://upsc.gov.in/",
+      type: "examination",
+    },
+    {
+      id: "31",
+      title: "NEET UG परीक्षा – अर्ज आणि परीक्षा मार्गदर्शक",
+      category: "परीक्षा",
+      date: "2026-10-26",
+      description:
+        "NEET UG परीक्षेसाठी अर्ज, पात्रता आणि अधिकृत परीक्षा सूचना.",
+      link: "https://neet.nta.nic.in/",
+      type: "examination",
+    },
+    {
+      id: "32",
+      title: "JEE Main परीक्षा – माहिती आणि तयारीचे मार्गदर्शन",
+      category: "परीक्षा",
+      date: "2026-10-27",
+      description:
+        "JEE Main परीक्षेची माहिती, अर्ज प्रक्रिया आणि अधिकृत सूचना.",
+      link: "https://jeemain.nta.nic.in/",
+      type: "examination",
+    },
+    {
+      id: "33",
+      title: "सरकारी स्पर्धा परीक्षांसाठी मॉक टेस्ट आणि सराव",
+      category: "परीक्षा",
+      date: "2026-10-28",
+      description:
+        "स्पर्धा परीक्षांच्या तयारीसाठी नमुना प्रश्नपत्रिका, सराव आणि मॉक टेस्टची माहिती.",
+      link: "https://www.mpsc.gov.in/",
+      type: "examination",
     },
   ],
   videos: [

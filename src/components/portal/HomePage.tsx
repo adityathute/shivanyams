@@ -12,7 +12,7 @@ import { MailIcon } from "shivanya-ui";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
 export function HomePage() {
-  const selectedLanguage = usePortalLanguage();
+  const { language: selectedLanguage } = usePortalLanguage();
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");
   const { data } = usePortalData();
@@ -53,7 +53,7 @@ export function HomePage() {
         <div className="content-layout">
           <UpdatesSection
             type={active}
-            title="ताज्या अपडेट्स"
+            language={selectedLanguage}
             query={search}
             onQueryChange={setSearch}
             onTypeChange={setActive}

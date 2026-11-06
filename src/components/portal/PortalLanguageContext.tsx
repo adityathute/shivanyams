@@ -1,12 +1,45 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Language } from "shivanya-i18n";
 
-const PortalLanguageContext = createContext<Language>("mr");
+type PortalLanguageContextValue = {
+  language: Language;
+  setLanguage: (language: Language) => void;
+};
 
-export const PortalLanguageProvider = PortalLanguageContext.Provider;
+const PortalLanguageContext =
+  createContext<PortalLanguageContextValue | null>(null);
+
+export function PortalLanguageProvider({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage: Language;
+}) {
+  const [language, setLanguage] = useState<Language>(initialLanguage);
+
+  return (
+    <PortalLanguageContext.Provider value={{ language, setLanguage }}>
+      {children}
+    </PortalLanguageContext.Provider>
+  );
+}
 
 export function usePortalLanguage() {
-  return useContext(PortalLanguageContext);
+  const context = useContext(PortalLanguageContext);
+
+  if (!context) {
+    throw new Error(
+      "usePortalLanguage must be used inside PortalLanguageProvider",
+    );
+  }
+
+  return context;
 }

@@ -543,3 +543,48 @@
     gap: 13px;
   }
 }
+
+
+/* Portal language selector */
+.portal-shell-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portal-language-select {
+  height: 36px;
+  min-width: 100px;
+  padding: 0 9px;
+  border: 1px solid #dce3ec;
+  border-radius: 8px;
+  background: var(--background, #fff);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.portal-language-select:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .portal-language-select {
+  background: #151b23;
+  border-color: #293544;
+  color: #e6edf3;
+}
+
+@media (max-width: 480px) {
+  .portal-shell-actions {
+    gap: 6px;
+  }
+
+  .portal-language-select {
+    min-width: 88px;
+    height: 34px;
+    padding: 0 6px;
+    font-size: 12px;
+  }
+}

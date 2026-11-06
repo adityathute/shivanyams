@@ -1,47 +1,180 @@
 "use client";
+
 import "./CategoryPage.css";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ItemType } from "./portal-data";
+import {
+  categoriesApi,
+  getCategoryDescription,
+  getCategoryTitle,
+  type Category,
+  type Language,
+} from "./CategoryGrid";
+import { usePortalLanguage } from "./PortalLanguageContext";
 
-const pageInfo: Record<ItemType, { title: string; subtitle: string }> = {
-  job: {
-    title: "सरकारी नोकरी",
-    subtitle: "Latest Government Jobs and Recruitment Updates",
+const categorySlugByType: Record<ItemType, string> = {
+  job: "jobs",
+  scheme: "schemes",
+  result: "results",
+  admit: "admit-cards",
+  guide: "guides",
+  video: "videos",
+};
+
+const categoryTypeBySlug: Record<string, ItemType> = {
+  jobs: "job",
+  schemes: "scheme",
+  results: "result",
+  "admit-cards": "admit",
+  guides: "guide",
+  videos: "video",
+  job: "job",
+  scheme: "scheme",
+  result: "result",
+  "admit-card": "admit",
+  guide: "guide",
+  video: "video",
+};
+
+const pageCopy: Record<Language, {
+  eyebrow: string;
+  search: string;
+  updates: string;
+  updateCount: string;
+  empty: string;
+  newest: string;
+  searchButton: string;
+}> = {
+  en: {
+    eyebrow: "SHIVANYAMS • INFORMATION PORTAL",
+    search: "Search",
+    updates: "Latest Updates",
+    updateCount: "updates",
+    empty: "No updates are currently available in this category.",
+    newest: "New",
+    searchButton: "⌕ Search",
   },
-  scheme: {
-    title: "शासकीय योजना",
-    subtitle: "Government Schemes, Eligibility and Application Updates",
+  mr: {
+    eyebrow: "SHIVANYAMS • माहिती पोर्टल",
+    search: "शोधा",
+    updates: "नवीन अपडेट्स",
+    updateCount: "अपडेट्स",
+    empty: "या श्रेणीमध्ये सध्या अपडेट्स उपलब्ध नाहीत.",
+    newest: "नवीन",
+    searchButton: "⌕ शोधा",
   },
-  result: {
-    title: "निकाल",
-    subtitle: "Exam Results, Merit Lists and Official Notifications",
-  },
-  admit: {
-    title: "प्रवेशपत्र",
-    subtitle: "Admit Cards and Examination Instructions",
-  },
-  guide: {
-    title: "लेख / मार्गदर्शक",
-    subtitle: "Useful Guides, Tutorials and Articles",
-  },
-  video: {
-    title: "व्हिडिओ",
-    subtitle: "सरकारी योजना, नोकरी आणि ऑनलाइन सेवांचे व्हिडिओ मार्गदर्शन",
+  hi: {
+    eyebrow: "SHIVANYAMS • सूचना पोर्टल",
+    search: "खोजें",
+    updates: "नवीनतम अपडेट",
+    updateCount: "अपडेट",
+    empty: "इस श्रेणी में अभी कोई अपडेट उपलब्ध नहीं है।",
+    newest: "नया",
+    searchButton: "⌕ खोजें",
   },
 };
 
+function normalizeSlug(slug: string) {
+  return slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
+}
+
+function getCategoryLanguage(category: Category, language: Language) {
+  return {
+    en: category.name_en,
+    mr: category.name_mr,
+    hi: category.name_hi,
+  }[language];
+}
+
+function getDescription(category: Category, language: Language) {
+  return getCategoryDescription(category, language);
+}
+
+function formatDate(date: string, language: Language) {
+  if (!date) return pageCopy[language].newest;
+
+  const locale = {
+    en: "en-IN",
+    mr: "mr-IN",
+    hi: "hi-IN",
+  }[language];
+
+  return new Date(`${date}T12:00:00`).toLocaleDateString(locale, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export function CategoryPage({ type }: { type: ItemType }) {
+  const language = usePortalLanguage();
+  const copy = pageCopy[language];
   const [query, setQuery] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const { data } = usePortalData();
-  const info = pageInfo[type];
+
+  const categorySlug = categorySlugByType[type];
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadCategories() {
+      try {
+        const response = await fetch(categoriesApi, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Category request failed: ${response.status}`);
+        }
+
+        const payload: Category[] | { results?: Category[] } =
+          await response.json();
+
+        setCategories(Array.isArray(payload) ? payload : payload.results ?? []);
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Category metadata loading failed:", error);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setCategoriesLoading(false);
+        }
+      }
+    }
+
+    loadCategories();
+
+    return () => controller.abort();
+  }, []);
+
+  const category = useMemo(
+    () =>
+      categories.find(
+        (entry) =>
+          entry.active &&
+          normalizeSlug(entry.slug) === normalizeSlug(categorySlug),
+      ),
+    [categories, categorySlug],
+  );
+
+  const title = category ? getCategoryTitle(category, language) : categorySlug;
+  const subtitle = category ? getDescription(category, language) : "";
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
+
     return data.items.filter((item) => {
-      if (item.type !== type) return false;
-      return !term || [item.title, item.category, item.description].some((value) =>
-        value.toLowerCase().includes(term),
+      const itemType = categoryTypeBySlug[normalizeSlug(item.type)];
+      if (itemType !== type) return false;
+
+      return (
+        !term ||
+        [item.title, item.category, item.description].some((value) =>
+          value.toLowerCase().includes(term),
+        )
       );
     });
   }, [data.items, query, type]);
@@ -51,47 +184,59 @@ export function CategoryPage({ type }: { type: ItemType }) {
       <main>
         <section className="hero category-hero">
           <div className="hero-copy">
-            <span className="eyebrow">SHIVANYAMS • INFORMATION PORTAL</span>
-            <h1>{info.title}</h1>
-            <p>{info.subtitle}</p>
-            <form className="search-form" onSubmit={(event) => event.preventDefault()}>
+            <span className="eyebrow">{copy.eyebrow}</span>
+            <h1>{title}</h1>
+            <p>{subtitle}</p>
+            <form
+              className="search-form"
+              onSubmit={(event) => event.preventDefault()}
+            >
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder={`${info.title} शोधा...`}
+                placeholder={`${title} ${copy.search}...`}
               />
-              <button type="submit">⌕ Search</button>
+              <button type="submit">{copy.searchButton}</button>
             </form>
           </div>
         </section>
 
         <section className="updates-panel panel" id="updates">
           <div className="section-heading">
-            <h2>{info.title} – नवीन अपडेट्स</h2>
-            <span>{filtered.length} updates</span>
+            <h2>
+              {title} – {copy.updates}
+            </h2>
+            <span>
+              {filtered.length} {copy.updateCount}
+            </span>
           </div>
+
           <div className="update-list">
-            {filtered.length ? filtered.map((item) => (
-              <a
-                className="update-row"
-                key={item.id}
-                href={item.link || "#"}
-                target={item.link ? "_blank" : undefined}
-                rel={item.link ? "noreferrer" : undefined}
-              >
-                <span className={`update-badge ${item.type}`}>{item.category}</span>
-                <span className="update-title">
-                  {item.title}
-                  <small>{item.description}</small>
-                </span>
-                <time>
-                  {item.date ? new Date(`${item.date}T12:00:00`).toLocaleDateString("mr-IN", {
-                    day: "numeric", month: "short", year: "numeric",
-                  }) : "नवीन"}
-                </time>
-                <span className="new-pill">New</span>
-              </a>
-            )) : <div className="empty-state">या श्रेणीमध्ये सध्या अपडेट्स उपलब्ध नाहीत.</div>}
+            {filtered.length ? (
+              filtered.map((item) => (
+                <a
+                  className="update-row"
+                  key={item.id}
+                  href={item.link || "#"}
+                  target={item.link ? "_blank" : undefined}
+                  rel={item.link ? "noreferrer" : undefined}
+                >
+                  <span className={`update-badge ${item.type}`}>
+                    {item.category}
+                  </span>
+                  <span className="update-title">
+                    {item.title}
+                    <small>{item.description}</small>
+                  </span>
+                  <time>{formatDate(item.date, language)}</time>
+                  <span className="new-pill">{copy.newest}</span>
+                </a>
+              ))
+            ) : (
+              <div className="empty-state">
+                {categoriesLoading ? "Loading..." : copy.empty}
+              </div>
+            )}
           </div>
         </section>
       </main>

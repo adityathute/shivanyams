@@ -19,11 +19,7 @@ import {
   usePortalLanguage,
 } from "./PortalLanguageContext";
 
-function PortalShell({
-  children,
-}: {
-  children: ReactNode;
-}) {
+function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const { language, setLanguage } = usePortalLanguage();
@@ -41,20 +37,18 @@ function PortalShell({
 
     try {
       localStorage.setItem("shivanya-language", language);
-      document.cookie =
-        `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      document.cookie = `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch {}
   }, [language]);
 
-  const navigation = getPortalNavigation(
-    language,
-    loading ? null : user,
-  );
+  const navigation = getPortalNavigation(language, loading ? null : user);
 
   return (
     <DashboardShell
       branding={{
-        src: "/shivanya-logo-light.png",
+        name: "ShivanyaMS",
+        subtitle: "Govt Jobs, Schemes & Updates",
+        src: "/logo.png",
         alt: "ShivanyaMS",
         href: "/",
       }}
@@ -82,8 +76,7 @@ export function PortalLayout({
     <AuthProvider
       config={{
         baseUrl:
-          process.env.NEXT_PUBLIC_AUTH_BASE_URL ??
-          "http://localhost:8000",
+          process.env.NEXT_PUBLIC_AUTH_BASE_URL ?? "http://localhost:8000",
         mode: "token",
       }}
     >

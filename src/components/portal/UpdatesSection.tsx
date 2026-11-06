@@ -1,8 +1,20 @@
 "use client";
+
 import "./UpdatesSection.css";
 
-import { useMemo } from "react";
-import { categories } from "./CategoryGrid";
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  categoriesApi,
+  categoryConfig,
+  getCategoryTitle,
+  normalizeCategorySlug,
+  type Category,
+  type Language,
+} from "./CategoryGrid";
+
+import { getPortalText } from "../../i18n/dictionaries/portal-dictionary";
+
 import type { ItemType } from "./portal-data";
 import { usePortalData } from "./portal-data";
 
@@ -10,20 +22,62 @@ type Props = {
   type?: ItemType | "all";
   title?: string;
   query?: string;
+  language?: Language;
   onQueryChange?: (value: string) => void;
   onTypeChange?: (value: ItemType | "all") => void;
   showFilters?: boolean;
 };
 
+interface CategoryApiResponse {
+  results?: Category[];
+}
+
 export function UpdatesSection({
   type = "all",
-  title = "ताज्या अपडेट्स",
+  title,
   query = "",
+  language = "mr",
   onQueryChange,
   onTypeChange,
   showFilters = true,
 }: Props) {
   const { data } = usePortalData();
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const sectionTitle = title ?? getPortalText("updatesTitle", language);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchCategories() {
+      try {
+        const response = await fetch(categoriesApi, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+
+        const payload: Category[] | CategoryApiResponse = await response.json();
+
+        const result = Array.isArray(payload)
+          ? payload
+          : (payload.results ?? []);
+
+        setCategories(result.filter((category) => category.active));
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Category loading failed:", error);
+        }
+      }
+    }
+
+    fetchCategories();
+
+    return () => controller.abort();
+  }, []);
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -31,6 +85,7 @@ export function UpdatesSection({
     return data.items
       .filter((item) => {
         const matchesType = type === "all" || item.type === type;
+
         const matchesQuery =
           !term ||
           [item.title, item.category, item.description].some((value) =>
@@ -39,26 +94,28 @@ export function UpdatesSection({
 
         return matchesType && matchesQuery;
       })
-      .sort((a, b) => {
-        // Latest date first
-        return (
-          new Date(b.date || "").getTime() - new Date(a.date || "").getTime()
-        );
-      })
+      .sort(
+        (a, b) =>
+          new Date(b.date || "").getTime() - new Date(a.date || "").getTime(),
+      )
       .slice(0, 20);
   }, [data.items, query, type]);
+
+  const dateLocale =
+    language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
     <section className="updates-panel panelin" id="updates">
       <div className="section-heading">
-        <h2>{title}</h2>
+        <h2>{sectionTitle}</h2>
+
         <button
           onClick={() => {
             onQueryChange?.("");
             onTypeChange?.("all");
           }}
         >
-          सर्व पहा →
+          {getPortalText("viewAll", language)} →
         </button>
       </div>
 
@@ -68,17 +125,25 @@ export function UpdatesSection({
             className={type === "all" ? "selected" : ""}
             onClick={() => onTypeChange?.("all")}
           >
-            सर्व
+            {getPortalText("all", language)}
           </button>
-          {categories.map((category) => (
-            <button
-              key={category.type}
-              className={type === category.type ? "selected" : ""}
-              onClick={() => onTypeChange?.(category.type)}
-            >
-              {category.title}
-            </button>
-          ))}
+
+          {categories.map((category) => {
+            const slug = normalizeCategorySlug(category.slug);
+            const config = categoryConfig[slug];
+
+            if (!config) return null;
+
+            return (
+              <button
+                key={category.id}
+                className={type === config.type ? "selected" : ""}
+                onClick={() => onTypeChange?.(config.type)}
+              >
+                {getCategoryTitle(category, language)}
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -95,27 +160,32 @@ export function UpdatesSection({
               <span className={`update-badge ${item.type}`}>
                 {item.category}
               </span>
+
               <span className="update-title">
                 {item.title}
                 <small>{item.description}</small>
               </span>
+
               <time>
                 {item.date
                   ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                      "mr-IN",
+                      dateLocale,
                       {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       },
                     )
-                  : "नवीन"}
+                  : getPortalText("new", language)}
               </time>
-              <span className="new-pill">New</span>
+
+              <span className="new-pill">{getPortalText("new", language)}</span>
             </a>
           ))
         ) : (
-          <div className="empty-state">या शोधासाठी अपडेट्स सापडले नाहीत.</div>
+          <div className="empty-state">
+            {getPortalText("emptyUpdates", language)}
+          </div>
         )}
       </div>
     </section>

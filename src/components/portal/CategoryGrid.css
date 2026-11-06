@@ -1,6 +1,6 @@
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 13px;
   margin: 14px 0;
 }
@@ -67,6 +67,10 @@
 
 .youtube-card .category-icon {
   color: #ee1c25;
+}
+
+.indigo .category-icon {
+  color: #4f46e5;
 }
 
 @media (max-width: 1100px) {

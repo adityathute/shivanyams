@@ -1,165 +1,139 @@
+"use client";
+
+import Link from "next/link";
 import { Typography } from "shivanya-ui";
+import type { Language } from "shivanya-i18n";
+
+import { usePortalLanguage } from "./portal/PortalLanguageContext";
+import {
+  getTermsPageText,
+  type TermsPageDictionaryKey,
+} from "../i18n/dictionaries/TermsPageDictionary";
+
 import { PortalFooter } from "./portal/PortalFooter";
+
 import "./ContactPage.css";
 import "./TermsPage.css";
 
 export function TermsPage() {
+  const { language } = usePortalLanguage();
+
+  const t = (key: TermsPageDictionaryKey) =>
+    getTermsPageText(key, language as Language);
+
   return (
     <>
       <main className="contact-page document-page terms-page">
         <div className="document-page-header">
-          <Typography
-            as="h1"
-            variant="h1"
-            className="document-page-title"
-          >
-            Terms of Use
-          </Typography>
+          <div>
+            <Typography
+              as="h1"
+              variant="h1"
+              className="document-page-title"
+            >
+              {t("pageTitle")}
+            </Typography>
 
-          <Typography className="document-page-description">
-            Please read these terms before using ShivanyaMS.
-          </Typography>
+            <Typography className="document-page-description">
+              {t("pageDescription")}
+            </Typography>
+          </div>
         </div>
 
         <section className="document-content">
-          <span className="contact-card-label">TERMS & CONDITIONS</span>
+          <span className="contact-card-label">
+            {t("termsLabel")}
+          </span>
 
-          <h2>Terms of Use</h2>
+          <h2>{t("pageTitle")}</h2>
 
           <p className="terms-updated">
-            <strong>Last updated:</strong> 3 November 2026
+            <strong>{t("lastUpdated")}</strong>{" "}
+            {t("updatedDate")}
           </p>
 
-          <p>
-            Welcome to <strong>ShivanyaMS</strong>. By accessing or using
-            this website, you agree to follow these Terms of Use. If you
-            do not agree with these terms, please discontinue using the
-            website.
-          </p>
+          <p>{t("introduction")}</p>
 
           <div className="document-divider" />
 
-          <h3>1. About ShivanyaMS</h3>
-          <p>
-            ShivanyaMS is an independent information platform providing
-            updates related to government jobs, recruitment notifications,
-            government schemes, admit cards, results, and other useful
-            information. We are not an official government website and
-            are not affiliated with any government department or authority.
-          </p>
+          <h3>{t("section1Title")}</h3>
+          <p>{t("section1Paragraph")}</p>
 
-          <h3>2. Use of Content</h3>
-          <p>
-            All content published on ShivanyaMS is provided for general
-            informational purposes.
-          </p>
+          <h3>{t("section2Title")}</h3>
+          <p>{t("section2Paragraph")}</p>
+
           <ul className="terms-list">
-            <li>You may access and read content for personal use.</li>
-            <li>
-              Copying, republishing, or redistributing our content without
-              permission is not allowed.
-            </li>
-            <li>
-              We do not guarantee that all information is complete,
-              accurate, or up to date.
-            </li>
+            <li>{t("contentItem1")}</li>
+            <li>{t("contentItem2")}</li>
+            <li>{t("contentItem3")}</li>
           </ul>
 
-          <h3>3. Information and Official Sources</h3>
-          <p>
-            Information may be collected from official government websites,
-            recruitment boards, notifications, and public announcements.
-            Users should verify all details with the relevant official
-            authority before applying or taking action.
-          </p>
+          <h3>{t("section3Title")}</h3>
+          <p>{t("section3Paragraph")}</p>
 
-          <h3>4. No Guarantee of Recruitment or Selection</h3>
-          <p>
-            ShivanyaMS does not guarantee job selection, examination
-            results, recruitment outcomes, or eligibility. All decisions
-            are made by the relevant recruitment authorities.
-          </p>
+          <h3>{t("section4Title")}</h3>
+          <p>{t("section4Paragraph")}</p>
 
-          <h3>5. External Links</h3>
-          <p>
-            Our website may contain links to third-party websites,
-            including government portals. We do not control these websites
-            and are not responsible for their content, accuracy,
-            availability, or policies. Users visit external websites
-            at their own discretion.
-          </p>
+          <h3>{t("section5Title")}</h3>
+          <p>{t("section5Paragraph")}</p>
 
-          <h3>6. Advertisements</h3>
-          <p>
-            ShivanyaMS may display advertisements or third-party
-            promotional content. Advertisements do not necessarily
-            represent our endorsement. We are not responsible for
-            advertiser products, services, or claims.
-          </p>
+          <h3>{t("section6Title")}</h3>
+          <p>{t("section6Paragraph")}</p>
 
-          <h3>7. Limitation of Liability</h3>
-          <p>
-            ShivanyaMS shall not be liable for any loss, damage, or
-            inconvenience resulting from:
-          </p>
+          <h3>{t("section7Title")}</h3>
+          <p>{t("section7Intro")}</p>
+
           <ul className="terms-list">
-            <li>Reliance on information published on this website.</li>
-            <li>Errors, omissions, or delays in information.</li>
-            <li>Website downtime or technical interruptions.</li>
-            <li>Content or services provided by third-party websites.</li>
+            <li>{t("liabilityItem1")}</li>
+            <li>{t("liabilityItem2")}</li>
+            <li>{t("liabilityItem3")}</li>
+            <li>{t("liabilityItem4")}</li>
           </ul>
 
-          <h3>8. Changes to Content and Services</h3>
-          <p>
-            We reserve the right to modify, update, or remove website
-            content and services at any time without prior notice.
-            We may also update these Terms of Use. Continued use of
-            ShivanyaMS after changes means you accept the updated terms.
-          </p>
+          <h3>{t("section8Title")}</h3>
+          <p>{t("section8Paragraph")}</p>
 
-          <h3>9. User Conduct</h3>
-          <p>Users agree not to:</p>
+          <h3>{t("section9Title")}</h3>
+          <p>{t("section9Intro")}</p>
+
           <ul className="terms-list">
-            <li>Use the website for unlawful purposes.</li>
-            <li>Attempt to disrupt or damage website functionality.</li>
-            <li>Misuse, scrape, or copy website content without permission.</li>
-            <li>Attempt unauthorized access to website systems or data.</li>
+            <li>{t("conductItem1")}</li>
+            <li>{t("conductItem2")}</li>
+            <li>{t("conductItem3")}</li>
+            <li>{t("conductItem4")}</li>
           </ul>
 
-          <h3>10. Privacy</h3>
+          <h3>{t("section10Title")}</h3>
           <p>
-            Your use of ShivanyaMS is also subject to our{" "}
-            <a href="/privacy">Privacy Policy</a>, which explains how
-            information may be collected and used.
+            {t("section10BeforeLink")}{" "}
+            <Link href="/privacy">
+              {t("privacyPolicyLink")}
+            </Link>
+            {t("section10AfterLink")}
           </p>
 
-          <h3>11. Governing Law</h3>
-          <p>
-            These Terms of Use shall be governed and interpreted in
-            accordance with the applicable laws of India.
-          </p>
+          <h3>{t("section11Title")}</h3>
+          <p>{t("section11Paragraph")}</p>
 
-          <h3>12. Contact Information</h3>
-          <p>
-            If you have questions about these Terms of Use, please
-            contact us:
-          </p>
+          <h3>{t("section12Title")}</h3>
+          <p>{t("section12Paragraph")}</p>
 
           <p>
-            <strong>Email:</strong>{" "}
+            <strong>{t("emailLabel")}</strong>{" "}
             <a href="mailto:hello@shivanyams.com">
               hello@shivanyams.com
             </a>
             <br />
-            <strong>Website:</strong>{" "}
-            <a href="https://shivanyams.com">shivanyams.com</a>
+            <strong>{t("websiteLabel")}</strong>{" "}
+            <a href="https://shivanyams.com">
+              shivanyams.com
+            </a>
           </p>
 
           <div className="document-notice">
             <p>
-              <strong>Important:</strong> Please verify important
-              information through official sources before applying for
-              jobs or government schemes.
+              <strong>{t("noticeTitle")}</strong>{" "}
+              {t("noticeDescription")}
             </p>
           </div>
         </section>

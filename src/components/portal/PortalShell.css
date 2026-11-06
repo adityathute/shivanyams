@@ -19,7 +19,6 @@
   align-items: center;
   gap: 30px;
   border-bottom: 1px solid #e9eef5;
-  background: #fff;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -93,7 +92,7 @@
 .portal-footer {
   background: #0c1c34;
   color: #eaf1ff;
-  margin-top: 16px;
+  margin-top: auto;
 }
 
 .footer-main {
@@ -124,6 +123,9 @@
   font-size: 12px;
   line-height: 1.65;
   color: #c2cee0;
+}
+
+.footer-brand-desc {
   margin: 14px 0;
 }
 
@@ -151,10 +153,9 @@
   text-align: left;
 }
 
-/* Replace your existing .social-links block with this */
-
 .social-links {
   display: flex;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -163,52 +164,56 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  /* Updated to a subtle glass/dark background instead of solid blue */
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-
-  transition: all 0.2s ease;
+  flex-shrink: 0;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* Make sure the SVG inside takes the color of the anchor tag */
 .social-links a svg {
   width: 18px;
   height: 18px;
-  fill: currentColor;
+  display: block;
+  fill: none;
+  stroke: currentColor;
 }
 
-/* Hover effect */
 .social-links a:hover {
-  background: var(--blue, #0872e8);
   transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(8, 114, 232, 0.3);
 }
 
-/* Optional: specific brand colors on hover if you prefer */
+/* Brand hover colors */
 .social-links a[aria-label="Facebook"]:hover {
   background: #1877f2;
 }
+
 .social-links a[aria-label="Instagram"]:hover {
   background: #e1306c;
 }
+
 .social-links a[aria-label="Twitter"]:hover {
-  background: #000000;
+  background: #000;
 }
+
 .social-links a[aria-label="YouTube"]:hover {
   background: #ff0000;
 }
+
 .social-links a[aria-label="WhatsApp"]:hover {
   background: #25d366;
 }
+
 .social-links a[aria-label="Telegram"]:hover {
   background: #229ed9;
 }
+
 .social-links a[aria-label="Threads"]:hover {
-  background: #000000;
+  background: #000;
 }
 
 /* Dark mode adjustments (if needed) */
@@ -343,36 +348,43 @@
   }
 }
 
-.portal-shell-actions {
+.portal-shell {
+  min-height: 100vh;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
 }
 
-.portal-theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--color-border, #dce3ec);
-  border-radius: 10px;
-  background: var(--color-surface, #fff);
-  color: var(--color-text, #172943);
-  cursor: pointer;
+.portal-shell main {
+  flex: 1;
 }
 
-.portal-theme-toggle:hover {
-  border-color: var(--blue);
-  color: var(--blue);
+/* DashboardShell wrapper */
+.shivanya-dashboard-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Shell content area */
 .shivanya-dashboard-shell .shivanya-shell-main {
-  min-width: 0;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Content */
 .shivanya-dashboard-shell .shivanya-shell-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 0;
+}
+
+/* Footer */
+.portal-footer {
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .portal-header {
@@ -488,6 +500,7 @@
   .footer-main {
     grid-template-columns: 1fr 1fr;
     gap: 23px 18px;
+    padding: 3px;
     padding-bottom: 20px;
   }
   .footer-brand {
@@ -533,4 +546,64 @@
     justify-content: center;
     gap: 13px;
   }
+}
+
+
+/* Portal language selector */
+.portal-shell-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portal-language-select {
+  height: 36px;
+  min-width: 100px;
+  padding: 0 9px;
+  border: 1px solid #dce3ec;
+  border-radius: 8px;
+  background: var(--background, #fff);
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.portal-language-select:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+[data-theme="dark"] .portal-language-select {
+  background: #151b23;
+  border-color: #293544;
+  color: #e6edf3;
+}
+
+@media (max-width: 480px) {
+  .portal-shell-actions {
+    gap: 6px;
+  }
+
+  .portal-language-select {
+    min-width: 88px;
+    height: 34px;
+    padding: 0 6px;
+    font-size: 12px;
+  }
+}
+
+.footer-category-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-category-link svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.footer-category-link:hover svg {
+  opacity: 1;
 }

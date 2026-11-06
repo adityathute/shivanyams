@@ -1,0 +1,27 @@
+.language-dropdown-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .language-dropdown-desktop {
+    display: none;
+  }
+
+  .language-dropdown-mobile {
+    display: block;
+  }
+
+  .language-dropdown-mobile .language-select-mobile {
+    width: 66px;
+    min-width: 0;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 11px;
+    border-radius: 8px;
+  }
+
+  .language-dropdown-mobile .language-select-mobile select {
+    padding: 0 16px 0 4px;
+    font-size: 11px;
+  }
+}

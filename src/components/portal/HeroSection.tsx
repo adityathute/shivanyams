@@ -3,6 +3,12 @@
 import "./HeroSection.css";
 
 import { useEffect, useState, type FormEvent } from "react";
+import type { Language } from "shivanya-i18n";
+import { usePortalLanguage } from "../portal/PortalLanguageContext";
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
 
 type Props = {
   onSearch: (value: string) => void;
@@ -22,6 +28,11 @@ function getSceneTime(): SceneTime {
 }
 
 export function HeroSection({ onSearch }: Props) {
+    const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
+
   const [value, setValue] = useState("");
   const [sceneTime, setSceneTime] = useState<SceneTime>(getSceneTime);
   const [preview, setPreview] = useState<PreviewTime>("auto");
@@ -55,46 +66,17 @@ export function HeroSection({ onSearch }: Props) {
   return (
     <section className={`hero scene-${activeScene}`}>
       <div className="hero-copy">
-        <span className="eyebrow">
-          SHIVANYAMS <span>•</span> YOUR INFORMATION GUIDE
-        </span>
+        <span className="eyebrow">{t("heroEyebrow")}</span>
 
         <h1>
-          सरकारी नोकरी, योजना आणि
+          {t("heroTitleLine1")}
           <br />
-          महत्त्वाच्या अपडेट्स एकाच ठिकाणी
+          {t("heroTitleLine2")}
         </h1>
 
-        <p>
-          Latest Govt Jobs, Schemes, Results, Admit Cards and Useful Guides in
-          Marathi &amp; English
-        </p>
+        <p>{t("heroDescription")}</p>
 
-        <div className="popular">
-          <strong>Popular:</strong>
-
-          {[
-            "MahaDBT",
-            "पोलीस भरती",
-            "तलाठी",
-            "Aadhaar",
-            "Ration Card",
-            "PM Kisan",
-          ].map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => {
-                setValue(tag);
-                onSearch(tag);
-              }}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-
-        {/* <div className="scene-tester">
+        <div className="scene-tester">
           <span className="scene-tester-label">Scene preview</span>
 
           {(
@@ -115,7 +97,7 @@ export function HeroSection({ onSearch }: Props) {
               {label}
             </button>
           ))}
-        </div> */}
+        </div>
       </div>
 
       <div className="hero-art" aria-hidden="true">

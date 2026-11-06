@@ -1,7 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "shivanya-auth";
 import "./admin.css";
 
 type Item = {
@@ -11,7 +12,7 @@ type Item = {
   date: string;
   description: string;
   link: string;
-  type: "job" | "scheme" | "result" | "admit" | "guide" | "video";
+  type: "job" | "scheme" | "examination" | "exam" | "result" | "admit" | "guide" | "video";
 };
 type Video = {
   id: string;
@@ -26,6 +27,8 @@ const defaults: Data = { items: [], videos: [] };
 const typeLabels: Record<Item["type"], string> = {
   job: "नोकरी",
   scheme: "योजना",
+  examination: "परीक्षा",
+  exam: "परीक्षा",
   result: "निकाल",
   admit: "प्रवेशपत्र",
   exam: "परीक्षा",
@@ -44,6 +47,17 @@ const emptyItem = {
 const emptyVideo = { title: "", url: "", thumbnail: "", language: "मराठी" };
 
 export default function AdminPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  const isAdmin = user?.roles?.includes("admin") === true;
+
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      router.replace("/");
+    }
+  }, [loading, isAdmin, router]);
+
   const [data, setData] = useState<Data>(defaults),
     [kind, setKind] = useState<"item" | "video">("item"),
     [item, setItem] = useState(emptyItem),
@@ -127,20 +141,13 @@ export default function AdminPage() {
       );
     }
   }
+
+  if (loading || !isAdmin) {
+    return null;
+  }
+
   return (
     <main className="admin-page">
-      <header className="admin-header">
-        <Link href="/" className="admin-brand">
-          <span>S</span>
-          <div>
-            <strong>ShivanyaMS</strong>
-            <small>Content Admin</small>
-          </div>
-        </Link>
-        <Link href="/" className="back-site">
-          ← वेबसाइट पहा
-        </Link>
-      </header>
       <div className="admin-wrap">
         <div className="admin-intro">
           <span>CONTENT MANAGEMENT</span>

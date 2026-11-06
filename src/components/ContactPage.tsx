@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+
 import {
   FacebookIcon,
   InstagramIcon,
@@ -17,72 +18,80 @@ import {
   Typography,
 } from "shivanya-ui";
 
+import { usePortalLanguage } from "./portal/PortalLanguageContext";
+import { getContactText } from "../i18n/dictionaries/ContactPageDictionary";
+
 import { PortalFooter } from "./portal/PortalFooter";
+
 import "./ContactPage.css";
 
 const socialLinks = [
   {
     name: "WhatsApp",
-    description: "Follow our WhatsApp channel",
+    descriptionKey: "whatsappDescription",
     href: "https://whatsapp.com/channel/0029VbCnsGAJpe8iDaN4qM3g",
     icon: WhatsappIcon,
     className: "whatsapp",
   },
   {
     name: "Telegram",
-    description: "Join our Telegram channel",
+    descriptionKey: "telegramDescription",
     href: "https://t.me/+Qk03yff1TUBkNzg1",
     icon: TelegramIcon,
     className: "telegram",
   },
   {
     name: "Instagram",
-    description: "Connect with us on Instagram",
+    descriptionKey: "instagramDescription",
     href: "https://www.instagram.com/shivanyams",
     icon: InstagramIcon,
     className: "instagram",
   },
   {
     name: "Facebook",
-    description: "Visit our Facebook page",
+    descriptionKey: "facebookDescription",
     href: "https://www.facebook.com/profile.php?id=61596321414691",
     icon: FacebookIcon,
     className: "facebook",
   },
   {
     name: "YouTube",
-    description: "Watch our latest videos",
+    descriptionKey: "youtubeDescription",
     href: "https://www.youtube.com/@Shivanya-MS",
     icon: YoutubeIcon,
     className: "youtube",
   },
   {
     name: "X / Twitter",
-    description: "Follow our latest updates",
+    descriptionKey: "twitterDescription",
     href: "https://x.com/shivanyams",
     icon: TwitterIcon,
     className: "twitter",
   },
-];
+] as const;
 
-const queryOptions = [
-  { label: "General Inquiry", value: "General Inquiry" },
-  { label: "Government Job Information", value: "Government Job Information" },
-  {
-    label: "Government Scheme Information",
-    value: "Government Scheme Information",
-  },
-  { label: "Website Issue", value: "Website Issue" },
-  {
-    label: "Correction / Update Request",
-    value: "Correction / Update Request",
-  },
-  { label: "Business / Partnership", value: "Business / Partnership" },
-  { label: "Feedback / Suggestion", value: "Feedback / Suggestion" },
-  { label: "Other", value: "Other" },
-];
+const queryOptionKeys = [
+  ["queryGeneral", "General Inquiry"],
+  ["queryJobs", "Government Job Information"],
+  ["querySchemes", "Government Scheme Information"],
+  ["queryWebsite", "Website Issue"],
+  ["queryCorrection", "Correction / Update Request"],
+  ["queryBusiness", "Business / Partnership"],
+  ["queryFeedback", "Feedback / Suggestion"],
+  ["queryOther", "Other"],
+] as const;
 
 export function ContactPage() {
+  const { language } = usePortalLanguage();
+
+  const t = (key: Parameters<typeof getContactText>[0]) =>
+    getContactText(key, language);
+
+  const queryOptions = queryOptionKeys.map(([key, value]) => ({
+    label: t(key),
+    value,
+  }));
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -105,37 +114,48 @@ export function ContactPage() {
       form.message,
     ].join("\n");
 
-    window.location.href = `mailto:hello@shivanyams.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href =
+      `mailto:hello@shivanyams.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
     <>
       <main className="contact-page">
+        {/* Header */}
         <div className="contact-page-header">
           <div>
-            <Typography as="h1" variant="h1" className="contact-page-title">
-              Let’s talk.
+            <Typography
+              as="h1"
+              variant="h1"
+              className="contact-page-title"
+            >
+              {t("pageTitle")}
             </Typography>
 
             <Typography className="contact-page-description">
-              Have a question, found an issue, or want to share feedback? We’re
-              here to help.
+              {t("pageDescription")}
             </Typography>
           </div>
 
           <div className="contact-header-badge">
             <span className="contact-status-dot" />
-            We’re happy to hear from you
+            {t("headerBadge")}
           </div>
         </div>
 
         <div className="contact-layout">
+          {/* Left section */}
           <section className="contact-left">
+            {/* Contact information */}
             <div className="contact-info-card">
               <div className="contact-card-heading">
-                <span className="contact-card-label">GET IN TOUCH</span>
-                <h2>Contact information</h2>
-                <p>Choose the easiest way to reach the ShivanyaMS team.</p>
+                <span className="contact-card-label">
+                  {t("getInTouch")}
+                </span>
+
+                <h2>{t("contactInformation")}</h2>
+
+                <p>{t("contactInformationDescription")}</p>
               </div>
 
               <a
@@ -147,9 +167,9 @@ export function ContactPage() {
                 </span>
 
                 <span className="contact-detail-content">
-                  <small>Email address</small>
+                  <small>{t("emailAddress")}</small>
                   <strong>hello@shivanyams.com</strong>
-                  <span>Send us your questions anytime</span>
+                  <span>{t("emailDescription")}</span>
                 </span>
 
                 <span className="contact-detail-arrow">↗</span>
@@ -161,9 +181,9 @@ export function ContactPage() {
                 </span>
 
                 <span className="contact-detail-content">
-                  <small>Our location</small>
-                  <strong>Buldana, Maharashtra</strong>
-                  <span>India</span>
+                  <small>{t("ourLocation")}</small>
+                  <strong>{t("locationCity")}</strong>
+                  <span>{t("locationCountry")}</span>
                 </span>
               </div>
 
@@ -173,23 +193,27 @@ export function ContactPage() {
                 <span className="contact-response-indicator" />
 
                 <div>
-                  <strong>Need assistance?</strong>
-                  <p>
-                    Send us your query and we’ll get back to you as soon as
-                    possible.
-                  </p>
+                  <strong>{t("needAssistance")}</strong>
+
+                  <p>{t("assistanceDescription")}</p>
                 </div>
               </div>
             </div>
 
+            {/* Social media */}
             <div className="contact-social-card">
               <div className="contact-social-heading">
                 <div>
-                  <span className="contact-card-label">STAY CONNECTED</span>
-                  <h2>Find us on social media</h2>
+                  <span className="contact-card-label">
+                    {t("stayConnected")}
+                  </span>
+
+                  <h2>{t("socialHeading")}</h2>
                 </div>
 
-                <span className="contact-social-count">06 channels</span>
+                <span className="contact-social-count">
+                  {t("socialChannels")}
+                </span>
               </div>
 
               <div className="contact-social-grid">
@@ -210,7 +234,10 @@ export function ContactPage() {
 
                       <span className="contact-social-text">
                         <strong>{social.name}</strong>
-                        <small>{social.description}</small>
+
+                        <small>
+                          {t(social.descriptionKey)}
+                        </small>
                       </span>
 
                       <span className="contact-social-arrow">↗</span>
@@ -221,12 +248,17 @@ export function ContactPage() {
             </div>
           </section>
 
+          {/* Contact form */}
           <section className="contact-form-card">
             <div className="contact-form-heading">
               <div>
-                <span className="contact-card-label">SEND AN ENQUIRY</span>
-                <h2>Send us a message</h2>
-                <p>Fill in the details below and tell us how we can help.</p>
+                <span className="contact-card-label">
+                  {t("sendEnquiry")}
+                </span>
+
+                <h2>{t("sendMessage")}</h2>
+
+                <p>{t("formDescription")}</p>
               </div>
 
               <div className="contact-form-heading-icon">
@@ -237,94 +269,112 @@ export function ContactPage() {
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="contact-form-row">
                 <Input
-                  label="Full name"
+                  label={t("fullName")}
                   required
                   fullWidth
                   size="md"
                   autoComplete="name"
-                  placeholder="Enter your full name"
+                  placeholder={t("namePlaceholder")}
                   value={form.name}
                   onChange={(event) =>
-                    setForm({ ...form, name: event.target.value })
+                    setForm({
+                      ...form,
+                      name: event.target.value,
+                    })
                   }
                 />
 
                 <Input
-                  label="Email address"
+                  label={t("emailAddress")}
                   required
                   fullWidth
                   size="md"
                   type="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder={t("emailPlaceholder")}
                   value={form.email}
                   onChange={(event) =>
-                    setForm({ ...form, email: event.target.value })
+                    setForm({
+                      ...form,
+                      email: event.target.value,
+                    })
                   }
                 />
               </div>
 
               <Select
-                label="Query type"
+                label={t("queryType")}
                 required
                 fullWidth
                 size="md"
                 options={queryOptions}
                 value={form.category}
                 onChange={(event) =>
-                  setForm({ ...form, category: event.target.value })
+                  setForm({
+                    ...form,
+                    category: event.target.value,
+                  })
                 }
               />
 
               <Input
-                label="Subject"
+                label={t("subject")}
                 required
                 fullWidth
                 size="md"
-                placeholder="Briefly describe your query"
+                placeholder={t("subjectPlaceholder")}
                 value={form.subject}
                 onChange={(event) =>
-                  setForm({ ...form, subject: event.target.value })
+                  setForm({
+                    ...form,
+                    subject: event.target.value,
+                  })
                 }
               />
 
               <Textarea
-                label="Message"
+                label={t("message")}
                 required
                 fullWidth
                 size="md"
                 rows={6}
-                placeholder="Write your message in detail..."
+                placeholder={t("messagePlaceholder")}
                 value={form.message}
                 onChange={(event) =>
-                  setForm({ ...form, message: event.target.value })
+                  setForm({
+                    ...form,
+                    message: event.target.value,
+                  })
                 }
               />
 
               <div className="contact-form-footer">
                 <p>
                   <span>🔒</span>
-                  Your information will be included in your email.
+                  {t("privacyNote")}
                 </p>
 
                 <Button
                   type="submit"
                   variant="primary"
-                  size="md"
+                  size="sm"
                   endIcon={<span>→</span>}
                 >
-                  Send enquiry
+                  {t("sendEnquiryButton")}
                 </Button>
               </div>
 
               <div className="contact-email-fallback">
-                Prefer email?{" "}
-                <a href="mailto:hello@shivanyams.com">hello@shivanyams.com</a>
+                {t("preferEmail")}{" "}
+                <a href="mailto:hello@shivanyams.com">
+                  hello@shivanyams.com
+                </a>
               </div>
             </form>
           </section>
         </div>
       </main>
+
       <PortalFooter />
     </>
   );

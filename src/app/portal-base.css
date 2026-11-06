@@ -13,14 +13,32 @@
 
 html {
   scroll-behavior: smooth;
+  background: #f8fafc;
+  color: #111827;
+  background: var(--shivanya-color-background, #f8fafc);
+  color: var(--shivanya-color-text-primary, #111827);
+}
+
+html[data-theme="dark"] {
+  background: #0f172a;
+  color: #f8fafc;
 }
 
 body {
   margin: 0;
-  background: #fff;
-  color: var(--navy);
+  background: #f8fafc;
+  color: #111827;
+  background: var(--shivanya-color-background, #f8fafc);
+  color: var(--shivanya-color-text-primary, #111827);
   font-family: Inter, Hind, sans-serif;
   font-size: 14px;
+}
+
+html[data-theme="dark"] body {
+  background: #0f172a;
+  color: #f8fafc;
+  background: var(--shivanya-color-background, #0f172a);
+  color: var(--shivanya-color-text-primary, #f8fafc);
 }
 
 button, input {

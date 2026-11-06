@@ -9,27 +9,62 @@ import {
   Button,
   Typography,
 } from "shivanya-ui";
+import type { Language } from "shivanya-i18n";
+
+import { usePortalLanguage } from "./portal/PortalLanguageContext";
+import {
+  getFeedbackPageText,
+  type FeedbackPageDictionaryKey,
+} from "../i18n/dictionaries/FeedbackPageDictionary";
 
 import { PortalFooter } from "./portal/PortalFooter";
+
 import "./ContactPage.css";
 import "./FeedbackPage.css";
 
-const feedbackOptions = [
-  { label: "सामान्य अभिप्राय", value: "General Feedback" },
-  { label: "सूचना", value: "Suggestion" },
-  { label: "समस्या कळवा", value: "Report an Issue" },
-  { label: "नवीन सुविधा", value: "Feature Request" },
-  { label: "इतर", value: "Other" },
+type FeedbackOptionKey =
+  | "categoryGeneral"
+  | "categorySuggestion"
+  | "categoryIssue"
+  | "categoryFeature"
+  | "categoryOther";
+
+type RatingOptionKey =
+  | "ratingExcellent"
+  | "ratingGood"
+  | "ratingAverage"
+  | "ratingNeedsImprovement";
+
+const feedbackOptions: {
+  labelKey: FeedbackOptionKey;
+  value: string;
+}[] = [
+  { labelKey: "categoryGeneral", value: "General Feedback" },
+  { labelKey: "categorySuggestion", value: "Suggestion" },
+  { labelKey: "categoryIssue", value: "Report an Issue" },
+  { labelKey: "categoryFeature", value: "Feature Request" },
+  { labelKey: "categoryOther", value: "Other" },
 ];
 
-const ratingOptions = [
-  { label: "खूप छान", value: "Excellent" },
-  { label: "छान", value: "Good" },
-  { label: "ठीक आहे", value: "Average" },
-  { label: "सुधारणा आवश्यक", value: "Needs Improvement" },
+const ratingOptions: {
+  labelKey: RatingOptionKey;
+  value: string;
+}[] = [
+  { labelKey: "ratingExcellent", value: "Excellent" },
+  { labelKey: "ratingGood", value: "Good" },
+  { labelKey: "ratingAverage", value: "Average" },
+  {
+    labelKey: "ratingNeedsImprovement",
+    value: "Needs Improvement",
+  },
 ];
 
 export function FeedbackPage() {
+  const { language } = usePortalLanguage();
+
+  const t = (key: FeedbackPageDictionaryKey) =>
+    getFeedbackPageText(key, language as Language);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -42,7 +77,7 @@ export function FeedbackPage() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const subject = `[ShivanyaMS Feedback] ${form.category}: ${form.subject}`;
+    const emailSubject = `[ShivanyaMS Feedback] ${form.category}: ${form.subject}`;
 
     const body = [
       `Name: ${form.name || "Not provided"}`,
@@ -55,7 +90,7 @@ export function FeedbackPage() {
     ].join("\n");
 
     window.location.href = `mailto:hello@shivanyams.com?subject=${encodeURIComponent(
-      subject,
+      emailSubject,
     )}&body=${encodeURIComponent(body)}`;
   };
 
@@ -64,19 +99,22 @@ export function FeedbackPage() {
       <main className="contact-page feedback-page">
         <div className="contact-page-header">
           <div>
-            <Typography as="h1" variant="h1" className="contact-page-title">
-              Share your feedback.
+            <Typography
+              as="h1"
+              variant="h1"
+              className="contact-page-title"
+            >
+              {t("pageTitle")}
             </Typography>
 
             <Typography className="contact-page-description">
-              Tell us what you think about ShivanyaMS. Your feedback helps us
-              improve.
+              {t("pageDescription")}
             </Typography>
           </div>
 
           <div className="contact-header-badge">
             <span className="contact-status-dot" />
-            We value your feedback
+            {t("feedbackBadge")}
           </div>
         </div>
 
@@ -84,36 +122,40 @@ export function FeedbackPage() {
           <section className="contact-left">
             <div className="contact-info-card">
               <div className="contact-card-heading">
-                <span className="contact-card-label">YOUR VOICE MATTERS</span>
-                <h2>Help us improve</h2>
-                <p>
-                  Your suggestions and ideas help us make ShivanyaMS better
-                  for everyone.
-                </p>
+                <span className="contact-card-label">
+                  {t("voiceMatters")}
+                </span>
+
+                <h2>{t("helpImprove")}</h2>
+
+                <p>{t("helpImproveDescription")}</p>
               </div>
 
               <div className="feedback-benefits">
                 <div className="feedback-benefit">
                   <span className="feedback-benefit-icon">💡</span>
+
                   <div>
-                    <strong>Share your ideas</strong>
-                    <p>Tell us what features you would like to see.</p>
+                    <strong>{t("shareIdeas")}</strong>
+                    <p>{t("shareIdeasDescription")}</p>
                   </div>
                 </div>
 
                 <div className="feedback-benefit">
                   <span className="feedback-benefit-icon">🛠️</span>
+
                   <div>
-                    <strong>Report a problem</strong>
-                    <p>Help us find and fix issues.</p>
+                    <strong>{t("reportProblem")}</strong>
+                    <p>{t("reportProblemDescription")}</p>
                   </div>
                 </div>
 
                 <div className="feedback-benefit">
                   <span className="feedback-benefit-icon">🚀</span>
+
                   <div>
-                    <strong>Make things better</strong>
-                    <p>Your feedback helps improve our services.</p>
+                    <strong>{t("makeThingsBetter")}</strong>
+                    <p>{t("makeThingsBetterDescription")}</p>
                   </div>
                 </div>
               </div>
@@ -124,21 +166,20 @@ export function FeedbackPage() {
                 <span className="contact-response-indicator" />
 
                 <div>
-                  <strong>Thank you for helping us</strong>
-                  <p>
-                    Every suggestion matters and helps us build a better
-                    experience.
-                  </p>
+                  <strong>{t("thankYou")}</strong>
+                  <p>{t("thankYouDescription")}</p>
                 </div>
               </div>
             </div>
 
             <div className="contact-info-card feedback-email-card">
-              <span className="contact-card-label">CONTACT US</span>
-              <h2>Have more to share?</h2>
-              <p>
-                You can also send your feedback directly to our email.
-              </p>
+              <span className="contact-card-label">
+                {t("contactUs")}
+              </span>
+
+              <h2>{t("moreToShare")}</h2>
+
+              <p>{t("directEmailDescription")}</p>
 
               <a
                 className="contact-detail-item"
@@ -149,7 +190,7 @@ export function FeedbackPage() {
                 </span>
 
                 <span className="contact-detail-content">
-                  <small>Email address</small>
+                  <small>{t("emailAddress")}</small>
                   <strong>hello@shivanyams.com</strong>
                 </span>
 
@@ -161,9 +202,13 @@ export function FeedbackPage() {
           <section className="contact-form-card">
             <div className="contact-form-heading">
               <div>
-                <span className="contact-card-label">SEND FEEDBACK</span>
-                <h2>We’re listening</h2>
-                <p>Fill in the details and share your thoughts with us.</p>
+                <span className="contact-card-label">
+                  {t("sendFeedback")}
+                </span>
+
+                <h2>{t("listening")}</h2>
+
+                <p>{t("formDescription")}</p>
               </div>
 
               <div className="contact-form-heading-icon">
@@ -174,98 +219,122 @@ export function FeedbackPage() {
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="contact-form-row">
                 <Input
-                  label="Name (Optional)"
+                  label={t("nameOptional")}
                   fullWidth
                   size="md"
                   autoComplete="name"
-                  placeholder="Enter your name"
+                  placeholder={t("namePlaceholder")}
                   value={form.name}
                   onChange={(event) =>
-                    setForm({ ...form, name: event.target.value })
+                    setForm({
+                      ...form,
+                      name: event.target.value,
+                    })
                   }
                 />
 
                 <Input
-                  label="Email (Optional)"
+                  label={t("emailOptional")}
                   fullWidth
                   size="md"
                   type="email"
                   autoComplete="email"
-                  placeholder="you@example.com"
+                  placeholder={t("emailPlaceholder")}
                   value={form.email}
                   onChange={(event) =>
-                    setForm({ ...form, email: event.target.value })
+                    setForm({
+                      ...form,
+                      email: event.target.value,
+                    })
                   }
                 />
               </div>
 
               <Select
-                label="Feedback type"
+                label={t("feedbackType")}
                 required
                 fullWidth
                 size="md"
-                options={feedbackOptions}
+                options={feedbackOptions.map((option) => ({
+                  label: t(option.labelKey),
+                  value: option.value,
+                }))}
                 value={form.category}
                 onChange={(event) =>
-                  setForm({ ...form, category: event.target.value })
+                  setForm({
+                    ...form,
+                    category: event.target.value,
+                  })
                 }
               />
 
               <Select
-                label="How was your experience?"
+                label={t("experienceRating")}
                 required
                 fullWidth
                 size="md"
-                options={ratingOptions}
+                options={ratingOptions.map((option) => ({
+                  label: t(option.labelKey),
+                  value: option.value,
+                }))}
                 value={form.rating}
                 onChange={(event) =>
-                  setForm({ ...form, rating: event.target.value })
+                  setForm({
+                    ...form,
+                    rating: event.target.value,
+                  })
                 }
               />
 
               <Input
-                label="Subject"
+                label={t("subject")}
                 required
                 fullWidth
                 size="md"
-                placeholder="Briefly describe your feedback"
+                placeholder={t("subjectPlaceholder")}
                 value={form.subject}
                 onChange={(event) =>
-                  setForm({ ...form, subject: event.target.value })
+                  setForm({
+                    ...form,
+                    subject: event.target.value,
+                  })
                 }
               />
 
               <Textarea
-                label="Your feedback"
+                label={t("yourFeedback")}
                 required
                 fullWidth
                 size="md"
                 rows={6}
-                placeholder="Share your ideas, suggestions, or experience..."
+                placeholder={t("messagePlaceholder")}
                 value={form.message}
                 onChange={(event) =>
-                  setForm({ ...form, message: event.target.value })
+                  setForm({
+                    ...form,
+                    message: event.target.value,
+                  })
                 }
               />
 
               <div className="contact-form-footer">
                 <p>
                   <span>💬</span>
-                  Your feedback helps us improve.
+                  {t("feedbackReminder")}
                 </p>
 
                 <Button
                   type="submit"
                   variant="primary"
-                  size="md"
+                  size="sm"
                   endIcon={<span>→</span>}
                 >
-                  Send feedback
+                  {t("sendFeedbackButton")}
                 </Button>
               </div>
 
               <div className="contact-email-fallback">
-                Prefer email?{" "}
+                {t("preferEmail")}{" "}
                 <a href="mailto:hello@shivanyams.com">
                   hello@shivanyams.com
                 </a>

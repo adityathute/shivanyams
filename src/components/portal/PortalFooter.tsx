@@ -1,3 +1,25 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import type React from "react";
+import { Button } from "shivanya-ui";
+import { useRouter } from "next/navigation";
+
+import {
+  categoriesApi,
+  categoryConfig,
+  getCategoryTitle,
+  normalizeCategorySlug,
+  type Category,
+  type Language,
+} from "./CategoryGrid";
+import { getBaseText } from "../../i18n/dictionaries/base";
+
+import { usePortalLanguage } from "./PortalLanguageContext";
+import { useImportantLinks } from "./useImportantLinks";
+
 import {
   FacebookIcon,
   InstagramIcon,
@@ -7,37 +29,97 @@ import {
   TelegramIcon,
   MapPinIcon,
   MailIcon,
+  ThreadsIcon,
+  GovernmentJobIcon,
+  GovernmentSchemeIcon,
+  ResultIcon,
+  AdmitCardIcon,
+  GuideIcon,
+  VideoIcon,
+  ExaminationIcon,
 } from "shivanya-ui";
 
-const links: [string, string][] = [
-  ["MahaDBT Portal", "https://mahadbt2.maharashtra.gov.in/"],
-  ["Aadhaar Official Website", "https://myaadhaar.uidai.gov.in/"],
-  ["Ration Card Maharashtra", "https://mahafood.gov.in/"],
-  ["PM Kisan Portal", "https://pmkisan.gov.in/"],
-  ["MPSC Official Website", "https://mpsc.gov.in/"],
-  ["Maharashtra Government", "https://www.maharashtra.gov.in/"],
-  ["MH Police Recruitment", "https://www.mahapolice.gov.in/"],
-];
-
 export function PortalFooter() {
+  const { language } = usePortalLanguage();
+  const { links, getLinkTitle } = useImportantLinks();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchCategories() {
+      try {
+        const response = await fetch(categoriesApi, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+
+        const payload: Category[] | { results?: Category[] } =
+          await response.json();
+
+        const data = Array.isArray(payload) ? payload : (payload.results ?? []);
+
+        setCategories(data.filter((category) => category.active));
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Footer categories loading failed:", error);
+        }
+      }
+    }
+
+    fetchCategories();
+
+    return () => controller.abort();
+  }, []);
+
+  const categoryOrder: Record<string, number> = {
+    jobs: 1,
+    schemes: 2,
+    examination: 3,
+    results: 4,
+    "admit-cards": 5,
+    guides: 6,
+    videos: 7,
+  };
+
+  const categoryIcons: Record<
+    string,
+    React.ComponentType<{ size?: number }>
+  > = {
+    jobs: GovernmentJobIcon,
+    schemes: GovernmentSchemeIcon,
+    examination: ExaminationIcon,
+    results: ResultIcon,
+    "admit-cards": AdmitCardIcon,
+    guides: GuideIcon,
+    videos: VideoIcon,
+  };
+
   return (
     <footer className="portal-footer" id="contact">
       <div className="footer-main">
         <div className="footer-brand">
-          <a className="brand" href="/">
-            <img
+          <Link className="brand" href="/">
+            <Image
               src="/logo.png"
               alt="ShivanyaMS Logo"
+              width={48}
+              height={48}
               className="brand-logo-img"
+              priority
             />
+
             <span>
               <strong>ShivanyaMS</strong>
               <small>Govt Jobs, Schemes &amp; Updates</small>
             </span>
-          </a>
-          <p>
-            सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि महत्त्वाच्या अपडेट्सची
-            माहिती – मराठी आणि English मध्ये.
+          </Link>
+          <p className="footer-brand-desc">
+            {getBaseText("footerDescription", language)}
           </p>
 
           <div className="social-links">
@@ -95,49 +177,84 @@ export function PortalFooter() {
               <TelegramIcon size={20} />
             </a>
 
-            {/* <a
+            <a
               href="https://threads.net/@your-page"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Threads"
             >
               <ThreadsIcon size={20} />
-            </a> */}
+            </a>
           </div>
         </div>
 
-        <div>
-          <h3>महत्त्वाचे विभाग</h3>
-          <a href="/jobs">सरकारी नोकरी</a>
-          <a href="/schemes">शासकीय योजना</a>
-          <a href="/results">निकाल</a>
-          <a href="/admit-cards">प्रवेशपत्र</a>
-          <a href="/guides">लेख / मार्गदर्शक</a>
-          <a href="/videos">YouTube व्हिडिओ</a>
+        <div className="footer-category-col">
+          <h3>{getBaseText("importantSections", language)}</h3>
+
+          {[...categories]
+            .map((category) => ({
+              ...category,
+              slug: normalizeCategorySlug(category.slug),
+            }))
+            .filter((category) => categoryConfig[category.slug])
+            .sort(
+              (a, b) =>
+                (categoryOrder[a.slug] ?? 99) - (categoryOrder[b.slug] ?? 99),
+            )
+            .map((category) => {
+              const config = categoryConfig[category.slug];
+              const Icon = categoryIcons[category.slug];
+
+              return (
+                <Link
+                  key={category.id}
+                  href={config.href}
+                  className="footer-category-link"
+                >
+                  {Icon && <Icon size={16} />}
+                  <span>
+                    {getCategoryTitle(category, language as Language)}
+                  </span>
+                </Link>
+              );
+            })}
         </div>
 
         <div>
-          <h3>उपयुक्त लिंक्स</h3>
-          {links.slice(0, 6).map(([label, url]) => (
-            <a key={label} href={url} target="_blank" rel="noreferrer">
-              {label}
+          <h3>{getBaseText("usefulLinks", language)}</h3>
+          {links.slice(0, 7).map((link) => (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {getLinkTitle(link, language)}
             </a>
           ))}
         </div>
 
         <div className="contact-col">
-          <h3>आमच्याशी संपर्क साधा</h3>
+          <h3>{getBaseText("contactUs", language)}</h3>
+
           <p className="footer-contact-item">
             <MailIcon size={16} />
-            <span>hello@shivanyams.com</span>
+            <span>{getBaseText("contactEmail", language)}</span>
           </p>
+
           <p className="footer-contact-item">
             <MapPinIcon size={16} />
-            <span>Buldana, Maharashtra, India</span>
+            <span>{getBaseText("contactLocation", language)}</span>
           </p>
-          <a className="contact-button" href="contact">
-            संपर्क साधा →
-          </a>
+
+          <Button
+            variant="primary"
+            size="md"
+            className="contact-button"
+            onClick={() => router.push("/contact")}
+          >
+            {getBaseText("contactButton", language)}
+          </Button>
         </div>
       </div>
 
@@ -149,11 +266,10 @@ export function PortalFooter() {
           <a href="/feedback">Feedback</a>
           <a href="/disclaimer">Disclaimer</a>
           <a href="/contact">Contact Us</a>
-          <a href="/admin" className="admin-link">
-            Admin
-          </a>
         </div>
-        <span>© {new Date().getFullYear()} ShivanyaMS. All rights reserved.</span>
+        <span>
+          © {new Date().getFullYear()} ShivanyaMS. All rights reserved.
+        </span>
       </div>
     </footer>
   );

@@ -1,39 +1,47 @@
 "use client";
+
 import "./PortalShell.css";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+
 import { DashboardShell } from "shivanya-shell";
-import { AuthProvider } from "shivanya-auth";
+import { AuthProvider, useAuth } from "shivanya-auth";
+import type { Language } from "shivanya-i18n";
+
 import SiteMobileFooter from "../SiteMobileFooter";
 import { PortalHeader } from "./PortalHeader";
-import { portalNavigation } from "./PortalSidebar";
+import { getPortalNavigation } from "./PortalSidebar";
 import { PortalDataProvider } from "./portal-data";
-import Link from "next/link";
+import {
+  PortalLanguageProvider,
+  usePortalLanguage,
+} from "./PortalLanguageContext";
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { user, loading } = useAuth();
+  const { language, setLanguage } = usePortalLanguage();
 
+  // A saved account preference takes precedence once authentication is loaded.
   useEffect(() => {
-    const saved = window.localStorage.getItem("shivanya-theme");
-    const nextTheme =
-      saved === "dark" || saved === "light"
-        ? saved
-        : window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
+    if (loading || !user?.settings?.language) return;
 
-    setTheme(nextTheme);
-    document.documentElement.dataset.theme = nextTheme;
-  }, []);
+    setLanguage(user.settings.language);
+  }, [loading, user?.settings?.language, setLanguage]);
 
-  const toggleTheme = () => {
-    const nextTheme = theme === "light" ? "dark" : "light";
-    setTheme(nextTheme);
-    document.documentElement.dataset.theme = nextTheme;
-    window.localStorage.setItem("shivanya-theme", nextTheme);
-  };
+  // Keep the browser preference in sync for logged-in and anonymous visitors.
+  useEffect(() => {
+    document.documentElement.lang = language;
+
+    try {
+      localStorage.setItem("shivanya-language", language);
+      document.cookie = `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    } catch {}
+  }, [language]);
+
+  const navigation = getPortalNavigation(language, loading ? null : user);
 
   return (
     <DashboardShell
@@ -44,11 +52,12 @@ function PortalShell({ children }: { children: ReactNode }) {
         alt: "ShivanyaMS",
         href: "/",
       }}
-      navigation={portalNavigation}
+      navigation={navigation}
       pathname={pathname}
       linkComponent={Link}
-      headerEnd={<PortalHeader theme={theme} onToggleTheme={toggleTheme} />}
+      headerEnd={<PortalHeader />}
       sidebarFooter={<SiteMobileFooter />}
+      sidebarWidth={245}
       contentPadding={0}
     >
       {children}
@@ -56,7 +65,13 @@ function PortalShell({ children }: { children: ReactNode }) {
   );
 }
 
-export function PortalLayout({ children }: { children: ReactNode }) {
+export function PortalLayout({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage: Language;
+}) {
   return (
     <AuthProvider
       config={{
@@ -66,7 +81,9 @@ export function PortalLayout({ children }: { children: ReactNode }) {
       }}
     >
       <PortalDataProvider>
-        <PortalShell>{children}</PortalShell>
+        <PortalLanguageProvider initialLanguage={initialLanguage}>
+          <PortalShell>{children}</PortalShell>
+        </PortalLanguageProvider>
       </PortalDataProvider>
     </AuthProvider>
   );

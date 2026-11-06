@@ -36,7 +36,6 @@
   color: #c72d48;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 1.5px;
 }
 
 .videos-hero h1 {
@@ -148,12 +147,15 @@
   justify-content: center;
   width: 85px;
   height: 85px;
-  padding-left: 6px;
   border-radius: 26px;
   background: #d93652;
   color: #fff;
-  font-size: 30px;
   box-shadow: 0 12px 25px rgba(217, 54, 82, 0.25);
+}
+
+.videos-art-play svg {
+  width: 38px;
+  height: 38px;
 }
 
 .videos-art-label {
@@ -264,29 +266,47 @@ a.videos-card {
   align-items: center;
   justify-content: center;
   aspect-ratio: 16 / 9;
+  overflow: hidden;
   background-color: #f5e7ea;
   background-position: center;
   background-size: cover;
 }
 
-/* Play Button */
+/* YouTube Player */
+
+.videos-youtube-player {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+
+/* Video Icon */
 
 .videos-play-button {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 48px;
-  height: 34px;
-  padding-left: 3px;
+  height: 38px;
   border-radius: 9px;
   background: #e53955;
   color: #fff;
-  font-size: 17px;
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.videos-play-button svg {
+  width: 20px;
+  height: 20px;
 }
 
 .videos-card:hover .videos-play-button {
   transform: scale(1.1);
+  background: #c92e48;
 }
 
 .videos-watch-label {
@@ -337,9 +357,11 @@ a.videos-card {
   text-align: center;
 }
 
-.videos-empty > span {
+.videos-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #d93652;
-  font-size: 28px;
 }
 
 .videos-empty h3 {
@@ -528,7 +550,11 @@ a.videos-card {
   .videos-play-button {
     width: 38px;
     height: 28px;
-    font-size: 14px;
+  }
+
+  .videos-play-button svg {
+    width: 16px;
+    height: 16px;
   }
 }
 

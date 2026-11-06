@@ -100,7 +100,7 @@ function formatDate(date: string, language: Language) {
 }
 
 export function CategoryPage({ type }: { type: ItemType }) {
-  const language = usePortalLanguage();
+  const { language } = usePortalLanguage();
   const copy = pageCopy[language];
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);

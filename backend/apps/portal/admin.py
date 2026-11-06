@@ -4,6 +4,7 @@ from .models import (
     Application,
     CandidateProfile,
     Category,
+    ImportantLink,
     Company,
     Job,
     PortalContent,
@@ -38,6 +39,16 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name_en",)}
 
     ordering = ("name_en",)
+
+
+@admin.register(ImportantLink)
+class ImportantLinkAdmin(admin.ModelAdmin):
+    list_display = ("name_en", "name_mr", "name_hi", "url", "sort_order", "active")
+    list_filter = ("active",)
+    search_fields = ("name_en", "name_mr", "name_hi", "url")
+    list_editable = ("sort_order", "active")
+    ordering = ("sort_order", "name_en")
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(Company)

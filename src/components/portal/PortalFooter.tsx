@@ -16,6 +16,7 @@ import {
 import { getBaseText } from "../../i18n/dictionaries/base";
 
 import { usePortalLanguage } from "./PortalLanguageContext";
+import { useImportantLinks } from "./useImportantLinks";
 
 import {
   FacebookIcon,
@@ -36,18 +37,11 @@ import {
   ExaminationIcon,
 } from "shivanya-ui";
 
-const links: [string, string][] = [
-  ["MahaDBT Portal", "https://mahadbt2.maharashtra.gov.in/"],
-  ["Aadhaar Official Website", "https://myaadhaar.uidai.gov.in/"],
-  ["Ration Card Maharashtra", "https://mahafood.gov.in/"],
-  ["PM Kisan Portal", "https://pmkisan.gov.in/"],
-  ["MPSC Official Website", "https://mpsc.gov.in/"],
-  ["Maharashtra Government", "https://www.maharashtra.gov.in/"],
-  ["MH Police Recruitment", "https://www.mahapolice.gov.in/"],
-];
+
 
 export function PortalFooter() {
   const { language } = usePortalLanguage();
+  const { links, getLinkTitle } = useImportantLinks();
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -225,11 +219,16 @@ export function PortalFooter() {
 
         <div>
           <h3>उपयुक्त लिंक्स</h3>
-          {links.slice(0, 7).map(([label, url]) => (
-            <a key={label} href={url} target="_blank" rel="noreferrer">
-              {label}
+          {links.slice(0, 7).map((link) => (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {getLinkTitle(link, language)}
             </a>
-          ))}
+                    ))}
         </div>
 
         <div className="contact-col">

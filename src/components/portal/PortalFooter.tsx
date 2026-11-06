@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+
 import {
   FacebookIcon,
   InstagramIcon,
@@ -27,17 +30,21 @@ export function PortalFooter() {
     <footer className="portal-footer" id="contact">
       <div className="footer-main">
         <div className="footer-brand">
-          <a className="brand" href="/">
-            <img
+          <Link className="brand" href="/">
+            <Image
               src="/logo.png"
               alt="ShivanyaMS Logo"
+              width={48}
+              height={48}
               className="brand-logo-img"
+              priority
             />
+
             <span>
               <strong>ShivanyaMS</strong>
               <small>Govt Jobs, Schemes &amp; Updates</small>
             </span>
-          </a>
+          </Link>
           <p>
             सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि महत्त्वाच्या अपडेट्सची
             माहिती – मराठी, हिंदी आणि इंग्रजीमध्ये.

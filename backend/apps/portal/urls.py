@@ -2,6 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from .views import (
     Categories,
+    ImportantLinks,
     PublicJobs,
     EmployerCompanies,
     EmployerJobs,
@@ -22,6 +23,7 @@ content_detail = PublicContent.as_view({"get": "retrieve"})
 urlpatterns = [
     path("", include(router.urls)),
     path("categories/", Categories.as_view()),
+    path("important-links/", ImportantLinks.as_view()),
     path("candidate/profile/", CandidateProfileView.as_view()),
     path("jobs/<slug:slug>/apply/", ApplyJob.as_view()),
     path("candidate/applications/", CandidateApplications.as_view()),

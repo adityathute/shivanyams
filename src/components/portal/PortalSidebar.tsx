@@ -16,6 +16,8 @@ export const portalNavigation = [
   { label: "शासकीय योजना", href: "/schemes", icon: <GovernmentSchemeIcon /> },
   { label: "निकाल", href: "/results", icon: <ResultIcon /> },
   { label: "प्रवेशपत्र", href: "/admit-cards", icon: <AdmitCardIcon /> },
+  { label: "परीक्षा", href: "/exams", icon: <ResultIcon /> },
+  { label: "बॅच परीक्षा", href: "/batch-examination", icon: <GovernmentJobIcon /> },
   { label: "लेख आणि मार्गदर्शक", href: "/guides", icon: <GuideIcon /> },
   { label: "व्हिडिओ", href: "/videos", icon: <VideoIcon /> },
   {

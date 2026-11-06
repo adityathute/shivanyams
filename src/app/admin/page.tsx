@@ -28,6 +28,8 @@ const typeLabels: Record<Item["type"], string> = {
   scheme: "योजना",
   result: "निकाल",
   admit: "प्रवेशपत्र",
+  exam: "परीक्षा",
+  "batch-exam": "बॅच परीक्षा",
   guide: "मार्गदर्शक",
   video: "व्हिडीओ",
 };

@@ -228,7 +228,7 @@ interface CategoryApiResponse {
   results?: Category[];
 }
 
-function normalizeCategorySlug(slug: string) {
+export function normalizeCategorySlug(slug: string) {
   const normalized = slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
   return categorySlugAliases[normalized] ?? normalized;
 }

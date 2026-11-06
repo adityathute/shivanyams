@@ -9,6 +9,7 @@ import {
   categoriesApi,
   categoryConfig,
   getCategoryTitle,
+  normalizeCategorySlug,
   type Category,
   type Language,
 } from "./CategoryGrid";
@@ -80,32 +81,28 @@ export function PortalFooter() {
     return () => controller.abort();
   }, []);
 
-const categoryOrder: Record<string, number> = {
-  jobs: 1,
-  schemes: 2,
-  examination: 3,
-  examinations: 3,
-  results: 4,
-  "admit-cards": 5,
-  "articles-guides": 6,
-  videos: 7,
-};
+  const categoryOrder: Record<string, number> = {
+    jobs: 1,
+    schemes: 2,
+    examination: 3,
+    results: 4,
+    "admit-cards": 5,
+    guides: 6,
+    videos: 7,
+  };
 
-const categoryIcons: Record<
-  string,
-  React.ComponentType<{ size?: number }>
-> = {
-  jobs: GovernmentJobIcon,
-  schemes: GovernmentSchemeIcon,
-  examination: ExaminationIcon,
-  examinations: ExaminationIcon,
-  results: ResultIcon,
-  "admit-cards": AdmitCardIcon,
-  guide: GuideIcon,
-  guides: GuideIcon,
-  articles: GuideIcon,
-  videos: VideoIcon,
-};
+  const categoryIcons: Record<
+    string,
+    React.ComponentType<{ size?: number }>
+  > = {
+    jobs: GovernmentJobIcon,
+    schemes: GovernmentSchemeIcon,
+    examination: ExaminationIcon,
+    results: ResultIcon,
+    "admit-cards": AdmitCardIcon,
+    guides: GuideIcon,
+    videos: VideoIcon,
+  };
 
   return (
     <footer className="portal-footer" id="contact">
@@ -126,10 +123,7 @@ const categoryIcons: Record<
               <small>Govt Jobs, Schemes &amp; Updates</small>
             </span>
           </Link>
-          <p>
-            सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि महत्त्वाच्या अपडेट्सची
-            माहिती – मराठी, हिंदी आणि इंग्रजीमध्ये.
-          </p>
+          <p>{getBaseText("footerDescription", language)}</p>
 
           <div className="social-links">
             <a
@@ -201,6 +195,10 @@ const categoryIcons: Record<
           <h3>{getBaseText("importantSections", language)}</h3>
 
           {[...categories]
+            .map((category) => ({
+              ...category,
+              slug: normalizeCategorySlug(category.slug),
+            }))
             .filter((category) => categoryConfig[category.slug])
             .sort(
               (a, b) =>

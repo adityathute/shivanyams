@@ -8,6 +8,7 @@ import {
   categoriesApi,
   categoryConfig,
   getCategoryTitle,
+  normalizeCategorySlug,
   type Category,
   type Language,
 } from "./CategoryGrid";
@@ -44,8 +45,7 @@ export function UpdatesSection({
 
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const sectionTitle =
-    title ?? getPortalText("updatesTitle", language);
+  const sectionTitle = title ?? getPortalText("updatesTitle", language);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -60,12 +60,11 @@ export function UpdatesSection({
           throw new Error("Failed to fetch categories");
         }
 
-        const payload: Category[] | CategoryApiResponse =
-          await response.json();
+        const payload: Category[] | CategoryApiResponse = await response.json();
 
         const result = Array.isArray(payload)
           ? payload
-          : payload.results ?? [];
+          : (payload.results ?? []);
 
         setCategories(result.filter((category) => category.active));
       } catch (error) {
@@ -97,18 +96,13 @@ export function UpdatesSection({
       })
       .sort(
         (a, b) =>
-          new Date(b.date || "").getTime() -
-          new Date(a.date || "").getTime(),
+          new Date(b.date || "").getTime() - new Date(a.date || "").getTime(),
       )
       .slice(0, 20);
   }, [data.items, query, type]);
 
   const dateLocale =
-    language === "en"
-      ? "en-IN"
-      : language === "hi"
-        ? "hi-IN"
-        : "mr-IN";
+    language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
     <section className="updates-panel panelin" id="updates">
@@ -135,7 +129,8 @@ export function UpdatesSection({
           </button>
 
           {categories.map((category) => {
-            const config = categoryConfig[category.slug];
+            const slug = normalizeCategorySlug(category.slug);
+            const config = categoryConfig[slug];
 
             if (!config) return null;
 
@@ -184,9 +179,7 @@ export function UpdatesSection({
                   : getPortalText("new", language)}
               </time>
 
-              <span className="new-pill">
-                {getPortalText("new", language)}
-              </span>
+              <span className="new-pill">{getPortalText("new", language)}</span>
             </a>
           ))
         ) : (

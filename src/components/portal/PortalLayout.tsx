@@ -14,6 +14,7 @@ import SiteMobileFooter from "../SiteMobileFooter";
 import { PortalHeader } from "./PortalHeader";
 import { getPortalNavigation } from "./PortalSidebar";
 import { PortalDataProvider } from "./portal-data";
+import { PortalLanguageProvider } from "./PortalLanguageContext";
 
 function PortalShell({
   children,
@@ -61,7 +62,9 @@ function PortalShell({
       sidebarWidth={245}
       contentPadding={0}
     >
-      {children}
+      <PortalLanguageProvider value={language}>
+        {children}
+      </PortalLanguageProvider>
     </DashboardShell>
   );
 }

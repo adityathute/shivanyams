@@ -1,3 +1,4 @@
+
 /* Privacy page */
 
 .privacy-page {
@@ -23,7 +24,6 @@
   margin: 0;
   font-size: clamp(30px, 3vw, 40px);
   font-weight: 750;
-  letter-spacing: -1.2px;
   line-height: 1.2;
 }
 
@@ -54,6 +54,16 @@
     0 12px 30px rgb(15 23 42 / 3%);
 
   overflow-wrap: anywhere;
+
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.privacy-page .document-content:hover {
+  box-shadow:
+    0 4px 12px rgb(15 23 42 / 3%),
+    0 16px 36px rgb(15 23 42 / 5%);
 }
 
 /* Label */
@@ -65,7 +75,7 @@
   color: #8b5cf6;
   font-size: 10px;
   font-weight: 750;
-  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 /* Document title */
@@ -75,7 +85,6 @@
   color: var(--text-primary, #172033);
   font-size: 26px;
   font-weight: 750;
-  letter-spacing: -0.6px;
   line-height: 1.4;
 }
 
@@ -84,6 +93,7 @@
 .privacy-page .privacy-updated {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
 
   margin-bottom: 22px;
   padding: 7px 11px;
@@ -113,7 +123,6 @@
   color: var(--text-primary, #172033);
   font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.2px;
   line-height: 1.5;
 }
 
@@ -142,25 +151,31 @@
 
 /* Lists */
 
-.privacy-page .privacy-list {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-
+.privacy-page .document-content ul.privacy-list {
+  display: block;
   margin: 0 0 18px;
   padding-left: 24px;
+
+  list-style: disc outside;
 
   color: var(--text-secondary, #64748b);
   font-size: 14px;
   line-height: 1.85;
 }
 
-.privacy-page .privacy-list li {
+.privacy-page .document-content ul.privacy-list li {
+  display: list-item;
+  margin-bottom: 8px;
   padding-left: 4px;
 }
 
-.privacy-page .privacy-list li::marker {
+.privacy-page .document-content ul.privacy-list li:last-child {
+  margin-bottom: 0;
+}
+
+.privacy-page .document-content ul.privacy-list li::marker {
   color: #8b5cf6;
+  font-size: 1em;
 }
 
 /* Contact card */
@@ -177,6 +192,7 @@
   border-radius: 12px;
 
   background: var(--surface-secondary, #f8fafc);
+
   transition:
     border-color 0.2s ease,
     transform 0.2s ease;
@@ -248,7 +264,13 @@
 /* Dark theme */
 
 [data-theme="dark"] .privacy-page .document-content {
+  background: var(--surface, #111827);
+  border-color: var(--border, #374151);
   border-left-color: #a78bfa;
+}
+
+[data-theme="dark"] .privacy-page .document-content h3 {
+  border-bottom-color: var(--border, #374151);
 }
 
 [data-theme="dark"] .privacy-page .privacy-updated,
@@ -259,6 +281,14 @@
 [data-theme="dark"] .privacy-page .privacy-contact-icon {
   background: rgb(167 139 250 / 15%);
   color: #c4b5fd;
+}
+
+[data-theme="dark"] .privacy-page .document-content ul.privacy-list {
+  color: var(--text-secondary, #9ca3af);
+}
+
+[data-theme="dark"] .privacy-page .document-content ul.privacy-list li::marker {
+  color: #a78bfa;
 }
 
 [data-theme="dark"] .privacy-page .document-notice {
@@ -297,9 +327,13 @@
   }
 
   .privacy-page .document-content p,
-  .privacy-page .privacy-list {
+  .privacy-page .document-content ul.privacy-list {
     font-size: 13px;
     line-height: 1.8;
+  }
+
+  .privacy-page .document-content ul.privacy-list {
+    padding-left: 22px;
   }
 
   .privacy-page .document-notice {

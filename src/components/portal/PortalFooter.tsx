@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type React from "react";
+import { Button } from "shivanya-ui";
+import { useRouter } from "next/navigation";
 
 import {
   categoriesApi,
@@ -37,12 +39,11 @@ import {
   ExaminationIcon,
 } from "shivanya-ui";
 
-
-
 export function PortalFooter() {
   const { language } = usePortalLanguage();
   const { links, getLinkTitle } = useImportantLinks();
   const [categories, setCategories] = useState<Category[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -117,7 +118,9 @@ export function PortalFooter() {
               <small>Govt Jobs, Schemes &amp; Updates</small>
             </span>
           </Link>
-          <p>{getBaseText("footerDescription", language)}</p>
+          <p className="footer-brand-desc">
+            {getBaseText("footerDescription", language)}
+          </p>
 
           <div className="social-links">
             <a
@@ -218,7 +221,7 @@ export function PortalFooter() {
         </div>
 
         <div>
-          <h3>उपयुक्त लिंक्स</h3>
+          <h3>{getBaseText("usefulLinks", language)}</h3>
           {links.slice(0, 7).map((link) => (
             <a
               key={link.id}
@@ -228,22 +231,30 @@ export function PortalFooter() {
             >
               {getLinkTitle(link, language)}
             </a>
-                    ))}
+          ))}
         </div>
 
         <div className="contact-col">
-          <h3>आमच्याशी संपर्क साधा</h3>
+          <h3>{getBaseText("contactUs", language)}</h3>
+
           <p className="footer-contact-item">
             <MailIcon size={16} />
-            <span>hello@shivanyams.com</span>
+            <span>{getBaseText("contactEmail", language)}</span>
           </p>
+
           <p className="footer-contact-item">
             <MapPinIcon size={16} />
-            <span>Buldana, Maharashtra, India</span>
+            <span>{getBaseText("contactLocation", language)}</span>
           </p>
-          <a className="contact-button" href="contact">
-            संपर्क साधा →
-          </a>
+
+          <Button
+            variant="primary"
+            size="md"
+            className="contact-button"
+            onClick={() => router.push("/contact")}
+          >
+            {getBaseText("contactButton", language)}
+          </Button>
         </div>
       </div>
 

@@ -123,6 +123,9 @@
   font-size: 12px;
   line-height: 1.65;
   color: #c2cee0;
+}
+
+.footer-brand-desc {
   margin: 14px 0;
 }
 
@@ -497,6 +500,7 @@
   .footer-main {
     grid-template-columns: 1fr 1fr;
     gap: 23px 18px;
+    padding: 3px;
     padding-bottom: 20px;
   }
   .footer-brand {

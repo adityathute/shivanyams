@@ -7,10 +7,20 @@ import { useMemo, useState } from "react";
 import { usePortalData } from "./portal-data";
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
+import type { Language } from "shivanya-i18n";
+import { usePortalLanguage } from "./PortalLanguageContext";
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
 
 export function JobsPage() {
   const [query, setQuery] = useState("");
   const { data } = usePortalData();
+  const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
 
   const jobs = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -34,19 +44,16 @@ export function JobsPage() {
           <section className="jobs-hero">
             <div className="jobs-hero-content">
               <span className="jobs-eyebrow">
-                SHIVANYAMS · CAREER & RECRUITMENT
+                {t("jobsEyebrow")}
               </span>
 
               <h1>
-                सरकारी नोकरी शोधा,
+                {t("jobsHeroTitleLine1")}
                 <br />
-                <span>आपलं भविष्य घडवा.</span>
+                <span>{t("jobsHeroTitleLine2")}</span>
               </h1>
 
-              <p>
-                Maharashtra and Central Government Jobs, Recruitment,
-                Notifications and Exam Updates.
-              </p>
+              <p>{t("jobsHeroDescription")}</p>
 
               <form
                 className="jobs-search"
@@ -57,25 +64,21 @@ export function JobsPage() {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="नोकरी, विभाग किंवा भरती शोधा..."
+                  placeholder={t("jobsSearchPlaceholder")}
                 />
 
-                <button type="submit">Search</button>
+                <button type="submit">{t("search")}</button>
               </form>
-
-              <div className="jobs-hero-tags">
-                <span>Latest Recruitment</span>
-                <span>Government Jobs</span>
-                <span>Exam Updates</span>
-              </div>
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">
               <div className="jobs-visual-circle">
                 <div className="jobs-visual-card">
                   <span className="jobs-visual-icon">▣</span>
-                  <strong>Government Jobs</strong>
-                  <small>Explore opportunities</small>
+
+                  <strong>{t("governmentJobs")}</strong>
+
+                  <small>{t("exploreOpportunities")}</small>
 
                   <div className="jobs-visual-lines">
                     <i />
@@ -85,21 +88,28 @@ export function JobsPage() {
 
                   <div className="jobs-visual-status">
                     <span />
-                    Recruitment Updates
+                    {t("recruitmentUpdates")}
                   </div>
                 </div>
               </div>
 
-              <div className="jobs-floating-icon jobs-floating-one">✓</div>
+              <div className="jobs-floating-icon jobs-floating-one">
+                ✓
+              </div>
 
-              <div className="jobs-floating-icon jobs-floating-two">₹</div>
+              <div className="jobs-floating-icon jobs-floating-two">
+                ₹
+              </div>
             </div>
           </section>
 
           <section className="jobs-updates panel" id="updates">
             <div className="section-heading">
-              <h2>Latest Government Jobs</h2>
-              <span>{jobs.length} updates</span>
+              <h2>{t("latestGovernmentJobs")}</h2>
+
+              <span>
+                {jobs.length} {t("updatesCount")}
+              </span>
             </div>
 
             <div className="update-list">
@@ -123,29 +133,36 @@ export function JobsPage() {
 
                     <time>
                       {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            "mr-IN",
+                        ? new Date(
+                            `${item.date}T12:00:00`,
+                          ).toLocaleDateString(
+                            language === "mr"
+                              ? "mr-IN"
+                              : language === "hi"
+                                ? "hi-IN"
+                                : "en-IN",
                             {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
                             },
                           )
-                        : "नवीन"}
+                        : t("new")}
                     </time>
 
-                    <span className="new-pill">New</span>
+                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
               ) : (
                 <div className="empty-state">
-                  सध्या सरकारी नोकरी अपडेट्स उपलब्ध नाहीत.
+                  {t("noJobsAvailable")}
                 </div>
               )}
             </div>
           </section>
         </main>
       </div>
+
       <PortalFooter />
     </>
   );

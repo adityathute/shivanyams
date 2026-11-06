@@ -8,9 +8,11 @@ import { VideosSection } from "./VideosSection";
 import type { ItemType } from "./portal-data";
 import { usePortalData } from "./portal-data";
 import { PortalFooter } from "./PortalFooter";
-import { MailIcon } from "shivanya-ui";
+import { MailIcon, Button } from "shivanya-ui";
 import { usePortalLanguage } from "./PortalLanguageContext";
 import { useImportantLinks } from "./useImportantLinks";
+import { getBaseText } from "../../i18n/dictionaries/base";
+import { useRouter } from "next/navigation";
 
 export function HomePage() {
   const { language: selectedLanguage } = usePortalLanguage();
@@ -18,11 +20,16 @@ export function HomePage() {
   const [search, setSearch] = useState("");
   const { data } = usePortalData();
   const { links, getLinkTitle } = useImportantLinks();
+  const router = useRouter();
+
+  const t = (key: Parameters<typeof getBaseText>[0]) =>
+    getBaseText(key, selectedLanguage);
 
   return (
     <div className="portal">
       <div className="ticker">
         <span className="ticker-label">⚑ Latest Updates</span>
+
         <div className="ticker-track">
           {data.items.slice(0, 6).map((item) => (
             <button
@@ -36,6 +43,7 @@ export function HomePage() {
             </button>
           ))}
         </div>
+
         <button
           className="ticker-arrow"
           aria-label="Show all updates"
@@ -50,6 +58,7 @@ export function HomePage() {
 
       <main>
         <HeroSection onSearch={setSearch} />
+
         <CategoryGrid language={selectedLanguage} />
 
         <div className="content-layout">
@@ -60,12 +69,14 @@ export function HomePage() {
             onQueryChange={setSearch}
             onTypeChange={setActive}
           />
+
           <aside className="right-column">
             <section className="panelin important-panel">
               <div className="section-heading">
-                <h2>महत्त्वाच्या लिंक्स</h2>
-                <span>Useful links</span>
+                <h2>{t("importantSections")}</h2>
+                <span>{t("usefulLinks")}</span>
               </div>
+
               {links.map((link) => (
                 <a
                   className="important-link"
@@ -78,7 +89,7 @@ export function HomePage() {
                   {getLinkTitle(link, selectedLanguage)}
                   <b>›</b>
                 </a>
-                            ))}
+              ))}
             </section>
 
             <section className="subscribe-panel">
@@ -87,13 +98,17 @@ export function HomePage() {
               </div>
 
               <div className="subscribe-content">
-                <h3>नवीन अपडेट्ससाठी तयार राहा</h3>
-                <p>महत्त्वाच्या अपडेट्ससाठी आमच्याशी जोडलेले राहा.</p>
+                <h3>{t("subscribeTitle")}</h3>
+                <p>{t("subscribeDescription")}</p>
               </div>
 
-              <a href="#contact" className="subscribe-button">
-                संपर्क साधा →
-              </a>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => router.push("/contact")}
+              >
+                {t("contactButton")}
+              </Button>
             </section>
           </aside>
         </div>

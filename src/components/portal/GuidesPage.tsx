@@ -4,13 +4,27 @@ import "./UpdatesSection.css";
 import "./GuidesPage.css";
 
 import { useMemo, useState } from "react";
+import type { Language } from "shivanya-i18n";
+
 import { usePortalData } from "./portal-data";
+import { usePortalLanguage } from "./PortalLanguageContext";
+
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
+
 export function GuidesPage() {
   const [query, setQuery] = useState("");
+
   const { data } = usePortalData();
+  const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
 
   const guides = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -27,6 +41,13 @@ export function GuidesPage() {
     });
   }, [data.items, query]);
 
+  const dateLocale =
+    language === "mr"
+      ? "mr-IN"
+      : language === "hi"
+        ? "hi-IN"
+        : "en-IN";
+
   return (
     <>
       <div className="guides-page">
@@ -34,19 +55,16 @@ export function GuidesPage() {
           <section className="guides-hero">
             <div className="guides-hero-content">
               <span className="guides-eyebrow">
-                SHIVANYAMS · GUIDES & INFORMATION
+                {t("guidesEyebrow")}
               </span>
 
               <h1>
-                योग्य मार्गदर्शन मिळवा,
+                {t("guidesHeroTitleLine1")}
                 <br />
-                <span>ज्ञानाने पुढे चला.</span>
+                <span>{t("guidesHeroTitleLine2")}</span>
               </h1>
 
-              <p>
-                Useful Guides, Tutorials, Online Services and Step-by-Step
-                Information for Government Applications and Exams.
-              </p>
+              <p>{t("guidesHeroDescription")}</p>
 
               <form
                 className="guides-search"
@@ -57,25 +75,19 @@ export function GuidesPage() {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="लेख, मार्गदर्शक किंवा विषय शोधा..."
+                  placeholder={t("guidesSearchPlaceholder")}
                 />
 
-                <button type="submit">Search</button>
+                <button type="submit">{t("search")}</button>
               </form>
-
-              <div className="guides-hero-tags">
-                <span>Useful Guides</span>
-                <span>Step-by-Step Tutorials</span>
-                <span>Online Services</span>
-              </div>
             </div>
 
             <div className="guides-hero-visual" aria-hidden="true">
               <div className="guides-visual-circle">
                 <div className="guides-visual-card">
                   <span className="guides-visual-icon">▣</span>
-                  <strong>Helpful Guides</strong>
-                  <small>Learn step by step</small>
+                  <strong>{t("helpfulGuides")}</strong>
+                  <small>{t("learnStepByStep")}</small>
 
                   <div className="guides-visual-lines">
                     <i />
@@ -85,21 +97,27 @@ export function GuidesPage() {
 
                   <div className="guides-visual-status">
                     <span />
-                    Knowledge Updates
+                    {t("knowledgeUpdates")}
                   </div>
                 </div>
               </div>
 
-              <div className="guides-floating-icon guides-floating-one">✓</div>
+              <div className="guides-floating-icon guides-floating-one">
+                ✓
+              </div>
 
-              <div className="guides-floating-icon guides-floating-two">?</div>
+              <div className="guides-floating-icon guides-floating-two">
+                ?
+              </div>
             </div>
           </section>
 
           <section className="guides-updates panel" id="updates">
             <div className="section-heading">
-              <h2>Latest Guides & Articles</h2>
-              <span>{guides.length} updates</span>
+              <h2>{t("latestGuidesArticles")}</h2>
+              <span>
+                {guides.length} {t("updatesCount")}
+              </span>
             </div>
 
             <div className="update-list">
@@ -123,29 +141,29 @@ export function GuidesPage() {
 
                     <time>
                       {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            "mr-IN",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : "नवीन"}
+                        ? new Date(
+                            `${item.date}T12:00:00`,
+                          ).toLocaleDateString(dateLocale, {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : t("new")}
                     </time>
 
-                    <span className="new-pill">New</span>
+                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
               ) : (
                 <div className="empty-state">
-                  सध्या मार्गदर्शक आणि लेख उपलब्ध नाहीत.
+                  {t("noGuidesAvailable")}
                 </div>
               )}
             </div>
           </section>
         </main>
       </div>
+
       <PortalFooter />
     </>
   );

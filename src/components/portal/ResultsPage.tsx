@@ -4,13 +4,27 @@ import "./UpdatesSection.css";
 import "./ResultsPage.css";
 
 import { useMemo, useState } from "react";
+import type { Language } from "shivanya-i18n";
+
 import { usePortalData } from "./portal-data";
+import { usePortalLanguage } from "./PortalLanguageContext";
+
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
+
 export function ResultsPage() {
   const [query, setQuery] = useState("");
+
   const { data } = usePortalData();
+  const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -27,24 +41,30 @@ export function ResultsPage() {
     });
   }, [data.items, query]);
 
+  const dateLocale =
+    language === "mr"
+      ? "mr-IN"
+      : language === "hi"
+        ? "hi-IN"
+        : "en-IN";
+
   return (
     <>
       <div className="results-page">
         <main>
           <section className="results-hero">
             <div className="results-hero-content">
-              <span className="results-eyebrow">SHIVANYAMS · EXAM RESULTS</span>
+              <span className="results-eyebrow">
+                {t("resultsEyebrow")}
+              </span>
 
               <h1>
-                परीक्षेचा निकाल पाहा,
+                {t("resultsHeroTitleLine1")}
                 <br />
-                <span>यशाची पुढची पायरी गाठा.</span>
+                <span>{t("resultsHeroTitleLine2")}</span>
               </h1>
 
-              <p>
-                Maharashtra and Central Government Exam Results, Merit Lists,
-                Scorecards and Result Notifications.
-              </p>
+              <p>{t("resultsHeroDescription")}</p>
 
               <form
                 className="results-search"
@@ -55,25 +75,19 @@ export function ResultsPage() {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="परीक्षा, विभाग किंवा निकाल शोधा..."
+                  placeholder={t("resultsSearchPlaceholder")}
                 />
 
-                <button type="submit">Search</button>
+                <button type="submit">{t("search")}</button>
               </form>
-
-              <div className="results-hero-tags">
-                <span>Latest Results</span>
-                <span>Merit Lists</span>
-                <span>Exam Updates</span>
-              </div>
             </div>
 
             <div className="results-hero-visual" aria-hidden="true">
               <div className="results-visual-circle">
                 <div className="results-visual-card">
                   <span className="results-visual-icon">▣</span>
-                  <strong>Exam Results</strong>
-                  <small>Check your performance</small>
+                  <strong>{t("examResults")}</strong>
+                  <small>{t("checkYourPerformance")}</small>
 
                   <div className="results-visual-lines">
                     <i />
@@ -83,7 +97,7 @@ export function ResultsPage() {
 
                   <div className="results-visual-status">
                     <span />
-                    Result Updates
+                    {t("resultUpdates")}
                   </div>
                 </div>
               </div>
@@ -100,8 +114,10 @@ export function ResultsPage() {
 
           <section className="results-updates panel" id="updates">
             <div className="section-heading">
-              <h2>Latest Exam Results</h2>
-              <span>{results.length} updates</span>
+              <h2>{t("latestExamResults")}</h2>
+              <span>
+                {results.length} {t("updatesCount")}
+              </span>
             </div>
 
             <div className="update-list">
@@ -125,29 +141,29 @@ export function ResultsPage() {
 
                     <time>
                       {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            "mr-IN",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : "नवीन"}
+                        ? new Date(
+                            `${item.date}T12:00:00`,
+                          ).toLocaleDateString(dateLocale, {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : t("new")}
                     </time>
 
-                    <span className="new-pill">New</span>
+                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
               ) : (
                 <div className="empty-state">
-                  सध्या परीक्षा निकाल अपडेट्स उपलब्ध नाहीत.
+                  {t("noResultsAvailable")}
                 </div>
               )}
             </div>
           </section>
         </main>
       </div>
+
       <PortalFooter />
     </>
   );

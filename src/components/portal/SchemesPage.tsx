@@ -4,13 +4,27 @@ import "./UpdatesSection.css";
 import "./SchemesPage.css";
 
 import { useMemo, useState } from "react";
+import type { Language } from "shivanya-i18n";
+
 import { usePortalData } from "./portal-data";
+import { usePortalLanguage } from "./PortalLanguageContext";
+
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
+
 export function SchemesPage() {
   const [query, setQuery] = useState("");
+
   const { data } = usePortalData();
+  const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
 
   const schemes = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -27,6 +41,13 @@ export function SchemesPage() {
     });
   }, [data.items, query]);
 
+  const dateLocale =
+    language === "mr"
+      ? "mr-IN"
+      : language === "hi"
+        ? "hi-IN"
+        : "en-IN";
+
   return (
     <>
       <div className="schemes-page">
@@ -34,19 +55,16 @@ export function SchemesPage() {
           <section className="schemes-hero">
             <div className="schemes-hero-content">
               <span className="schemes-eyebrow">
-                SHIVANYAMS · GOVERNMENT SCHEMES
+                {t("schemesEyebrow")}
               </span>
 
               <h1>
-                शासकीय योजना शोधा,
+                {t("schemesHeroTitleLine1")}
                 <br />
-                <span>प्रगतीची संधी मिळवा.</span>
+                <span>{t("schemesHeroTitleLine2")}</span>
               </h1>
 
-              <p>
-                Maharashtra and Central Government Schemes, Benefits,
-                Eligibility and Application Updates.
-              </p>
+              <p>{t("schemesHeroDescription")}</p>
 
               <form
                 className="schemes-search"
@@ -57,25 +75,19 @@ export function SchemesPage() {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="योजना, विभाग किंवा लाभ शोधा..."
+                  placeholder={t("schemesSearchPlaceholder")}
                 />
 
-                <button type="submit">Search</button>
+                <button type="submit">{t("search")}</button>
               </form>
-
-              <div className="schemes-hero-tags">
-                <span>Latest Schemes</span>
-                <span>Government Benefits</span>
-                <span>Application Updates</span>
-              </div>
             </div>
 
             <div className="schemes-hero-visual" aria-hidden="true">
               <div className="schemes-visual-circle">
                 <div className="schemes-visual-card">
                   <span className="schemes-visual-icon">▣</span>
-                  <strong>Government Schemes</strong>
-                  <small>Explore benefits</small>
+                  <strong>{t("governmentSchemes")}</strong>
+                  <small>{t("exploreBenefits")}</small>
 
                   <div className="schemes-visual-lines">
                     <i />
@@ -85,7 +97,7 @@ export function SchemesPage() {
 
                   <div className="schemes-visual-status">
                     <span />
-                    Scheme Updates
+                    {t("schemeUpdates")}
                   </div>
                 </div>
               </div>
@@ -102,8 +114,10 @@ export function SchemesPage() {
 
           <section className="schemes-updates panel" id="updates">
             <div className="section-heading">
-              <h2>Latest Government Schemes</h2>
-              <span>{schemes.length} updates</span>
+              <h2>{t("latestGovernmentSchemes")}</h2>
+              <span>
+                {schemes.length} {t("updatesCount")}
+              </span>
             </div>
 
             <div className="update-list">
@@ -127,29 +141,29 @@ export function SchemesPage() {
 
                     <time>
                       {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            "mr-IN",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : "नवीन"}
+                        ? new Date(
+                            `${item.date}T12:00:00`,
+                          ).toLocaleDateString(dateLocale, {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : t("new")}
                     </time>
 
-                    <span className="new-pill">New</span>
+                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
               ) : (
                 <div className="empty-state">
-                  सध्या शासकीय योजना अपडेट्स उपलब्ध नाहीत.
+                  {t("noSchemesAvailable")}
                 </div>
               )}
             </div>
           </section>
         </main>
       </div>
+
       <PortalFooter />
     </>
   );

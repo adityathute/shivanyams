@@ -16,6 +16,7 @@ import { usePortalLanguage } from "./PortalLanguageContext";
 const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
   scheme: "schemes",
+  examination: "examinations",
   result: "results",
   admit: "admit-cards",
   guide: "guides",

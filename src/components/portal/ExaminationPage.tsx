@@ -4,13 +4,27 @@ import "./UpdatesSection.css";
 import "./JobsPage.css";
 
 import { useMemo, useState } from "react";
+import type { Language } from "shivanya-i18n";
+
 import { usePortalData } from "./portal-data";
+import { usePortalLanguage } from "./PortalLanguageContext";
+
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
+
 export function ExaminationPage() {
   const [query, setQuery] = useState("");
+
   const { data } = usePortalData();
+  const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
 
   const examinations = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -27,6 +41,13 @@ export function ExaminationPage() {
     });
   }, [data.items, query]);
 
+  const dateLocale =
+    language === "mr"
+      ? "mr-IN"
+      : language === "hi"
+        ? "hi-IN"
+        : "en-IN";
+
   return (
     <>
       <div className="jobs-page">
@@ -34,19 +55,16 @@ export function ExaminationPage() {
           <section className="jobs-hero">
             <div className="jobs-hero-content">
               <span className="jobs-eyebrow">
-                SHIVANYAMS · EXAMINATION & PREPARATION
+                {t("examinationEyebrow")}
               </span>
 
               <h1>
-                परीक्षेची तयारी करा,
+                {t("examinationHeroTitleLine1")}
                 <br />
-                <span>यशाची संधी मिळवा.</span>
+                <span>{t("examinationHeroTitleLine2")}</span>
               </h1>
 
-              <p>
-                Maharashtra and Central Government Exam Notifications,
-                Syllabus, Exam Dates and Preparation Updates.
-              </p>
+              <p>{t("examinationHeroDescription")}</p>
 
               <form
                 className="jobs-search"
@@ -57,25 +75,19 @@ export function ExaminationPage() {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="परीक्षा, विभाग किंवा अभ्यासक्रम शोधा..."
+                  placeholder={t("examinationSearchPlaceholder")}
                 />
 
-                <button type="submit">Search</button>
+                <button type="submit">{t("search")}</button>
               </form>
-
-              <div className="jobs-hero-tags">
-                <span>Exam Notifications</span>
-                <span>Exam Dates</span>
-                <span>Syllabus & Preparation</span>
-              </div>
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">
               <div className="jobs-visual-circle">
                 <div className="jobs-visual-card">
                   <span className="jobs-visual-icon">▤</span>
-                  <strong>Examination</strong>
-                  <small>Prepare for success</small>
+                  <strong>{t("examination")}</strong>
+                  <small>{t("prepareForSuccess")}</small>
 
                   <div className="jobs-visual-lines">
                     <i />
@@ -85,20 +97,27 @@ export function ExaminationPage() {
 
                   <div className="jobs-visual-status">
                     <span />
-                    Exam Updates
+                    {t("examUpdates")}
                   </div>
                 </div>
               </div>
 
-              <div className="jobs-floating-icon jobs-floating-one">✓</div>
-              <div className="jobs-floating-icon jobs-floating-two">A+</div>
+              <div className="jobs-floating-icon jobs-floating-one">
+                ✓
+              </div>
+
+              <div className="jobs-floating-icon jobs-floating-two">
+                A+
+              </div>
             </div>
           </section>
 
           <section className="jobs-updates panel" id="updates">
             <div className="section-heading">
-              <h2>Latest Examination Updates</h2>
-              <span>{examinations.length} updates</span>
+              <h2>{t("latestExaminationUpdates")}</h2>
+              <span>
+                {examinations.length} {t("updatesCount")}
+              </span>
             </div>
 
             <div className="update-list">
@@ -122,23 +141,22 @@ export function ExaminationPage() {
 
                     <time>
                       {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            "mr-IN",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : "नवीन"}
+                        ? new Date(
+                            `${item.date}T12:00:00`,
+                          ).toLocaleDateString(dateLocale, {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : t("new")}
                     </time>
 
-                    <span className="new-pill">New</span>
+                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
               ) : (
                 <div className="empty-state">
-                  सध्या परीक्षा अपडेट्स उपलब्ध नाहीत.
+                  {t("noExaminationUpdates")}
                 </div>
               )}
             </div>

@@ -30,7 +30,6 @@
   color: var(--primary, #2563eb);
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 1.5px;
 }
 
 .about-title {
@@ -38,8 +37,7 @@
   margin: 0;
   font-size: clamp(32px, 4vw, 48px);
   font-weight: 800;
-  letter-spacing: -1.7px;
-  line-height: 1.15;
+  line-height: 1.5;
 }
 
 .about-hero-description {
@@ -143,14 +141,12 @@
   color: var(--primary, #2563eb);
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 1.5px;
 }
 
 .about-visual-card h2 {
   margin: 10px 0;
   font-size: 23px;
   font-weight: 750;
-  letter-spacing: -0.5px;
 }
 
 .about-visual-card p {
@@ -216,7 +212,6 @@
   margin: 0;
   font-size: 26px;
   font-weight: 750;
-  letter-spacing: -0.7px;
   line-height: 1.35;
 }
 
@@ -335,7 +330,6 @@
   margin: 0 0 12px;
   font-size: 25px;
   font-weight: 750;
-  letter-spacing: -0.6px;
   line-height: 1.4;
 }
 
@@ -455,7 +449,6 @@
   margin: 0;
   font-size: 27px;
   font-weight: 750;
-  letter-spacing: -0.7px;
 }
 
 .about-cta p {
@@ -568,7 +561,6 @@
 
   .about-title {
     font-size: 34px;
-    letter-spacing: -1px;
   }
 
   .about-section-heading h2,

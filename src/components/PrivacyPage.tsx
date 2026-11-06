@@ -1,9 +1,25 @@
+"use client";
+
 import { Typography } from "shivanya-ui";
+import type { Language } from "shivanya-i18n";
+
+import { usePortalLanguage } from "./portal/PortalLanguageContext";
+import {
+  getPrivacyPageText,
+  type PrivacyPageDictionaryKey,
+} from "../i18n/dictionaries/PrivacyPageDictionary";
+
 import { PortalFooter } from "./portal/PortalFooter";
+
 import "./ContactPage.css";
 import "./PrivacyPage.css";
 
 export function PrivacyPage() {
+  const { language } = usePortalLanguage();
+
+  const t = (key: PrivacyPageDictionaryKey) =>
+    getPrivacyPageText(key, language as Language);
+
   return (
     <>
       <main className="contact-page document-page privacy-page">
@@ -14,160 +30,83 @@ export function PrivacyPage() {
               variant="h1"
               className="document-page-title"
             >
-              Privacy Policy
+              {t("pageTitle")}
             </Typography>
 
             <Typography className="document-page-description">
-              Learn how ShivanyaMS handles your information and privacy.
+              {t("pageDescription")}
             </Typography>
           </div>
         </div>
 
         <article className="document-content">
-          <span className="contact-card-label">PRIVACY & DATA</span>
+          <span className="contact-card-label">
+            {t("privacyDataLabel")}
+          </span>
 
-          <h2>Privacy Policy</h2>
+          <h2>{t("pageTitle")}</h2>
 
           <div className="privacy-updated">
-            Last updated: 3 November 2026
+            {t("lastUpdated")} {t("updatedDate")}
           </div>
 
-          <p>
-            Welcome to <strong>ShivanyaMS</strong>. Your privacy is important
-            to us. This Privacy Policy explains how information may be
-            collected, used, and protected when you visit or use our website.
-          </p>
+          <p>{t("welcomeParagraph")}</p>
 
-          <h3>1. About ShivanyaMS</h3>
+          <h3>{t("section1Title")}</h3>
+          <p>{t("section1Paragraph")}</p>
 
-          <p>
-            ShivanyaMS is an independent information platform providing
-            updates related to government jobs, recruitment notifications,
-            government schemes, admit cards, results, and other useful
-            information.
-          </p>
-
-          <h3>2. Information We May Collect</h3>
-
-          <p>
-            Depending on how you use our website, we may collect the
-            following information:
-          </p>
+          <h3>{t("section2Title")}</h3>
+          <p>{t("section2Intro")}</p>
 
           <ul className="privacy-list">
-            <li>
-              Information you voluntarily provide, such as your name,
-              email address, or feedback.
-            </li>
-            <li>
-              Basic technical information, such as browser type,
-              device information, and pages visited.
-            </li>
-            <li>
-              Usage information that helps us understand and improve
-              website performance.
-            </li>
+            <li>{t("collectItem1")}</li>
+            <li>{t("collectItem2")}</li>
+            <li>{t("collectItem3")}</li>
           </ul>
 
-          <p>
-            Please do not submit passwords, financial information, or
-            other sensitive personal information through our contact
-            or feedback forms.
-          </p>
+          <p>{t("sensitiveInfoWarning")}</p>
 
-          <h3>3. How We Use Information</h3>
-
-          <p>Information may be used to:</p>
+          <h3>{t("section3Title")}</h3>
+          <p>{t("section3Intro")}</p>
 
           <ul className="privacy-list">
-            <li>Respond to your questions and feedback.</li>
-            <li>Improve website content and user experience.</li>
-            <li>Maintain website functionality and security.</li>
-            <li>Understand how visitors use our website.</li>
+            <li>{t("useItem1")}</li>
+            <li>{t("useItem2")}</li>
+            <li>{t("useItem3")}</li>
+            <li>{t("useItem4")}</li>
           </ul>
 
-          <h3>4. Cookies and Similar Technologies</h3>
+          <h3>{t("section4Title")}</h3>
+          <p>{t("section4Paragraph1")}</p>
+          <p>{t("section4Paragraph2")}</p>
 
-          <p>
-            ShivanyaMS may use cookies or similar technologies to support
-            website functionality, remember preferences, or understand
-            website usage.
-          </p>
+          <h3>{t("section5Title")}</h3>
+          <p>{t("section5Paragraph1")}</p>
+          <p>{t("section5Paragraph2")}</p>
 
-          <p>
-            You can manage or disable cookies through your browser
-            settings. Some website features may not work properly
-            if cookies are disabled.
-          </p>
+          <h3>{t("section6Title")}</h3>
+          <p>{t("section6Paragraph")}</p>
 
-          <h3>5. Third-Party Services</h3>
+          <h3>{t("section7Title")}</h3>
+          <p>{t("section7Paragraph")}</p>
 
-          <p>
-            Our website may use third-party services for analytics,
-            advertising, or other functionality. These services may
-            collect information according to their own privacy policies.
-          </p>
+          <h3>{t("section8Title")}</h3>
+          <p>{t("section8Paragraph")}</p>
 
-          <p>
-            ShivanyaMS does not control the privacy practices of
-            third-party websites or services. Please review their
-            privacy policies before using them.
-          </p>
+          <h3>{t("section9Title")}</h3>
+          <p>{t("section9Paragraph")}</p>
 
-          <h3>6. External Links</h3>
+          <h3>{t("section10Title")}</h3>
+          <p>{t("section10Paragraph")}</p>
 
-          <p>
-            Our website may contain links to government websites and
-            other external websites. We are not responsible for their
-            content, security, or privacy practices.
-          </p>
-
-          <h3>7. Information Sharing</h3>
-
-          <p>
-            We do not sell personal information submitted through our
-            website. Information may be shared when necessary to operate
-            the website, comply with applicable laws, or protect the
-            security and rights of ShivanyaMS and its users.
-          </p>
-
-          <h3>8. Data Security</h3>
-
-          <p>
-            We take reasonable steps to protect information from
-            unauthorized access, misuse, or disclosure. However,
-            no method of internet transmission or electronic storage
-            can be guaranteed to be completely secure.
-          </p>
-
-          <h3>9. Children's Privacy</h3>
-
-          <p>
-            ShivanyaMS is an informational website. We do not knowingly
-            collect personal information from children unless permitted
-            by applicable law and with appropriate consent where required.
-          </p>
-
-          <h3>10. Changes to This Privacy Policy</h3>
-
-          <p>
-            We may update this Privacy Policy from time to time.
-            Any changes will be published on this page along with
-            an updated date.
-          </p>
-
-          <h3>11. Contact Us</h3>
-
-          <p>
-            If you have any questions about this Privacy Policy or
-            your information, please contact us.
-          </p>
+          <h3>{t("section11Title")}</h3>
+          <p>{t("section11Paragraph")}</p>
 
           <div className="privacy-contact">
             <span className="privacy-contact-icon">✉</span>
 
             <div>
-              <strong>ShivanyaMS</strong>
+              <strong>{t("privacyContactName")}</strong>
               <a href="mailto:hello@shivanyams.com">
                 hello@shivanyams.com
               </a>
@@ -176,9 +115,8 @@ export function PrivacyPage() {
 
           <div className="document-notice">
             <p>
-              <strong>Your privacy matters.</strong> Please contact us
-              if you have concerns about information submitted through
-              ShivanyaMS.
+              <strong>{t("privacyNoticeTitle")}</strong>{" "}
+              {t("privacyNoticeDescription")}
             </p>
           </div>
         </article>

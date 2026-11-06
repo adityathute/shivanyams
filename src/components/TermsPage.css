@@ -1,3 +1,4 @@
+
 /* Terms page layout */
 
 .terms-page {
@@ -22,7 +23,6 @@
   margin: 0;
   font-size: clamp(30px, 3vw, 40px);
   font-weight: 750;
-  letter-spacing: -1.2px;
   line-height: 1.2;
 }
 
@@ -72,7 +72,6 @@
   color: var(--primary, #2563eb);
   font-size: 10px;
   font-weight: 750;
-  letter-spacing: 1.5px;
   text-transform: uppercase;
 }
 
@@ -82,7 +81,6 @@
   margin: 0 0 16px;
   font-size: 25px;
   font-weight: 750;
-  letter-spacing: -0.6px;
   line-height: 1.35;
 }
 
@@ -101,7 +99,6 @@
   color: var(--text-primary, #172033);
   font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.2px;
   line-height: 1.5;
 }
 
@@ -124,6 +121,8 @@
   margin-bottom: 0;
 }
 
+/* Updated date */
+
 .terms-page .terms-updated {
   display: inline-flex;
   align-items: center;
@@ -142,25 +141,31 @@
 
 /* Lists */
 
-.terms-page .terms-list {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-
+.terms-page .document-content ul.terms-list {
+  display: block;
   margin: 0 0 18px;
-  padding: 0 0 0 22px;
+  padding-left: 24px;
+
+  list-style: disc outside;
 
   color: var(--text-secondary, #64748b);
   font-size: 14px;
   line-height: 1.8;
 }
 
-.terms-page .terms-list li {
+.terms-page .document-content ul.terms-list li {
+  display: list-item;
+  margin-bottom: 8px;
   padding-left: 4px;
 }
 
-.terms-page .terms-list li::marker {
+.terms-page .document-content ul.terms-list li:last-child {
+  margin-bottom: 0;
+}
+
+.terms-page .document-content ul.terms-list li::marker {
   color: var(--primary, #2563eb);
+  font-size: 1em;
 }
 
 /* Links */
@@ -225,6 +230,14 @@
   background: var(--surface-secondary, #1f2937);
 }
 
+[data-theme="dark"] .terms-page .document-content ul.terms-list {
+  color: var(--text-secondary, #9ca3af);
+}
+
+[data-theme="dark"] .terms-page .document-content ul.terms-list li::marker {
+  color: #60a5fa;
+}
+
 [data-theme="dark"] .terms-page .document-notice {
   background: rgb(59 130 246 / 10%);
   border-color: rgb(96 165 250 / 20%);
@@ -261,9 +274,13 @@
   }
 
   .terms-page .document-content p,
-  .terms-page .terms-list {
+  .terms-page .document-content ul.terms-list {
     font-size: 13px;
     line-height: 1.8;
+  }
+
+  .terms-page .document-content ul.terms-list {
+    padding-left: 22px;
   }
 
   .terms-page .document-notice {

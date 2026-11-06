@@ -4,13 +4,27 @@ import "./UpdatesSection.css";
 import "./AdmitCardsPage.css";
 
 import { useMemo, useState } from "react";
+import type { Language } from "shivanya-i18n";
+
 import { usePortalData } from "./portal-data";
+import { usePortalLanguage } from "./PortalLanguageContext";
+
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
+import {
+  baseDictionary,
+  getBaseText,
+} from "../../i18n/dictionaries/base";
+
 export function AdmitCardsPage() {
   const [query, setQuery] = useState("");
+
   const { data } = usePortalData();
+  const { language } = usePortalLanguage();
+
+  const t = (key: keyof typeof baseDictionary) =>
+    getBaseText(key, language as Language);
 
   const admitCards = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -27,6 +41,13 @@ export function AdmitCardsPage() {
     });
   }, [data.items, query]);
 
+  const dateLocale =
+    language === "mr"
+      ? "mr-IN"
+      : language === "hi"
+        ? "hi-IN"
+        : "en-IN";
+
   return (
     <>
       <div className="admit-page">
@@ -34,19 +55,16 @@ export function AdmitCardsPage() {
           <section className="admit-hero">
             <div className="admit-hero-content">
               <span className="admit-eyebrow">
-                SHIVANYAMS · EXAM & ADMIT CARDS
+                {t("admitEyebrow")}
               </span>
 
               <h1>
-                प्रवेशपत्र डाउनलोड करा,
+                {t("admitHeroTitleLine1")}
                 <br />
-                <span>परीक्षेसाठी सज्ज व्हा.</span>
+                <span>{t("admitHeroTitleLine2")}</span>
               </h1>
 
-              <p>
-                Maharashtra and Central Government Exam Admit Cards, Hall
-                Tickets, Exam Dates and Instructions.
-              </p>
+              <p>{t("admitHeroDescription")}</p>
 
               <form
                 className="admit-search"
@@ -57,25 +75,19 @@ export function AdmitCardsPage() {
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="परीक्षा, विभाग किंवा प्रवेशपत्र शोधा..."
+                  placeholder={t("admitSearchPlaceholder")}
                 />
 
-                <button type="submit">Search</button>
+                <button type="submit">{t("search")}</button>
               </form>
-
-              <div className="admit-hero-tags">
-                <span>Latest Admit Cards</span>
-                <span>Hall Tickets</span>
-                <span>Exam Instructions</span>
-              </div>
             </div>
 
             <div className="admit-hero-visual" aria-hidden="true">
               <div className="admit-visual-circle">
                 <div className="admit-visual-card">
                   <span className="admit-visual-icon">▣</span>
-                  <strong>Exam Admit Card</strong>
-                  <small>Ready for examination</small>
+                  <strong>{t("examAdmitCard")}</strong>
+                  <small>{t("readyForExamination")}</small>
 
                   <div className="admit-visual-lines">
                     <i />
@@ -85,21 +97,27 @@ export function AdmitCardsPage() {
 
                   <div className="admit-visual-status">
                     <span />
-                    Hall Ticket Updates
+                    {t("hallTicketUpdates")}
                   </div>
                 </div>
               </div>
 
-              <div className="admit-floating-icon admit-floating-one">✓</div>
+              <div className="admit-floating-icon admit-floating-one">
+                ✓
+              </div>
 
-              <div className="admit-floating-icon admit-floating-two">↓</div>
+              <div className="admit-floating-icon admit-floating-two">
+                ↓
+              </div>
             </div>
           </section>
 
           <section className="admit-updates panel" id="updates">
             <div className="section-heading">
-              <h2>Latest Admit Cards</h2>
-              <span>{admitCards.length} updates</span>
+              <h2>{t("latestAdmitCards")}</h2>
+              <span>
+                {admitCards.length} {t("updatesCount")}
+              </span>
             </div>
 
             <div className="update-list">
@@ -123,29 +141,29 @@ export function AdmitCardsPage() {
 
                     <time>
                       {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            "mr-IN",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : "नवीन"}
+                        ? new Date(
+                            `${item.date}T12:00:00`,
+                          ).toLocaleDateString(dateLocale, {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : t("new")}
                     </time>
 
-                    <span className="new-pill">New</span>
+                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
               ) : (
                 <div className="empty-state">
-                  सध्या प्रवेशपत्र अपडेट्स उपलब्ध नाहीत.
+                  {t("noAdmitCardsAvailable")}
                 </div>
               )}
             </div>
           </section>
         </main>
       </div>
+
       <PortalFooter />
     </>
   );

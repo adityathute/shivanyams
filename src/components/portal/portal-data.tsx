@@ -365,7 +365,7 @@ export const initialData: PortalData = {
     {
       id: "v1",
       title: "Aadhaar Card Download कसे करावे? | संपूर्ण माहिती",
-      url: "",
+      url: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
       thumbnail:
         "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=700&q=80",
       language: "मराठी",

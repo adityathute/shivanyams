@@ -18,10 +18,6 @@ import {
 
 import type { ItemType } from "./portal-data";
 
-export function getCategorySubtitle(category: Category, language: Language) {
-  return language === "en" ? category.name_mr : category.name_en;
-}
-
 export type Language = "en" | "mr" | "hi";
 
 export interface Category {
@@ -34,6 +30,10 @@ export interface Category {
   description_mr: string;
   description_hi: string;
   active: boolean;
+}
+
+export function getCategorySubtitle(category: Category, language: Language) {
+  return language === "en" ? category.name_mr : category.name_en;
 }
 
 interface CategoryConfig {
@@ -98,6 +98,104 @@ const categoryOrder = [
   "videos",
 ];
 
+const categorySlugAliases: Record<string, string> = {
+  job: "jobs",
+  "government-jobs": "jobs",
+  scheme: "schemes",
+  "government-schemes": "schemes",
+  result: "results",
+  "admit-card": "admit-cards",
+  admitcards: "admit-cards",
+  guide: "guides",
+  article: "guides",
+  articles: "guides",
+  "article-guide": "guides",
+  "article-guides": "guides",
+  "articles-guide": "guides",
+  "articles-guides": "guides",
+  video: "videos",
+};
+
+const fallbackCategories: Category[] = [
+  {
+    id: -1,
+    slug: "jobs",
+    name_en: "Jobs",
+    name_mr: "नोकरी",
+    name_hi: "नौकरियां",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
+    id: -2,
+    slug: "schemes",
+    name_en: "Schemes",
+    name_mr: "योजना",
+    name_hi: "योजनाएं",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
+    id: -3,
+    slug: "examination",
+    name_en: "Examination",
+    name_mr: "परीक्षा",
+    name_hi: "परीक्षा",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
+    id: -4,
+    slug: "results",
+    name_en: "Results",
+    name_mr: "निकाल",
+    name_hi: "परिणाम",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
+    id: -5,
+    slug: "admit-cards",
+    name_en: "Admit Cards",
+    name_mr: "प्रवेशपत्र",
+    name_hi: "प्रवेश पत्र",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
+    id: -6,
+    slug: "guides",
+    name_en: "Articles & Guides",
+    name_mr: "लेख आणि मार्गदर्शक",
+    name_hi: "लेख और मार्गदर्शिकाएँ",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
+    id: -7,
+    slug: "videos",
+    name_en: "Videos",
+    name_mr: "व्हिडिओ",
+    name_hi: "वीडियो",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+];
+
 const API_URL =
   process.env.NEXT_PUBLIC_PORTAL_API_URL ??
   "http://localhost:8001/api/v1/portal";
@@ -130,10 +228,33 @@ interface CategoryApiResponse {
   results?: Category[];
 }
 
+function normalizeCategorySlug(slug: string) {
+  const normalized = slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
+  return categorySlugAliases[normalized] ?? normalized;
+}
+
+function mergeCategories(apiCategories: Category[]) {
+  const categoriesBySlug = new Map<string, Category>();
+
+  apiCategories
+    .filter((category) => category.active)
+    .forEach((category) => {
+      const slug = normalizeCategorySlug(category.slug);
+
+      if (categoryConfig[slug] && !categoriesBySlug.has(slug)) {
+        categoriesBySlug.set(slug, { ...category, slug });
+      }
+    });
+
+  return categoryOrder.map((slug, index) => {
+    return categoriesBySlug.get(slug) ?? fallbackCategories[index];
+  });
+}
+
 export function CategoryGrid({ language = "mr" }: { language?: Language }) {
   const router = useRouter();
 
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -146,24 +267,17 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch categories");
+          throw new Error(`Failed to fetch categories: ${response.status}`);
         }
 
         const payload: Category[] | CategoryApiResponse = await response.json();
-
         const data = Array.isArray(payload) ? payload : (payload.results ?? []);
 
-        setCategories(
-          data
-            .filter((category) => category.active)
-            .sort(
-              (a, b) =>
-                categoryOrder.indexOf(a.slug) - categoryOrder.indexOf(b.slug),
-            ),
-        );
+        setCategories(mergeCategories(data));
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category loading failed:", error);
+          setCategories(fallbackCategories);
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -177,20 +291,14 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
     return () => controller.abort();
   }, []);
 
-  if (loading) {
-    return <section className="category-grid">Loading categories...</section>;
-  }
-
   return (
-    <section className="category-grid">
+    <section className="category-grid" aria-busy={loading}>
       {categories.map((category) => {
         const config = categoryConfig[category.slug];
 
-        if (!config) return null;
-
         return (
           <button
-            key={category.id}
+            key={category.slug}
             className={`category-card ${config.color}`}
             onClick={() => router.push(config.href)}
           >

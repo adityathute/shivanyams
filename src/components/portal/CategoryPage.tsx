@@ -79,14 +79,6 @@ function normalizeSlug(slug: string) {
   return slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
 }
 
-function getCategoryLanguage(category: Category, language: Language) {
-  return {
-    en: category.name_en,
-    mr: category.name_mr,
-    hi: category.name_hi,
-  }[language];
-}
-
 function getDescription(category: Category, language: Language) {
   return getCategoryDescription(category, language);
 }

@@ -12,7 +12,7 @@ type Item = {
   date: string;
   description: string;
   link: string;
-  type: "job" | "scheme" | "exam" | "result" | "admit" | "guide" | "video";
+  type: "job" | "scheme" | "examination" | "exam" | "result" | "admit" | "guide" | "video";
 };
 type Video = {
   id: string;
@@ -27,6 +27,7 @@ const defaults: Data = { items: [], videos: [] };
 const typeLabels: Record<Item["type"], string> = {
   job: "नोकरी",
   scheme: "योजना",
+  examination: "परीक्षा",
   exam: "परीक्षा",
   result: "निकाल",
   admit: "प्रवेशपत्र",

@@ -13,7 +13,8 @@
 .schemes-characters-image {
   position: relative;
   display: block;
-  width: 100%;
+  width: 90%;
+  max-width: 100%;
   height: auto;
   object-fit: contain;
   z-index: 1;
@@ -92,8 +93,8 @@
 }
 
 .schemes-badge-government {
-  top: 10%;
-  left: -4%;
+    top: 8%;
+    left: -1%;
   color: #159b60;
   transform: rotate(-8deg);
 }
@@ -107,7 +108,7 @@
 
 .schemes-badge-money {
   bottom: 46%;
-  right: -37px;
+  right: -20px;
   color: #d99b00;
   font-size: 25px;
   font-weight: 800;
@@ -118,7 +119,7 @@
 .schemes-character-sparkle {
   position: absolute;
   top: 49%;
-  left: -5%;
+  left: 0%;
   color: #ffc928;
   font-size: 32px;
   z-index: 2;

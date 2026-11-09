@@ -24,7 +24,8 @@
 .results-characters-image {
   position: relative;
   display: block;
-  width: 100%;
+  width: 90%;
+  max-width: 100%;
   height: auto;
   object-fit: contain;
   z-index: 1;
@@ -125,8 +126,8 @@
 /* Success badge */
 
 .results-badge-check {
-  top: 28%;
-  right: -3%;
+  top: 30%;
+  right: 0%;
 
   color: var(--results-check-color);
 
@@ -136,9 +137,8 @@
 /* Job / result badge */
 
 .results-badge-job {
-  bottom: 73%;
-  left: -4%;
-
+  bottom: 71%;
+  left: 1%;
   color: var(--results-job-color);
 
   transform: rotate(-8deg);
@@ -149,8 +149,8 @@
 .results-character-sparkle {
   position: absolute;
 
-  top: 54%;
-  left: -4%;
+  top: 53%;
+  left: 1%;
 
   color: var(--results-sparkle-color);
   font-size: 32px;

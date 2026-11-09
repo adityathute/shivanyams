@@ -28,9 +28,9 @@ export function JobsCharacters() {
 
       <div className="jobs-character-sparkle">✦</div>
 
-      <div className="jobs-character-badge jobs-badge-check">
+      {/* <div className="jobs-character-badge jobs-badge-check">
         <CheckIcon size={24} />
-      </div>
+      </div> */}
 
       <div className="jobs-character-badge jobs-badge-building">
         <GovernmentSchemeIcon size={24} />

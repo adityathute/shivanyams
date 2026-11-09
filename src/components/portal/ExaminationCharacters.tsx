@@ -27,9 +27,9 @@ export function ExaminationCharacters() {
 
       <div className="examination-character-sparkle">✦</div>
 
-      <div className="examination-character-badge examination-badge-check">
+      {/* <div className="examination-character-badge examination-badge-check">
         <CheckIcon size={24} />
-      </div>
+      </div> */}
 
       <div className="examination-character-badge examination-badge-grade">
         A+

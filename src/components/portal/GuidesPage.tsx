@@ -5,17 +5,14 @@ import "./GuidesPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
-
+import { GuidesCharacters } from "./GuidesCharacters";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function GuidesPage() {
   const [query, setQuery] = useState("");
@@ -42,11 +39,7 @@ export function GuidesPage() {
   }, [data.items, query]);
 
   const dateLocale =
-    language === "mr"
-      ? "mr-IN"
-      : language === "hi"
-        ? "hi-IN"
-        : "en-IN";
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
 
   return (
     <>
@@ -54,9 +47,7 @@ export function GuidesPage() {
         <main>
           <section className="guides-hero">
             <div className="guides-hero-content">
-              <span className="guides-eyebrow">
-                {t("guidesEyebrow")}
-              </span>
+              <span className="guides-eyebrow">{t("guidesEyebrow")}</span>
 
               <h1>
                 {t("guidesHeroTitleLine1")}
@@ -83,32 +74,7 @@ export function GuidesPage() {
             </div>
 
             <div className="guides-hero-visual" aria-hidden="true">
-              <div className="guides-visual-circle">
-                <div className="guides-visual-card">
-                  <span className="guides-visual-icon">▣</span>
-                  <strong>{t("helpfulGuides")}</strong>
-                  <small>{t("learnStepByStep")}</small>
-
-                  <div className="guides-visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <div className="guides-visual-status">
-                    <span />
-                    {t("knowledgeUpdates")}
-                  </div>
-                </div>
-              </div>
-
-              <div className="guides-floating-icon guides-floating-one">
-                ✓
-              </div>
-
-              <div className="guides-floating-icon guides-floating-two">
-                ?
-              </div>
+              <GuidesCharacters />
             </div>
           </section>
 
@@ -141,13 +107,14 @@ export function GuidesPage() {
 
                     <time>
                       {item.date
-                        ? new Date(
-                            `${item.date}T12:00:00`,
-                          ).toLocaleDateString(dateLocale, {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                            dateLocale,
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
                         : t("new")}
                     </time>
 
@@ -155,9 +122,7 @@ export function GuidesPage() {
                   </a>
                 ))
               ) : (
-                <div className="empty-state">
-                  {t("noGuidesAvailable")}
-                </div>
+                <div className="empty-state">{t("noGuidesAvailable")}</div>
               )}
             </div>
           </section>

@@ -1,3 +1,4 @@
+
 .admit-page {
   margin-top: 14px;
   color: var(--text, #172b45);
@@ -5,18 +6,23 @@
 
 .admit-hero {
   min-height: 250px;
-  padding: 28px 5% 28px 2%;
+  padding: 28px 2% 28px 2%;
   border-radius: 12px;
   background: #effaff;
   border: 1px solid #d5f1f8;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
+
   position: relative;
   overflow: hidden;
 }
 
 .admit-hero-content {
+  flex: 1;
+  min-width: 0;
   max-width: 670px;
   position: relative;
   z-index: 2;
@@ -106,127 +112,61 @@
   border-radius: 4px;
 }
 
+/* Characters */
+
 .admit-hero-visual {
   position: relative;
-  width: 240px;
-  height: 200px;
+  width: 430px;
   flex-shrink: 0;
-}
 
-.admit-visual-circle {
-  position: absolute;
-  width: 190px;
-  height: 190px;
-  border-radius: 50%;
-  background: #d5f2fa;
-  right: 10px;
-  top: 5px;
-  display: grid;
-  place-items: center;
-}
-
-.admit-visual-card {
-  width: 155px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 12px 30px #155e751a;
-  transform: rotate(-3deg);
-}
-
-.admit-visual-icon {
-  display: block;
-  font-size: 24px;
-  color: #0891b2;
-}
-
-.admit-visual-card strong,
-.admit-visual-card small {
-  display: block;
-}
-
-.admit-visual-card strong {
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-.admit-visual-card small {
-  font-size: 9px;
-  color: #64748b;
-  margin-top: 3px;
-}
-
-.admit-visual-lines {
-  display: grid;
-  gap: 5px;
-  margin-top: 12px;
-}
-
-.admit-visual-lines i {
-  display: block;
-  height: 5px;
-  border-radius: 5px;
-  background: #e4f1f5;
-}
-
-.admit-visual-lines i:nth-child(2) {
-  width: 75%;
-}
-
-.admit-visual-lines i:nth-child(3) {
-  width: 50%;
-}
-
-.admit-visual-status {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 12px;
-  font-size: 8px;
-  color: #0891b2;
+  justify-content: center;
+
+  overflow: visible;
 }
 
-.admit-visual-status span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #06b6d4;
+/* Character component */
+
+.admit-hero-visual .admit-characters {
+  width: 430px;
+  max-width: 100%;
 }
 
-.admit-floating-icon {
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  background: white;
-  box-shadow: 0 5px 15px #155e7518;
-  color: #0891b2;
-  font-weight: 800;
-}
-
-.admit-floating-one {
-  top: 15px;
-  left: 5px;
-}
-
-.admit-floating-two {
-  bottom: 15px;
-  right: 0;
-}
+/* Updates */
 
 .admit-updates {
   margin-top: 20px;
 }
 
-@media (max-width: 900px) {
+/* Tablet */
+
+@media (max-width: 1100px) {
+  .admit-hero {
+    padding-right: 1%;
+    gap: 10px;
+  }
+
   .admit-hero-visual {
-    transform: scale(0.85);
-    transform-origin: right center;
-    margin-left: -25px;
+    width: 360px;
+  }
+
+  .admit-hero-visual .admit-characters {
+    width: 360px;
   }
 }
+
+@media (max-width: 900px) {
+  .admit-hero-visual {
+    width: 300px;
+  }
+
+  .admit-hero-visual .admit-characters {
+    width: 300px;
+  }
+}
+
+/* Mobile */
 
 @media (max-width: 760px) {
   .admit-hero {
@@ -261,6 +201,8 @@
   }
 }
 
+/* Dark theme */
+
 [data-theme="dark"] .admit-hero {
   background: #142832;
   border-color: #25434e;
@@ -287,8 +229,4 @@
 
 [data-theme="dark"] .admit-search input {
   color: #e6edf3;
-}
-
-[data-theme="dark"] .admit-visual-circle {
-  background: #1e3b46;
 }

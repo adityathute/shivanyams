@@ -5,17 +5,14 @@ import "./AdmitCardsPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
-
+import { AdmitCardsCharacters } from "./AdmitCardsCharacters";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function AdmitCardsPage() {
   const [query, setQuery] = useState("");
@@ -42,11 +39,7 @@ export function AdmitCardsPage() {
   }, [data.items, query]);
 
   const dateLocale =
-    language === "mr"
-      ? "mr-IN"
-      : language === "hi"
-        ? "hi-IN"
-        : "en-IN";
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
 
   return (
     <>
@@ -54,9 +47,7 @@ export function AdmitCardsPage() {
         <main>
           <section className="admit-hero">
             <div className="admit-hero-content">
-              <span className="admit-eyebrow">
-                {t("admitEyebrow")}
-              </span>
+              <span className="admit-eyebrow">{t("admitEyebrow")}</span>
 
               <h1>
                 {t("admitHeroTitleLine1")}
@@ -83,32 +74,7 @@ export function AdmitCardsPage() {
             </div>
 
             <div className="admit-hero-visual" aria-hidden="true">
-              <div className="admit-visual-circle">
-                <div className="admit-visual-card">
-                  <span className="admit-visual-icon">▣</span>
-                  <strong>{t("examAdmitCard")}</strong>
-                  <small>{t("readyForExamination")}</small>
-
-                  <div className="admit-visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <div className="admit-visual-status">
-                    <span />
-                    {t("hallTicketUpdates")}
-                  </div>
-                </div>
-              </div>
-
-              <div className="admit-floating-icon admit-floating-one">
-                ✓
-              </div>
-
-              <div className="admit-floating-icon admit-floating-two">
-                ↓
-              </div>
+              <AdmitCardsCharacters />
             </div>
           </section>
 
@@ -141,13 +107,14 @@ export function AdmitCardsPage() {
 
                     <time>
                       {item.date
-                        ? new Date(
-                            `${item.date}T12:00:00`,
-                          ).toLocaleDateString(dateLocale, {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                            dateLocale,
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
                         : t("new")}
                     </time>
 
@@ -155,9 +122,7 @@ export function AdmitCardsPage() {
                   </a>
                 ))
               ) : (
-                <div className="empty-state">
-                  {t("noAdmitCardsAvailable")}
-                </div>
+                <div className="empty-state">{t("noAdmitCardsAvailable")}</div>
               )}
             </div>
           </section>

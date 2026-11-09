@@ -1,0 +1,229 @@
+.guides-characters {
+  position: relative;
+  width: 430px;
+  max-width: 100%;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  isolation: isolate;
+  overflow: visible;
+}
+
+/* Image */
+
+.guides-characters-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Animated background circle */
+
+.guides-character-circle {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+
+  background: #ffead0;
+  z-index: 0;
+
+  animation: guides-circle-morph 12s ease-in-out infinite;
+
+  transform-origin: center;
+  will-change: transform, border-radius, opacity;
+}
+
+@keyframes guides-circle-morph {
+  0%,
+  100% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  20% {
+    border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  40% {
+    border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.8;
+  }
+
+  60% {
+    border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+
+  75% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  90% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+/* Floating badges */
+
+.guides-character-badge {
+  position: absolute;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 15px;
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 8px 25px rgba(237, 134, 18, 0.15);
+
+  z-index: 2;
+
+  animation: guides-badge-float 4s ease-in-out infinite;
+}
+
+/* Guide badge */
+
+.guides-badge-guide {
+  top: 10%;
+  left: -4%;
+
+  color: #ed8612;
+
+  transform: rotate(-8deg);
+}
+
+/* Check badge */
+
+.guides-badge-check {
+  top: 30%;
+  right: 0%;
+
+  color: #22b573;
+
+  animation-delay: -2s;
+}
+
+/* Book badge */
+
+.guides-badge-book {
+  bottom: 53%;
+  right: 0%;
+  font-size: 24px;
+}
+
+/* Sparkle */
+
+.guides-character-sparkle {
+  position: absolute;
+
+  top: 47%;
+  left: -3%;
+
+  color: #ffc928;
+  font-size: 32px;
+
+  z-index: 2;
+
+  animation: guides-sparkle 3s ease-in-out infinite;
+}
+
+/* Animations */
+
+@keyframes guides-badge-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes guides-sparkle {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9) rotate(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(15deg);
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .guides-characters {
+    width: 100%;
+  }
+
+  .guides-character-circle {
+    width: 65%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .guides-character-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .guides-character-badge svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .guides-character-sparkle {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 390px) {
+  .guides-character-badge {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Dark mode */
+
+[data-theme="dark"] .guides-character-circle {
+  background: #44301e;
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .guides-character-badge,
+  .guides-character-sparkle,
+  .guides-character-circle {
+    animation: none;
+  }
+}

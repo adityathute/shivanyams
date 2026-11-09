@@ -122,11 +122,13 @@
 
 .videos-hero-art {
   position: relative;
+  width: 430px;
+  height: auto;
+  flex-shrink: 0;
   display: flex;
-  flex: 0 0 230px;
   align-items: center;
   justify-content: center;
-  min-height: 220px;
+  overflow: visible;
 }
 
 .videos-art-circle {
@@ -567,5 +569,19 @@ a.videos-card {
 
   .videos-card-content h3 {
     font-size: 13px;
+  }
+}
+
+@media (max-width: 900px) {
+  .videos-hero-art {
+    transform: scale(0.85);
+    transform-origin: right center;
+    margin-left: -25px;
+  }
+}
+
+@media (max-width: 760px) {
+  .videos-hero-art {
+    display: none;
   }
 }

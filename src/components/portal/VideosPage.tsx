@@ -2,16 +2,13 @@
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
-
+import { VideosCharacters } from "./VideosCharacters";
 import { SearchIcon, VideoIcon } from "shivanya-ui";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 import { PortalFooter } from "./PortalFooter";
 
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 import "./VideosPage.css";
 
@@ -36,10 +33,7 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
       } else {
         const segments = parsedUrl.pathname.split("/").filter(Boolean);
 
-        if (
-          ["embed", "shorts", "live"].includes(segments[0]) &&
-          segments[1]
-        ) {
+        if (["embed", "shorts", "live"].includes(segments[0]) && segments[1]) {
           videoId = segments[1];
         }
       }
@@ -79,9 +73,7 @@ export function VideosPage() {
       <main className="videos-page">
         <section className="videos-hero">
           <div className="videos-hero-content">
-            <span className="videos-eyebrow">
-              {t("videosEyebrow")}
-            </span>
+            <span className="videos-eyebrow">{t("videosEyebrow")}</span>
 
             <h1>
               {t("videosHeroTitleLine1")}
@@ -109,15 +101,7 @@ export function VideosPage() {
           </div>
 
           <div className="videos-hero-art" aria-hidden="true">
-            <div className="videos-art-circle">
-              <div className="videos-art-play">
-                <VideoIcon size={38} />
-              </div>
-            </div>
-
-            <span className="videos-art-label">
-              {t("watchLearnGrow")}
-            </span>
+            <VideosCharacters />
           </div>
         </section>
 

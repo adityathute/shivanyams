@@ -13,7 +13,7 @@ export function ExaminationCharacters() {
       <div className="examination-character-circle" />
 
       <Image
-        src="/images/examination-image.png"
+        src="/images/exam-image.png"
         alt="Students preparing for examinations"
         width={1536}
         height={1024}

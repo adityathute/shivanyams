@@ -27,9 +27,9 @@ export function SchemesCharacters() {
 
       <div className="schemes-character-sparkle">✦</div>
 
-      <div className="schemes-character-badge schemes-badge-check">
+      {/* <div className="schemes-character-badge schemes-badge-check">
         <CheckIcon size={24} />
-      </div>
+      </div> */}
 
       <div className="schemes-character-badge schemes-badge-money">
         ₹

@@ -5,7 +5,7 @@ import "./SchemesPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
-
+import { SchemesCharacters } from "./SchemesCharacters";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
@@ -83,32 +83,8 @@ export function SchemesPage() {
             </div>
 
             <div className="schemes-hero-visual" aria-hidden="true">
-              <div className="schemes-visual-circle">
-                <div className="schemes-visual-card">
-                  <span className="schemes-visual-icon">▣</span>
-                  <strong>{t("governmentSchemes")}</strong>
-                  <small>{t("exploreBenefits")}</small>
+  <SchemesCharacters />
 
-                  <div className="schemes-visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <div className="schemes-visual-status">
-                    <span />
-                    {t("schemeUpdates")}
-                  </div>
-                </div>
-              </div>
-
-              <div className="schemes-floating-icon schemes-floating-one">
-                ✓
-              </div>
-
-              <div className="schemes-floating-icon schemes-floating-two">
-                ₹
-              </div>
             </div>
           </section>
 

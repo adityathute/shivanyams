@@ -5,17 +5,14 @@ import "./ResultsPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
-
+import { ResultsCharacters } from "./ResultsCharacters";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function ResultsPage() {
   const [query, setQuery] = useState("");
@@ -42,11 +39,7 @@ export function ResultsPage() {
   }, [data.items, query]);
 
   const dateLocale =
-    language === "mr"
-      ? "mr-IN"
-      : language === "hi"
-        ? "hi-IN"
-        : "en-IN";
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
 
   return (
     <>
@@ -54,9 +47,7 @@ export function ResultsPage() {
         <main>
           <section className="results-hero">
             <div className="results-hero-content">
-              <span className="results-eyebrow">
-                {t("resultsEyebrow")}
-              </span>
+              <span className="results-eyebrow">{t("resultsEyebrow")}</span>
 
               <h1>
                 {t("resultsHeroTitleLine1")}
@@ -83,32 +74,7 @@ export function ResultsPage() {
             </div>
 
             <div className="results-hero-visual" aria-hidden="true">
-              <div className="results-visual-circle">
-                <div className="results-visual-card">
-                  <span className="results-visual-icon">▣</span>
-                  <strong>{t("examResults")}</strong>
-                  <small>{t("checkYourPerformance")}</small>
-
-                  <div className="results-visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <div className="results-visual-status">
-                    <span />
-                    {t("resultUpdates")}
-                  </div>
-                </div>
-              </div>
-
-              <div className="results-floating-icon results-floating-one">
-                ✓
-              </div>
-
-              <div className="results-floating-icon results-floating-two">
-                ★
-              </div>
+              <ResultsCharacters />
             </div>
           </section>
 
@@ -141,13 +107,14 @@ export function ResultsPage() {
 
                     <time>
                       {item.date
-                        ? new Date(
-                            `${item.date}T12:00:00`,
-                          ).toLocaleDateString(dateLocale, {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                            dateLocale,
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
                         : t("new")}
                     </time>
 
@@ -155,9 +122,7 @@ export function ResultsPage() {
                   </a>
                 ))
               ) : (
-                <div className="empty-state">
-                  {t("noResultsAvailable")}
-                </div>
+                <div className="empty-state">{t("noResultsAvailable")}</div>
               )}
             </div>
           </section>

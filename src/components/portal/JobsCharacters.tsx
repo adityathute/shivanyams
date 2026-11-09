@@ -13,48 +13,28 @@ export function JobsCharacters() {
     <div className="jobs-characters">
       <div className="jobs-character-circle" />
 
-      <div className="jobs-character girl">
-        <Image
-          src="/images/jobs/girl.png"
-          alt="Student girl"
-          width={420}
-          height={500}
-          priority
-        />
-      </div>
-
-      <div className="jobs-character boy">
-        <Image
-          src="/images/jobs/boy.png"
-          alt="Student boy holding job checklist"
-          width={420}
-          height={500}
-          priority
-        />
-      </div>
+      <Image
+        src="/images/job-image.png"
+        alt="Students preparing for government jobs and examinations"
+        width={1600}
+        height={920}
+        priority
+        className="jobs-characters-image"
+      />
 
       <div className="jobs-character-badge jobs-badge-job">
-        <span>
-          {" "}
-          <GovernmentJobIcon size={24} />
-        </span>
+        <GovernmentJobIcon size={24} />
       </div>
+
       <div className="jobs-character-sparkle">✦</div>
 
       <div className="jobs-character-badge jobs-badge-check">
-        <span>
-          {" "}
-          <CheckIcon size={24} />
-        </span>
+        <CheckIcon size={24} />
       </div>
 
       <div className="jobs-character-badge jobs-badge-building">
-        <span>
-          {" "}
-          <GovernmentSchemeIcon size={24} />
-        </span>
+        <GovernmentSchemeIcon size={24} />
       </div>
-
     </div>
   );
 }

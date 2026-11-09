@@ -15,7 +15,6 @@ export type ItemType =
   | "result"
   | "admit"
   | "exam"
-  | "batch-exam"
   | "guide"
   | "video";
 

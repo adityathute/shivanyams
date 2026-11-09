@@ -1,5 +1,5 @@
 import { CategoryPage } from "../../components/portal/CategoryPage";
 
 export default function BatchExaminationPageRoute() {
-  return <CategoryPage type="batch-exam" />;
+  return <CategoryPage type="exam" />;
 }

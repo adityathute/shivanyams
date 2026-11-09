@@ -18,7 +18,6 @@ const categorySlugByType: Record<ItemType, string> = {
   scheme: "schemes",
   examination: "examination",
   exam: "exam",
-  "batch-exam": "batch-exam",
   result: "results",
   admit: "admit-cards",
   guide: "guides",
@@ -28,7 +27,6 @@ const categorySlugByType: Record<ItemType, string> = {
 const categoryTypeBySlug: Record<string, ItemType> = {
   jobs: "job",
   exam: "exam",
-  "batch-exam": "batch-exam",
   schemes: "scheme",
   results: "result",
   "admit-cards": "admit",

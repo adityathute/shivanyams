@@ -1,24 +1,36 @@
 .jobs-characters {
   position: relative;
   width: 430px;
-  height: 280px;
+  max-width: 100%;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   isolation: isolate;
+  overflow: visible;
 }
+
+.jobs-characters-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Animated background circle */
 
 .jobs-character-circle {
   position: absolute;
   width: 260px;
   height: 260px;
-  top: 10px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   background: #dce9ff;
-  z-index: -1;
+  z-index: 0;
 
   animation: jobs-circle-morph 12s ease-in-out infinite;
   transform-origin: center;
@@ -29,73 +41,40 @@
   0%,
   100% {
     border-radius: 50%;
-    transform: translateX(-50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 
   20% {
     border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
-    transform: translateX(-50%) scale(1.05);
-    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
   }
 
   40% {
     border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
-    transform: translateX(-50%) scale(0.95);
+    transform: translate(-50%, -50%) scale(0.95);
     opacity: 0.8;
   }
 
   60% {
     border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
-    transform: translateX(-50%) scale(0.8);
+    transform: translate(-50%, -50%) scale(0.8);
     opacity: 0.5;
   }
 
   75% {
-    border-radius: 50%;
-    transform: translateX(-50%) scale(0);
+    transform: translate(-50%, -50%) scale(0);
     opacity: 0;
   }
 
   90% {
     border-radius: 50%;
-    transform: translateX(-50%) scale(0.8);
+    transform: translate(-50%, -50%) scale(0.8);
     opacity: 0.5;
   }
 }
 
-.jobs-character {
-  position: absolute;
-  bottom: -25px;
-  width: 220px;
-  height: 265px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: none;
-  will-change: auto;
-}
-
-.jobs-character img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: bottom;
-}
-
-.jobs-character.girl {
-    bottom: -30px;
-  left: 20px;
-  z-index: 2;
-  animation: none;
-}
-
-.jobs-character.boy {
-        bottom: -30px;
-  right: 45px;
-  z-index: 3;
-  animation: none;
-}
+/* Floating badges */
 
 .jobs-character-badge {
   position: absolute;
@@ -107,50 +86,43 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.12);
-  z-index: 4;
+  z-index: 2;
+
   animation: jobs-badge-float 4s ease-in-out infinite;
 }
 
 .jobs-badge-job {
-      right: -5px;
-  bottom: 30px;
+  color: #2563eb;
+  bottom: 26%;
+  right: -27px;
   transform: rotate(8deg);
-
-  color: #8B5E3C;
-}
-
-.jobs-badge-job span {
-  font-size: 23px;
 }
 
 .jobs-badge-check {
   right: 12px;
-  top: 35px;
+  top: 10%;
   color: #22b573;
-  font-size: 32px;
-  font-weight: 800;
   animation-delay: -2s;
 }
 
 .jobs-badge-building {
+  color: #2563eb;
+  top: 10%;
   left: 5px;
-  top: 30px;
   transform: rotate(-8deg);
-    color: #2563eb;
 }
 
-.jobs-badge-building span {
-  font-size: 24px;
-}
+/* Sparkle */
 
 .jobs-character-sparkle {
-  position: absolute;
-  left: 40px;
-  top: 100px;
-  color: #ffc928;
+  color: rgb(255, 201, 40);
+  z-index: 2;
   font-size: 32px;
+  position: absolute;
+  top: 49%;
+  left: 0%;
+
   animation: jobs-sparkle 3s ease-in-out infinite;
-  z-index: 4;
 }
 
 @keyframes jobs-badge-float {
@@ -177,34 +149,54 @@
   }
 }
 
+/* Responsive */
+
 @media (max-width: 760px) {
-  .jobs-hero {
-    flex-direction: column;
+  .jobs-characters {
+    width: 100%;
   }
 
-  .jobs-characters {
-    transform: scale(0.8);
-    margin: -10px auto -25px;
-    transform-origin: center;
+  .jobs-character-circle {
+    width: 65%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .jobs-character-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .jobs-character-badge svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .jobs-character-sparkle {
+    font-size: 24px;
   }
 }
 
 @media (max-width: 390px) {
-  .jobs-characters {
-    transform: scale(0.65);
-    margin: -35px auto -45px;
+  .jobs-character-badge {
+    width: 32px;
+    height: 32px;
   }
 }
 
+/* Dark mode */
+
+[data-theme="dark"] .jobs-character-circle {
+  background: #243b58;
+}
+
+/* Reduced motion */
+
 @media (prefers-reduced-motion: reduce) {
-  .jobs-character,
   .jobs-character-badge,
   .jobs-character-sparkle,
   .jobs-character-circle {
     animation: none;
   }
-}
-
-[data-theme="dark"] .jobs-character-circle {
-  background: #243b58;
 }

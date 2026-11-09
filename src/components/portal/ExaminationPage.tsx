@@ -5,17 +5,14 @@ import "./JobsPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
-
+import { ExaminationCharacters } from "./ExaminationCharacters";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function ExaminationPage() {
   const [query, setQuery] = useState("");
@@ -42,11 +39,7 @@ export function ExaminationPage() {
   }, [data.items, query]);
 
   const dateLocale =
-    language === "mr"
-      ? "mr-IN"
-      : language === "hi"
-        ? "hi-IN"
-        : "en-IN";
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
 
   return (
     <>
@@ -54,9 +47,7 @@ export function ExaminationPage() {
         <main>
           <section className="jobs-hero">
             <div className="jobs-hero-content">
-              <span className="jobs-eyebrow">
-                {t("examinationEyebrow")}
-              </span>
+              <span className="jobs-eyebrow">{t("examinationEyebrow")}</span>
 
               <h1>
                 {t("examinationHeroTitleLine1")}
@@ -83,32 +74,7 @@ export function ExaminationPage() {
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">
-              <div className="jobs-visual-circle">
-                <div className="jobs-visual-card">
-                  <span className="jobs-visual-icon">▤</span>
-                  <strong>{t("examination")}</strong>
-                  <small>{t("prepareForSuccess")}</small>
-
-                  <div className="jobs-visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <div className="jobs-visual-status">
-                    <span />
-                    {t("examUpdates")}
-                  </div>
-                </div>
-              </div>
-
-              <div className="jobs-floating-icon jobs-floating-one">
-                ✓
-              </div>
-
-              <div className="jobs-floating-icon jobs-floating-two">
-                A+
-              </div>
+              <ExaminationCharacters />
             </div>
           </section>
 
@@ -141,13 +107,14 @@ export function ExaminationPage() {
 
                     <time>
                       {item.date
-                        ? new Date(
-                            `${item.date}T12:00:00`,
-                          ).toLocaleDateString(dateLocale, {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                            dateLocale,
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
                         : t("new")}
                     </time>
 
@@ -155,9 +122,7 @@ export function ExaminationPage() {
                   </a>
                 ))
               ) : (
-                <div className="empty-state">
-                  {t("noExaminationUpdates")}
-                </div>
+                <div className="empty-state">{t("noExaminationUpdates")}</div>
               )}
             </div>
           </section>

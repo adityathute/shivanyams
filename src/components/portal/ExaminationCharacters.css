@@ -1,0 +1,203 @@
+.examination-characters {
+  position: relative;
+  width: 430px;
+  max-width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.examination-characters-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Animated background circle */
+
+.examination-character-circle {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #dce9ff;
+  z-index: 0;
+
+  animation: examination-circle-morph 12s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform, border-radius, opacity;
+}
+
+@keyframes examination-circle-morph {
+  0%,
+  100% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  20% {
+    border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  40% {
+    border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.8;
+  }
+
+  60% {
+    border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+
+  75% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  90% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+/* Floating badges */
+
+.examination-character-badge {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.12);
+  z-index: 2;
+
+  animation: examination-badge-float 4s ease-in-out infinite;
+}
+
+.examination-badge-job {
+  top: 10%;
+  left: -8%;
+  color: #2563eb;
+  transform: rotate(-8deg);
+}
+
+.examination-badge-check {
+  top: 18%;
+  right: -7%;
+  color: #22b573;
+  animation-delay: -2s;
+}
+
+.examination-badge-grade {
+  bottom: -4%;
+  right: -15px;
+  color: #2563eb;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+/* Sparkle */
+
+.examination-character-sparkle {
+  position: absolute;
+  top: 51%;
+  left: -6%;
+  color: #ffc928;
+  font-size: 32px;
+  z-index: 2;
+
+  animation: examination-sparkle 3s ease-in-out infinite;
+}
+
+@keyframes examination-badge-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes examination-sparkle {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9) rotate(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(15deg);
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .examination-characters {
+    width: 100%;
+  }
+
+  .examination-character-circle {
+    width: 65%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .examination-character-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .examination-character-badge svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .examination-character-sparkle {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 390px) {
+  .examination-character-badge {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Dark mode */
+
+[data-theme="dark"] .examination-character-circle {
+  background: #243b58;
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .examination-character-badge,
+  .examination-character-sparkle,
+  .examination-character-circle {
+    animation: none;
+  }
+}

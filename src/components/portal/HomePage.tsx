@@ -57,7 +57,7 @@ export function HomePage() {
       </div>
 
       <main>
-        <HeroSection onSearch={setSearch} />
+        <HeroSection />
 
         <CategoryGrid language={selectedLanguage} />
 

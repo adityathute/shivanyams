@@ -4,7 +4,7 @@
 .privacy-page {
   width: 100%;
   min-width: 0;
-  padding: 28px 24px;
+  padding: 24px 16px 0 16px;
   box-sizing: border-box;
   color: var(--text-primary, #172033);
   background: var(--surface-secondary, #f6f8fc);

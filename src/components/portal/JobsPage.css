@@ -109,113 +109,13 @@
 
 .jobs-hero-visual {
   position: relative;
-  width: 240px;
-  height: 200px;
+  width: 430px;
+  height: 280px;
   flex-shrink: 0;
-}
-
-.jobs-visual-circle {
-  position: absolute;
-  width: 190px;
-  height: 190px;
-  border-radius: 50%;
-  background: #dce9ff;
-  right: 10px;
-  top: 5px;
-  display: grid;
-  place-items: center;
-}
-
-.jobs-visual-card {
-  width: 155px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 12px 30px #204a8a1a;
-  transform: rotate(-3deg);
-}
-
-.jobs-visual-icon {
-  display: block;
-  font-size: 24px;
-  color: #2563eb;
-}
-
-.jobs-visual-card strong,
-.jobs-visual-card small {
-  display: block;
-}
-
-.jobs-visual-card strong {
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-.jobs-visual-card small {
-  font-size: 9px;
-  color: #64748b;
-  margin-top: 3px;
-}
-
-.jobs-visual-lines {
-  display: grid;
-  gap: 5px;
-  margin-top: 12px;
-}
-
-.jobs-visual-lines i {
-  display: block;
-  height: 5px;
-  border-radius: 5px;
-  background: #e8eef7;
-}
-
-.jobs-visual-lines i:nth-child(2) {
-  width: 75%;
-}
-
-.jobs-visual-lines i:nth-child(3) {
-  width: 50%;
-}
-
-.jobs-visual-status {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 12px;
-  font-size: 8px;
-  color: #16a34a;
-}
-
-.jobs-visual-status span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-}
-
-.jobs-floating-icon {
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  background: white;
-  box-shadow: 0 5px 15px #204a8a18;
-  color: #2563eb;
-  font-weight: 800;
-}
-
-.jobs-floating-one {
-  top: 15px;
-  left: 5px;
-}
-
-.jobs-floating-two {
-  bottom: 15px;
-  right: 0;
-  color: #16a34a;
+  justify-content: center;
+  overflow: visible;
 }
 
 .jobs-updates {
@@ -287,6 +187,3 @@
   color: #e6edf3;
 }
 
-[data-theme="dark"] .jobs-visual-circle {
-  background: #243b58;
-}

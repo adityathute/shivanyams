@@ -184,6 +184,7 @@
 }
 
 .social-links a:hover {
+    color: #fff;
   transform: translateY(-3px);
 }
 
@@ -383,8 +384,12 @@
 
 /* Footer */
 .portal-footer {
-  margin-top: auto;
-  flex-shrink: 0;
+  background: #ffffff;
+  color: #172943;
+  border: 1px solid #e1e8f0;
+  border-radius: 10px;
+  margin: 16px 16px 0;
+  overflow: hidden;
 }
 
 .portal-header {
@@ -534,13 +539,18 @@
   }
   /* ------------------------------------- */
 
-  .footer-bottom {
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    padding: 12px 0;
-    gap: 9px;
-  }
+/* Copyright and policy links remain separate */
+.footer-bottom {
+  margin-top: auto;
+  min-height: 47px;
+  border-top: 1px solid #e1e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 0 16px;
+  background: #f8fafc;
+}
   .footer-bottom > div {
     flex-wrap: wrap;
     justify-content: center;
@@ -606,4 +616,111 @@
 
 .footer-category-link:hover svg {
   opacity: 1;
+}
+
+/* Footer - Match YouTube Videos Card */
+.portal-footer {
+  background: #ffffff;
+  color: #172943;
+  border: 1px solid #e1e8f0;
+  border-radius: 10px;
+  margin: 16px 16px 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Footer Main */
+.footer-main {
+  background: transparent;
+  padding: 20px;
+}
+
+/* Footer Headings */
+.footer-main h3 {
+  color: #172943;
+}
+
+/* Footer Description */
+.footer-main p {
+  color: #52647b;
+}
+
+/* Footer Links */
+.footer-main > div > a:not(.brand),
+.footer-main > div > button {
+  color: #52647b;
+}
+
+.footer-main > div > a:hover {
+  color: #007bff;
+}
+
+/* Brand */
+.portal-footer .brand strong {
+  color: #172943;
+}
+
+.portal-footer .brand small {
+  color: #52647b;
+}
+
+/* Social Links */
+.social-links a {
+  background: #edf2f8;
+  color: #172943;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 47px;
+  border-top: 1px solid #e1e8f0;
+  padding: 0 20px;
+}
+
+/* Footer Bottom Links */
+.footer-bottom a {
+  color: #52647b;
+}
+
+.footer-bottom a:hover {
+  color: var(--primary, #2563eb);
+}
+
+[data-theme="dark"] .portal-footer {
+  background: #151b23;
+  border-color: #293544;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .footer-main h3,
+[data-theme="dark"] .portal-footer .brand strong {
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .footer-main p,
+[data-theme="dark"] .portal-footer .brand small,
+[data-theme="dark"] .footer-main > div > a:not(.brand) {
+  color: #a9b7c8;
+}
+
+[data-theme="dark"] .footer-bottom {
+  background: #101720;
+  border-color: #293544;
+  color: #a9b7c8;
+}
+
+[data-theme="dark"] .footer-bottom a {
+  color: #a9b7c8;
+}
+
+.footer-bottom > span {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+[data-theme="dark"] .footer-bottom > span {
+  color: #64748b;
 }

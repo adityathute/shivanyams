@@ -2,17 +2,14 @@
 
 import "./UpdatesSection.css";
 import "./JobsPage.css";
-
 import { useMemo, useState } from "react";
 import { usePortalData } from "./portal-data";
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 import type { Language } from "shivanya-i18n";
 import { usePortalLanguage } from "./PortalLanguageContext";
-import {
-  baseDictionary,
-  getBaseText,
-} from "../../i18n/dictionaries/base";
+import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
+import { JobsCharacters } from "./JobsCharacters";
 
 export function JobsPage() {
   const [query, setQuery] = useState("");
@@ -43,9 +40,7 @@ export function JobsPage() {
         <main>
           <section className="jobs-hero">
             <div className="jobs-hero-content">
-              <span className="jobs-eyebrow">
-                {t("jobsEyebrow")}
-              </span>
+              <span className="jobs-eyebrow">{t("jobsEyebrow")}</span>
 
               <h1>
                 {t("jobsHeroTitleLine1")}
@@ -72,34 +67,7 @@ export function JobsPage() {
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">
-              <div className="jobs-visual-circle">
-                <div className="jobs-visual-card">
-                  <span className="jobs-visual-icon">▣</span>
-
-                  <strong>{t("governmentJobs")}</strong>
-
-                  <small>{t("exploreOpportunities")}</small>
-
-                  <div className="jobs-visual-lines">
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-
-                  <div className="jobs-visual-status">
-                    <span />
-                    {t("recruitmentUpdates")}
-                  </div>
-                </div>
-              </div>
-
-              <div className="jobs-floating-icon jobs-floating-one">
-                ✓
-              </div>
-
-              <div className="jobs-floating-icon jobs-floating-two">
-                ₹
-              </div>
+              <JobsCharacters />
             </div>
           </section>
 
@@ -133,9 +101,7 @@ export function JobsPage() {
 
                     <time>
                       {item.date
-                        ? new Date(
-                            `${item.date}T12:00:00`,
-                          ).toLocaleDateString(
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
                             language === "mr"
                               ? "mr-IN"
                               : language === "hi"
@@ -154,9 +120,7 @@ export function JobsPage() {
                   </a>
                 ))
               ) : (
-                <div className="empty-state">
-                  {t("noJobsAvailable")}
-                </div>
+                <div className="empty-state">{t("noJobsAvailable")}</div>
               )}
             </div>
           </section>

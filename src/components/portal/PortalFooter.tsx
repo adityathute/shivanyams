@@ -100,163 +100,165 @@ export function PortalFooter() {
   };
 
   return (
-    <footer className="portal-footer" id="contact">
-      <div className="footer-main">
-        <div className="footer-brand">
-          <Link className="brand" href="/">
-            <Image
-              src="/logo.png"
-              alt="ShivanyaMS Logo"
-              width={48}
-              height={48}
-              className="brand-logo-img"
-              priority
-            />
+    <div className="portal-footer-area">
+      <footer className="portal-footer" id="contact">
+        <div className="footer-main">
+          <div className="footer-brand">
+            <Link className="brand" href="/">
+              <Image
+                src="/logo.png"
+                alt="ShivanyaMS Logo"
+                width={48}
+                height={48}
+                className="brand-logo-img"
+                priority
+              />
 
-            <span>
-              <strong>ShivanyaMS</strong>
-              <small>Govt Jobs, Schemes &amp; Updates</small>
-            </span>
-          </Link>
-          <p className="footer-brand-desc">
-            {getBaseText("footerDescription", language)}
-          </p>
+              <span>
+                <strong>ShivanyaMS</strong>
+                <small>Govt Jobs, Schemes &amp; Updates</small>
+              </span>
+            </Link>
+            <p className="footer-brand-desc">
+              {getBaseText("footerDescription", language)}
+            </p>
 
-          <div className="social-links">
-            <a
-              href="https://www.facebook.com/profile.php?id=61596321414691"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
+            <div className="social-links">
+              <a
+                href="https://www.facebook.com/profile.php?id=61596321414691"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+              >
+                <FacebookIcon size={20} />
+              </a>
+
+              <a
+                href="https://www.instagram.com/shivanyams"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
+                <InstagramIcon size={20} />
+              </a>
+
+              <a
+                href="https://x.com/shivanyams"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+              >
+                <TwitterIcon size={20} />
+              </a>
+
+              <a
+                href="https://www.youtube.com/@Shivanya-MS"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
+              >
+                <YoutubeIcon size={20} />
+              </a>
+
+              <a
+                href="https://whatsapp.com/channel/0029VbCnsGAJpe8iDaN4qM3g"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+              >
+                <WhatsappIcon size={20} />
+              </a>
+
+              <a
+                href="https://t.me/+Qk03yff1TUBkNzg1"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Telegram"
+              >
+                <TelegramIcon size={20} />
+              </a>
+
+              <a
+                href="https://threads.net/@your-page"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Threads"
+              >
+                <ThreadsIcon size={20} />
+              </a>
+            </div>
+          </div>
+
+          <div className="footer-category-col">
+            <h3>{getBaseText("importantSections", language)}</h3>
+
+            {[...categories]
+              .map((category) => ({
+                ...category,
+                slug: normalizeCategorySlug(category.slug),
+              }))
+              .filter((category) => categoryConfig[category.slug])
+              .sort(
+                (a, b) =>
+                  (categoryOrder[a.slug] ?? 99) - (categoryOrder[b.slug] ?? 99),
+              )
+              .map((category) => {
+                const config = categoryConfig[category.slug];
+                const Icon = categoryIcons[category.slug];
+
+                return (
+                  <Link
+                    key={category.id}
+                    href={config.href}
+                    className="footer-category-link"
+                  >
+                    {Icon && <Icon size={16} />}
+                    <span>
+                      {getCategoryTitle(category, language as Language)}
+                    </span>
+                  </Link>
+                );
+              })}
+          </div>
+
+          <div>
+            <h3>{getBaseText("usefulLinks", language)}</h3>
+            {links.slice(0, 7).map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {getLinkTitle(link, language)}
+              </a>
+            ))}
+          </div>
+
+          <div className="contact-col">
+            <h3>{getBaseText("contactUs", language)}</h3>
+
+            <p className="footer-contact-item">
+              <MailIcon size={16} />
+              <span>{getBaseText("contactEmail", language)}</span>
+            </p>
+
+            <p className="footer-contact-item">
+              <MapPinIcon size={16} />
+              <span>{getBaseText("contactLocation", language)}</span>
+            </p>
+
+            <Button
+              variant="primary"
+              size="md"
+              className="contact-button"
+              onClick={() => router.push("/contact")}
             >
-              <FacebookIcon size={20} />
-            </a>
-
-            <a
-              href="https://www.instagram.com/shivanyams"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-            >
-              <InstagramIcon size={20} />
-            </a>
-
-            <a
-              href="https://x.com/shivanyams"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Twitter"
-            >
-              <TwitterIcon size={20} />
-            </a>
-
-            <a
-              href="https://www.youtube.com/@Shivanya-MS"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-            >
-              <YoutubeIcon size={20} />
-            </a>
-
-            <a
-              href="https://whatsapp.com/channel/0029VbCnsGAJpe8iDaN4qM3g"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-            >
-              <WhatsappIcon size={20} />
-            </a>
-
-            <a
-              href="https://t.me/+Qk03yff1TUBkNzg1"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Telegram"
-            >
-              <TelegramIcon size={20} />
-            </a>
-
-            <a
-              href="https://threads.net/@your-page"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Threads"
-            >
-              <ThreadsIcon size={20} />
-            </a>
+              {getBaseText("contactButton", language)}
+            </Button>
           </div>
         </div>
-
-        <div className="footer-category-col">
-          <h3>{getBaseText("importantSections", language)}</h3>
-
-          {[...categories]
-            .map((category) => ({
-              ...category,
-              slug: normalizeCategorySlug(category.slug),
-            }))
-            .filter((category) => categoryConfig[category.slug])
-            .sort(
-              (a, b) =>
-                (categoryOrder[a.slug] ?? 99) - (categoryOrder[b.slug] ?? 99),
-            )
-            .map((category) => {
-              const config = categoryConfig[category.slug];
-              const Icon = categoryIcons[category.slug];
-
-              return (
-                <Link
-                  key={category.id}
-                  href={config.href}
-                  className="footer-category-link"
-                >
-                  {Icon && <Icon size={16} />}
-                  <span>
-                    {getCategoryTitle(category, language as Language)}
-                  </span>
-                </Link>
-              );
-            })}
-        </div>
-
-        <div>
-          <h3>{getBaseText("usefulLinks", language)}</h3>
-          {links.slice(0, 7).map((link) => (
-            <a
-              key={link.id}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {getLinkTitle(link, language)}
-            </a>
-          ))}
-        </div>
-
-        <div className="contact-col">
-          <h3>{getBaseText("contactUs", language)}</h3>
-
-          <p className="footer-contact-item">
-            <MailIcon size={16} />
-            <span>{getBaseText("contactEmail", language)}</span>
-          </p>
-
-          <p className="footer-contact-item">
-            <MapPinIcon size={16} />
-            <span>{getBaseText("contactLocation", language)}</span>
-          </p>
-
-          <Button
-            variant="primary"
-            size="md"
-            className="contact-button"
-            onClick={() => router.push("/contact")}
-          >
-            {getBaseText("contactButton", language)}
-          </Button>
-        </div>
-      </div>
+      </footer>
 
       <div className="footer-bottom">
         <div>
@@ -271,6 +273,6 @@ export function PortalFooter() {
           © {new Date().getFullYear()} ShivanyaMS. All rights reserved.
         </span>
       </div>
-    </footer>
+    </div>
   );
 }

@@ -22,7 +22,7 @@ function getSceneTime(): SceneTime {
   return "night";
 }
 
-const ENABLE_SCENE_TESTER = false; // Set to true to enable the scene tester dropdown for testing different scenes
+const ENABLE_SCENE_TESTER = true; // Set to true to enable the scene tester dropdown for testing different scenes
 
 export function HeroSection() {
   const { language } = usePortalLanguage();

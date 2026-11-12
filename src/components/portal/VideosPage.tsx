@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import type { Language } from "shivanya-i18n";
 import { VideosCharacters } from "./VideosCharacters";
 import { SearchIcon, VideoIcon } from "shivanya-ui";
 import { usePortalData } from "./portal-data";
+import { createPostSlug } from "./PortalPostDetail";
 import { usePortalLanguage } from "./PortalLanguageContext";
 import { PortalFooter } from "./PortalFooter";
 
@@ -166,7 +168,7 @@ export function VideosPage() {
                         <span>{t("guide")}</span>
                       </div>
 
-                      <h3>{video.title}</h3>
+                      <h3><Link href={`/videos/${createPostSlug(video.title)}`}>{video.title}</Link></h3>
                     </div>
                   </>
                 );
@@ -183,9 +185,7 @@ export function VideosPage() {
                   <a
                     className="videos-card"
                     key={video.id}
-                    href={video.url}
-                    target="_blank"
-                    rel="noreferrer"
+                    href={`/videos/${createPostSlug(video.title)}`}
                   >
                     {content}
                   </a>

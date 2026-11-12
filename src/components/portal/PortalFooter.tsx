@@ -263,8 +263,8 @@ export function PortalFooter() {
       <div className="footer-bottom">
         <div>
           <a href="/about">About Us</a>
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/terms">Terms of Use</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
           <a href="/feedback">Feedback</a>
           <a href="/disclaimer">Disclaimer</a>
           <a href="/contact">Contact Us</a>

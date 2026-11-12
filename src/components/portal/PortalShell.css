@@ -245,7 +245,7 @@
   gap: 15px;
   color: #c0cde0;
   font-size: 10px;
-  padding: 0 16px;
+  padding: 12px 16px;
 }
 
 .footer-bottom > div {
@@ -548,7 +548,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  padding: 0 16px;
   background: #f8fafc;
 }
   .footer-bottom > div {
@@ -677,7 +676,6 @@
   justify-content: space-between;
   min-height: 47px;
   border-top: 1px solid #e1e8f0;
-  padding: 0 20px;
 }
 
 /* Footer Bottom Links */

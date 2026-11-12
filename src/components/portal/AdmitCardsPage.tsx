@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
 import { AdmitCardsCharacters } from "./AdmitCardsCharacters";
 import { usePortalData } from "./portal-data";
+import { createPostSlug } from "./PortalPostDetail";
 import { usePortalLanguage } from "./PortalLanguageContext";
 
 import { SearchIcon } from "shivanya-ui";
@@ -92,9 +93,7 @@ export function AdmitCardsPage() {
                   <a
                     className="update-row"
                     key={item.id}
-                    href={item.link || "#"}
-                    target={item.link ? "_blank" : undefined}
-                    rel={item.link ? "noreferrer" : undefined}
+                    href={`/admit-cards/${createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}

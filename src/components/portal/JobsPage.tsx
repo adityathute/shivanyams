@@ -4,6 +4,7 @@ import "./UpdatesSection.css";
 import "./JobsPage.css";
 import { useMemo, useState } from "react";
 import { usePortalData } from "./portal-data";
+import { createPostSlug } from "./PortalPostDetail";
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "./PortalFooter";
 import type { Language } from "shivanya-i18n";
@@ -86,9 +87,7 @@ export function JobsPage() {
                   <a
                     className="update-row"
                     key={item.id}
-                    href={item.link || "#"}
-                    target={item.link ? "_blank" : undefined}
-                    rel={item.link ? "noreferrer" : undefined}
+                    href={`/jobs/${createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}

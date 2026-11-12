@@ -181,15 +181,7 @@ export function VideosPage() {
                   );
                 }
 
-                return video.url ? (
-                  <a
-                    className="videos-card"
-                    key={video.id}
-                    href={`/videos/${createPostSlug(video.title)}`}
-                  >
-                    {content}
-                  </a>
-                ) : (
+                return (
                   <div className="videos-card" key={video.id}>
                     {content}
                   </div>

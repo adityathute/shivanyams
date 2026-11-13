@@ -74,7 +74,7 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     icon: <AdmitCardIcon />,
     href: "/admit-cards",
   },
-  guides: {
+  "articles-guides": {
     type: "guide",
     color: "orange",
     icon: <GuideIcon />,
@@ -144,7 +144,7 @@ export function normalizeCategorySlug(slug: string) {
   const normalized = slug
     .trim()
     .toLowerCase()
-    .replace(/[_\\s]+/g, "-");
+    .replace(/[_\s]+/g, "-");
   return categorySlugAliases[normalized] ?? normalized;
 }
 

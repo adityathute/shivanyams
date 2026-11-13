@@ -25,6 +25,7 @@ export type JobDetails = {
   examination_name: string;
   post_details: string;
   educational_qualification: string;
+  location: string;
   age_limit: string;
   application_fee: string;
   application_mode: string;
@@ -102,7 +103,6 @@ type JobApiItem = {
   interview_venue?: string;
   important_dates?: { label: string; date: string }[];
   important_links?: { label: string; url: string }[];
-  location?: string;
 };
 
 export const STORAGE_KEY = "shivanyams-portal-data";

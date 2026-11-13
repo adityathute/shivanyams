@@ -66,7 +66,6 @@ export default function AddPostPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
-  const categoryId = jobsCategory ? String(jobsCategory.id) : "";
   const [job, setJob] = useState<JobForm>(emptyJob);
   const [notice, setNotice] = useState("");
   const [saving, setSaving] = useState(false);
@@ -75,6 +74,8 @@ export default function AddPostPage() {
     () => categories.find((category) => category.slug === "jobs"),
     [categories],
   );
+
+  const categoryId = jobsCategory ? String(jobsCategory.id) : "";
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");

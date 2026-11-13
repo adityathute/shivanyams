@@ -122,15 +122,6 @@ const emptyData: PortalData = {
   error: "",
 };
 
-const kindByCategorySlug: Record<string, ItemType> = {
-  schemes: "scheme",
-  results: "result",
-  "admit-cards": "admit",
-  "articles-guides": "guide",
-  examination: "examination",
-  videos: "video",
-};
-
 function getDate(value?: string | null) {
   return value ? value.slice(0, 10) : "";
 }
@@ -195,7 +186,7 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
     }
     visited.add(nextUrl);
 
-    const response = await fetch(nextUrl, { signal });
+    const response: Response = await fetch(nextUrl, { signal });
     if (!response.ok) {
       throw new Error(`Request failed (${response.status}): ${nextUrl}`);
     }
@@ -212,7 +203,7 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
       continue;
     }
 
-    const resolvedNext = new URL(payload.next, url);
+    const resolvedNext: URL = new URL(payload.next, url);
     if (resolvedNext.origin !== apiOrigin) {
       throw new Error("Pagination returned a URL outside the portal API.");
     }
@@ -242,7 +233,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
   const items = jobs.map(mapJob);
   const videos: Video[] = [];
 
-  contentKinds.forEach(([kind, type], index) => {
+  contentKinds.forEach(([, type], index) => {
     const entries = contentLists[index];
 
     entries.forEach((entry) => {

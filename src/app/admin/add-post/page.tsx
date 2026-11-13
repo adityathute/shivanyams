@@ -66,15 +66,26 @@ function slugify(value: string) {
 }
 
 function getAccessToken() {
-  const candidates = [
-    "shivanya-access-token",
-    "access_token",
-    "accessToken",
-  ];
+  const storageKeys = Object.keys(window.localStorage);
 
-  for (const key of candidates) {
-    const value = window.localStorage.getItem(key);
-    if (value) return value;
+  for (const key of storageKeys) {
+    if (!/token/i.test(key)) continue;
+
+    const raw = window.localStorage.getItem(key);
+    if (!raw) continue;
+
+    try {
+      const parsed = JSON.parse(raw);
+      const token =
+        parsed?.access_token ||
+        parsed?.accessToken ||
+        parsed?.token ||
+        parsed?.state?.accessToken ||
+        parsed?.state?.access_token;
+      if (typeof token === "string" && token) return token;
+    } catch {
+      if (raw.split(".").length === 3) return raw;
+    }
   }
 
   return "";

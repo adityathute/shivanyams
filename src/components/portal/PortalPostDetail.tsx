@@ -104,7 +104,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const post = useMemo(() => {
     if (category === "videos") {
       const video = data.videos.find(
-        (entry) => (entry.slug || createPostSlug(entry.title)) === slug || entry.id === slug,
+        (entry) => createPostSlug(entry.title) === slug || entry.id === slug,
       );
       return video
         ? {

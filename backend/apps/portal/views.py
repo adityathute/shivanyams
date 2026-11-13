@@ -56,8 +56,8 @@ class AdminJobs(viewsets.ModelViewSet):
         if category is None or category.slug != "jobs" or not category.active:
             raise PermissionDenied("Select the active Jobs category.")
 
-        company, _ = Company.objects.get_or_create(
-            slug="government-recruitment",
+        company, created = Company.objects.get_or_create(
+            slug=f"government-recruitment-{self.request.user.id}",
             defaults={
                 "owner_auth_id": str(self.request.user.id),
                 "name": "Government Recruitment",
@@ -65,6 +65,9 @@ class AdminJobs(viewsets.ModelViewSet):
                 "verified": True,
             },
         )
+        if not created and company.owner_auth_id != str(self.request.user.id):
+            raise PermissionDenied("Unable to assign the government recruitment company.")
+
         serializer.save(
             company=company,
             owner_auth_id=str(self.request.user.id),

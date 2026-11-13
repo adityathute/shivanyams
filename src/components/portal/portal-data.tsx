@@ -51,6 +51,7 @@ export type Video = {
   url: string;
   thumbnail: string;
   language: string;
+  slug?: string;
 };
 
 export type PortalData = {
@@ -101,6 +102,7 @@ type JobApiItem = {
   interview_venue?: string;
   important_dates?: { label: string; date: string }[];
   important_links?: { label: string; url: string }[];
+  location?: string;
 };
 
 export const STORAGE_KEY = "shivanyams-portal-data";
@@ -154,6 +156,7 @@ function mapJob(job: JobApiItem): Item {
       examination_name: job.examination_name || "",
       post_details: job.post_details || "",
       educational_qualification: job.educational_qualification || job.requirements || "",
+      location: job.location || "",
       age_limit: job.age_limit || "",
       application_fee: job.application_fee || "",
       application_mode: job.application_mode || "",
@@ -201,6 +204,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
       if (type === "video") {
         videos.push({
           id: String(entry.id),
+          slug: entry.slug,
           title: entry.title,
           url: entry.source_url,
           thumbnail: entry.image_url,

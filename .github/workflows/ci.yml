@@ -45,7 +45,7 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm -r build
           for package in packages/ai packages/auth packages/core packages/i18n packages/shell packages/ui; do
-            (cd "$package" && npm pack --pack-destination "$package_dir")
+            (cd "$package" && pnpm pack --pack-destination "$package_dir")
           done
           test -f "$package_dir/shivanya-ai-0.1.2.tgz"
           test -f "$package_dir/shivanya-auth-1.0.1.tgz"

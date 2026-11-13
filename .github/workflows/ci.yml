@@ -74,7 +74,7 @@ jobs:
             delete entry.integrity;
           }
 
-          fs.writeFileSync("package-lock.json", `${JSON.stringify(lock, null, 2)}\\n`);
+          fs.writeFileSync("package-lock.json", `${JSON.stringify(lock, null, 2)}\n`);
           NODE
 
       - name: Install portal dependencies

@@ -82,12 +82,14 @@ export function JobsPage() {
             </div>
 
             <div className="update-list">
-              {jobs.length ? (
+              {data.loading ? <div className="empty-state">Loading...</div> : null}
+              {!data.loading && data.error ? <div className="empty-state">{data.error}</div> : null}
+              {!data.loading && !data.error && jobs.length ? (
                 jobs.map((item) => (
                   <a
                     className="update-row"
                     key={item.id}
-                    href={`/jobs/${createPostSlug(item.title)}`}
+                    href={`/jobs/${item.slug || createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}
@@ -118,9 +120,9 @@ export function JobsPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
-              ) : (
+              ) : !data.loading && !data.error ? (
                 <div className="empty-state">{t("noJobsAvailable")}</div>
-              )}
+              ) : null}
             </div>
           </section>
         </main>

@@ -115,6 +115,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             link: video.url,
             image: video.thumbnail,
             body: "",
+            organization: "",
+            location: "",
+            startDate: "",
+            endDate: "",
+            eventDate: "",
             jobDetails: undefined,
           }
         : null;
@@ -133,8 +138,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           category: item.category,
           date: item.date,
           link: item.link,
-          image: "",
-          body: "",
+          image: item.content_details?.image_url || "",
+          body: item.content_details?.body || "",
+          organization: item.content_details?.organization || "",
+          location: item.content_details?.location || "",
+          startDate: item.content_details?.start_date || "",
+          endDate: item.content_details?.end_date || "",
+          eventDate: item.content_details?.event_date || "",
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
@@ -165,6 +175,21 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
               </div>
 
               <h1>{post.title}</h1>
+
+              {post.organization || post.location ? (
+                <div className="portal-post-context">
+                  {post.organization ? <span>{post.organization}</span> : null}
+                  {post.location ? <span>{post.location}</span> : null}
+                </div>
+              ) : null}
+
+              {post.startDate || post.endDate || post.eventDate ? (
+                <div className="portal-post-context">
+                  {post.eventDate ? <span>Event date: {formatDate(post.eventDate, language)}</span> : null}
+                  {post.startDate ? <span>Start: {formatDate(post.startDate, language)}</span> : null}
+                  {post.endDate ? <span>End: {formatDate(post.endDate, language)}</span> : null}
+                </div>
+              ) : null}
 
               {post.image && !embedUrl ? (
                 <img
@@ -233,6 +258,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
               {post.description ? (
                 <p className="portal-post-summary">{post.description}</p>
+              ) : null}
+
+              {post.body ? (
+                <div className="portal-post-body">{post.body}</div>
               ) : null}
 
               {post.link ? (

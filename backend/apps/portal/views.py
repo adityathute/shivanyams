@@ -7,7 +7,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from .models import Category,ImportantLink,Company,Job,CandidateProfile,Application,SavedJob,PortalContent
 from .serializers import CategorySerializer,ImportantLinkSerializer,CompanySerializer,JobSerializer,JobWriteSerializer,CandidateSerializer,ApplySerializer,ApplicationSerializer,ContentSerializer
-from .permissions import IsPortalIdentity
+from .permissions import IsPortalIdentity, IsPortalAdmin
 class Categories(generics.ListAPIView): queryset=Category.objects.filter(active=True); serializer_class=CategorySerializer; permission_classes=[permissions.AllowAny]
 class ImportantLinks(generics.ListAPIView):
     queryset = ImportantLink.objects.filter(active=True)
@@ -42,6 +42,41 @@ class EmployerJobs(viewsets.ModelViewSet):
  @action(detail=True,methods=['post'])
  def close(self,request,pk=None):
   job=self.get_object(); job.status=Job.Status.CLOSED; job.save(update_fields=['status','updated_at']); return Response(JobSerializer(job).data)
+class AdminJobs(viewsets.ModelViewSet):
+    serializer_class = JobWriteSerializer
+    permission_classes = [IsPortalAdmin]
+
+    def get_queryset(self):
+        return Job.objects.filter(owner_auth_id=str(self.request.user.id)).select_related(
+            "company", "category"
+        )
+
+    def perform_create(self, serializer):
+        category = serializer.validated_data.get("category")
+        if category is None or category.slug != "jobs" or not category.active:
+            raise PermissionDenied("Select the active Jobs category.")
+
+        company, _ = Company.objects.get_or_create(
+            slug="government-recruitment",
+            defaults={
+                "owner_auth_id": str(self.request.user.id),
+                "name": "Government Recruitment",
+                "description": "Government recruitment notices published by ShivanyaMS.",
+                "verified": True,
+            },
+        )
+        serializer.save(
+            company=company,
+            owner_auth_id=str(self.request.user.id),
+        )
+
+    def perform_update(self, serializer):
+        category = serializer.validated_data.get("category", serializer.instance.category)
+        if category is None or category.slug != "jobs" or not category.active:
+            raise PermissionDenied("Select the active Jobs category.")
+        serializer.save()
+
+
 class CandidateProfileView(generics.RetrieveUpdateAPIView):
  serializer_class=CandidateSerializer; permission_classes=[IsPortalIdentity]
  def get_object(self): return CandidateProfile.objects.get_or_create(auth_user_id=str(self.request.user.id))[0]

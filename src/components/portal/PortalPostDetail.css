@@ -69,6 +69,25 @@
   white-space: pre-wrap;
 }
 
+.portal-post-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin: -8px 0 20px;
+  color: var(--text-secondary, #64748b);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.portal-post-body {
+  margin: 22px 0;
+  color: var(--text-primary, #172033);
+  font-size: 16px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .portal-post-image {
   display: block;
   width: 100%;

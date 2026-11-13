@@ -216,3 +216,28 @@ min-height: calc(100vh - 65px);
     flex: 1;
   }
 }
+
+
+.add-post-dynamic-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.add-post-dynamic-heading h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.add-post-dynamic-heading button {
+  border: 1px solid #075be8;
+  border-radius: 6px;
+  padding: 7px 12px;
+  background: #fff;
+  color: #075be8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}

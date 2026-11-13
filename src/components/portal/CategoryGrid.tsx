@@ -91,10 +91,10 @@ export const categoryConfig: Record<string, CategoryConfig> = {
 const categoryOrder = [
   "jobs",
   "schemes",
+  "guides",
+  "admit-cards",
   "examination",
   "results",
-  "admit-cards",
-  "guides",
   "videos",
 ];
 
@@ -139,12 +139,13 @@ const fallbackCategories: Category[] = [
     description_hi: "",
     active: true,
   },
+
   {
     id: -3,
-    slug: "examination",
-    name_en: "Examination",
-    name_mr: "परीक्षा",
-    name_hi: "परीक्षा",
+    slug: "guides",
+    name_en: "Articles & Guides",
+    name_mr: "लेख आणि मार्गदर्शक",
+    name_hi: "लेख और मार्गदर्शिकाएँ",
     description_en: "",
     description_mr: "",
     description_hi: "",
@@ -152,17 +153,6 @@ const fallbackCategories: Category[] = [
   },
   {
     id: -4,
-    slug: "results",
-    name_en: "Results",
-    name_mr: "निकाल",
-    name_hi: "परिणाम",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-  {
-    id: -5,
     slug: "admit-cards",
     name_en: "Admit Cards",
     name_mr: "प्रवेशपत्र",
@@ -173,11 +163,22 @@ const fallbackCategories: Category[] = [
     active: true,
   },
   {
+    id: -5,
+    slug: "examination",
+    name_en: "Examination",
+    name_mr: "परीक्षा",
+    name_hi: "परीक्षा",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    active: true,
+  },
+  {
     id: -6,
-    slug: "guides",
-    name_en: "Articles & Guides",
-    name_mr: "लेख आणि मार्गदर्शक",
-    name_hi: "लेख और मार्गदर्शिकाएँ",
+    slug: "results",
+    name_en: "Results",
+    name_mr: "निकाल",
+    name_hi: "परिणाम",
     description_en: "",
     description_mr: "",
     description_hi: "",
@@ -230,7 +231,10 @@ interface CategoryApiResponse {
 }
 
 export function normalizeCategorySlug(slug: string) {
-  const normalized = slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
+  const normalized = slug
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-");
   return categorySlugAliases[normalized] ?? normalized;
 }
 

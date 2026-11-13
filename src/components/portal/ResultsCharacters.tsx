@@ -14,7 +14,7 @@ export function ResultsCharacters() {
       <div className="results-character-circle" />
 
       <Image
-        src="/images/result-image.png"
+        src="/images/result-img.png"
         alt="Students celebrating examination results"
         width={1536}
         height={1024}
@@ -22,17 +22,17 @@ export function ResultsCharacters() {
         className="results-characters-image"
       />
 
-      <div className="results-character-badge results-badge-check">
+      {/* <div className="results-character-badge results-badge-check">
         <CheckIcon size={24} />
-      </div>
+      </div> */}
 
-      <div className="results-character-badge results-badge-job">
+      {/* <div className="results-character-badge results-badge-job">
         <GovernmentJobIcon size={24} />
-      </div>
+      </div> */}
 
-      <div className="results-character-sparkle">
+      {/* <div className="results-character-sparkle">
         ✦
-      </div>
+      </div> */}
     </div>
   );
 }

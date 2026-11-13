@@ -10,7 +10,7 @@ export function VideosCharacters() {
       <div className="videos-character-circle" />
 
       <Image
-        src="/images/video-image.png"
+        src="/images/video-img.png"
         alt="Students watching educational videos"
         width={1600}
         height={1024}
@@ -18,15 +18,15 @@ export function VideosCharacters() {
         className="videos-characters-image"
       />
 
-      <div className="videos-character-badge videos-badge-video">
+      {/* <div className="videos-character-badge videos-badge-video">
         <VideoIcon size={24} />
-      </div>
+      </div> */}
 
-      <div className="videos-character-sparkle">✦</div>
+      {/* <div className="videos-character-sparkle">✦</div> */}
 
-      <div className="videos-character-badge videos-badge-check">
+      {/* <div className="videos-character-badge videos-badge-check">
         <CheckIcon size={24} />
-      </div>
+      </div> */}
 
       {/* <div className="videos-character-badge videos-badge-play">
         ▶

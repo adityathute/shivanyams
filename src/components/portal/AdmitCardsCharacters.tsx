@@ -15,7 +15,7 @@ export function AdmitCardsCharacters() {
       <div className="admit-character-circle" />
 
       <Image
-        src="/images/admit-card-image.png"
+        src="/images/admit-img.png"
         alt="Students preparing for examinations"
         width={1600}
         height={1024}
@@ -23,19 +23,19 @@ export function AdmitCardsCharacters() {
         className="admit-characters-image"
       />
 
-      <div className="admit-character-badge admit-badge-card">
+      {/* <div className="admit-character-badge admit-badge-card">
         <AdmitCardIcon size={24} />
-      </div>
+      </div> */}
 
-      <div className="admit-character-sparkle">✦</div>
+      {/* <div className="admit-character-sparkle">✦</div> */}
 
       {/* <div className="admit-character-badge admit-badge-check">
         <CheckIcon size={24} />
       </div> */}
 
-      <div className="admit-character-badge admit-badge-download">
+      {/* <div className="admit-character-badge admit-badge-download">
         <DownloadIcon size={24} />
-      </div>
+      </div> */}
     </div>
   );
 }

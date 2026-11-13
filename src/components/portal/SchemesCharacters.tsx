@@ -13,7 +13,7 @@ export function SchemesCharacters() {
       <div className="schemes-character-circle" />
 
       <Image
-        src="/images/scheme-image.png"
+        src="/images/scheme-img.png"
         alt="Students exploring government schemes and benefits"
         width={1600}
         height={1024}
@@ -21,9 +21,9 @@ export function SchemesCharacters() {
         className="schemes-characters-image"
       />
 
-      <div className="schemes-character-badge schemes-badge-government">
+      {/* <div className="schemes-character-badge schemes-badge-government">
         <GovernmentSchemeIcon size={24} />
-      </div>
+      </div> */}
 
       <div className="schemes-character-sparkle">✦</div>
 
@@ -31,9 +31,9 @@ export function SchemesCharacters() {
         <CheckIcon size={24} />
       </div> */}
 
-      <div className="schemes-character-badge schemes-badge-money">
+      {/* <div className="schemes-character-badge schemes-badge-money">
         ₹
-      </div>
+      </div> */}
     </div>
   );
 }

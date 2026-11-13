@@ -110,7 +110,8 @@
 
 .schemes-hero-visual {
   position: relative;
-  width: 430px;
+  /* width: 430px; */
+  aspect-ratio: 1728 / 832;
   height: auto;
   flex-shrink: 0;
   display: flex;

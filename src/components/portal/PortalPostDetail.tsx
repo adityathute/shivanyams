@@ -1,12 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 import { PortalFooter } from "./PortalFooter";
+import { PortalContentNotFound } from "./PortalContentNotFound";
 import "./PortalPostDetail.css";
+import { CategoryGrid } from "./CategoryGrid";
+import type { Language as CategoryLanguage } from "./CategoryGrid";
 
 type CategorySlug =
   | "jobs"
@@ -28,11 +30,19 @@ const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
 
 const categoryLabels: Record<CategorySlug, Record<string, string>> = {
   jobs: { en: "Government Jobs", mr: "सरकारी नोकरी", hi: "सरकारी नौकरियां" },
-  schemes: { en: "Government Schemes", mr: "सरकारी योजना", hi: "सरकारी योजनाएं" },
+  schemes: {
+    en: "Government Schemes",
+    mr: "सरकारी योजना",
+    hi: "सरकारी योजनाएं",
+  },
   examination: { en: "Examination", mr: "परीक्षा", hi: "परीक्षा" },
   results: { en: "Results", mr: "निकाल", hi: "परिणाम" },
   "admit-cards": { en: "Admit Cards", mr: "प्रवेशपत्र", hi: "प्रवेश पत्र" },
-  guides: { en: "Articles & Guides", mr: "लेख आणि मार्गदर्शक", hi: "लेख और मार्गदर्शिकाएँ" },
+  guides: {
+    en: "Articles & Guides",
+    mr: "लेख आणि मार्गदर्शक",
+    hi: "लेख और मार्गदर्शिकाएँ",
+  },
   videos: { en: "Videos", mr: "व्हिडिओ", hi: "वीडियो" },
 };
 
@@ -47,11 +57,16 @@ export function createPostSlug(value: string) {
 
 function formatDate(value: string, language: string) {
   if (!value) return "";
-  const locale = language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
+  const locale =
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
   const date = new Date(`${value.slice(0, 10)}T12:00:00`);
   return Number.isNaN(date.getTime())
     ? ""
-    : date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+    : date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
 }
 
 function getVideoEmbedUrl(value?: string) {
@@ -65,7 +80,9 @@ function getVideoEmbedUrl(value?: string) {
         ? segments[0]
         : url.pathname === "/watch"
           ? url.searchParams.get("v")
-          : ["embed", "shorts", "live"].includes(segments[0]) ? segments[1] : null;
+          : ["embed", "shorts", "live"].includes(segments[0])
+            ? segments[1]
+            : null;
     return id ? `https://www.youtube.com/embed/${id}` : null;
   } catch {
     return null;
@@ -115,28 +132,31 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       : null;
   }, [category, data.items, data.videos, slug]);
 
-  const label = categoryLabels[category][language] ?? categoryLabels[category].en;
+  const label =
+    categoryLabels[category][language] ?? categoryLabels[category].en;
   const embedUrl = category === "videos" ? getVideoEmbedUrl(post?.link) : null;
 
   return (
     <>
       <main className="portal-post-detail">
         <div className="portal-post-detail-inner">
-          <Link className="portal-post-back" href={`/${category}`}>
-            <span aria-hidden="true">←</span> {label}
-          </Link>
-
           {post ? (
             <article className="portal-post-card">
               <div className="portal-post-meta">
                 <span>{post.category || label}</span>
-                {post.date ? <time>{formatDate(post.date, language)}</time> : null}
+                {post.date ? (
+                  <time>{formatDate(post.date, language)}</time>
+                ) : null}
               </div>
 
               <h1>{post.title}</h1>
 
               {post.image && !embedUrl ? (
-                <img className="portal-post-image" src={post.image} alt={post.title} />
+                <img
+                  className="portal-post-image"
+                  src={post.image}
+                  alt={post.title}
+                />
               ) : null}
 
               {embedUrl ? (
@@ -150,24 +170,37 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                 </div>
               ) : null}
 
-              {post.description ? <p className="portal-post-summary">{post.description}</p> : null}
+              {post.description ? (
+                <p className="portal-post-summary">{post.description}</p>
+              ) : null}
 
               {post.link ? (
-                <a className="portal-post-action" href={post.link} target="_blank" rel="noreferrer">
-                  {category === "videos" ? "Watch video" : "Visit official website"}
+                <a
+                  className="portal-post-action"
+                  href={post.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {category === "videos"
+                    ? "Watch video"
+                    : "Visit official website"}
                   <span aria-hidden="true">↗</span>
                 </a>
               ) : null}
             </article>
           ) : (
-            <section className="portal-post-not-found">
-              <h1>Content not found</h1>
-              <p>This post may have been removed or the link may be incorrect.</p>
-              <Link href={`/${category}`}>Back to {label}</Link>
-            </section>
+            <PortalContentNotFound
+              categoryLabel={label}
+              categoryHref={`/${category}`}
+            />
           )}
         </div>
       </main>
+
+      <div className="portal-post-category-grid">
+        <CategoryGrid language={language as CategoryLanguage} />
+      </div>
+
       <PortalFooter />
     </>
   );

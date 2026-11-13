@@ -79,10 +79,10 @@ export function PortalFooter() {
   const categoryOrder: Record<string, number> = {
     jobs: 1,
     schemes: 2,
-    examination: 3,
-    results: 4,
-    "admit-cards": 5,
-    guides: 6,
+    guides: 3,
+    "admit-cards": 4,
+    examination: 5,
+    results: 6,
     videos: 7,
   };
 

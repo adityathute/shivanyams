@@ -13,7 +13,7 @@ export function ExaminationCharacters() {
       <div className="examination-character-circle" />
 
       <Image
-        src="/images/exam-image.png"
+        src="/images/exam-img.png"
         alt="Students preparing for examinations"
         width={1536}
         height={1024}
@@ -21,19 +21,19 @@ export function ExaminationCharacters() {
         className="examination-characters-image"
       />
 
-      <div className="examination-character-badge examination-badge-job">
+      {/* <div className="examination-character-badge examination-badge-job">
         <GovernmentJobIcon size={24} />
-      </div>
+      </div> */}
 
-      <div className="examination-character-sparkle">✦</div>
+      {/* <div className="examination-character-sparkle">✦</div> */}
 
       {/* <div className="examination-character-badge examination-badge-check">
         <CheckIcon size={24} />
       </div> */}
 
-      <div className="examination-character-badge examination-badge-grade">
+      {/* <div className="examination-character-badge examination-badge-grade">
         A+
-      </div>
+      </div> */}
     </div>
   );
 }

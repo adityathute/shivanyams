@@ -1,12 +1,13 @@
 .portal-post-detail {
-  min-height: 55vh;
-  padding: 48px 24px 72px;
+  flex: 1 0 auto;
+  box-sizing: border-box;
+  padding: 16px;
+  padding-bottom: 0;
 }
 
 .portal-post-detail-inner {
-  width: min(900px, 100%);
-  margin: 0 auto;
-}
+  width: 100%;
+  }
 
 .portal-post-back {
   display: inline-flex;
@@ -116,7 +117,7 @@
 
 @media (max-width: 600px) {
   .portal-post-detail {
-    padding: 28px 16px 48px;
+    padding: 16px;
   }
 
   .portal-post-card,
@@ -134,4 +135,12 @@
 :root[data-theme="dark"] .portal-post-card h1,
 :root[data-theme="dark"] .portal-post-not-found h1 {
   color: var(--text-primary, #f8fafc);
+}
+
+.portal-post-category-grid {
+  padding: 0 16px;
+}
+
+.portal-post-category-grid .category-grid{
+  margin: 0;
 }

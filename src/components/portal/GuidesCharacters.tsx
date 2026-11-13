@@ -11,7 +11,7 @@ export function GuidesCharacters() {
       <div className="guides-character-circle" />
 
       <Image
-        src="/images/guide-image.png"
+        src="/images/guide-img.png"
         alt="Students learning through educational guides"
         width={1600}
         height={1024}
@@ -19,15 +19,15 @@ export function GuidesCharacters() {
         className="guides-characters-image"
       />
 
-      <div className="guides-character-badge guides-badge-guide">
+      {/* <div className="guides-character-badge guides-badge-guide">
         <GuideIcon size={24} />
-      </div>
+      </div> */}
 
-      <div className="guides-character-sparkle">✦</div>
+      {/* <div className="guides-character-sparkle">✦</div> */}
 
-      <div className="guides-character-badge guides-badge-check">
+      {/* <div className="guides-character-badge guides-badge-check">
         <CheckIcon size={24} />
-      </div>
+      </div> */}
 
       {/* <div className="guides-character-badge guides-badge-book">
         📖

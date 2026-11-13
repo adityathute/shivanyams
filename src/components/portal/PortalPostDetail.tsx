@@ -104,7 +104,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const post = useMemo(() => {
     if (category === "videos") {
       const video = data.videos.find(
-        (entry) => createPostSlug(entry.title) === slug || entry.id === slug,
+        (entry) => (entry.slug || createPostSlug(entry.title)) === slug || entry.id === slug,
       );
       return video
         ? {
@@ -115,6 +115,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             link: video.url,
             image: video.thumbnail,
             body: "",
+            jobDetails: undefined,
           }
         : null;
     }
@@ -134,7 +135,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           link: item.link,
           image: "",
           body: "",
-          jobDetails: item.job_details,
+          jobDetails: item.job_details
+            ? { ...item.job_details, location: item.job_details.location || "" }
+            : undefined,
         }
       : null;
   }, [category, data.items, data.videos, slug]);

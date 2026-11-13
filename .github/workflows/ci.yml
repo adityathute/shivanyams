@@ -57,8 +57,11 @@ jobs:
       - name: Prepare generated SDK package lock entries
         run: |
           node <<'NODE'
+          const crypto = require("node:crypto");
           const fs = require("node:fs");
+          const path = require("node:path");
           const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
+          const packageDir = path.resolve(process.env.GITHUB_WORKSPACE, "../shivanya-sdk");
           const packages = [
             "shivanya-ai",
             "shivanya-auth",
@@ -71,7 +74,17 @@ jobs:
           for (const name of packages) {
             const entry = lock.packages?.[`node_modules/${name}`];
             if (!entry) throw new Error(`Missing lockfile entry for ${name}`);
-            delete entry.integrity;
+
+            const tarballPath = path.join(packageDir, `${name}-${entry.version}.tgz`);
+            if (!fs.existsSync(tarballPath)) {
+              throw new Error(`Missing generated SDK tarball: ${tarballPath}`);
+            }
+
+            const digest = crypto
+              .createHash("sha512")
+              .update(fs.readFileSync(tarballPath))
+              .digest("base64");
+            entry.integrity = `sha512-${digest}`;
           }
 
           fs.writeFileSync("package-lock.json", `${JSON.stringify(lock, null, 2)}\n`);

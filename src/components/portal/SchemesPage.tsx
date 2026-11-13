@@ -103,7 +103,7 @@ export function SchemesPage() {
                   <a
                     className="update-row"
                     key={item.id}
-                    href={`/schemes/${createPostSlug(item.title)}`}
+                    href={`/schemes/${item.slug || createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}

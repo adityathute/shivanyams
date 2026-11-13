@@ -1,14 +1,19 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePortalData } from "./portal-data";
 import { usePortalLanguage } from "./PortalLanguageContext";
 import { PortalFooter } from "./PortalFooter";
 import { PortalContentNotFound } from "./PortalContentNotFound";
 import "./PortalPostDetail.css";
-import { CategoryGrid } from "./CategoryGrid";
-import type { Language as CategoryLanguage } from "./CategoryGrid";
+import {
+  CategoryGrid,
+  categoriesApi,
+  getCategoryTitle,
+  type Category,
+  type Language as CategoryLanguage,
+} from "./CategoryGrid";
 
 type CategorySlug =
   | "jobs"
@@ -28,23 +33,6 @@ const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
   guides: "guide",
 };
 
-const categoryLabels: Record<CategorySlug, Record<string, string>> = {
-  jobs: { en: "Government Jobs", mr: "सरकारी नोकरी", hi: "सरकारी नौकरियां" },
-  schemes: {
-    en: "Government Schemes",
-    mr: "सरकारी योजना",
-    hi: "सरकारी योजनाएं",
-  },
-  examination: { en: "Examination", mr: "परीक्षा", hi: "परीक्षा" },
-  results: { en: "Results", mr: "निकाल", hi: "परिणाम" },
-  "admit-cards": { en: "Admit Cards", mr: "प्रवेशपत्र", hi: "प्रवेश पत्र" },
-  guides: {
-    en: "Articles & Guides",
-    mr: "लेख आणि मार्गदर्शक",
-    hi: "लेख और मार्गदर्शिकाएँ",
-  },
-  videos: { en: "Videos", mr: "व्हिडिओ", hi: "वीडियो" },
-};
 
 export function createPostSlug(value: string) {
   return value
@@ -94,6 +82,24 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(categoriesApi, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error("Unable to load categories.");
+        return response.json();
+      })
+      .then((payload) => {
+        const list: Category[] = Array.isArray(payload) ? payload : payload.results ?? [];
+        setCategories(list.filter((entry) => entry.active));
+      })
+      .catch((error) => {
+        if (!controller.signal.aborted) console.error("Category loading failed:", error);
+      });
+    return () => controller.abort();
+  }, []);
 
   const post = useMemo(() => {
     if (category === "videos") {
@@ -117,7 +123,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     const item = data.items.find(
       (entry) =>
         entry.type === type &&
-        (createPostSlug(entry.title) === slug || entry.id === slug),
+        ((entry.slug || createPostSlug(entry.title)) === slug || entry.id === slug),
     );
     return item
       ? {
@@ -128,19 +134,25 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           link: item.link,
           image: "",
           body: "",
+          jobDetails: item.job_details,
         }
       : null;
   }, [category, data.items, data.videos, slug]);
 
-  const label =
-    categoryLabels[category][language] ?? categoryLabels[category].en;
+  const categoryApiSlug = category === "guides" ? "articles-guides" : category;
+  const categoryRecord = categories.find((entry) => entry.slug === categoryApiSlug);
+  const label = categoryRecord
+    ? getCategoryTitle(categoryRecord, language as CategoryLanguage)
+    : "";
   const embedUrl = category === "videos" ? getVideoEmbedUrl(post?.link) : null;
 
   return (
     <>
       <main className="portal-post-detail">
         <div className="portal-post-detail-inner">
-          {post ? (
+          {data.loading ? (
+            <div className="portal-post-loading">Loading...</div>
+          ) : post ? (
             <article className="portal-post-card">
               <div className="portal-post-meta">
                 <span>{post.category || label}</span>
@@ -170,6 +182,52 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                 </div>
               ) : null}
 
+              {post.jobDetails ? (
+                <section className="portal-job-details">
+                  {[
+                    ["Advertisement No.", post.jobDetails.advertisement_no],
+                    ["Total", post.jobDetails.total_posts],
+                    ["Name of the Examination", post.jobDetails.examination_name],
+                    ["Name of the Post & Details", post.jobDetails.post_details],
+                    ["Educational Qualification", post.jobDetails.educational_qualification],
+                    ["Job location", post.jobDetails.location],
+                    ["Age Limit", post.jobDetails.age_limit],
+                    ["Fee", post.jobDetails.application_fee],
+                    ["Application Mode", post.jobDetails.application_mode],
+                    ["Venue of Interview", post.jobDetails.interview_venue],
+                  ].filter(([, value]) => Boolean(value)).map(([name, value]) => (
+                    <div className="portal-job-detail-row" key={name as string}>
+                      <strong>{name}</strong>
+                      <span>{value}</span>
+                    </div>
+                  ))}
+
+                  {post.jobDetails.important_dates.length ? (
+                    <div className="portal-job-detail-group">
+                      <h2>Important Dates</h2>
+                      {post.jobDetails.important_dates.map((entry, index) => (
+                        <div className="portal-job-detail-row" key={index}>
+                          <strong>{entry.label}</strong>
+                          <span>{entry.date}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {post.jobDetails.important_links.length ? (
+                    <div className="portal-job-detail-group">
+                      <h2>Important Links</h2>
+                      {post.jobDetails.important_links.map((entry, index) => (
+                        <div className="portal-job-detail-row" key={index}>
+                          <strong>{entry.label}</strong>
+                          <a href={entry.url} target="_blank" rel="noreferrer">{entry.url}</a>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </section>
+              ) : null}
+
               {post.description ? (
                 <p className="portal-post-summary">{post.description}</p>
               ) : null}
@@ -190,7 +248,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             </article>
           ) : (
             <PortalContentNotFound
-              categoryLabel={label}
+              categoryLabel={label || category}
               categoryHref={`/${category}`}
             />
           )}

@@ -235,14 +235,12 @@ export default function AddPostPage() {
                 required
                 value={categoryId}
                 onChange={(event) => setCategoryId(event.target.value)}
-                disabled={categoriesLoading}
+                disabled={categoriesLoading || !jobsCategory}
               >
                 <option value="">Select category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {text(category)}
-                  </option>
-                ))}
+                {jobsCategory ? (
+                  <option value={jobsCategory.id}>{text(jobsCategory)}</option>
+                ) : null}
               </select>
             </label>
 
@@ -354,7 +352,7 @@ export default function AddPostPage() {
 
             <div className="add-post-actions">
               <button type="button" onClick={() => router.push("/admin")}>Cancel</button>
-              <button className="primary" type="submit" disabled={saving || categoriesLoading || !categories.length}>
+              <button className="primary" type="submit" disabled={saving || categoriesLoading || !jobsCategory}>
                 {saving ? "Publishing..." : "Publish Post"}
               </button>
             </div>

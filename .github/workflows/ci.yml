@@ -54,8 +54,28 @@ jobs:
           test -f "$package_dir/shivanya-shell-1.1.1.tgz"
           test -f "$package_dir/shivanya-ui-1.1.1.tgz"
 
-      - name: Refresh local package lock metadata
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Prepare generated SDK package lock entries
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs");
+          const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
+          const packages = [
+            "shivanya-ai",
+            "shivanya-auth",
+            "shivanya-core",
+            "shivanya-i18n",
+            "shivanya-shell",
+            "shivanya-ui",
+          ];
+
+          for (const name of packages) {
+            const entry = lock.packages?.[`node_modules/${name}`];
+            if (!entry) throw new Error(`Missing lockfile entry for ${name}`);
+            delete entry.integrity;
+          }
+
+          fs.writeFileSync("package-lock.json", `${JSON.stringify(lock, null, 2)}\\n`);
+          NODE
 
       - name: Install portal dependencies
         run: npm ci

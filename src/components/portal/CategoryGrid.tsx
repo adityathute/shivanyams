@@ -88,16 +88,6 @@ export const categoryConfig: Record<string, CategoryConfig> = {
   },
 };
 
-const categoryOrder = [
-  "jobs",
-  "schemes",
-  "guides",
-  "admit-cards",
-  "examination",
-  "results",
-  "videos",
-];
-
 const categorySlugAliases: Record<string, string> = {
   job: "jobs",
   "government-jobs": "jobs",
@@ -106,96 +96,16 @@ const categorySlugAliases: Record<string, string> = {
   result: "results",
   "admit-card": "admit-cards",
   admitcards: "admit-cards",
-  guide: "guides",
-  article: "guides",
-  articles: "guides",
-  "article-guide": "guides",
-  "article-guides": "guides",
-  "articles-guide": "guides",
-  "articles-guides": "guides",
+  guide: "articles-guides",
+  guides: "articles-guides",
+  article: "articles-guides",
+  articles: "articles-guides",
+  "article-guide": "articles-guides",
+  "article-guides": "articles-guides",
+  "articles-guide": "articles-guides",
+  "articles-guides": "articles-guides",
   video: "videos",
 };
-
-const fallbackCategories: Category[] = [
-  {
-    id: -1,
-    slug: "jobs",
-    name_en: "Jobs",
-    name_mr: "नोकरी",
-    name_hi: "नौकरियां",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-  {
-    id: -2,
-    slug: "schemes",
-    name_en: "Schemes",
-    name_mr: "योजना",
-    name_hi: "योजनाएं",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-
-  {
-    id: -3,
-    slug: "guides",
-    name_en: "Articles & Guides",
-    name_mr: "लेख आणि मार्गदर्शक",
-    name_hi: "लेख और मार्गदर्शिकाएँ",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-  {
-    id: -4,
-    slug: "admit-cards",
-    name_en: "Admit Cards",
-    name_mr: "प्रवेशपत्र",
-    name_hi: "प्रवेश पत्र",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-  {
-    id: -5,
-    slug: "examination",
-    name_en: "Examination",
-    name_mr: "परीक्षा",
-    name_hi: "परीक्षा",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-  {
-    id: -6,
-    slug: "results",
-    name_en: "Results",
-    name_mr: "निकाल",
-    name_hi: "परिणाम",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-  {
-    id: -7,
-    slug: "videos",
-    name_en: "Videos",
-    name_mr: "व्हिडिओ",
-    name_hi: "वीडियो",
-    description_en: "",
-    description_mr: "",
-    description_hi: "",
-    active: true,
-  },
-];
 
 export const API_URL =
   process.env.NEXT_PUBLIC_PORTAL_API_URL ??
@@ -234,32 +144,14 @@ export function normalizeCategorySlug(slug: string) {
   const normalized = slug
     .trim()
     .toLowerCase()
-    .replace(/[_\s]+/g, "-");
+    .replace(/[_\\s]+/g, "-");
   return categorySlugAliases[normalized] ?? normalized;
-}
-
-function mergeCategories(apiCategories: Category[]) {
-  const categoriesBySlug = new Map<string, Category>();
-
-  apiCategories
-    .filter((category) => category.active)
-    .forEach((category) => {
-      const slug = normalizeCategorySlug(category.slug);
-
-      if (categoryConfig[slug] && !categoriesBySlug.has(slug)) {
-        categoriesBySlug.set(slug, { ...category, slug });
-      }
-    });
-
-  return categoryOrder.map((slug, index) => {
-    return categoriesBySlug.get(slug) ?? fallbackCategories[index];
-  });
 }
 
 export function CategoryGrid({ language = "mr" }: { language?: Language }) {
   const router = useRouter();
 
-  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -278,11 +170,11 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
         const payload: Category[] | CategoryApiResponse = await response.json();
         const data = Array.isArray(payload) ? payload : (payload.results ?? []);
 
-        setCategories(mergeCategories(data));
+        setCategories(data.filter((category) => category.active).map((category) => ({ ...category, slug: normalizeCategorySlug(category.slug) })).filter((category) => Boolean(categoryConfig[category.slug])));
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category loading failed:", error);
-          setCategories(fallbackCategories);
+          setCategories([]);
         }
       } finally {
         if (!controller.signal.aborted) {

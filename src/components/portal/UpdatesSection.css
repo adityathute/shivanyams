@@ -163,9 +163,13 @@
 }
 
 .empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 35px;
   text-align: center;
   color: #758399;
+  height: 370px;
 }
 
 .right-column {

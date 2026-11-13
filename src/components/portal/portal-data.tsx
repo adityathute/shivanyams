@@ -34,6 +34,17 @@ export type JobDetails = {
   important_links: { label: string; url: string }[];
 };
 
+export type PortalContentDetails = {
+  body: string;
+  image_url: string;
+  organization: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+  event_date: string;
+  extra: Record<string, unknown>;
+};
+
 export type Item = {
   id: string;
   title: string;
@@ -44,6 +55,7 @@ export type Item = {
   type: ItemType;
   slug?: string;
   job_details?: JobDetails;
+  content_details?: PortalContentDetails;
 };
 
 export type Video = {
@@ -137,6 +149,16 @@ function mapContent(content: ContentApiItem, type: ItemType): Item {
     description: content.summary,
     link: content.source_url,
     type,
+    content_details: {
+      body: content.body || "",
+      image_url: content.image_url || "",
+      organization: content.organization || "",
+      location: content.location || "",
+      start_date: getDate(content.start_date),
+      end_date: getDate(content.end_date),
+      event_date: getDate(content.event_date),
+      extra: content.extra || {},
+    },
   };
 }
 
@@ -168,13 +190,27 @@ function mapJob(job: JobApiItem): Item {
 }
 
 async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
-  const response = await fetch(url, { signal });
-  if (!response.ok) {
-    throw new Error(`Request failed (${response.status}): ${url}`);
+  const results: T[] = [];
+  let nextUrl: string | null = url;
+
+  while (nextUrl) {
+    const response = await fetch(nextUrl, { signal });
+    if (!response.ok) {
+      throw new Error(`Request failed (${response.status}): ${nextUrl}`);
+    }
+
+    const payload = await response.json();
+
+    if (Array.isArray(payload)) {
+      results.push(...payload);
+      break;
+    }
+
+    results.push(...(Array.isArray(payload.results) ? payload.results : []));
+    nextUrl = payload.next || null;
   }
 
-  const payload = await response.json();
-  return Array.isArray(payload) ? payload : payload.results ?? [];
+  return results;
 }
 
 async function loadPortalData(signal: AbortSignal): Promise<PortalData> {

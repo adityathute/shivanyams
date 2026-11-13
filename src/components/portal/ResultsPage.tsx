@@ -93,7 +93,7 @@ export function ResultsPage() {
                   <a
                     className="update-row"
                     key={item.id}
-                    href={`/results/${createPostSlug(item.title)}`}
+                    href={`/results/${item.slug || createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ItemType } from "./portal-data";
 import {
   categoriesApi,
+  normalizeCategorySlug,
   getCategoryDescription,
   getCategoryTitle,
   type Category,
@@ -17,29 +18,21 @@ const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
   scheme: "schemes",
   examination: "examination",
+  exam: "examination",
   result: "results",
   admit: "admit-cards",
-  guide: "guides",
+  guide: "articles-guides",
   video: "videos",
 };
 
 const categoryTypeBySlug: Record<string, ItemType> = {
   jobs: "job",
-  exam: "exam",
   schemes: "scheme",
+  examination: "examination",
   results: "result",
   "admit-cards": "admit",
   "articles-guides": "guide",
-  guides: "guide",
   videos: "video",
-  job: "job",
-  scheme: "scheme",
-  result: "result",
-  "admit-card": "admit",
-  examination: "examination",
-  "articles-guides": "guide",
-  guide: "guide",
-  video: "video",
 };
 
 const pageCopy: Record<
@@ -82,10 +75,6 @@ const pageCopy: Record<
     searchButton: "⌕ खोजें",
   },
 };
-
-function normalizeSlug(slug: string) {
-  return slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
-}
 
 function getDescription(category: Category, language: Language) {
   return getCategoryDescription(category, language);
@@ -155,7 +144,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
       categories.find(
         (entry) =>
           entry.active &&
-          normalizeSlug(entry.slug) === normalizeSlug(categorySlug),
+          normalizeCategorySlug(entry.slug) === normalizeCategorySlug(categorySlug),
       ),
     [categories, categorySlug],
   );
@@ -167,7 +156,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
     const term = query.trim().toLowerCase();
 
     return data.items.filter((item) => {
-      const itemType = categoryTypeBySlug[normalizeSlug(item.type)];
+      const itemType = categoryTypeBySlug[item.type] || (item.type === "guide" ? "guide" : undefined);
       if (itemType !== type) return false;
 
       return (

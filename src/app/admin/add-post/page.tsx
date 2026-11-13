@@ -66,7 +66,7 @@ export default function AddPostPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
-  const [categoryId, setCategoryId] = useState("");
+  const categoryId = jobsCategory ? String(jobsCategory.id) : "";
   const [job, setJob] = useState<JobForm>(emptyJob);
   const [notice, setNotice] = useState("");
   const [saving, setSaving] = useState(false);
@@ -108,10 +108,6 @@ export default function AddPostPage() {
     loadCategories();
     return () => controller.abort();
   }, []);
-
-  useEffect(() => {
-    if (jobsCategory) setCategoryId(String(jobsCategory.id));
-  }, [jobsCategory]);
 
   function update<K extends keyof JobForm>(key: K, value: JobForm[K]) {
     setJob((current) => ({ ...current, [key]: value }));
@@ -196,18 +192,8 @@ export default function AddPostPage() {
             <h2>Post Information</h2>
 
             <label>
-              Category *
-              <select
-                required
-                value={categoryId}
-                onChange={(event) => setCategoryId(event.target.value)}
-                disabled={categoriesLoading || !jobsCategory}
-              >
-                <option value="">Select category</option>
-                {jobsCategory ? (
-                  <option value={jobsCategory.id}>{text(jobsCategory)}</option>
-                ) : null}
-              </select>
+              Category
+              <input readOnly value={jobsCategory ? text(jobsCategory) : "Loading categories..."} />
             </label>
 
             <label>

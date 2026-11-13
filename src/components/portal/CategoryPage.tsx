@@ -17,7 +17,6 @@ const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
   scheme: "schemes",
   examination: "examination",
-  exam: "exam",
   result: "results",
   admit: "admit-cards",
   guide: "guides",
@@ -30,12 +29,15 @@ const categoryTypeBySlug: Record<string, ItemType> = {
   schemes: "scheme",
   results: "result",
   "admit-cards": "admit",
+  "articles-guides": "guide",
   guides: "guide",
   videos: "video",
   job: "job",
   scheme: "scheme",
   result: "result",
   "admit-card": "admit",
+  examination: "examination",
+  "articles-guides": "guide",
   guide: "guide",
   video: "video",
 };
@@ -113,7 +115,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const { data } = usePortalData();
 
-  const categorySlug = categorySlugByType[type];
+  const categorySlug = categorySlugByType[type] ?? type;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -158,7 +160,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
     [categories, categorySlug],
   );
 
-  const title = category ? getCategoryTitle(category, language) : categorySlug;
+  const title = category ? getCategoryTitle(category, language) : "";
   const subtitle = category ? getDescription(category, language) : "";
 
   const filtered = useMemo(() => {
@@ -210,7 +212,9 @@ export function CategoryPage({ type }: { type: ItemType }) {
           </div>
 
           <div className="update-list">
-            {filtered.length ? (
+            {data.loading || categoriesLoading ? (
+              <div className="empty-state">Loading...</div>
+            ) : filtered.length ? (
               filtered.map((item) => (
                 <a
                   className="update-row"
@@ -232,7 +236,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
               ))
             ) : (
               <div className="empty-state">
-                {categoriesLoading ? "Loading..." : copy.empty}
+                {data.error || copy.empty}
               </div>
             )}
           </div>

@@ -10,7 +10,6 @@ import {
   type Category,
   type Language,
 } from "../../../components/portal/CategoryGrid";
-import { usePortalLanguage } from "../../../components/portal/PortalLanguageContext";
 
 import "./AddPostPage.css";
 
@@ -84,7 +83,7 @@ function getAccessToken() {
 export default function AddPostPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const { language } = usePortalLanguage();
+  const language: Language = "mr";
 
   const isAdmin = user?.roles?.includes("admin") === true;
 

@@ -125,7 +125,9 @@ export function VideosPage() {
             </div>
           </div>
 
-          {videos.length ? (
+          {data.loading ? <div className="videos-empty">Loading...</div> : null}
+          {!data.loading && data.error ? <div className="videos-empty">{data.error}</div> : null}
+          {!data.loading && !data.error && videos.length ? (
             <div className="videos-grid">
               {videos.map((video) => {
                 const youtubeEmbedUrl = getYouTubeEmbedUrl(video.url);
@@ -188,7 +190,7 @@ export function VideosPage() {
                 );
               })}
             </div>
-          ) : (
+          ) : !data.loading && !data.error ? (
             <div className="videos-empty">
               <span className="videos-empty-icon">
                 <VideoIcon size={28} />
@@ -197,7 +199,7 @@ export function VideosPage() {
               <h3>{t("noVideosFound")}</h3>
               <p>{t("tryAnotherSearch")}</p>
             </div>
-          )}
+          ) : null}
         </section>
       </main>
 

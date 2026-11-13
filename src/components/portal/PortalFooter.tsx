@@ -95,6 +95,7 @@ export function PortalFooter() {
     examination: ExaminationIcon,
     results: ResultIcon,
     "admit-cards": AdmitCardIcon,
+    "articles-guides": GuideIcon,
     guides: GuideIcon,
     videos: VideoIcon,
   };

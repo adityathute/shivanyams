@@ -8,8 +8,8 @@ import {
   API_URL,
   getCategoryTitle,
   type Category,
+  type Language,
 } from "../../../components/portal/CategoryGrid";
-import type { Language } from "../../../components/portal/PortalLanguageContext";
 import { usePortalLanguage } from "../../../components/portal/PortalLanguageContext";
 
 import "./AddPostPage.css";

@@ -93,7 +93,7 @@ export function ExaminationPage() {
                   <a
                     className="update-row"
                     key={item.id}
-                    href={`/examination/${createPostSlug(item.title)}`}
+                    href={`/examination/${item.slug || createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}

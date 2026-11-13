@@ -1,19 +1,69 @@
 name: Application CI
 
+permissions:
+  contents: read
+
 on:
   push:
-    branches: ["Master"]
+    branches: ["Master", "shivanyams-v2"]
   pull_request:
+    branches: ["Master", "shivanyams-v2"]
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: shivanyams
+
+      - uses: actions/checkout@v4
+        with:
+          repository: adityathute/shivanya-sdk
+          ref: a6edf73a924dd5cf15a0407b755e2af1cdeaf2dc
+          path: shivanya-sdk
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run build
+          cache-dependency-path: shivanyams/package-lock.json
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+          run_install: false
+
+      - name: Install SDK dependencies
+        working-directory: shivanya-sdk
+        run: pnpm install --frozen-lockfile
+
+      - name: Build SDK packages
+        working-directory: shivanya-sdk
+        run: pnpm build
+
+      - name: Pack SDK packages
+        working-directory: shivanya-sdk
+        run: |
+          pnpm --filter shivanya-core pack --pack-destination "$GITHUB_WORKSPACE/shivanya-sdk"
+          pnpm --filter shivanya-ai pack --pack-destination "$GITHUB_WORKSPACE/shivanya-sdk"
+          pnpm --filter shivanya-ui pack --pack-destination "$GITHUB_WORKSPACE/shivanya-sdk"
+          pnpm --filter shivanya-shell pack --pack-destination "$GITHUB_WORKSPACE/shivanya-sdk"
+          pnpm --filter shivanya-auth pack --pack-destination "$GITHUB_WORKSPACE/shivanya-sdk"
+          pnpm --filter shivanya-i18n pack --pack-destination "$GITHUB_WORKSPACE/shivanya-sdk"
+
+      - name: Refresh local package lock
+        working-directory: shivanyams
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Install application dependencies
+        working-directory: shivanyams
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        working-directory: shivanyams
+        run: npm run lint
+
+      - name: Build
+        working-directory: shivanyams
+        run: npm run build

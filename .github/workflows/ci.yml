@@ -2,18 +2,66 @@ name: Application CI
 
 on:
   push:
-    branches: ["Master"]
+    branches: ["Master", "shivanyams-v2"]
   pull_request:
+    branches: ["Master", "shivanyams-v2"]
+
+permissions:
+  contents: read
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout portal
+        uses: actions/checkout@v4
+
+      - name: Checkout Shivanya SDK
+        uses: actions/checkout@v4
+        with:
+          repository: adityathute/shivanya-sdk
+          ref: a6edf73a924dd5cf15a0407b755e2af1cdeaf2dc
+          path: .ci/shivanya-sdk
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run build
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+
+      - name: Build local SDK packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk_dir="$GITHUB_WORKSPACE/.ci/shivanya-sdk"
+          package_dir="$GITHUB_WORKSPACE/../shivanya-sdk"
+          mkdir -p "$package_dir"
+          cd "$sdk_dir"
+          pnpm install --frozen-lockfile
+          pnpm -r build
+          for package in packages/ai packages/auth packages/core packages/i18n packages/shell packages/ui; do
+            (cd "$package" && npm pack --pack-destination "$package_dir")
+          done
+          test -f "$package_dir/shivanya-ai-0.1.2.tgz"
+          test -f "$package_dir/shivanya-auth-1.0.1.tgz"
+          test -f "$package_dir/shivanya-core-1.1.0.tgz"
+          test -f "$package_dir/shivanya-i18n-1.0.0.tgz"
+          test -f "$package_dir/shivanya-shell-1.1.1.tgz"
+          test -f "$package_dir/shivanya-ui-1.1.1.tgz"
+
+      - name: Refresh local package lock metadata
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Install portal dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build

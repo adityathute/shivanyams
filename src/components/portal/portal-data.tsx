@@ -43,6 +43,14 @@ export type Item = {
   link: string;
   type: ItemType;
   slug?: string;
+  body?: string;
+  image?: string;
+  organization?: string;
+  location?: string;
+  start_date?: string;
+  end_date?: string;
+  event_date?: string;
+  extra?: Record<string, unknown>;
   job_details?: JobDetails;
 };
 
@@ -137,6 +145,14 @@ function mapContent(content: ContentApiItem, type: ItemType): Item {
     description: content.summary,
     link: content.source_url,
     type,
+    body: content.body,
+    image: content.image_url,
+    organization: content.organization,
+    location: content.location,
+    start_date: getDate(content.start_date),
+    end_date: getDate(content.end_date),
+    event_date: getDate(content.event_date),
+    extra: content.extra,
   };
 }
 
@@ -168,13 +184,42 @@ function mapJob(job: JobApiItem): Item {
 }
 
 async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
-  const response = await fetch(url, { signal });
-  if (!response.ok) {
-    throw new Error(`Request failed (${response.status}): ${url}`);
+  const results: T[] = [];
+  const visited = new Set<string>();
+  const apiOrigin = new URL(API_URL).origin;
+  let nextUrl: string | null = url;
+
+  while (nextUrl) {
+    if (visited.has(nextUrl)) {
+      throw new Error("Pagination returned a repeated URL.");
+    }
+    visited.add(nextUrl);
+
+    const response = await fetch(nextUrl, { signal });
+    if (!response.ok) {
+      throw new Error(`Request failed (${response.status}): ${nextUrl}`);
+    }
+
+    const payload: T[] | { results?: T[]; next?: string | null } = await response.json();
+    if (Array.isArray(payload)) {
+      results.push(...payload);
+      break;
+    }
+
+    results.push(...(payload.results ?? []));
+    if (!payload.next) {
+      nextUrl = null;
+      continue;
+    }
+
+    const resolvedNext = new URL(payload.next, url);
+    if (resolvedNext.origin !== apiOrigin) {
+      throw new Error("Pagination returned a URL outside the portal API.");
+    }
+    nextUrl = resolvedNext.toString();
   }
 
-  const payload = await response.json();
-  return Array.isArray(payload) ? payload : payload.results ?? [];
+  return results;
 }
 
 async function loadPortalData(signal: AbortSignal): Promise<PortalData> {

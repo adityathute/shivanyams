@@ -133,8 +133,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           category: item.category,
           date: item.date,
           link: item.link,
-          image: "",
-          body: "",
+          image: item.image || "",
+          body: item.body || "",
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
@@ -233,6 +233,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
               {post.description ? (
                 <p className="portal-post-summary">{post.description}</p>
+              ) : null}
+
+              {post.body ? (
+                <div className="portal-post-summary">{post.body}</div>
               ) : null}
 
               {post.link ? (

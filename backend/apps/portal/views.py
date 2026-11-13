@@ -71,6 +71,8 @@ class AdminJobs(viewsets.ModelViewSet):
         serializer.save(
             company=company,
             owner_auth_id=str(self.request.user.id),
+            status=Job.Status.PUBLISHED,
+            published_at=timezone.now(),
         )
 
     def perform_update(self, serializer):

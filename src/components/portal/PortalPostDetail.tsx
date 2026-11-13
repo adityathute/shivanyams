@@ -115,6 +115,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             link: video.url,
             image: video.thumbnail,
             body: "",
+            organization: "",
+            location: "",
+            startDate: "",
+            endDate: "",
+            eventDate: "",
             jobDetails: undefined,
           }
         : null;
@@ -135,6 +140,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           link: item.link,
           image: item.image || "",
           body: item.body || "",
+          organization: item.organization || "",
+          location: item.location || "",
+          startDate: item.start_date || "",
+          endDate: item.end_date || "",
+          eventDate: item.event_date || "",
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
@@ -165,6 +175,21 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
               </div>
 
               <h1>{post.title}</h1>
+
+              {post.organization || post.location ? (
+                <div className="portal-post-context">
+                  {post.organization ? <span>{post.organization}</span> : null}
+                  {post.location ? <span>{post.location}</span> : null}
+                </div>
+              ) : null}
+
+              {post.eventDate || post.startDate || post.endDate ? (
+                <div className="portal-post-context">
+                  {post.eventDate ? <span>Event date: {formatDate(post.eventDate, language)}</span> : null}
+                  {post.startDate ? <span>Start: {formatDate(post.startDate, language)}</span> : null}
+                  {post.endDate ? <span>End: {formatDate(post.endDate, language)}</span> : null}
+                </div>
+              ) : null}
 
               {post.image && !embedUrl ? (
                 <img

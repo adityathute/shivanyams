@@ -170,7 +170,7 @@ export function VideosPage() {
                         <span>{t("guide")}</span>
                       </div>
 
-                      <h3><Link href={`/videos/${createPostSlug(video.title)}`}>{video.title}</Link></h3>
+                      <h3><Link href={`/videos/${video.slug || createPostSlug(video.title)}`}>{video.title}</Link></h3>
                     </div>
                   </>
                 );

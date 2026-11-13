@@ -97,6 +97,12 @@ class JobWriteSerializer(serializers.ModelSerializer):
         ]
 
 
+class ContentWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PortalContent
+        fields = ["kind", "title", "slug", "summary", "body", "organization", "location", "start_date", "end_date", "event_date", "source_url", "image_url", "extra"]
+
+
 class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CandidateProfile

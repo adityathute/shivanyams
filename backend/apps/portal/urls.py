@@ -7,6 +7,7 @@ from .views import (
     EmployerCompanies,
     EmployerJobs,
     AdminJobs,
+    AdminContent,
     CandidateProfileView,
     ApplyJob,
     CandidateApplications,
@@ -20,6 +21,7 @@ router.register("jobs", PublicJobs, basename="jobs")
 router.register("employer/companies", EmployerCompanies, basename="employer-companies")
 router.register("employer/jobs", EmployerJobs, basename="employer-jobs")
 router.register("admin/jobs", AdminJobs, basename="admin-jobs")
+router.register("admin/content", AdminContent, basename="admin-content")
 content_list = PublicContent.as_view({"get": "list"})
 content_detail = PublicContent.as_view({"get": "retrieve"})
 urlpatterns = [

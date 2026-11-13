@@ -153,3 +153,5 @@ min-height: calc(100vh - 65px);
     transition: none;
   }
 }
+
+.admin-dashboard-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }

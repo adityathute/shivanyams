@@ -35,10 +35,10 @@ export default function AdminPage() {
             new posts.
           </p>
 
-          <Link href="/admin/add-post" className="admin-add-post-button">
-            <span>+</span>
-            Add New Post
-          </Link>
+          <div className="admin-dashboard-actions">
+            <Link href="/admin/add-post" className="admin-add-post-button"><span>+</span>Add Government Job</Link>
+            <Link href="/admin/add-content" className="admin-add-post-button"><span>+</span>Add Other Content</Link>
+          </div>
         </div>
       </section>
 

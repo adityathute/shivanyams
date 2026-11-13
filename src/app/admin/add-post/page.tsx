@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
+import { getAccessToken, slugify } from "../admin-utils";
 
 import {
   API_URL,
@@ -55,41 +56,6 @@ const emptyJob: JobForm = {
   important_dates: [],
   important_links: [],
 };
-
-function slugify(value: string) {
-  return value
-    .normalize("NFKD")
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function getAccessToken() {
-  const storageKeys = Object.keys(window.localStorage);
-
-  for (const key of storageKeys) {
-    if (!/token/i.test(key)) continue;
-
-    const raw = window.localStorage.getItem(key);
-    if (!raw) continue;
-
-    try {
-      const parsed = JSON.parse(raw);
-      const token =
-        parsed?.access_token ||
-        parsed?.accessToken ||
-        parsed?.token ||
-        parsed?.state?.accessToken ||
-        parsed?.state?.access_token;
-      if (typeof token === "string" && token) return token;
-    } catch {
-      if (raw.split(".").length === 3) return raw;
-    }
-  }
-
-  return "";
-}
 
 export default function AddPostPage() {
   const router = useRouter();

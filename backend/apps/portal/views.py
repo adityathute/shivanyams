@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from .models import Category,ImportantLink,Company,Job,CandidateProfile,Application,SavedJob,PortalContent
-from .serializers import CategorySerializer,ImportantLinkSerializer,CompanySerializer,JobSerializer,JobWriteSerializer,CandidateSerializer,ApplySerializer,ApplicationSerializer,ContentSerializer
+from .serializers import CategorySerializer,ImportantLinkSerializer,CompanySerializer,JobSerializer,JobWriteSerializer,CandidateSerializer,ApplySerializer,ApplicationSerializer,ContentSerializer,ContentWriteSerializer
 from .permissions import IsPortalIdentity, IsPortalAdmin
 class Categories(generics.ListAPIView): queryset=Category.objects.filter(active=True); serializer_class=CategorySerializer; permission_classes=[permissions.AllowAny]
 class ImportantLinks(generics.ListAPIView):
@@ -79,6 +79,23 @@ class AdminJobs(viewsets.ModelViewSet):
         category = serializer.validated_data.get("category", serializer.instance.category)
         if category is None or category.slug != "jobs" or not category.active:
             raise PermissionDenied("Select the active Jobs category.")
+        serializer.save()
+
+
+class AdminContent(viewsets.ModelViewSet):
+    serializer_class = ContentWriteSerializer
+    permission_classes = [IsPortalAdmin]
+
+    def get_queryset(self):
+        return PortalContent.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(status=PortalContent.Status.PUBLISHED, published_at=timezone.now())
+
+    def perform_update(self, serializer):
+        if serializer.instance.status != PortalContent.Status.PUBLISHED:
+            serializer.save(status=PortalContent.Status.PUBLISHED, published_at=timezone.now())
+            return
         serializer.save()
 
 

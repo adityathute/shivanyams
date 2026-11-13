@@ -93,7 +93,7 @@ export function AdmitCardsPage() {
                   <a
                     className="update-row"
                     key={item.id}
-                    href={`/admit-cards/${createPostSlug(item.title)}`}
+                    href={`/admit-cards/${item.slug || createPostSlug(item.title)}`}
                   >
                     <span className={`update-badge ${item.type}`}>
                       {item.category}

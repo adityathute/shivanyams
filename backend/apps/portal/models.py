@@ -75,6 +75,17 @@ class Job(Timestamped):
     category = models.ForeignKey(
         Category, null=True, blank=True, on_delete=models.SET_NULL, related_name="jobs"
     )
+    advertisement_no = models.CharField(max_length=120, blank=True)
+    total_posts = models.PositiveIntegerField(null=True, blank=True)
+    examination_name = models.CharField(max_length=240, blank=True)
+    post_details = models.TextField(blank=True)
+    educational_qualification = models.TextField(blank=True)
+    age_limit = models.CharField(max_length=180, blank=True)
+    application_fee = models.CharField(max_length=180, blank=True)
+    application_mode = models.CharField(max_length=120, blank=True)
+    interview_venue = models.TextField(blank=True)
+    important_dates = models.JSONField(default=list, blank=True)
+    important_links = models.JSONField(default=list, blank=True)
     title = models.CharField(max_length=220)
     slug = models.SlugField(unique=True)
     description = models.TextField()

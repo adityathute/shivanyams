@@ -31,7 +31,8 @@ export interface Category {
   description_en: string;
   description_mr: string;
   description_hi: string;
-  active: boolean;
+  is_active?: boolean;
+  active?: boolean;
 }
 
 export function getCategorySubtitle(
@@ -204,7 +205,7 @@ export function CategoryGrid({
           : payload.results ?? [];
 
         const activeCategories = data
-          .filter((category) => category.active)
+          .filter((category) => category.is_active ?? category.active ?? false)
           .map((category) => ({
             ...category,
             slug: normalizeCategorySlug(category.slug),

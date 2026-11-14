@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Language } from "../category/CategoryGrid";
-import { importantLinksApi } from "../category/CategoryGrid";
+import { getPortalApiUrl } from "../category/CategoryGrid";
 
 export interface ImportantLink {
   id: number;
@@ -27,7 +27,7 @@ export function useImportantLinks() {
 
     async function fetchLinks() {
       try {
-        const response = await fetch(importantLinksApi, {
+        const response = await fetch(getPortalApiUrl("important-links/"), {
           signal: controller.signal,
         });
 

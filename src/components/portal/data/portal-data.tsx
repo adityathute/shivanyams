@@ -71,47 +71,78 @@ export type PortalData = {
   error: string;
 };
 
-type ContentApiItem = {
-  id: number | string;
-  kind: string;
-  title: string;
-  slug: string;
-  summary: string;
-  body: string;
-  organization: string;
-  location: string;
-  start_date: string | null;
-  end_date: string | null;
-  event_date: string | null;
-  source_url: string;
-  image_url: string;
-  extra: Record<string, unknown>;
-  published_at: string | null;
+type ApiLink = {
+  name_en?: string;
+  name_mr?: string;
+  name_hi?: string;
+  url: string;
+  is_active?: boolean;
 };
 
-type JobApiItem = {
+type ApiPost = {
   id: number | string;
-  title: string;
+  title_en?: string;
+  title_mr?: string;
+  title_hi?: string;
   slug: string;
-  description: string;
-  requirements: string;
-  responsibilities: string;
-  location: string;
-  apply_url: string;
-  deadline: string | null;
-  published_at: string | null;
-  category: { name_en: string; name_mr: string; name_hi: string; slug: string } | null;
-  advertisement_no?: string;
-  total_posts?: number | null;
-  examination_name?: string;
-  post_details?: string;
-  educational_qualification?: string;
-  age_limit?: string;
-  application_fee?: string;
-  application_mode?: string;
-  interview_venue?: string;
-  important_dates?: { label: string; date: string }[];
-  important_links?: { label: string; url: string }[];
+  summary_en?: string;
+  summary_mr?: string;
+  summary_hi?: string;
+  body_en?: string;
+  body_mr?: string;
+  body_hi?: string;
+  category?: {
+    name_en?: string;
+    name_mr?: string;
+    name_hi?: string;
+    slug?: string;
+  } | null;
+  organization?: { name_en?: string; name_mr?: string; name_hi?: string } | null;
+  location?: string;
+  start_date?: string | null;
+  end_date?: string | null;
+  event_date?: string | null;
+  featured_image_url?: string;
+  published_at?: string | null;
+  important_links?: ApiLink[];
+  job_details?: {
+    advertisement_no?: string;
+    total_vacancies?: number | null;
+    designation?: string;
+    post_details?: string;
+    educational_qualification?: string;
+    age_min?: number | null;
+    age_max?: number | null;
+    age_limit_note?: string;
+    application_fee?: string;
+    application_mode?: string;
+    apply_url?: string;
+    official_notification_url?: string;
+    official_website?: string;
+    interview_details?: string;
+  } | null;
+  scheme_details?: {
+    application_url?: string;
+    official_website?: string;
+  } | null;
+  examination_details?: { official_website?: string } | null;
+  admit_card_details?: {
+    download_url?: string;
+    login_url?: string;
+    official_website?: string;
+  } | null;
+  result_details?: {
+    result_url?: string;
+    merit_list_url?: string;
+    official_website?: string;
+  } | null;
+  article_guide_details?: { source_url?: string } | null;
+  video_details?: {
+    video_url?: string;
+    thumbnail_url?: string;
+    available_languages?: string[];
+  } | null;
+  tool_details?: { tool_key?: string } | null;
 };
 
 export const STORAGE_KEY = "shivanyams-portal-data";
@@ -127,51 +158,87 @@ function getDate(value?: string | null) {
   return value ? value.slice(0, 10) : "";
 }
 
-function mapContent(content: ContentApiItem, type: ItemType): Item {
-  return {
-    id: String(content.id),
-    slug: content.slug,
-    title: content.title,
-    category: "",
-    date: getDate(content.published_at || content.event_date || content.start_date),
-    description: content.summary,
-    link: content.source_url,
-    type,
-    body: content.body,
-    image: content.image_url,
-    organization: content.organization,
-    location: content.location,
-    start_date: getDate(content.start_date),
-    end_date: getDate(content.end_date),
-    event_date: getDate(content.event_date),
-    extra: content.extra,
-  };
+function getPostTitle(post: ApiPost) {
+  return post.title_en || post.title_mr || post.title_hi || "";
 }
 
-function mapJob(job: JobApiItem): Item {
+function getPostSummary(post: ApiPost) {
+  return post.summary_en || post.summary_mr || post.summary_hi || "";
+}
+
+function getPostBody(post: ApiPost) {
+  return post.body_en || post.body_mr || post.body_hi || "";
+}
+
+function getPostLink(post: ApiPost) {
+  return (
+    post.job_details?.apply_url ||
+    post.job_details?.official_notification_url ||
+    post.scheme_details?.application_url ||
+    post.admit_card_details?.download_url ||
+    post.admit_card_details?.login_url ||
+    post.result_details?.result_url ||
+    post.result_details?.merit_list_url ||
+    post.video_details?.video_url ||
+    post.examination_details?.official_website ||
+    post.scheme_details?.official_website ||
+    post.admit_card_details?.official_website ||
+    post.result_details?.official_website ||
+    post.job_details?.official_website ||
+    post.article_guide_details?.source_url ||
+    post.important_links?.find((link) => link.is_active !== false)?.url ||
+    ""
+  );
+}
+
+function mapPost(post: ApiPost, type: ItemType): Item {
+  const job = post.job_details;
+
   return {
-    id: String(job.id),
-    slug: job.slug,
-    title: job.title,
-    category: job.category?.name_mr || job.category?.name_en || "",
-    date: getDate(job.published_at),
-    description: job.description,
-    link: job.apply_url,
-    type: "job",
-    job_details: {
-      advertisement_no: job.advertisement_no || "",
-      total_posts: job.total_posts == null ? "" : String(job.total_posts),
-      examination_name: job.examination_name || "",
-      post_details: job.post_details || "",
-      educational_qualification: job.educational_qualification || job.requirements || "",
-      location: job.location || "",
-      age_limit: job.age_limit || "",
-      application_fee: job.application_fee || "",
-      application_mode: job.application_mode || "",
-      interview_venue: job.interview_venue || "",
-      important_dates: job.important_dates || [],
-      important_links: job.important_links || [],
-    },
+    id: String(post.id),
+    slug: post.slug,
+    title: getPostTitle(post),
+    category:
+      post.category?.name_en ||
+      post.category?.name_mr ||
+      post.category?.name_hi ||
+      "",
+    date: getDate(post.published_at || post.event_date || post.start_date),
+    description: getPostSummary(post),
+    link: getPostLink(post),
+    type,
+    body: getPostBody(post),
+    image: post.featured_image_url || post.video_details?.thumbnail_url || "",
+    organization:
+      post.organization?.name_en ||
+      post.organization?.name_mr ||
+      post.organization?.name_hi ||
+      "",
+    location: post.location || "",
+    start_date: getDate(post.start_date),
+    end_date: getDate(post.end_date),
+    event_date: getDate(post.event_date),
+    job_details: job
+      ? {
+          advertisement_no: job.advertisement_no || "",
+          total_posts: job.total_vacancies == null ? "" : String(job.total_vacancies),
+          examination_name: "",
+          post_details: job.post_details || job.designation || "",
+          educational_qualification: job.educational_qualification || "",
+          location: post.location || "",
+          age_limit:
+            job.age_limit_note ||
+            [job.age_min, job.age_max].filter((value) => value != null).join(" - "),
+          application_fee: job.application_fee || "",
+          application_mode: job.application_mode || "",
+          interview_venue: job.interview_details || "",
+          important_dates: [],
+          important_links: (post.important_links || []).map((link) => ({
+            label: link.name_en || link.name_mr || link.name_hi || "",
+            url: link.url,
+          })),
+        }
+      : undefined,
   };
 }
 
@@ -187,12 +254,14 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
     }
     visited.add(nextUrl);
 
-    const response: Response = await fetch(nextUrl, { signal });
+    const response = await fetch(nextUrl, { signal });
     if (!response.ok) {
       throw new Error(`Request failed (${response.status}): ${nextUrl}`);
     }
 
-    const payload: T[] | { results?: T[]; next?: string | null } = await response.json();
+    const payload: T[] | { results?: T[]; next?: string | null } =
+      await response.json();
+
     if (Array.isArray(payload)) {
       results.push(...payload);
       break;
@@ -204,7 +273,7 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
       continue;
     }
 
-    const resolvedNext: URL = new URL(payload.next, url);
+    const resolvedNext = new URL(payload.next, url);
     if (resolvedNext.origin !== apiOrigin) {
       throw new Error("Pagination returned a URL outside the portal API.");
     }
@@ -215,41 +284,60 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
 }
 
 async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
-  const contentKinds = [
-    ["scheme", "scheme"],
-    ["result", "result"],
-    ["admit_card", "admit"],
-    ["guide", "guide"],
-    ["video", "video"],
-    ["update", "examination"],
-  ] as const;
+  const contentKinds: { endpoint: string; type: ItemType }[] = [
+    { endpoint: "jobs", type: "job" },
+    { endpoint: "schemes", type: "scheme" },
+    { endpoint: "examination", type: "examination" },
+    { endpoint: "admit-card", type: "admit" },
+    { endpoint: "results", type: "result" },
+    { endpoint: "articles", type: "guide" },
+    { endpoint: "videos", type: "video" },
+    { endpoint: "tools", type: "tool" },
+  ];
 
-  const [jobs, ...contentLists] = await Promise.all([
-    fetchList<JobApiItem>(`${API_URL}/jobs/`, signal),
-    ...contentKinds.map(([kind]) =>
-      fetchList<ContentApiItem>(`${API_URL}/content/${kind}/`, signal),
+  const responses = await Promise.allSettled(
+    contentKinds.map(({ endpoint }) =>
+      fetchList<ApiPost>(`${API_URL}/content/${endpoint}/`, signal),
     ),
-  ]);
+  );
 
-  const items = jobs.map(mapJob);
+  if (responses.every((response) => response.status === "rejected")) {
+    const firstError = responses.find(
+      (response): response is PromiseRejectedResult =>
+        response.status === "rejected",
+    );
+    throw firstError?.reason || new Error("Unable to load portal content.");
+  }
+
+  const items: Item[] = [];
   const videos: Video[] = [];
+  const errors: string[] = [];
 
-  contentKinds.forEach(([, type], index) => {
-    const entries = contentLists[index];
+  responses.forEach((response, index) => {
+    const { type } = contentKinds[index];
 
-    entries.forEach((entry) => {
+    if (response.status === "rejected") {
+      if (!signal.aborted) {
+        errors.push(`${contentKinds[index].endpoint}: ${String(response.reason)}`);
+      }
+      return;
+    }
+
+    response.value.forEach((post) => {
+      const item = mapPost(post, type);
+
       if (type === "video") {
         videos.push({
-          id: String(entry.id),
-          slug: entry.slug,
-          title: entry.title,
-          url: entry.source_url,
-          thumbnail: entry.image_url,
-          language: String(entry.extra.language || ""),
+          id: item.id,
+          slug: item.slug,
+          title: item.title,
+          url: post.video_details?.video_url || item.link,
+          thumbnail: post.video_details?.thumbnail_url || item.image || "",
+          language: post.video_details?.available_languages?.join(", ") || "",
         });
-      } else {
-        items.push(mapContent(entry, type));
       }
+
+      items.push(item);
     });
   });
 
@@ -257,7 +345,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
     items: items.sort((a, b) => b.date.localeCompare(a.date)),
     videos,
     loading: false,
-    error: "",
+    error: errors.join("\n"),
   };
 }
 

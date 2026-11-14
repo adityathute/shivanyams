@@ -155,3 +155,44 @@ min-height: calc(100vh - 65px);
 }
 
 .admin-dashboard-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+
+
+.admin-shell{width:min(1440px,100%);margin:0 auto;padding:34px 24px 48px;box-sizing:border-box;flex:1}
+.admin-topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px}
+.admin-topbar h1{font-size:30px;margin:8px 0 5px;color:#132642}
+.admin-topbar p,.admin-panel-heading p{margin:0;color:#748299;font-size:13px}
+.admin-top-actions{display:flex;gap:10px;flex-wrap:wrap}
+.admin-primary-button,.admin-secondary-button,.admin-refresh-button{display:inline-flex;align-items:center;justify-content:center;border-radius:7px;padding:11px 16px;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer}
+.admin-primary-button{background:#075be8;color:#fff;border:1px solid #075be8}
+.admin-secondary-button,.admin-refresh-button{background:#fff;color:#36506f;border:1px solid #dbe4f0}
+.admin-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.admin-stats article{background:#fff;border:1px solid #e1e8f2;border-radius:10px;padding:17px 18px;display:grid;gap:9px}
+.admin-stats span{font-size:11px;color:#718198;font-weight:600}
+.admin-stats strong{font-size:25px;color:#142c4b}
+.admin-post-panel{background:#fff;border:1px solid #e1e8f2;border-radius:12px;overflow:hidden}
+.admin-panel-heading{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #edf1f6}
+.admin-panel-heading h2{font-size:18px;margin:0 0 5px;color:#132642}
+.admin-filters{display:grid;grid-template-columns:minmax(220px,1fr) 210px 190px;gap:10px;padding:16px 22px;border-bottom:1px solid #edf1f6}
+.admin-filters input,.admin-filters select{min-width:0;width:100%;box-sizing:border-box;border:1px solid #dbe4f0;border-radius:7px;padding:10px 12px;background:#fff;color:#263b57;font:inherit;font-size:12px}
+.admin-table-wrap{width:100%;overflow-x:auto}
+.admin-post-table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}
+.admin-post-table th{background:#f8faff;color:#718198;font-size:10px;text-transform:uppercase;letter-spacing:.6px;padding:12px 16px;font-weight:800}
+.admin-post-table td{padding:14px 16px;border-top:1px solid #edf1f6;color:#435671;font-size:12px}
+.admin-post-table td:first-child{min-width:250px;white-space:normal}
+.admin-post-table td strong,.admin-post-table td small{display:block}
+.admin-post-table td strong{color:#1b304d;font-size:12px;line-height:1.5}
+.admin-post-table td small{color:#8a98aa;font-size:10px;margin-top:3px}
+.admin-status{display:inline-flex;border-radius:30px;padding:5px 9px;background:#eef2f7;color:#596a80;font-size:10px;font-weight:700}
+.admin-status.status-published{background:#e8f7ef;color:#187447}
+.admin-status.status-pending_review{background:#fff5df;color:#946200}
+.admin-status.status-rejected{background:#fff0f0;color:#b33434}
+.admin-status.status-approved{background:#eaf2ff;color:#245db4}
+.admin-row-actions{display:flex;align-items:center;gap:10px}
+.admin-row-actions a,.admin-row-actions button{border:0;background:none;color:#075be8;text-decoration:none;font:700 11px inherit;cursor:pointer;padding:2px}
+.admin-row-actions button.danger{color:#c43b3b}
+.admin-row-actions button:disabled{opacity:.5;cursor:wait}
+.admin-empty{padding:36px 20px;text-align:center;color:#8190a4;font-size:13px}
+.admin-table-footer{padding:12px 18px;border-top:1px solid #edf1f6;color:#8492a4;font-size:10px}
+.admin-error{margin:14px 22px;padding:11px 13px;border-radius:7px;background:#fff0f0;color:#a52f2f;font-size:12px}
+@media(max-width:900px){.admin-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-topbar{align-items:flex-start;flex-direction:column}}
+@media(max-width:620px){.admin-shell{padding:24px 13px}.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-stats article{padding:13px}.admin-stats strong{font-size:21px}.admin-filters{grid-template-columns:1fr;padding:13px}.admin-panel-heading{padding:16px}.admin-topbar h1{font-size:25px}}

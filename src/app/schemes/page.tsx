@@ -1,4 +1,4 @@
-import { SchemesPage } from "../../components/portal/SchemesPage";
+import { SchemesPage } from "../../components/scheme/SchemesPage";
 
 export default function SchemesPageRoute() {
   return <SchemesPage />;

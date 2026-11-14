@@ -1,0 +1,84 @@
+.cloud {
+  position: absolute;
+  width: 120px;
+  height: 35px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.45);
+  filter: blur(1px);
+  animation: cloud-drift 35s linear infinite;
+  transition:
+    opacity 4s ease,
+    background 4s ease;
+}
+
+.cloud span {
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.cloud span:nth-child(1) {
+  width: 45px;
+  height: 45px;
+  left: 15px;
+  top: -20px;
+}
+
+.cloud span:nth-child(2) {
+  width: 55px;
+  height: 55px;
+  left: 45px;
+  top: -30px;
+}
+
+.cloud span:nth-child(3) {
+  width: 35px;
+  height: 35px;
+  left: 80px;
+  top: -12px;
+}
+
+.cloud-one {
+  top: 25%;
+  left: 65%;
+}
+
+.cloud-two {
+  top: 38%;
+  left: 85%;
+  transform: scale(0.7);
+  animation-duration: 50s;
+  animation-delay: -15s;
+}
+
+.cloud-three {
+  top: 15%;
+  left: 45%;
+  transform: scale(0.55);
+  animation-duration: 45s;
+  animation-delay: -20s;
+}
+
+.scene-night .cloud {
+  opacity: 0.08;
+}
+
+.scene-sunset .cloud {
+  background: rgba(255, 177, 142, 0.5);
+}
+
+@keyframes cloud-drift {
+  from {
+    translate: -20px 0;
+  }
+
+  to {
+    translate: 120px 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .cloud {
+    display: none !important;
+  }
+}

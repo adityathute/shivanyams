@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { API_URL } from "../../../components/portal/CategoryGrid";
+import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { getAccessToken, slugify } from "../admin-utils";
 
 import "../add-post/AddPostPage.css";

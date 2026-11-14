@@ -1,0 +1,71 @@
+/* Government building */
+.building-realistic {
+  position: absolute;
+  width: 320px;
+  height: 205px;
+  right: 4%;
+  bottom: -24;
+  z-index: 5;
+  overflow: visible;
+  transform: none;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 5px 7px rgba(25, 35, 25, 0.16));
+  transition: filter 4s ease;
+}
+
+.government-building-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Soft shadow directly beneath the foundation */
+.building-realistic::after {
+  content: "";
+  position: absolute;
+  left: 17%;
+  right: 17%;
+  bottom: 1px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(18, 35, 24, 0.35);
+  filter: blur(8px);
+  z-index: -1;
+}
+
+/* Night scene */
+.scene-night .building-realistic {
+  filter: brightness(0.55) drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+}
+
+@media (max-width: 1100px) {
+  .building-realistic {
+    right: 5%;
+    transform: scale(0.85);
+    transform-origin: bottom right;
+  }
+}
+
+@media (max-width: 760px) {
+  .building-realistic {
+    right: 8%;
+    bottom: 20px;
+    transform: scale(0.7);
+    transform-origin: bottom right;
+  }
+}
+
+@media (max-width: 430px) {
+  .building-realistic {
+    right: 3%;
+    transform: scale(0.58);
+    transform-origin: bottom right;
+  }
+}
+
+@media (max-width: 768px) {
+  .building-realistic {
+    display: none;
+  }
+}

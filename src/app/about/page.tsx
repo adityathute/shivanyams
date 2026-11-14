@@ -1,4 +1,4 @@
-import { AboutPage } from "../../components/AboutPage";
+import { AboutPage } from "../../components/static-pages/About/AboutPage";
 
 export default function AboutPageRoute() {
   return <AboutPage />;

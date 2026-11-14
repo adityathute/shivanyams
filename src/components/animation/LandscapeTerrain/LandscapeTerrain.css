@@ -1,0 +1,77 @@
+/* ------------------------------
+   Mountains
+------------------------------ */
+
+.mountain {
+  position: absolute;
+  bottom: 12px;
+  width: 45%;
+  height: 150px;
+  border-radius: 50% 50% 0 0;
+  z-index: 0;
+}
+
+.mountain-back {
+  left: 45%;
+  background: var(--land-back);
+  transform: rotate(-10deg);
+}
+
+.mountain-middle {
+  right: -5%;
+  background: var(--land-back);
+  transform: rotate(8deg);
+}
+
+/* ------------------------------
+   Hills
+------------------------------ */
+
+.hill {
+  position: absolute;
+  width: 120%;
+  height: 110px;
+  left: -10%;
+  border-radius: 50% 50% 0 0;
+  transition: background 5s ease;
+}
+
+/* Back hill */
+.hill-back {
+  bottom: -95px;
+  height: 110px;
+  left: -10%;
+  background: var(--land-back);
+  transform: rotate(-3deg);
+  z-index: 2;
+}
+
+/* Front hill */
+.hill-front {
+  bottom: -70px;
+  left: -12%;
+  height: 130px;
+  background: linear-gradient(
+    180deg,
+    var(--land-front),
+    color-mix(in srgb, var(--land-front), #172c35 20%)
+  );
+  transform: rotate(2deg);
+  z-index: 4;
+}
+
+/* ------------------------------
+   Responsive
+------------------------------ */
+
+@media (max-width: 760px) {
+  .mountain,
+  .hill-back {
+    display: none !important;
+  }
+
+  .hill-front {
+    display: block !important;
+    z-index: 4;
+  }
+}

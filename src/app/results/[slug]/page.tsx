@@ -1,4 +1,4 @@
-import { PortalPostDetail } from "../../../components/portal/PortalPostDetail";
+import { PortalPostDetail } from "../../../components/portal/post/PortalPostDetail";
 
 export default function Page() {
   return <PortalPostDetail category="results" />;

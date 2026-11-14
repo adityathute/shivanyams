@@ -10,7 +10,7 @@ import {
   getCategoryTitle,
   type Category,
   type Language,
-} from "../../../components/portal/CategoryGrid";
+} from "../../../components/portal/category/CategoryGrid";
 
 import "./AddPostPage.css";
 

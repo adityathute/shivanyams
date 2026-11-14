@@ -1,4 +1,4 @@
-import type { Language } from "../../components/portal/CategoryGrid";
+import type { Language } from "../../components/portal/category/CategoryGrid";
 
 export const portalDictionary = {
   updatesTitle: {

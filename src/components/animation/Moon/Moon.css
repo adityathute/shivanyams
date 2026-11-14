@@ -1,0 +1,101 @@
+.moon {
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  top: 55px;
+  right: 27%;
+  border-radius: 50%;
+  background: #f3f5ff;
+  box-shadow:
+    0 0 25px rgba(210, 225, 255, 0.25),
+    0 0 65px rgba(210, 225, 255, 0.2);
+  opacity: 0;
+  transform: translateY(100px);
+  transition:
+    opacity 4s ease,
+    transform 5s ease;
+}
+
+.scene-night .moon {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.moon-crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(180, 194, 222, 0.35);
+}
+
+.crater-one {
+  width: 15px;
+  height: 15px;
+  top: 20px;
+  left: 18px;
+}
+
+.crater-two {
+  width: 10px;
+  height: 10px;
+  top: 45px;
+  left: 42px;
+}
+
+.crater-three {
+  width: 7px;
+  height: 7px;
+  top: 12px;
+  left: 48px;
+}
+
+@media (max-width: 760px) {
+  .moon {
+    right: 15%;
+  }
+}
+
+@media (max-width: 760px) {
+  .moon {
+    display: block !important;
+    width: 50px;
+    height: 50px;
+    top: 30px;
+    right: 10%;
+  }
+}
+
+@media (max-width: 760px) {
+  .moon {
+    position: absolute;
+    top: 50%;
+    right: 9%;
+    width: 55px;
+    height: 55px;
+    transform: translateY(0) !important;
+  }
+
+  .crater-one {
+    width: 10px;
+    height: 10px;
+    top: 10px;
+    left: 12px;
+  }
+
+  .crater-two {
+    width: 5px;
+    height: 5px;
+    top: 35px;
+    left: 20px;
+  }
+
+  .crater-three {
+    width: 12px;
+    height: 12px;
+    top: 15px;
+    left: 30px;
+  }
+
+  .scene-night .moon {
+    transform: translateY(0) !important;
+  }
+}

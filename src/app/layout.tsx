@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import type { Language } from "shivanya-i18n";
 
-import { PortalLayout } from "../components/portal/PortalLayout";
+import { PortalLayout } from "../components/portal/layout/PortalLayout";
 import "./globals.css";
 import "./portal-base.css";
 

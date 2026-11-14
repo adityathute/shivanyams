@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { API_URL } from "../category/CategoryGrid";
+import { getPortalApiUrl, API_URL } from "../category/CategoryGrid";
 
 export type ItemType =
   | "job"
@@ -297,7 +297,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
 
   const responses = await Promise.allSettled(
     contentKinds.map(({ endpoint }) =>
-      fetchList<ApiPost>(`${API_URL}/content/${endpoint}/`, signal),
+      fetchList<ApiPost>(getPortalApiUrl(`content/${endpoint}/`), signal),
     ),
   );
 

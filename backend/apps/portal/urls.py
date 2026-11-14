@@ -53,17 +53,17 @@ urlpatterns = [
     # Admin content management
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
     path(
+        "admin/content/<int:post_id>/review/",
+        AdminPostReview.as_view(),
+        name="admin-post-review",
+    ),
+    path(
         "admin/content/<str:kind>/<slug:slug>/",
         admin_content_detail,
         name="admin-content-detail",
     ),
 
     # Admin review and publishing workflow
-    path(
-        "admin/content/<int:post_id>/review/",
-        AdminPostReview.as_view(),
-        name="admin-post-review",
-    ),
 
     # Comments and replies
     path(

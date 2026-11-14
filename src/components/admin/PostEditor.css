@@ -20,3 +20,9 @@
 .post-editor-notice{margin:0 0 15px;padding:12px 14px;background:#fff0f0;color:#a52f2f;border-radius:7px;font-size:12px}
 .post-editor-loading{max-width:1120px;margin:60px auto;color:#718198}
 @media(max-width:650px){.post-editor-page{padding:22px 12px 35px}.post-editor-header{align-items:flex-start;flex-direction:column}.post-editor-header h1{font-size:25px}.post-editor-form section{padding:16px}.post-editor-grid{grid-template-columns:1fr}.post-editor-actions button{flex:1}}
+
+.post-editor-detail-grid{align-items:start}
+.post-editor-check{display:flex!important;align-items:center;gap:9px!important;min-height:40px}
+.post-editor-check input{width:16px!important;height:16px;accent-color:#075be8}
+.post-editor-detail-wide{grid-column:1/-1}
+.post-editor-help{padding:10px 12px;background:#f7f9fd;border-radius:7px}

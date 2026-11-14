@@ -26,3 +26,9 @@
 .post-editor-check input{width:16px!important;height:16px;accent-color:#075be8}
 .post-editor-detail-wide{grid-column:1/-1}
 .post-editor-help{padding:10px 12px;background:#f7f9fd;border-radius:7px}
+
+.post-editor-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.post-editor-section-heading h2{margin:0}
+.post-editor-section-heading button{border:1px solid #075be8;border-radius:6px;padding:8px 11px;background:#fff;color:#075be8;font-size:11px;font-weight:700;cursor:pointer}
+.post-editor-repeat-card{padding:14px;border:1px solid #e7edf5;border-radius:8px;background:#fbfcff;display:grid;gap:12px}
+.post-editor-remove{justify-self:end;border:0;background:none;color:#bd3c3c;font-size:11px;font-weight:700;cursor:pointer}

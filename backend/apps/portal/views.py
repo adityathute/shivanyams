@@ -43,12 +43,19 @@ SUPPORTED_CONTENT_KINDS = {
 }
 
 
+CONTENT_CATEGORY_SLUGS = {
+    "admit-card": "admit-cards",
+    "articles": "articles-guides",
+}
+
+
 def get_content_category(kind):
     """Resolve a public URL kind to an active Category record."""
     if kind not in SUPPORTED_CONTENT_KINDS:
         raise NotFound("Unknown content category.")
 
-    return get_object_or_404(Category, slug=kind, is_active=True)
+    category_slug = CONTENT_CATEGORY_SLUGS.get(kind, kind)
+    return get_object_or_404(Category, slug=category_slug, is_active=True)
 
 
 def public_posts_for_kind(kind):

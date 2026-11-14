@@ -15,6 +15,7 @@ import {
   GuideIcon,
   VideoIcon,
   ExaminationIcon,
+  ToolsIcon,
 } from "shivanya-ui";
 
 import type { ItemType } from "../data/portal-data";
@@ -90,6 +91,12 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     icon: <VideoIcon />,
     href: "/videos",
   },
+  tools: {
+  type: "tool" as ItemType,
+  color: "gray",
+  icon: <ToolsIcon />,
+  href: "/tools",
+},
 };
 
 const CATEGORY_ORDER = [
@@ -100,6 +107,7 @@ const CATEGORY_ORDER = [
   "examination",
   "results",
   "videos",
+    "tools",
 ];
 
 const categorySlugAliases: Record<string, string> = {

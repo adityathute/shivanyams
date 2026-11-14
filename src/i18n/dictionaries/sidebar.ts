@@ -8,6 +8,7 @@ export const sidebarTranslations = {
     admitCards: "Admit Cards",
     guides: "Articles & Guides",
     videos: "Videos",
+    tools: "Tools",
     contact: "Contact",
   },
   mr: {
@@ -19,6 +20,7 @@ export const sidebarTranslations = {
     admitCards: "प्रवेशपत्र",
     guides: "लेख आणि मार्गदर्शक",
     videos: "व्हिडिओ",
+    tools: "टूल्स",
     contact: "संपर्क",
   },
   hi: {
@@ -30,6 +32,7 @@ export const sidebarTranslations = {
     admitCards: "प्रवेशपत्र",
     guides: "लेख और मार्गदर्शक",
     videos: "वीडियो",
+    tools: "टूल्स",
     contact: "संपर्क",
   },
 } as const;

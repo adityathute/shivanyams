@@ -23,7 +23,8 @@ type CategorySlug =
   | "results"
   | "admit-cards"
   | "guides"
-  | "videos";
+  | "videos"
+  | "tools";
 
 const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
   jobs: "job",
@@ -32,6 +33,7 @@ const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
   results: "result",
   "admit-cards": "admit",
   guides: "guide",
+  tools: "tool",
 };
 
 export function createPostSlug(value: string) {

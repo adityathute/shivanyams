@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState } from "react";
@@ -9,7 +10,6 @@ import { usePortalData } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
-
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 import "./VideosPage.css";
@@ -35,7 +35,10 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
       } else {
         const segments = parsedUrl.pathname.split("/").filter(Boolean);
 
-        if (["embed", "shorts", "live"].includes(segments[0]) && segments[1]) {
+        if (
+          ["embed", "shorts", "live"].includes(segments[0]) &&
+          segments[1]
+        ) {
           videoId = segments[1];
         }
       }
@@ -70,12 +73,16 @@ export function VideosPage() {
     );
   }, [data.videos, query]);
 
+  const hasVideos = data.videos.length > 0;
+
   return (
     <>
       <main className="videos-page">
         <section className="videos-hero">
           <div className="videos-hero-content">
-            <span className="videos-eyebrow">{t("videosEyebrow")}</span>
+            <span className="videos-eyebrow">
+              {t("videosEyebrow")}
+            </span>
 
             <h1>
               {t("videosHeroTitleLine1")}
@@ -110,20 +117,31 @@ export function VideosPage() {
         <section className="videos-panel">
           <header className="videos-panel-header">
             <h2>{t("latestVideosGuides")}</h2>
+
             <span>
               {videos.length} {t("videosCount")}
             </span>
           </header>
 
-          {data.loading ? <div className="videos-empty">Loading...</div> : null}
-          {!data.loading && data.error ? <div className="videos-empty">{data.error}</div> : null}
-          {!data.loading && !data.error && videos.length ? (
+          {data.loading && (
+            <div className="videos-empty">
+              Loading...
+            </div>
+          )}
+
+          {!data.loading && data.error && (
+            <div className="videos-empty">
+              {data.error}
+            </div>
+          )}
+
+          {!data.loading && !data.error && videos.length > 0 && (
             <div className="videos-grid">
               {videos.map((video) => {
                 const youtubeEmbedUrl = getYouTubeEmbedUrl(video.url);
 
-                const content = (
-                  <>
+                return (
+                  <div className="videos-card" key={video.id}>
                     <div
                       className="videos-thumbnail"
                       style={{
@@ -160,36 +178,32 @@ export function VideosPage() {
                         <span>{t("guide")}</span>
                       </div>
 
-                      <h3><Link href={`/videos/${video.slug || createPostSlug(video.title)}`}>{video.title}</Link></h3>
+                      <h3>
+                        <Link
+                          href={`/videos/${video.slug || createPostSlug(video.title)}`}
+                        >
+                          {video.title}
+                        </Link>
+                      </h3>
                     </div>
-                  </>
-                );
-
-                if (youtubeEmbedUrl) {
-                  return (
-                    <div className="videos-card" key={video.id}>
-                      {content}
-                    </div>
-                  );
-                }
-
-                return (
-                  <div className="videos-card" key={video.id}>
-                    {content}
                   </div>
                 );
               })}
             </div>
-          ) : !data.loading && !data.error ? (
-            <div className="videos-empty">
-              <span className="videos-empty-icon">
-                <VideoIcon size={28} />
-              </span>
+          )}
 
-              <h3>{t("noVideosFound")}</h3>
-              <p>{t("tryAnotherSearch")}</p>
+          {!data.loading && !data.error && videos.length === 0 && (
+            <div className="videos-empty">
+              {hasVideos ? (
+                <>
+                  <h3>{t("noVideosFound")}</h3>
+                  <p>{t("tryAnotherSearch")}</p>
+                </>
+              ) : (
+                <h3>No videos available</h3>
+              )}
             </div>
-          ) : null}
+          )}
         </section>
       </main>
 

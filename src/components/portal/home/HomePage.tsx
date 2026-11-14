@@ -13,6 +13,7 @@ import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { useRouter } from "next/navigation";
+import { LinkIcon } from "shivanya-ui";
 
 export function HomePage() {
   const { language: selectedLanguage } = usePortalLanguage();
@@ -87,7 +88,7 @@ export function HomePage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span>✦</span>
+                  <LinkIcon size={16} />
                   {getLinkTitle(link, selectedLanguage)}
                   <b>›</b>
                 </a>

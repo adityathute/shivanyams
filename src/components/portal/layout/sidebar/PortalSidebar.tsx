@@ -9,6 +9,7 @@ import {
   VideoIcon,
   MailIcon,
   ShieldCheckIcon,
+  ToolsIcon,
 } from "shivanya-ui";
 
 export const portalNavigation = [
@@ -20,9 +21,8 @@ export const portalNavigation = [
   { label: "परीक्षा", href: "/exams", icon: <ExaminationIcon /> },
   { label: "लेख आणि मार्गदर्शक", href: "/guides", icon: <GuideIcon /> },
   { label: "व्हिडिओ", href: "/videos", icon: <VideoIcon /> },
-  {
-    divider: true,
-  },
+  { label: "टूल्स", href: "/tools", icon: <ToolsIcon /> },
+  { divider: true },
   { label: "संपर्क", href: "/contact", icon: <MailIcon /> },
 ];
 import { translate, type Language } from "shivanya-i18n";
@@ -78,6 +78,11 @@ export function getPortalNavigation(
       label: translate(language, sidebarTranslations, "videos"),
       href: "/videos",
       icon: <VideoIcon />,
+    },
+    {
+      label: translate(language, sidebarTranslations, "tools"),
+      href: "/tools",
+      icon: <ToolsIcon />,
     },
     { label: "", divider: true },
     ...(isAdmin

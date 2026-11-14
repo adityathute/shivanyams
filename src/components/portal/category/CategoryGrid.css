@@ -1,6 +1,6 @@
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 13px;
   margin: 14px 0;
 }
@@ -60,7 +60,7 @@
 .cyan .category-icon { color: #0891b2; }
 .red .category-icon { color: #df3d4d; }
 .orange .category-icon { color: #ed8612; }
-
+.gray .category-icon { color: #4b5563; }
 .youtube-card {
   background: linear-gradient(145deg, #fff4f4, #fff);
 }

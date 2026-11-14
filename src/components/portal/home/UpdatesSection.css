@@ -186,27 +186,31 @@
 }
 
 .empty-admit {
-  height: 140px;
+  height: 110px;
 }
 
 .empty-exam {
-  height: 122px;
+  height: 92px;
 }
 
 .empty-guide {
-  height: 118px;
+  height: 88px;
 }
 
 .empty-job {
-  height: 144px;
+  height: 114px;
 }
 
 .empty-result {
-  height: 118px;
+  height: 88px;
 }
 
 .empty-scheme {
-  height: 140px;
+  height: 110px;
+}
+
+.empty-tool {
+  height: 114px;
 }
 
 .right-column {

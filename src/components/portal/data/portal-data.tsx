@@ -17,7 +17,8 @@ export type ItemType =
   | "admit"
   | "exam"
   | "guide"
-  | "video";
+  | "video"
+  | "tool";
 
 export type JobDetails = {
   advertisement_no: string;

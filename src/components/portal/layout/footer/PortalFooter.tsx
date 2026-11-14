@@ -37,6 +37,7 @@ import {
   GuideIcon,
   VideoIcon,
   ExaminationIcon,
+  ToolsIcon,
 } from "shivanya-ui";
 
 export function PortalFooter() {
@@ -84,6 +85,7 @@ export function PortalFooter() {
     examination: 5,
     results: 6,
     videos: 7,
+    tools: 8,
   };
 
   const categoryIcons: Record<
@@ -98,6 +100,7 @@ export function PortalFooter() {
     "articles-guides": GuideIcon,
     guides: GuideIcon,
     videos: VideoIcon,
+    tools: ToolsIcon,
   };
 
   return (
@@ -225,7 +228,7 @@ export function PortalFooter() {
 
           <div>
             <h3>{getBaseText("usefulLinks", language)}</h3>
-            {links.slice(0, 7).map((link) => (
+            {links.slice(0, 8).map((link) => (
               <a
                 key={link.id}
                 href={link.url}

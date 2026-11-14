@@ -73,7 +73,7 @@ const EMPTY = {
   body_en: "", body_mr: "", body_hi: "",
   location: "", state: "", country: "India", featured_image_url: "",
   start_date: "", end_date: "", event_date: "", default_language: "en",
-  meta_title_en: "", meta_description_en: "", meta_keywords: "",
+  meta_title_en: "", meta_description_en: "", meta_keywords: "",\n  comments_enabled: true, reactions_enabled: true, is_featured: false, is_active: true,
 };
 
 type FormState = typeof EMPTY;
@@ -371,6 +371,17 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
                       />}
                 </label>;
               })}
+            </div>
+          </section>
+          <section>
+            <h2>Post Settings</h2>
+            <div className="post-editor-settings-grid">
+              {([
+                ["is_active", "Post is active"],
+                ["is_featured", "Feature this post"],
+                ["comments_enabled", "Allow comments"],
+                ["reactions_enabled", "Allow likes and dislikes"],
+              ] as const).map(([key, label]) => <label className="post-editor-check" key={key}><input type="checkbox" checked={form[key]} onChange={(event) => update(key, event.target.checked)} />{label}</label>)}
             </div>
           </section>
           <section>

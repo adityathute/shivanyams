@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from .models import (
     Category,
     Comment,
+    ImportantLink,
     LanguageChoices,
     Post,
     PostLink,
@@ -24,6 +25,7 @@ from .permissions import IsPortalAdmin, IsPortalIdentity
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
+    ImportantLinkSerializer,
     PostLinkSerializer,
     PostSerializer,
     PostWriteSerializer,
@@ -82,20 +84,13 @@ class Categories(generics.ListAPIView):
 
 
 class ImportantLinks(generics.ListAPIView):
-    serializer_class = PostLinkSerializer
+    serializer_class = ImportantLinkSerializer
     permission_classes = [permissions.AllowAny]
     pagination_class = None
 
     def get_queryset(self):
-        return (
-            PostLink.objects.filter(
-                is_active=True,
-                post__is_active=True,
-                post__status=Post.Status.PUBLISHED,
-                post__published_at__isnull=False,
-            )
-            .select_related("post")
-            .order_by("post_id", "sort_order", "id")
+        return ImportantLink.objects.filter(active=True).order_by(
+            "sort_order", "name_en"
         )
 
 

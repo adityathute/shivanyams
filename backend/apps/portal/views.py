@@ -14,7 +14,6 @@ from .models import (
     ImportantLink,
     LanguageChoices,
     Post,
-    PostLink,
     PostReaction,
     PostStatusHistory,
     PostView,
@@ -26,7 +25,6 @@ from .serializers import (
     CategorySerializer,
     CommentSerializer,
     ImportantLinkSerializer,
-    PostLinkSerializer,
     PostSerializer,
     PostWriteSerializer,
 )

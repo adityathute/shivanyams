@@ -220,7 +220,7 @@ export default function AdminPage() {
     ]);
     const csv = [columns, ...rows].map((row) => row.map((value) =>
       `"${String(value ?? "").replaceAll('"', '""')}"`
-    ).join(",")).join("\\r\\n");
+    ).join(",")).join("\r\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");

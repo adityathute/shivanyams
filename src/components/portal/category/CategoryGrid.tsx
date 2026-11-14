@@ -149,9 +149,6 @@ export function getPortalApiUrl(path: string) {
   return `${API_URL}/${path.replace(/^\/+/, "")}`;
 }
 
-export const categoriesApi = getPortalApiUrl("categories/");
-export const importantLinksApi = getPortalApiUrl("important-links/");
-
 export function getCategoryTitle(
   category: Category,
   language: Language = "mr",
@@ -202,7 +199,7 @@ export function CategoryGrid({
 
     async function fetchCategories() {
       try {
-        const response = await fetch(categoriesApi, {
+        const response = await fetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 

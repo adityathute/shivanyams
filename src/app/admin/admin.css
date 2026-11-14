@@ -196,3 +196,18 @@ min-height: calc(100vh - 65px);
 .admin-error{margin:14px 22px;padding:11px 13px;border-radius:7px;background:#fff0f0;color:#a52f2f;font-size:12px}
 @media(max-width:900px){.admin-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-topbar{align-items:flex-start;flex-direction:column}}
 @media(max-width:620px){.admin-shell{padding:24px 13px}.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.admin-stats article{padding:13px}.admin-stats strong{font-size:21px}.admin-filters{grid-template-columns:1fr;padding:13px}.admin-panel-heading{padding:16px}.admin-topbar h1{font-size:25px}}
+
+
+.admin-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.admin-filters{grid-template-columns:minmax(220px,1fr) 190px 180px 170px}
+.admin-post-table th:first-child,.admin-post-table td:first-child{width:34px;min-width:34px;padding-left:18px;padding-right:4px}
+.admin-post-table input[type=checkbox]{width:15px;height:15px;accent-color:#075be8;cursor:pointer}
+.admin-table-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.admin-pagination{display:flex;align-items:center;gap:8px}
+.admin-pagination button,.admin-pagination select,.admin-bulk-bar button{border:1px solid #dbe4f0;border-radius:6px;background:#fff;color:#405571;padding:7px 9px;font-size:10px;font-weight:700;cursor:pointer}
+.admin-pagination button:disabled{opacity:.4;cursor:not-allowed}
+.admin-bulk-bar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:12px 18px;background:#f3f7ff;border-top:1px solid #dfe9fb}
+.admin-bulk-bar strong{font-size:11px;color:#1c3f73;margin-right:auto}
+.admin-bulk-bar button:nth-of-type(1){background:#075be8;border-color:#075be8;color:#fff}
+@media(max-width:900px){.admin-filters{grid-template-columns:1fr 1fr}.admin-table-footer{align-items:flex-start;flex-direction:column}}
+@media(max-width:620px){.admin-filters{grid-template-columns:1fr}.admin-panel-heading{align-items:flex-start;flex-direction:column}.admin-toolbar-actions{width:100%}.admin-table-footer{padding:12px}.admin-pagination{width:100%;justify-content:space-between}}

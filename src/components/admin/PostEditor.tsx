@@ -7,6 +7,9 @@ import { getAccessToken, slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
 
 type ContentKind = { slug: string; label: string; api: string; detailKey: string };
+type LinkInput = { name_en: string; name_mr: string; name_hi: string; url: string; sort_order: number; is_active: boolean };
+type DateInput = { date_type: string; label_en: string; label_mr: string; label_hi: string; date: string; description_en: string; description_mr: string; description_hi: string; sort_order: number };
+
 type PostRecord = {
   id: number;
   slug: string;
@@ -30,7 +33,7 @@ type PostRecord = {
   meta_title_en?: string;
   meta_description_en?: string;
   meta_keywords?: string[];
-  category?: Category;
+  category?: Category;\n  important_links?: LinkInput[];\n  important_dates?: DateInput[];
   job_details?: Record<string, unknown> | null;
   scheme_details?: Record<string, unknown> | null;
   examination_details?: Record<string, unknown> | null;
@@ -133,7 +136,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
   const [categories, setCategories] = useState<Category[]>([]);
   const [kind, setKind] = useState(KINDS.find((item) => item.api === initialKind) ?? KINDS[0]);
   const [form, setForm] = useState<FormState>(EMPTY);
-  const [details, setDetails] = useState<Record<string, unknown>>(detailTemplate(initialKind));
+  const [details, setDetails] = useState<Record<string, unknown>>(detailTemplate(initialKind));\n  const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);\n  const [importantDates, setImportantDates] = useState<DateInput[]>([]);
 
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
@@ -192,7 +195,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
           meta_description_en: record.meta_description_en || "",
           meta_keywords: (record.meta_keywords || []).join(", "),
         });
-        const data = record[detailKeyFor(kind.api) as keyof PostRecord] as Record<string, unknown> | null;
+        setImportantLinks(record.important_links || []);\n        setImportantDates((record.important_dates || []).map((item) => ({ ...item, date: item.date || "" })));\n        const data = record[detailKeyFor(kind.api) as keyof PostRecord] as Record<string, unknown> | null;
         const template = data || detailTemplate(kind.api);
         setDetails(template);
 
@@ -249,7 +252,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
         start_date: form.start_date || null,
         end_date: form.end_date || null,
         event_date: form.event_date || null,
-        [kind.detailKey]: details,
+        [kind.detailKey]: details,\n        important_links: importantLinks.filter((item) => item.name_en.trim() && item.url.trim()),\n        important_dates: importantDates.filter((item) => item.label_en.trim()).map((item) => ({ ...item, date: item.date || null })),
       };
       const url = editing
         ? `${API_URL}/admin/content/${kind.api}/${editSlug}/`
@@ -320,6 +323,27 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
               <label>Event Date<input type="date" value={form.event_date} onChange={(event) => update("event_date", event.target.value)} /></label>
               <label>Default Language<select value={form.default_language} onChange={(event) => update("default_language", event.target.value)}><option value="en">English</option><option value="mr">Marathi</option><option value="hi">Hindi</option></select></label>
             </div>
+          </section>
+          <section>
+            <div className="post-editor-section-heading"><h2>Important Dates</h2><button type="button" onClick={() => setImportantDates((items) => [...items, { date_type: "other", label_en: "", label_mr: "", label_hi: "", date: "", description_en: "", description_mr: "", description_hi: "", sort_order: items.length }])}>＋ Add date</button></div>
+            {importantDates.map((item, index) => <div className="post-editor-repeat-card" key={index}>
+              <div className="post-editor-grid">
+                <label>Date type<select value={item.date_type} onChange={(event) => setImportantDates((rows) => rows.map((row, i) => i === index ? { ...row, date_type: event.target.value } : row))}>{["application_start","application_end","fee_last_date","correction_window","exam_date","admit_card","answer_key","result","interview","other"].map((value) => <option key={value} value={value}>{detailLabel(value)}</option>)}</select></label>
+                <label>Date<input type="date" value={item.date} onChange={(event) => setImportantDates((rows) => rows.map((row, i) => i === index ? { ...row, date: event.target.value } : row))} /></label>
+                {(["en","mr","hi"] as const).map((lang) => <label key={lang}>Label ({lang.toUpperCase()})<input value={item[`label_${lang}`]} onChange={(event) => setImportantDates((rows) => rows.map((row, i) => i === index ? { ...row, [`label_${lang}`]: event.target.value } : row))} /></label>)}
+              </div>
+              <button type="button" className="post-editor-remove" onClick={() => setImportantDates((rows) => rows.filter((_, i) => i !== index))}>Remove date</button>
+            </div>)}
+          </section>
+          <section>
+            <div className="post-editor-section-heading"><h2>Important Links</h2><button type="button" onClick={() => setImportantLinks((items) => [...items, { name_en: "", name_mr: "", name_hi: "", url: "", sort_order: items.length, is_active: true }])}>＋ Add link</button></div>
+            {importantLinks.map((item, index) => <div className="post-editor-repeat-card" key={index}>
+              <div className="post-editor-grid">
+                {(["en","mr","hi"] as const).map((lang) => <label key={lang}>Link title ({lang.toUpperCase()})<input value={item[`name_${lang}`]} onChange={(event) => setImportantLinks((rows) => rows.map((row, i) => i === index ? { ...row, [`name_${lang}`]: event.target.value } : row))} /></label>)}
+                <label>URL<input type="url" value={item.url} onChange={(event) => setImportantLinks((rows) => rows.map((row, i) => i === index ? { ...row, url: event.target.value } : row))} /></label>
+              </div>
+              <button type="button" className="post-editor-remove" onClick={() => setImportantLinks((rows) => rows.filter((_, i) => i !== index))}>Remove link</button>
+            </div>)}
           </section>
           <section>
             <h2>{kind.label} Details</h2>

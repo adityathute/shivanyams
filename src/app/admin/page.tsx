@@ -10,6 +10,8 @@ import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
 
+type PaginatedPosts = { results?: AdminPost[]; next?: string | null };
+
 type AdminPost = {
   id: number;
   slug: string;
@@ -76,7 +78,8 @@ export default function AdminPage() {
           let url: string | null = `${API_URL}/admin/content/${kind.api}/`;
           const rows: AdminPost[] = [];
           while (url) {
-            const response = await fetch(url, {
+            const requestUrl: string = url;
+            const response: Response = await fetch(requestUrl, {
               headers: { Authorization: `Bearer ${token}` },
               cache: "no-store",
             });
@@ -84,12 +87,14 @@ export default function AdminPage() {
               const body = await response.json().catch(() => ({}));
               throw new Error(body.detail || `Unable to load ${kind.label} (${response.status}).`);
             }
-            const payload = await response.json();
-            const pageRows: AdminPost[] = Array.isArray(payload) ? payload : payload.results ?? [];
+            const payload: AdminPost[] | PaginatedPosts = await response.json();
+            const isPaginated = !Array.isArray(payload);
+            const pageRows: AdminPost[] = isPaginated
+              ? (payload as PaginatedPosts).results ?? []
+              : payload as AdminPost[];
             rows.push(...pageRows);
-            url = !Array.isArray(payload) && payload.next
-              ? new URL(payload.next, API_URL).toString()
-              : null;
+            const nextPage = isPaginated ? (payload as PaginatedPosts).next : null;
+            url = nextPage ? new URL(nextPage, API_URL).toString() : null;
           }
           return rows.map((post) => ({ ...post, category: post.category ?? ({
             id: 0, slug: kind.slug, name_en: kind.label,

@@ -1,198 +1,515 @@
-from django.db.models import F, Q
+from django.db import transaction
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import generics,permissions,viewsets
-from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+
+from rest_framework import generics, permissions, status, viewsets
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
-from .models import Category,ImportantLink,Company,Job,CandidateProfile,Application,SavedJob,PortalContent
-from .serializers import CategorySerializer,ImportantLinkSerializer,CompanySerializer,JobSerializer,JobWriteSerializer,CandidateSerializer,ApplySerializer,ApplicationSerializer,ContentSerializer,ContentWriteSerializer
-from .permissions import IsPortalIdentity, IsPortalAdmin
-class Categories(generics.ListAPIView): queryset=Category.objects.filter(active=True); serializer_class=CategorySerializer; permission_classes=[permissions.AllowAny]
-class ImportantLinks(generics.ListAPIView):
-    queryset = ImportantLink.objects.filter(active=True)
-    serializer_class = ImportantLinkSerializer
+from rest_framework.views import APIView
+
+from .models import (
+    Category,
+    Comment,
+    LanguageChoices,
+    Post,
+    PostLink,
+    PostReaction,
+    PostStatusHistory,
+    PostView,
+    PostVisitor,
+    SavedPost,
+)
+from .permissions import IsPortalAdmin, IsPortalIdentity
+from .serializers import (
+    CategorySerializer,
+    CommentSerializer,
+    PostLinkSerializer,
+    PostSerializer,
+    PostWriteSerializer,
+)
+
+
+PUBLIC_POST_STATUSES = (Post.Status.PUBLISHED,)
+SUPPORTED_CONTENT_KINDS = {
+    "jobs",
+    "schemes",
+    "examination",
+    "admit-card",
+    "results",
+    "articles",
+    "videos",
+    "tools",
+}
+
+
+def get_content_category(kind):
+    """Resolve a public URL kind to an active Category record."""
+    if kind not in SUPPORTED_CONTENT_KINDS:
+        raise NotFound("Unknown content category.")
+
+    return get_object_or_404(Category, slug=kind, is_active=True)
+
+
+def public_posts_for_kind(kind):
+    category = get_content_category(kind)
+    return (
+        Post.objects.filter(
+            category=category,
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        )
+        .select_related("category", "organization")
+        .prefetch_related(
+            "important_links",
+            "important_dates",
+            "resources",
+            "outgoing_relations__target_post",
+        )
+    )
+
+
+class Categories(generics.ListAPIView):
+    serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
     pagination_class = None
 
+    def get_queryset(self):
+        return Category.objects.filter(is_active=True).order_by(
+            "sort_order", "name_en"
+        )
 
-class PublicJobs(viewsets.ReadOnlyModelViewSet):
- serializer_class=JobSerializer; permission_classes=[permissions.AllowAny]; lookup_field='slug'; search_fields=['title','description','company__name','location','state']; filterset_fields=['category__slug','employment_type','location','state','remote']; ordering_fields=['published_at','salary_min','salary_max']
- def get_queryset(self): return Job.objects.filter(status=Job.Status.PUBLISHED,published_at__isnull=False).filter(Q(deadline__isnull=True)|Q(deadline__gte=timezone.localdate())).select_related('company','category')
- def retrieve(self,request,*args,**kwargs):
-  obj=self.get_object(); Job.objects.filter(pk=obj.pk).update(views=F('views')+1); return Response(self.get_serializer(obj).data)
-class EmployerCompanies(viewsets.ModelViewSet):
- serializer_class=CompanySerializer; permission_classes=[IsPortalIdentity]
- def get_queryset(self): return Company.objects.filter(owner_auth_id=str(self.request.user.id))
- def perform_create(self,serializer): serializer.save(owner_auth_id=str(self.request.user.id))
-class EmployerJobs(viewsets.ModelViewSet):
- serializer_class=JobWriteSerializer; permission_classes=[IsPortalIdentity]
- def get_queryset(self): return Job.objects.filter(owner_auth_id=str(self.request.user.id)).select_related('company','category')
- def perform_create(self,serializer):
-  company=get_object_or_404(Company,pk=self.request.data.get('company'),owner_auth_id=str(self.request.user.id)); serializer.save(company=company,owner_auth_id=str(self.request.user.id))
- def perform_update(self,serializer):
-  company=serializer.validated_data.get('company',serializer.instance.company)
-  if company.owner_auth_id!=str(self.request.user.id): raise PermissionDenied('Cannot assign a company you do not own.')
-  serializer.save()
- @action(detail=True,methods=['post'])
- def publish(self,request,pk=None):
-  job=self.get_object()
-  if not job.title.strip() or not job.description.strip(): return Response({'detail':'Title and description are required.'},status=400)
-  job.status=Job.Status.PUBLISHED; job.published_at=timezone.now(); job.save(update_fields=['status','published_at','updated_at']); return Response(JobSerializer(job).data)
- @action(detail=True,methods=['post'])
- def close(self,request,pk=None):
-  job=self.get_object(); job.status=Job.Status.CLOSED; job.save(update_fields=['status','updated_at']); return Response(JobSerializer(job).data)
-class AdminJobs(viewsets.ModelViewSet):
-    serializer_class = JobWriteSerializer
-    permission_classes = [IsPortalAdmin]
+
+class ImportantLinks(generics.ListAPIView):
+    serializer_class = PostLinkSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None
 
     def get_queryset(self):
-        return Job.objects.filter(owner_auth_id=str(self.request.user.id)).select_related(
-            "company", "category"
-        )
-
-    def perform_create(self, serializer):
-        category = serializer.validated_data.get("category")
-        if category is None or category.slug != "jobs" or not category.active:
-            raise PermissionDenied("Select the active Jobs category.")
-
-        company, created = Company.objects.get_or_create(
-            slug=f"government-recruitment-{self.request.user.id}",
-            defaults={
-                "owner_auth_id": str(self.request.user.id),
-                "name": "Government Recruitment",
-                "description": "Government recruitment notices published by ShivanyaMS.",
-                "verified": True,
-            },
-        )
-        if not created and company.owner_auth_id != str(self.request.user.id):
-            raise PermissionDenied("Unable to assign the government recruitment company.")
-
-        serializer.save(
-            company=company,
-            owner_auth_id=str(self.request.user.id),
-            status=Job.Status.PUBLISHED,
-            published_at=timezone.now(),
-        )
-
-    def perform_update(self, serializer):
-        category = serializer.validated_data.get("category", serializer.instance.category)
-        if category is None or category.slug != "jobs" or not category.active:
-            raise PermissionDenied("Select the active Jobs category.")
-        serializer.save()
-
-
-class AdminContent(viewsets.ModelViewSet):
-    serializer_class = ContentWriteSerializer
-    permission_classes = [IsPortalAdmin]
-
-    def get_queryset(self):
-        return PortalContent.objects.all()
-
-    def perform_create(self, serializer):
-        serializer.save(status=PortalContent.Status.PUBLISHED, published_at=timezone.now())
-
-    def perform_update(self, serializer):
-        if serializer.instance.status != PortalContent.Status.PUBLISHED:
-            serializer.save(status=PortalContent.Status.PUBLISHED, published_at=timezone.now())
-            return
-        serializer.save()
-
-
-class CandidateProfileView(generics.RetrieveUpdateAPIView):
- serializer_class=CandidateSerializer; permission_classes=[IsPortalIdentity]
- def get_object(self): return CandidateProfile.objects.get_or_create(auth_user_id=str(self.request.user.id))[0]
-class ApplyJob(generics.CreateAPIView):
-    serializer_class = ApplySerializer
-    permission_classes = [IsPortalIdentity]
-
-    def create(self, request, *args, **kwargs):
-        job = get_object_or_404(
-            Job,
-            slug=kwargs["slug"],
-            status=Job.Status.PUBLISHED,
-        )
-
-        if job.deadline and job.deadline < timezone.localdate():
-            return Response(
-                {"detail": "Application deadline has passed."},
-                status=400,
+        return (
+            PostLink.objects.filter(
+                is_active=True,
+                post__is_active=True,
+                post__status=Post.Status.PUBLISHED,
+                post__published_at__isnull=False,
             )
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        application, created = Application.objects.get_or_create(
-            job=job,
-            candidate_auth_id=str(request.user.id),
-            defaults=serializer.validated_data,
+            .select_related("post")
+            .order_by("post_id", "sort_order", "id")
         )
-
-        if not created:
-            return Response(
-                {"detail": "Already applied to this job."},
-                status=409,
-            )
-
-        return Response(
-            ApplicationSerializer(application).data,
-            status=201,
-        )
-
-
-class CandidateApplications(generics.ListAPIView):
-    serializer_class = ApplicationSerializer
-    permission_classes = [IsPortalIdentity]
-
-    def get_queryset(self):
-        return Application.objects.filter(
-            candidate_auth_id=str(self.request.user.id)
-        ).select_related("job", "job__company", "job__category")
-
-
-class SavedJobs(generics.ListCreateAPIView):
-    serializer_class = JobSerializer
-    permission_classes = [IsPortalIdentity]
-
-    def get_queryset(self):
-        return Job.objects.filter(
-            saved_jobs__candidate_auth_id=str(self.request.user.id)
-        ).select_related("company", "category")
-
-    def create(self, request, *args, **kwargs):
-        job = get_object_or_404(
-            Job,
-            pk=request.data.get("job_id"),
-            status=Job.Status.PUBLISHED,
-        )
-
-        SavedJob.objects.get_or_create(
-            candidate_auth_id=str(request.user.id),
-            job=job,
-        )
-
-        return Response({"saved": True}, status=201)
-    
-class UnsaveJob(generics.GenericAPIView):
-    permission_classes = [IsPortalIdentity]
-
-    def delete(self, request, job_id):
-        SavedJob.objects.filter(
-            candidate_auth_id=str(request.user.id),
-            job_id=job_id,
-        ).delete()
-
-        return Response(status=204)
 
 
 class PublicContent(viewsets.ReadOnlyModelViewSet):
-    serializer_class = ContentSerializer
+    serializer_class = PostSerializer
     permission_classes = [permissions.AllowAny]
     lookup_field = "slug"
+    lookup_url_kwarg = "slug"
 
     def get_queryset(self):
-        return PortalContent.objects.filter(
-            kind=self.kwargs["kind"],
-            status=PortalContent.Status.PUBLISHED,
+        return public_posts_for_kind(self.kwargs["kind"])
+
+
+class AdminContent(viewsets.ModelViewSet):
+    permission_classes = [IsPortalAdmin]
+    lookup_field = "slug"
+    lookup_url_kwarg = "slug"
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return PostSerializer
+        return PostWriteSerializer
+
+    def get_queryset(self):
+        category = get_content_category(self.kwargs["kind"])
+        return (
+            Post.objects.filter(category=category)
+            .select_related("category", "organization")
+            .prefetch_related(
+                "important_links",
+                "important_dates",
+                "resources",
+                "outgoing_relations__target_post",
+            )
+        )
+
+    def perform_create(self, serializer):
+        category = get_content_category(self.kwargs["kind"])
+        serializer.save(
+            category=category,
+            owner_auth_id=str(self.request.user.id),
+            status=Post.Status.DRAFT,
+            published_at=None,
+            published_by_auth_id="",
+        )
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class AdminPostReview(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    ALLOWED_TRANSITIONS = {
+        Post.Status.PENDING_REVIEW,
+        Post.Status.CHANGES_REQUESTED,
+        Post.Status.APPROVED,
+        Post.Status.PUBLISHED,
+        Post.Status.REJECTED,
+        Post.Status.ARCHIVED,
+    }
+
+    def post(self, request, post_id):
+        new_status = request.data.get("status")
+        note = str(request.data.get("note", "")).strip()
+
+        if new_status not in self.ALLOWED_TRANSITIONS:
+            raise ValidationError({"status": "Unsupported review status."})
+
+        with transaction.atomic():
+            post = get_object_or_404(
+                Post.objects.select_for_update(),
+                pk=post_id,
+            )
+            previous_status = post.status
+            now = timezone.now()
+            auth_id = str(request.user.id)
+
+            update_fields = ["status", "updated_at"]
+            post.status = new_status
+
+            if new_status == Post.Status.PENDING_REVIEW:
+                post.submitted_at = now
+                update_fields.append("submitted_at")
+
+            if new_status in {
+                Post.Status.CHANGES_REQUESTED,
+                Post.Status.APPROVED,
+                Post.Status.REJECTED,
+            }:
+                post.reviewed_at = now
+                post.reviewed_by_auth_id = auth_id
+                post.review_note = note
+                update_fields.extend(
+                    ["reviewed_at", "reviewed_by_auth_id", "review_note"]
+                )
+
+            if new_status == Post.Status.APPROVED:
+                post.approved_at = now
+                post.approved_by_auth_id = auth_id
+                update_fields.extend(["approved_at", "approved_by_auth_id"])
+
+            if new_status == Post.Status.PUBLISHED:
+                if not post.title_en.strip():
+                    raise ValidationError(
+                        {"title_en": "An English title is required before publishing."}
+                    )
+                post.published_at = now
+                post.published_by_auth_id = auth_id
+                update_fields.extend(["published_at", "published_by_auth_id"])
+
+            if new_status != Post.Status.PUBLISHED and post.published_at:
+                post.published_at = None
+                post.published_by_auth_id = ""
+                update_fields.extend(["published_at", "published_by_auth_id"])
+
+            post.save(update_fields=list(set(update_fields)))
+
+            if previous_status != new_status:
+                PostStatusHistory.objects.create(
+                    post=post,
+                    previous_status=previous_status,
+                    new_status=new_status,
+                    changed_by_auth_id=auth_id,
+                    note=note,
+                )
+
+        return Response(PostSerializer(post, context={"request": request}).data)
+
+
+class SavedPosts(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsPortalIdentity]
+
+    def get_queryset(self):
+        return (
+            Post.objects.filter(
+                saved_posts__user_auth_id=str(self.request.user.id),
+                status=Post.Status.PUBLISHED,
+                is_active=True,
+                published_at__isnull=False,
+            )
+            .select_related("category", "organization")
+            .order_by("-saved_posts__created_at")
+        )
+
+    def post(self, request, *args, **kwargs):
+        post_id = request.data.get("post_id")
+        if not post_id:
+            raise ValidationError({"post_id": "This field is required."})
+
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            is_active=True,
             published_at__isnull=False,
+        )
+
+        SavedPost.objects.get_or_create(
+            post=post,
+            user_auth_id=str(request.user.id),
+        )
+        return Response({"saved": True, "post_id": post.pk}, status=status.HTTP_201_CREATED)
+
+
+class UnsavePost(APIView):
+    permission_classes = [IsPortalIdentity]
+
+    def delete(self, request, post_id):
+        SavedPost.objects.filter(
+            post_id=post_id,
+            user_auth_id=str(request.user.id),
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PostComments(APIView):
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsPortalIdentity()]
+        return [permissions.AllowAny()]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            is_active=True,
+            comments_enabled=True,
+        )
+        comments = (
+            Comment.objects.filter(
+                post=post,
+                status=Comment.Status.APPROVED,
+                parent__isnull=True,
+            )
+            .select_related("parent")
+            .prefetch_related("replies")
+            .order_by("created_at")
+        )
+        return Response(
+            CommentSerializer(comments, many=True, context={"request": request}).data
+        )
+
+    def post(self, request, post_id):
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            is_active=True,
+            comments_enabled=True,
+        )
+        serializer = CommentSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+
+        parent = serializer.validated_data.get("parent")
+        if parent and parent.post_id != post.pk:
+            raise ValidationError(
+                {"parent": "The parent comment must belong to this post."}
+            )
+
+        with transaction.atomic():
+            comment = serializer.save(
+                post=post,
+                user_auth_id=str(request.user.id),
+                status=Comment.Status.PENDING,
+            )
+            Post.objects.filter(pk=post.pk).update(
+                comments_count=F("comments_count") + 1
+            )
+
+        return Response(
+            CommentSerializer(comment, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class PostReactions(APIView):
+    permission_classes = [IsPortalIdentity]
+
+    def post(self, request, post_id):
+        reaction_type = request.data.get("reaction")
+        valid_reactions = {choice[0] for choice in PostReaction.ReactionType.choices}
+        if reaction_type not in valid_reactions:
+            raise ValidationError(
+                {"reaction": f"Choose one of: {', '.join(sorted(valid_reactions))}."}
+            )
+
+        user_auth_id = str(request.user.id)
+
+        with transaction.atomic():
+            post = get_object_or_404(
+                Post.objects.select_for_update(),
+                pk=post_id,
+                status=Post.Status.PUBLISHED,
+                is_active=True,
+                reactions_enabled=True,
+            )
+            reaction, created = PostReaction.objects.get_or_create(
+                post=post,
+                user_auth_id=user_auth_id,
+                defaults={"reaction": reaction_type},
+            )
+
+            if created:
+                if reaction_type == PostReaction.ReactionType.LIKE:
+                    Post.objects.filter(pk=post.pk).update(
+                        likes_count=F("likes_count") + 1
+                    )
+                else:
+                    Post.objects.filter(pk=post.pk).update(
+                        dislikes_count=F("dislikes_count") + 1
+                    )
+            elif reaction.reaction != reaction_type:
+                old_reaction = reaction.reaction
+                reaction.reaction = reaction_type
+                reaction.save(update_fields=["reaction", "updated_at"])
+
+                if old_reaction == PostReaction.ReactionType.LIKE:
+                    Post.objects.filter(pk=post.pk).update(
+                        likes_count=F("likes_count") - 1,
+                        dislikes_count=F("dislikes_count") + 1,
+                    )
+                else:
+                    Post.objects.filter(pk=post.pk).update(
+                        dislikes_count=F("dislikes_count") - 1,
+                        likes_count=F("likes_count") + 1,
+                    )
+
+            post.refresh_from_db(fields=["likes_count", "dislikes_count"])
+
+        return Response(
+            {
+                "reaction": reaction.reaction,
+                "likes_count": post.likes_count,
+                "dislikes_count": post.dislikes_count,
+            }
+        )
+
+    def delete(self, request, post_id):
+        user_auth_id = str(request.user.id)
+
+        with transaction.atomic():
+            post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
+            reaction = PostReaction.objects.filter(
+                post=post,
+                user_auth_id=user_auth_id,
+            ).first()
+
+            if reaction:
+                if reaction.reaction == PostReaction.ReactionType.LIKE:
+                    Post.objects.filter(pk=post.pk).update(
+                        likes_count=F("likes_count") - 1
+                    )
+                else:
+                    Post.objects.filter(pk=post.pk).update(
+                        dislikes_count=F("dislikes_count") - 1
+                    )
+                reaction.delete()
+
+            post.refresh_from_db(fields=["likes_count", "dislikes_count"])
+
+        return Response(
+            {
+                "reaction": None,
+                "likes_count": post.likes_count,
+                "dislikes_count": post.dislikes_count,
+            }
+        )
+
+
+class TrackPostView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            is_active=True,
+            published_at__isnull=False,
+        )
+
+        visitor_id = request.data.get("visitor_id")
+        if not isinstance(visitor_id, str) or not visitor_id.strip():
+            raise ValidationError({"visitor_id": "A visitor identifier is required."})
+
+        visitor_id = visitor_id.strip()
+        if len(visitor_id) > 128:
+            raise ValidationError({"visitor_id": "Maximum length is 128 characters."})
+
+        language = request.data.get("language", LanguageChoices.ENGLISH)
+        allowed_languages = {choice[0] for choice in LanguageChoices.choices}
+        if language not in allowed_languages:
+            language = LanguageChoices.ENGLISH
+
+        device = request.data.get("device", PostView.DeviceType.UNKNOWN)
+        allowed_devices = {choice[0] for choice in PostView.DeviceType.choices}
+        if device not in allowed_devices:
+            device = PostView.DeviceType.UNKNOWN
+
+        referrer_url = request.data.get("referrer_url", "")
+        if not isinstance(referrer_url, str):
+            referrer_url = ""
+
+        # Identity is read only from the authenticated server-side session.
+        auth_user_id = (
+            str(request.user.id)
+            if request.user.is_authenticated
+            else ""
+        )
+
+        with transaction.atomic():
+            visitor, created = PostVisitor.objects.get_or_create(
+                post=post,
+                visitor_id=visitor_id,
+                defaults={"auth_user_id": auth_user_id},
+            )
+
+            if not created:
+                visitor.visit_count = F("visit_count") + 1
+                visitor.auth_user_id = auth_user_id or visitor.auth_user_id
+                visitor.last_seen_at = timezone.now()
+                visitor.save(
+                    update_fields=[
+                        "visit_count",
+                        "auth_user_id",
+                        "last_seen_at",
+                        "updated_at",
+                    ]
+                )
+                visitor.refresh_from_db(fields=["visit_count"])
+
+            PostView.objects.create(
+                post=post,
+                visitor=visitor,
+                auth_user_id=auth_user_id,
+                language=language,
+                device=device,
+                referrer_url=referrer_url[:1000],
+            )
+
+            updates = {"views_count": F("views_count") + 1}
+            if created:
+                updates["unique_visitors_count"] = (
+                    F("unique_visitors_count") + 1
+                )
+            Post.objects.filter(pk=post.pk).update(**updates)
+
+        return Response(
+            {
+                "tracked": True,
+                "unique_visitor": created,
+            },
+            status=status.HTTP_201_CREATED,
         )

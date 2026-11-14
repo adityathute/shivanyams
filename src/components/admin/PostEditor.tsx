@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "shivanya-auth";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
-import { getAccessToken, slugify } from "../../app/admin/admin-utils";
+import { slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
 
 type ContentKind = { slug: string; label: string; api: string; detailKey: string };
@@ -135,6 +136,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
   editSlug?: string;
 }) {
   const router = useRouter();
+  const { getAccessToken } = useAuth();
   const editing = Boolean(editSlug);
   const [categories, setCategories] = useState<Category[]>([]);
   const [kind, setKind] = useState(KINDS.find((item) => item.api === initialKind) ?? KINDS[0]);
@@ -180,7 +182,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
       try {
         const response = await fetch(`${API_URL}/admin/content/${kind.api}/${editSlug}/`, {
           signal: controller.signal,
-          headers: { Authorization: `Bearer ${getAccessToken()}` },
+          headers: { Authorization: `Bearer ${await getAccessToken()}` },
         });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.detail || `Unable to load post (${response.status}).`);
@@ -240,7 +242,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
-    const token = getAccessToken();
+    const token = await getAccessToken();
     if (!token) {
       setNotice("Your login token was not found. Please sign in again.");
       return;

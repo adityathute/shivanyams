@@ -8,7 +8,7 @@ import { Button } from "shivanya-ui";
 import { useRouter } from "next/navigation";
 
 import {
-  categoriesApi,
+  getPortalApiUrl,
   categoryConfig,
   getCategoryTitle,
   normalizeCategorySlug,
@@ -51,7 +51,7 @@ export function PortalFooter() {
 
     async function fetchCategories() {
       try {
-        const response = await fetch(categoriesApi, {
+        const response = await fetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 

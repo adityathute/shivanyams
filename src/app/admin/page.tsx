@@ -111,7 +111,7 @@ export default function AdminPage() {
     } finally {
       setPostsLoading(false);
     }
-  }, []);
+  }, [getAccessToken]);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");

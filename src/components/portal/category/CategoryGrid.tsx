@@ -130,12 +130,27 @@ const categorySlugAliases: Record<string, string> = {
   video: "videos",
 };
 
-export const API_URL =
-  process.env.NEXT_PUBLIC_PORTAL_API_URL ??
-  "http://localhost:8001/api/v1/portal";
+const configuredPortalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
 
-export const categoriesApi = `${API_URL}/categories/`;
-export const importantLinksApi = `${API_URL}/important-links/`;
+export const API_URL = (
+  configuredPortalApiUrl ||
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:8001/api/v1/portal"
+    : "")
+).replace(/\/+$/, "");
+
+export function getPortalApiUrl(path: string) {
+  if (!API_URL) {
+    throw new Error(
+      "Portal API is not configured. Set NEXT_PUBLIC_PORTAL_API_URL to the deployed Portal API base URL."
+    );
+  }
+
+  return `${API_URL}/${path.replace(/^\/+/, "")}`;
+}
+
+export const categoriesApi = getPortalApiUrl("categories/");
+export const importantLinksApi = getPortalApiUrl("important-links/");
 
 export function getCategoryTitle(
   category: Category,

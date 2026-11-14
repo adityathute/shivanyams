@@ -64,7 +64,9 @@ export function PortalFooter() {
 
         const data = Array.isArray(payload) ? payload : (payload.results ?? []);
 
-        setCategories(data.filter((category) => category.active));
+        setCategories(
+          data.filter((category) => category.is_active ?? category.active ?? false),
+        );
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Footer categories loading failed:", error);
@@ -197,7 +199,7 @@ export function PortalFooter() {
             <h3>{getBaseText("importantSections", language)}</h3>
 
             {[...categories]
-              .filter((category) => category.active)
+              .filter((category) => category.is_active ?? category.active ?? false)
               .map((category) => ({
                 ...category,
                 slug: normalizeCategorySlug(category.slug),

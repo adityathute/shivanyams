@@ -188,7 +188,7 @@ min-height: calc(100vh - 65px);
 .admin-status.status-rejected{background:#fff0f0;color:#b33434}
 .admin-status.status-approved{background:#eaf2ff;color:#245db4}
 .admin-row-actions{display:flex;align-items:center;gap:10px}
-.admin-row-actions a,.admin-row-actions button{border:0;background:none;color:#075be8;text-decoration:none;font:700 11px inherit;cursor:pointer;padding:2px}
+.admin-row-actions a,.admin-row-actions button{border:0;background:none;color:#075be8;text-decoration:none;font:inherit;font-size:11px;font-weight:700;cursor:pointer;padding:2px}
 .admin-row-actions button.danger{color:#c43b3b}
 .admin-row-actions button:disabled{opacity:.5;cursor:wait}
 .admin-empty{padding:36px 20px;text-align:center;color:#8190a4;font-size:13px}

@@ -66,7 +66,9 @@ export function UpdatesSection({
           ? payload
           : (payload.results ?? []);
 
-        setCategories(result.filter((category) => category.active));
+        setCategories(
+          result.filter((category) => category.is_active ?? category.active ?? false),
+        );
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category loading failed:", error);

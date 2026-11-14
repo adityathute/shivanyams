@@ -32,3 +32,7 @@
 .post-editor-section-heading button{border:1px solid #075be8;border-radius:6px;padding:8px 11px;background:#fff;color:#075be8;font-size:11px;font-weight:700;cursor:pointer}
 .post-editor-repeat-card{padding:14px;border:1px solid #e7edf5;border-radius:8px;background:#fbfcff;display:grid;gap:12px}
 .post-editor-remove{justify-self:end;border:0;background:none;color:#bd3c3c;font-size:11px;font-weight:700;cursor:pointer}
+
+.post-editor-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.post-editor-settings-grid .post-editor-check{padding:12px;border:1px solid #e7edf5;border-radius:7px;background:#fbfcff}
+@media(max-width:650px){.post-editor-settings-grid{grid-template-columns:1fr}}

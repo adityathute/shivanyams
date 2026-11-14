@@ -5,7 +5,7 @@ import "./UpdatesSection.css";
 import { useEffect, useMemo, useState } from "react";
 
 import {
-  categoriesApi,
+  getPortalApiUrl,
   categoryConfig,
   getCategoryTitle,
   normalizeCategorySlug,
@@ -52,7 +52,7 @@ export function UpdatesSection({
 
     async function fetchCategories() {
       try {
-        const response = await fetch(categoriesApi, {
+        const response = await fetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 

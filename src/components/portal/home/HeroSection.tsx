@@ -14,6 +14,7 @@ import { Stars } from "../../animation/Stars/Stars";
 import { Sun } from "../../animation/Sun/Sun";
 import { Moon } from "../../animation/Moon/Moon";
 import { Clouds } from "../../animation/Clouds/Clouds";
+import { Birds } from "../../animation/Birds/Birds";
 
 type SceneTime = "dawn" | "day" | "sunset" | "night";
 type PreviewTime = SceneTime | "auto";
@@ -88,6 +89,7 @@ export function HeroSection() {
         <Moon />
         <Stars />
         <Clouds />
+        <Birds scene={activeScene} />
 
         <div className="landscape">
           <LandscapeTerrain />

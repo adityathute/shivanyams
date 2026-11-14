@@ -1,4 +1,3 @@
-
 "use client";
 
 import "./BanyanTree.css";
@@ -87,14 +86,16 @@ export function BanyanTree() {
 
         {/* Main branches */}
         <g fill="none" stroke="url(#bark)" strokeLinecap="round">
-          <path d="M290 465 C270 350 290 245 245 145 C215 95 155 105 95 75"
-            strokeWidth="48" />
-          <path d="M300 420 C335 300 390 230 450 190 C490 160 525 150 560 145"
-            strokeWidth="37" />
-          <path d="M275 300 C220 245 170 235 115 225"
-            strokeWidth="25" />
-          <path d="M325 330 C375 280 430 275 480 290"
-            strokeWidth="24" />
+          <path
+            d="M290 465 C270 350 290 245 245 145 C215 95 155 105 95 75"
+            strokeWidth="48"
+          />
+          <path
+            d="M300 420 C335 300 390 230 450 190 C490 160 525 150 560 145"
+            strokeWidth="37"
+          />
+          <path d="M275 300 C220 245 170 235 115 225" strokeWidth="25" />
+          <path d="M325 330 C375 280 430 275 480 290" strokeWidth="24" />
         </g>
 
         {/* Canopy silhouette */}
@@ -168,14 +169,32 @@ export function BanyanTree() {
           </g>
 
           {/* Window */}
-          <rect x="290" y="250" width="35" height="40" rx="2"
-            fill="url(#windowLight)" stroke="#2c1b12" strokeWidth="5" />
-          <path d="M307 250 V290 M290 270 H325"
-            stroke="#352116" strokeWidth="4" />
+          <rect
+            x="290"
+            y="250"
+            width="35"
+            height="40"
+            rx="2"
+            fill="url(#windowLight)"
+            stroke="#2c1b12"
+            strokeWidth="5"
+          />
+          <path
+            d="M307 250 V290 M290 270 H325"
+            stroke="#352116"
+            strokeWidth="4"
+          />
 
           {/* Door */}
-          <rect x="345" y="267" width="35" height="63"
-            fill="#3b2618" stroke="#24160f" strokeWidth="4" />
+          <rect
+            x="345"
+            y="267"
+            width="35"
+            height="63"
+            fill="#3b2618"
+            stroke="#24160f"
+            strokeWidth="4"
+          />
           <circle cx="372" cy="300" r="3" fill="#d2a45b" />
 
           {/* Balcony */}
@@ -188,15 +207,27 @@ export function BanyanTree() {
           {/* Lantern */}
           <g className="banyan-lantern">
             <path d="M400 250 V265" stroke="#27180f" strokeWidth="3" />
-            <rect x="394" y="265" width="13" height="20" rx="3"
-              fill="#d68a3c" stroke="#382116" strokeWidth="3" />
+            <rect
+              x="394"
+              y="265"
+              width="13"
+              height="20"
+              rx="3"
+              fill="#d68a3c"
+              stroke="#382116"
+              strokeWidth="3"
+            />
             <rect x="398" y="269" width="5" height="12" fill="#ffe4a0" />
           </g>
         </g>
 
         {/* Hanging aerial roots */}
-        <g className="banyan-root" fill="none" stroke="url(#bark)"
-          strokeLinecap="round">
+        <g
+          className="banyan-root"
+          fill="none"
+          stroke="url(#bark)"
+          strokeLinecap="round"
+        >
           <path d="M135 145 Q145 220 125 330" strokeWidth="8" />
           <path d="M165 155 Q175 235 160 385" strokeWidth="6" />
           <path d="M455 155 Q445 240 465 350" strokeWidth="7" />
@@ -230,6 +261,99 @@ export function BanyanTree() {
           <path d="M300 440 Q340 445 385 475 L325 475Z" />
           <path d="M260 450 Q240 465 230 480 L290 480Z" />
           <path d="M325 450 Q350 465 360 480 L300 480Z" />
+        </g>
+
+        {/* =================================
+    PARROT HOME - NATURAL TREE NEST
+================================= */}
+
+        <g className="parrot-home">
+          {/* Supporting branch */}
+          <path
+            d="M385 205 Q430 195 480 220"
+            fill="none"
+            stroke="#503321"
+            strokeWidth="15"
+            strokeLinecap="round"
+          />
+
+          {/* Nest shadow */}
+          <ellipse
+            cx="444"
+            cy="232"
+            rx="43"
+            ry="13"
+            fill="#172719"
+            opacity=".35"
+          />
+
+          {/* Nest outer twigs */}
+          <path
+            d="M401 218 Q420 242 444 240 Q468 242 486 218"
+            fill="none"
+            stroke="#704328"
+            strokeWidth="9"
+            strokeLinecap="round"
+          />
+
+          <path
+            d="M402 220 Q425 248 447 243 Q471 247 486 220"
+            fill="none"
+            stroke="#9a6840"
+            strokeWidth="6"
+            strokeLinecap="round"
+          />
+
+          {/* Nest inner cavity */}
+          <ellipse cx="444" cy="222" rx="28" ry="10" fill="#302018" />
+
+          <ellipse cx="444" cy="224" rx="19" ry="6" fill="#493020" />
+
+          {/* Small nesting eggs */}
+          <g className="nest-eggs">
+            <ellipse cx="436" cy="220" rx="5" ry="4" fill="#f3e4c4" />
+            <ellipse cx="447" cy="218" rx="5" ry="4" fill="#fff0d0" />
+          </g>
+
+          {/* Fine nest twigs */}
+          <g fill="none" stroke="#b17b48" strokeWidth="2" strokeLinecap="round">
+            <path d="M408 228 L420 236 L430 230" />
+            <path d="M425 237 L439 243 L450 235" />
+            <path d="M450 237 L465 232 L479 226" />
+            <path d="M414 215 L427 222" />
+            <path d="M463 215 L478 220" />
+          </g>
+
+          {/* Leaves around the nest */}
+          <g fill="#4c853b">
+            <path d="M400 214 Q385 197 375 208 Q386 221 400 214Z" />
+            <path d="M479 213 Q491 196 502 208 Q492 221 479 213Z" />
+            <path d="M420 205 Q409 188 400 196 Q405 210 420 205Z" />
+          </g>
+
+          {/* Nest entrance highlights */}
+          <path
+            d="M417 218 Q444 207 471 218"
+            fill="none"
+            stroke="#c08a52"
+            strokeWidth="2"
+            opacity=".8"
+          />
+        </g>
+
+        {/* Parrot resting near nest */}
+        <g className="nest-parent-parrot">
+          <ellipse cx="479" cy="192" rx="11" ry="13" fill="#27a95b" />
+          <circle cx="482" cy="179" r="10" fill="#32b85f" />
+          <path d="M489 179 Q501 178 493 186 L488 184Z" fill="#e44736" />
+          <circle cx="485" cy="176" r="2.5" fill="white" />
+          <circle cx="486" cy="176" r="1.2" fill="#172b23" />
+          <path
+            d="M474 201 L468 215 M480 201 L478 215"
+            stroke="#a66a32"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
         </g>
       </svg>
     </div>

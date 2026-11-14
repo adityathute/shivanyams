@@ -75,3 +75,50 @@
     height: 200px;
   }
 }
+
+
+
+/* Parrot home and nest */
+
+.parrot-home {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.nest-eggs {
+  animation: nest-warmth 3s ease-in-out infinite alternate;
+}
+
+.nest-parent-parrot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: parrot-rest 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes nest-warmth {
+  from {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes parrot-rest {
+  from {
+    transform: translateY(0) rotate(0);
+  }
+  to {
+    transform: translateY(-1.5px) rotate(2deg);
+  }
+}
+
+/* Night-time warm nest appearance */
+
+.scene-night .nest-eggs {
+  filter: drop-shadow(0 0 5px rgba(255, 190, 90, 0.65));
+}
+
+.scene-night .nest-parent-parrot {
+  opacity: 0.85;
+}

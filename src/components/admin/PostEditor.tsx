@@ -33,7 +33,9 @@ type PostRecord = {
   meta_title_en?: string;
   meta_description_en?: string;
   meta_keywords?: string[];
-  category?: Category;\n  important_links?: LinkInput[];\n  important_dates?: DateInput[];
+  category?: Category;
+  important_links?: LinkInput[];
+  important_dates?: DateInput[];
   job_details?: Record<string, unknown> | null;
   scheme_details?: Record<string, unknown> | null;
   examination_details?: Record<string, unknown> | null;
@@ -73,7 +75,8 @@ const EMPTY = {
   body_en: "", body_mr: "", body_hi: "",
   location: "", state: "", country: "India", featured_image_url: "",
   start_date: "", end_date: "", event_date: "", default_language: "en",
-  meta_title_en: "", meta_description_en: "", meta_keywords: "",\n  comments_enabled: true, reactions_enabled: true, is_featured: false, is_active: true,
+  meta_title_en: "", meta_description_en: "", meta_keywords: "",
+  comments_enabled: true, reactions_enabled: true, is_featured: false, is_active: true,
 };
 
 type FormState = typeof EMPTY;
@@ -136,7 +139,9 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
   const [categories, setCategories] = useState<Category[]>([]);
   const [kind, setKind] = useState(KINDS.find((item) => item.api === initialKind) ?? KINDS[0]);
   const [form, setForm] = useState<FormState>(EMPTY);
-  const [details, setDetails] = useState<Record<string, unknown>>(detailTemplate(initialKind));\n  const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);\n  const [importantDates, setImportantDates] = useState<DateInput[]>([]);
+  const [details, setDetails] = useState<Record<string, unknown>>(detailTemplate(initialKind));
+  const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);
+  const [importantDates, setImportantDates] = useState<DateInput[]>([]);
 
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
@@ -195,7 +200,9 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
           meta_description_en: record.meta_description_en || "",
           meta_keywords: (record.meta_keywords || []).join(", "),
         });
-        setImportantLinks(record.important_links || []);\n        setImportantDates((record.important_dates || []).map((item) => ({ ...item, date: item.date || "" })));\n        const data = record[detailKeyFor(kind.api) as keyof PostRecord] as Record<string, unknown> | null;
+        setImportantLinks(record.important_links || []);
+        setImportantDates((record.important_dates || []).map((item) => ({ ...item, date: item.date || "" })));
+        const data = record[detailKeyFor(kind.api) as keyof PostRecord] as Record<string, unknown> | null;
         const template = data || detailTemplate(kind.api);
         setDetails(template);
 
@@ -252,7 +259,9 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
         start_date: form.start_date || null,
         end_date: form.end_date || null,
         event_date: form.event_date || null,
-        [kind.detailKey]: details,\n        important_links: importantLinks.filter((item) => item.name_en.trim() && item.url.trim()),\n        important_dates: importantDates.filter((item) => item.label_en.trim()).map((item) => ({ ...item, date: item.date || null })),
+        [kind.detailKey]: details,
+        important_links: importantLinks.filter((item) => item.name_en.trim() && item.url.trim()),
+        important_dates: importantDates.filter((item) => item.label_en.trim()).map((item) => ({ ...item, date: item.date || null })),
       };
       const url = editing
         ? `${API_URL}/admin/content/${kind.api}/${editSlug}/`

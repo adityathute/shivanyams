@@ -242,10 +242,15 @@ function mapPost(post: ApiPost, type: ItemType): Item {
   };
 }
 
+type PaginatedResponse<T> = {
+  results?: T[];
+  next?: string | null;
+};
+
 async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
   const results: T[] = [];
   const visited = new Set<string>();
-  const apiOrigin = new URL(API_URL).origin;
+  const apiOrigin = new URL(url).origin;
   let nextUrl: string | null = url;
 
   while (nextUrl) {
@@ -254,13 +259,13 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
     }
     visited.add(nextUrl);
 
-    const response = await fetch(nextUrl, { signal });
+    const response: Response = await fetch(nextUrl, { signal });
     if (!response.ok) {
       throw new Error(`Request failed (${response.status}): ${nextUrl}`);
     }
 
-    const payload: T[] | { results?: T[]; next?: string | null } =
-      await response.json();
+    const payload: T[] | PaginatedResponse<T> =
+      (await response.json()) as T[] | PaginatedResponse<T>;
 
     if (Array.isArray(payload)) {
       results.push(...payload);
@@ -273,7 +278,7 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
       continue;
     }
 
-    const resolvedNext = new URL(payload.next, url);
+    const resolvedNext: URL = new URL(payload.next, url);
     if (resolvedNext.origin !== apiOrigin) {
       throw new Error("Pagination returned a URL outside the portal API.");
     }

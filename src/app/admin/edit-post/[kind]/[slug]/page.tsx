@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import PostEditor from "../../../../components/admin/PostEditor";
+import PostEditor from "../../../../../components/admin/PostEditor";
 
 export default function EditPostPage() {
   const router = useRouter();

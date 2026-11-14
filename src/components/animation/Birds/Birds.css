@@ -1,496 +1,312 @@
-
-/* =========================================
-   BIRDS - GLOBAL
-========================================= */
-
+/* Photographic bird ecosystem for the existing ShivanyaMS hero. */
 .birds {
-  --nest-x: calc(40% + 259px);
-  --nest-y: calc(100% - 183px);
+  --tree-left: calc(40% + 140px);
+  --nest-x: calc(var(--tree-left) + 259px);
+  --nest-y: calc(100% - 185px);
 
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 4;
   overflow: hidden;
   pointer-events: none;
-  isolation: isolate;
 }
 
-.parrot-flight {
+.bird-home,
+.bird-perch,
+.bird-flight {
   position: absolute;
-  width: 48px;
-  height: 48px;
+}
+
+.bird-home {
+  left: calc(var(--tree-left) + 200px);
+  top: calc(100% - 278px);
+  width: 112px;
+  z-index: 2;
+  opacity: 1;
+  transform-origin: center;
+  filter: drop-shadow(0 3px 5px rgba(20, 35, 20, 0.2));
+}
+
+.bird-home img,
+.bird-perch img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bird-perch {
+  left: calc(var(--tree-left) + 220px);
+  top: calc(100% - 245px);
+  width: 68px;
+  z-index: 3;
+  opacity: 0;
+  filter: drop-shadow(0 3px 4px rgba(20, 35, 20, 0.2));
+}
+
+.bird-flight {
+  width: 82px;
+  z-index: 5;
   opacity: 0;
   transform-origin: center;
   will-change: transform, opacity;
 }
 
-.parrot {
-  width: 100%;
-  height: 100%;
+.bird-flight-image {
   display: block;
-  overflow: visible;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 3px 4px rgba(25, 35, 25, 0.16));
+  animation: bird-glide 1.8s ease-in-out infinite alternate;
 }
 
-/* =========================================
-   INDEPENDENT PARROT MOVEMENT
-========================================= */
-
-.parrot-wing {
-  transform-box: fill-box;
-  transform-origin: 15% 80%;
-  animation: parrot-wing-flap 0.32s ease-in-out infinite alternate;
+@keyframes bird-glide {
+  from { translate: 0 0; }
+  to { translate: 0 -3px; }
 }
 
-.parrot-tail {
-  transform-box: fill-box;
-  transform-origin: 80% 30%;
-  animation: parrot-tail-move 0.7s ease-in-out infinite alternate;
+/* The photo asset faces right. Returning/departing birds face the tree/sky. */
+.birds-dawn .bird-flight-image,
+.birds-sunset .bird-flight-image {
+  transform: scaleX(-1);
 }
 
-@keyframes parrot-wing-flap {
-  from {
-    transform: rotate(-28deg) scaleY(0.55);
-  }
-
-  to {
-    transform: rotate(24deg) scaleY(1.05);
-  }
+/* Sunrise: the hollow is occupied at first, then the family leaves in sequence. */
+.birds-dawn .bird-home {
+  animation: dawn-home-empty 20s ease-in-out infinite;
 }
 
-@keyframes parrot-tail-move {
-  from {
-    transform: rotate(-2deg);
-  }
-
-  to {
-    transform: rotate(3deg);
-  }
-}
-
-/* =========================================
-   SUNRISE - LEAVING THE TREE HOME
-========================================= */
-
-.birds-dawn .parrot-one {
+.dawn-parrot-one {
   left: var(--nest-x);
   top: var(--nest-y);
-  animation: dawn-flight-one 19s ease-in-out infinite;
+  animation: dawn-depart-one 20s cubic-bezier(.42, 0, .2, 1) infinite;
 }
 
-.birds-dawn .parrot-two {
+.dawn-parrot-two {
   left: var(--nest-x);
   top: var(--nest-y);
-  width: 40px;
-  animation: dawn-flight-two 21s ease-in-out infinite;
-  animation-delay: 2.5s;
+  width: 68px;
+  animation: dawn-depart-two 22s cubic-bezier(.42, 0, .2, 1) infinite;
+  animation-delay: 2.4s;
 }
 
-.birds-dawn .parrot-three {
+.dawn-parrot-three {
   left: var(--nest-x);
   top: var(--nest-y);
-  width: 35px;
-  animation: dawn-flight-three 23s ease-in-out infinite;
-  animation-delay: 5s;
+  width: 58px;
+  animation: dawn-depart-three 24s cubic-bezier(.42, 0, .2, 1) infinite;
+  animation-delay: 4.8s;
 }
 
-/* First parrot */
-
-@keyframes dawn-flight-one {
-  0%, 7% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.35) rotate(15deg);
-  }
-
-  12% {
-    opacity: 1;
-    transform: translate(-5px, -12px) scale(0.7) rotate(5deg);
-  }
-
-  20% {
-    transform: translate(-25px, -45px) scale(0.95) rotate(-8deg);
-  }
-
-  38% {
-    transform: translate(-75px, -90px) scale(1.05) rotate(-12deg);
-  }
-
-  58% {
-    transform: translate(-145px, -135px) scale(0.95) rotate(-5deg);
-  }
-
-  76% {
-    opacity: 1;
-    transform: translate(-220px, -175px) scale(0.8) rotate(5deg);
-  }
-
-  92%, 100% {
-    opacity: 0;
-    transform: translate(-290px, -220px) scale(0.55) rotate(10deg);
-  }
+@keyframes dawn-home-empty {
+  0%, 8% { opacity: 1; }
+  22%, 100% { opacity: 0; }
 }
 
-/* Second parrot */
-
-@keyframes dawn-flight-two {
-  0%, 9% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.3) rotate(12deg);
-  }
-
-  16% {
-    opacity: 1;
-  }
-
-  25% {
-    transform: translate(-35px, -35px) scale(0.9) rotate(-5deg);
-  }
-
-  45% {
-    transform: translate(-100px, -100px) scale(1) rotate(-10deg);
-  }
-
-  67% {
-    transform: translate(-175px, -150px) scale(0.9) rotate(0);
-  }
-
-  84% {
-    opacity: 1;
-    transform: translate(-255px, -195px) scale(0.7) rotate(8deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-320px, -230px) scale(0.45);
-  }
+@keyframes dawn-depart-one {
+  0%, 8% { opacity: 0; transform: translate(0, 12px) scale(.42) rotate(8deg); }
+  14% { opacity: 1; transform: translate(-8px, -2px) scale(.72) rotate(3deg); }
+  29% { transform: translate(-45px, -42px) scale(.92) rotate(-7deg); }
+  49% { transform: translate(-125px, -94px) scale(1) rotate(-12deg); }
+  72% { opacity: 1; transform: translate(-225px, -145px) scale(.82) rotate(-5deg); }
+  92%, 100% { opacity: 0; transform: translate(-320px, -195px) scale(.55) rotate(4deg); }
 }
 
-/* Third parrot */
-
-@keyframes dawn-flight-three {
-  0%, 12% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.3);
-  }
-
-  19% {
-    opacity: 1;
-  }
-
-  33% {
-    transform: translate(-45px, -50px) scale(0.9) rotate(-8deg);
-  }
-
-  53% {
-    transform: translate(-125px, -115px) scale(1) rotate(-12deg);
-  }
-
-  74% {
-    opacity: 1;
-    transform: translate(-210px, -175px) scale(0.8) rotate(3deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-330px, -240px) scale(0.45);
-  }
+@keyframes dawn-depart-two {
+  0%, 9% { opacity: 0; transform: translate(0, 12px) scale(.4); }
+  16% { opacity: 1; }
+  34% { transform: translate(-55px, -48px) scale(.88) rotate(-8deg); }
+  55% { transform: translate(-145px, -105px) scale(.98) rotate(-10deg); }
+  78% { opacity: 1; transform: translate(-245px, -158px) scale(.76); }
+  100% { opacity: 0; transform: translate(-340px, -205px) scale(.48); }
 }
 
-/* =========================================
-   DAY - DISTANT BIRD FLOCK
-========================================= */
-
-.day-flock {
-  position: absolute;
-  inset: 0;
+@keyframes dawn-depart-three {
+  0%, 11% { opacity: 0; transform: translate(0, 12px) scale(.38); }
+  18% { opacity: 1; }
+  37% { transform: translate(-62px, -52px) scale(.86) rotate(-8deg); }
+  59% { transform: translate(-160px, -116px) scale(.94) rotate(-11deg); }
+  81% { opacity: 1; transform: translate(-260px, -166px) scale(.72); }
+  100% { opacity: 0; transform: translate(-355px, -215px) scale(.45); }
 }
 
-.small-bird {
-  position: absolute;
-  width: 24px;
-  height: 20px;
-  color: #526477;
+/* Day: one parrot rests on a branch while two fly across the open sky. */
+.birds-day .bird-home {
   opacity: 0;
-  overflow: visible;
 }
 
-.small-bird-wing {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: distant-wing-flap 0.45s ease-in-out infinite alternate;
+.birds-day .bird-perch {
+  animation: branch-perch 5s ease-in-out infinite alternate;
 }
 
-@keyframes distant-wing-flap {
-  from {
-    transform: scaleY(0.5);
-  }
-
-  to {
-    transform: scaleY(1);
-  }
+@keyframes branch-perch {
+  from { opacity: .92; transform: translateY(0) rotate(-.5deg); }
+  to { opacity: 1; transform: translateY(-2px) rotate(.5deg); }
 }
 
-.day-bird-one {
-  left: -5%;
-  top: 20%;
-  animation: day-flight-one 23s linear infinite;
+.day-parrot-one {
+  left: -10%;
+  top: 19%;
+  width: 58px;
+  animation: day-cross-one 28s linear infinite;
 }
 
-.day-bird-two {
-  left: -5%;
-  top: 29%;
-  width: 19px;
-  animation: day-flight-two 26s linear infinite;
-  animation-delay: 3s;
+.day-parrot-two {
+  left: -13%;
+  top: 31%;
+  width: 46px;
+  animation: day-cross-two 32s linear infinite;
+  animation-delay: 8s;
 }
 
-.day-bird-three {
-  left: -5%;
-  top: 15%;
-  width: 17px;
-  animation: day-flight-three 25s linear infinite;
-  animation-delay: 7s;
+@keyframes day-cross-one {
+  0% { opacity: 0; transform: translate(0, 0) scale(.72); }
+  8%, 86% { opacity: .94; }
+  100% { opacity: 0; transform: translate(125vw, -52px) scale(.82); }
 }
 
-.day-bird-four {
-  left: -5%;
-  top: 36%;
-  width: 21px;
-  animation: day-flight-four 28s linear infinite;
-  animation-delay: 11s;
+@keyframes day-cross-two {
+  0% { opacity: 0; transform: translate(0, 0) scale(.65); }
+  8%, 86% { opacity: .88; }
+  100% { opacity: 0; transform: translate(125vw, 42px) scale(.78); }
 }
 
-@keyframes day-flight-one {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0);
-  }
-
-  8%, 88% {
-    opacity: 0.85;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(120vw, -55px);
-  }
+/* Sunset: birds approach from the open right-hand sky and return to the hollow. */
+.birds-sunset .bird-home {
+  opacity: 0;
+  animation: sunset-home-return 22s ease-in-out infinite;
 }
 
-@keyframes day-flight-two {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0);
-  }
-
-  8%, 88% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(120vw, 35px);
-  }
-}
-
-@keyframes day-flight-three {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0);
-  }
-
-  8%, 88% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(120vw, -25px);
-  }
-}
-
-@keyframes day-flight-four {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0);
-  }
-
-  8%, 88% {
-    opacity: 0.8;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(120vw, 45px);
-  }
-}
-
-/* =========================================
-   SUNSET - RETURNING HOME
-========================================= */
-
-.birds-sunset .parrot-one {
+.return-parrot-one {
   left: var(--nest-x);
   top: var(--nest-y);
-  animation: sunset-flight-one 20s ease-in-out infinite;
+  width: 82px;
+  animation: sunset-return-one 22s cubic-bezier(.4, 0, .2, 1) infinite;
 }
 
-.birds-sunset .parrot-two {
+.return-parrot-two {
   left: var(--nest-x);
   top: var(--nest-y);
-  width: 40px;
-  animation: sunset-flight-two 22s ease-in-out infinite;
+  width: 68px;
+  animation: sunset-return-two 24s cubic-bezier(.4, 0, .2, 1) infinite;
   animation-delay: 2.5s;
 }
 
-.birds-sunset .parrot-three {
+.return-parrot-three {
   left: var(--nest-x);
   top: var(--nest-y);
-  width: 35px;
-  animation: sunset-flight-three 24s ease-in-out infinite;
+  width: 58px;
+  animation: sunset-return-three 26s cubic-bezier(.4, 0, .2, 1) infinite;
   animation-delay: 5s;
 }
 
-/* Parrots approach from open sky */
-
-@keyframes sunset-flight-one {
-  0%, 7% {
-    opacity: 0;
-    transform: translate(-290px, -220px) scale(0.55) rotate(-8deg);
-  }
-
-  14% {
-    opacity: 1;
-  }
-
-  32% {
-    transform: translate(-220px, -175px) scale(0.8) rotate(-5deg);
-  }
-
-  52% {
-    transform: translate(-145px, -130px) scale(0.95) rotate(5deg);
-  }
-
-  70% {
-    transform: translate(-75px, -80px) scale(1.05) rotate(10deg);
-  }
-
-  82% {
-    opacity: 1;
-    transform: translate(-20px, -32px) scale(0.85) rotate(3deg);
-  }
-
-  93%, 100% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.3);
-  }
+@keyframes sunset-home-return {
+  0%, 68% { opacity: 0; }
+  82%, 100% { opacity: 1; }
 }
 
-@keyframes sunset-flight-two {
-  0%, 9% {
-    opacity: 0;
-    transform: translate(-320px, -230px) scale(0.5) rotate(-5deg);
-  }
-
-  17% {
-    opacity: 1;
-  }
-
-  36% {
-    transform: translate(-245px, -180px) scale(0.8);
-  }
-
-  56% {
-    transform: translate(-160px, -130px) scale(0.95);
-  }
-
-  75% {
-    transform: translate(-75px, -75px) scale(1);
-  }
-
-  88% {
-    opacity: 1;
-    transform: translate(-15px, -25px) scale(0.75);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.3);
-  }
+@keyframes sunset-return-one {
+  0%, 7% { opacity: 0; transform: translate(390px, -175px) scale(.55) rotate(-8deg); }
+  15% { opacity: 1; }
+  38% { transform: translate(270px, -125px) scale(.72) rotate(-5deg); }
+  59% { transform: translate(150px, -76px) scale(.9) rotate(4deg); }
+  77% { opacity: 1; transform: translate(55px, -30px) scale(1) rotate(8deg); }
+  91%, 100% { opacity: 0; transform: translate(0, 0) scale(.42) rotate(2deg); }
 }
 
-@keyframes sunset-flight-three {
-  0%, 12% {
-    opacity: 0;
-    transform: translate(-330px, -240px) scale(0.45);
-  }
-
-  20% {
-    opacity: 1;
-  }
-
-  39% {
-    transform: translate(-250px, -190px) scale(0.8);
-  }
-
-  59% {
-    transform: translate(-170px, -135px) scale(0.95);
-  }
-
-  78% {
-    transform: translate(-80px, -80px) scale(1);
-  }
-
-  90% {
-    opacity: 1;
-    transform: translate(-12px, -25px) scale(0.7);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(0, 0) scale(0.3);
-  }
+@keyframes sunset-return-two {
+  0%, 9% { opacity: 0; transform: translate(440px, -205px) scale(.5) rotate(-8deg); }
+  17% { opacity: 1; }
+  41% { transform: translate(300px, -145px) scale(.7) rotate(-4deg); }
+  63% { transform: translate(175px, -88px) scale(.88) rotate(5deg); }
+  81% { opacity: 1; transform: translate(60px, -35px) scale(.95) rotate(8deg); }
+  100% { opacity: 0; transform: translate(0, 0) scale(.38); }
 }
 
-/* =========================================
-   RESPONSIVE
-========================================= */
+@keyframes sunset-return-three {
+  0%, 11% { opacity: 0; transform: translate(470px, -230px) scale(.46); }
+  19% { opacity: 1; }
+  43% { transform: translate(325px, -165px) scale(.68) rotate(-4deg); }
+  65% { transform: translate(190px, -105px) scale(.86) rotate(4deg); }
+  83% { opacity: 1; transform: translate(65px, -42px) scale(.92) rotate(7deg); }
+  100% { opacity: 0; transform: translate(0, 0) scale(.36); }
+}
+
+/* Night: the family remains in the hollow; no flight layers are rendered. */
+.birds-night .bird-home {
+  opacity: 1;
+  filter: brightness(.72) saturate(.9) drop-shadow(0 0 8px rgba(255, 190, 110, .2));
+}
+
+/* Hide the previous vector nest/parrot ornament without touching the treehouse. */
+.banyan-tree .parrot-home,
+.banyan-tree .nest-parent-parrot {
+  display: none !important;
+}
 
 @media (max-width: 760px) {
   .birds {
-    --nest-x: calc(30% + 140px);
-    --nest-y: 22%;
+    --tree-left: calc(30% + 57px);
+    --nest-x: calc(var(--tree-left) + 169px);
+    --nest-y: 50%;
   }
 
-  .parrot-flight {
-    width: 34px;
-    height: 34px;
+  .bird-home {
+    left: calc(var(--tree-left) + 95px);
+    top: 43%;
+    width: 76px;
   }
 
-  .birds-dawn .parrot-two,
-  .birds-sunset .parrot-two {
-    width: 30px;
+  .bird-perch {
+    left: calc(var(--tree-left) + 125px);
+    top: 50%;
+    width: 52px;
   }
 
-  .birds-dawn .parrot-three,
-  .birds-sunset .parrot-three {
-    width: 27px;
+  .bird-flight {
+    width: 58px;
+  }
+
+  .dawn-parrot-two,
+  .return-parrot-two { width: 48px; }
+
+  .dawn-parrot-three,
+  .return-parrot-three { width: 42px; }
+
+  .day-parrot-one { width: 46px; }
+  .day-parrot-two { width: 38px; }
+
+  @keyframes sunset-return-one {
+    0%, 7% { opacity: 0; transform: translate(210px, -115px) scale(.55); }
+    15% { opacity: 1; }
+    40% { transform: translate(145px, -82px) scale(.75); }
+    65% { transform: translate(72px, -42px) scale(.9); }
+    91%, 100% { opacity: 0; transform: translate(0, 0) scale(.4); }
+  }
+
+  @keyframes sunset-return-two {
+    0%, 9% { opacity: 0; transform: translate(235px, -130px) scale(.5); }
+    17% { opacity: 1; }
+    43% { transform: translate(160px, -90px) scale(.72); }
+    68% { transform: translate(78px, -48px) scale(.88); }
+    100% { opacity: 0; transform: translate(0, 0) scale(.38); }
+  }
+
+  @keyframes sunset-return-three {
+    0%, 11% { opacity: 0; transform: translate(250px, -145px) scale(.46); }
+    19% { opacity: 1; }
+    45% { transform: translate(170px, -100px) scale(.68); }
+    70% { transform: translate(85px, -52px) scale(.85); }
+    100% { opacity: 0; transform: translate(0, 0) scale(.36); }
   }
 }
 
-/* =========================================
-   REDUCED MOTION
-========================================= */
-
 @media (prefers-reduced-motion: reduce) {
-  .parrot-flight,
-  .parrot-wing,
-  .parrot-tail,
-  .small-bird,
-  .small-bird-wing {
+  .bird-flight,
+  .bird-flight-image,
+  .bird-home,
+  .bird-perch {
     animation: none !important;
   }
 
-  .parrot-flight,
-  .small-bird {
-    opacity: 0 !important;
-  }
+  .bird-flight { display: none !important; }
 }

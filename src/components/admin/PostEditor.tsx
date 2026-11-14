@@ -52,6 +52,18 @@ const KINDS: ContentKind[] = [
   { slug: "tools", label: "Tools", api: "tools", detailKey: "tool_details" },
 ];
 
+const DETAIL_OPTIONS: Record<string, string[]> = {
+  recruitment_type: ["regular", "contract", "apprenticeship", "temporary", "deputation", "other"],
+  application_mode: ["online", "offline", "both", "not_applicable", "not_required"],
+  scheme_type: ["central", "state", "district", "education", "farmer", "employment", "health", "financial", "other"],
+  exam_type: ["recruitment", "entrance", "departmental", "competitive", "other"],
+  exam_mode: ["online", "offline", "both", "other"],
+  result_type: ["written", "final", "merit_list", "cut_off", "answer_key", "scorecard", "other"],
+  article_type: ["article", "how_to", "career", "preparation", "information", "other"],
+  provider: ["youtube", "vimeo", "self_hosted", "other"],
+  tool_type: ["calculator", "checker", "converter", "generator", "other"],
+};
+
 const EMPTY = {
   title_en: "", title_mr: "", title_hi: "", slug: "",
   summary_en: "", summary_mr: "", summary_hi: "",
@@ -322,6 +334,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
                 const isDate = /date$|_date$/.test(key);
                 const isLongText = /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration/i.test(key);
                 if (isBoolean) return <label className="post-editor-check" key={key}><input type="checkbox" checked={value} onChange={(event) => updateDetail(key, event.target.checked)} />{label}</label>;
+                if (DETAIL_OPTIONS[key]) return <label key={key}>{label}<select value={String(value ?? "")} onChange={(event) => updateDetail(key, event.target.value)}>{DETAIL_OPTIONS[key].map((option) => <option key={option} value={option}>{detailLabel(option)}</option>)}</select></label>;
                 if (isArray) return <label key={key}>{label} <input value={value.join(", ")} onChange={(event) => updateDetail(key, event.target.value.split(",").map((item) => item.trim()).filter(Boolean))} placeholder="Comma-separated values" /></label>;
                 if (isObject) return <label className="post-editor-detail-wide" key={key}>{label} <textarea rows={5} value={JSON.stringify(value, null, 2)} onChange={(event) => { try { updateDetail(key, JSON.parse(event.target.value)); } catch { /* Keep the last valid object while typing. */ } }} /></label>;
                 return <label key={key}>{label}

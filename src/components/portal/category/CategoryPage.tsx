@@ -24,6 +24,7 @@ const categorySlugByType: Record<ItemType, string> = {
   admit: "admit-cards",
   guide: "articles-guides",
   video: "videos",
+  tool: "tools",
 };
 
 const categoryTypeBySlug: Record<string, ItemType> = {
@@ -41,6 +42,8 @@ const categoryTypeBySlug: Record<string, ItemType> = {
   "articles-guides": "guide",
   video: "video",
   videos: "video",
+  tool: "tool",
+  tools: "tool",
 };
 
 const CATEGORY_ORDER = [

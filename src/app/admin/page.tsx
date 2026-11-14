@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
-import { getAccessToken } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
@@ -47,7 +46,7 @@ function statusLabel(status: string) {
 
 export default function AdminPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, getAccessToken } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
@@ -63,7 +62,7 @@ export default function AdminPage() {
   const [sortOrder, setSortOrder] = useState("newest");
 
   const loadPosts = useCallback(async () => {
-    const token = getAccessToken();
+    const token = await getAccessToken();
     if (!token) {
       setError("Your session token was not found. Please sign in again.");
       setPostsLoading(false);
@@ -160,7 +159,7 @@ export default function AdminPage() {
     try {
       const response = await fetch(`${API_URL}/admin/content/${kind.api}/${post.slug}/`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${getAccessToken()}` },
+        headers: { Authorization: `Bearer ${await getAccessToken()}` },
       });
       if (!response.ok) throw new Error(`Delete failed (${response.status}).`);
       setPosts((current) => current.filter((item) => item.id !== post.id));

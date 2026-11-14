@@ -11,7 +11,8 @@ export interface ImportantLink {
   name_hi: string;
   url: string;
   sort_order: number;
-  active: boolean;
+  is_active?: boolean;
+  active?: boolean;
 }
 
 interface ImportantLinksResponse {
@@ -38,7 +39,7 @@ export function useImportantLinks() {
           await response.json();
 
         const data = Array.isArray(payload) ? payload : (payload.results ?? []);
-        setLinks(data.filter((link) => link.active));
+        setLinks(data.filter((link) => link.is_active ?? link.active ?? false));
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Important links loading failed:", error);

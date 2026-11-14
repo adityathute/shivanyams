@@ -10,7 +10,7 @@ import { PortalContentNotFound } from "./PortalContentNotFound";
 import "./PortalPostDetail.css";
 import {
   CategoryGrid,
-  categoriesApi,
+  getPortalApiUrl,
   getCategoryTitle,
   type Category,
   type Language as CategoryLanguage,
@@ -88,7 +88,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(categoriesApi, { signal: controller.signal })
+    fetch(getPortalApiUrl("categories/"), { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Unable to load categories.");
         return response.json();
@@ -97,7 +97,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         const list: Category[] = Array.isArray(payload)
           ? payload
           : (payload.results ?? []);
-        setCategories(list.filter((entry) => entry.active));
+        setCategories(list.filter((entry) => entry.is_active ?? entry.active ?? false));
       })
       .catch((error) => {
         if (!controller.signal.aborted)

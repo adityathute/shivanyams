@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getPortalApiUrl, API_URL } from "../category/CategoryGrid";
+import { getPortalApiUrl } from "../category/CategoryGrid";
 
 export type ItemType =
   | "job"

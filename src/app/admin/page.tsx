@@ -223,6 +223,7 @@ export default function AdminPage() {
                         <td>{post.created_at ? new Date(post.created_at).toLocaleDateString() : "—"}</td>
                         <td>
                           <div className="admin-row-actions">
+                            <Link href={`/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}`} target="_blank">View</Link>
                             <Link href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`}>Edit</Link>
                             {post.status !== "published" && <button disabled={busyPost === post.id} onClick={() => void changeStatus(post, "published")}>Publish</button>}
                             <button className="danger" disabled={busyPost === post.id} onClick={() => void deletePost(post)}>Delete</button>

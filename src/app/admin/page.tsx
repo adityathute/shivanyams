@@ -40,7 +40,7 @@ const STATUS_OPTIONS = [
 ];
 
 function statusLabel(status: string) {
-  return status.replaceAll("_", " ").replace(/w/g, (letter) => letter.toUpperCase());
+  return status.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 export default function AdminPage() {
@@ -55,6 +55,10 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [refreshKey, setRefreshKey] = useState(0);
   const [busyPost, setBusyPost] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
+  const [sortOrder, setSortOrder] = useState("newest");
 
   const loadPosts = useCallback(async () => {
     const token = getAccessToken();
@@ -69,16 +73,24 @@ export default function AdminPage() {
     try {
       const responses = await Promise.all(
         CONTENT_KINDS.map(async (kind) => {
-          const response = await fetch(`${API_URL}/admin/content/${kind.api}/`, {
-            headers: { Authorization: `Bearer ${token}` },
-            cache: "no-store",
-          });
-          if (!response.ok) {
-            const body = await response.json().catch(() => ({}));
-            throw new Error(body.detail || `Unable to load ${kind.label} (${response.status}).`);
+          let url: string | null = `${API_URL}/admin/content/${kind.api}/`;
+          const rows: AdminPost[] = [];
+          while (url) {
+            const response = await fetch(url, {
+              headers: { Authorization: `Bearer ${token}` },
+              cache: "no-store",
+            });
+            if (!response.ok) {
+              const body = await response.json().catch(() => ({}));
+              throw new Error(body.detail || `Unable to load ${kind.label} (${response.status}).`);
+            }
+            const payload = await response.json();
+            const pageRows: AdminPost[] = Array.isArray(payload) ? payload : payload.results ?? [];
+            rows.push(...pageRows);
+            url = !Array.isArray(payload) && payload.next
+              ? new URL(payload.next, API_URL).toString()
+              : null;
           }
-          const payload = await response.json();
-          const rows: AdminPost[] = Array.isArray(payload) ? payload : payload.results ?? [];
           return rows.map((post) => ({ ...post, category: post.category ?? ({
             id: 0, slug: kind.slug, name_en: kind.label,
             name_mr: kind.label, name_hi: kind.label,
@@ -113,6 +125,19 @@ export default function AdminPage() {
       .some((value) => value?.toLowerCase().includes(query));
     return categoryMatch && statusMatch && searchMatch;
   }), [posts, categoryFilter, statusFilter, search]);
+
+  const sortedPosts = useMemo(() => [...filteredPosts].sort((a, b) => {
+    const aDate = new Date(a.created_at || a.published_at || 0).getTime();
+    const bDate = new Date(b.created_at || b.published_at || 0).getTime();
+    if (sortOrder === "oldest") return aDate - bDate;
+    if (sortOrder === "title") return (a.title_en || "").localeCompare(b.title_en || "");
+    if (sortOrder === "views") return (b.views_count || 0) - (a.views_count || 0);
+    return bDate - aDate;
+  }), [filteredPosts, sortOrder]);
+  const pageCount = Math.max(1, Math.ceil(sortedPosts.length / pageSize));
+  const visiblePosts = sortedPosts.slice((page - 1) * pageSize, page * pageSize);
+  const visibleIds = visiblePosts.map((post) => post.id);
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
 
   const counts = useMemo(() => ({
     total: posts.length,
@@ -162,6 +187,49 @@ export default function AdminPage() {
     }
   }
 
+  async function bulkChangeStatus(status: "published" | "archived") {
+    const targets = posts.filter((post) => selectedIds.includes(post.id));
+    if (!targets.length) return;
+    if (!window.confirm(`${status === "published" ? "Publish" : "Archive"} ${targets.length} selected posts?`)) return;
+    setBusyPost(-1);
+    try {
+      const results = await Promise.all(targets.map(async (post) => {
+        const response = await fetch(`${API_URL}/admin/content/${post.id}/review/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${getAccessToken()}` },
+          body: JSON.stringify({ status }),
+        });
+        if (!response.ok) throw new Error(`Could not update "${post.title_en}".`);
+        return post.id;
+      }));
+      setPosts((current) => current.map((post) => results.includes(post.id) ? { ...post, status } : post));
+      setSelectedIds([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Bulk update failed.");
+      void loadPosts();
+    } finally {
+      setBusyPost(null);
+    }
+  }
+
+  function exportCsv() {
+    const columns = ["title_en", "slug", "category", "status", "views_count", "created_at"];
+    const rows = sortedPosts.map((post) => [
+      post.title_en, post.slug, post.category.name_en, post.status,
+      post.views_count ?? 0, post.created_at ?? "",
+    ]);
+    const csv = [columns, ...rows].map((row) => row.map((value) =>
+      `"${String(value ?? "").replaceAll('"', '""')}"`
+    ).join(",")).join("\\r\\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "shivanyams-posts.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   if (loading || !isAdmin) return null;
 
   return (
@@ -190,7 +258,7 @@ export default function AdminPage() {
         <section className="admin-post-panel">
           <div className="admin-panel-heading">
             <div><h2>All Posts</h2><p>View, search, edit and manage every category.</p></div>
-            <button type="button" className="admin-refresh-button" onClick={() => setRefreshKey((value) => value + 1)}>↻ Refresh</button>
+            <div className="admin-toolbar-actions"><button type="button" className="admin-refresh-button" onClick={exportCsv}>↓ Export CSV</button><button type="button" className="admin-refresh-button" onClick={() => setRefreshKey((value) => value + 1)}>↻ Refresh</button></div>
           </div>
 
           <div className="admin-filters">
@@ -210,9 +278,9 @@ export default function AdminPage() {
           ) : (
             <div className="admin-table-wrap">
               <table className="admin-post-table">
-                <thead><tr><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Created</th><th>Actions</th></tr></thead>
+                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Created</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {filteredPosts.map((post) => {
+                  {visiblePosts.map((post) => {
                     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
                     return (
                       <tr key={post.id}>
@@ -236,7 +304,16 @@ export default function AdminPage() {
               </table>
             </div>
           )}
-          <div className="admin-table-footer">Showing {filteredPosts.length} of {posts.length} posts</div>
+          <div className="admin-table-footer">
+            <span>Showing {sortedPosts.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, sortedPosts.length)} of {sortedPosts.length} filtered posts · {posts.length} total</span>
+            <div className="admin-pagination">
+              <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page"><option value={10}>10 rows</option><option value={15}>15 rows</option><option value={25}>25 rows</option><option value={50}>50 rows</option></select>
+              <button disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button>
+              <span>Page {page} of {pageCount}</span>
+              <button disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>Next</button>
+            </div>
+          </div>
+          {selectedIds.length > 0 && <div className="admin-bulk-bar"><strong>{selectedIds.length} selected</strong><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("published")}>Publish selected</button><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("archived")}>Archive selected</button><button onClick={() => setSelectedIds([])}>Clear selection</button></div>}
         </section>
       </div>
       <footer className="admin-footer">ShivanyaMS · Content Administration</footer>

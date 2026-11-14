@@ -6,7 +6,7 @@ import "./CategoryPage.css";
 import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ItemType } from "../data/portal-data";
 import {
-  categoriesApi,
+  getPortalApiUrl,
   normalizeCategorySlug,
   getCategoryDescription,
   getCategoryTitle,
@@ -132,7 +132,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
 
     async function loadCategories() {
       try {
-        const response = await fetch(categoriesApi, {
+        const response = await fetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 
@@ -187,7 +187,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
     () =>
       sortedCategories.find(
         (entry) =>
-          entry.active &&
+          (entry.is_active ?? entry.active ?? false) &&
           normalizeCategorySlug(entry.slug) ===
             normalizeCategorySlug(categorySlug),
       ),

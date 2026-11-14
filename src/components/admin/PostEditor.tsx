@@ -122,7 +122,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
   const [kind, setKind] = useState(KINDS.find((item) => item.api === initialKind) ?? KINDS[0]);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [details, setDetails] = useState<Record<string, unknown>>(detailTemplate(initialKind));
-  const [detailsText, setDetailsText] = useState(JSON.stringify(detailTemplate(initialKind), null, 2));
+
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
@@ -152,7 +152,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
     if (!editSlug) {
       const template = detailTemplate(kind.api);
       setDetails(template);
-      setDetailsText(JSON.stringify(template, null, 2));
+
       return;
     }
     const controller = new AbortController();
@@ -183,7 +183,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
         const data = record[detailKeyFor(kind.api) as keyof PostRecord] as Record<string, unknown> | null;
         const template = data || detailTemplate(kind.api);
         setDetails(template);
-        setDetailsText(JSON.stringify(template, null, 2));
+
       } catch (error) {
         if (!controller.signal.aborted) setNotice(error instanceof Error ? error.message : "Unable to load post.");
       } finally {
@@ -204,24 +204,20 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
     setKind(next);
     const template = detailTemplate(next.api);
     setDetails(template);
-    setDetailsText(JSON.stringify(template, null, 2));
+
+  }
+
+  function updateDetail(key: string, value: unknown) {
+    setDetails((current) => ({ ...current, [key]: value }));
+  }
+
+  function detailLabel(key: string) {
+    return key.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
-    let parsedDetails: Record<string, unknown>;
-    try {
-      const parsed: unknown = JSON.parse(detailsText);
-      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-        throw new Error("Category details must be a JSON object.");
-      }
-      parsedDetails = parsed as Record<string, unknown>;
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Enter valid category details JSON.");
-      return;
-    }
-
     const token = getAccessToken();
     if (!token) {
       setNotice("Your login token was not found. Please sign in again.");
@@ -241,7 +237,7 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
         start_date: form.start_date || null,
         end_date: form.end_date || null,
         event_date: form.event_date || null,
-        [kind.detailKey]: parsedDetails,
+        [kind.detailKey]: details,
       };
       const url = editing
         ? `${API_URL}/admin/content/${kind.api}/${editSlug}/`
@@ -315,8 +311,30 @@ export default function PostEditor({ initialKind = "jobs", editSlug }: {
           </section>
           <section>
             <h2>{kind.label} Details</h2>
-            <p className="post-editor-help">Category-specific fields follow the Portal API model. Keep the JSON object valid and retain required fields in the template.</p>
-            <textarea className="post-editor-json" rows={18} spellCheck={false} value={detailsText} onChange={(event) => setDetailsText(event.target.value)} />
+            <p className="post-editor-help">Complete the fields for this content category. Optional fields can remain empty.</p>
+            <div className="post-editor-grid post-editor-detail-grid">
+              {Object.entries(details).map(([key, value]) => {
+                const label = detailLabel(key);
+                const isBoolean = typeof value === "boolean";
+                const isArray = Array.isArray(value);
+                const isObject = value !== null && typeof value === "object" && !isArray;
+                const isNumber = typeof value === "number" || value === null && /count|minutes|marks|seconds|age_min|age_max|vacancies|duration/i.test(key);
+                const isDate = /date$|_date$/.test(key);
+                const isLongText = /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration/i.test(key);
+                if (isBoolean) return <label className="post-editor-check" key={key}><input type="checkbox" checked={value} onChange={(event) => updateDetail(key, event.target.checked)} />{label}</label>;
+                if (isArray) return <label key={key}>{label} <input value={value.join(", ")} onChange={(event) => updateDetail(key, event.target.value.split(",").map((item) => item.trim()).filter(Boolean))} placeholder="Comma-separated values" /></label>;
+                if (isObject) return <label className="post-editor-detail-wide" key={key}>{label} <textarea rows={5} value={JSON.stringify(value, null, 2)} onChange={(event) => { try { updateDetail(key, JSON.parse(event.target.value)); } catch { /* Keep the last valid object while typing. */ } }} /></label>;
+                return <label key={key}>{label}
+                  {isLongText
+                    ? <textarea rows={4} value={String(value ?? "")} onChange={(event) => updateDetail(key, event.target.value)} />
+                    : <input
+                        type={isDate ? "date" : isNumber ? "number" : /url/i.test(key) ? "url" : "text"}
+                        value={value === null ? "" : String(value)}
+                        onChange={(event) => updateDetail(key, isNumber ? event.target.value === "" ? null : Number(event.target.value) : event.target.value)}
+                      />}
+                </label>;
+              })}
+            </div>
           </section>
           <section>
             <h2>Search Engine Information</h2>

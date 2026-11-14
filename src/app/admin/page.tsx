@@ -262,13 +262,17 @@ export default function AdminPage() {
           </div>
 
           <div className="admin-filters">
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by post title or slug..." aria-label="Search posts" />
-            <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} aria-label="Filter by category">
+            <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search by post title or slug..." aria-label="Search posts" />
+            <select value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value); setPage(1); }} aria-label="Filter by category">
               <option value="all">All categories</option>
               {CONTENT_KINDS.map((kind) => <option key={kind.slug} value={kind.slug}>{kind.label}</option>)}
             </select>
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Filter by status">
+            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter by status">
               {STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? "All statuses" : statusLabel(status)}</option>)}
+            </select>
+            <select value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setPage(1); }} aria-label="Sort posts">
+              <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+              <option value="title">Title A–Z</option><option value="views">Most views</option>
             </select>
           </div>
 
@@ -284,6 +288,7 @@ export default function AdminPage() {
                     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
                     return (
                       <tr key={post.id}>
+                        <td><input type="checkbox" aria-label={`Select ${post.title_en}`} checked={selectedIds.includes(post.id)} onChange={(event) => setSelectedIds((current) => event.target.checked ? [...current, post.id] : current.filter((id) => id !== post.id))} /></td>
                         <td><strong>{post.title_en || post.slug}</strong><small>/{post.slug}</small></td>
                         <td>{kind?.label || post.category.name_en}</td>
                         <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>

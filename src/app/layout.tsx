@@ -36,6 +36,7 @@ export default async function RootLayout({
     <html
       lang={initialLanguage}
       data-theme={initialTheme}
+      data-scroll-behavior="smooth"
       style={{ colorScheme: initialTheme }}
       suppressHydrationWarning
     >

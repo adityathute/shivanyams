@@ -177,7 +177,7 @@ export default function AdminPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessToken()}`,
+          Authorization: `Bearer ${await getAccessToken()}`,
         },
         body: JSON.stringify({ status }),
       });
@@ -200,7 +200,7 @@ export default function AdminPage() {
       const results = await Promise.all(targets.map(async (post) => {
         const response = await fetch(`${API_URL}/admin/content/${post.id}/review/`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${getAccessToken()}` },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAccessToken()}` },
           body: JSON.stringify({ status }),
         });
         if (!response.ok) throw new Error(`Could not update "${post.title_en}".`);

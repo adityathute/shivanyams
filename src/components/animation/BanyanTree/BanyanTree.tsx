@@ -707,6 +707,7 @@ export function BanyanTree() {
             <path d="M418 207 Q408 190 399 198 Q405 211 418 207Z" />
           </g>
         </g>
+        
       </svg>
     </div>
   );

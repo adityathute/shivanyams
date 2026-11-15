@@ -36,7 +36,7 @@ function BirdHome({ scene }: { scene: SceneTime }) {
   return (
     <div className={`bird-home bird-home-${scene}`}>
       <Image
-        src="/images/birds/parrot-home.png"
+        src="/images/birds/parrot-homes.png"
         alt=""
         width={180}
         height={183}
@@ -52,7 +52,7 @@ function PerchedParrot() {
   return (
     <div className="bird-perch">
       <Image
-        src="/images/birds/parrot-perched.png"
+        src="/images/birds/parrot-percheds.png"
         alt=""
         width={180}
         height={246}

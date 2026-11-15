@@ -263,97 +263,36 @@ export function BanyanTree() {
           <path d="M325 450 Q350 465 360 480 L300 480Z" />
         </g>
 
-        {/* =================================
-    PARROT HOME - NATURAL TREE NEST
-================================= */}
+        {/* Small natural nest with two animated chicks */}
+        <g className="parrot-nest" transform="translate(195 100) scale(.58)">
+          <ellipse cx="444" cy="235" rx="47" ry="10" fill="#172719" opacity=".28" />
+          <path d="M397 215 Q410 252 444 249 Q478 252 491 215" fill="#57351f" stroke="#352218" strokeWidth="5" />
+          <path d="M400 220 Q420 246 444 243 Q470 247 488 220" fill="none" stroke="#a87543" strokeWidth="5" strokeLinecap="round" />
+          <path d="M405 229 Q430 250 455 244 M416 238 L435 248 M452 247 L477 231 M402 218 L423 235 M468 235 L489 217" fill="none" stroke="#c08a52" strokeWidth="2.5" strokeLinecap="round" />
+          <ellipse cx="444" cy="222" rx="31" ry="10" fill="#2d1c14" />
+          <ellipse cx="444" cy="225" rx="23" ry="6" fill="#493020" />
 
-        <g className="parrot-home">
-          {/* Supporting branch */}
-          <path
-            d="M385 205 Q430 195 480 220"
-            fill="none"
-            stroke="#503321"
-            strokeWidth="15"
-            strokeLinecap="round"
-          />
-
-          {/* Nest shadow */}
-          <ellipse
-            cx="444"
-            cy="232"
-            rx="43"
-            ry="13"
-            fill="#172719"
-            opacity=".35"
-          />
-
-          {/* Nest outer twigs */}
-          <path
-            d="M401 218 Q420 242 444 240 Q468 242 486 218"
-            fill="none"
-            stroke="#704328"
-            strokeWidth="9"
-            strokeLinecap="round"
-          />
-
-          <path
-            d="M402 220 Q425 248 447 243 Q471 247 486 220"
-            fill="none"
-            stroke="#9a6840"
-            strokeWidth="6"
-            strokeLinecap="round"
-          />
-
-          {/* Nest inner cavity */}
-          <ellipse cx="444" cy="222" rx="28" ry="10" fill="#302018" />
-
-          <ellipse cx="444" cy="224" rx="19" ry="6" fill="#493020" />
-
-          {/* Small nesting eggs */}
-          <g className="nest-eggs">
-            <ellipse cx="436" cy="220" rx="5" ry="4" fill="#f3e4c4" />
-            <ellipse cx="447" cy="218" rx="5" ry="4" fill="#fff0d0" />
+          <g className="nest-chick nest-chick-one">
+            <ellipse cx="432" cy="214" rx="10" ry="12" fill="#28a95a" />
+            <circle cx="434" cy="204" r="9" fill="#39bd68" />
+            <path d="M441 204 Q452 203 444 211 L440 209Z" fill="#e64c35" />
+            <circle cx="437" cy="201" r="2" fill="#fff" />
+            <circle cx="438" cy="201" r="1" fill="#172b23" />
+            <path className="nest-chick-wing" d="M425 213 Q432 208 438 216 Q432 222 425 213Z" fill="#16884a" />
           </g>
 
-          {/* Fine nest twigs */}
-          <g fill="none" stroke="#b17b48" strokeWidth="2" strokeLinecap="round">
-            <path d="M408 228 L420 236 L430 230" />
-            <path d="M425 237 L439 243 L450 235" />
-            <path d="M450 237 L465 232 L479 226" />
-            <path d="M414 215 L427 222" />
-            <path d="M463 215 L478 220" />
+          <g className="nest-chick nest-chick-two">
+            <ellipse cx="456" cy="215" rx="9" ry="11" fill="#239d54" />
+            <circle cx="457" cy="206" r="8" fill="#35b961" />
+            <path d="M464 206 Q474 205 467 212 L463 210Z" fill="#e64c35" />
+            <circle cx="460" cy="203" r="1.8" fill="#fff" />
+            <circle cx="461" cy="203" r=".9" fill="#172b23" />
+            <path className="nest-chick-wing" d="M450 214 Q456 209 462 216 Q456 221 450 214Z" fill="#147f45" />
           </g>
 
-          {/* Leaves around the nest */}
-          <g fill="#4c853b">
-            <path d="M400 214 Q385 197 375 208 Q386 221 400 214Z" />
-            <path d="M479 213 Q491 196 502 208 Q492 221 479 213Z" />
-            <path d="M420 205 Q409 188 400 196 Q405 210 420 205Z" />
-          </g>
-
-          {/* Nest entrance highlights */}
-          <path
-            d="M417 218 Q444 207 471 218"
-            fill="none"
-            stroke="#c08a52"
-            strokeWidth="2"
-            opacity=".8"
-          />
-        </g>
-
-        {/* Parrot resting near nest */}
-        <g className="nest-parent-parrot">
-          <ellipse cx="479" cy="192" rx="11" ry="13" fill="#27a95b" />
-          <circle cx="482" cy="179" r="10" fill="#32b85f" />
-          <path d="M489 179 Q501 178 493 186 L488 184Z" fill="#e44736" />
-          <circle cx="485" cy="176" r="2.5" fill="white" />
-          <circle cx="486" cy="176" r="1.2" fill="#172b23" />
-          <path
-            d="M474 201 L468 215 M480 201 L478 215"
-            stroke="#a66a32"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
+          <path d="M405 214 Q392 198 382 208 Q393 222 405 214Z" fill="#4c853b" />
+          <path d="M481 214 Q495 197 505 208 Q494 222 481 214Z" fill="#4c853b" />
+          <path d="M418 207 Q408 190 399 198 Q405 211 418 207Z" fill="#5d9144" />
         </g>
       </svg>
     </div>

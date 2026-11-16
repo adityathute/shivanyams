@@ -26,6 +26,23 @@ export function HomePage() {
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, selectedLanguage);
 
+  const handleTickerClick = (item: any) => {
+    const routes: Record<string, string> = {
+      jobs: "jobs",
+      schemes: "schemes",
+      examination: "examination",
+      results: "results",
+      "admit-cards": "admit-cards",
+      guides: "guides",
+    };
+
+    const category = routes[item.type];
+
+    if (category && item.slug) {
+      router.push(`/${category}/${item.slug}`);
+    }
+  };
+
   return (
     <div className="portal">
       {data.items && data.items.length > 0 && (
@@ -36,10 +53,9 @@ export function HomePage() {
             {data.items.slice(0, 6).map((item) => (
               <button
                 key={item.id}
-                onClick={() => {
-                  setSearch(item.title);
-                  setActive("all");
-                }}
+                type="button"
+                onClick={() => handleTickerClick(item)}
+                aria-label={`Read ${item.title}`}
               >
                 {item.title}
               </button>

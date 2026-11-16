@@ -68,7 +68,7 @@ export const baseDictionary = {
   },
 
   heroTitleLine2: {
-    en: "Important Updates in One Place",
+    en: "Latest Updates",
     mr: "महत्त्वाच्या अपडेट्स एकाच ठिकाणी",
     hi: "महत्वपूर्ण अपडेट्स एक ही जगह",
   },

@@ -15,6 +15,10 @@ import {
   type Category,
   type Language as CategoryLanguage,
 } from "../category/CategoryGrid";
+import { useImportantLinks } from "../utils/useImportantLinks";
+import { getBaseText } from "../../../i18n/dictionaries/base";
+import { LinkIcon } from "shivanya-ui";
+import "../home/UpdatesSection.css";
 
 type CategorySlug =
   | "jobs"
@@ -84,6 +88,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
+  const { links, getLinkTitle } = useImportantLinks();
+
+  const t = (key: Parameters<typeof getBaseText>[0]) =>
+    getBaseText(key, language);
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -97,7 +105,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         const list: Category[] = Array.isArray(payload)
           ? payload
           : (payload.results ?? []);
-        setCategories(list.filter((entry) => entry.is_active ?? entry.active ?? false));
+        setCategories(
+          list.filter((entry) => entry.is_active ?? entry.active ?? false),
+        );
       })
       .catch((error) => {
         if (!controller.signal.aborted)
@@ -173,154 +183,204 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     <>
       <main className="portal-post-detail">
         <div className="portal-post-detail-inner">
-          {data.loading ? (
-            <div className="portal-post-loading">Loading...</div>
-          ) : post ? (
-            <article className="portal-post-card">
-              <div className="portal-post-meta">
-                <span>{post.category || label}</span>
-                {post.date ? (
-                  <time>{formatDate(post.date, language)}</time>
-                ) : null}
-              </div>
+          <div
+            className={`content-layout ${post && !data.loading ? "has-sidebar" : "no-sidebar"}`}
+          >
+            <div className="post-detail-main">
+              {data.loading ? (
+                <div className="portal-post-loading">Loading...</div>
+              ) : post ? (
+                <article className="portal-post-card">
+                  <div className="portal-post-meta">
+                    <span>{post.category || label}</span>
+                    {post.date ? (
+                      <time>{formatDate(post.date, language)}</time>
+                    ) : null}
+                  </div>
 
-              <h1>{post.title}</h1>
+                  <h1>{post.title}</h1>
 
-              {post.organization || post.location ? (
-                <div className="portal-post-context">
-                  {post.organization ? <span>{post.organization}</span> : null}
-                  {post.location ? <span>{post.location}</span> : null}
-                </div>
-              ) : null}
-
-              {post.eventDate || post.startDate || post.endDate ? (
-                <div className="portal-post-context">
-                  {post.eventDate ? (
-                    <span>
-                      Event date: {formatDate(post.eventDate, language)}
-                    </span>
+                  {post.organization || post.location ? (
+                    <div className="portal-post-context">
+                      {post.organization ? (
+                        <span>{post.organization}</span>
+                      ) : null}
+                      {post.location ? <span>{post.location}</span> : null}
+                    </div>
                   ) : null}
-                  {post.startDate ? (
-                    <span>Start: {formatDate(post.startDate, language)}</span>
-                  ) : null}
-                  {post.endDate ? (
-                    <span>End: {formatDate(post.endDate, language)}</span>
-                  ) : null}
-                </div>
-              ) : null}
 
-              {post.image && !embedUrl ? (
-                <Image
-                  className="portal-post-image"
-                  src={post.image}
-                  alt={post.title}
-                  width={1200}
-                  height={800}
-                  sizes="(max-width: 768px) 100vw, 1200px"
+                  {post.eventDate || post.startDate || post.endDate ? (
+                    <div className="portal-post-context">
+                      {post.eventDate ? (
+                        <span>
+                          Event date: {formatDate(post.eventDate, language)}
+                        </span>
+                      ) : null}
+                      {post.startDate ? (
+                        <span>
+                          Start: {formatDate(post.startDate, language)}
+                        </span>
+                      ) : null}
+                      {post.endDate ? (
+                        <span>End: {formatDate(post.endDate, language)}</span>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {post.image && !embedUrl ? (
+                    <Image
+                      className="portal-post-image"
+                      src={post.image}
+                      alt={post.title}
+                      width={1200}
+                      height={800}
+                      sizes="(max-width: 768px) 100vw, 1200px"
+                    />
+                  ) : null}
+
+                  {embedUrl ? (
+                    <div className="portal-post-video">
+                      <iframe
+                        src={embedUrl}
+                        title={post.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : null}
+
+                  {post.jobDetails ? (
+                    <section className="portal-job-details">
+                      {[
+                        ["Advertisement No.", post.jobDetails.advertisement_no],
+                        ["Total", post.jobDetails.total_posts],
+                        [
+                          "Name of the Examination",
+                          post.jobDetails.examination_name,
+                        ],
+                        [
+                          "Name of the Post & Details",
+                          post.jobDetails.post_details,
+                        ],
+                        [
+                          "Educational Qualification",
+                          post.jobDetails.educational_qualification,
+                        ],
+                        ["Job location", post.jobDetails.location],
+                        ["Age Limit", post.jobDetails.age_limit],
+                        ["Fee", post.jobDetails.application_fee],
+                        ["Application Mode", post.jobDetails.application_mode],
+                        ["Venue of Interview", post.jobDetails.interview_venue],
+                      ]
+                        .filter(([, value]) => Boolean(value))
+                        .map(([name, value]) => (
+                          <div
+                            className="portal-job-detail-row"
+                            key={name as string}
+                          >
+                            <strong>{name}</strong>
+                            <span>{value}</span>
+                          </div>
+                        ))}
+
+                      {post.jobDetails.important_dates.length ? (
+                        <div className="portal-job-detail-group">
+                          <h2>Important Dates</h2>
+                          {post.jobDetails.important_dates.map(
+                            (entry, index) => (
+                              <div
+                                className="portal-job-detail-row"
+                                key={index}
+                              >
+                                <strong>{entry.label}</strong>
+                                <span>{entry.date}</span>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      ) : null}
+
+                      {post.jobDetails.important_links.length ? (
+                        <div className="portal-job-detail-group">
+                          <h2>Important Links</h2>
+                          {post.jobDetails.important_links.map(
+                            (entry, index) => (
+                              <div
+                                className="portal-job-detail-row"
+                                key={index}
+                              >
+                                <strong>{entry.label}</strong>
+                                <a
+                                  href={entry.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {entry.url}
+                                </a>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      ) : null}
+                    </section>
+                  ) : null}
+
+                  {post.description ? (
+                    <p className="portal-post-summary">{post.description}</p>
+                  ) : null}
+
+                  {post.body ? (
+                    <div className="portal-post-summary">{post.body}</div>
+                  ) : null}
+
+                  {post.link ? (
+                    <a
+                      className="portal-post-action"
+                      href={post.link}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {category === "videos"
+                        ? "Watch video"
+                        : "Visit official website"}
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  ) : null}
+                </article>
+              ) : (
+                <PortalContentNotFound
+                  categoryLabel={label || category}
+                  categoryHref={`/${category}`}
                 />
-              ) : null}
+              )}
+            </div>
 
-              {embedUrl ? (
-                <div className="portal-post-video">
-                  <iframe
-                    src={embedUrl}
-                    title={post.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-              ) : null}
+            {/* RIGHT SIDE: Important Links - only when post exists */}
+            {post && !data.loading && (
+              <aside className="right-column">
+                <section className="panelin important-panel">
+                  <div className="section-heading">
+                    <h2>{t("importantSections")}</h2>
+                    <span>{t("usefulLinks")}</span>
+                  </div>
 
-              {post.jobDetails ? (
-                <section className="portal-job-details">
-                  {[
-                    ["Advertisement No.", post.jobDetails.advertisement_no],
-                    ["Total", post.jobDetails.total_posts],
-                    [
-                      "Name of the Examination",
-                      post.jobDetails.examination_name,
-                    ],
-                    [
-                      "Name of the Post & Details",
-                      post.jobDetails.post_details,
-                    ],
-                    [
-                      "Educational Qualification",
-                      post.jobDetails.educational_qualification,
-                    ],
-                    ["Job location", post.jobDetails.location],
-                    ["Age Limit", post.jobDetails.age_limit],
-                    ["Fee", post.jobDetails.application_fee],
-                    ["Application Mode", post.jobDetails.application_mode],
-                    ["Venue of Interview", post.jobDetails.interview_venue],
-                  ]
-                    .filter(([, value]) => Boolean(value))
-                    .map(([name, value]) => (
-                      <div
-                        className="portal-job-detail-row"
-                        key={name as string}
-                      >
-                        <strong>{name}</strong>
-                        <span>{value}</span>
-                      </div>
-                    ))}
-
-                  {post.jobDetails.important_dates.length ? (
-                    <div className="portal-job-detail-group">
-                      <h2>Important Dates</h2>
-                      {post.jobDetails.important_dates.map((entry, index) => (
-                        <div className="portal-job-detail-row" key={index}>
-                          <strong>{entry.label}</strong>
-                          <span>{entry.date}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {post.jobDetails.important_links.length ? (
-                    <div className="portal-job-detail-group">
-                      <h2>Important Links</h2>
-                      {post.jobDetails.important_links.map((entry, index) => (
-                        <div className="portal-job-detail-row" key={index}>
-                          <strong>{entry.label}</strong>
-                          <a href={entry.url} target="_blank" rel="noreferrer">
-                            {entry.url}
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
+                  {links.map((link) => (
+                    <a
+                      className="important-link"
+                      href={link.url}
+                      key={link.id}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <LinkIcon size={16} />
+                      {getLinkTitle(link, language)}
+                      <b>›</b>
+                    </a>
+                  ))}
                 </section>
-              ) : null}
-
-              {post.description ? (
-                <p className="portal-post-summary">{post.description}</p>
-              ) : null}
-
-              {post.body ? (
-                <div className="portal-post-summary">{post.body}</div>
-              ) : null}
-
-              {post.link ? (
-                <a
-                  className="portal-post-action"
-                  href={post.link}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {category === "videos"
-                    ? "Watch video"
-                    : "Visit official website"}
-                  <span aria-hidden="true">↗</span>
-                </a>
-              ) : null}
-            </article>
-          ) : (
-            <PortalContentNotFound
-              categoryLabel={label || category}
-              categoryHref={`/${category}`}
-            />
-          )}
+              </aside>
+            )}
+          </div>
         </div>
       </main>
 

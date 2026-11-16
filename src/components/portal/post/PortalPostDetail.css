@@ -7,7 +7,38 @@
 
 .portal-post-detail-inner {
   width: 100%;
+  margin: 0 auto;
+}
+
+.portal-post-detail .content-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.95fr) minmax(270px, 0.85fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.post-detail-main {
+  min-width: 0;
+}
+
+.portal-post-detail .right-column {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .portal-post-detail .content-layout {
+    grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
   }
+}
+
+@media (max-width: 760px) {
+  .portal-post-detail .content-layout {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
 
 .portal-post-back {
   display: inline-flex;
@@ -26,12 +57,11 @@
 
 .portal-post-card,
 .portal-post-not-found {
-  padding: clamp(22px, 5vw, 44px);
+  padding: 32px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 20px;
   background: var(--surface, #fff);
   box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
-  margin-bottom: 16px;
 }
 
 .portal-post-meta {
@@ -154,4 +184,42 @@
 
 .portal-post-category-grid .category-grid{
   margin: 0;
+}
+
+/* Post found: two columns */
+.portal-post-detail .content-layout.has-sidebar {
+  grid-template-columns: minmax(0, 1.95fr) minmax(270px, 0.85fr);
+}
+
+/* Post not found: full width */
+.portal-post-detail .content-layout.no-sidebar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.portal-post-detail .content-layout.no-sidebar .post-detail-main {
+  width: 100%;
+  max-width: none;
+}
+
+@media (max-width: 1100px) {
+  .portal-post-detail .content-layout.has-sidebar {
+    grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .portal-post-detail .content-layout {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* Bottom spacing only when post exists */
+.portal-post-detail:has(.content-layout.has-sidebar) {
+  padding-bottom: 16px;
+}
+
+/* No extra bottom spacing when post is not found */
+.portal-post-detail:has(.content-layout.no-sidebar) {
+  padding-bottom: 0;
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import "./BanyanTree.css";
@@ -89,11 +88,7 @@ export function BanyanTree() {
         />
 
         {/* Main branches behind the leaves */}
-        <g
-          fill="none"
-          stroke="url(#bark-branch)"
-          strokeLinecap="round"
-        >
+        <g fill="none" stroke="url(#bark-branch)" strokeLinecap="round">
           <path
             d="M308 425 C289 337 291 258 253 170 C225 117 166 106 83 93"
             strokeWidth="39"
@@ -102,14 +97,8 @@ export function BanyanTree() {
             d="M324 391 C356 296 411 226 484 190 C527 166 568 151 610 151"
             strokeWidth="30"
           />
-          <path
-            d="M290 305 C235 258 180 246 121 241"
-            strokeWidth="21"
-          />
-          <path
-            d="M343 315 C397 280 451 278 510 296"
-            strokeWidth="19"
-          />
+          <path d="M290 305 C235 258 180 246 121 241" strokeWidth="21" />
+          <path d="M343 315 C397 280 451 278 510 296" strokeWidth="19" />
         </g>
 
         {/* Deep foliage behind the canopy */}
@@ -126,7 +115,6 @@ export function BanyanTree() {
 
         {/* Natural irregular canopy clusters */}
         <g className="banyan-canopy">
-
           {/* Left upper foliage */}
           <g className="banyan-leaf-cluster cluster-one">
             <path
@@ -322,14 +310,14 @@ export function BanyanTree() {
         {/* Main trunk */}
         <path
           d="
-            M270 450
-            C253 408 255 374 267 335
-            C280 291 266 260 251 228
-            C238 198 252 171 280 159
-            C305 148 329 171 336 205
-            C347 246 329 287 339 333
-            C349 375 365 416 355 450Z
-          "
+    M270 450
+    C253 425 255 400 267 375
+    C280 345 266 320 251 290
+    C238 265 252 245 280 235
+    C305 225 329 245 336 275
+    C347 310 329 340 339 375
+    C349 405 365 430 355 450Z
+  "
           fill="url(#bark-main)"
           stroke="#2b1b12"
           strokeWidth="5"
@@ -396,11 +384,7 @@ export function BanyanTree() {
         </g>
 
         {/* Treehouse supporting branch */}
-        <g
-          fill="none"
-          stroke="url(#bark-branch)"
-          strokeLinecap="round"
-        >
+        <g fill="none" stroke="url(#bark-branch)" strokeLinecap="round">
           <path d="M245 290 Q318 248 409 285" strokeWidth="22" />
           <path d="M250 310 Q325 278 405 306" strokeWidth="13" />
         </g>
@@ -432,12 +416,7 @@ export function BanyanTree() {
           />
 
           {/* Roof texture */}
-          <g
-            fill="none"
-            stroke="#bd956a"
-            strokeWidth="2"
-            opacity=".55"
-          >
+          <g fill="none" stroke="#bd956a" strokeWidth="2" opacity=".55">
             <path d="M270 218 L325 184" />
             <path d="M300 225 L350 194" />
             <path d="M335 225 L380 210" />
@@ -475,28 +454,16 @@ export function BanyanTree() {
           <circle cx="372" cy="300" r="3" fill="#d2a45b" />
 
           {/* Balcony */}
-          <path
-            d="M255 330 H410"
-            stroke="#382419"
-            strokeWidth="8"
-          />
+          <path d="M255 330 H410" stroke="#382419" strokeWidth="8" />
 
-          <g
-            stroke="#68452b"
-            strokeWidth="5"
-            fill="none"
-          >
+          <g stroke="#68452b" strokeWidth="5" fill="none">
             <path d="M260 330 V355 M290 330 V355 M320 330 V355 M350 330 V355 M380 330 V355 M405 330 V355" />
             <path d="M255 345 H410" />
           </g>
 
           {/* Lantern */}
           <g className="banyan-lantern">
-            <path
-              d="M400 250 V265"
-              stroke="#27180f"
-              strokeWidth="3"
-            />
+            <path d="M400 250 V265" stroke="#27180f" strokeWidth="3" />
 
             <rect
               x="394"
@@ -509,13 +476,7 @@ export function BanyanTree() {
               strokeWidth="3"
             />
 
-            <rect
-              x="398"
-              y="269"
-              width="5"
-              height="12"
-              fill="#ffe4a0"
-            />
+            <rect x="398" y="269" width="5" height="12" fill="#ffe4a0" />
           </g>
         </g>
 
@@ -556,12 +517,7 @@ export function BanyanTree() {
           />
 
           {/* Fine root ridges */}
-          <g
-            fill="none"
-            stroke="#d3a06b"
-            strokeLinecap="round"
-            opacity=".65"
-          >
+          <g fill="none" stroke="#d3a06b" strokeLinecap="round" opacity=".65">
             <path d="M270 418 Q233 448 170 474" strokeWidth="3" />
             <path d="M339 417 Q382 449 453 473" strokeWidth="3" />
             <path d="M292 435 Q276 459 267 477" strokeWidth="2" />
@@ -570,10 +526,7 @@ export function BanyanTree() {
         </g>
 
         {/* Nest attached to a small branch */}
-        <g
-          className="parrot-nest"
-          transform="translate(195 100) scale(.58)"
-        >
+        <g className="parrot-nest" transform="translate(195 100) scale(.58)">
           <path
             d="M385 209 Q421 195 486 219"
             fill="none"
@@ -620,43 +573,17 @@ export function BanyanTree() {
             <path d="M468 235 L489 217" />
           </g>
 
-          <ellipse
-            cx="444"
-            cy="222"
-            rx="31"
-            ry="10"
-            fill="#2d1c14"
-          />
+          <ellipse cx="444" cy="222" rx="31" ry="10" fill="#2d1c14" />
 
-          <ellipse
-            cx="444"
-            cy="225"
-            rx="23"
-            ry="6"
-            fill="#493020"
-          />
+          <ellipse cx="444" cy="225" rx="23" ry="6" fill="#493020" />
 
           {/* Baby bird one */}
           <g className="nest-chick nest-chick-one">
-            <ellipse
-              cx="432"
-              cy="214"
-              rx="10"
-              ry="12"
-              fill="#28a95a"
-            />
+            <ellipse cx="432" cy="214" rx="10" ry="12" fill="#28a95a" />
 
-            <circle
-              cx="434"
-              cy="204"
-              r="9"
-              fill="#39bd68"
-            />
+            <circle cx="434" cy="204" r="9" fill="#39bd68" />
 
-            <path
-              d="M441 204 Q452 203 444 211 L440 209Z"
-              fill="#e64c35"
-            />
+            <path d="M441 204 Q452 203 444 211 L440 209Z" fill="#e64c35" />
 
             <circle cx="437" cy="201" r="2" fill="#fff" />
             <circle cx="438" cy="201" r="1" fill="#172b23" />
@@ -670,25 +597,11 @@ export function BanyanTree() {
 
           {/* Baby bird two */}
           <g className="nest-chick nest-chick-two">
-            <ellipse
-              cx="456"
-              cy="215"
-              rx="9"
-              ry="11"
-              fill="#239d54"
-            />
+            <ellipse cx="456" cy="215" rx="9" ry="11" fill="#239d54" />
 
-            <circle
-              cx="457"
-              cy="206"
-              r="8"
-              fill="#35b961"
-            />
+            <circle cx="457" cy="206" r="8" fill="#35b961" />
 
-            <path
-              d="M464 206 Q474 205 467 212 L463 210Z"
-              fill="#e64c35"
-            />
+            <path d="M464 206 Q474 205 467 212 L463 210Z" fill="#e64c35" />
 
             <circle cx="460" cy="203" r="1.8" fill="#fff" />
             <circle cx="461" cy="203" r=".9" fill="#172b23" />
@@ -707,7 +620,6 @@ export function BanyanTree() {
             <path d="M418 207 Q408 190 399 198 Q405 211 418 207Z" />
           </g>
         </g>
-        
       </svg>
     </div>
   );

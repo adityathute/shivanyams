@@ -15,8 +15,9 @@ import {
 
 import { getPortalText } from "../../../i18n/dictionaries/portal-dictionary";
 
-import type { ItemType } from "../data/portal-data";
+import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
+import { createPostSlug } from "../post/PortalPostDetail";
 
 type Props = {
   type?: ItemType | "all";
@@ -30,6 +31,85 @@ type Props = {
 
 interface CategoryApiResponse {
   results?: Category[];
+}
+
+function getLocalizedValue(
+  language: Language,
+  en?: string,
+  mr?: string,
+  hi?: string,
+): string {
+  const values: Record<Language, string> = {
+    en: en?.trim() || "",
+    mr: mr?.trim() || "",
+    hi: hi?.trim() || "",
+  };
+
+  return values[language] || values.en || values.mr || values.hi || "";
+}
+
+function getItemTitle(item: Item, language: Language): string {
+  return (
+    getLocalizedValue(language, item.title_en, item.title_mr, item.title_hi) ||
+    item.title?.trim() ||
+    ""
+  );
+}
+
+function getItemDescription(item: Item, language: Language): string {
+  return (
+    getLocalizedValue(
+      language,
+      item.summary_en,
+      item.summary_mr,
+      item.summary_hi,
+    ) ||
+    item.description?.trim() ||
+    ""
+  );
+}
+
+function getItemCategory(item: Item, language: Language): string {
+  return getLocalizedValue(
+    language,
+    item.category_en,
+    item.category_mr,
+    item.category_hi,
+  );
+}
+
+function getPostHref(item: Item): string {
+  const slug = item.slug || createPostSlug(item.title);
+
+  switch (item.type) {
+    case "job":
+      return `/jobs/${slug}`;
+
+    case "scheme":
+      return `/schemes/${slug}`;
+
+    case "examination":
+    case "exam":
+      return `/examinations/${slug}`;
+
+    case "admit":
+      return `/admit-card/${slug}`;
+
+    case "result":
+      return `/results/${slug}`;
+
+    case "guide":
+      return `/articles/${slug}`;
+
+    case "video":
+      return `/videos/${slug}`;
+
+    case "tool":
+      return `/tools/${slug}`;
+
+    default:
+      return "#";
+  }
 }
 
 export function UpdatesSection({
@@ -47,6 +127,7 @@ export function UpdatesSection({
 
   const sectionTitle = title ?? getPortalText("updatesTitle", language);
 
+  // Load actual categories from Django API
   useEffect(() => {
     const controller = new AbortController();
 
@@ -57,7 +138,7 @@ export function UpdatesSection({
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch categories");
+          throw new Error(`Category request failed (${response.status})`);
         }
 
         const payload: Category[] | CategoryApiResponse = await response.json();
@@ -67,7 +148,9 @@ export function UpdatesSection({
           : (payload.results ?? []);
 
         setCategories(
-          result.filter((category) => category.is_active ?? category.active ?? false),
+          result.filter(
+            (category) => category.is_active ?? category.active ?? false,
+          ),
         );
       } catch (error) {
         if (!controller.signal.aborted) {
@@ -81,27 +164,33 @@ export function UpdatesSection({
     return () => controller.abort();
   }, []);
 
+  // Localized database content and search
   const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase();
+    const term = query.trim().toLocaleLowerCase();
 
     return data.items
       .filter((item) => {
         const matchesType = type === "all" || item.type === type;
 
+        const title = getItemTitle(item, language);
+        const description = getItemDescription(item, language);
+        const category = getItemCategory(item, language);
+
         const matchesQuery =
           !term ||
-          [item.title, item.category, item.description].some((value) =>
-            value.toLowerCase().includes(term),
+          [title, description, category].some((value) =>
+            value.toLocaleLowerCase().includes(term),
           );
 
         return matchesType && matchesQuery;
       })
-      .sort(
-        (a, b) =>
-          new Date(b.date || "").getTime() - new Date(a.date || "").getTime(),
-      )
+      .sort((a, b) => {
+        return (
+          new Date(b.date || "").getTime() - new Date(a.date || "").getTime()
+        );
+      })
       .slice(0, 20);
-  }, [data.items, query, type]);
+  }, [data.items, query, type, language]);
 
   const dateLocale =
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
@@ -112,6 +201,7 @@ export function UpdatesSection({
         <h2>{sectionTitle}</h2>
 
         <button
+          type="button"
           onClick={() => {
             onQueryChange?.("");
             onTypeChange?.("all");
@@ -124,6 +214,7 @@ export function UpdatesSection({
       {showFilters && (
         <div className="filter-row">
           <button
+            type="button"
             className={type === "all" ? "selected" : ""}
             onClick={() => onTypeChange?.("all")}
           >
@@ -138,6 +229,7 @@ export function UpdatesSection({
 
             return (
               <button
+                type="button"
                 key={category.id}
                 className={type === config.type ? "selected" : ""}
                 onClick={() => onTypeChange?.(config.type)}
@@ -150,40 +242,44 @@ export function UpdatesSection({
       )}
 
       <div className="update-list">
-        {filtered.length > 0 ? (
-          filtered.map((item) => (
-            <a
-              className="update-row"
-              key={item.id}
-              href={item.link || "#"}
-              target={item.link ? "_blank" : undefined}
-              rel={item.link ? "noreferrer" : undefined}
-            >
-              <span className={`update-badge ${item.type}`}>
-                {item.category}
-              </span>
+        {data.loading ? (
+          <div className="empty-state">Loading updates...</div>
+        ) : filtered.length > 0 ? (
+          filtered.map((item) => {
+            const itemTitle = getItemTitle(item, language);
+            const itemDescription = getItemDescription(item, language);
+            const itemCategory = getItemCategory(item, language);
 
-              <span className="update-title">
-                {item.title}
-                <small>{item.description}</small>
-              </span>
+            return (
+              <a className="update-row" key={item.id} href={getPostHref(item)}>
+                <span className={`update-badge ${item.type}`}>
+                  {itemCategory}
+                </span>
 
-              <time>
-                {item.date
-                  ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                      dateLocale,
-                      {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      },
-                    )
-                  : getPortalText("new", language)}
-              </time>
+                <span className="update-title">
+                  {itemTitle}
+                  {itemDescription && <small>{itemDescription}</small>}
+                </span>
 
-              <span className="new-pill">{getPortalText("new", language)}</span>
-            </a>
-          ))
+                <time>
+                  {item.date
+                    ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                        dateLocale,
+                        {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        },
+                      )
+                    : getPortalText("new", language)}
+                </time>
+
+                <span className="new-pill">
+                  {getPortalText("new", language)}
+                </span>
+              </a>
+            );
+          })
         ) : (
           <div className="empty-state">
             {getPortalText("emptyUpdates", language)}

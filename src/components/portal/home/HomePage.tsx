@@ -5,7 +5,7 @@ import { HeroSection } from "./HeroSection";
 import { CategoryGrid } from "../category/CategoryGrid";
 import { UpdatesSection } from "./UpdatesSection";
 import { VideosSection } from "../../videos/VideosSection";
-import type { ItemType } from "../data/portal-data";
+import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
 import { PortalFooter } from "../layout/footer/PortalFooter";
 import { MailIcon, Button } from "shivanya-ui";
@@ -14,61 +14,94 @@ import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { useRouter } from "next/navigation";
 import { LinkIcon } from "shivanya-ui";
+import { createPostSlug } from "../post/PortalPostDetail";
 
 export function HomePage() {
   const { language: selectedLanguage } = usePortalLanguage();
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");
   const { data } = usePortalData();
+  const tickerItems = data.items.slice(0, 20);
   const { links, getLinkTitle } = useImportantLinks();
   const router = useRouter();
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, selectedLanguage);
 
-  const handleTickerClick = (item: any) => {
-    const routes: Record<string, string> = {
-      jobs: "jobs",
-      schemes: "schemes",
-      examination: "examination",
-      results: "results",
-      "admit-cards": "admit-cards",
-      guides: "guides",
+  const [tickerIndex, setTickerIndex] = useState(0);
+
+  const getPostTitle = (item: Item): string => {
+    const titles: Record<string, string | undefined> = {
+      en: item.title_en,
+      mr: item.title_mr,
+      hi: item.title_hi,
     };
 
-    const category = routes[item.type];
+    return (
+      titles[selectedLanguage]?.trim() ||
+      item.title_en?.trim() ||
+      item.title_mr?.trim() ||
+      item.title_hi?.trim() ||
+      ""
+    );
+  };
 
-    if (category && item.slug) {
-      router.push(`/${category}/${item.slug}`);
-    }
+  const handleNextTicker = () => {
+    const maxIndex = Math.max(0, tickerItems.length - 5);
+
+    setTickerIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
 
   return (
     <div className="portal">
       {data.items && data.items.length > 0 && (
         <div className="ticker">
-          <span className="ticker-label">⚑ Latest Updates</span>
+          <span className="ticker-label">
+            <span className="ticker-label-icon">⚑</span>
+            Latest Updates
+          </span>
 
           <div className="ticker-track">
-            {data.items.slice(0, 6).map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => handleTickerClick(item)}
-                aria-label={`Read ${item.title}`}
-              >
-                {item.title}
-              </button>
-            ))}
+            <div
+              className="ticker-slides"
+              style={{
+                transform: `translateX(-${tickerIndex * 20}%)`,
+              }}
+            >
+              {tickerItems.map((item) => (
+                <a
+                  key={item.id}
+                  href={
+                    item.type === "job"
+                      ? `/jobs/${item.slug || createPostSlug(item.title)}`
+                      : item.type === "scheme"
+                        ? `/schemes/${item.slug || createPostSlug(item.title)}`
+                        : item.type === "result"
+                          ? `/results/${item.slug || createPostSlug(item.title)}`
+                          : item.type === "admit"
+                            ? `/admit-card/${item.slug || createPostSlug(item.title)}`
+                            : item.type === "video"
+                              ? `/videos/${item.slug || createPostSlug(item.title)}`
+                              : item.type === "guide"
+                                ? `/articles/${item.slug || createPostSlug(item.title)}`
+                                : `/examinations/${item.slug || createPostSlug(item.title)}`
+                  }
+                  className="ticker-item"
+                >
+                  <span className="ticker-dot">•</span>
+                  <span className="ticker-item-title">
+                    {getPostTitle(item)}
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
 
           <button
             className="ticker-arrow"
-            aria-label="Show all updates"
-            onClick={() => {
-              setActive("all");
-              setSearch("");
-            }}
+            type="button"
+            aria-label="Show next update"
+            onClick={handleNextTicker}
           >
             ›
           </button>

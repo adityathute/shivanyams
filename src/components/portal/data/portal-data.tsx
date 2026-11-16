@@ -38,7 +38,18 @@ export type JobDetails = {
 export type Item = {
   id: string;
   title: string;
+  title_en?: string;
+  title_mr?: string;
+  title_hi?: string;
   category: string;
+
+  category_en?: string;
+  category_mr?: string;
+  category_hi?: string;
+
+  summary_en?: string;
+  summary_mr?: string;
+  summary_hi?: string;
   date: string;
   description: string;
   link: string;
@@ -97,7 +108,11 @@ type ApiPost = {
     name_hi?: string;
     slug?: string;
   } | null;
-  organization?: { name_en?: string; name_mr?: string; name_hi?: string } | null;
+  organization?: {
+    name_en?: string;
+    name_mr?: string;
+    name_hi?: string;
+  } | null;
   location?: string;
   start_date?: string | null;
   end_date?: string | null;
@@ -197,38 +212,64 @@ function mapPost(post: ApiPost, type: ItemType): Item {
   return {
     id: String(post.id),
     slug: post.slug,
+
+    // Preserve all database translations
+    title_en: post.title_en || "",
+    title_mr: post.title_mr || "",
+    title_hi: post.title_hi || "",
+
     title: getPostTitle(post),
+
+    // Default category for existing components
     category:
       post.category?.name_en ||
       post.category?.name_mr ||
       post.category?.name_hi ||
       "",
+
+    // Preserve all category translations
+    category_en: post.category?.name_en || "",
+    category_mr: post.category?.name_mr || "",
+    category_hi: post.category?.name_hi || "",
+
+    summary_en: post.summary_en || "",
+    summary_mr: post.summary_mr || "",
+    summary_hi: post.summary_hi || "",
+
     date: getDate(post.published_at || post.event_date || post.start_date),
+
     description: getPostSummary(post),
     link: getPostLink(post),
     type,
     body: getPostBody(post),
+
     image: post.featured_image_url || post.video_details?.thumbnail_url || "",
+
     organization:
       post.organization?.name_en ||
       post.organization?.name_mr ||
       post.organization?.name_hi ||
       "",
+
     location: post.location || "",
     start_date: getDate(post.start_date),
     end_date: getDate(post.end_date),
     event_date: getDate(post.event_date),
+
     job_details: job
       ? {
           advertisement_no: job.advertisement_no || "",
-          total_posts: job.total_vacancies == null ? "" : String(job.total_vacancies),
+          total_posts:
+            job.total_vacancies == null ? "" : String(job.total_vacancies),
           examination_name: "",
           post_details: job.post_details || job.designation || "",
           educational_qualification: job.educational_qualification || "",
           location: post.location || "",
           age_limit:
             job.age_limit_note ||
-            [job.age_min, job.age_max].filter((value) => value != null).join(" - "),
+            [job.age_min, job.age_max]
+              .filter((value) => value != null)
+              .join(" - "),
           application_fee: job.application_fee || "",
           application_mode: job.application_mode || "",
           interview_venue: job.interview_details || "",
@@ -264,8 +305,9 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
       throw new Error(`Request failed (${response.status}): ${nextUrl}`);
     }
 
-    const payload: T[] | PaginatedResponse<T> =
-      (await response.json()) as T[] | PaginatedResponse<T>;
+    const payload: T[] | PaginatedResponse<T> = (await response.json()) as
+      | T[]
+      | PaginatedResponse<T>;
 
     if (Array.isArray(payload)) {
       results.push(...payload);
@@ -323,7 +365,9 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
 
     if (response.status === "rejected") {
       if (!signal.aborted) {
-        errors.push(`${contentKinds[index].endpoint}: ${String(response.reason)}`);
+        errors.push(
+          `${contentKinds[index].endpoint}: ${String(response.reason)}`,
+        );
       }
       return;
     }

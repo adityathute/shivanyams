@@ -7,7 +7,6 @@ from .models import (
     Category,
     Comment,
     ExaminationDetails,
-    GovernmentOrganization,
     JobDetails,
     JobVacancyBreakdown,
     Post,
@@ -47,35 +46,6 @@ class ImportantLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImportantLink
         fields = ["id", "name_en", "name_mr", "name_hi", "url", "sort_order", "active"]
-
-
-class OrganizationTypeSerializer(serializers.Serializer):
-    value = serializers.CharField()
-    label = serializers.CharField()
-
-
-class GovernmentOrganizationSerializer(serializers.ModelSerializer):
-    organization_type_label = serializers.CharField(
-        source="get_organization_type_display",
-        read_only=True,
-    )
-
-    class Meta:
-        model = GovernmentOrganization
-        fields = [
-            "id",
-            "name_en",
-            "name_mr",
-            "name_hi",
-            "slug",
-            "organization_type",
-            "organization_type_label",
-            "website",
-            "logo_url",
-            "state",
-            "is_verified",
-            "is_active",
-        ]
 
 
 class PostLinkSerializer(serializers.ModelSerializer):
@@ -255,7 +225,6 @@ DETAIL_SERIALIZERS = {
 
 class PostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
-    organization = GovernmentOrganizationSerializer(read_only=True)
     important_links = PostLinkSerializer(many=True, read_only=True)
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
@@ -275,7 +244,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "category",
-            "organization",
+            "organization_type",
             "title_en",
             "title_mr",
             "title_hi",
@@ -421,7 +390,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
-            "organization",
+            "organization_type",
             "title_en",
             "title_mr",
             "title_hi",

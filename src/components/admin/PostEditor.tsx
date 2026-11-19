@@ -36,23 +36,10 @@ type DateInput = {
   description_hi: string;
   sort_order: number;
 };
-type Organization = {
-  id: number;
-  name_en: string;
-  name_mr?: string;
-  name_hi?: string;
-  slug: string;
-  organization_type: string;
-  website?: string;
-  logo_url?: string;
-  state?: string;
-  is_verified: boolean;
-  is_active: boolean;
-};
 type PostRecord = {
   id: number;
   slug: string;
-  organization?: Organization | null;
+  organization_type?: string;
   title_en: string;
   title_mr?: string;
   title_hi?: string;
@@ -351,9 +338,7 @@ export default function PostEditor({
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
 
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [organizationId, setOrganizationId] = useState("");
-  const [organizationsLoading, setOrganizationsLoading] = useState(false);
+  const [organizationType, setOrganizationType] = useState("");
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -448,16 +433,7 @@ export default function PostEditor({
             payload.detail || `Unable to load post (${response.status}).`,
           );
         const record = payload as PostRecord;
-        const organization = record.organization;
-
-        const selectedOrganizationId =
-          typeof organization === "number"
-            ? String(organization)
-            : organization?.id
-              ? String(organization.id)
-              : "";
-
-        setOrganizationId(selectedOrganizationId);
+        setOrganizationType(record.organization_type || "");
         setForm({
           ...EMPTY,
           title_en: record.title_en || "",
@@ -507,62 +483,6 @@ export default function PostEditor({
     return () => controller.abort();
   }, [editSlug, kind.api]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadOrganizations() {
-      setOrganizationsLoading(true);
-
-      try {
-        const token = await getAccessToken();
-
-        if (!token) {
-          throw new Error(
-            "Your login token was not found. Please sign in again.",
-          );
-        }
-
-        const response = await fetch(`${API_URL}/admin/organizations/`, {
-          signal: controller.signal,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const payload = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            payload.detail ||
-              `Unable to load organizations (${response.status}).`,
-          );
-        }
-
-        const list: Organization[] = Array.isArray(payload)
-          ? payload
-          : (payload.results ?? []);
-
-        setOrganizations(list.filter((item) => item.is_active));
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setNotice(
-            error instanceof Error
-              ? error.message
-              : "Unable to load organizations.",
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setOrganizationsLoading(false);
-        }
-      }
-    }
-
-    void loadOrganizations();
-
-    return () => controller.abort();
-  }, [getAccessToken]);
-
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
@@ -602,7 +522,7 @@ export default function PostEditor({
     try {
       const payload = {
         ...form,
-        organization: organizationId ? Number(organizationId) : null,
+        organization_type: organizationType,
         slug: form.slug || slugify(form.title_en),
         meta_keywords: form.meta_keywords
           .split(",")
@@ -698,8 +618,8 @@ export default function PostEditor({
               <label>
                 Government Organization Type
                 <select
-                  value={organizationId}
-                  onChange={(event) => setOrganizationId(event.target.value)}
+                  value={organizationType}
+                  onChange={(event) => setOrganizationType(event.target.value)}
                 >
                   <option value="">Select organization type (Optional)</option>
 

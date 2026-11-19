@@ -6,7 +6,6 @@ from .models import (
     Category,
     Comment,
     ExaminationDetails,
-    GovernmentOrganization,
     JobDetails,
     JobVacancyBreakdown,
     Post,
@@ -44,23 +43,6 @@ class ImportantLinkAdmin(admin.ModelAdmin):
     search_fields = ("name_en", "name_mr", "name_hi", "url")
     list_editable = ("sort_order", "active")
     ordering = ("sort_order", "name_en")
-    readonly_fields = ("created_at", "updated_at")
-
-
-@admin.register(GovernmentOrganization)
-class GovernmentOrganizationAdmin(admin.ModelAdmin):
-    list_display = (
-        "name_en",
-        "organization_type",
-        "state",
-        "is_verified",
-        "is_active",
-        "updated_at",
-    )
-    list_filter = ("organization_type", "state", "is_verified", "is_active")
-    search_fields = ("name_en", "name_mr", "name_hi", "slug", "website", "state")
-    ordering = ("name_en",)
-    prepopulated_fields = {"slug": ("name_en",)}
     readonly_fields = ("created_at", "updated_at")
 
 
@@ -137,7 +119,7 @@ class PostAdmin(admin.ModelAdmin):
         "title_en",
         "category",
         "status",
-        "organization",
+        "organization_type",
         "owner_auth_id",
         "is_featured",
         "published_at",
@@ -160,9 +142,8 @@ class PostAdmin(admin.ModelAdmin):
         "slug",
         "summary_en",
         "owner_auth_id",
-        "organization__name_en",
     )
-    autocomplete_fields = ("category", "organization")
+    autocomplete_fields = ("category",)
     prepopulated_fields = {"slug": ("title_en",)}
     readonly_fields = (
         "created_at",
@@ -176,7 +157,7 @@ class PostAdmin(admin.ModelAdmin):
     )
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
-    list_select_related = ("category", "organization")
+    list_select_related = ("category",)
     inlines = (
         PostLinkInline,
         PostDateInline,
@@ -190,7 +171,7 @@ class PostAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "category",
-                    "organization",
+                    "organization_type",
                     "owner_auth_id",
                     "title_en",
                     "title_mr",

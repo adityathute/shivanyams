@@ -13,7 +13,6 @@ from .views import (
     PostReactions,
     TrackPostView,
     AdminPostReview,
-    AdminOrganizations,
     AdminOrganizationTypes,
 )
 
@@ -97,11 +96,6 @@ urlpatterns = [
     ),
 
         path(
-        "admin/organizations/",
-        AdminOrganizations.as_view(),
-        name="admin-organizations",
-    ),
-    path(
     "admin/organization-types/",
     AdminOrganizationTypes.as_view(),
     name="admin-organization-types",

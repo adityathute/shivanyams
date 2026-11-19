@@ -12,7 +12,6 @@ from rest_framework.permissions import IsAuthenticated
 from .models import (
     Category,
     Comment,
-    GovernmentOrganization,
     ImportantLink,
     LanguageChoices,
     Post,
@@ -21,12 +20,12 @@ from .models import (
     PostView,
     PostVisitor,
     SavedPost,
+    PostOrganizationType,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
-    GovernmentOrganizationSerializer,
     ImportantLinkSerializer,
     PostSerializer,
     PostWriteSerializer,
@@ -70,7 +69,7 @@ def public_posts_for_kind(kind):
             published_at__isnull=False,
             is_active=True,
         )
-        .select_related("category", "organization")
+        .select_related("category")
         .prefetch_related(
             "important_links",
             "important_dates",
@@ -126,7 +125,7 @@ class AdminContent(viewsets.ModelViewSet):
         category = get_content_category(self.kwargs["kind"])
         return (
             Post.objects.filter(category=category)
-            .select_related("category", "organization")
+            .select_related("category")
             .prefetch_related(
                 "important_links",
                 "important_dates",
@@ -241,7 +240,7 @@ class SavedPosts(generics.ListAPIView):
                 is_active=True,
                 published_at__isnull=False,
             )
-            .select_related("category", "organization")
+            .select_related("category")
             .order_by("-saved_posts__created_at")
         )
 
@@ -517,25 +516,11 @@ class TrackPostView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
-class AdminOrganizations(generics.ListAPIView):
-    """
-    List active government organizations for the admin post editor.
-    """
-
-    serializer_class = GovernmentOrganizationSerializer
-    permission_classes = [IsPortalAdmin]
-    pagination_class = None
-
-    def get_queryset(self):
-        return GovernmentOrganization.objects.filter(
-            is_active=True
-        ).order_by("name_en")
-
 class AdminOrganizationTypes(APIView):
     permission_classes = [IsAuthenticated, IsPortalAdmin]
 
     def get(self, request):
-        choices = GovernmentOrganization.OrganizationType.choices
+        choices = PostOrganizationType.choices
 
         return Response([
             {

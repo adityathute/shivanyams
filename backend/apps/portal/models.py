@@ -57,46 +57,18 @@ class ImportantLink(TimestampedModel):
     def __str__(self):
         return self.name_en
     
-class GovernmentOrganization(TimestampedModel):
-    """Government departments, commissions, boards and public institutions."""
+class PostOrganizationType(models.TextChoices):
+    """Simple government organization type choices used directly by posts."""
 
-    class OrganizationType(models.TextChoices):
-        CENTRAL = "central", "Central Government"
-        STATE = "state", "State Government"
-        DISTRICT = "district", "District Administration"
-        LOCAL = "local", "Local Government"
-        PSU = "psu", "Public Sector Undertaking"
-        UNIVERSITY = "university", "Government University"
-        BANK = "bank", "Government Bank"
-        COURT = "court", "Court"
-        OTHER = "other", "Other Government Organization"
-
-    name_en = models.CharField(max_length=240)
-    name_mr = models.CharField(max_length=240, blank=True)
-    name_hi = models.CharField(max_length=240, blank=True)
-
-    slug = models.SlugField(max_length=180, unique=True)
-    organization_type = models.CharField(
-        max_length=20,
-        choices=OrganizationType.choices,
-        default=OrganizationType.OTHER,
-    )
-
-    website = models.URLField(max_length=1000, blank=True)
-    logo_url = models.URLField(max_length=1000, blank=True)
-    state = models.CharField(max_length=120, blank=True)
-    is_verified = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        ordering = ("name_en",)
-        indexes = [
-            models.Index(fields=("organization_type", "is_active")),
-            models.Index(fields=("state", "is_active")),
-        ]
-
-    def __str__(self):
-        return self.name_en
+    CENTRAL = "central", "Central Government"
+    STATE = "state", "State Government"
+    DISTRICT = "district", "District Administration"
+    LOCAL = "local", "Local Government"
+    PSU = "psu", "Public Sector Undertaking"
+    UNIVERSITY = "university", "Government University"
+    BANK = "bank", "Government Bank"
+    COURT = "court", "Court"
+    OTHER = "other", "Other Government Organization"
 
 
 class Post(TimestampedModel):
@@ -107,7 +79,7 @@ class Post(TimestampedModel):
     Translation policy:
     - title, summary, body and SEO text can be translated.
     - slug is one canonical English slug.
-    - organization, location, media URLs, dates and other structured
+    - organization type, location, media URLs, dates and other structured
       values are shared rather than duplicated by language.
     """
 
@@ -125,12 +97,11 @@ class Post(TimestampedModel):
         on_delete=models.PROTECT,
         related_name="posts",
     )
-    organization = models.ForeignKey(
-        GovernmentOrganization,
-        on_delete=models.SET_NULL,
-        null=True,
+    organization_type = models.CharField(
+        max_length=20,
+        choices=PostOrganizationType.choices,
         blank=True,
-        related_name="posts",
+        default="",
     )
 
     # External identity from the existing ShivanyaMS Auth system.

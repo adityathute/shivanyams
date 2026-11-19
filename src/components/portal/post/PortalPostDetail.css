@@ -387,3 +387,43 @@
     font-size: 11px;
   }
 }
+
+
+/* Structured Important Dates */
+.portal-important-dates {
+  margin: 18px 0;
+}
+
+.portal-important-date-value {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: var(--text-primary, #172033);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.portal-important-date-value s {
+  color: var(--text-secondary, #8792a3);
+  font-weight: 400;
+}
+
+.portal-important-date-value strong {
+  color: var(--text-primary, #172033);
+  font-weight: 750;
+}
+
+.portal-important-date-description {
+  color: var(--text-secondary, #778397);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+:root[data-theme="dark"] .portal-important-date-value {
+  color: var(--text-primary, #f8fafc);
+}
+
+:root[data-theme="dark"] .portal-important-date-value strong {
+  color: var(--text-primary, #f8fafc);
+}

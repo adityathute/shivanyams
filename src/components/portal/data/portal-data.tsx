@@ -366,6 +366,31 @@ function sameForEveryPost<T>(posts: T[], getValue: (post: T) => unknown) {
 
 function mapPost(post: ApiPost, type: ItemType): Item {
   const job = post.job_details;
+  const postDetailsAreCommon = sameForEveryPost(job?.posts || [], (entry) => [
+    normalizeComparable(entry.educational_qualification_en),
+    normalizeComparable(entry.educational_qualification_mr),
+    normalizeComparable(entry.educational_qualification_hi),
+    normalizeComparable(entry.age_criteria_type),
+    entry.age_min ?? null,
+    entry.age_max ?? null,
+    getDate(entry.age_as_on_date),
+    getDate(entry.eligible_dob_from),
+    getDate(entry.eligible_dob_to),
+    normalizeComparable(entry.age_limit_note_en),
+    normalizeComparable(entry.age_limit_note_mr),
+    normalizeComparable(entry.age_limit_note_hi),
+    (entry.fees || [])
+      .map((fee) => [
+        normalizeComparable(fee.category_name_en),
+        normalizeComparable(fee.category_name_mr),
+        normalizeComparable(fee.category_name_hi),
+        fee.fee_amount == null ? "" : String(fee.fee_amount),
+        normalizeComparable(fee.fee_note_en),
+        normalizeComparable(fee.fee_note_mr),
+        normalizeComparable(fee.fee_note_hi),
+      ])
+      .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
+  ]);
 
   return {
     id: String(post.id),
@@ -437,35 +462,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             job.total_vacancies == null ? "" : String(job.total_vacancies),
           examination_name: "",
           post_details: job.post_details || job.designation || "",
-          education_mode: sameForEveryPost(job.posts || [], (entry) => [
-            normalizeComparable(entry.educational_qualification_en),
-            normalizeComparable(entry.educational_qualification_mr),
-            normalizeComparable(entry.educational_qualification_hi),
-          ]) ? "common" : "per_post",
-          age_mode: sameForEveryPost(job.posts || [], (entry) => [
-            normalizeComparable(entry.age_criteria_type),
-            entry.age_min ?? null,
-            entry.age_max ?? null,
-            getDate(entry.age_as_on_date),
-            getDate(entry.eligible_dob_from),
-            getDate(entry.eligible_dob_to),
-            normalizeComparable(entry.age_limit_note_en),
-            normalizeComparable(entry.age_limit_note_mr),
-            normalizeComparable(entry.age_limit_note_hi),
-          ]) ? "common" : "per_post",
-          fee_mode: sameForEveryPost(job.posts || [], (entry) =>
-            (entry.fees || [])
-              .map((fee) => [
-                normalizeComparable(fee.category_name_en),
-                normalizeComparable(fee.category_name_mr),
-                normalizeComparable(fee.category_name_hi),
-                fee.fee_amount == null ? "" : String(fee.fee_amount),
-                normalizeComparable(fee.fee_note_en),
-                normalizeComparable(fee.fee_note_mr),
-                normalizeComparable(fee.fee_note_hi),
-              ])
-              .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
-          ) ? "common" : "per_post",
+          education_mode: postDetailsAreCommon ? "common" : "per_post",
+          age_mode: postDetailsAreCommon ? "common" : "per_post",
+          fee_mode: postDetailsAreCommon ? "common" : "per_post",
           educational_qualification:
             job.posts?.[0]?.educational_qualification_en ||
             job.educational_qualification || "",

@@ -47,7 +47,7 @@ export type Item = {
   title_mr?: string;
   title_hi?: string;
   category: string;
-
+updated_date?: string;
   category_en?: string;
   category_mr?: string;
   category_hi?: string;
@@ -60,12 +60,12 @@ export type Item = {
   link: string;
   type: ItemType;
   slug?: string;
-    body?: string;
+  body?: string;
   body_en?: string;
   body_mr?: string;
   body_hi?: string;
   image?: string;
-    organization?: string;
+  organization?: string;
   organization_type?: string;
   location?: string;
   start_date?: string;
@@ -127,6 +127,7 @@ type ApiPost = {
   event_date?: string | null;
   featured_image_url?: string;
   published_at?: string | null;
+  updated_at?: string | null;
   important_links?: ApiLink[];
   job_details?: {
     advertisement_no?: string;
@@ -234,7 +235,7 @@ function mapPost(post: ApiPost, type: ItemType): Item {
       post.category?.name_mr ||
       post.category?.name_hi ||
       "",
-
+updated_date: getDate(post.updated_at),
     // Preserve all category translations
     category_en: post.category?.name_en || "",
     category_mr: post.category?.name_mr || "",
@@ -250,9 +251,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
     link: getPostLink(post),
     type,
     body: getPostBody(post),
-body_en: post.body_en || "",
-body_mr: post.body_mr || "",
-body_hi: post.body_hi || "",
+    body_en: post.body_en || "",
+    body_mr: post.body_mr || "",
+    body_hi: post.body_hi || "",
 
     image: post.featured_image_url || post.video_details?.thumbnail_url || "",
 

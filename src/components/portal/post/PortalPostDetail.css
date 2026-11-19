@@ -57,7 +57,7 @@
 
 .portal-post-card,
 .portal-post-not-found {
-  padding: 32px;
+  padding: 16px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 20px;
   background: var(--surface, #fff);
@@ -74,7 +74,7 @@
   font-size: 13px;
 }
 
-.portal-post-meta span {
+.portal-post-meta > span {
   padding: 6px 11px;
   border-radius: 999px;
   background: rgba(0, 123, 255, 0.09);
@@ -158,7 +158,7 @@
 
 @media (max-width: 600px) {
   .portal-post-detail {
-    padding: 16px;
+    padding: 12px;
   }
 
   .portal-post-card,
@@ -226,4 +226,79 @@
 /* No extra bottom spacing when post is not found */
 .portal-post-detail:has(.content-layout.no-sidebar) {
   padding-bottom: 0;
+}
+
+.portal-post-dates {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.portal-post-date-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.portal-post-date-label {
+  color: #222;
+  font-weight: 600;
+}
+
+.portal-post-date-group time {
+  color: #888;
+  font-weight: 400;
+}
+
+@media (max-width: 600px) {
+  .portal-post-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .portal-post-dates {
+    gap: 6px 12px;
+  }
+}
+
+/* Date groups */
+.portal-post-date-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* Date labels: black */
+.portal-post-date-label {
+  padding: 0 !important;
+  background: transparent !important;
+  color: #888 !important;
+  font-weight: 600;
+}
+
+/* Date values: gray */
+.portal-post-date-group time {
+  color: #888 !important;
+  font-weight: 400;
+}
+
+/* Mobile: Right sidebar below the post */
+@media (max-width: 760px) {
+  .portal-post-detail .content-layout.has-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portal-post-detail .post-detail-main,
+  .portal-post-detail .right-column {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .portal-post-detail .right-column {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
 }

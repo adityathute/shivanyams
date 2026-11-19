@@ -413,7 +413,7 @@ function detailTemplate(api: string): Record<string, unknown> {
       age_mode: "per_post",
       fee_mode: "per_post",
       educational_qualification: "",
-      age_criteria_type: "",
+      age_criteria_type: "age_range",
       age_min: null,
       age_max: null,
       age_as_on_date: "",

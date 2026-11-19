@@ -520,3 +520,34 @@
     padding: 11px 12px;
   }
 }
+
+/* Age cells use space based on how many age values are available. */
+.portal-job-info-item-age-full {
+  grid-column: span 4;
+}
+
+.portal-job-info-item-age-half {
+  grid-column: span 2;
+}
+
+.portal-job-info-item-age-quarter {
+  grid-column: span 1;
+}
+
+@media (max-width: 900px) {
+  .portal-job-info-item-age-full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .portal-job-info-item-age-full {
+    grid-column: 1 / -1;
+  }
+  .portal-job-info-item-age-half {
+    grid-column: span 1;
+  }
+  .portal-job-info-item-age-quarter {
+    grid-column: span 1;
+  }
+}

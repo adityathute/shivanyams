@@ -149,6 +149,18 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         ((entry.slug || createPostSlug(entry.title)) === slug ||
           entry.id === slug),
     );
+
+    const organizationTypeLabels: Record<string, string> = {
+      central: "Central Government",
+      state: "State Government",
+      district: "District Administration",
+      local: "Local Government",
+      psu: "Public Sector Undertaking",
+      university: "Government University",
+      bank: "Government Bank",
+      court: "Court",
+      other: "Other Government Organization",
+    };
     return item
       ? {
           title: item.title,
@@ -158,7 +170,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           link: item.link,
           image: item.image || "",
           body: item.body || "",
-          organization: item.organization || "",
+          organization:
+            organizationTypeLabels[item.organization_type || ""] || "",
           location: item.location || "",
           startDate: item.start_date || "",
           endDate: item.end_date || "",
@@ -200,12 +213,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                   <h1>{post.title}</h1>
 
-                  {post.organization || post.location ? (
+                  {post.organization ? (
                     <div className="portal-post-context">
-                      {post.organization ? (
-                        <span>{post.organization}</span>
-                      ) : null}
-                      {post.location ? <span>{post.location}</span> : null}
+                      <span>{post.organization}</span>
                     </div>
                   ) : null}
 

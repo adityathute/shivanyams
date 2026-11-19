@@ -57,7 +57,8 @@ export type Item = {
   slug?: string;
   body?: string;
   image?: string;
-  organization?: string;
+    organization?: string;
+  organization_type?: string;
   location?: string;
   start_date?: string;
   end_date?: string;
@@ -108,11 +109,7 @@ type ApiPost = {
     name_hi?: string;
     slug?: string;
   } | null;
-  organization?: {
-    name_en?: string;
-    name_mr?: string;
-    name_hi?: string;
-  } | null;
+  organization_type?: string;
   location?: string;
   start_date?: string | null;
   end_date?: string | null;
@@ -245,11 +242,8 @@ function mapPost(post: ApiPost, type: ItemType): Item {
 
     image: post.featured_image_url || post.video_details?.thumbnail_url || "",
 
-    organization:
-      post.organization?.name_en ||
-      post.organization?.name_mr ||
-      post.organization?.name_hi ||
-      "",
+    organization_type: post.organization_type || "",
+    organization: post.organization_type || "",
 
     location: post.location || "",
     start_date: getDate(post.start_date),

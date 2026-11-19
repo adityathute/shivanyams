@@ -190,7 +190,7 @@ class Post(TimestampedModel):
             models.Index(fields=("status", "created_at")),
             models.Index(fields=("owner_auth_id", "status")),
             models.Index(fields=("is_featured", "status")),
-            models.Index(fields=("organization", "status")),
+            models.Index(fields=("organization_type", "status")),
         ]
         constraints = [
             models.CheckConstraint(

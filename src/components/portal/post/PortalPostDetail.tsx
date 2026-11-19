@@ -218,6 +218,8 @@ const detailLabels = {
     hi: "विज्ञापन संख्या",
   },
   total: { en: "Total Posts", mr: "एकूण पदे", hi: "कुल पद" },
+  vacancies: { en: "Vacancies", mr: "रिक्त पदे", hi: "रिक्तियां" },
+  department: { en: "Department", mr: "विभाग", hi: "विभाग" },
   examinationName: {
     en: "Name of the Examination",
     mr: "परीक्षेचे नाव",
@@ -828,13 +830,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 <div className="portal-post-wise-grid">
                                   {entry.vacancies != null ? (
                                     <div>
-                                      <span>Vacancies</span>
+                                      <span>{getDetailLabel("vacancies", language)}</span>
                                       <strong>{entry.vacancies.toLocaleString("en-IN")}</strong>
                                     </div>
                                   ) : null}
                                   {department ? (
                                     <div>
-                                      <span>Department</span>
+                                      <span>{getDetailLabel("department", language)}</span>
                                       <strong>{department}</strong>
                                     </div>
                                   ) : null}

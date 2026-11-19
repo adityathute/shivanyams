@@ -110,15 +110,15 @@ function normalizeDateInput(item: Partial<DateInput>): DateInput {
     ...item,
     date_format: item.date_format || "single",
     date: item.date || "",
-    time: item.time || "",
+    time: item.time ? item.time.slice(0, 5) : "",
     start_date: item.start_date || "",
     end_date: item.end_date || "",
     month: item.month == null ? "" : String(item.month),
     year: item.year == null ? "" : String(item.year),
     old_date: item.old_date || "",
     new_date: item.new_date || "",
-    old_time: item.old_time || "",
-    new_time: item.new_time || "",
+    old_time: item.old_time ? item.old_time.slice(0, 5) : "",
+    new_time: item.new_time ? item.new_time.slice(0, 5) : "",
   };
 }
 type PostRecord = {
@@ -623,7 +623,7 @@ export default function PostEditor({
           .filter((item) => item.label_en.trim())
           .map((item, index) => ({
             ...item,
-            sort_order: index,
+            sort_order: item.sort_order,
             date: item.date || null,
             time: item.time || null,
             start_date: item.start_date || null,

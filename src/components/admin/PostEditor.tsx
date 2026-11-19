@@ -1152,13 +1152,15 @@ export default function PostEditor({
               </label>
             </div>
             <label>
-              SEO Keywords (comma separated)
+              Related Tags (comma separated)
               <input
                 value={form.meta_keywords}
                 onChange={(event) =>
                   update("meta_keywords", event.target.value)
                 }
+                placeholder="e.g. Police Bharti, Maharashtra, Graduate"
               />
+              <small>Enter tags separated by commas. These appear as clickable gray tags on the post.</small>
             </label>
           </section>
           <div className="post-editor-actions">

@@ -460,8 +460,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
   const jobAgeDetails = post?.jobDetails;
 
+  const isTextOnlyAgeCriteria =
+    jobAgeDetails?.age_criteria_type === "text_only";
+
   const ageLimitValue = (() => {
-    if (!jobAgeDetails) return "";
+    if (!jobAgeDetails || isTextOnlyAgeCriteria) return "";
 
     const min = jobAgeDetails.age_min;
     const max = jobAgeDetails.age_max;
@@ -500,12 +503,18 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           formatDate(jobAgeDetails.age_as_on_date, language),
         ] as [string, string]]
       : []),
-    ...(jobAgeDetails?.age_limit_note?.trim()
-      ? [[
-          getDetailLabel("ageNote", language),
-          jobAgeDetails.age_limit_note.trim(),
-        ] as [string, string]]
-      : []),
+    ...(
+      (jobAgeDetails?.age_limit_note?.trim() ||
+        (isTextOnlyAgeCriteria ? jobAgeDetails?.age_limit?.trim() : "")) 
+        ? [[
+            getDetailLabel("ageNote", language),
+            (
+              jobAgeDetails?.age_limit_note?.trim() ||
+              (isTextOnlyAgeCriteria ? jobAgeDetails?.age_limit?.trim() : "")
+            ) as string,
+          ] as [string, string]]
+        : []
+    ),
   ];
 
   return (

@@ -1628,36 +1628,11 @@ export default function PostEditor({
                   </button>
                 </div>
                 <div className="post-editor-grid">
-                  <label>
-                    Educational Qualification
-                    <select
-                      value={String(details.education_mode || "per_post")}
-                      onChange={(event) => updateDetail("education_mode", event.target.value)}
-                    >
-                      <option value="common">Same for all posts</option>
-                      <option value="per_post">Different for each post</option>
-                    </select>
-                  </label>
-                  <label>
-                    Age Limit
-                    <select
-                      value={String(details.age_mode || "per_post")}
-                      onChange={(event) => updateDetail("age_mode", event.target.value)}
-                    >
-                      <option value="common">Same for all posts</option>
-                      <option value="per_post">Different for each post</option>
-                    </select>
-                  </label>
-                  <label>
-                    Application Fees
-                    <select
-                      value={String(details.fee_mode || "per_post")}
-                      onChange={(event) => updateDetail("fee_mode", event.target.value)}
-                    >
-                      <option value="common">Same for all posts</option>
-                      <option value="per_post">Different for each post</option>
-                    </select>
-                  </label>
+                  <p className="post-editor-help">
+                    Enter education, age criteria and application fees for each post.
+                    The public page will automatically show matching details once
+                    when they are the same, and separately when they differ.
+                  </p>
                 </div>
 
                 <p className="post-editor-help">
@@ -1835,7 +1810,7 @@ export default function PostEditor({
                           Age As On Date
                           <input
                             type="date"
-                            value={post.age_as_on_date}
+                            value={post.age_as_on_date ?? ""}
                             onChange={(event) =>
                               updateJobPost(
                                 postIndex,
@@ -1853,7 +1828,7 @@ export default function PostEditor({
                             Eligible Date of Birth From
                             <input
                               type="date"
-                              value={post.eligible_dob_from}
+                              value={post.eligible_dob_from ?? ""}
                               onChange={(event) =>
                                 updateJobPost(
                                   postIndex,
@@ -1868,7 +1843,7 @@ export default function PostEditor({
                             Eligible Date of Birth To
                             <input
                               type="date"
-                              value={post.eligible_dob_to}
+                              value={post.eligible_dob_to ?? ""}
                               onChange={(event) =>
                                 updateJobPost(
                                   postIndex,

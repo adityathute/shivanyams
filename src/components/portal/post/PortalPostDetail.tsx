@@ -710,7 +710,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           })}
                       </div>
 
-                      {[
+                      {/* {[
                         [
                           getDetailLabel("examinationName", language),
                           post.jobDetails.examination_name,
@@ -737,7 +737,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             <strong>{name}</strong>
                             <span>{value}</span>
                           </div>
-                        ))}
+                        ))} */}
 
                       {post.jobDetails.important_links.length ? (
                         <div className="portal-job-detail-group">
@@ -773,8 +773,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                   {post.importantDates.length ? (
                     <section className="portal-job-details portal-important-dates">
-                      <div className="portal-job-detail-group">
+                      <div className="portal-important-dates-heading">
                         <h2>{getDetailLabel("importantDates", language)}</h2>
+                      </div>
+
+                      <div className="portal-important-dates-list">
                         {post.importantDates.map((entry, index) => {
                           const label = getLocalizedText(
                             language,
@@ -782,28 +785,79 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             entry.label_mr,
                             entry.label_hi,
                           );
+
+                          const isDeadline =
+                            entry.date_type === "application_end" ||
+                            entry.date_type === "fee_last_date" ||
+                            entry.date_type === "correction_window";
+
                           const description = getLocalizedText(
                             language,
                             entry.description_en,
                             entry.description_mr,
                             entry.description_hi,
                           );
+
+                          const isRevised =
+                            entry.date_format === "revised" ||
+                            entry.date_format === "revised_with_time";
+
                           return (
                             <div
-                              className="portal-job-detail-row"
+                              className={`portal-important-date-item ${
+                                isRevised ? "is-revised" : ""
+                              }`}
                               key={entry.id ?? `${entry.date_type}-${index}`}
                             >
-                              <strong>
-                                {label || detailLabelFallback(entry.date_type)}
-                              </strong>
-                              <span className="portal-important-date-value">
-                                {renderImportantDateValue(entry, language)}
+                              <div className="portal-important-date-info">
+                                <div className="portal-important-date-title">
+                                  <span className="portal-important-date-dot" />
+                                  <strong>
+                                    {label ||
+                                      detailLabelFallback(entry.date_type)}
+                                  </strong>
+                                </div>
+
                                 {description ? (
-                                  <small className="portal-important-date-description">
+                                  <p className="portal-important-date-description">
                                     {description}
-                                  </small>
+                                  </p>
                                 ) : null}
-                              </span>
+                              </div>
+
+                              <div
+                                className={`portal-important-date-value ${
+                                  isDeadline ? "is-deadline" : ""
+                                }`}
+                              >
+                                {isRevised ? (
+                                  <>
+                                    <s>
+                                      {formatDate(
+                                        entry.old_date || "",
+                                        language,
+                                      )}
+                                      {entry.date_format ===
+                                        "revised_with_time" && entry.old_time
+                                        ? ` (${formatTime(entry.old_time, language)})`
+                                        : ""}
+                                    </s>
+
+                                    <strong>
+                                      {formatDate(
+                                        entry.new_date || "",
+                                        language,
+                                      )}
+                                      {entry.date_format ===
+                                        "revised_with_time" && entry.new_time
+                                        ? ` (${formatTime(entry.new_time, language)})`
+                                        : ""}
+                                    </strong>
+                                  </>
+                                ) : (
+                                  renderImportantDateValue(entry, language)
+                                )}
+                              </div>
                             </div>
                           );
                         })}

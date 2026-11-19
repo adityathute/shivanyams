@@ -797,3 +797,142 @@
 :root[data-theme="dark"] .portal-important-date-value.is-deadline strong {
   color: #f87171;
 }
+
+
+/* Individual recruitment post details */
+.portal-post-wise-details {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.portal-post-wise-details > h2 {
+  margin: 0;
+  color: var(--text-primary, #172033);
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.portal-post-wise-item {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+}
+
+.portal-post-wise-item > h3 {
+  margin: 0 0 14px;
+  color: var(--text-primary, #172033);
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.portal-post-wise-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.portal-post-wise-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.portal-post-wise-grid > div > span {
+  color: var(--text-secondary, #778397);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.portal-post-wise-grid > div > strong {
+  color: var(--text-primary, #172033);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.55;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.portal-post-wise-grid > .portal-post-wise-full {
+  grid-column: 1 / -1;
+}
+
+.portal-post-wise-fees {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.portal-post-wise-fees > h4 {
+  margin: 0 0 2px;
+  color: var(--text-primary, #172033);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.portal-post-wise-fee {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: start;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: var(--surface-muted, #f5f7fa);
+}
+
+.portal-post-wise-fee > strong,
+.portal-post-wise-fee > span {
+  color: var(--text-primary, #172033);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.portal-post-wise-fee > span {
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.portal-post-wise-fee > small {
+  grid-column: 1 / -1;
+  color: var(--text-secondary, #778397);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+:root[data-theme="dark"] .portal-post-wise-details > h2,
+:root[data-theme="dark"] .portal-post-wise-item > h3,
+:root[data-theme="dark"] .portal-post-wise-grid > div > strong,
+:root[data-theme="dark"] .portal-post-wise-fees > h4,
+:root[data-theme="dark"] .portal-post-wise-fee > strong,
+:root[data-theme="dark"] .portal-post-wise-fee > span {
+  color: var(--text-primary, #f8fafc);
+}
+
+:root[data-theme="dark"] .portal-post-wise-item {
+  background: var(--surface, #171c28);
+}
+
+:root[data-theme="dark"] .portal-post-wise-fee {
+  background: var(--surface-muted, #202838);
+}
+
+@media (max-width: 600px) {
+  .portal-post-wise-item {
+    padding: 13px;
+  }
+
+  .portal-post-wise-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-post-wise-grid > .portal-post-wise-full {
+    grid-column: auto;
+  }
+}

@@ -507,7 +507,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       (jobAgeDetails?.age_limit_note?.trim() ||
         (isTextOnlyAgeCriteria ? jobAgeDetails?.age_limit?.trim() : "")) 
         ? [[
-            getDetailLabel("ageNote", language),
+            getDetailLabel(
+              isTextOnlyAgeCriteria ? "ageLimit" : "ageNote",
+              language,
+            ),
             (
               jobAgeDetails?.age_limit_note?.trim() ||
               (isTextOnlyAgeCriteria ? jobAgeDetails?.age_limit?.trim() : "")

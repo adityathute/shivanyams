@@ -409,6 +409,9 @@ function detailTemplate(api: string): Record<string, unknown> {
       department: "",
       designation: "",
       post_details: "",
+      education_mode: "per_post",
+      age_mode: "per_post",
+      fee_mode: "per_post",
       educational_qualification: "",
       age_criteria_type: "",
       age_min: null,
@@ -1624,6 +1627,39 @@ export default function PostEditor({
                     + Add Post
                   </button>
                 </div>
+                <div className="post-editor-grid">
+                  <label>
+                    Educational Qualification
+                    <select
+                      value={String(details.education_mode || "per_post")}
+                      onChange={(event) => updateDetail("education_mode", event.target.value)}
+                    >
+                      <option value="common">Same for all posts</option>
+                      <option value="per_post">Different for each post</option>
+                    </select>
+                  </label>
+                  <label>
+                    Age Limit
+                    <select
+                      value={String(details.age_mode || "per_post")}
+                      onChange={(event) => updateDetail("age_mode", event.target.value)}
+                    >
+                      <option value="common">Same for all posts</option>
+                      <option value="per_post">Different for each post</option>
+                    </select>
+                  </label>
+                  <label>
+                    Application Fees
+                    <select
+                      value={String(details.fee_mode || "per_post")}
+                      onChange={(event) => updateDetail("fee_mode", event.target.value)}
+                    >
+                      <option value="common">Same for all posts</option>
+                      <option value="per_post">Different for each post</option>
+                    </select>
+                  </label>
+                </div>
+
                 <p className="post-editor-help">
                   Total vacancies:{" "}
                   {((details.posts as JobPostInput[]) || [])
@@ -1955,11 +1991,8 @@ export default function PostEditor({
 
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
-                if (
-                  kind.api === "jobs" &&
-                  [
-                    "posts",
-                    "total_vacancies",
+                if (kind.api === "jobs") {
+                  const commonOnlyFields = [
                     "educational_qualification",
                     "age_criteria_type",
                     "age_min",
@@ -1974,9 +2007,35 @@ export default function PostEditor({
                     "application_fee_note_en",
                     "application_fee_note_mr",
                     "application_fee_note_hi",
-                  ].includes(key)
-                ) {
-                  return null;
+                  ];
+                  if (
+                    key === "posts" ||
+                    key === "total_vacancies" ||
+                    (commonOnlyFields.includes(key) &&
+                      ((key === "educational_qualification" &&
+                        details.education_mode !== "common") ||
+                        ([
+                          "age_criteria_type",
+                          "age_min",
+                          "age_max",
+                          "age_as_on_date",
+                          "eligible_dob_from",
+                          "eligible_dob_to",
+                          "age_limit_note_en",
+                          "age_limit_note_mr",
+                          "age_limit_note_hi",
+                        ].includes(key) &&
+                        details.age_mode !== "common") ||
+                        ([
+                          "application_fee",
+                          "application_fee_note_en",
+                          "application_fee_note_mr",
+                          "application_fee_note_hi",
+                        ].includes(key) &&
+                        details.fee_mode !== "common")))
+                  ) {
+                    return null;
+                  }
                 }
 
                 const criteriaType = String(

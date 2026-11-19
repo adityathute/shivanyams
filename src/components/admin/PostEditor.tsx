@@ -49,6 +49,78 @@ type DateInput = {
   sort_order: number;
 };
 
+type JobPostFeeInput = {
+  category_name_en: string;
+  category_name_mr: string;
+  category_name_hi: string;
+  fee_amount: string;
+  fee_note_en: string;
+  fee_note_mr: string;
+  fee_note_hi: string;
+  sort_order: number;
+};
+
+type JobPostInput = {
+  post_number: string;
+  post_name_en: string;
+  post_name_mr: string;
+  post_name_hi: string;
+  department_en: string;
+  department_mr: string;
+  department_hi: string;
+  vacancies: number | null;
+  educational_qualification_en: string;
+  educational_qualification_mr: string;
+  educational_qualification_hi: string;
+  age_criteria_type: string;
+  age_min: number | null;
+  age_max: number | null;
+  age_as_on_date: string;
+  eligible_dob_from: string;
+  eligible_dob_to: string;
+  age_limit_note_en: string;
+  age_limit_note_mr: string;
+  age_limit_note_hi: string;
+  sort_order: number;
+  fees: JobPostFeeInput[];
+};
+
+const createEmptyJobPostFee = (): JobPostFeeInput => ({
+  category_name_en: "",
+  category_name_mr: "",
+  category_name_hi: "",
+  fee_amount: "",
+  fee_note_en: "",
+  fee_note_mr: "",
+  fee_note_hi: "",
+  sort_order: 0,
+});
+
+const createEmptyJobPost = (sort_order: number): JobPostInput => ({
+  post_number: "",
+  post_name_en: "",
+  post_name_mr: "",
+  post_name_hi: "",
+  department_en: "",
+  department_mr: "",
+  department_hi: "",
+  vacancies: null,
+  educational_qualification_en: "",
+  educational_qualification_mr: "",
+  educational_qualification_hi: "",
+  age_criteria_type: "",
+  age_min: null,
+  age_max: null,
+  age_as_on_date: "",
+  eligible_dob_from: "",
+  eligible_dob_to: "",
+  age_limit_note_en: "",
+  age_limit_note_mr: "",
+  age_limit_note_hi: "",
+  sort_order,
+  fees: [],
+});
+
 const DATE_TYPE_OPTIONS = [
   "application_start",
   "application_end",
@@ -362,6 +434,7 @@ function detailTemplate(api: string): Record<string, unknown> {
       interview_details: "",
       official_notification_url: "",
       official_website: "",
+      posts: [],
     };
   if (api === "schemes")
     return {
@@ -593,10 +666,32 @@ export default function PostEditor({
         const data = record[
           detailKeyFor(kind.api) as keyof PostRecord
         ] as Record<string, unknown> | null;
+
         const template: Record<string, unknown> = {
           ...detailTemplate(kind.api),
           ...(data || {}),
         };
+
+        if (kind.api === "jobs") {
+          const existingPosts = Array.isArray(data?.posts)
+            ? (data.posts as Record<string, unknown>[])
+            : [];
+
+          template.posts = existingPosts.map((post, index) => ({
+            ...createEmptyJobPost(index),
+            ...post,
+            fees: Array.isArray(post.fees)
+              ? (post.fees as Record<string, unknown>[]).map((fee) => ({
+                  ...createEmptyJobPostFee(),
+                  ...fee,
+                  fee_amount:
+                    fee.fee_amount === null || fee.fee_amount === undefined
+                      ? ""
+                      : String(fee.fee_amount),
+                }))
+              : [],
+          }));
+        }
 
         // Remove fields from the previous age-relaxation structure.
         if (kind.api === "jobs") {
@@ -674,6 +769,124 @@ export default function PostEditor({
     setDetails((current) => ({ ...current, [key]: value }));
   }
 
+  function updateJobPost(postIndex: number, key: string, value: unknown) {
+    setDetails((current) => {
+      const posts = [...((current.posts as JobPostInput[]) || [])];
+
+      const post = { ...posts[postIndex] };
+
+      if (key === "age_criteria_type") {
+        const criteriaType = String(value);
+
+        Object.assign(post, {
+          age_criteria_type: criteriaType,
+          age_min: null,
+          age_max: null,
+          age_as_on_date: "",
+          eligible_dob_from: "",
+          eligible_dob_to: "",
+          age_limit_note_en: post.age_limit_note_en,
+          age_limit_note_mr: post.age_limit_note_mr,
+          age_limit_note_hi: post.age_limit_note_hi,
+        });
+      } else {
+        Object.assign(post, { [key]: value });
+      }
+
+      posts[postIndex] = post;
+
+      return { ...current, posts };
+    });
+  }
+
+  function addJobPost() {
+    setDetails((current) => {
+      const posts = (current.posts as JobPostInput[]) || [];
+
+      return {
+        ...current,
+        posts: [...posts, createEmptyJobPost(posts.length)],
+      };
+    });
+  }
+
+  function removeJobPost(postIndex: number) {
+    setDetails((current) => {
+      const posts = (current.posts as JobPostInput[]).filter(
+        (_, index) => index !== postIndex,
+      );
+
+      return {
+        ...current,
+        posts: posts.map((post, index) => ({
+          ...post,
+          sort_order: index,
+        })),
+      };
+    });
+  }
+
+  function addJobPostFee(postIndex: number) {
+    setDetails((current) => {
+      const posts = [...(current.posts as JobPostInput[])];
+
+      posts[postIndex] = {
+        ...posts[postIndex],
+        fees: [
+          ...posts[postIndex].fees,
+          {
+            ...createEmptyJobPostFee(),
+            sort_order: posts[postIndex].fees.length,
+          },
+        ],
+      };
+
+      return { ...current, posts };
+    });
+  }
+
+  function updateJobPostFee(
+    postIndex: number,
+    feeIndex: number,
+    key: string,
+    value: unknown,
+  ) {
+    setDetails((current) => {
+      const posts = [...(current.posts as JobPostInput[])];
+      const fees = [...posts[postIndex].fees];
+
+      fees[feeIndex] = {
+        ...fees[feeIndex],
+        [key]: value,
+      };
+
+      posts[postIndex] = {
+        ...posts[postIndex],
+        fees,
+      };
+
+      return { ...current, posts };
+    });
+  }
+
+  function removeJobPostFee(postIndex: number, feeIndex: number) {
+    setDetails((current) => {
+      const posts = [...(current.posts as JobPostInput[])];
+
+      posts[postIndex] = {
+        ...posts[postIndex],
+        fees: posts[postIndex].fees
+          .filter((_, index) => index !== feeIndex)
+          .map((fee, index) => ({
+            ...fee,
+            sort_order: index,
+          })),
+      };
+
+      return { ...current, posts };
+    });
+  }
+
   function detailLabel(key: string) {
     const customLabels: Record<string, string> = {
       age_limit_note_en: "Age Limit Note (English)",
@@ -691,6 +904,23 @@ export default function PostEditor({
         .replaceAll("_", " ")
         .replace(/\b\w/g, (letter) => letter.toUpperCase())
     );
+  }
+
+  function normalizeJobPost(post: JobPostInput) {
+    return {
+      ...post,
+      vacancies: post.vacancies === null ? null : Number(post.vacancies),
+      age_min: post.age_min === null ? null : Number(post.age_min),
+      age_max: post.age_max === null ? null : Number(post.age_max),
+      age_as_on_date: normalizeApiDate(post.age_as_on_date),
+      eligible_dob_from: normalizeApiDate(post.eligible_dob_from),
+      eligible_dob_to: normalizeApiDate(post.eligible_dob_to),
+      fees: post.fees.map((fee) => ({
+        ...fee,
+        fee_amount:
+          fee.fee_amount.trim() === "" ? null : Number(fee.fee_amount),
+      })),
+    };
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -716,6 +946,7 @@ export default function PostEditor({
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
+
         [kind.detailKey]:
           kind.api === "jobs"
             ? {
@@ -723,8 +954,12 @@ export default function PostEditor({
                 age_as_on_date: normalizeApiDate(details.age_as_on_date),
                 eligible_dob_from: normalizeApiDate(details.eligible_dob_from),
                 eligible_dob_to: normalizeApiDate(details.eligible_dob_to),
+                posts: ((details.posts as JobPostInput[]) || []).map(
+                  normalizeJobPost,
+                ),
               }
             : details,
+
         important_links: importantLinks.filter(
           (item) => item.name_en.trim() && item.url.trim(),
         ),
@@ -1380,8 +1615,343 @@ export default function PostEditor({
               Complete the fields for this content category. Optional fields can
               remain empty.
             </p>
+
+            {kind.api === "jobs" && (
+              <div className="post-editor-job-posts">
+                <div className="post-editor-section-heading">
+                  <h3>Individual Recruitment Posts</h3>
+                  <button type="button" onClick={addJobPost}>
+                    + Add Post
+                  </button>
+                </div>
+
+                {(details.posts as JobPostInput[]).map((post, postIndex) => (
+                  <div className="post-editor-repeat-card" key={postIndex}>
+                    <h3>Post {postIndex + 1}</h3>
+
+                    <div className="post-editor-grid">
+                      <label>
+                        Post Number *
+                        <input
+                          required
+                          value={post.post_number}
+                          onChange={(event) =>
+                            updateJobPost(
+                              postIndex,
+                              "post_number",
+                              event.target.value,
+                            )
+                          }
+                        />
+                      </label>
+
+                      {(["en", "mr", "hi"] as const).map((lang) => (
+                        <label key={lang}>
+                          Post Name ({lang.toUpperCase()}) *
+                          <input
+                            required={lang === "en"}
+                            value={post[`post_name_${lang}`]}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                `post_name_${lang}`,
+                                event.target.value,
+                              )
+                            }
+                          />
+                        </label>
+                      ))}
+
+                      {(["en", "mr", "hi"] as const).map((lang) => (
+                        <label key={lang}>
+                          Department ({lang.toUpperCase()})
+                          <input
+                            value={post[`department_${lang}`]}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                `department_${lang}`,
+                                event.target.value,
+                              )
+                            }
+                          />
+                        </label>
+                      ))}
+
+                      <label>
+                        Vacancies
+                        <input
+                          type="number"
+                          min={0}
+                          value={post.vacancies ?? ""}
+                          onChange={(event) =>
+                            updateJobPost(
+                              postIndex,
+                              "vacancies",
+                              event.target.value === ""
+                                ? null
+                                : Number(event.target.value),
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+
+                    <h4>Educational Qualification</h4>
+                    <div className="post-editor-grid">
+                      {(["en", "mr", "hi"] as const).map((lang) => (
+                        <label key={lang}>
+                          Qualification ({lang.toUpperCase()})
+                          <textarea
+                            rows={3}
+                            value={post[`educational_qualification_${lang}`]}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                `educational_qualification_${lang}`,
+                                event.target.value,
+                              )
+                            }
+                          />
+                        </label>
+                      ))}
+                    </div>
+
+                    <h4>Age Criteria</h4>
+                    <div className="post-editor-grid">
+                      <label>
+                        Age Criteria
+                        <select
+                          value={post.age_criteria_type}
+                          onChange={(event) =>
+                            updateJobPost(
+                              postIndex,
+                              "age_criteria_type",
+                              event.target.value,
+                            )
+                          }
+                        >
+                          <option value="">
+                            Use common recruitment criteria
+                          </option>
+                          {DETAIL_OPTIONS.age_criteria_type.map((option) => (
+                            <option key={option} value={option}>
+                              {detailLabel(option)}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      {post.age_criteria_type === "age_range" ||
+                      post.age_criteria_type === "minimum_only" ? (
+                        <label>
+                          Minimum Age
+                          <input
+                            type="number"
+                            min={0}
+                            value={post.age_min ?? ""}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                "age_min",
+                                event.target.value === ""
+                                  ? null
+                                  : Number(event.target.value),
+                              )
+                            }
+                          />
+                        </label>
+                      ) : null}
+
+                      {post.age_criteria_type === "age_range" ||
+                      post.age_criteria_type === "maximum_only" ? (
+                        <label>
+                          Maximum Age
+                          <input
+                            type="number"
+                            min={0}
+                            value={post.age_max ?? ""}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                "age_max",
+                                event.target.value === ""
+                                  ? null
+                                  : Number(event.target.value),
+                              )
+                            }
+                          />
+                        </label>
+                      ) : null}
+
+                      {post.age_criteria_type &&
+                      !["dob_range", "text_only"].includes(
+                        post.age_criteria_type,
+                      ) ? (
+                        <label>
+                          Age As On Date
+                          <input
+                            type="date"
+                            value={post.age_as_on_date}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                "age_as_on_date",
+                                event.target.value,
+                              )
+                            }
+                          />
+                        </label>
+                      ) : null}
+
+                      {post.age_criteria_type === "dob_range" ? (
+                        <>
+                          <label>
+                            Eligible Date of Birth From
+                            <input
+                              type="date"
+                              value={post.eligible_dob_from}
+                              onChange={(event) =>
+                                updateJobPost(
+                                  postIndex,
+                                  "eligible_dob_from",
+                                  event.target.value,
+                                )
+                              }
+                            />
+                          </label>
+
+                          <label>
+                            Eligible Date of Birth To
+                            <input
+                              type="date"
+                              value={post.eligible_dob_to}
+                              onChange={(event) =>
+                                updateJobPost(
+                                  postIndex,
+                                  "eligible_dob_to",
+                                  event.target.value,
+                                )
+                              }
+                            />
+                          </label>
+                        </>
+                      ) : null}
+
+                      {(["en", "mr", "hi"] as const).map((lang) => (
+                        <label key={lang}>
+                          Age Limit Note ({lang.toUpperCase()})
+                          <textarea
+                            rows={2}
+                            value={post[`age_limit_note_${lang}`]}
+                            onChange={(event) =>
+                              updateJobPost(
+                                postIndex,
+                                `age_limit_note_${lang}`,
+                                event.target.value,
+                              )
+                            }
+                          />
+                        </label>
+                      ))}
+                    </div>
+
+                    <h4>Application Fees</h4>
+
+                    <button
+                      type="button"
+                      onClick={() => addJobPostFee(postIndex)}
+                    >
+                      + Add Fee Category
+                    </button>
+
+                    {post.fees.map((fee, feeIndex) => (
+                      <div className="post-editor-repeat-card" key={feeIndex}>
+                        <h5>Fee Category {feeIndex + 1}</h5>
+
+                        <div className="post-editor-grid">
+                          {(["en", "mr", "hi"] as const).map((lang) => (
+                            <label key={lang}>
+                              Category ({lang.toUpperCase()})
+                              <input
+                                value={fee[`category_name_${lang}`]}
+                                onChange={(event) =>
+                                  updateJobPostFee(
+                                    postIndex,
+                                    feeIndex,
+                                    `category_name_${lang}`,
+                                    event.target.value,
+                                  )
+                                }
+                              />
+                            </label>
+                          ))}
+
+                          <label>
+                            Fee Amount
+                            <input
+                              type="number"
+                              min={0}
+                              step="0.01"
+                              value={fee.fee_amount}
+                              onChange={(event) =>
+                                updateJobPostFee(
+                                  postIndex,
+                                  feeIndex,
+                                  "fee_amount",
+                                  event.target.value,
+                                )
+                              }
+                            />
+                          </label>
+
+                          {(["en", "mr", "hi"] as const).map((lang) => (
+                            <label key={lang}>
+                              Fee Note ({lang.toUpperCase()})
+                              <textarea
+                                rows={2}
+                                value={fee[`fee_note_${lang}`]}
+                                onChange={(event) =>
+                                  updateJobPostFee(
+                                    postIndex,
+                                    feeIndex,
+                                    `fee_note_${lang}`,
+                                    event.target.value,
+                                  )
+                                }
+                              />
+                            </label>
+                          ))}
+                        </div>
+
+                        <button
+                          type="button"
+                          className="post-editor-remove"
+                          onClick={() => removeJobPostFee(postIndex, feeIndex)}
+                        >
+                          Remove Fee Category
+                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      className="post-editor-remove"
+                      onClick={() => removeJobPost(postIndex)}
+                    >
+                      Remove Post
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
+                if (key === "posts" && kind.api === "jobs") {
+                  return null;
+                }
+
                 const criteriaType = String(
                   details.age_criteria_type || "age_range",
                 );

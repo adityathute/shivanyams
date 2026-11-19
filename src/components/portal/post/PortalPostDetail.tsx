@@ -477,6 +477,30 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
 
 
+                  {!post.importantDates.length &&
+                  (post.eventDate || post.startDate || post.endDate) ? (
+                    <div className="portal-post-context">
+                      {post.eventDate ? (
+                        <span>
+                          {getDetailLabel("eventDate", language)}:{" "}
+                          {formatDate(post.eventDate, language)}
+                        </span>
+                      ) : null}
+                      {post.startDate ? (
+                        <span>
+                          {getDetailLabel("start", language)}:{" "}
+                          {formatDate(post.startDate, language)}
+                        </span>
+                      ) : null}
+                      {post.endDate ? (
+                        <span>
+                          {getDetailLabel("end", language)}:{" "}
+                          {formatDate(post.endDate, language)}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
+
                   {post.image && !embedUrl ? (
                     <Image
                       className="portal-post-image"

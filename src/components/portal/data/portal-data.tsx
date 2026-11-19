@@ -67,6 +67,7 @@ updated_date?: string;
   image?: string;
   organization?: string;
   organization_type?: string;
+  tags: string[];
   location?: string;
   start_date?: string;
   end_date?: string;
@@ -121,6 +122,7 @@ type ApiPost = {
     slug?: string;
   } | null;
   organization_type?: string;
+  meta_keywords?: string[];
   location?: string;
   start_date?: string | null;
   end_date?: string | null;
@@ -259,6 +261,7 @@ updated_date: getDate(post.updated_at),
 
     organization_type: post.organization_type || "",
     organization: post.organization_type || "",
+    tags: Array.isArray(post.meta_keywords) ? post.meta_keywords.filter((tag) => typeof tag === "string" && tag.trim()) : [],
 
     location: post.location || "",
     start_date: getDate(post.start_date),

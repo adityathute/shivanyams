@@ -613,6 +613,45 @@ export default function PostEditor({
   }
 
   function updateDetail(key: string, value: unknown) {
+    if (key === "age_criteria_type") {
+      const criteriaType = String(value);
+      setDetails((current) => ({
+        ...current,
+        age_criteria_type: criteriaType,
+        ...(criteriaType === "age_range"
+          ? {
+              eligible_dob_from: "",
+              eligible_dob_to: "",
+            }
+          : criteriaType === "minimum_only"
+            ? {
+                age_max: null,
+                eligible_dob_from: "",
+                eligible_dob_to: "",
+              }
+            : criteriaType === "maximum_only"
+              ? {
+                  age_min: null,
+                  eligible_dob_from: "",
+                  eligible_dob_to: "",
+                }
+              : criteriaType === "dob_range"
+                ? {
+                    age_min: null,
+                    age_max: null,
+                    age_as_on_date: "",
+                  }
+                : {
+                    age_min: null,
+                    age_max: null,
+                    age_as_on_date: "",
+                    eligible_dob_from: "",
+                    eligible_dob_to: "",
+                  }),
+      }));
+      return;
+    }
+
     setDetails((current) => ({ ...current, [key]: value }));
   }
 
@@ -1284,7 +1323,20 @@ export default function PostEditor({
             </p>
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
+                const criteriaType = String(details.age_criteria_type || "age_range");
                 if (key === "age_relaxations") return null;
+                if (
+                  (key === "age_min" &&
+                    ["maximum_only", "dob_range", "text_only"].includes(criteriaType)) ||
+                  (key === "age_max" &&
+                    ["minimum_only", "dob_range", "text_only"].includes(criteriaType)) ||
+                  (key === "age_as_on_date" &&
+                    ["dob_range", "text_only"].includes(criteriaType)) ||
+                  ((key === "eligible_dob_from" || key === "eligible_dob_to") &&
+                    criteriaType !== "dob_range")
+                ) {
+                  return null;
+                }
 
                 const label = detailLabel(key);
                 const isBoolean = typeof value === "boolean";

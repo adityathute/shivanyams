@@ -32,7 +32,12 @@ export type JobDetails = {
   application_mode: string;
   interview_venue: string;
   important_dates: { label: string; date: string }[];
-  important_links: { label: string; url: string }[];
+  important_links: {
+    label_en: string;
+    label_mr: string;
+    label_hi: string;
+    url: string;
+  }[];
 };
 
 export type Item = {
@@ -73,6 +78,9 @@ export type Item = {
 export type Video = {
   id: string;
   title: string;
+  title_en?: string;
+  title_mr?: string;
+  title_hi?: string;
   url: string;
   thumbnail: string;
   language: string;
@@ -275,7 +283,9 @@ body_hi: post.body_hi || "",
           interview_venue: job.interview_details || "",
           important_dates: [],
           important_links: (post.important_links || []).map((link) => ({
-            label: link.name_en || link.name_mr || link.name_hi || "",
+            label_en: link.name_en || "",
+            label_mr: link.name_mr || "",
+            label_hi: link.name_hi || "",
             url: link.url,
           })),
         }
@@ -380,6 +390,9 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
           id: item.id,
           slug: item.slug,
           title: item.title,
+          title_en: item.title_en || "",
+          title_mr: item.title_mr || "",
+          title_hi: item.title_hi || "",
           url: post.video_details?.video_url || item.link,
           thumbnail: post.video_details?.thumbnail_url || item.image || "",
           language: post.video_details?.available_languages?.join(", ") || "",

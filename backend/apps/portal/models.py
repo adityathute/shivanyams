@@ -254,10 +254,13 @@ class JobDetails(TimestampedModel):
 
     educational_qualification = models.TextField(blank=True)
     # Age eligibility configuration
+    # Legacy notification-wide age fields. New recruitment data stores age
+    # eligibility independently on each JobPost.
     age_criteria_type = models.CharField(
         max_length=20,
         choices=AgeCriteriaType.choices,
-        default=AgeCriteriaType.AGE_RANGE,
+        blank=True,
+        default="",
     )
 
     # Standard age limits
@@ -327,86 +330,9 @@ class JobDetails(TimestampedModel):
         ]
 
     def clean(self):
+        # Common age fields are retained for backward compatibility only.
+        # New recruitment posts must store their own age criteria on JobPost.
         super().clean()
-
-        errors = {}
-
-        if self.age_criteria_type == self.AgeCriteriaType.AGE_RANGE:
-            if self.age_min is None:
-                errors["age_min"] = "Minimum age is required."
-
-            if self.age_max is None:
-                errors["age_max"] = "Maximum age is required."
-
-            if self.eligible_dob_from or self.eligible_dob_to:
-                errors["eligible_dob_from"] = (
-                    "DOB fields are not allowed for Age Range criteria."
-                )
-
-        elif self.age_criteria_type == self.AgeCriteriaType.MINIMUM_ONLY:
-            if self.age_min is None:
-                errors["age_min"] = "Minimum age is required."
-
-            if self.age_max is not None:
-                errors["age_max"] = (
-                    "Maximum age is not allowed for Minimum Only criteria."
-                )
-
-            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
-                errors["eligible_dob_from"] = (
-                    "DOB fields are not allowed for numeric age criteria."
-                )
-
-        elif self.age_criteria_type == self.AgeCriteriaType.MAXIMUM_ONLY:
-            if self.age_max is None:
-                errors["age_max"] = "Maximum age is required."
-
-            if self.age_min is not None:
-                errors["age_min"] = (
-                    "Minimum age is not allowed for Maximum Only criteria."
-                )
-
-            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
-                errors["eligible_dob_from"] = (
-                    "DOB fields are not allowed for numeric age criteria."
-                )
-
-        elif self.age_criteria_type == self.AgeCriteriaType.DOB_RANGE:
-            if self.eligible_dob_from is None:
-                errors["eligible_dob_from"] = "Starting DOB is required."
-
-            if self.eligible_dob_to is None:
-                errors["eligible_dob_to"] = "Ending DOB is required."
-
-            if self.age_min is not None or self.age_max is not None:
-                errors["age_min"] = (
-                    "Numeric age fields are not allowed for DOB Range criteria."
-                )
-
-        elif self.age_criteria_type == self.AgeCriteriaType.TEXT_ONLY:
-            if not any(
-                [
-                    (self.age_limit_note_en or "").strip(),
-                    (self.age_limit_note_mr or "").strip(),
-                    (self.age_limit_note_hi or "").strip(),
-                ]
-            ):
-                errors["age_limit_note_en"] = (
-                    "Age criteria description is required in at least one language."
-                )
-
-            if (
-                self.age_min is not None
-                or self.age_max is not None
-                or self.eligible_dob_from is not None
-                or self.eligible_dob_to is not None
-            ):
-                errors["age_min"] = (
-                    "Numeric age and DOB fields are not allowed for Text Only criteria."
-                )
-
-        if errors:
-            raise ValidationError(errors)
 
     def __str__(self):
         return self.post.title_en
@@ -442,8 +368,8 @@ class JobPost(TimestampedModel):
     educational_qualification_mr = models.TextField(blank=True)
     educational_qualification_hi = models.TextField(blank=True)
 
-    # Leave empty to use the common age criteria from JobDetails.
-    # Set a value to override it for this particular post.
+    # Each post owns its age criteria. An empty value means no age criteria
+    # was supplied for this post; it never inherits JobDetails age fields.
     age_criteria_type = models.CharField(
         max_length=20,
         choices=JobDetails.AgeCriteriaType.choices,
@@ -496,12 +422,14 @@ class JobPost(TimestampedModel):
 
         errors = {}
 
-        # Empty means inherit common JobDetails age criteria.
+        # Blank means that this individual post has no age criteria entered.
+        # It must never fall back to the notification-wide legacy age fields.
         if not self.age_criteria_type:
             if any(
                 [
                     self.age_min is not None,
                     self.age_max is not None,
+                    self.age_as_on_date is not None,
                     self.eligible_dob_from is not None,
                     self.eligible_dob_to is not None,
                     (self.age_limit_note_en or "").strip(),

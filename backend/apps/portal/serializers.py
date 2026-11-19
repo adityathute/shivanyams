@@ -49,23 +49,33 @@ class ImportantLinkSerializer(serializers.ModelSerializer):
         fields = ["id", "name_en", "name_mr", "name_hi", "url", "sort_order", "active"]
 
 
+class OrganizationTypeSerializer(serializers.Serializer):
+    value = serializers.CharField()
+    label = serializers.CharField()
+
+
 class GovernmentOrganizationSerializer(serializers.ModelSerializer):
+    organization_type_label = serializers.CharField(
+        source="get_organization_type_display",
+        read_only=True,
+    )
+
     class Meta:
         model = GovernmentOrganization
-        fields = (
+        fields = [
             "id",
             "name_en",
             "name_mr",
             "name_hi",
             "slug",
             "organization_type",
+            "organization_type_label",
             "website",
             "logo_url",
             "state",
             "is_verified",
             "is_active",
-        )
-        read_only_fields = ("id",)
+        ]
 
 
 class PostLinkSerializer(serializers.ModelSerializer):

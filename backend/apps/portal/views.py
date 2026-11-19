@@ -7,10 +7,12 @@ from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import (
     Category,
     Comment,
+    GovernmentOrganization,
     ImportantLink,
     LanguageChoices,
     Post,
@@ -24,6 +26,7 @@ from .permissions import IsPortalAdmin, IsPortalIdentity
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
+    GovernmentOrganizationSerializer,
     ImportantLinkSerializer,
     PostSerializer,
     PostWriteSerializer,
@@ -513,3 +516,31 @@ class TrackPostView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+class AdminOrganizations(generics.ListAPIView):
+    """
+    List active government organizations for the admin post editor.
+    """
+
+    serializer_class = GovernmentOrganizationSerializer
+    permission_classes = [IsPortalAdmin]
+    pagination_class = None
+
+    def get_queryset(self):
+        return GovernmentOrganization.objects.filter(
+            is_active=True
+        ).order_by("name_en")
+
+class AdminOrganizationTypes(APIView):
+    permission_classes = [IsAuthenticated, IsPortalAdmin]
+
+    def get(self, request):
+        choices = GovernmentOrganization.OrganizationType.choices
+
+        return Response([
+            {
+                "value": value,
+                "label": label,
+            }
+            for value, label in choices
+        ])

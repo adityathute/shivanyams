@@ -226,3 +226,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.post-editor-form select {
+  cursor: pointer;
+  pointer-events: auto;
+  appearance: auto;
+  -webkit-appearance: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.post-editor-form select option {
+  background: #fff;
+  color: #1d304b;
+}

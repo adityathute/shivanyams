@@ -13,6 +13,8 @@ from .views import (
     PostReactions,
     TrackPostView,
     AdminPostReview,
+    AdminOrganizations,
+    AdminOrganizationTypes,
 )
 
 router = DefaultRouter()
@@ -93,4 +95,15 @@ urlpatterns = [
         TrackPostView.as_view(),
         name="track-post-view",
     ),
+
+        path(
+        "admin/organizations/",
+        AdminOrganizations.as_view(),
+        name="admin-organizations",
+    ),
+    path(
+    "admin/organization-types/",
+    AdminOrganizationTypes.as_view(),
+    name="admin-organization-types",
+),
 ]

@@ -27,15 +27,100 @@ type LinkInput = {
 };
 type DateInput = {
   date_type: string;
+  date_format: string;
   label_en: string;
   label_mr: string;
   label_hi: string;
   date: string;
+  time: string;
+  start_date: string;
+  end_date: string;
+  month: string;
+  year: string;
+  old_date: string;
+  new_date: string;
+  old_time: string;
+  new_time: string;
   description_en: string;
   description_mr: string;
   description_hi: string;
   sort_order: number;
 };
+
+const DATE_TYPE_OPTIONS = [
+  "application_start",
+  "application_end",
+  "fee_last_date",
+  "correction_window",
+  "application_reopening",
+  "preliminary_exam",
+  "main_exam",
+  "other_exam",
+  "exam_date",
+  "admit_card",
+  "answer_key",
+  "objection_window",
+  "result",
+  "interview",
+  "physical_test",
+  "document_verification",
+  "other",
+] as const;
+
+const DATE_FORMAT_OPTIONS = [
+  { value: "single", label: "Single date" },
+  { value: "range", label: "Date range" },
+  { value: "month_year", label: "Month and year" },
+  { value: "revised", label: "Revised date" },
+  { value: "revised_with_time", label: "Revised date with time" },
+] as const;
+
+const MONTH_OPTIONS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+function createEmptyDate(sortOrder: number): DateInput {
+  return {
+    date_type: "other",
+    date_format: "single",
+    label_en: "",
+    label_mr: "",
+    label_hi: "",
+    date: "",
+    time: "",
+    start_date: "",
+    end_date: "",
+    month: "",
+    year: "",
+    old_date: "",
+    new_date: "",
+    old_time: "",
+    new_time: "",
+    description_en: "",
+    description_mr: "",
+    description_hi: "",
+    sort_order: sortOrder,
+  };
+}
+
+function normalizeDateInput(item: Partial<DateInput>): DateInput {
+  return {
+    ...createEmptyDate(item.sort_order ?? 0),
+    ...item,
+    date_format: item.date_format || "single",
+    date: item.date || "",
+    time: item.time || "",
+    start_date: item.start_date || "",
+    end_date: item.end_date || "",
+    month: item.month == null ? "" : String(item.month),
+    year: item.year == null ? "" : String(item.year),
+    old_date: item.old_date || "",
+    new_date: item.new_date || "",
+    old_time: item.old_time || "",
+    new_time: item.new_time || "",
+  };
+}
 type PostRecord = {
   id: number;
   slug: string;
@@ -460,10 +545,9 @@ export default function PostEditor({
         });
         setImportantLinks(record.important_links || []);
         setImportantDates(
-          (record.important_dates || []).map((item) => ({
-            ...item,
-            date: item.date || "",
-          })),
+          (record.important_dates || []).map((item) =>
+            normalizeDateInput(item),
+          ),
         );
         const data = record[
           detailKeyFor(kind.api) as keyof PostRecord
@@ -537,7 +621,20 @@ export default function PostEditor({
         ),
         important_dates: importantDates
           .filter((item) => item.label_en.trim())
-          .map((item) => ({ ...item, date: item.date || null })),
+          .map((item, index) => ({
+            ...item,
+            sort_order: index,
+            date: item.date || null,
+            time: item.time || null,
+            start_date: item.start_date || null,
+            end_date: item.end_date || null,
+            month: item.month ? Number(item.month) : null,
+            year: item.year ? Number(item.year) : null,
+            old_date: item.old_date || null,
+            new_date: item.new_date || null,
+            old_time: item.old_time || null,
+            new_time: item.new_time || null,
+          })),
       };
       const url = editing
         ? `${API_URL}/admin/content/${kind.api}/${editSlug}/`
@@ -795,108 +892,274 @@ export default function PostEditor({
                 onClick={() =>
                   setImportantDates((items) => [
                     ...items,
-                    {
-                      date_type: "other",
-                      label_en: "",
-                      label_mr: "",
-                      label_hi: "",
-                      date: "",
-                      description_en: "",
-                      description_mr: "",
-                      description_hi: "",
-                      sort_order: items.length,
-                    },
+                    createEmptyDate(items.length),
                   ])
                 }
               >
                 ＋ Add date
               </button>
             </div>
-            {importantDates.map((item, index) => (
-              <div className="post-editor-repeat-card" key={index}>
-                <div className="post-editor-grid">
-                  <label>
-                    Date type
-                    <select
-                      value={item.date_type}
-                      onChange={(event) =>
-                        setImportantDates((rows) =>
-                          rows.map((row, i) =>
-                            i === index
-                              ? { ...row, date_type: event.target.value }
-                              : row,
-                          ),
-                        )
-                      }
-                    >
-                      {[
-                        "application_start",
-                        "application_end",
-                        "fee_last_date",
-                        "correction_window",
-                        "exam_date",
-                        "admit_card",
-                        "answer_key",
-                        "result",
-                        "interview",
-                        "other",
-                      ].map((value) => (
-                        <option key={value} value={value}>
-                          {detailLabel(value)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label>
-                    Date
-                    <input
-                      type="date"
-                      value={item.date}
-                      onChange={(event) =>
-                        setImportantDates((rows) =>
-                          rows.map((row, i) =>
-                            i === index
-                              ? { ...row, date: event.target.value }
-                              : row,
-                          ),
-                        )
-                      }
-                    />
-                  </label>
-                  {(["en", "mr", "hi"] as const).map((lang) => (
-                    <label key={lang}>
-                      Label ({lang.toUpperCase()})
-                      <input
-                        value={item[`label_${lang}`]}
+            {importantDates.map((item, index) => {
+              const updateDate = (changes: Partial<DateInput>) =>
+                setImportantDates((rows) =>
+                  rows.map((row, rowIndex) =>
+                    rowIndex === index ? { ...row, ...changes } : row,
+                  ),
+                );
+
+              const changeFormat = (date_format: string) =>
+                updateDate({
+                  date_format,
+                  date: "",
+                  time: "",
+                  start_date: "",
+                  end_date: "",
+                  month: "",
+                  year: "",
+                  old_date: "",
+                  new_date: "",
+                  old_time: "",
+                  new_time: "",
+                });
+
+              return (
+                <div className="post-editor-repeat-card" key={index}>
+                  <div className="post-editor-grid">
+                    <label>
+                      Date type
+                      <select
+                        value={item.date_type}
                         onChange={(event) =>
-                          setImportantDates((rows) =>
-                            rows.map((row, i) =>
-                              i === index
-                                ? {
-                                    ...row,
-                                    [`label_${lang}`]: event.target.value,
-                                  }
-                                : row,
-                            ),
-                          )
+                          updateDate({ date_type: event.target.value })
+                        }
+                      >
+                        {DATE_TYPE_OPTIONS.map((value) => (
+                          <option key={value} value={value}>
+                            {detailLabel(value)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      Date format
+                      <select
+                        value={item.date_format}
+                        onChange={(event) => changeFormat(event.target.value)}
+                      >
+                        {DATE_FORMAT_OPTIONS.map((format) => (
+                          <option key={format.value} value={format.value}>
+                            {format.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    {(["en", "mr", "hi"] as const).map((lang) => (
+                      <label key={lang}>
+                        Label ({lang.toUpperCase()}) *
+                        <input
+                          required={lang === "en"}
+                          maxLength={180}
+                          value={item[`label_${lang}`]}
+                          onChange={(event) =>
+                            updateDate({
+                              [`label_${lang}`]: event.target.value,
+                            })
+                          }
+                        />
+                      </label>
+                    ))}
+                  </div>
+
+                  {item.date_format === "single" ? (
+                    <div className="post-editor-grid">
+                      <label>
+                        Date *
+                        <input
+                          type="date"
+                          required
+                          value={item.date}
+                          onChange={(event) =>
+                            updateDate({ date: event.target.value })
+                          }
+                        />
+                      </label>
+                      <label>
+                        Time (Optional)
+                        <input
+                          type="time"
+                          value={item.time}
+                          onChange={(event) =>
+                            updateDate({ time: event.target.value })
+                          }
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {item.date_format === "range" ? (
+                    <div className="post-editor-grid">
+                      <label>
+                        Start date *
+                        <input
+                          type="date"
+                          required
+                          value={item.start_date}
+                          onChange={(event) =>
+                            updateDate({ start_date: event.target.value })
+                          }
+                        />
+                      </label>
+                      <label>
+                        End date *
+                        <input
+                          type="date"
+                          required
+                          min={item.start_date || undefined}
+                          value={item.end_date}
+                          onChange={(event) =>
+                            updateDate({ end_date: event.target.value })
+                          }
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {item.date_format === "month_year" ? (
+                    <div className="post-editor-grid">
+                      <label>
+                        Month *
+                        <select
+                          required
+                          value={item.month}
+                          onChange={(event) =>
+                            updateDate({ month: event.target.value })
+                          }
+                        >
+                          <option value="">Select month</option>
+                          {MONTH_OPTIONS.map((month, monthIndex) => (
+                            <option key={month} value={monthIndex + 1}>
+                              {month}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Year *
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          max={9999}
+                          step={1}
+                          value={item.year}
+                          onChange={(event) =>
+                            updateDate({ year: event.target.value })
+                          }
+                        />
+                      </label>
+                    </div>
+                  ) : null}
+
+                  {item.date_format === "revised" ||
+                  item.date_format === "revised_with_time" ? (
+                    <div className="post-editor-grid">
+                      <label>
+                        Original date *
+                        <input
+                          type="date"
+                          required
+                          value={item.old_date}
+                          onChange={(event) =>
+                            updateDate({ old_date: event.target.value })
+                          }
+                        />
+                      </label>
+                      <label>
+                        Revised date *
+                        <input
+                          type="date"
+                          required
+                          value={item.new_date}
+                          onChange={(event) =>
+                            updateDate({ new_date: event.target.value })
+                          }
+                        />
+                      </label>
+                      {item.date_format === "revised_with_time" ? (
+                        <>
+                          <label>
+                            Original time *
+                            <input
+                              type="time"
+                              required
+                              value={item.old_time}
+                              onChange={(event) =>
+                                updateDate({ old_time: event.target.value })
+                              }
+                            />
+                          </label>
+                          <label>
+                            Revised time *
+                            <input
+                              type="time"
+                              required
+                              value={item.new_time}
+                              onChange={(event) =>
+                                updateDate({ new_time: event.target.value })
+                              }
+                            />
+                          </label>
+                        </>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <div className="post-editor-grid">
+                    {(["en", "mr", "hi"] as const).map((lang) => (
+                      <label key={lang}>
+                        Description ({lang.toUpperCase()})
+                        <textarea
+                          rows={2}
+                          maxLength={500}
+                          value={item[`description_${lang}`]}
+                          onChange={(event) =>
+                            updateDate({
+                              [`description_${lang}`]: event.target.value,
+                            })
+                          }
+                        />
+                      </label>
+                    ))}
+                    <label>
+                      Display order
+                      <input
+                        type="number"
+                        min={0}
+                        step={1}
+                        value={item.sort_order}
+                        onChange={(event) =>
+                          updateDate({
+                            sort_order: Number(event.target.value) || 0,
+                          })
                         }
                       />
                     </label>
-                  ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="post-editor-remove"
+                    onClick={() =>
+                      setImportantDates((rows) =>
+                        rows.filter((_, rowIndex) => rowIndex !== index),
+                      )
+                    }
+                  >
+                    Remove date
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="post-editor-remove"
-                  onClick={() =>
-                    setImportantDates((rows) =>
-                      rows.filter((_, i) => i !== index),
-                    )
-                  }
-                >
-                  Remove date
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </section>
           <section>
             <div className="post-editor-section-heading">

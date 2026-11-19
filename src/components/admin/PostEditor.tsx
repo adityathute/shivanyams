@@ -102,6 +102,27 @@ const MONTH_OPTIONS = [
   "July", "August", "September", "October", "November", "December",
 ];
 
+function normalizeApiDate(value: unknown): string | null {
+  if (value == null || value === "") return null;
+  if (typeof value !== "string") return String(value);
+
+  const date = value.trim();
+  if (!date) return null;
+
+  // HTML date inputs and Django DateField use YYYY-MM-DD.
+  const isoDate = date.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (isoDate) return isoDate[1];
+
+  // Also handle older values stored/displayed as DD/MM/YYYY or DD-MM-YYYY.
+  const localDate = date.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+  if (localDate) {
+    const [, day, month, year] = localDate;
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  }
+
+  return date;
+}
+
 function createEmptyDate(sortOrder: number): DateInput {
   return {
     date_type: "other",
@@ -717,7 +738,14 @@ export default function PostEditor({
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-        [kind.detailKey]: details,
+        [kind.detailKey]:
+          kind.api === "jobs"
+            ? {
+                ...details,
+                eligible_dob_from: normalizeApiDate(details.eligible_dob_from),
+                eligible_dob_to: normalizeApiDate(details.eligible_dob_to),
+              }
+            : details,
         important_links: importantLinks.filter(
           (item) => item.name_en.trim() && item.url.trim(),
         ),

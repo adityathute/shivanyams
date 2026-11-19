@@ -349,7 +349,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 className="portal-job-detail-row"
                                 key={index}
                               >
-                                <strong>{getLocalizedText(language, entry.label_en, entry.label_mr, entry.label_hi)}</strong>
+                                <strong>{entry.label}</strong>
                                 <span>{entry.date}</span>
                               </div>
                             ),
@@ -366,7 +366,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 className="portal-job-detail-row"
                                 key={index}
                               >
-                                <strong>{entry.label}</strong>
+                                <strong>{getLocalizedText(language, entry.label_en, entry.label_mr, entry.label_hi)}</strong>
                                 <a
                                   href={entry.url}
                                   target="_blank"

@@ -354,6 +354,16 @@ function getPostLink(post: ApiPost) {
   );
 }
 
+function normalizeComparable(value: unknown) {
+  return value == null ? "" : String(value).trim().toLocaleLowerCase();
+}
+
+function sameForEveryPost<T>(posts: T[], getValue: (post: T) => unknown) {
+  if (posts.length <= 1) return posts.length === 1;
+  const first = JSON.stringify(getValue(posts[0]));
+  return posts.slice(1).every((post) => JSON.stringify(getValue(post)) === first);
+}
+
 function mapPost(post: ApiPost, type: ItemType): Item {
   const job = post.job_details;
 
@@ -427,27 +437,74 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             job.total_vacancies == null ? "" : String(job.total_vacancies),
           examination_name: "",
           post_details: job.post_details || job.designation || "",
-          education_mode: job.education_mode || "common",
-          age_mode: job.age_mode || "common",
-          fee_mode: job.fee_mode || "common",
-          educational_qualification: job.educational_qualification || "",
+          education_mode: sameForEveryPost(job.posts || [], (entry) => [
+            normalizeComparable(entry.educational_qualification_en),
+            normalizeComparable(entry.educational_qualification_mr),
+            normalizeComparable(entry.educational_qualification_hi),
+          ]) ? "common" : "per_post",
+          age_mode: sameForEveryPost(job.posts || [], (entry) => [
+            normalizeComparable(entry.age_criteria_type),
+            entry.age_min ?? null,
+            entry.age_max ?? null,
+            getDate(entry.age_as_on_date),
+            getDate(entry.eligible_dob_from),
+            getDate(entry.eligible_dob_to),
+            normalizeComparable(entry.age_limit_note_en),
+            normalizeComparable(entry.age_limit_note_mr),
+            normalizeComparable(entry.age_limit_note_hi),
+          ]) ? "common" : "per_post",
+          fee_mode: sameForEveryPost(job.posts || [], (entry) =>
+            (entry.fees || []).map((fee) => [
+              normalizeComparable(fee.category_name_en),
+              normalizeComparable(fee.category_name_mr),
+              normalizeComparable(fee.category_name_hi),
+              fee.fee_amount == null ? "" : String(fee.fee_amount),
+              normalizeComparable(fee.fee_note_en),
+              normalizeComparable(fee.fee_note_mr),
+              normalizeComparable(fee.fee_note_hi),
+            ]),
+          ) ? "common" : "per_post",
+          educational_qualification:
+            job.posts?.[0]?.educational_qualification_en ||
+            job.educational_qualification || "",
           location: post.location || "",
-          age_limit: [job.age_min, job.age_max]
+          age_limit: [job.posts?.[0]?.age_min, job.posts?.[0]?.age_max]
             .filter((value) => value != null)
             .join(" - "),
-          age_criteria_type: job.age_criteria_type || "age_range",
-          age_min: job.age_min ?? null,
-          age_max: job.age_max ?? null,
-          age_as_on_date: job.age_as_on_date || null,
-          eligible_dob_from: job.eligible_dob_from || null,
-          eligible_dob_to: job.eligible_dob_to || null,
-          age_limit_note_en: job.age_limit_note_en || "",
-          age_limit_note_mr: job.age_limit_note_mr || "",
-          age_limit_note_hi: job.age_limit_note_hi || "",
-          application_fee: job.application_fee || "",
-          application_fee_note_en: job.application_fee_note_en || "",
-          application_fee_note_mr: job.application_fee_note_mr || "",
-          application_fee_note_hi: job.application_fee_note_hi || "",
+          age_criteria_type:
+            job.posts?.[0]?.age_criteria_type || job.age_criteria_type || "age_range",
+          age_min: job.posts?.[0]?.age_min ?? job.age_min ?? null,
+          age_max: job.posts?.[0]?.age_max ?? job.age_max ?? null,
+          age_as_on_date:
+            getDate(job.posts?.[0]?.age_as_on_date) || job.age_as_on_date || null,
+          eligible_dob_from:
+            getDate(job.posts?.[0]?.eligible_dob_from) || job.eligible_dob_from || null,
+          eligible_dob_to:
+            getDate(job.posts?.[0]?.eligible_dob_to) || job.eligible_dob_to || null,
+          age_limit_note_en:
+            job.posts?.[0]?.age_limit_note_en || job.age_limit_note_en || "",
+          age_limit_note_mr:
+            job.posts?.[0]?.age_limit_note_mr || job.age_limit_note_mr || "",
+          age_limit_note_hi:
+            job.posts?.[0]?.age_limit_note_hi || job.age_limit_note_hi || "",
+          application_fee:
+            (job.posts?.[0]?.fees || [])
+              .map((fee) => {
+                const category = fee.category_name_en || "";
+                const amount = fee.fee_amount == null ? "" : `₹${fee.fee_amount}`;
+                const note = fee.fee_note_en || "";
+                return [category, amount, note].filter(Boolean).join(": ");
+              })
+              .join(" | ") || job.application_fee || "",
+          application_fee_note_en:
+            (job.posts?.[0]?.fees || []).map((fee) => fee.fee_note_en).filter(Boolean).join(" | ") ||
+            job.application_fee_note_en || "",
+          application_fee_note_mr:
+            (job.posts?.[0]?.fees || []).map((fee) => fee.fee_note_mr).filter(Boolean).join(" | ") ||
+            job.application_fee_note_mr || "",
+          application_fee_note_hi:
+            (job.posts?.[0]?.fees || []).map((fee) => fee.fee_note_hi).filter(Boolean).join(" | ") ||
+            job.application_fee_note_hi || "",
           application_mode: job.application_mode || "",
           interview_venue: job.interview_details || "",
           important_dates: [],
@@ -476,9 +533,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             age_criteria_type: post.age_criteria_type || "",
             age_min: post.age_min ?? null,
             age_max: post.age_max ?? null,
-            age_as_on_date: post.age_as_on_date || null,
-            eligible_dob_from: post.eligible_dob_from || null,
-            eligible_dob_to: post.eligible_dob_to || null,
+            age_as_on_date: getDate(post.age_as_on_date) || "",
+            eligible_dob_from: getDate(post.eligible_dob_from) || "",
+            eligible_dob_to: getDate(post.eligible_dob_to) || "",
             age_limit_note_en: post.age_limit_note_en || "",
             age_limit_note_mr: post.age_limit_note_mr || "",
             age_limit_note_hi: post.age_limit_note_hi || "",

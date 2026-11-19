@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { usePortalData } from "../data/portal-data";
+import { usePortalData, type ImportantDate } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { PortalFooter } from "../layout/footer/PortalFooter";
 import { PortalContentNotFound } from "./PortalContentNotFound";
@@ -61,6 +61,59 @@ function formatDate(value: string, language: string) {
         month: "long",
         year: "numeric",
       });
+}
+
+function formatTime(value: string | null | undefined, language: string) {
+  if (!value) return "";
+  const [hours, minutes] = value.split(":").map(Number);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return value;
+  const locale =
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
+  return new Date(2000, 0, 1, hours, minutes).toLocaleTimeString(locale, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatMonthYear(month?: number | null, year?: number | null, language = "en") {
+  if (!month || !year || month < 1 || month > 12) return "";
+  const locale =
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
+  return new Date(year, month - 1, 1).toLocaleDateString(locale, {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function renderImportantDateValue(entry: ImportantDate, language: string) {
+  const withTime = entry.date_format === "revised_with_time";
+  if (entry.date_format === "range") {
+    const start = formatDate(entry.start_date || "", language);
+    const end = formatDate(entry.end_date || "", language);
+    return start && end ? <>{start} – {end}</> : start || end;
+  }
+
+  if (entry.date_format === "month_year") {
+    return formatMonthYear(entry.month, entry.year, language);
+  }
+
+  if (entry.date_format === "revised" || withTime) {
+    const oldDate = formatDate(entry.old_date || "", language);
+    const newDate = formatDate(entry.new_date || "", language);
+    const oldTime = withTime ? formatTime(entry.old_time, language) : "";
+    const newTime = withTime ? formatTime(entry.new_time, language) : "";
+    return (
+      <>
+        <s>{oldDate}{oldTime ? ` (${oldTime})` : ""}</s>
+        {" → "}
+        <strong>{newDate}{newTime ? ` (${newTime})` : ""}</strong>
+      </>
+    );
+  }
+
+  const date = formatDate(entry.date || "", language);
+  const time = formatTime(entry.time, language);
+  return <>{date}{time ? ` (${time})` : ""}</>;
 }
 
 function getVideoEmbedUrl(value?: string) {
@@ -178,6 +231,12 @@ function getDetailLabel(key: keyof typeof detailLabels, language: string) {
   return labels[language as keyof typeof labels] || labels.en;
 }
 
+function detailLabelFallback(value: string) {
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 const organizationTypeLabels: Record<string, Record<string, string>> = {
   central: { en: "Central Government", mr: "केंद्र सरकार", hi: "केंद्र सरकार" },
   state: { en: "State Government", mr: "राज्य सरकार", hi: "राज्य सरकार" },
@@ -278,6 +337,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             startDate: "",
             endDate: "",
             eventDate: "",
+            importantDates: [] as ImportantDate[],
             jobDetails: undefined,
           }
         : null;
@@ -337,6 +397,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           startDate: item.start_date || "",
           endDate: item.end_date || "",
           eventDate: item.event_date || "",
+          importantDates: item.important_dates || [],
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
@@ -414,28 +475,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </div>
                   ) : null}
 
-                  {post.eventDate || post.startDate || post.endDate ? (
-                    <div className="portal-post-context">
-                      {post.eventDate ? (
-                        <span>
-                          {getDetailLabel("eventDate", language)}:{" "}
-                          {formatDate(post.eventDate, language)}
-                        </span>
-                      ) : null}
-                      {post.startDate ? (
-                        <span>
-                          {getDetailLabel("start", language)}:{" "}
-                          {formatDate(post.startDate, language)}
-                        </span>
-                      ) : null}
-                      {post.endDate ? (
-                        <span>
-                          {getDetailLabel("end", language)}:{" "}
-                          {formatDate(post.endDate, language)}
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
+
 
                   {post.image && !embedUrl ? (
                     <Image
@@ -514,23 +554,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           </div>
                         ))}
 
-                      {post.jobDetails.important_dates.length ? (
-                        <div className="portal-job-detail-group">
-                          <h2>{getDetailLabel("importantDates", language)}</h2>
-                          {post.jobDetails.important_dates.map(
-                            (entry, index) => (
-                              <div
-                                className="portal-job-detail-row"
-                                key={index}
-                              >
-                                <strong>{entry.label}</strong>
-                                <span>{entry.date}</span>
-                              </div>
-                            ),
-                          )}
-                        </div>
-                      ) : null}
-
                       {post.jobDetails.important_links.length ? (
                         <div className="portal-job-detail-group">
                           <h2>{getDetailLabel("importantLinks", language)}</h2>
@@ -560,6 +583,44 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           )}
                         </div>
                       ) : null}
+                    </section>
+                  ) : null}
+
+                  {post.importantDates.length ? (
+                    <section className="portal-job-details portal-important-dates">
+                      <div className="portal-job-detail-group">
+                        <h2>{getDetailLabel("importantDates", language)}</h2>
+                        {post.importantDates.map((entry, index) => {
+                          const label = getLocalizedText(
+                            language,
+                            entry.label_en,
+                            entry.label_mr,
+                            entry.label_hi,
+                          );
+                          const description = getLocalizedText(
+                            language,
+                            entry.description_en,
+                            entry.description_mr,
+                            entry.description_hi,
+                          );
+                          return (
+                            <div
+                              className="portal-job-detail-row"
+                              key={entry.id ?? `${entry.date_type}-${index}`}
+                            >
+                              <strong>{label || detailLabelFallback(entry.date_type)}</strong>
+                              <span className="portal-important-date-value">
+                                {renderImportantDateValue(entry, language)}
+                                {description ? (
+                                  <small className="portal-important-date-description">
+                                    {description}
+                                  </small>
+                                ) : null}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </section>
                   ) : null}
 

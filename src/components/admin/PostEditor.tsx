@@ -138,9 +138,6 @@ type PostRecord = {
   state?: string;
   country?: string;
   featured_image_url?: string;
-  start_date?: string | null;
-  end_date?: string | null;
-  event_date?: string | null;
   default_language?: string;
   meta_title_en?: string;
   meta_description_en?: string;
@@ -270,9 +267,6 @@ const EMPTY = {
   state: "",
   country: "India",
   featured_image_url: "",
-  start_date: "",
-  end_date: "",
-  event_date: "",
   default_language: "en",
   meta_title_en: "",
   meta_description_en: "",
@@ -535,9 +529,6 @@ export default function PostEditor({
           state: record.state || "",
           country: record.country || "India",
           featured_image_url: record.featured_image_url || "",
-          start_date: record.start_date || "",
-          end_date: record.end_date || "",
-          event_date: record.event_date || "",
           default_language: record.default_language || "en",
           meta_title_en: record.meta_title_en || "",
           meta_description_en: record.meta_description_en || "",
@@ -612,9 +603,6 @@ export default function PostEditor({
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-        start_date: form.start_date || null,
-        end_date: form.end_date || null,
-        event_date: form.event_date || null,
         [kind.detailKey]: details,
         important_links: importantLinks.filter(
           (item) => item.name_en.trim() && item.url.trim(),
@@ -843,30 +831,6 @@ export default function PostEditor({
                   onChange={(event) =>
                     update("featured_image_url", event.target.value)
                   }
-                />
-              </label>
-              <label>
-                Start Date
-                <input
-                  type="date"
-                  value={form.start_date}
-                  onChange={(event) => update("start_date", event.target.value)}
-                />
-              </label>
-              <label>
-                End Date
-                <input
-                  type="date"
-                  value={form.end_date}
-                  onChange={(event) => update("end_date", event.target.value)}
-                />
-              </label>
-              <label>
-                Event Date
-                <input
-                  type="date"
-                  value={form.event_date}
-                  onChange={(event) => update("event_date", event.target.value)}
                 />
               </label>
               <label>

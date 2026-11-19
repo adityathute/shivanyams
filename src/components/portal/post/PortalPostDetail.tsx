@@ -218,6 +218,15 @@ const detailLabels = {
     hi: "नौकरी का स्थान",
   },
   ageLimit: { en: "Age Limit", mr: "वयोमर्यादा", hi: "आयु सीमा" },
+  minimumAge: { en: "Minimum Age", mr: "किमान वय", hi: "न्यूनतम आयु" },
+  maximumAge: { en: "Maximum Age", mr: "कमाल वय", hi: "अधिकतम आयु" },
+  ageAsOn: { en: "Age Calculated As On", mr: "या तारखेनुसार वय", hi: "इस तारीख के अनुसार आयु" },
+  eligibleDob: { en: "Eligible Date of Birth", mr: "पात्र जन्मतारीख", hi: "पात्र जन्म तिथि" },
+  ageNote: { en: "Age Criteria Note", mr: "वयोमर्यादेबाबत टीप", hi: "आयु संबंधी टिप्पणी" },
+  ageRelaxations: { en: "Category-wise Age Relaxation", mr: "प्रवर्गनिहाय वयोमर्यादा सवलत", hi: "श्रेणीवार आयु में छूट" },
+  relaxationYears: { en: "Relaxation", mr: "वयोमर्यादेत सवलत", hi: "आयु में छूट" },
+  years: { en: "years", mr: "वर्षे", hi: "वर्ष" },
+  condition: { en: "Condition", mr: "अट", hi: "शर्त" },
   fee: { en: "Application Fee", mr: "अर्ज शुल्क", hi: "आवेदन शुल्क" },
   applicationMode: {
     en: "Application Mode",
@@ -250,6 +259,20 @@ const detailLabels = {
 function getDetailLabel(key: keyof typeof detailLabels, language: string) {
   const labels = detailLabels[key];
   return labels[language as keyof typeof labels] || labels.en;
+}
+
+const ageCategoryLabels: Record<string, Record<string, string>> = {
+  SC: { en: "Scheduled Caste", mr: "अनुसूचित जाती", hi: "अनुसूचित जाति" },
+  ST: { en: "Scheduled Tribe", mr: "अनुसूचित जमाती", hi: "अनुसूचित जनजाति" },
+  OBC: { en: "Other Backward Classes", mr: "इतर मागासवर्ग", hi: "अन्य पिछड़ा वर्ग" },
+  EWS: { en: "Economically Weaker Section", mr: "आर्थिकदृष्ट्या दुर्बल घटक", hi: "आर्थिक रूप से कमजोर वर्ग" },
+  PWD: { en: "Persons with Disabilities", mr: "दिव्यांग व्यक्ती", hi: "दिव्यांगजन" },
+  UR: { en: "Unreserved", mr: "खुला प्रवर्ग", hi: "अनारक्षित" },
+  GENERAL: { en: "General", mr: "खुला प्रवर्ग", hi: "सामान्य" },
+};
+
+function getAgeCategoryLabel(code: string, name: string, language: string) {
+  return ageCategoryLabels[code.toUpperCase()]?.[language] || name || code;
 }
 
 function detailLabelFallback(value: string) {
@@ -435,6 +458,65 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     : "";
   const embedUrl = category === "videos" ? getVideoEmbedUrl(post?.link) : null;
 
+  const jobAgeDetails = post?.jobDetails;
+  const ageRows: { label: string; value: string }[] = [];
+
+  if (jobAgeDetails) {
+    if (jobAgeDetails.age_min != null) {
+      ageRows.push({
+        label: getDetailLabel("minimumAge", language),
+        value: String(jobAgeDetails.age_min) + " " + getDetailLabel("years", language),
+      });
+    }
+    if (jobAgeDetails.age_max != null) {
+      ageRows.push({
+        label: getDetailLabel("maximumAge", language),
+        value: String(jobAgeDetails.age_max) + " " + getDetailLabel("years", language),
+      });
+    }
+    if (jobAgeDetails.age_as_on_date) {
+      ageRows.push({
+        label: getDetailLabel("ageAsOn", language),
+        value: formatDate(jobAgeDetails.age_as_on_date, language),
+      });
+    }
+
+    const dobFrom = jobAgeDetails.eligible_dob_from
+      ? formatDate(jobAgeDetails.eligible_dob_from, language)
+      : "";
+    const dobTo = jobAgeDetails.eligible_dob_to
+      ? formatDate(jobAgeDetails.eligible_dob_to, language)
+      : "";
+
+    if (dobFrom || dobTo) {
+      ageRows.push({
+        label: getDetailLabel("eligibleDob", language),
+        value: [dobFrom, dobTo].filter(Boolean).join(" – "),
+      });
+    }
+    if (jobAgeDetails.age_limit_note) {
+      ageRows.push({
+        label: getDetailLabel("ageNote", language),
+        value: jobAgeDetails.age_limit_note,
+      });
+    }
+    if (jobAgeDetails.age_relaxation) {
+      ageRows.push({
+        label: getDetailLabel("ageRelaxations", language),
+        value: jobAgeDetails.age_relaxation,
+      });
+    }
+    if (ageRows.length === 0 && jobAgeDetails.age_limit) {
+      ageRows.push({
+        label: getDetailLabel("ageLimit", language),
+        value: jobAgeDetails.age_limit,
+      });
+    }
+  }
+
+  const ageRelaxations = jobAgeDetails?.age_relaxations || [];
+  const showAgeSection = ageRows.length > 0 || ageRelaxations.length > 0;
+
   return (
     <>
       <main className="portal-post-detail">
@@ -606,10 +688,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           post.jobDetails.educational_qualification,
                         ],
                         [
-                          getDetailLabel("ageLimit", language),
-                          post.jobDetails.age_limit,
-                        ],
-                        [
                           getDetailLabel("fee", language),
                           post.jobDetails.application_fee,
                         ],
@@ -628,6 +706,85 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             <span>{value}</span>
                           </div>
                         ))}
+
+                      {showAgeSection ? (
+                        <section className="portal-job-age-section">
+                          <div className="portal-job-age-divider" />
+                          <h2>{getDetailLabel("ageLimit", language)}</h2>
+
+                          {ageRows.map((row) => (
+                            <div className="portal-job-detail-row" key={row.label}>
+                              <strong>{row.label}</strong>
+                              <span>{row.value}</span>
+                            </div>
+                          ))}
+
+                          {ageRelaxations.length > 0 ? (
+                            <div className="portal-job-age-relaxations">
+                              <h3>{getDetailLabel("ageRelaxations", language)}</h3>
+                              {ageRelaxations.map((relaxation, index) => {
+                                const categoryName = getAgeCategoryLabel(
+                                  relaxation.category_code || "",
+                                  relaxation.category_name || "",
+                                  language,
+                                );
+                                const values: string[] = [];
+
+                                if (relaxation.relaxation_years != null) {
+                                  values.push(
+                                    getDetailLabel("relaxationYears", language) +
+                                      ": " +
+                                      relaxation.relaxation_years +
+                                      " " +
+                                      getDetailLabel("years", language),
+                                  );
+                                }
+                                if (relaxation.minimum_age != null) {
+                                  values.push(
+                                    getDetailLabel("minimumAge", language) +
+                                      ": " +
+                                      relaxation.minimum_age,
+                                  );
+                                }
+                                if (relaxation.maximum_age != null) {
+                                  values.push(
+                                    getDetailLabel("maximumAge", language) +
+                                      ": " +
+                                      relaxation.maximum_age,
+                                  );
+                                }
+
+                                return (
+                                  <div
+                                    className="portal-job-age-relaxation"
+                                    key={relaxation.id ?? relaxation.category_code ?? index}
+                                  >
+                                    <div className="portal-job-age-category">
+                                      <strong>{categoryName}</strong>
+                                      {relaxation.category_code ? (
+                                        <span className="portal-job-age-code">
+                                          {relaxation.category_code}
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                    {values.length > 0 ? (
+                                      <p>{values.join(" · ")}</p>
+                                    ) : null}
+                                    {relaxation.condition ? (
+                                      <p>
+                                        <strong>
+                                          {getDetailLabel("condition", language)}:
+                                        </strong>{" "}
+                                        {relaxation.condition}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : null}
+                        </section>
+                      ) : null}
 
                       {post.jobDetails.important_links.length ? (
                         <div className="portal-job-detail-group">

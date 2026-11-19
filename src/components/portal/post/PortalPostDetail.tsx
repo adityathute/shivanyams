@@ -521,9 +521,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     jobAgeDetails?.application_fee_note_hi,
   );
 
-  const ageInfoRows: [string, string][] = jobDetails?.posts?.length
-    ? []
-    : [
+  const ageInfoRows: [string, string][] =
+    jobDetails?.age_mode === "per_post"
+      ? []
+      : [
     ...(ageLimitValue
       ? [
           [getDetailLabel("ageLimit", language), ageLimitValue] as [
@@ -646,10 +647,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             getDetailLabel("jobLocation", language),
                             post.jobDetails.location,
                           ],
+                          ...(jobDetails?.education_mode !== "per_post" && jobDetails?.educational_qualification
+                            ? [[getDetailLabel("qualification", language), jobDetails.educational_qualification] as [string, string]]
+                            : []),
                           ...ageInfoRows,
 
                           // Application Fee
-                          ...(!jobDetails?.posts?.length && jobDetails?.application_fee
+                          ...(jobDetails?.fee_mode !== "per_post" && jobDetails?.application_fee
                             ? [
                                 [
                                   getDetailLabel("fee", language),
@@ -659,7 +663,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             : []),
 
                           // Multilingual Application Fee Note
-                          ...(!jobDetails?.posts?.length && applicationFeeNote
+                          ...(jobDetails?.fee_mode !== "per_post" && applicationFeeNote
                             ? [
                                 [
                                   getDetailLabel("feeNote", language),
@@ -840,25 +844,25 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       <strong>{department}</strong>
                                     </div>
                                   ) : null}
-                                  {qualification ? (
+                                  {jobDetails.education_mode === "per_post" && qualification ? (
                                     <div className="portal-post-wise-full">
                                       <span>{getDetailLabel("qualification", language)}</span>
                                       <strong>{qualification}</strong>
                                     </div>
                                   ) : null}
-                                  {ageValue ? (
+                                  {jobDetails.age_mode === "per_post" && ageValue ? (
                                     <div>
                                       <span>{getDetailLabel("ageLimit", language)}</span>
                                       <strong>{ageValue}</strong>
                                     </div>
                                   ) : null}
-                                  {entry.age_as_on_date ? (
+                                  {jobDetails.age_mode === "per_post" && entry.age_as_on_date ? (
                                     <div>
                                       <span>{getDetailLabel("ageAsOn", language)}</span>
                                       <strong>{formatDate(entry.age_as_on_date, language)}</strong>
                                     </div>
                                   ) : null}
-                                  {ageNote ? (
+                                  {jobDetails.age_mode === "per_post" && ageNote ? (
                                     <div className="portal-post-wise-full">
                                       <span>{getDetailLabel(ageType === "text_only" ? "ageLimit" : "ageNote", language)}</span>
                                       <strong>{ageNote}</strong>
@@ -866,7 +870,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   ) : null}
                                 </div>
 
-                                {entry.fees?.length ? (
+                                {jobDetails.fee_mode === "per_post" && entry.fees?.length ? (
                                   <div className="portal-post-wise-fees">
                                     <h4>{getDetailLabel("fee", language)}</h4>
                                     {entry.fees.map((fee, feeIndex) => {

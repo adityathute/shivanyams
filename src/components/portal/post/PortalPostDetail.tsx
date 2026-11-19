@@ -218,15 +218,17 @@ const detailLabels = {
     hi: "नौकरी का स्थान",
   },
   ageLimit: { en: "Age Limit", mr: "वयोमर्यादा", hi: "आयु सीमा" },
-  minimumAge: { en: "Minimum Age", mr: "किमान वय", hi: "न्यूनतम आयु" },
-  maximumAge: { en: "Maximum Age", mr: "कमाल वय", hi: "अधिकतम आयु" },
-  ageAsOn: { en: "Age Calculated As On", mr: "या तारखेनुसार वय", hi: "इस तारीख के अनुसार आयु" },
-  eligibleDob: { en: "Eligible Date of Birth", mr: "पात्र जन्मतारीख", hi: "पात्र जन्म तिथि" },
-  ageNote: { en: "Age Criteria Note", mr: "वयोमर्यादेबाबत टीप", hi: "आयु संबंधी टिप्पणी" },
-  ageRelaxations: { en: "Category-wise Age Relaxation", mr: "प्रवर्गनिहाय वयोमर्यादा सवलत", hi: "श्रेणीवार आयु में छूट" },
-  relaxationYears: { en: "Relaxation", mr: "वयोमर्यादेत सवलत", hi: "आयु में छूट" },
+  ageAsOn: {
+    en: "Age Calculated As On",
+    mr: "या तारखेनुसार वय",
+    hi: "इस तारीख के अनुसार आयु",
+  },
+  ageNote: {
+    en: "Age Criteria Note",
+    mr: "वयोमर्यादेबाबत टीप",
+    hi: "आयु संबंधी टिप्पणी",
+  },
   years: { en: "years", mr: "वर्षे", hi: "वर्ष" },
-  condition: { en: "Condition", mr: "अट", hi: "शर्त" },
   fee: { en: "Application Fee", mr: "अर्ज शुल्क", hi: "आवेदन शुल्क" },
   applicationMode: {
     en: "Application Mode",
@@ -259,20 +261,6 @@ const detailLabels = {
 function getDetailLabel(key: keyof typeof detailLabels, language: string) {
   const labels = detailLabels[key];
   return labels[language as keyof typeof labels] || labels.en;
-}
-
-const ageCategoryLabels: Record<string, Record<string, string>> = {
-  SC: { en: "Scheduled Caste", mr: "अनुसूचित जाती", hi: "अनुसूचित जाति" },
-  ST: { en: "Scheduled Tribe", mr: "अनुसूचित जमाती", hi: "अनुसूचित जनजाति" },
-  OBC: { en: "Other Backward Classes", mr: "इतर मागासवर्ग", hi: "अन्य पिछड़ा वर्ग" },
-  EWS: { en: "Economically Weaker Section", mr: "आर्थिकदृष्ट्या दुर्बल घटक", hi: "आर्थिक रूप से कमजोर वर्ग" },
-  PWD: { en: "Persons with Disabilities", mr: "दिव्यांग व्यक्ती", hi: "दिव्यांगजन" },
-  UR: { en: "Unreserved", mr: "खुला प्रवर्ग", hi: "अनारक्षित" },
-  GENERAL: { en: "General", mr: "खुला प्रवर्ग", hi: "सामान्य" },
-};
-
-function getAgeCategoryLabel(code: string, name: string, language: string) {
-  return ageCategoryLabels[code.toUpperCase()]?.[language] || name || code;
 }
 
 function detailLabelFallback(value: string) {
@@ -472,9 +460,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     if (min != null && max != null) {
       return `${min} – ${max} ${getDetailLabel("years", language)}`;
     }
+
     if (min != null) {
       return `${min}+ ${getDetailLabel("years", language)}`;
     }
+
     if (max != null) {
       return `Up to ${max} ${getDetailLabel("years", language)}`;
     }
@@ -482,6 +472,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     const dobFrom = jobAgeDetails.eligible_dob_from
       ? formatDate(jobAgeDetails.eligible_dob_from, language)
       : "";
+
     const dobTo = jobAgeDetails.eligible_dob_to
       ? formatDate(jobAgeDetails.eligible_dob_to, language)
       : "";
@@ -490,34 +481,46 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       return [dobFrom, dobTo].filter(Boolean).join(" – ");
     }
 
-    return jobAgeDetails.age_limit || "";
+    return "";
   })();
+
+  const ageLimitNote = getLocalizedText(
+    language,
+    jobAgeDetails?.age_limit_note_en,
+    jobAgeDetails?.age_limit_note_mr,
+    jobAgeDetails?.age_limit_note_hi,
+  );
 
   const ageInfoRows: [string, string][] = [
     ...(ageLimitValue
-      ? [[getDetailLabel("ageLimit", language), ageLimitValue] as [string, string]]
+      ? [
+          [getDetailLabel("ageLimit", language), ageLimitValue] as [
+            string,
+            string,
+          ],
+        ]
       : []),
+
     ...(jobAgeDetails?.age_as_on_date
-      ? [[
-          getDetailLabel("ageAsOn", language),
-          formatDate(jobAgeDetails.age_as_on_date, language),
-        ] as [string, string]]
+      ? [
+          [
+            getDetailLabel("ageAsOn", language),
+            formatDate(jobAgeDetails.age_as_on_date, language),
+          ] as [string, string],
+        ]
       : []),
-    ...(
-      (jobAgeDetails?.age_limit_note?.trim() ||
-        (isTextOnlyAgeCriteria ? jobAgeDetails?.age_limit?.trim() : "")) 
-        ? [[
+
+    ...(ageLimitNote
+      ? [
+          [
             getDetailLabel(
               isTextOnlyAgeCriteria ? "ageLimit" : "ageNote",
               language,
             ),
-            (
-              jobAgeDetails?.age_limit_note?.trim() ||
-              (isTextOnlyAgeCriteria ? jobAgeDetails?.age_limit?.trim() : "")
-            ) as string,
-          ] as [string, string]]
-        : []
-    ),
+            ageLimitNote,
+          ] as [string, string],
+        ]
+      : []),
   ];
 
   return (
@@ -657,25 +660,29 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           )
                           .map(([name, value]) => {
                             const shouldCapitalize =
-                              name === getDetailLabel("applicationMode", language) ||
+                              name ===
+                                getDetailLabel("applicationMode", language) ||
                               name === getDetailLabel("jobLocation", language);
                             const formattedValue = shouldCapitalize
                               ? String(value).charAt(0).toUpperCase() +
                                 String(value).slice(1)
                               : value;
 
-                            const isAgeRow = ageInfoRows.some(
+                            const ageRowIndex = ageInfoRows.findIndex(
                               ([ageLabel]) => ageLabel === name,
                             );
-                            const ageRowSpan = isAgeRow
-                              ? ageInfoRows.length === 1
+
+                            const isAgeRow = ageRowIndex !== -1;
+
+                            const ageRowSpan = !isAgeRow
+                              ? ""
+                              : ageInfoRows.length === 1
                                 ? "portal-job-info-item-age-full"
                                 : ageInfoRows.length === 2
                                   ? "portal-job-info-item-age-half"
-                                  : name === getDetailLabel("ageNote", language)
+                                  : ageRowIndex === 2
                                     ? "portal-job-info-item-age-half"
-                                    : "portal-job-info-item-age-quarter"
-                              : "";
+                                    : "portal-job-info-item-age-quarter";
 
                             return (
                               <div

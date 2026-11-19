@@ -25,27 +25,6 @@ type LinkInput = {
   sort_order: number;
   is_active: boolean;
 };
-type AgeRelaxationInput = {
-  category_code: string;
-  category_name: string;
-  relaxation_years: number | null;
-  minimum_age: number | null;
-  maximum_age: number | null;
-  condition: string;
-  sort_order: number;
-};
-
-function createEmptyAgeRelaxation(sortOrder: number): AgeRelaxationInput {
-  return {
-    category_code: "",
-    category_name: "",
-    relaxation_years: null,
-    minimum_age: null,
-    maximum_age: null,
-    condition: "",
-    sort_order: sortOrder,
-  };
-}
 
 type DateInput = {
   date_type: string;
@@ -98,8 +77,18 @@ const DATE_FORMAT_OPTIONS = [
 ] as const;
 
 const MONTH_OPTIONS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 function normalizeApiDate(value: unknown): string | null {
@@ -349,9 +338,9 @@ function detailTemplate(api: string): Record<string, unknown> {
       age_as_on_date: "",
       eligible_dob_from: "",
       eligible_dob_to: "",
-      age_limit_note: "",
-      age_relaxation: "",
-      age_relaxations: [],
+      age_limit_note_en: "",
+      age_limit_note_mr: "",
+      age_limit_note_hi: "",
       application_fee: "",
       fee_payment_mode: "",
       pay_scale: "",
@@ -602,11 +591,14 @@ export default function PostEditor({
           ...detailTemplate(kind.api),
           ...(data || {}),
         };
+
+        // Remove fields from the previous age-relaxation structure.
         if (kind.api === "jobs") {
-          template.age_relaxations = Array.isArray(template.age_relaxations)
-            ? template.age_relaxations
-            : [];
+          delete template.age_relaxation;
+          delete template.age_relaxations;
+          delete template.age_limit_note;
         }
+
         setDetails(template);
       } catch (error) {
         if (!controller.signal.aborted)
@@ -676,44 +668,20 @@ export default function PostEditor({
     setDetails((current) => ({ ...current, [key]: value }));
   }
 
-  const ageRelaxations = Array.isArray(details.age_relaxations)
-    ? (details.age_relaxations as AgeRelaxationInput[])
-    : [];
+function detailLabel(key: string) {
+  const customLabels: Record<string, string> = {
+    age_limit_note_en: "Age Limit Note (English)",
+    age_limit_note_mr: "Age Limit Note (Marathi)",
+    age_limit_note_hi: "Age Limit Note (Hindi)",
+  };
 
-  function updateAgeRelaxation(
-    index: number,
-    key: keyof AgeRelaxationInput,
-    value: string | number | null,
-  ) {
-    updateDetail(
-      "age_relaxations",
-      ageRelaxations.map((item, rowIndex) =>
-        rowIndex === index ? { ...item, [key]: value } : item,
-      ),
-    );
-  }
-
-  function addAgeRelaxation() {
-    updateDetail(
-      "age_relaxations",
-      [...ageRelaxations, createEmptyAgeRelaxation(ageRelaxations.length)],
-    );
-  }
-
-  function removeAgeRelaxation(index: number) {
-    updateDetail(
-      "age_relaxations",
-      ageRelaxations
-        .filter((_, rowIndex) => rowIndex !== index)
-        .map((item, sortOrder) => ({ ...item, sort_order: sortOrder })),
-    );
-  }
-
-  function detailLabel(key: string) {
-    return key
+  return (
+    customLabels[key] ||
+    key
       .replaceAll("_", " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase());
-  }
+      .replace(/\b\w/g, (letter) => letter.toUpperCase())
+  );
+}
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1352,13 +1320,18 @@ export default function PostEditor({
             </p>
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
-                const criteriaType = String(details.age_criteria_type || "age_range");
-                if (key === "age_relaxations") return null;
+                const criteriaType = String(
+                  details.age_criteria_type || "age_range",
+                );
                 if (
                   (key === "age_min" &&
-                    ["maximum_only", "dob_range", "text_only"].includes(criteriaType)) ||
+                    ["maximum_only", "dob_range", "text_only"].includes(
+                      criteriaType,
+                    )) ||
                   (key === "age_max" &&
-                    ["minimum_only", "dob_range", "text_only"].includes(criteriaType)) ||
+                    ["minimum_only", "dob_range", "text_only"].includes(
+                      criteriaType,
+                    )) ||
                   (key === "age_as_on_date" &&
                     ["dob_range", "text_only"].includes(criteriaType)) ||
                   ((key === "eligible_dob_from" || key === "eligible_dob_to") &&
@@ -1382,10 +1355,10 @@ export default function PostEditor({
                   /date$|_date$/.test(key) ||
                   key === "eligible_dob_from" ||
                   key === "eligible_dob_to";
-                const isLongText =
-                  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration/i.test(
-                    key,
-                  );
+const isLongText =
+  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note/i.test(
+    key,
+  );
                 if (isBoolean)
                   return (
                     <label className="post-editor-check" key={key}>
@@ -1493,110 +1466,6 @@ export default function PostEditor({
               })}
             </div>
 
-            {kind.api === "jobs" ? (
-              <div className="post-editor-age-relaxations">
-                <div className="post-editor-section-heading">
-                  <h3>Category-wise Age Relaxations</h3>
-                  <button type="button" onClick={addAgeRelaxation}>
-                    + Add Category
-                  </button>
-                </div>
-                <p className="post-editor-help">
-                  Add category-specific relaxation years or an adjusted age
-                  range. Leave unused numeric fields empty.
-                </p>
-
-                {ageRelaxations.map((item, index) => (
-                  <div className="post-editor-repeat-card" key={index}>
-                    <div className="post-editor-grid">
-                      <label>
-                        Category Code
-                        <input
-                          value={item.category_code || ""}
-                          onChange={(event) =>
-                            updateAgeRelaxation(index, "category_code", event.target.value)
-                          }
-                          placeholder="e.g. SC, ST, OBC, EWS, PWD"
-                        />
-                      </label>
-                      <label>
-                        Category Name
-                        <input
-                          value={item.category_name || ""}
-                          onChange={(event) =>
-                            updateAgeRelaxation(index, "category_name", event.target.value)
-                          }
-                          placeholder="e.g. Scheduled Caste"
-                        />
-                      </label>
-                      <label>
-                        Relaxation Years
-                        <input
-                          type="number"
-                          min="0"
-                          value={item.relaxation_years ?? ""}
-                          onChange={(event) =>
-                            updateAgeRelaxation(
-                              index,
-                              "relaxation_years",
-                              event.target.value === "" ? null : Number(event.target.value),
-                            )
-                          }
-                        />
-                      </label>
-                      <label>
-                        Minimum Age (Category)
-                        <input
-                          type="number"
-                          min="0"
-                          value={item.minimum_age ?? ""}
-                          onChange={(event) =>
-                            updateAgeRelaxation(
-                              index,
-                              "minimum_age",
-                              event.target.value === "" ? null : Number(event.target.value),
-                            )
-                          }
-                        />
-                      </label>
-                      <label>
-                        Maximum Age (Category)
-                        <input
-                          type="number"
-                          min="0"
-                          value={item.maximum_age ?? ""}
-                          onChange={(event) =>
-                            updateAgeRelaxation(
-                              index,
-                              "maximum_age",
-                              event.target.value === "" ? null : Number(event.target.value),
-                            )
-                          }
-                        />
-                      </label>
-                      <label className="post-editor-detail-wide">
-                        Special Condition
-                        <textarea
-                          rows={3}
-                          value={item.condition || ""}
-                          onChange={(event) =>
-                            updateAgeRelaxation(index, "condition", event.target.value)
-                          }
-                          placeholder="Optional eligibility or relaxation condition"
-                        />
-                      </label>
-                    </div>
-                    <button
-                      type="button"
-                      className="post-editor-remove"
-                      onClick={() => removeAgeRelaxation(index)}
-                    >
-                      Remove category
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : null}
           </section>
           <section>
             <h2>Post Settings</h2>
@@ -1653,7 +1522,10 @@ export default function PostEditor({
                 }
                 placeholder="e.g. Police Bharti, Maharashtra, Graduate"
               />
-              <small>Enter tags separated by commas. These appear as clickable gray tags on the post.</small>
+              <small>
+                Enter tags separated by commas. These appear as clickable gray
+                tags on the post.
+              </small>
             </label>
           </section>
           <div className="post-editor-actions">

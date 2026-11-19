@@ -20,17 +20,6 @@ export type ItemType =
   | "video"
   | "tool";
 
-export type JobAgeRelaxation = {
-  id?: number;
-  category_code: string;
-  category_name: string;
-  relaxation_years?: number | null;
-  minimum_age?: number | null;
-  maximum_age?: number | null;
-  condition?: string;
-  sort_order?: number;
-};
-
 export type JobDetails = {
   advertisement_no: string;
   total_posts: string;
@@ -45,9 +34,9 @@ export type JobDetails = {
   age_as_on_date?: string | null;
   eligible_dob_from?: string | null;
   eligible_dob_to?: string | null;
-  age_limit_note?: string;
-  age_relaxation?: string;
-  age_relaxations?: JobAgeRelaxation[];
+  age_limit_note_en: string;
+  age_limit_note_mr: string;
+  age_limit_note_hi: string;
   application_fee: string;
   application_mode: string;
   interview_venue: string;
@@ -67,7 +56,7 @@ export type Item = {
   title_mr?: string;
   title_hi?: string;
   category: string;
-updated_date?: string;
+  updated_date?: string;
   category_en?: string;
   category_mr?: string;
   category_hi?: string;
@@ -127,7 +116,13 @@ type ApiLink = {
 export type ImportantDate = {
   id?: number;
   date_type: string;
-  date_format: "single" | "range" | "month_year" | "revised" | "revised_with_time" | string;
+  date_format:
+    | "single"
+    | "range"
+    | "month_year"
+    | "revised"
+    | "revised_with_time"
+    | string;
   label_en: string;
   label_mr?: string;
   label_hi?: string;
@@ -188,9 +183,9 @@ type ApiPost = {
     age_as_on_date?: string | null;
     eligible_dob_from?: string | null;
     eligible_dob_to?: string | null;
-    age_limit_note?: string;
-    age_relaxation?: string;
-    age_relaxations?: JobAgeRelaxation[];
+    age_limit_note_en?: string;
+    age_limit_note_mr?: string;
+    age_limit_note_hi?: string;
     application_fee?: string;
     application_mode?: string;
     apply_url?: string;
@@ -288,7 +283,7 @@ function mapPost(post: ApiPost, type: ItemType): Item {
       post.category?.name_mr ||
       post.category?.name_hi ||
       "",
-updated_date: getDate(post.updated_at),
+    updated_date: getDate(post.updated_at),
     // Preserve all category translations
     category_en: post.category?.name_en || "",
     category_mr: post.category?.name_mr || "",
@@ -312,7 +307,11 @@ updated_date: getDate(post.updated_at),
 
     organization_type: post.organization_type || "",
     organization: post.organization_type || "",
-    tags: Array.isArray(post.meta_keywords) ? post.meta_keywords.filter((tag) => typeof tag === "string" && tag.trim()) : [],
+    tags: Array.isArray(post.meta_keywords)
+      ? post.meta_keywords.filter(
+          (tag) => typeof tag === "string" && tag.trim(),
+        )
+      : [],
 
     location: post.location || "",
     start_date: getDate(post.start_date),
@@ -339,22 +338,18 @@ updated_date: getDate(post.updated_at),
           post_details: job.post_details || job.designation || "",
           educational_qualification: job.educational_qualification || "",
           location: post.location || "",
-          age_limit:
-            job.age_limit_note ||
-            [job.age_min, job.age_max]
-              .filter((value) => value != null)
-              .join(" - "),
+          age_limit: [job.age_min, job.age_max]
+            .filter((value) => value != null)
+            .join(" - "),
           age_criteria_type: job.age_criteria_type || "age_range",
           age_min: job.age_min ?? null,
           age_max: job.age_max ?? null,
           age_as_on_date: job.age_as_on_date || null,
           eligible_dob_from: job.eligible_dob_from || null,
           eligible_dob_to: job.eligible_dob_to || null,
-          age_limit_note: job.age_limit_note || "",
-          age_relaxation: job.age_relaxation || "",
-          age_relaxations: Array.isArray(job.age_relaxations)
-            ? job.age_relaxations
-            : [],
+          age_limit_note_en: job.age_limit_note_en || "",
+          age_limit_note_mr: job.age_limit_note_mr || "",
+          age_limit_note_hi: job.age_limit_note_hi || "",
           application_fee: job.application_fee || "",
           application_mode: job.application_mode || "",
           interview_venue: job.interview_details || "",

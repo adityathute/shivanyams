@@ -742,6 +742,7 @@ export default function PostEditor({
           kind.api === "jobs"
             ? {
                 ...details,
+                age_as_on_date: normalizeApiDate(details.age_as_on_date),
                 eligible_dob_from: normalizeApiDate(details.eligible_dob_from),
                 eligible_dob_to: normalizeApiDate(details.eligible_dob_to),
               }

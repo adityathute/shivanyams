@@ -7,6 +7,7 @@ from .models import (
     Comment,
     ExaminationDetails,
     JobDetails,
+    JobAgeRelaxation,
     JobVacancyBreakdown,
     Post,
     PostDate,
@@ -332,23 +333,145 @@ class PostDetailAdmin(admin.ModelAdmin):
     list_select_related = ("post",)
 
 
+class JobAgeRelaxationInline(admin.TabularInline):
+    model = JobAgeRelaxation
+    extra = 1
+    show_change_link = True
+
+    fields = (
+        "category_code",
+        "category_name",
+        "relaxation_years",
+        "minimum_age",
+        "maximum_age",
+        "condition",
+        "sort_order",
+    )
+
+    ordering = ("sort_order", "id")
+
 @admin.register(JobDetails)
 class JobDetailsAdmin(PostDetailAdmin):
     list_display = (
         "post",
         "recruitment_type",
         "total_vacancies",
+        "age_criteria_type",
+        "age_min",
+        "age_max",
         "applications_open",
         "application_mode",
         "updated_at",
     )
-    list_filter = ("recruitment_type", "applications_open", "application_mode")
+
+    list_filter = (
+        "recruitment_type",
+        "age_criteria_type",
+        "applications_open",
+        "application_mode",
+    )
+
     search_fields = (
         "post__title_en",
         "post__slug",
         "department",
         "designation",
         "advertisement_no",
+    )
+
+    inlines = (
+        JobAgeRelaxationInline,
+    )
+
+    fieldsets = (
+        (
+            "Recruitment Information",
+            {
+                "fields": (
+                    "post",
+                    "advertisement_no",
+                    "recruitment_type",
+                    "total_vacancies",
+                    "department",
+                    "designation",
+                    "post_details",
+                    "educational_qualification",
+                )
+            },
+        ),
+        (
+            "Age Eligibility",
+            {
+                "fields": (
+                    "age_criteria_type",
+                    ("age_min", "age_max"),
+                    "age_as_on_date",
+                    ("eligible_dob_from", "eligible_dob_to"),
+                    "age_limit_note",
+                    "age_relaxation",
+                )
+            },
+        ),
+        (
+            "Application Fee",
+            {
+                "fields": (
+                    "application_fee",
+                    "fee_payment_mode",
+                )
+            },
+        ),
+        (
+            "Salary and Pay Scale",
+            {
+                "fields": (
+                    "pay_scale",
+                    "pay_level",
+                )
+            },
+        ),
+        (
+            "Application Details",
+            {
+                "fields": (
+                    "application_mode",
+                    "apply_url",
+                    "apply_email",
+                    "applications_open",
+                )
+            },
+        ),
+        (
+            "Selection Process",
+            {
+                "fields": (
+                    "selection_process",
+                    "exam_pattern",
+                    "syllabus",
+                    "physical_test_details",
+                    "interview_details",
+                )
+            },
+        ),
+        (
+            "Official Links",
+            {
+                "fields": (
+                    "official_notification_url",
+                    "official_website",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
     )
 
 

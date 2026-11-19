@@ -75,7 +75,11 @@ function formatTime(value: string | null | undefined, language: string) {
   });
 }
 
-function formatMonthYear(month?: number | null, year?: number | null, language = "en") {
+function formatMonthYear(
+  month?: number | null,
+  year?: number | null,
+  language = "en",
+) {
   if (!month || !year || month < 1 || month > 12) return "";
   const locale =
     language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
@@ -90,7 +94,13 @@ function renderImportantDateValue(entry: ImportantDate, language: string) {
   if (entry.date_format === "range") {
     const start = formatDate(entry.start_date || "", language);
     const end = formatDate(entry.end_date || "", language);
-    return start && end ? <>{start} – {end}</> : start || end;
+    return start && end ? (
+      <>
+        {start} – {end}
+      </>
+    ) : (
+      start || end
+    );
   }
 
   if (entry.date_format === "month_year") {
@@ -104,16 +114,27 @@ function renderImportantDateValue(entry: ImportantDate, language: string) {
     const newTime = withTime ? formatTime(entry.new_time, language) : "";
     return (
       <>
-        <s>{oldDate}{oldTime ? ` (${oldTime})` : ""}</s>
+        <s>
+          {oldDate}
+          {oldTime ? ` (${oldTime})` : ""}
+        </s>
         {" → "}
-        <strong>{newDate}{newTime ? ` (${newTime})` : ""}</strong>
+        <strong>
+          {newDate}
+          {newTime ? ` (${newTime})` : ""}
+        </strong>
       </>
     );
   }
 
   const date = formatDate(entry.date || "", language);
   const time = formatTime(entry.time, language);
-  return <>{date}{time ? ` (${time})` : ""}</>;
+  return (
+    <>
+      {date}
+      {time ? ` (${time})` : ""}
+    </>
+  );
 }
 
 function getVideoEmbedUrl(value?: string) {
@@ -475,8 +496,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </div>
                   ) : null}
 
-
-
                   {!post.importantDates.length &&
                   (post.eventDate || post.startDate || post.endDate) ? (
                     <div className="portal-post-context">
@@ -525,15 +544,55 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                   {post.jobDetails ? (
                     <section className="portal-job-details">
+                      <div className="portal-job-info-grid">
+                        {[
+                          [
+                            getDetailLabel("advertisementNo", language),
+                            post.jobDetails.advertisement_no,
+                          ],
+                          [
+                            getDetailLabel("total", language),
+                            post.jobDetails.total_posts,
+                          ],
+                          [
+                            getDetailLabel("applicationMode", language),
+                            post.jobDetails.application_mode,
+                          ],
+                          [
+                            getDetailLabel("jobLocation", language),
+                            post.jobDetails.location,
+                          ],
+                        ]
+                          .filter(
+                            ([, value]) =>
+                              value !== null &&
+                              value !== undefined &&
+                              String(value).trim() !== "",
+                          )
+                          .map(([name, value], index) => {
+                            const formattedValue =
+                              index === 2 || index === 3
+                                ? String(value).charAt(0).toUpperCase() +
+                                  String(value).slice(1)
+                                : value;
+
+                            return (
+                              <div
+                                className="portal-job-info-item"
+                                key={name as string}
+                              >
+                                <span className="portal-job-info-label">
+                                  {name}
+                                </span>
+                                <strong className="portal-job-info-value">
+                                  {formattedValue}
+                                </strong>
+                              </div>
+                            );
+                          })}
+                      </div>
+
                       {[
-                        [
-                          getDetailLabel("advertisementNo", language),
-                          post.jobDetails.advertisement_no,
-                        ],
-                        [
-                          getDetailLabel("total", language),
-                          post.jobDetails.total_posts,
-                        ],
                         [
                           getDetailLabel("examinationName", language),
                           post.jobDetails.examination_name,
@@ -547,20 +606,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           post.jobDetails.educational_qualification,
                         ],
                         [
-                          getDetailLabel("jobLocation", language),
-                          post.jobDetails.location,
-                        ],
-                        [
                           getDetailLabel("ageLimit", language),
                           post.jobDetails.age_limit,
                         ],
                         [
                           getDetailLabel("fee", language),
                           post.jobDetails.application_fee,
-                        ],
-                        [
-                          getDetailLabel("applicationMode", language),
-                          post.jobDetails.application_mode,
                         ],
                         [
                           getDetailLabel("interviewVenue", language),
@@ -632,7 +683,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               className="portal-job-detail-row"
                               key={entry.id ?? `${entry.date_type}-${index}`}
                             >
-                              <strong>{label || detailLabelFallback(entry.date_type)}</strong>
+                              <strong>
+                                {label || detailLabelFallback(entry.date_type)}
+                              </strong>
                               <span className="portal-important-date-value">
                                 {renderImportantDateValue(entry, language)}
                                 {description ? (

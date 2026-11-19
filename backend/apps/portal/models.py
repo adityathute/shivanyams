@@ -224,6 +224,13 @@ class JobDetails(TimestampedModel):
         BOTH = "both", "Online and Offline"
         NOT_APPLICABLE = "not_applicable", "Not Applicable"
 
+    class AgeCriteriaType(models.TextChoices):
+        AGE_RANGE = "age_range", "Minimum and Maximum Age"
+        MINIMUM_ONLY = "minimum_only", "Minimum Age Only"
+        MAXIMUM_ONLY = "maximum_only", "Maximum Age Only"
+        DOB_RANGE = "dob_range", "Date of Birth Range"
+        TEXT_ONLY = "text_only", "Text-based Age Criteria"
+        
     post = models.OneToOneField(
         Post,
         on_delete=models.CASCADE,
@@ -243,9 +250,31 @@ class JobDetails(TimestampedModel):
     post_details = models.TextField(blank=True)
 
     educational_qualification = models.TextField(blank=True)
+    # Age eligibility configuration
+    age_criteria_type = models.CharField(
+        max_length=20,
+        choices=AgeCriteriaType.choices,
+        default=AgeCriteriaType.AGE_RANGE,
+    )
+
+    # Standard age limits
     age_min = models.PositiveSmallIntegerField(null=True, blank=True)
     age_max = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    # Date on which the candidate's age is calculated.
+    # Example: 17 December 2026
+    age_as_on_date = models.DateField(null=True, blank=True)
+
+    # Direct date-of-birth eligibility, when the notification
+    # provides DOB limits instead of age in years.
+    eligible_dob_from = models.DateField(null=True, blank=True)
+    eligible_dob_to = models.DateField(null=True, blank=True)
+
+    # Additional official age instructions
     age_limit_note = models.TextField(blank=True)
+
+    # Retained for compatibility with your existing records.
+    # New category-wise relaxation data will use JobAgeRelaxation.
     age_relaxation = models.TextField(blank=True)
 
     application_fee = models.TextField(blank=True)
@@ -259,6 +288,7 @@ class JobDetails(TimestampedModel):
         choices=ApplicationMode.choices,
         default=ApplicationMode.ONLINE,
     )
+    
     apply_url = models.URLField(max_length=1000, blank=True)
     apply_email = models.EmailField(blank=True)
     applications_open = models.BooleanField(default=True)
@@ -285,11 +315,152 @@ class JobDetails(TimestampedModel):
                 ),
                 name="job_age_max_gte_age_min",
             ),
+            models.CheckConstraint(
+                condition=(
+                    Q(eligible_dob_from__isnull=True)
+                    | Q(eligible_dob_to__isnull=True)
+                    | Q(eligible_dob_to__gte=F("eligible_dob_from"))
+                ),
+                name="job_eligible_dob_range_valid",
+            ),
         ]
 
+    def clean(self):
+        super().clean()
+
+        errors = {}
+
+        if self.age_criteria_type == self.AgeCriteriaType.AGE_RANGE:
+            if self.age_min is None:
+                errors["age_min"] = "Minimum age is required."
+
+            if self.age_max is None:
+                errors["age_max"] = "Maximum age is required."
+
+            if self.eligible_dob_from or self.eligible_dob_to:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for Age Range criteria."
+                )
+
+        elif self.age_criteria_type == self.AgeCriteriaType.MINIMUM_ONLY:
+            if self.age_min is None:
+                errors["age_min"] = "Minimum age is required."
+
+        elif self.age_criteria_type == self.AgeCriteriaType.MAXIMUM_ONLY:
+            if self.age_max is None:
+                errors["age_max"] = "Maximum age is required."
+
+        elif self.age_criteria_type == self.AgeCriteriaType.DOB_RANGE:
+            if self.eligible_dob_from is None:
+                errors["eligible_dob_from"] = "Starting DOB is required."
+
+            if self.eligible_dob_to is None:
+                errors["eligible_dob_to"] = "Ending DOB is required."
+
+            if self.age_min is not None or self.age_max is not None:
+                errors["age_min"] = (
+                    "Numeric age fields are not allowed for DOB Range criteria."
+                )
+
+        elif self.age_criteria_type == self.AgeCriteriaType.TEXT_ONLY:
+            if not self.age_limit_note.strip():
+                errors["age_limit_note"] = (
+                    "Age criteria description is required."
+                )
+
+        if errors:
+            raise ValidationError(errors)
+        
     def __str__(self):
         return self.post.title_en
 
+class JobAgeRelaxation(TimestampedModel):
+    """
+    Category-wise and special age relaxation rules for a recruitment.
+
+    Examples:
+    SC, ST, OBC, EWS, PwBD, Ex-Servicemen, Government Employees.
+    """
+
+    job = models.ForeignKey(
+        JobDetails,
+        on_delete=models.CASCADE,
+        related_name="age_relaxations",
+    )
+
+    # Internal identifier.
+    # Examples: sc, st, obc, ews, pwbd, ex_servicemen
+    category_code = models.CharField(max_length=60)
+
+    # Display name.
+    # Examples: SC, ST, OBC, PwBD, Ex-Servicemen
+    category_name = models.CharField(max_length=180)
+
+    # Relaxation in years, if specified.
+    relaxation_years = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    # Use these when the notification specifies a direct
+    # minimum or maximum age for a particular category.
+    minimum_age = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    maximum_age = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    # Additional conditions from the official notification.
+    # Example: Subject to the maximum age limit prescribed
+    # by the recruitment rules.
+    condition = models.TextField(blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [
+            models.Index(fields=("job", "sort_order")),
+            models.Index(fields=("job", "category_code")),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    Q(minimum_age__isnull=True)
+                    | Q(maximum_age__isnull=True)
+                    | Q(maximum_age__gte=F("minimum_age"))
+                ),
+                name="job_relaxation_max_gte_min",
+            ),
+            models.UniqueConstraint(
+                fields=("job", "category_code"),
+                name="unique_job_age_relaxation_category",
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+
+        if (
+            self.minimum_age is not None
+            and self.maximum_age is not None
+            and self.maximum_age < self.minimum_age
+        ):
+            errors["maximum_age"] = (
+                "Maximum age cannot be less than minimum age."
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def __str__(self):
+        return f"{self.job.post.title_en} - {self.category_name}"
 
 class JobVacancyBreakdown(TimestampedModel):
     """Optional category-wise vacancy counts for a government recruitment."""

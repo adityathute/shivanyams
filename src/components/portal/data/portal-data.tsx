@@ -20,6 +20,17 @@ export type ItemType =
   | "video"
   | "tool";
 
+export type JobAgeRelaxation = {
+  id?: number;
+  category_code: string;
+  category_name: string;
+  relaxation_years?: number | null;
+  minimum_age?: number | null;
+  maximum_age?: number | null;
+  condition?: string;
+  sort_order?: number;
+};
+
 export type JobDetails = {
   advertisement_no: string;
   total_posts: string;
@@ -28,6 +39,15 @@ export type JobDetails = {
   educational_qualification: string;
   location: string;
   age_limit: string;
+  age_criteria_type?: string;
+  age_min?: number | null;
+  age_max?: number | null;
+  age_as_on_date?: string | null;
+  eligible_dob_from?: string | null;
+  eligible_dob_to?: string | null;
+  age_limit_note?: string;
+  age_relaxation?: string;
+  age_relaxations?: JobAgeRelaxation[];
   application_fee: string;
   application_mode: string;
   interview_venue: string;
@@ -162,9 +182,15 @@ type ApiPost = {
     designation?: string;
     post_details?: string;
     educational_qualification?: string;
+    age_criteria_type?: string;
     age_min?: number | null;
     age_max?: number | null;
+    age_as_on_date?: string | null;
+    eligible_dob_from?: string | null;
+    eligible_dob_to?: string | null;
     age_limit_note?: string;
+    age_relaxation?: string;
+    age_relaxations?: JobAgeRelaxation[];
     application_fee?: string;
     application_mode?: string;
     apply_url?: string;
@@ -318,6 +344,17 @@ updated_date: getDate(post.updated_at),
             [job.age_min, job.age_max]
               .filter((value) => value != null)
               .join(" - "),
+          age_criteria_type: job.age_criteria_type || "age_range",
+          age_min: job.age_min ?? null,
+          age_max: job.age_max ?? null,
+          age_as_on_date: job.age_as_on_date || null,
+          eligible_dob_from: job.eligible_dob_from || null,
+          eligible_dob_to: job.eligible_dob_to || null,
+          age_limit_note: job.age_limit_note || "",
+          age_relaxation: job.age_relaxation || "",
+          age_relaxations: Array.isArray(job.age_relaxations)
+            ? job.age_relaxations
+            : [],
           application_fee: job.application_fee || "",
           application_mode: job.application_mode || "",
           interview_venue: job.interview_details || "",

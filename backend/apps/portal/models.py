@@ -234,6 +234,10 @@ class JobDetails(TimestampedModel):
         DOB_RANGE = "dob_range", "Date of Birth Range"
         TEXT_ONLY = "text_only", "Text-based Age Criteria"
 
+    class DetailMode(models.TextChoices):
+        COMMON = "common", "Same for all posts"
+        PER_POST = "per_post", "Different for each post"
+
     post = models.OneToOneField(
         Post,
         on_delete=models.CASCADE,
@@ -251,6 +255,23 @@ class JobDetails(TimestampedModel):
     department = models.CharField(max_length=240, blank=True)
     designation = models.CharField(max_length=240, blank=True)
     post_details = models.TextField(blank=True)
+
+    # Choose whether these details are shared across all posts or entered per post.
+    education_mode = models.CharField(
+        max_length=12,
+        choices=DetailMode.choices,
+        default=DetailMode.PER_POST,
+    )
+    age_mode = models.CharField(
+        max_length=12,
+        choices=DetailMode.choices,
+        default=DetailMode.PER_POST,
+    )
+    fee_mode = models.CharField(
+        max_length=12,
+        choices=DetailMode.choices,
+        default=DetailMode.PER_POST,
+    )
 
     educational_qualification = models.TextField(blank=True)
     # Age eligibility configuration

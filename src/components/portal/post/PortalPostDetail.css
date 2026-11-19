@@ -540,14 +540,25 @@
   }
 }
 
+.portal-job-info-item-age-note {
+  grid-column: span 2;
+}
+
 @media (max-width: 600px) {
   .portal-job-info-item-age-full {
     grid-column: 1 / -1;
   }
+
   .portal-job-info-item-age-half {
     grid-column: span 1;
   }
+
   .portal-job-info-item-age-quarter {
     grid-column: span 1;
+  }
+
+  /* Only Age Criteria Note gets full width on mobile */
+  .portal-job-info-item-age-note {
+    grid-column: 1 / -1;
   }
 }

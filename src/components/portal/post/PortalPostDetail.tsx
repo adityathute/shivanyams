@@ -174,6 +174,11 @@ function getLocalizedText(
 }
 
 const detailLabels = {
+  upTo: {
+    en: "Up to",
+    mr: "पर्यंत",
+    hi: "अधिकतम",
+  },
   posted: {
     en: "Posted",
     mr: "प्रकाशित दिनांक",
@@ -466,7 +471,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     }
 
     if (max != null) {
-      return `Up to ${max} ${getDetailLabel("years", language)}`;
+      return `${getDetailLabel("upTo", language)} ${max} ${getDetailLabel("years", language)}`;
     }
 
     const dobFrom = jobAgeDetails.eligible_dob_from
@@ -668,21 +673,18 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 String(value).slice(1)
                               : value;
 
-                            const ageRowIndex = ageInfoRows.findIndex(
+                            const isAgeRow = ageInfoRows.some(
                               ([ageLabel]) => ageLabel === name,
                             );
-
-                            const isAgeRow = ageRowIndex !== -1;
-
-                            const ageRowSpan = !isAgeRow
-                              ? ""
-                              : ageInfoRows.length === 1
+                            const ageRowSpan = isAgeRow
+                              ? ageInfoRows.length === 1
                                 ? "portal-job-info-item-age-full"
                                 : ageInfoRows.length === 2
                                   ? "portal-job-info-item-age-half"
-                                  : ageRowIndex === 2
-                                    ? "portal-job-info-item-age-half"
-                                    : "portal-job-info-item-age-quarter";
+                                  : name === getDetailLabel("ageNote", language)
+                                    ? "portal-job-info-item-age-note"
+                                    : "portal-job-info-item-age-quarter"
+                              : "";
 
                             return (
                               <div

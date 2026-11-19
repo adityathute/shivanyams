@@ -359,7 +359,7 @@ function normalizeComparable(value: unknown) {
 }
 
 function sameForEveryPost<T>(posts: T[], getValue: (post: T) => unknown) {
-  if (posts.length <= 1) return posts.length === 1;
+  if (posts.length <= 1) return true;
   const first = JSON.stringify(getValue(posts[0]));
   return posts.slice(1).every((post) => JSON.stringify(getValue(post)) === first);
 }
@@ -454,15 +454,17 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             normalizeComparable(entry.age_limit_note_hi),
           ]) ? "common" : "per_post",
           fee_mode: sameForEveryPost(job.posts || [], (entry) =>
-            (entry.fees || []).map((fee) => [
-              normalizeComparable(fee.category_name_en),
-              normalizeComparable(fee.category_name_mr),
-              normalizeComparable(fee.category_name_hi),
-              fee.fee_amount == null ? "" : String(fee.fee_amount),
-              normalizeComparable(fee.fee_note_en),
-              normalizeComparable(fee.fee_note_mr),
-              normalizeComparable(fee.fee_note_hi),
-            ]),
+            (entry.fees || [])
+              .map((fee) => [
+                normalizeComparable(fee.category_name_en),
+                normalizeComparable(fee.category_name_mr),
+                normalizeComparable(fee.category_name_hi),
+                fee.fee_amount == null ? "" : String(fee.fee_amount),
+                normalizeComparable(fee.fee_note_en),
+                normalizeComparable(fee.fee_note_mr),
+                normalizeComparable(fee.fee_note_hi),
+              ])
+              .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
           ) ? "common" : "per_post",
           educational_qualification:
             job.posts?.[0]?.educational_qualification_en ||

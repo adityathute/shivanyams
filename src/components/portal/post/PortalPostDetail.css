@@ -212,6 +212,10 @@
     grid-template-columns: 1fr;
     gap: 10px;
   }
+
+  .portal-post-category-grid {
+  margin-top: 12px;
+}
 }
 
 /* Bottom spacing only when post exists */

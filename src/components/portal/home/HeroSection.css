@@ -13,6 +13,7 @@
   overflow: hidden;
   background: #fff;
   box-shadow: var(--shadow);
+  margin-bottom: 12px;
 }
 
 /* Label */
@@ -77,7 +78,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
 }
 
@@ -182,7 +183,6 @@
   display: flex;
   align-items: flex-start;
   min-height: 390px;
-  margin-top: 12px;
   padding: 36px;
   overflow: hidden;
   isolation: isolate;

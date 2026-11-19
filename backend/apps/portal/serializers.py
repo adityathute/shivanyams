@@ -8,7 +8,6 @@ from .models import (
     Comment,
     ExaminationDetails,
     JobDetails,
-    JobAgeRelaxation,
     JobVacancyBreakdown,
     Post,
     PostDate,
@@ -203,40 +202,9 @@ class JobVacancyBreakdownSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
-class JobAgeRelaxationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = JobAgeRelaxation
-        fields = (
-            "id",
-            "category_code",
-            "category_name",
-            "relaxation_years",
-            "minimum_age",
-            "maximum_age",
-            "condition",
-            "sort_order",
-        )
-        read_only_fields = ("id",)
-
-    def validate(self, attrs):
-        candidate = JobAgeRelaxation(**attrs)
-
-        try:
-            candidate.clean()
-        except DjangoValidationError as exc:
-            if hasattr(exc, "message_dict"):
-                raise serializers.ValidationError(exc.message_dict)
-            raise serializers.ValidationError(exc.messages)
-
-        return attrs
-    
+   
 class JobDetailsSerializer(serializers.ModelSerializer):
     vacancy_breakdowns = JobVacancyBreakdownSerializer(
-        many=True,
-        required=False,
-    )
-
-    age_relaxations = JobAgeRelaxationSerializer(
         many=True,
         required=False,
     )
@@ -245,27 +213,8 @@ class JobDetailsSerializer(serializers.ModelSerializer):
         model = JobDetails
         exclude = ("id", "post", "created_at", "updated_at")
 
-    def validate(self, attrs):
-        age_relaxations = attrs.get("age_relaxations")
-
-        if age_relaxations is not None:
-            category_codes = [
-                item["category_code"]
-                for item in age_relaxations
-            ]
-
-            if len(category_codes) != len(set(category_codes)):
-                raise serializers.ValidationError({
-                    "age_relaxations": (
-                        "Each category can have only one age relaxation."
-                    )
-                })
-
-        return attrs
-
     def create(self, validated_data):
         breakdowns = validated_data.pop("vacancy_breakdowns", [])
-        age_relaxations = validated_data.pop("age_relaxations", [])
 
         job = JobDetails.objects.create(**validated_data)
 
@@ -275,17 +224,10 @@ class JobDetailsSerializer(serializers.ModelSerializer):
                 **breakdown,
             )
 
-        for relaxation in age_relaxations:
-            JobAgeRelaxation.objects.create(
-                job=job,
-                **relaxation,
-            )
-
         return job
 
     def update(self, instance, validated_data):
         breakdowns = validated_data.pop("vacancy_breakdowns", None)
-        age_relaxations = validated_data.pop("age_relaxations", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -302,18 +244,7 @@ class JobDetailsSerializer(serializers.ModelSerializer):
                     **breakdown,
                 )
 
-        # Replace age relaxations only when provided.
-        if age_relaxations is not None:
-            instance.age_relaxations.all().delete()
-
-            for relaxation in age_relaxations:
-                JobAgeRelaxation.objects.create(
-                    job=instance,
-                    **relaxation,
-                )
-
         return instance
-
 
 class SchemeDetailsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -711,10 +642,8 @@ class PostWriteSerializer(serializers.ModelSerializer):
             # Job-specific nested data.
             if related_name == "job_details":
                 breakdowns = detail_data.pop("vacancy_breakdowns", None)
-                age_relaxations = detail_data.pop("age_relaxations", None)
             else:
                 breakdowns = None
-                age_relaxations = None
 
             # Create or update the detail record.
             detail, _ = detail_model.objects.update_or_create(
@@ -732,18 +661,6 @@ class PostWriteSerializer(serializers.ModelSerializer):
                     JobVacancyBreakdown.objects.create(
                         job=detail,
                         **breakdown,
-                    )
-
-            # Save category-wise age relaxations.
-            if age_relaxations is not None:
-                detail.age_relaxations.all().delete()
-
-                for relaxation in age_relaxations:
-                    relaxation.pop("id", None)
-
-                    JobAgeRelaxation.objects.create(
-                        job=detail,
-                        **relaxation,
                     )
 
 

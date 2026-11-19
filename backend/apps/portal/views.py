@@ -13,7 +13,6 @@ from .models import (
     Comment,
     ImportantLink,
         JobDetails,
-    JobAgeRelaxation,
     JobVacancyBreakdown,
     LanguageChoices,
     Post,
@@ -87,15 +86,8 @@ def public_posts_for_kind(kind):
             "resources",
             "outgoing_relations__target_post",
             "job_details__vacancy_breakdowns",
-            Prefetch(
-                "job_details__age_relaxations",
-                queryset=JobAgeRelaxation.objects.order_by(
-                    "sort_order", "id"
-                ),
-            ),
         )
     )
-
 
 class Categories(generics.ListAPIView):
     serializer_class = CategorySerializer
@@ -158,12 +150,6 @@ class AdminContent(viewsets.ModelViewSet):
                 "resources",
                 "outgoing_relations__target_post",
                 "job_details__vacancy_breakdowns",
-                Prefetch(
-                    "job_details__age_relaxations",
-                    queryset=JobAgeRelaxation.objects.order_by(
-                        "sort_order", "id"
-                    ),
-                ),
             )
         )
 

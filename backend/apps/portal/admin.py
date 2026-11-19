@@ -7,7 +7,6 @@ from .models import (
     Comment,
     ExaminationDetails,
     JobDetails,
-    JobAgeRelaxation,
     JobVacancyBreakdown,
     Post,
     PostDate,
@@ -333,23 +332,6 @@ class PostDetailAdmin(admin.ModelAdmin):
     list_select_related = ("post",)
 
 
-class JobAgeRelaxationInline(admin.TabularInline):
-    model = JobAgeRelaxation
-    extra = 1
-    show_change_link = True
-
-    fields = (
-        "category_code",
-        "category_name",
-        "relaxation_years",
-        "minimum_age",
-        "maximum_age",
-        "condition",
-        "sort_order",
-    )
-
-    ordering = ("sort_order", "id")
-
 @admin.register(JobDetails)
 class JobDetailsAdmin(PostDetailAdmin):
     list_display = (
@@ -379,10 +361,6 @@ class JobDetailsAdmin(PostDetailAdmin):
         "advertisement_no",
     )
 
-    inlines = (
-        JobAgeRelaxationInline,
-    )
-
     fieldsets = (
         (
             "Recruitment Information",
@@ -407,8 +385,9 @@ class JobDetailsAdmin(PostDetailAdmin):
                     ("age_min", "age_max"),
                     "age_as_on_date",
                     ("eligible_dob_from", "eligible_dob_to"),
-                    "age_limit_note",
-                    "age_relaxation",
+                    "age_limit_note_en",
+                    "age_limit_note_mr",
+                    "age_limit_note_hi",
                 )
             },
         ),
@@ -473,7 +452,6 @@ class JobDetailsAdmin(PostDetailAdmin):
             },
         ),
     )
-
 
 @admin.register(JobVacancyBreakdown)
 class JobVacancyBreakdownAdmin(admin.ModelAdmin):

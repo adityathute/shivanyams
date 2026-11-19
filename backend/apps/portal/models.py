@@ -270,12 +270,10 @@ class JobDetails(TimestampedModel):
     eligible_dob_from = models.DateField(null=True, blank=True)
     eligible_dob_to = models.DateField(null=True, blank=True)
 
-    # Additional official age instructions
-    age_limit_note = models.TextField(blank=True)
-
-    # Retained for compatibility with your existing records.
-    # New category-wise relaxation data will use JobAgeRelaxation.
-    age_relaxation = models.TextField(blank=True)
+    # Additional official age instructions in three languages.
+    age_limit_note_en = models.TextField(blank=True)
+    age_limit_note_mr = models.TextField(blank=True)
+    age_limit_note_hi = models.TextField(blank=True)
 
     application_fee = models.TextField(blank=True)
     fee_payment_mode = models.CharField(max_length=180, blank=True)
@@ -363,9 +361,13 @@ class JobDetails(TimestampedModel):
                 )
 
         elif self.age_criteria_type == self.AgeCriteriaType.TEXT_ONLY:
-            if not self.age_limit_note.strip():
-                errors["age_limit_note"] = (
-                    "Age criteria description is required."
+            if not any([
+                self.age_limit_note_en.strip(),
+                self.age_limit_note_mr.strip(),
+                self.age_limit_note_hi.strip(),
+            ]):
+                errors["age_limit_note_en"] = (
+                    "Age criteria description is required in at least one language."
                 )
 
         if errors:
@@ -373,94 +375,6 @@ class JobDetails(TimestampedModel):
         
     def __str__(self):
         return self.post.title_en
-
-class JobAgeRelaxation(TimestampedModel):
-    """
-    Category-wise and special age relaxation rules for a recruitment.
-
-    Examples:
-    SC, ST, OBC, EWS, PwBD, Ex-Servicemen, Government Employees.
-    """
-
-    job = models.ForeignKey(
-        JobDetails,
-        on_delete=models.CASCADE,
-        related_name="age_relaxations",
-    )
-
-    # Internal identifier.
-    # Examples: sc, st, obc, ews, pwbd, ex_servicemen
-    category_code = models.CharField(max_length=60)
-
-    # Display name.
-    # Examples: SC, ST, OBC, PwBD, Ex-Servicemen
-    category_name = models.CharField(max_length=180)
-
-    # Relaxation in years, if specified.
-    relaxation_years = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-    )
-
-    # Use these when the notification specifies a direct
-    # minimum or maximum age for a particular category.
-    minimum_age = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-    )
-
-    maximum_age = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-    )
-
-    # Additional conditions from the official notification.
-    # Example: Subject to the maximum age limit prescribed
-    # by the recruitment rules.
-    condition = models.TextField(blank=True)
-
-    sort_order = models.PositiveSmallIntegerField(default=0)
-
-    class Meta:
-        ordering = ("sort_order", "id")
-        indexes = [
-            models.Index(fields=("job", "sort_order")),
-            models.Index(fields=("job", "category_code")),
-        ]
-        constraints = [
-            models.CheckConstraint(
-                condition=(
-                    Q(minimum_age__isnull=True)
-                    | Q(maximum_age__isnull=True)
-                    | Q(maximum_age__gte=F("minimum_age"))
-                ),
-                name="job_relaxation_max_gte_min",
-            ),
-            models.UniqueConstraint(
-                fields=("job", "category_code"),
-                name="unique_job_age_relaxation_category",
-            ),
-        ]
-
-    def clean(self):
-        super().clean()
-
-        errors = {}
-
-        if (
-            self.minimum_age is not None
-            and self.maximum_age is not None
-            and self.maximum_age < self.minimum_age
-        ):
-            errors["maximum_age"] = (
-                "Maximum age cannot be less than minimum age."
-            )
-
-        if errors:
-            raise ValidationError(errors)
-
-    def __str__(self):
-        return f"{self.job.post.title_en} - {self.category_name}"
 
 class JobVacancyBreakdown(TimestampedModel):
     """Optional category-wise vacancy counts for a government recruitment."""

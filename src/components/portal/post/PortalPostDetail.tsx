@@ -209,17 +209,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           entry.id === slug),
     );
 
-    const organizationTypeLabels: Record<string, string> = {
-      central: "Central Government",
-      state: "State Government",
-      district: "District Administration",
-      local: "Local Government",
-      psu: "Public Sector Undertaking",
-      university: "Government University",
-      bank: "Government Bank",
-      court: "Court",
-      other: "Other Government Organization",
-    };
     return item
       ? {
           title:

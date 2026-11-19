@@ -366,7 +366,14 @@ class JobDetailsSerializer(serializers.ModelSerializer):
 
 
     @staticmethod
-    def create_job_posts(job, posts):
+    def sync_total_vacancies(job):
+        vacancies = list(job.posts.values_list("vacancies", flat=True))
+        entered_vacancies = [value for value in vacancies if value is not None]
+        job.total_vacancies = sum(entered_vacancies) if entered_vacancies else None
+        job.save(update_fields=("total_vacancies", "updated_at"))
+
+    @classmethod
+    def create_job_posts(cls, job, posts):
         for post_data in posts:
             post_data = dict(post_data)
             fees = post_data.pop("fees", [])
@@ -381,6 +388,9 @@ class JobDetailsSerializer(serializers.ModelSerializer):
                     job_post=job_post,
                     **fee,
                 )
+
+        # The notification total is derived from its individual post vacancies.
+        cls.sync_total_vacancies(job)
 
     @classmethod
     def replace_job_posts(cls, job, posts):

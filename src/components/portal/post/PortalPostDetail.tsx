@@ -643,12 +643,14 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               value !== undefined &&
                               String(value).trim() !== "",
                           )
-                          .map(([name, value], index) => {
-                            const formattedValue =
-                              index === 2 || index === 3
-                                ? String(value).charAt(0).toUpperCase() +
-                                  String(value).slice(1)
-                                : value;
+                          .map(([name, value]) => {
+                            const shouldCapitalize =
+                              name === getDetailLabel("applicationMode", language) ||
+                              name === getDetailLabel("jobLocation", language);
+                            const formattedValue = shouldCapitalize
+                              ? String(value).charAt(0).toUpperCase() +
+                                String(value).slice(1)
+                              : value;
 
                             return (
                               <div

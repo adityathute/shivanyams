@@ -621,7 +621,7 @@ export default function PostEditor({
         ),
         important_dates: importantDates
           .filter((item) => item.label_en.trim())
-          .map((item, index) => ({
+          .map((item) => ({
             ...item,
             sort_order: item.sort_order,
             date: item.date || null,

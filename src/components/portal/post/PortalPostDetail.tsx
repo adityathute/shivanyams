@@ -99,6 +99,49 @@ function getLocalizedText(
   return values.find((value) => value?.trim()) || "";
 }
 
+const detailLabels = {
+  eventDate: { en: "Event date", mr: "कार्यक्रमाची तारीख", hi: "कार्यक्रम की तारीख" },
+  start: { en: "Start", mr: "सुरुवात", hi: "शुरुआत" },
+  end: { en: "End", mr: "समाप्ती", hi: "समाप्ति" },
+  advertisementNo: { en: "Advertisement No.", mr: "जाहिरात क्रमांक", hi: "विज्ञापन संख्या" },
+  total: { en: "Total Posts", mr: "एकूण पदे", hi: "कुल पद" },
+  examinationName: { en: "Name of the Examination", mr: "परीक्षेचे नाव", hi: "परीक्षा का नाम" },
+  postDetails: { en: "Name of the Post & Details", mr: "पदाचे नाव आणि तपशील", hi: "पद का नाम और विवरण" },
+  qualification: { en: "Educational Qualification", mr: "शैक्षणिक पात्रता", hi: "शैक्षणिक योग्यता" },
+  jobLocation: { en: "Job location", mr: "नोकरीचे ठिकाण", hi: "नौकरी का स्थान" },
+  ageLimit: { en: "Age Limit", mr: "वयोमर्यादा", hi: "आयु सीमा" },
+  fee: { en: "Application Fee", mr: "अर्ज शुल्क", hi: "आवेदन शुल्क" },
+  applicationMode: { en: "Application Mode", mr: "अर्ज करण्याची पद्धत", hi: "आवेदन का माध्यम" },
+  interviewVenue: { en: "Venue of Interview", mr: "मुलाखतीचे ठिकाण", hi: "साक्षात्कार का स्थान" },
+  importantDates: { en: "Important Dates", mr: "महत्त्वाच्या तारखा", hi: "महत्वपूर्ण तिथियां" },
+  importantLinks: { en: "Important Links", mr: "महत्त्वाच्या लिंक्स", hi: "महत्वपूर्ण लिंक" },
+  watchVideo: { en: "Watch video", mr: "व्हिडिओ पाहा", hi: "वीडियो देखें" },
+  visitWebsite: { en: "Visit official website", mr: "अधिकृत वेबसाइटला भेट द्या", hi: "आधिकारिक वेबसाइट देखें" },
+} as const;
+
+function getDetailLabel(key: keyof typeof detailLabels, language: string) {
+  const labels = detailLabels[key];
+  return labels[language as keyof typeof labels] || labels.en;
+}
+
+const organizationTypeLabels: Record<string, Record<string, string>> = {
+  central: { en: "Central Government", mr: "केंद्र सरकार", hi: "केंद्र सरकार" },
+  state: { en: "State Government", mr: "राज्य सरकार", hi: "राज्य सरकार" },
+  district: { en: "District Administration", mr: "जिल्हा प्रशासन", hi: "जिला प्रशासन" },
+  local: { en: "Local Government", mr: "स्थानिक स्वराज्य संस्था", hi: "स्थानीय शासन" },
+  psu: { en: "Public Sector Undertaking", mr: "सार्वजनिक क्षेत्रातील उपक्रम", hi: "सार्वजनिक क्षेत्र का उपक्रम" },
+  university: { en: "Government University", mr: "शासकीय विद्यापीठ", hi: "सरकारी विश्वविद्यालय" },
+  bank: { en: "Government Bank", mr: "शासकीय बँक", hi: "सरकारी बैंक" },
+  court: { en: "Court", mr: "न्यायालय", hi: "न्यायालय" },
+  other: { en: "Other Government Organization", mr: "इतर शासकीय संस्था", hi: "अन्य सरकारी संगठन" },
+};
+
+function getOrganizationTypeLabel(value: string | undefined, language: string) {
+  if (!value) return "";
+  const labels = organizationTypeLabels[value];
+  return labels?.[language] || labels?.en || "";
+}
+
 export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const params = useParams<{ slug: string }>();
   const slug = decodeURIComponent(params.slug ?? "");
@@ -141,7 +184,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       );
       return video
         ? {
-            title: video.title,
+            title: getLocalizedText(language, video.title_en, video.title_mr, video.title_hi) || video.title,
             description: "",
             category: video.language,
             date: "",
@@ -179,15 +222,23 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     };
     return item
       ? {
-          title: item.title,
-          description: item.description,
-          category: item.category,
+          title:
+            getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) ||
+            item.title,
+          description:
+            getLocalizedText(language, item.summary_en, item.summary_mr, item.summary_hi) ||
+            item.description,
+          category:
+            getLocalizedText(language, item.category_en, item.category_mr, item.category_hi) ||
+            item.category,
           date: item.date,
           link: item.link,
           image: item.image || "",
-          body: item.body || "",
-          organization:
-            organizationTypeLabels[item.organization_type || ""] || "",
+          body:
+            getLocalizedText(language, item.body_en, item.body_mr, item.body_hi) ||
+            item.body ||
+            "",
+          organization: getOrganizationTypeLabel(item.organization_type, language),
           location: item.location || "",
           startDate: item.start_date || "",
           endDate: item.end_date || "",
@@ -197,7 +248,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             : undefined,
         }
       : null;
-  }, [category, data.items, data.videos, slug]);
+  }, [category, data.items, data.videos, slug, language]);
 
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(
@@ -239,16 +290,16 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     <div className="portal-post-context">
                       {post.eventDate ? (
                         <span>
-                          Event date: {formatDate(post.eventDate, language)}
+                          {getDetailLabel("eventDate", language)}: {formatDate(post.eventDate, language)}
                         </span>
                       ) : null}
                       {post.startDate ? (
                         <span>
-                          Start: {formatDate(post.startDate, language)}
+                          {getDetailLabel("start", language)}: {formatDate(post.startDate, language)}
                         </span>
                       ) : null}
                       {post.endDate ? (
-                        <span>End: {formatDate(post.endDate, language)}</span>
+                        <span>{getDetailLabel("end", language)}: {formatDate(post.endDate, language)}</span>
                       ) : null}
                     </div>
                   ) : null}
@@ -278,25 +329,16 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                   {post.jobDetails ? (
                     <section className="portal-job-details">
                       {[
-                        ["Advertisement No.", post.jobDetails.advertisement_no],
-                        ["Total", post.jobDetails.total_posts],
-                        [
-                          "Name of the Examination",
-                          post.jobDetails.examination_name,
-                        ],
-                        [
-                          "Name of the Post & Details",
-                          post.jobDetails.post_details,
-                        ],
-                        [
-                          "Educational Qualification",
-                          post.jobDetails.educational_qualification,
-                        ],
-                        ["Job location", post.jobDetails.location],
-                        ["Age Limit", post.jobDetails.age_limit],
-                        ["Fee", post.jobDetails.application_fee],
-                        ["Application Mode", post.jobDetails.application_mode],
-                        ["Venue of Interview", post.jobDetails.interview_venue],
+                        [getDetailLabel("advertisementNo", language), post.jobDetails.advertisement_no],
+                        [getDetailLabel("total", language), post.jobDetails.total_posts],
+                        [getDetailLabel("examinationName", language), post.jobDetails.examination_name],
+                        [getDetailLabel("postDetails", language), post.jobDetails.post_details],
+                        [getDetailLabel("qualification", language), post.jobDetails.educational_qualification],
+                        [getDetailLabel("jobLocation", language), post.jobDetails.location],
+                        [getDetailLabel("ageLimit", language), post.jobDetails.age_limit],
+                        [getDetailLabel("fee", language), post.jobDetails.application_fee],
+                        [getDetailLabel("applicationMode", language), post.jobDetails.application_mode],
+                        [getDetailLabel("interviewVenue", language), post.jobDetails.interview_venue],
                       ]
                         .filter(([, value]) => Boolean(value))
                         .map(([name, value]) => (
@@ -311,14 +353,14 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                       {post.jobDetails.important_dates.length ? (
                         <div className="portal-job-detail-group">
-                          <h2>Important Dates</h2>
+                          <h2>{getDetailLabel("importantDates", language)}</h2>
                           {post.jobDetails.important_dates.map(
                             (entry, index) => (
                               <div
                                 className="portal-job-detail-row"
                                 key={index}
                               >
-                                <strong>{entry.label}</strong>
+                                <strong>{getLocalizedText(language, entry.label_en, entry.label_mr, entry.label_hi)}</strong>
                                 <span>{entry.date}</span>
                               </div>
                             ),
@@ -328,7 +370,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                       {post.jobDetails.important_links.length ? (
                         <div className="portal-job-detail-group">
-                          <h2>Important Links</h2>
+                          <h2>{getDetailLabel("importantLinks", language)}</h2>
                           {post.jobDetails.important_links.map(
                             (entry, index) => (
                               <div
@@ -367,8 +409,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                       rel="noreferrer"
                     >
                       {category === "videos"
-                        ? "Watch video"
-                        : "Visit official website"}
+                        ? getDetailLabel("watchVideo", language)
+                        : getDetailLabel("visitWebsite", language)}
                       <span aria-hidden="true">↗</span>
                     </a>
                   ) : null}

@@ -519,7 +519,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     jobAgeDetails?.application_fee_note_hi,
   );
 
-  const ageInfoRows: [string, string][] = [
+  const ageInfoRows: [string, string][] = jobDetails?.posts?.length
+    ? []
+    : [
     ...(ageLimitValue
       ? [
           [getDetailLabel("ageLimit", language), ageLimitValue] as [
@@ -645,7 +647,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           ...ageInfoRows,
 
                           // Application Fee
-                          ...(jobDetails?.application_fee
+                          ...(!jobDetails?.posts?.length && jobDetails?.application_fee
                             ? [
                                 [
                                   getDetailLabel("fee", language),
@@ -655,7 +657,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             : []),
 
                           // Multilingual Application Fee Note
-                          ...(applicationFeeNote
+                          ...(!jobDetails?.posts?.length && applicationFeeNote
                             ? [
                                 [
                                   getDetailLabel("feeNote", language),
@@ -765,6 +767,141 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             <span>{value}</span>
                           </div>
                         ))} */}
+
+                      {jobDetails?.posts?.length ? (
+                        <div className="portal-post-wise-details">
+                          <h2>{getDetailLabel("postDetails", language)}</h2>
+                          {jobDetails.posts.map((entry, index) => {
+                            const postName = getLocalizedText(
+                              language,
+                              entry.post_name_en,
+                              entry.post_name_mr,
+                              entry.post_name_hi,
+                            );
+                            const qualification = getLocalizedText(
+                              language,
+                              entry.educational_qualification_en,
+                              entry.educational_qualification_mr,
+                              entry.educational_qualification_hi,
+                            );
+                            const department = getLocalizedText(
+                              language,
+                              entry.department_en,
+                              entry.department_mr,
+                              entry.department_hi,
+                            );
+                            const ageType = entry.age_criteria_type;
+                            const ageValue =
+                              ageType === "text_only"
+                                ? ""
+                                : entry.age_min != null && entry.age_max != null
+                                  ? `${entry.age_min} – ${entry.age_max} ${getDetailLabel("years", language)}`
+                                  : entry.age_min != null
+                                    ? `${entry.age_min}+ ${getDetailLabel("years", language)}`
+                                    : entry.age_max != null
+                                      ? `${getDetailLabel("upTo", language)} ${entry.age_max} ${getDetailLabel("years", language)}`
+                                      : [
+                                          entry.eligible_dob_from
+                                            ? formatDate(entry.eligible_dob_from, language)
+                                            : "",
+                                          entry.eligible_dob_to
+                                            ? formatDate(entry.eligible_dob_to, language)
+                                            : "",
+                                        ].filter(Boolean).join(" – ");
+                            const ageNote = getLocalizedText(
+                              language,
+                              entry.age_limit_note_en,
+                              entry.age_limit_note_mr,
+                              entry.age_limit_note_hi,
+                            );
+
+                            return (
+                              <article
+                                className="portal-post-wise-item"
+                                key={entry.id || `${entry.post_number}-${index}`}
+                              >
+                                <h3>
+                                  {entry.post_number ? `${entry.post_number}. ` : ""}
+                                  {postName || entry.post_name_en}
+                                </h3>
+
+                                <div className="portal-post-wise-grid">
+                                  {entry.vacancies != null ? (
+                                    <div>
+                                      <span>Vacancies</span>
+                                      <strong>{entry.vacancies.toLocaleString("en-IN")}</strong>
+                                    </div>
+                                  ) : null}
+                                  {department ? (
+                                    <div>
+                                      <span>Department</span>
+                                      <strong>{department}</strong>
+                                    </div>
+                                  ) : null}
+                                  {qualification ? (
+                                    <div className="portal-post-wise-full">
+                                      <span>{getDetailLabel("qualification", language)}</span>
+                                      <strong>{qualification}</strong>
+                                    </div>
+                                  ) : null}
+                                  {ageValue ? (
+                                    <div>
+                                      <span>{getDetailLabel("ageLimit", language)}</span>
+                                      <strong>{ageValue}</strong>
+                                    </div>
+                                  ) : null}
+                                  {entry.age_as_on_date ? (
+                                    <div>
+                                      <span>{getDetailLabel("ageAsOn", language)}</span>
+                                      <strong>{formatDate(entry.age_as_on_date, language)}</strong>
+                                    </div>
+                                  ) : null}
+                                  {ageNote ? (
+                                    <div className="portal-post-wise-full">
+                                      <span>{getDetailLabel(ageType === "text_only" ? "ageLimit" : "ageNote", language)}</span>
+                                      <strong>{ageNote}</strong>
+                                    </div>
+                                  ) : null}
+                                </div>
+
+                                {entry.fees?.length ? (
+                                  <div className="portal-post-wise-fees">
+                                    <h4>{getDetailLabel("fee", language)}</h4>
+                                    {entry.fees.map((fee, feeIndex) => {
+                                      const categoryName = getLocalizedText(
+                                        language,
+                                        fee.category_name_en,
+                                        fee.category_name_mr,
+                                        fee.category_name_hi,
+                                      );
+                                      const feeNote = getLocalizedText(
+                                        language,
+                                        fee.fee_note_en,
+                                        fee.fee_note_mr,
+                                        fee.fee_note_hi,
+                                      );
+                                      return (
+                                        <div
+                                          className="portal-post-wise-fee"
+                                          key={fee.id || `${fee.category_name_en}-${feeIndex}`}
+                                        >
+                                          <strong>{categoryName || fee.category_name_en}</strong>
+                                          <span>
+                                            {fee.fee_amount
+                                              ? `₹${Number(fee.fee_amount).toLocaleString("en-IN")}`
+                                              : "—"}
+                                          </span>
+                                          {feeNote ? <small>{feeNote}</small> : null}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                ) : null}
+                              </article>
+                            );
+                          })}
+                        </div>
+                      ) : null}
 
                       {post.jobDetails.important_links.length ? (
                         <div className="portal-job-detail-group">

@@ -272,6 +272,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             image: video.thumbnail,
             body: "",
             organization: "",
+            organizationType: "",
+            tags: [] as string[],
             location: "",
             startDate: "",
             endDate: "",
@@ -329,6 +331,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             item.organization_type,
             language,
           ),
+          organizationType: item.organization_type || "",
+          tags: item.tags || [],
           location: item.location || "",
           startDate: item.start_date || "",
           endDate: item.end_date || "",
@@ -387,9 +391,26 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                   <h1>{post.title}</h1>
 
-                  {post.organization ? (
-                    <div className="portal-post-context">
-                      <span>{post.organization}</span>
+                  {post.organization || post.tags.length > 0 ? (
+                    <div className="portal-post-context portal-post-taxonomy">
+                      {post.organization ? (
+                        <a
+                          className="portal-organization-tag"
+                          href={`/jobs/related/organization/${createPostSlug(post.organizationType)}`}
+                          aria-label={`View jobs from ${post.organization}`}
+                        >
+                          {post.organization}
+                        </a>
+                      ) : null}
+                      {post.tags.map((tag) => (
+                        <a
+                          className="portal-custom-tag"
+                          href={`/jobs/related/tag/${createPostSlug(tag)}`}
+                          key={tag}
+                        >
+                          {tag}
+                        </a>
+                      ))}
                     </div>
                   ) : null}
 

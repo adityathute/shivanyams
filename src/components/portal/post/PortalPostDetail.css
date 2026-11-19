@@ -509,3 +509,110 @@
     font-size: 14px;
   }
 }
+
+
+/* Job age eligibility and category-wise relaxation */
+.portal-job-age-section {
+  margin-top: 8px;
+}
+
+.portal-job-age-divider {
+  width: 100%;
+  height: 1px;
+  margin: 20px 0 16px;
+  background: var(--border-color, #e5e7eb);
+}
+
+.portal-job-age-section h2 {
+  margin: 0 0 12px;
+  color: var(--text-primary, #172033);
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.portal-job-age-section .portal-job-detail-row {
+  display: grid;
+  grid-template-columns: minmax(145px, 0.36fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.portal-job-age-section .portal-job-detail-row strong {
+  color: var(--text-secondary, #778397);
+  font-weight: 650;
+}
+
+.portal-job-age-section .portal-job-detail-row span {
+  color: var(--text-primary, #172033);
+  overflow-wrap: anywhere;
+}
+
+.portal-job-age-relaxations {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.portal-job-age-relaxations h3 {
+  margin: 0 0 2px;
+  color: var(--text-primary, #172033);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.portal-job-age-relaxation {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+}
+
+.portal-job-age-category {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.portal-job-age-category strong {
+  color: var(--text-primary, #172033);
+  font-size: 13px;
+}
+
+.portal-job-age-code {
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--surface-muted, #f1f4f8);
+  color: var(--text-secondary, #667085);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.portal-job-age-relaxation p {
+  margin: 0;
+  color: var(--text-secondary, #667085);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+:root[data-theme="dark"] .portal-job-age-relaxation {
+  background: var(--surface, #171c28);
+  border-color: var(--border-color, #303746);
+}
+
+@media (max-width: 600px) {
+  .portal-job-age-section .portal-job-detail-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .portal-job-age-relaxation {
+    padding: 11px 12px;
+  }
+}

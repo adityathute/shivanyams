@@ -103,7 +103,34 @@ function renderImportantDateValue(entry: ImportantDate, language: string) {
   }
 
   if (entry.date_format === "month_year") {
-    return formatMonthYear(entry.month, entry.year, language);
+    const monthYears = entry.month_years?.length
+      ? entry.month_years
+      : entry.month && entry.year
+        ? [{ month: entry.month, year: entry.year }]
+        : [];
+
+    const validEntries = monthYears.filter(
+      (item) => item.month >= 1 && item.month <= 12 && item.year,
+    );
+
+    if (!validEntries.length) return "";
+
+    const years = [...new Set(validEntries.map((item) => item.year))];
+
+    if (years.length === 1) {
+      const months = validEntries.map((item) =>
+        new Date(item.year, item.month - 1, 1).toLocaleDateString(
+          language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN",
+          { month: "long" },
+        ),
+      );
+
+      return `${months.join(" / ")} ${years[0]}`;
+    }
+
+    return validEntries
+      .map((item) => formatMonthYear(item.month, item.year, language))
+      .join(" / ");
   }
 
   if (entry.date_format === "revised" || withTime) {

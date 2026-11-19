@@ -7,6 +7,8 @@ from .models import (
     Comment,
     ExaminationDetails,
     JobDetails,
+    JobPost,
+    JobPostFee,
     JobVacancyBreakdown,
     Post,
     PostDate,
@@ -85,7 +87,10 @@ class PostDateInline(admin.StackedInline):
         (
             "Month and Year",
             {
-                "fields": (("month", "year"),),
+                "fields": (
+                    ("month", "year"),
+                    "month_years",
+                ),
                 "classes": ("collapse",),
             },
         ),
@@ -318,8 +323,55 @@ class PostDetailAdmin(admin.ModelAdmin):
     list_select_related = ("post",)
 
 
+class JobPostInline(admin.StackedInline):
+    model = JobPost
+    extra = 0
+    show_change_link = True
+    ordering = ("sort_order", "id")
+
+    fieldsets = (
+        (
+            "Post Information",
+            {
+                "fields": (
+                    ("post_number", "sort_order"),
+                    ("post_name_en", "post_name_mr", "post_name_hi"),
+                    ("department_en", "department_mr", "department_hi"),
+                    "vacancies",
+                )
+            },
+        ),
+        (
+            "Educational Qualification",
+            {
+                "fields": (
+                    "educational_qualification_en",
+                    "educational_qualification_mr",
+                    "educational_qualification_hi",
+                )
+            },
+        ),
+        (
+            "Post-specific Age Eligibility",
+            {
+                "fields": (
+                    "age_criteria_type",
+                    ("age_min", "age_max"),
+                    "age_as_on_date",
+                    ("eligible_dob_from", "eligible_dob_to"),
+                    "age_limit_note_en",
+                    "age_limit_note_mr",
+                    "age_limit_note_hi",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
 @admin.register(JobDetails)
 class JobDetailsAdmin(PostDetailAdmin):
+    inlines = (JobPostInline,)
+
     list_display = (
         "post",
         "recruitment_type",
@@ -433,6 +485,59 @@ class JobDetailsAdmin(PostDetailAdmin):
         ),
     )
 
+
+class JobPostFeeInline(admin.TabularInline):
+    model = JobPostFee
+    extra = 0
+    fields = (
+        "category_name_en",
+        "category_name_mr",
+        "category_name_hi",
+        "fee_amount",
+        "fee_note_en",
+        "fee_note_mr",
+        "fee_note_hi",
+        "sort_order",
+    )
+    ordering = ("sort_order", "id")
+
+
+@admin.register(JobPost)
+class JobPostAdmin(admin.ModelAdmin):
+    list_display = (
+        "post_number",
+        "post_name_en",
+        "job",
+        "vacancies",
+        "age_criteria_type",
+        "age_min",
+        "age_max",
+        "sort_order",
+    )
+
+    list_filter = (
+        "age_criteria_type",
+        "job__recruitment_type",
+    )
+
+    search_fields = (
+        "post_number",
+        "post_name_en",
+        "post_name_mr",
+        "post_name_hi",
+        "department_en",
+        "job__post__title_en",
+    )
+
+    autocomplete_fields = ("job",)
+
+    list_select_related = ("job", "job__post")
+
+    ordering = ("job", "sort_order", "id")
+
+    readonly_fields = ("created_at", "updated_at")
+
+    inlines = (JobPostFeeInline,)
 
 @admin.register(JobVacancyBreakdown)
 class JobVacancyBreakdownAdmin(admin.ModelAdmin):
@@ -579,7 +684,10 @@ class PostDateAdmin(admin.ModelAdmin):
         (
             "Month and Year",
             {
-                "fields": (("month", "year"),),
+                "fields": (
+                    ("month", "year"),
+                    "month_years",
+                ),
                 "classes": ("collapse",),
             },
         ),

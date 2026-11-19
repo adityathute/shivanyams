@@ -38,6 +38,7 @@ type DateInput = {
   end_date: string;
   month: string;
   year: string;
+  month_years: { month: string; year: string }[];
   old_date: string;
   new_date: string;
   old_time: string;
@@ -125,6 +126,7 @@ function createEmptyDate(sortOrder: number): DateInput {
     end_date: "",
     month: "",
     year: "",
+    month_years: [],
     old_date: "",
     new_date: "",
     old_time: "",
@@ -147,6 +149,10 @@ function normalizeDateInput(item: Partial<DateInput>): DateInput {
     end_date: item.end_date || "",
     month: item.month == null ? "" : String(item.month),
     year: item.year == null ? "" : String(item.year),
+    month_years: (item.month_years || []).map((entry) => ({
+      month: String(entry.month),
+      year: String(entry.year),
+    })),
     old_date: item.old_date || "",
     new_date: item.new_date || "",
     old_time: item.old_time ? item.old_time.slice(0, 5) : "",
@@ -733,6 +739,12 @@ export default function PostEditor({
             end_date: item.end_date || null,
             month: item.month ? Number(item.month) : null,
             year: item.year ? Number(item.year) : null,
+            month_years: item.month_years
+              .filter((entry) => entry.month && entry.year)
+              .map((entry) => ({
+                month: Number(entry.month),
+                year: Number(entry.year),
+              })),
             old_date: item.old_date || null,
             new_date: item.new_date || null,
             old_time: item.old_time || null,
@@ -995,6 +1007,7 @@ export default function PostEditor({
                   end_date: "",
                   month: "",
                   year: "",
+                  month_years: [],
                   old_date: "",
                   new_date: "",
                   old_time: "",
@@ -1105,37 +1118,82 @@ export default function PostEditor({
 
                   {item.date_format === "month_year" ? (
                     <div className="post-editor-grid">
-                      <label>
-                        Month *
-                        <select
-                          required
-                          value={item.month}
-                          onChange={(event) =>
-                            updateDate({ month: event.target.value })
+                      <div className="post-editor-field">
+                        <label>Month / Year *</label>
+
+                        {item.month_years.map((entry, index) => (
+                          <div
+                            key={index}
+                            className="post-editor-grid"
+                            style={{ marginBottom: 8 }}
+                          >
+                            <select
+                              required
+                              value={entry.month}
+                              onChange={(event) => {
+                                const updated = [...item.month_years];
+                                updated[index] = {
+                                  ...entry,
+                                  month: event.target.value,
+                                };
+                                updateDate({ month_years: updated });
+                              }}
+                            >
+                              <option value="">Select month</option>
+                              {MONTH_OPTIONS.map((month, monthIndex) => (
+                                <option key={month} value={monthIndex + 1}>
+                                  {month}
+                                </option>
+                              ))}
+                            </select>
+
+                            <input
+                              type="number"
+                              required
+                              min={1}
+                              max={9999}
+                              step={1}
+                              placeholder="Year"
+                              value={entry.year}
+                              onChange={(event) => {
+                                const updated = [...item.month_years];
+                                updated[index] = {
+                                  ...entry,
+                                  year: event.target.value,
+                                };
+                                updateDate({ month_years: updated });
+                              }}
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateDate({
+                                  month_years: item.month_years.filter(
+                                    (_, pairIndex) => pairIndex !== index,
+                                  ),
+                                })
+                              }
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateDate({
+                              month_years: [
+                                ...item.month_years,
+                                { month: "", year: "" },
+                              ],
+                            })
                           }
                         >
-                          <option value="">Select month</option>
-                          {MONTH_OPTIONS.map((month, monthIndex) => (
-                            <option key={month} value={monthIndex + 1}>
-                              {month}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        Year *
-                        <input
-                          type="number"
-                          required
-                          min={1}
-                          max={9999}
-                          step={1}
-                          value={item.year}
-                          onChange={(event) =>
-                            updateDate({ year: event.target.value })
-                          }
-                        />
-                      </label>
+                          + Add Month / Year
+                        </button>
+                      </div>
                     </div>
                   ) : null}
 

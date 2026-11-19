@@ -20,7 +20,46 @@ export type ItemType =
   | "video"
   | "tool";
 
+export type JobPostFee = {
+  id?: number;
+  category_name_en: string;
+  category_name_mr: string;
+  category_name_hi: string;
+  fee_amount: string;
+  fee_note_en: string;
+  fee_note_mr: string;
+  fee_note_hi: string;
+  sort_order?: number;
+};
+
+export type JobPost = {
+  id: number;
+  post_number: string;
+  post_name_en: string;
+  post_name_mr: string;
+  post_name_hi: string;
+  department_en: string;
+  department_mr: string;
+  department_hi: string;
+  vacancies: number | null;
+  educational_qualification_en: string;
+  educational_qualification_mr: string;
+  educational_qualification_hi: string;
+  age_criteria_type: string;
+  age_min: number | null;
+  age_max: number | null;
+  age_as_on_date: string | null;
+  eligible_dob_from: string | null;
+  eligible_dob_to: string | null;
+  age_limit_note_en: string;
+  age_limit_note_mr: string;
+  age_limit_note_hi: string;
+  sort_order?: number;
+  fees: JobPostFee[];
+};
+
 export type JobDetails = {
+  posts?: JobPost[];
   advertisement_no: string;
   total_posts: string;
   examination_name: string;
@@ -135,6 +174,10 @@ export type ImportantDate = {
   end_date?: string | null;
   month?: number | null;
   year?: number | null;
+  month_years?: {
+    month: number;
+    year: number;
+  }[];
   old_date?: string | null;
   new_date?: string | null;
   old_time?: string | null;
@@ -143,6 +186,44 @@ export type ImportantDate = {
   description_mr?: string;
   description_hi?: string;
   sort_order?: number;
+};
+
+type ApiJobPostFee = {
+  id?: number;
+  category_name_en?: string;
+  category_name_mr?: string;
+  category_name_hi?: string;
+  fee_amount?: string | number;
+  fee_note_en?: string;
+  fee_note_mr?: string;
+  fee_note_hi?: string;
+  sort_order?: number;
+};
+
+type ApiJobPost = {
+  id: number;
+  post_number?: string;
+  post_name_en?: string;
+  post_name_mr?: string;
+  post_name_hi?: string;
+  department_en?: string;
+  department_mr?: string;
+  department_hi?: string;
+  vacancies?: number | null;
+  educational_qualification_en?: string;
+  educational_qualification_mr?: string;
+  educational_qualification_hi?: string;
+  age_criteria_type?: string;
+  age_min?: number | null;
+  age_max?: number | null;
+  age_as_on_date?: string | null;
+  eligible_dob_from?: string | null;
+  eligible_dob_to?: string | null;
+  age_limit_note_en?: string;
+  age_limit_note_mr?: string;
+  age_limit_note_hi?: string;
+  sort_order?: number;
+  fees?: ApiJobPostFee[];
 };
 
 type ApiPost = {
@@ -198,6 +279,7 @@ type ApiPost = {
     official_notification_url?: string;
     official_website?: string;
     interview_details?: string;
+    posts?: ApiJobPost[];
   } | null;
   scheme_details?: {
     application_url?: string;
@@ -368,6 +450,44 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             label_mr: link.name_mr || "",
             label_hi: link.name_hi || "",
             url: link.url,
+          })),
+          posts: (job.posts || []).map((post) => ({
+            id: post.id,
+            post_number: post.post_number || "",
+            post_name_en: post.post_name_en || "",
+            post_name_mr: post.post_name_mr || "",
+            post_name_hi: post.post_name_hi || "",
+            department_en: post.department_en || "",
+            department_mr: post.department_mr || "",
+            department_hi: post.department_hi || "",
+            vacancies: post.vacancies ?? null,
+            educational_qualification_en:
+              post.educational_qualification_en || "",
+            educational_qualification_mr:
+              post.educational_qualification_mr || "",
+            educational_qualification_hi:
+              post.educational_qualification_hi || "",
+            age_criteria_type: post.age_criteria_type || "",
+            age_min: post.age_min ?? null,
+            age_max: post.age_max ?? null,
+            age_as_on_date: post.age_as_on_date || null,
+            eligible_dob_from: post.eligible_dob_from || null,
+            eligible_dob_to: post.eligible_dob_to || null,
+            age_limit_note_en: post.age_limit_note_en || "",
+            age_limit_note_mr: post.age_limit_note_mr || "",
+            age_limit_note_hi: post.age_limit_note_hi || "",
+            sort_order: post.sort_order ?? 0,
+            fees: (post.fees || []).map((fee) => ({
+              id: fee.id,
+              category_name_en: fee.category_name_en || "",
+              category_name_mr: fee.category_name_mr || "",
+              category_name_hi: fee.category_name_hi || "",
+              fee_amount: String(fee.fee_amount ?? ""),
+              fee_note_en: fee.fee_note_en || "",
+              fee_note_mr: fee.fee_note_mr || "",
+              fee_note_hi: fee.fee_note_hi || "",
+              sort_order: fee.sort_order ?? 0,
+            })),
           })),
         }
       : undefined,

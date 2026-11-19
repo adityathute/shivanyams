@@ -8,6 +8,8 @@ from .models import (
     Comment,
     ExaminationDetails,
     JobDetails,
+    JobPost,
+    JobPostFee,
     JobVacancyBreakdown,
     Post,
     PostDate,
@@ -64,7 +66,6 @@ class PostLinkSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "post")
 
 
-
 class PostDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostDate
@@ -72,35 +73,29 @@ class PostDateSerializer(serializers.ModelSerializer):
             "id",
             "date_type",
             "date_format",
-
             # Multilingual labels
             "label_en",
             "label_mr",
             "label_hi",
-
             # Single date
             "date",
             "time",
-
             # Date range
             "start_date",
             "end_date",
-
             # Month and year
             "month",
             "year",
-
+            "month_years",
             # Revised date
             "old_date",
             "new_date",
             "old_time",
             "new_time",
-
             # Multilingual descriptions
             "description_en",
             "description_mr",
             "description_hi",
-
             # Ordering
             "sort_order",
         )
@@ -139,7 +134,6 @@ class PostDateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(errors)
 
         return attrs
-
 
 
 class PostResourceSerializer(serializers.ModelSerializer):
@@ -202,9 +196,107 @@ class JobVacancyBreakdownSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
-   
+class JobPostFeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobPostFee
+        fields = (
+            "id",
+            "category_name_en",
+            "category_name_mr",
+            "category_name_hi",
+            "fee_amount",
+            "fee_note_en",
+            "fee_note_mr",
+            "fee_note_hi",
+            "sort_order",
+        )
+        read_only_fields = ("id",)
+        validators = []
+
+
+class JobPostSerializer(serializers.ModelSerializer):
+    fees = JobPostFeeSerializer(many=True, required=False)
+
+    class Meta:
+        model = JobPost
+        fields = (
+            "id",
+            "post_number",
+            "post_name_en",
+            "post_name_mr",
+            "post_name_hi",
+            "department_en",
+            "department_mr",
+            "department_hi",
+            "vacancies",
+            "educational_qualification_en",
+            "educational_qualification_mr",
+            "educational_qualification_hi",
+            "age_criteria_type",
+            "age_min",
+            "age_max",
+            "age_as_on_date",
+            "eligible_dob_from",
+            "eligible_dob_to",
+            "age_limit_note_en",
+            "age_limit_note_mr",
+            "age_limit_note_hi",
+            "sort_order",
+            "fees",
+        )
+        read_only_fields = ("id",)
+
+
+    def validate(self, attrs):
+        values = {}
+
+        if self.instance:
+            for field in self.Meta.fields:
+                if field in ("id", "fees"):
+                    continue
+                values[field] = getattr(self.instance, field)
+
+        values.update({
+            key: value
+            for key, value in attrs.items()
+            if key != "fees"
+        })
+
+        if self.instance:
+            values["job"] = self.instance.job
+
+        candidate = JobPost(**values)
+
+        try:
+            candidate.clean()
+        except DjangoValidationError as exc:
+            if hasattr(exc, "message_dict"):
+                raise serializers.ValidationError(exc.message_dict)
+            raise serializers.ValidationError(exc.messages)
+
+        # Prevent duplicate fee categories within the same post.
+        fees = attrs.get("fees")
+        if fees is not None:
+            categories = [
+                fee["category_name_en"].strip().casefold()
+                for fee in fees
+            ]
+
+            if len(categories) != len(set(categories)):
+                raise serializers.ValidationError({
+                    "fees": "Duplicate fee categories are not allowed."
+                })
+
+        return attrs
+
+
 class JobDetailsSerializer(serializers.ModelSerializer):
     vacancy_breakdowns = JobVacancyBreakdownSerializer(
+        many=True,
+        required=False,
+    )
+
+    posts = JobPostSerializer(
         many=True,
         required=False,
     )
@@ -213,10 +305,93 @@ class JobDetailsSerializer(serializers.ModelSerializer):
         model = JobDetails
         exclude = ("id", "post", "created_at", "updated_at")
 
-    def create(self, validated_data):
-        breakdowns = validated_data.pop("vacancy_breakdowns", [])
 
-        job = JobDetails.objects.create(**validated_data)
+
+    def validate(self, attrs):
+        # For nested updates, retrieve the existing JobDetails
+        # from the parent PostWriteSerializer.
+        detail_instance = self.instance
+
+        if detail_instance is None:
+            parent_instance = getattr(self.parent, "instance", None)
+
+            if parent_instance is not None:
+                try:
+                    detail_instance = parent_instance.job_details
+                except (JobDetails.DoesNotExist, AttributeError):
+                    detail_instance = None
+
+        # Start with existing values when updating.
+        values = {}
+
+        if detail_instance:
+            for field in JobDetails._meta.concrete_fields:
+                if field.name in ("id", "post", "created_at", "updated_at"):
+                    continue
+
+                values[field.name] = getattr(detail_instance, field.name)
+
+        # Apply submitted changes.
+        values.update({
+            key: value
+            for key, value in attrs.items()
+            if key not in ("vacancy_breakdowns", "posts")
+        })
+
+        candidate = JobDetails(**values)
+
+        try:
+            candidate.clean()
+        except DjangoValidationError as exc:
+            if hasattr(exc, "message_dict"):
+                raise serializers.ValidationError(exc.message_dict)
+            raise serializers.ValidationError(exc.messages)
+
+        # Prevent duplicate post numbers in one submission.
+        posts = attrs.get("posts")
+
+        if posts is not None:
+            post_numbers = [
+                item["post_number"].strip().casefold()
+                for item in posts
+            ]
+
+            if len(post_numbers) != len(set(post_numbers)):
+                raise serializers.ValidationError({
+                    "posts": "Duplicate post numbers are not allowed."
+                })
+
+        return attrs
+
+
+
+    @staticmethod
+    def create_job_posts(job, posts):
+        for post_data in posts:
+            post_data = dict(post_data)
+            fees = post_data.pop("fees", [])
+
+            job_post = JobPost.objects.create(
+                job=job,
+                **post_data,
+            )
+
+            for fee in fees:
+                JobPostFee.objects.create(
+                    job_post=job_post,
+                    **fee,
+                )
+
+    @classmethod
+    def replace_job_posts(cls, job, posts):
+        # Replace existing posts and their fees.
+        job.posts.all().delete()
+
+        cls.create_job_posts(job, posts)
+
+    @staticmethod
+    def replace_vacancy_breakdowns(job, breakdowns):
+        job.vacancy_breakdowns.all().delete()
 
         for breakdown in breakdowns:
             JobVacancyBreakdown.objects.create(
@@ -224,27 +399,36 @@ class JobDetailsSerializer(serializers.ModelSerializer):
                 **breakdown,
             )
 
+    @transaction.atomic
+    def create(self, validated_data):
+        breakdowns = validated_data.pop("vacancy_breakdowns", [])
+        posts = validated_data.pop("posts", [])
+
+        job = JobDetails.objects.create(**validated_data)
+
+        self.replace_vacancy_breakdowns(job, breakdowns)
+        self.create_job_posts(job, posts)
+
         return job
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         breakdowns = validated_data.pop("vacancy_breakdowns", None)
+        posts = validated_data.pop("posts", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         instance.save()
 
-        # Replace vacancy breakdowns only when provided.
         if breakdowns is not None:
-            instance.vacancy_breakdowns.all().delete()
+            self.replace_vacancy_breakdowns(instance, breakdowns)
 
-            for breakdown in breakdowns:
-                JobVacancyBreakdown.objects.create(
-                    job=instance,
-                    **breakdown,
-                )
+        if posts is not None:
+            self.replace_job_posts(instance, posts)
 
         return instance
+
 
 class SchemeDetailsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -520,9 +704,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        start_date = attrs.get(
-            "start_date", getattr(self.instance, "start_date", None)
-        )
+        start_date = attrs.get("start_date", getattr(self.instance, "start_date", None))
         end_date = attrs.get("end_date", getattr(self.instance, "end_date", None))
         if start_date and end_date and end_date < start_date:
             raise serializers.ValidationError(
@@ -588,7 +770,6 @@ class PostWriteSerializer(serializers.ModelSerializer):
             row.pop("target_post", None)
             manager.create(**{parent_field: parent}, **row)
 
-
     @classmethod
     def _save_nested_data(cls, post, nested_data):
         if "important_links" in nested_data:
@@ -642,8 +823,10 @@ class PostWriteSerializer(serializers.ModelSerializer):
             # Job-specific nested data.
             if related_name == "job_details":
                 breakdowns = detail_data.pop("vacancy_breakdowns", None)
+                posts = detail_data.pop("posts", None)
             else:
                 breakdowns = None
+                posts = None
 
             # Create or update the detail record.
             detail, _ = detail_model.objects.update_or_create(
@@ -653,16 +836,17 @@ class PostWriteSerializer(serializers.ModelSerializer):
 
             # Save vacancy breakdowns.
             if breakdowns is not None:
-                detail.vacancy_breakdowns.all().delete()
+                JobDetailsSerializer.replace_vacancy_breakdowns(
+                    detail,
+                    breakdowns,
+                )
 
-                for breakdown in breakdowns:
-                    breakdown.pop("id", None)
-
-                    JobVacancyBreakdown.objects.create(
-                        job=detail,
-                        **breakdown,
-                    )
-
+            # Save individual recruitment posts.
+            if posts is not None:
+                JobDetailsSerializer.replace_job_posts(
+                    detail,
+                    posts,
+                )
 
 
 class CommentReplySerializer(serializers.ModelSerializer):

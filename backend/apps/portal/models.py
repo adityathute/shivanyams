@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import F, Q
 from django.core.exceptions import ValidationError
 
+
 class TimestampedModel(models.Model):
     """Abstract base for records that need creation and update timestamps."""
 
@@ -43,6 +44,7 @@ class Category(TimestampedModel):
     def __str__(self):
         return self.name_en
 
+
 class ImportantLink(TimestampedModel):
     name_en = models.CharField(max_length=240)
     name_mr = models.CharField(max_length=240)
@@ -56,7 +58,8 @@ class ImportantLink(TimestampedModel):
 
     def __str__(self):
         return self.name_en
-    
+
+
 class PostOrganizationType(models.TextChoices):
     """Simple government organization type choices used directly by posts."""
 
@@ -230,7 +233,7 @@ class JobDetails(TimestampedModel):
         MAXIMUM_ONLY = "maximum_only", "Maximum Age Only"
         DOB_RANGE = "dob_range", "Date of Birth Range"
         TEXT_ONLY = "text_only", "Text-based Age Criteria"
-        
+
     post = models.OneToOneField(
         Post,
         on_delete=models.CASCADE,
@@ -286,7 +289,7 @@ class JobDetails(TimestampedModel):
         choices=ApplicationMode.choices,
         default=ApplicationMode.ONLINE,
     )
-    
+
     apply_url = models.URLField(max_length=1000, blank=True)
     apply_email = models.EmailField(blank=True)
     applications_open = models.BooleanField(default=True)
@@ -344,9 +347,29 @@ class JobDetails(TimestampedModel):
             if self.age_min is None:
                 errors["age_min"] = "Minimum age is required."
 
+            if self.age_max is not None:
+                errors["age_max"] = (
+                    "Maximum age is not allowed for Minimum Only criteria."
+                )
+
+            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for numeric age criteria."
+                )
+
         elif self.age_criteria_type == self.AgeCriteriaType.MAXIMUM_ONLY:
             if self.age_max is None:
                 errors["age_max"] = "Maximum age is required."
+
+            if self.age_min is not None:
+                errors["age_min"] = (
+                    "Minimum age is not allowed for Maximum Only criteria."
+                )
+
+            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for numeric age criteria."
+                )
 
         elif self.age_criteria_type == self.AgeCriteriaType.DOB_RANGE:
             if self.eligible_dob_from is None:
@@ -361,20 +384,256 @@ class JobDetails(TimestampedModel):
                 )
 
         elif self.age_criteria_type == self.AgeCriteriaType.TEXT_ONLY:
-            if not any([
-                self.age_limit_note_en.strip(),
-                self.age_limit_note_mr.strip(),
-                self.age_limit_note_hi.strip(),
-            ]):
+            if not any(
+                [
+                    (self.age_limit_note_en or "").strip(),
+                    (self.age_limit_note_mr or "").strip(),
+                    (self.age_limit_note_hi or "").strip(),
+                ]
+            ):
                 errors["age_limit_note_en"] = (
                     "Age criteria description is required in at least one language."
                 )
 
+            if (
+                self.age_min is not None
+                or self.age_max is not None
+                or self.eligible_dob_from is not None
+                or self.eligible_dob_to is not None
+            ):
+                errors["age_min"] = (
+                    "Numeric age and DOB fields are not allowed for Text Only criteria."
+                )
+
         if errors:
             raise ValidationError(errors)
-        
+
     def __str__(self):
         return self.post.title_en
+
+
+class JobPost(TimestampedModel):
+    """
+    Individual posts within a recruitment notification.
+    Each post can have its own vacancies and age eligibility.
+    """
+
+    job = models.ForeignKey(
+        JobDetails,
+        on_delete=models.CASCADE,
+        related_name="posts",
+    )
+
+    # Post identification
+    post_number = models.CharField(max_length=40)
+    post_name_en = models.CharField(max_length=240)
+    post_name_mr = models.CharField(max_length=240, blank=True)
+    post_name_hi = models.CharField(max_length=240, blank=True)
+
+    # Optional department
+    department_en = models.CharField(max_length=240, blank=True)
+    department_mr = models.CharField(max_length=240, blank=True)
+    department_hi = models.CharField(max_length=240, blank=True)
+
+    vacancies = models.PositiveIntegerField(null=True, blank=True)
+
+    # Educational qualification for this individual post
+    educational_qualification_en = models.TextField(blank=True)
+    educational_qualification_mr = models.TextField(blank=True)
+    educational_qualification_hi = models.TextField(blank=True)
+
+    # Leave empty to use the common age criteria from JobDetails.
+    # Set a value to override it for this particular post.
+    age_criteria_type = models.CharField(
+        max_length=20,
+        choices=JobDetails.AgeCriteriaType.choices,
+        blank=True,
+        default="",
+    )
+
+    age_min = models.PositiveSmallIntegerField(null=True, blank=True)
+    age_max = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    eligible_dob_from = models.DateField(null=True, blank=True)
+    eligible_dob_to = models.DateField(null=True, blank=True)
+
+    # Leave empty to use the common JobDetails age calculation date.
+    age_as_on_date = models.DateField(null=True, blank=True)
+
+    age_limit_note_en = models.TextField(blank=True)
+    age_limit_note_mr = models.TextField(blank=True)
+    age_limit_note_hi = models.TextField(blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("job", "post_number"),
+                name="unique_job_post_number",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(age_min__isnull=True)
+                    | Q(age_max__isnull=True)
+                    | Q(age_max__gte=F("age_min"))
+                ),
+                name="job_post_age_max_gte_min",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(eligible_dob_from__isnull=True)
+                    | Q(eligible_dob_to__isnull=True)
+                    | Q(eligible_dob_to__gte=F("eligible_dob_from"))
+                ),
+                name="job_post_dob_range_valid",
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+
+        # Empty means inherit common JobDetails age criteria.
+        if not self.age_criteria_type:
+            if any(
+                [
+                    self.age_min is not None,
+                    self.age_max is not None,
+                    self.eligible_dob_from is not None,
+                    self.eligible_dob_to is not None,
+                    (self.age_limit_note_en or "").strip(),
+                    (self.age_limit_note_mr or "").strip(),
+                    (self.age_limit_note_hi or "").strip(),
+                ]
+            ):
+                errors["age_criteria_type"] = (
+                    "Select an age criteria type when entering post-specific age details."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.AGE_RANGE:
+            if self.age_min is None:
+                errors["age_min"] = "Minimum age is required."
+
+            if self.age_max is None:
+                errors["age_max"] = "Maximum age is required."
+
+            if self.eligible_dob_from or self.eligible_dob_to:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for Age Range criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.MINIMUM_ONLY:
+            if self.age_min is None:
+                errors["age_min"] = "Minimum age is required."
+
+            if self.age_max is not None:
+                errors["age_max"] = (
+                    "Maximum age is not allowed for Minimum Only criteria."
+                )
+
+            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for numeric age criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.MAXIMUM_ONLY:
+            if self.age_max is None:
+                errors["age_max"] = "Maximum age is required."
+
+            if self.age_min is not None:
+                errors["age_min"] = (
+                    "Minimum age is not allowed for Maximum Only criteria."
+                )
+
+            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for numeric age criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.DOB_RANGE:
+            if self.eligible_dob_from is None:
+                errors["eligible_dob_from"] = "Starting DOB is required."
+
+            if self.eligible_dob_to is None:
+                errors["eligible_dob_to"] = "Ending DOB is required."
+
+            if self.age_min is not None or self.age_max is not None:
+                errors["age_min"] = (
+                    "Numeric age fields are not allowed for DOB Range criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.TEXT_ONLY:
+            if not any(
+                [
+                    (self.age_limit_note_en or "").strip(),
+                    (self.age_limit_note_mr or "").strip(),
+                    (self.age_limit_note_hi or "").strip(),
+                ]
+            ):
+                errors["age_limit_note_en"] = (
+                    "Age criteria description is required in at least one language."
+                )
+
+            if (
+                self.age_min is not None
+                or self.age_max is not None
+                or self.eligible_dob_from is not None
+                or self.eligible_dob_to is not None
+            ):
+                errors["age_min"] = (
+                    "Numeric age and DOB fields are not allowed for Text Only criteria."
+                )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def __str__(self):
+        return f"{self.post_number} - {self.post_name_en}"
+
+
+class JobPostFee(TimestampedModel):
+    """
+    Category-wise application fees for an individual recruitment post.
+    """
+
+    job_post = models.ForeignKey(
+        JobPost,
+        on_delete=models.CASCADE,
+        related_name="fees",
+    )
+
+    category_name_en = models.CharField(max_length=120)
+    category_name_mr = models.CharField(max_length=120, blank=True)
+    category_name_hi = models.CharField(max_length=120, blank=True)
+
+    fee_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    fee_note_en = models.CharField(max_length=300, blank=True)
+    fee_note_mr = models.CharField(max_length=300, blank=True)
+    fee_note_hi = models.CharField(max_length=300, blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("job_post", "category_name_en"),
+                name="unique_job_post_fee_category",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.job_post} - {self.category_name_en}"
+
 
 class JobVacancyBreakdown(TimestampedModel):
     """Optional category-wise vacancy counts for a government recruitment."""
@@ -687,6 +946,7 @@ class ToolDetails(TimestampedModel):
     def __str__(self):
         return self.post.title_en
 
+
 class PostLink(TimestampedModel):
     """Important links displayed with a post, with translated labels."""
 
@@ -785,6 +1045,7 @@ class PostDate(TimestampedModel):
     # Format 3: Month and year
     month = models.PositiveSmallIntegerField(null=True, blank=True)
     year = models.PositiveSmallIntegerField(null=True, blank=True)
+    month_years = models.JSONField(default=list, blank=True)
 
     # Formats 4 and 5: Revised dates
     old_date = models.DateField(null=True, blank=True)
@@ -828,14 +1089,22 @@ class PostDate(TimestampedModel):
                 errors["date"] = "A date is required for Single Date format."
 
             if self.start_date or self.end_date:
-                errors["start_date"] = "Date range fields are not allowed for Single Date format."
-                errors["end_date"] = "Date range fields are not allowed for Single Date format."
+                errors["start_date"] = (
+                    "Date range fields are not allowed for Single Date format."
+                )
+                errors["end_date"] = (
+                    "Date range fields are not allowed for Single Date format."
+                )
 
             if self.old_date or self.new_date:
-                errors["old_date"] = "Revised date fields are not allowed for Single Date format."
+                errors["old_date"] = (
+                    "Revised date fields are not allowed for Single Date format."
+                )
 
             if self.month or self.year:
-                errors["month"] = "Month and year fields are not allowed for Single Date format."
+                errors["month"] = (
+                    "Month and year fields are not allowed for Single Date format."
+                )
 
         elif self.date_format == self.DateFormat.RANGE:
             if not self.start_date:
@@ -848,23 +1117,68 @@ class PostDate(TimestampedModel):
                 errors["end_date"] = "End date cannot be earlier than start date."
 
             if self.date or self.old_date or self.new_date:
-                errors["date"] = "Single and revised date fields are not allowed for Date Range format."
+                errors["date"] = (
+                    "Single and revised date fields are not allowed for Date Range format."
+                )
 
             if self.month or self.year:
-                errors["month"] = "Month and year fields are not allowed for Date Range format."
+                errors["month"] = (
+                    "Month and year fields are not allowed for Date Range format."
+                )
 
         elif self.date_format == self.DateFormat.MONTH_YEAR:
-            if not self.month:
-                errors["month"] = "Month is required."
+            # Support both old single month/year and new multiple month/year entries.
+            month_years = self.month_years or []
 
-            if not self.year:
-                errors["year"] = "Year is required."
+            if not month_years and self.month and self.year:
+                month_years = [{"month": self.month, "year": self.year}]
+
+            if not month_years:
+                errors["month_years"] = "At least one month and year is required."
+
+            elif not isinstance(month_years, list):
+                errors["month_years"] = "Month and year entries must be a list."
+
+            else:
+                for index, item in enumerate(month_years):
+                    if not isinstance(item, dict):
+                        errors["month_years"] = (
+                            "Each entry must contain a month and year."
+                        )
+                        break
+
+                    month = item.get("month")
+                    year = item.get("year")
+
+                    if (
+                        not isinstance(month, int)
+                        or isinstance(month, bool)
+                        or not 1 <= month <= 12
+                    ):
+                        errors["month_years"] = (
+                            f"Entry {index + 1}: Month must be between 1 and 12."
+                        )
+                        break
+
+                    if (
+                        not isinstance(year, int)
+                        or isinstance(year, bool)
+                        or not 1 <= year <= 9999
+                    ):
+                        errors["month_years"] = (
+                            f"Entry {index + 1}: Enter a valid year."
+                        )
+                        break
 
             if self.date or self.start_date or self.end_date:
-                errors["date"] = "Date fields are not allowed for Month and Year format."
+                errors["date"] = (
+                    "Date fields are not allowed for Month and Year format."
+                )
 
             if self.old_date or self.new_date:
-                errors["old_date"] = "Revised date fields are not allowed for Month and Year format."
+                errors["old_date"] = (
+                    "Revised date fields are not allowed for Month and Year format."
+                )
 
         elif self.date_format in (
             self.DateFormat.REVISED,
@@ -877,16 +1191,21 @@ class PostDate(TimestampedModel):
                 errors["new_date"] = "Revised date is required."
 
             if self.date or self.start_date or self.end_date:
-                errors["date"] = "Single and range date fields are not allowed for Revised Date format."
+                errors["date"] = (
+                    "Single and range date fields are not allowed for Revised Date format."
+                )
 
             if self.month or self.year:
-                errors["month"] = "Month and year fields are not allowed for Revised Date format."
+                errors["month"] = (
+                    "Month and year fields are not allowed for Revised Date format."
+                )
 
-            if (
-                self.date_format == self.DateFormat.REVISED
-                and (self.old_time or self.new_time)
+            if self.date_format == self.DateFormat.REVISED and (
+                self.old_time or self.new_time
             ):
-                errors["old_time"] = "Time fields are only allowed for Revised Date with Time format."
+                errors["old_time"] = (
+                    "Time fields are only allowed for Revised Date with Time format."
+                )
 
         if errors:
             raise ValidationError(errors)

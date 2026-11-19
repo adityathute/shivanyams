@@ -12,7 +12,9 @@ from .models import (
     Category,
     Comment,
     ImportantLink,
-        JobDetails,
+    JobDetails,
+    JobPost,
+    JobPostFee,
     JobVacancyBreakdown,
     LanguageChoices,
     Post,
@@ -86,6 +88,15 @@ def public_posts_for_kind(kind):
             "resources",
             "outgoing_relations__target_post",
             "job_details__vacancy_breakdowns",
+            Prefetch(
+                "job_details__posts",
+                queryset=JobPost.objects.order_by("sort_order", "id").prefetch_related(
+                    Prefetch(
+                        "fees",
+                        queryset=JobPostFee.objects.order_by("sort_order", "id"),
+                    )
+                ),
+            ),
         )
     )
 
@@ -150,6 +161,15 @@ class AdminContent(viewsets.ModelViewSet):
                 "resources",
                 "outgoing_relations__target_post",
                 "job_details__vacancy_breakdowns",
+                Prefetch(
+                    "job_details__posts",
+                    queryset=JobPost.objects.order_by("sort_order", "id").prefetch_related(
+                        Prefetch(
+                            "fees",
+                            queryset=JobPostFee.objects.order_by("sort_order", "id"),
+                        )
+                    ),
+                ),
             )
         )
 

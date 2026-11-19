@@ -410,7 +410,7 @@ function detailTemplate(api: string): Record<string, unknown> {
       designation: "",
       post_details: "",
       educational_qualification: "",
-      age_criteria_type: "age_range",
+      age_criteria_type: "",
       age_min: null,
       age_max: null,
       age_as_on_date: "",
@@ -1732,7 +1732,7 @@ export default function PostEditor({
                           }
                         >
                           <option value="">
-                            Use common recruitment criteria
+                            Select age criteria for this post
                           </option>
                           {DETAIL_OPTIONS.age_criteria_type.map((option) => (
                             <option key={option} value={option}>

@@ -260,17 +260,17 @@ class JobDetails(TimestampedModel):
     education_mode = models.CharField(
         max_length=12,
         choices=DetailMode.choices,
-        default=DetailMode.PER_POST,
+        default=DetailMode.COMMON,
     )
     age_mode = models.CharField(
         max_length=12,
         choices=DetailMode.choices,
-        default=DetailMode.PER_POST,
+        default=DetailMode.COMMON,
     )
     fee_mode = models.CharField(
         max_length=12,
         choices=DetailMode.choices,
-        default=DetailMode.PER_POST,
+        default=DetailMode.COMMON,
     )
 
     educational_qualification = models.TextField(blank=True)

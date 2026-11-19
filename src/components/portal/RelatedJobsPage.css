@@ -1,10 +1,8 @@
 .related-jobs-page {
-  min-height: 55vh;
   padding: 28px 16px 48px;
 }
 
 .related-jobs-shell {
-  width: min(100%, 1120px);
   margin: 0 auto;
 }
 

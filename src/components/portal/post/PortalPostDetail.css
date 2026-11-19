@@ -84,20 +84,35 @@
 
 .portal-post-card h1,
 .portal-post-not-found h1 {
-  margin: 0 0 24px;
   color: var(--text-primary, #172033);
   font-size: clamp(25px, 4vw, 38px);
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
 
+.portal-post-card h1 {
+  margin: 0 0 0px;
+}
+
+.portal-post-not-found h1 {
+  margin: 0 0 24px;
+}
+
 .portal-post-summary,
 .portal-post-not-found p {
-  margin: 22px 0;
   color: var(--text-secondary, #64748b);
   font-size: 16px;
   line-height: 1.85;
   white-space: pre-wrap;
+}
+
+.portal-post-summary {
+  margin: 16px 0;
+  margin-top: 12px;
+}
+
+.portal-post-not-found p {
+  margin: 22px 0;
 }
 
 .portal-post-context {
@@ -307,7 +322,7 @@
 .portal-post-taxonomy {
   align-items: center;
   gap: 8px;
-  margin: -8px 0 20px;
+  margin: -8px 0 12px;
 }
 
 .portal-post-taxonomy a {
@@ -560,5 +575,40 @@
   /* Only Age Criteria Note gets full width on mobile */
   .portal-job-info-item-age-note {
     grid-column: 1 / -1;
+  }
+}
+
+/* Fee occupies 1 of 4 columns */
+.portal-job-info-item-fee {
+  grid-column: span 1;
+}
+
+/* Fee note occupies 3 of 4 columns */
+.portal-job-info-item-fee-note {
+  grid-column: span 3;
+}
+
+/* Full width when only fee or note is available */
+.portal-job-info-item-fee-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .portal-job-info-item-fee {
+    grid-column: span 1;
+  }
+
+  .portal-job-info-item-fee-note {
+    grid-column: span 1;
+  }
+
+  .portal-job-info-item-fee-full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .portal-job-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

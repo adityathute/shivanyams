@@ -36,6 +36,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name_en",)}
     readonly_fields = ("created_at", "updated_at")
 
+
 @admin.register(ImportantLink)
 class ImportantLinkAdmin(admin.ModelAdmin):
     list_display = ("name_en", "name_mr", "name_hi", "url", "sort_order", "active")
@@ -53,7 +54,6 @@ class PostLinkInline(admin.TabularInline):
     ordering = ("sort_order", "id")
 
 
-
 class PostDateInline(admin.StackedInline):
     model = PostDate
     extra = 0
@@ -62,44 +62,30 @@ class PostDateInline(admin.StackedInline):
     fieldsets = (
         (
             "Date Category and Format",
-            {
-                "fields": (
-                    ("date_type", "date_format", "sort_order"),
-                )
-            },
+            {"fields": (("date_type", "date_format", "sort_order"),)},
         ),
         (
             "Multilingual Labels",
-            {
-                "fields": (
-                    ("label_en", "label_mr", "label_hi"),
-                )
-            },
+            {"fields": (("label_en", "label_mr", "label_hi"),)},
         ),
         (
             "Single Date",
             {
-                "fields": (
-                    ("date", "time"),
-                ),
+                "fields": (("date", "time"),),
                 "classes": ("collapse",),
             },
         ),
         (
             "Date Range",
             {
-                "fields": (
-                    ("start_date", "end_date"),
-                ),
+                "fields": (("start_date", "end_date"),),
                 "classes": ("collapse",),
             },
         ),
         (
             "Month and Year",
             {
-                "fields": (
-                    ("month", "year"),
-                ),
+                "fields": (("month", "year"),),
                 "classes": ("collapse",),
             },
         ),
@@ -341,6 +327,7 @@ class JobDetailsAdmin(PostDetailAdmin):
         "age_criteria_type",
         "age_min",
         "age_max",
+        "application_fee",
         "applications_open",
         "application_mode",
         "updated_at",
@@ -396,16 +383,9 @@ class JobDetailsAdmin(PostDetailAdmin):
             {
                 "fields": (
                     "application_fee",
-                    "fee_payment_mode",
-                )
-            },
-        ),
-        (
-            "Salary and Pay Scale",
-            {
-                "fields": (
-                    "pay_scale",
-                    "pay_level",
+                    "application_fee_note_en",
+                    "application_fee_note_mr",
+                    "application_fee_note_hi",
                 )
             },
         ),
@@ -452,6 +432,7 @@ class JobDetailsAdmin(PostDetailAdmin):
             },
         ),
     )
+
 
 @admin.register(JobVacancyBreakdown)
 class JobVacancyBreakdownAdmin(admin.ModelAdmin):
@@ -533,7 +514,6 @@ class PostLinkAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
 
 
-
 @admin.register(PostDate)
 class PostDateAdmin(admin.ModelAdmin):
     list_display = (
@@ -580,36 +560,26 @@ class PostDateAdmin(admin.ModelAdmin):
         ),
         (
             "Labels",
-            {
-                "fields": (
-                    ("label_en", "label_mr", "label_hi"),
-                )
-            },
+            {"fields": (("label_en", "label_mr", "label_hi"),)},
         ),
         (
             "Single Date",
             {
-                "fields": (
-                    ("date", "time"),
-                ),
+                "fields": (("date", "time"),),
                 "classes": ("collapse",),
             },
         ),
         (
             "Date Range",
             {
-                "fields": (
-                    ("start_date", "end_date"),
-                ),
+                "fields": (("start_date", "end_date"),),
                 "classes": ("collapse",),
             },
         ),
         (
             "Month and Year",
             {
-                "fields": (
-                    ("month", "year"),
-                ),
+                "fields": (("month", "year"),),
                 "classes": ("collapse",),
             },
         ),
@@ -653,6 +623,7 @@ class PostDateAdmin(admin.ModelAdmin):
         if obj.date_format == PostDate.DateFormat.MONTH_YEAR:
             if obj.month and obj.year:
                 import calendar
+
                 return f"{calendar.month_name[obj.month]} {obj.year}"
             return "-"
 
@@ -665,7 +636,6 @@ class PostDateAdmin(admin.ModelAdmin):
         return "-"
 
     get_display_date.short_description = "Important Date"
-
 
 
 @admin.register(PostResource)
@@ -766,7 +736,14 @@ class PostVisitorAdmin(admin.ModelAdmin):
 
 @admin.register(PostView)
 class PostViewAdmin(admin.ModelAdmin):
-    list_display = ("post", "visitor", "auth_user_id", "language", "device", "viewed_at")
+    list_display = (
+        "post",
+        "visitor",
+        "auth_user_id",
+        "language",
+        "device",
+        "viewed_at",
+    )
     list_filter = ("language", "device", "viewed_at")
     search_fields = ("post__title_en", "visitor__visitor_id", "auth_user_id")
     autocomplete_fields = ("post", "visitor")

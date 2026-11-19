@@ -276,10 +276,10 @@ class JobDetails(TimestampedModel):
     age_limit_note_hi = models.TextField(blank=True)
 
     application_fee = models.TextField(blank=True)
-    fee_payment_mode = models.CharField(max_length=180, blank=True)
 
-    pay_scale = models.CharField(max_length=240, blank=True)
-    pay_level = models.CharField(max_length=120, blank=True)
+    application_fee_note_en = models.TextField(blank=True)
+    application_fee_note_mr = models.TextField(blank=True)
+    application_fee_note_hi = models.TextField(blank=True)
 
     application_mode = models.CharField(
         max_length=16,

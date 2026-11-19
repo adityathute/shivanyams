@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ImportantDate } from "../data/portal-data";
@@ -137,26 +136,6 @@ function renderImportantDateValue(entry: ImportantDate, language: string) {
   );
 }
 
-function getVideoEmbedUrl(value?: string) {
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    const host = url.hostname.replace(/^www\./, "");
-    const segments = url.pathname.split("/").filter(Boolean);
-    const id =
-      host === "youtu.be"
-        ? segments[0]
-        : url.pathname === "/watch"
-          ? url.searchParams.get("v")
-          : ["embed", "shorts", "live"].includes(segments[0])
-            ? segments[1]
-            : null;
-    return id ? `https://www.youtube.com/embed/${id}` : null;
-  } catch {
-    return null;
-  }
-}
-
 function getLocalizedText(
   language: string,
   en?: string,
@@ -174,6 +153,16 @@ function getLocalizedText(
 }
 
 const detailLabels = {
+  totalPostsUnit: {
+    en: "Posts",
+    mr: "जागा",
+    hi: "पद",
+  },
+  feeNote: {
+    en: "Application Fee Note",
+    mr: "अर्ज शुल्क सूचना",
+    hi: "आवेदन शुल्क संबंधी सूचना",
+  },
   upTo: {
     en: "Up to",
     mr: "पर्यंत",
@@ -449,9 +438,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const label = categoryRecord
     ? getCategoryTitle(categoryRecord, language as CategoryLanguage)
     : "";
-  const embedUrl = category === "videos" ? getVideoEmbedUrl(post?.link) : null;
 
   const jobAgeDetails = post?.jobDetails;
+  const jobDetails = post?.jobDetails;
 
   const isTextOnlyAgeCriteria =
     jobAgeDetails?.age_criteria_type === "text_only";
@@ -494,6 +483,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     jobAgeDetails?.age_limit_note_en,
     jobAgeDetails?.age_limit_note_mr,
     jobAgeDetails?.age_limit_note_hi,
+  );
+
+  const applicationFeeNote = getLocalizedText(
+    language,
+    jobAgeDetails?.application_fee_note_en,
+    jobAgeDetails?.application_fee_note_mr,
+    jobAgeDetails?.application_fee_note_hi,
   );
 
   const ageInfoRows: [string, string][] = [
@@ -566,6 +562,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                   <h1>{post.title}</h1>
 
+                  {post.description ? (
+                    <p className="portal-post-summary">{post.description}</p>
+                  ) : null}
+
                   {post.organization || post.tags.length > 0 ? (
                     <div className="portal-post-context portal-post-taxonomy">
                       {post.organization ? (
@@ -589,50 +589,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </div>
                   ) : null}
 
-                  {!post.importantDates.length &&
-                  (post.eventDate || post.startDate || post.endDate) ? (
-                    <div className="portal-post-context">
-                      {post.eventDate ? (
-                        <span>
-                          {getDetailLabel("eventDate", language)}:{" "}
-                          {formatDate(post.eventDate, language)}
-                        </span>
-                      ) : null}
-                      {post.startDate ? (
-                        <span>
-                          {getDetailLabel("start", language)}:{" "}
-                          {formatDate(post.startDate, language)}
-                        </span>
-                      ) : null}
-                      {post.endDate ? (
-                        <span>
-                          {getDetailLabel("end", language)}:{" "}
-                          {formatDate(post.endDate, language)}
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  {post.image && !embedUrl ? (
-                    <Image
-                      className="portal-post-image"
-                      src={post.image}
-                      alt={post.title}
-                      width={1200}
-                      height={800}
-                      sizes="(max-width: 768px) 100vw, 1200px"
-                    />
-                  ) : null}
-
-                  {embedUrl ? (
-                    <div className="portal-post-video">
-                      <iframe
-                        src={embedUrl}
-                        title={post.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      />
-                    </div>
+                  {post.body ? (
+                    <div className="portal-post-summary">{post.body}</div>
                   ) : null}
 
                   {post.jobDetails ? (
@@ -645,7 +603,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           ],
                           [
                             getDetailLabel("total", language),
-                            post.jobDetails.total_posts,
+                            post.jobDetails.total_posts != null
+                              ? `${post.jobDetails.total_posts} ${getDetailLabel("totalPostsUnit", language)}`
+                              : "",
                           ],
                           [
                             getDetailLabel("applicationMode", language),
@@ -656,6 +616,26 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             post.jobDetails.location,
                           ],
                           ...ageInfoRows,
+
+                          // Application Fee
+                          ...(jobDetails?.application_fee
+                            ? [
+                                [
+                                  getDetailLabel("fee", language),
+                                  jobDetails.application_fee,
+                                ] as [string, string],
+                              ]
+                            : []),
+
+                          // Multilingual Application Fee Note
+                          ...(applicationFeeNote
+                            ? [
+                                [
+                                  getDetailLabel("feeNote", language),
+                                  applicationFeeNote,
+                                ] as [string, string],
+                              ]
+                            : []),
                         ]
                           .filter(
                             ([, value]) =>
@@ -668,6 +648,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               name ===
                                 getDetailLabel("applicationMode", language) ||
                               name === getDetailLabel("jobLocation", language);
+
                             const formattedValue = shouldCapitalize
                               ? String(value).charAt(0).toUpperCase() +
                                 String(value).slice(1)
@@ -676,19 +657,46 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             const isAgeRow = ageInfoRows.some(
                               ([ageLabel]) => ageLabel === name,
                             );
-                            const ageRowSpan = isAgeRow
-                              ? ageInfoRows.length === 1
-                                ? "portal-job-info-item-age-full"
-                                : ageInfoRows.length === 2
-                                  ? "portal-job-info-item-age-half"
-                                  : name === getDetailLabel("ageNote", language)
-                                    ? "portal-job-info-item-age-note"
-                                    : "portal-job-info-item-age-quarter"
-                              : "";
+
+                            const isAgeNote =
+                              ageInfoRows.some(
+                                ([ageLabel]) => ageLabel === name,
+                              ) &&
+                              (name === getDetailLabel("ageNote", language) ||
+                                (isTextOnlyAgeCriteria &&
+                                  name ===
+                                    getDetailLabel("ageLimit", language)));
+
+                            const isFeeRow =
+                              name === getDetailLabel("fee", language);
+
+                            const isFeeNoteRow =
+                              name === getDetailLabel("feeNote", language);
+
+                            let rowSpan = "";
+
+                            if (isAgeRow) {
+                              rowSpan =
+                                ageInfoRows.length === 1
+                                  ? "portal-job-info-item-age-full"
+                                  : ageInfoRows.length === 2
+                                    ? "portal-job-info-item-age-half"
+                                    : isAgeNote
+                                      ? "portal-job-info-item-age-note"
+                                      : "portal-job-info-item-age-quarter";
+                            } else if (isFeeRow) {
+                              rowSpan = applicationFeeNote
+                                ? "portal-job-info-item-fee"
+                                : "portal-job-info-item-fee-full";
+                            } else if (isFeeNoteRow) {
+                              rowSpan = jobDetails?.application_fee
+                                ? "portal-job-info-item-fee-note"
+                                : "portal-job-info-item-fee-full";
+                            }
 
                             return (
                               <div
-                                className={`portal-job-info-item ${ageRowSpan}`}
+                                className={`portal-job-info-item ${rowSpan}`}
                                 key={name as string}
                               >
                                 <span className="portal-job-info-label">
@@ -714,10 +722,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                         [
                           getDetailLabel("qualification", language),
                           post.jobDetails.educational_qualification,
-                        ],
-                        [
-                          getDetailLabel("fee", language),
-                          post.jobDetails.application_fee,
                         ],
                         [
                           getDetailLabel("interviewVenue", language),
@@ -805,14 +809,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                         })}
                       </div>
                     </section>
-                  ) : null}
-
-                  {post.description ? (
-                    <p className="portal-post-summary">{post.description}</p>
-                  ) : null}
-
-                  {post.body ? (
-                    <div className="portal-post-summary">{post.body}</div>
                   ) : null}
 
                   {post.link ? (

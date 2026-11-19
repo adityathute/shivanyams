@@ -38,6 +38,9 @@ export type JobDetails = {
   age_limit_note_mr: string;
   age_limit_note_hi: string;
   application_fee: string;
+  application_fee_note_en: string;
+  application_fee_note_mr: string;
+  application_fee_note_hi: string;
   application_mode: string;
   interview_venue: string;
   important_dates: { label: string; date: string }[];
@@ -187,6 +190,9 @@ type ApiPost = {
     age_limit_note_mr?: string;
     age_limit_note_hi?: string;
     application_fee?: string;
+    application_fee_note_en?: string;
+    application_fee_note_mr?: string;
+    application_fee_note_hi?: string;
     application_mode?: string;
     apply_url?: string;
     official_notification_url?: string;
@@ -351,6 +357,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
           age_limit_note_mr: job.age_limit_note_mr || "",
           age_limit_note_hi: job.age_limit_note_hi || "",
           application_fee: job.application_fee || "",
+          application_fee_note_en: job.application_fee_note_en || "",
+          application_fee_note_mr: job.application_fee_note_mr || "",
+          application_fee_note_hi: job.application_fee_note_hi || "",
           application_mode: job.application_mode || "",
           interview_venue: job.interview_details || "",
           important_dates: [],

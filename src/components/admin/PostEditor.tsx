@@ -342,9 +342,9 @@ function detailTemplate(api: string): Record<string, unknown> {
       age_limit_note_mr: "",
       age_limit_note_hi: "",
       application_fee: "",
-      fee_payment_mode: "",
-      pay_scale: "",
-      pay_level: "",
+      application_fee_note_en: "",
+      application_fee_note_mr: "",
+      application_fee_note_hi: "",
       application_mode: "online",
       apply_url: "",
       apply_email: "",
@@ -668,20 +668,24 @@ export default function PostEditor({
     setDetails((current) => ({ ...current, [key]: value }));
   }
 
-function detailLabel(key: string) {
-  const customLabels: Record<string, string> = {
-    age_limit_note_en: "Age Limit Note (English)",
-    age_limit_note_mr: "Age Limit Note (Marathi)",
-    age_limit_note_hi: "Age Limit Note (Hindi)",
-  };
+  function detailLabel(key: string) {
+    const customLabels: Record<string, string> = {
+      age_limit_note_en: "Age Limit Note (English)",
+      age_limit_note_mr: "Age Limit Note (Marathi)",
+      age_limit_note_hi: "Age Limit Note (Hindi)",
 
-  return (
-    customLabels[key] ||
-    key
-      .replaceAll("_", " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase())
-  );
-}
+      application_fee_note_en: "Application Fee Note (English)",
+      application_fee_note_mr: "Application Fee Note (Marathi)",
+      application_fee_note_hi: "Application Fee Note (Hindi)",
+    };
+
+    return (
+      customLabels[key] ||
+      key
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase())
+    );
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1355,10 +1359,10 @@ function detailLabel(key: string) {
                   /date$|_date$/.test(key) ||
                   key === "eligible_dob_from" ||
                   key === "eligible_dob_to";
-const isLongText =
-  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note/i.test(
-    key,
-  );
+                const isLongText =
+                  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note|application_fee_note/i.test(
+                    key,
+                  );
                 if (isBoolean)
                   return (
                     <label className="post-editor-check" key={key}>
@@ -1465,7 +1469,6 @@ const isLongText =
                 );
               })}
             </div>
-
           </section>
           <section>
             <h2>Post Settings</h2>

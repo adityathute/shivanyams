@@ -652,9 +652,22 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 String(value).slice(1)
                               : value;
 
+                            const isAgeRow = ageInfoRows.some(
+                              ([ageLabel]) => ageLabel === name,
+                            );
+                            const ageRowSpan = isAgeRow
+                              ? ageInfoRows.length === 1
+                                ? "portal-job-info-item-age-full"
+                                : ageInfoRows.length === 2
+                                  ? "portal-job-info-item-age-half"
+                                  : name === getDetailLabel("ageNote", language)
+                                    ? "portal-job-info-item-age-half"
+                                    : "portal-job-info-item-age-quarter"
+                              : "";
+
                             return (
                               <div
-                                className="portal-job-info-item"
+                                className={`portal-job-info-item ${ageRowSpan}`}
                                 key={name as string}
                               >
                                 <span className="portal-job-info-label">

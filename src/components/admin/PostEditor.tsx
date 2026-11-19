@@ -1624,6 +1624,13 @@ export default function PostEditor({
                     + Add Post
                   </button>
                 </div>
+                <p className="post-editor-help">
+                  Total vacancies:{" "}
+                  {((details.posts as JobPostInput[]) || [])
+                    .reduce((total, post) => total + (post.vacancies ?? 0), 0)
+                    .toLocaleString("en-IN")}
+                  {" "} (calculated from individual posts)
+                </p>
 
                 {(details.posts as JobPostInput[]).map((post, postIndex) => (
                   <div className="post-editor-repeat-card" key={postIndex}>
@@ -1948,7 +1955,27 @@ export default function PostEditor({
 
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
-                if (key === "posts" && kind.api === "jobs") {
+                if (
+                  kind.api === "jobs" &&
+                  [
+                    "posts",
+                    "total_vacancies",
+                    "educational_qualification",
+                    "age_criteria_type",
+                    "age_min",
+                    "age_max",
+                    "age_as_on_date",
+                    "eligible_dob_from",
+                    "eligible_dob_to",
+                    "age_limit_note_en",
+                    "age_limit_note_mr",
+                    "age_limit_note_hi",
+                    "application_fee",
+                    "application_fee_note_en",
+                    "application_fee_note_mr",
+                    "application_fee_note_hi",
+                  ].includes(key)
+                ) {
                   return null;
                 }
 

@@ -55,7 +55,10 @@ export type Item = {
   link: string;
   type: ItemType;
   slug?: string;
-  body?: string;
+    body?: string;
+  body_en?: string;
+  body_mr?: string;
+  body_hi?: string;
   image?: string;
     organization?: string;
   organization_type?: string;
@@ -239,6 +242,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
     link: getPostLink(post),
     type,
     body: getPostBody(post),
+body_en: post.body_en || "",
+body_mr: post.body_mr || "",
+body_hi: post.body_hi || "",
 
     image: post.featured_image_url || post.video_details?.thumbnail_url || "",
 

@@ -83,6 +83,22 @@ function getVideoEmbedUrl(value?: string) {
   }
 }
 
+function getLocalizedText(
+  language: string,
+  en?: string,
+  mr?: string,
+  hi?: string,
+) {
+  const values =
+    language === "mr"
+      ? [mr, en, hi]
+      : language === "hi"
+        ? [hi, en, mr]
+        : [en, mr, hi];
+
+  return values.find((value) => value?.trim()) || "";
+}
+
 export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const params = useParams<{ slug: string }>();
   const slug = decodeURIComponent(params.slug ?? "");

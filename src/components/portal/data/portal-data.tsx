@@ -72,6 +72,7 @@ updated_date?: string;
   start_date?: string;
   end_date?: string;
   event_date?: string;
+  important_dates?: ImportantDate[];
   extra?: Record<string, unknown>;
   job_details?: JobDetails;
 };
@@ -103,6 +104,29 @@ type ApiLink = {
   is_active?: boolean;
 };
 
+export type ImportantDate = {
+  id?: number;
+  date_type: string;
+  date_format: "single" | "range" | "month_year" | "revised" | "revised_with_time" | string;
+  label_en: string;
+  label_mr?: string;
+  label_hi?: string;
+  date?: string | null;
+  time?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  month?: number | null;
+  year?: number | null;
+  old_date?: string | null;
+  new_date?: string | null;
+  old_time?: string | null;
+  new_time?: string | null;
+  description_en?: string;
+  description_mr?: string;
+  description_hi?: string;
+  sort_order?: number;
+};
+
 type ApiPost = {
   id: number | string;
   title_en?: string;
@@ -131,6 +155,7 @@ type ApiPost = {
   published_at?: string | null;
   updated_at?: string | null;
   important_links?: ApiLink[];
+  important_dates?: ImportantDate[];
   job_details?: {
     advertisement_no?: string;
     total_vacancies?: number | null;
@@ -267,6 +292,17 @@ updated_date: getDate(post.updated_at),
     start_date: getDate(post.start_date),
     end_date: getDate(post.end_date),
     event_date: getDate(post.event_date),
+    important_dates: (post.important_dates || []).map((entry) => ({
+      ...entry,
+      date: entry.date || null,
+      time: entry.time || null,
+      start_date: entry.start_date || null,
+      end_date: entry.end_date || null,
+      old_date: entry.old_date || null,
+      new_date: entry.new_date || null,
+      old_time: entry.old_time || null,
+      new_time: entry.new_time || null,
+    })),
 
     job_details: job
       ? {

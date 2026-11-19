@@ -60,6 +60,9 @@ export type JobPost = {
 
 export type JobDetails = {
   posts?: JobPost[];
+  education_mode?: "common" | "per_post";
+  age_mode?: "common" | "per_post";
+  fee_mode?: "common" | "per_post";
   advertisement_no: string;
   total_posts: string;
   examination_name: string;
@@ -424,6 +427,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             job.total_vacancies == null ? "" : String(job.total_vacancies),
           examination_name: "",
           post_details: job.post_details || job.designation || "",
+          education_mode: job.education_mode || "common",
+          age_mode: job.age_mode || "common",
+          fee_mode: job.fee_mode || "common",
           educational_qualification: job.educational_qualification || "",
           location: post.location || "",
           age_limit: [job.age_min, job.age_max]

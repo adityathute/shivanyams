@@ -224,7 +224,6 @@ const detailLabels = {
   eligibleDob: { en: "Eligible Date of Birth", mr: "पात्र जन्मतारीख", hi: "पात्र जन्म तिथि" },
   ageNote: { en: "Age Criteria Note", mr: "वयोमर्यादेबाबत टीप", hi: "आयु संबंधी टिप्पणी" },
   ageRelaxations: { en: "Category-wise Age Relaxation", mr: "प्रवर्गनिहाय वयोमर्यादा सवलत", hi: "श्रेणीवार आयु में छूट" },
-  relaxationNote: { en: "Additional Age Relaxation Note", mr: "अतिरिक्त वयोमर्यादा सवलत टीप", hi: "अतिरिक्त आयु छूट टिप्पणी" },
   relaxationYears: { en: "Relaxation", mr: "वयोमर्यादेत सवलत", hi: "आयु में छूट" },
   years: { en: "years", mr: "वर्षे", hi: "वर्ष" },
   condition: { en: "Condition", mr: "अट", hi: "शर्त" },

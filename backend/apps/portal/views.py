@@ -1,8 +1,7 @@
 from django.db import transaction
-from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-
+from django.db.models import F, Prefetch
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -15,6 +14,7 @@ from .models import (
     ImportantLink,
     LanguageChoices,
     Post,
+    PostDate,
     PostReaction,
     PostStatusHistory,
     PostView,
@@ -60,8 +60,10 @@ def get_content_category(kind):
     return get_object_or_404(Category, slug=category_slug, is_active=True)
 
 
+
 def public_posts_for_kind(kind):
     category = get_content_category(kind)
+
     return (
         Post.objects.filter(
             category=category,
@@ -72,11 +74,15 @@ def public_posts_for_kind(kind):
         .select_related("category")
         .prefetch_related(
             "important_links",
-            "important_dates",
+            Prefetch(
+                "important_dates",
+                queryset=PostDate.objects.order_by("sort_order", "id"),
+            ),
             "resources",
             "outgoing_relations__target_post",
         )
     )
+
 
 
 class Categories(generics.ListAPIView):
@@ -121,18 +127,24 @@ class AdminContent(viewsets.ModelViewSet):
             return PostSerializer
         return PostWriteSerializer
 
+
     def get_queryset(self):
         category = get_content_category(self.kwargs["kind"])
+
         return (
             Post.objects.filter(category=category)
             .select_related("category")
             .prefetch_related(
                 "important_links",
-                "important_dates",
+                Prefetch(
+                    "important_dates",
+                    queryset=PostDate.objects.order_by("sort_order", "id"),
+                ),
                 "resources",
                 "outgoing_relations__target_post",
             )
         )
+
 
     def perform_create(self, serializer):
         category = get_content_category(self.kwargs["kind"])

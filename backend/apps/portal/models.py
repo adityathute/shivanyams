@@ -1,7 +1,7 @@
 # Validators can be added to individual fields when business rules require them.
 from django.db import models
 from django.db.models import F, Q
-
+from django.core.exceptions import ValidationError
 
 class TimestampedModel(models.Model):
     """Abstract base for records that need creation and update timestamps."""
@@ -630,19 +630,39 @@ class PostLink(TimestampedModel):
 
 
 class PostDate(TimestampedModel):
-    """Structured date rows such as application, exam and result dates."""
+    """Structured important dates for jobs, schemes, exams, admit cards and results."""
 
     class DateType(models.TextChoices):
-        APPLICATION_START = "application_start", "Application Start"
+        APPLICATION_START = "application_start", "Application Start Date"
         APPLICATION_END = "application_end", "Application Last Date"
         FEE_LAST_DATE = "fee_last_date", "Fee Payment Last Date"
-        CORRECTION_WINDOW = "correction_window", "Correction Window"
-        EXAM_DATE = "exam_date", "Examination Date"
-        ADMIT_CARD = "admit_card", "Admit Card"
-        ANSWER_KEY = "answer_key", "Answer Key"
-        RESULT = "result", "Result"
-        INTERVIEW = "interview", "Interview"
-        OTHER = "other", "Other"
+        CORRECTION_WINDOW = "correction_window", "Application Correction"
+        APPLICATION_REOPENING = "application_reopening", "Application Reopening"
+
+        PRELIMINARY_EXAM = "preliminary_exam", "Preliminary Examination"
+        MAIN_EXAM = "main_exam", "Main Examination"
+        OTHER_EXAM = "other_exam", "Other Examination"
+
+        # Retained for compatibility with existing records.
+        EXAM_DATE = "exam_date", "Examination Date (Legacy)"
+
+        ADMIT_CARD = "admit_card", "Admit Card Release"
+        ANSWER_KEY = "answer_key", "Answer Key Release"
+        OBJECTION_WINDOW = "objection_window", "Objection Window"
+
+        RESULT = "result", "Result Date"
+        INTERVIEW = "interview", "Interview Date"
+        PHYSICAL_TEST = "physical_test", "Physical Test Date"
+        DOCUMENT_VERIFICATION = "document_verification", "Document Verification"
+
+        OTHER = "other", "Other Important Date"
+
+    class DateFormat(models.TextChoices):
+        SINGLE = "single", "Single Date"
+        RANGE = "range", "Date Range"
+        MONTH_YEAR = "month_year", "Month and Year"
+        REVISED = "revised", "Revised Date"
+        REVISED_WITH_TIME = "revised_with_time", "Revised Date with Time"
 
     post = models.ForeignKey(
         Post,
@@ -650,22 +670,51 @@ class PostDate(TimestampedModel):
         related_name="important_dates",
     )
 
+    # Date category and display format
     date_type = models.CharField(
         max_length=30,
         choices=DateType.choices,
         default=DateType.OTHER,
+        db_index=True,
     )
 
+    date_format = models.CharField(
+        max_length=30,
+        choices=DateFormat.choices,
+        default=DateFormat.SINGLE,
+    )
+
+    # Multilingual labels
     label_en = models.CharField(max_length=180)
     label_mr = models.CharField(max_length=180, blank=True)
     label_hi = models.CharField(max_length=180, blank=True)
 
+    # Format 1: Single date
     date = models.DateField(null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
 
+    # Format 2: Date range
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    # Format 3: Month and year
+    month = models.PositiveSmallIntegerField(null=True, blank=True)
+    year = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    # Formats 4 and 5: Revised dates
+    old_date = models.DateField(null=True, blank=True)
+    new_date = models.DateField(null=True, blank=True)
+
+    # Format 5: Revised date with time
+    old_time = models.TimeField(null=True, blank=True)
+    new_time = models.TimeField(null=True, blank=True)
+
+    # Multilingual descriptions
     description_en = models.CharField(max_length=500, blank=True)
     description_mr = models.CharField(max_length=500, blank=True)
     description_hi = models.CharField(max_length=500, blank=True)
 
+    # Display ordering
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
@@ -673,7 +722,89 @@ class PostDate(TimestampedModel):
         indexes = [
             models.Index(fields=("post", "date_type")),
             models.Index(fields=("date",)),
+            models.Index(fields=("start_date",)),
+            models.Index(fields=("end_date",)),
+            models.Index(fields=("year", "month")),
         ]
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+
+        if self.month is not None and not 1 <= self.month <= 12:
+            errors["month"] = "Month must be between 1 and 12."
+
+        if self.year is not None and not 1 <= self.year <= 9999:
+            errors["year"] = "Enter a valid year."
+
+        if self.date_format == self.DateFormat.SINGLE:
+            if not self.date:
+                errors["date"] = "A date is required for Single Date format."
+
+            if self.start_date or self.end_date:
+                errors["start_date"] = "Date range fields are not allowed for Single Date format."
+                errors["end_date"] = "Date range fields are not allowed for Single Date format."
+
+            if self.old_date or self.new_date:
+                errors["old_date"] = "Revised date fields are not allowed for Single Date format."
+
+            if self.month or self.year:
+                errors["month"] = "Month and year fields are not allowed for Single Date format."
+
+        elif self.date_format == self.DateFormat.RANGE:
+            if not self.start_date:
+                errors["start_date"] = "Start date is required."
+
+            if not self.end_date:
+                errors["end_date"] = "End date is required."
+
+            if self.start_date and self.end_date and self.end_date < self.start_date:
+                errors["end_date"] = "End date cannot be earlier than start date."
+
+            if self.date or self.old_date or self.new_date:
+                errors["date"] = "Single and revised date fields are not allowed for Date Range format."
+
+            if self.month or self.year:
+                errors["month"] = "Month and year fields are not allowed for Date Range format."
+
+        elif self.date_format == self.DateFormat.MONTH_YEAR:
+            if not self.month:
+                errors["month"] = "Month is required."
+
+            if not self.year:
+                errors["year"] = "Year is required."
+
+            if self.date or self.start_date or self.end_date:
+                errors["date"] = "Date fields are not allowed for Month and Year format."
+
+            if self.old_date or self.new_date:
+                errors["old_date"] = "Revised date fields are not allowed for Month and Year format."
+
+        elif self.date_format in (
+            self.DateFormat.REVISED,
+            self.DateFormat.REVISED_WITH_TIME,
+        ):
+            if not self.old_date:
+                errors["old_date"] = "Original date is required."
+
+            if not self.new_date:
+                errors["new_date"] = "Revised date is required."
+
+            if self.date or self.start_date or self.end_date:
+                errors["date"] = "Single and range date fields are not allowed for Revised Date format."
+
+            if self.month or self.year:
+                errors["month"] = "Month and year fields are not allowed for Revised Date format."
+
+            if (
+                self.date_format == self.DateFormat.REVISED
+                and (self.old_time or self.new_time)
+            ):
+                errors["old_time"] = "Time fields are only allowed for Revised Date with Time format."
+
+        if errors:
+            raise ValidationError(errors)
 
     def __str__(self):
         return self.label_en

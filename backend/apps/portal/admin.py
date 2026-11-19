@@ -53,20 +53,79 @@ class PostLinkInline(admin.TabularInline):
     ordering = ("sort_order", "id")
 
 
-class PostDateInline(admin.TabularInline):
+
+class PostDateInline(admin.StackedInline):
     model = PostDate
     extra = 0
-    fields = (
-        "date_type",
-        "label_en",
-        "label_mr",
-        "label_hi",
-        "date",
-        "description_en",
-        "description_mr",
-        "description_hi",
-        "sort_order",
+    show_change_link = True
+
+    fieldsets = (
+        (
+            "Date Category and Format",
+            {
+                "fields": (
+                    ("date_type", "date_format", "sort_order"),
+                )
+            },
+        ),
+        (
+            "Multilingual Labels",
+            {
+                "fields": (
+                    ("label_en", "label_mr", "label_hi"),
+                )
+            },
+        ),
+        (
+            "Single Date",
+            {
+                "fields": (
+                    ("date", "time"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Date Range",
+            {
+                "fields": (
+                    ("start_date", "end_date"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Month and Year",
+            {
+                "fields": (
+                    ("month", "year"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Revised Date",
+            {
+                "fields": (
+                    ("old_date", "new_date"),
+                    ("old_time", "new_time"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Descriptions",
+            {
+                "fields": (
+                    "description_en",
+                    "description_mr",
+                    "description_hi",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
     )
+
     ordering = ("sort_order", "id")
 
 
@@ -373,16 +432,139 @@ class PostLinkAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
 
 
+
 @admin.register(PostDate)
 class PostDateAdmin(admin.ModelAdmin):
-    list_display = ("label_en", "post", "date_type", "date", "sort_order")
-    list_filter = ("date_type", "date")
-    search_fields = ("label_en", "label_mr", "label_hi", "post__title_en")
+    list_display = (
+        "label_en",
+        "post",
+        "date_type",
+        "date_format",
+        "get_display_date",
+        "sort_order",
+    )
+
+    list_filter = (
+        "date_type",
+        "date_format",
+        "post__category",
+    )
+
+    search_fields = (
+        "label_en",
+        "label_mr",
+        "label_hi",
+        "description_en",
+        "post__title_en",
+        "post__slug",
+    )
+
     autocomplete_fields = ("post",)
-    date_hierarchy = "date"
-    ordering = ("date", "sort_order")
-    list_select_related = ("post",)
+
+    ordering = ("post", "sort_order", "id")
+
+    list_select_related = ("post", "post__category")
+
     readonly_fields = ("created_at", "updated_at")
+
+    fieldsets = (
+        (
+            "Date Category",
+            {
+                "fields": (
+                    "post",
+                    ("date_type", "date_format", "sort_order"),
+                )
+            },
+        ),
+        (
+            "Labels",
+            {
+                "fields": (
+                    ("label_en", "label_mr", "label_hi"),
+                )
+            },
+        ),
+        (
+            "Single Date",
+            {
+                "fields": (
+                    ("date", "time"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Date Range",
+            {
+                "fields": (
+                    ("start_date", "end_date"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Month and Year",
+            {
+                "fields": (
+                    ("month", "year"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Revised Date",
+            {
+                "fields": (
+                    ("old_date", "new_date"),
+                    ("old_time", "new_time"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Descriptions",
+            {
+                "fields": (
+                    "description_en",
+                    "description_mr",
+                    "description_hi",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": ("created_at", "updated_at"),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+    def get_display_date(self, obj):
+        if obj.date_format == PostDate.DateFormat.SINGLE:
+            return obj.date or "-"
+
+        if obj.date_format == PostDate.DateFormat.RANGE:
+            return f"{obj.start_date or '-'} to {obj.end_date or '-'}"
+
+        if obj.date_format == PostDate.DateFormat.MONTH_YEAR:
+            if obj.month and obj.year:
+                import calendar
+                return f"{calendar.month_name[obj.month]} {obj.year}"
+            return "-"
+
+        if obj.date_format in (
+            PostDate.DateFormat.REVISED,
+            PostDate.DateFormat.REVISED_WITH_TIME,
+        ):
+            return f"{obj.old_date or '-'} → {obj.new_date or '-'}"
+
+        return "-"
+
+    get_display_date.short_description = "Important Date"
+
 
 
 @admin.register(PostResource)

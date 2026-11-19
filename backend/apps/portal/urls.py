@@ -1,4 +1,3 @@
-
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
@@ -35,13 +34,10 @@ admin_content_detail = AdminContent.as_view(
 
 urlpatterns = [
     path("", include(router.urls)),
-
     # Categories
     path("categories/", Categories.as_view(), name="categories"),
-
     # Important links
     path("important-links/", ImportantLinks.as_view(), name="important-links"),
-
     # Public content: jobs, schemes, examinations, admit cards,
     # results, articles, videos and tools.
     path("content/<str:kind>/", content_list, name="content-list"),
@@ -50,7 +46,6 @@ urlpatterns = [
         content_detail,
         name="content-detail",
     ),
-
     # Admin content management
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
     path(
@@ -63,23 +58,19 @@ urlpatterns = [
         admin_content_detail,
         name="admin-content-detail",
     ),
-
     # Admin review and publishing workflow
-
     # Comments and replies
     path(
         "content/<int:post_id>/comments/",
         PostComments.as_view(),
         name="post-comments",
     ),
-
     # Likes and dislikes
     path(
         "content/<int:post_id>/reactions/",
         PostReactions.as_view(),
         name="post-reactions",
     ),
-
     # Saved posts
     path("saved-posts/", SavedPosts.as_view(), name="saved-posts"),
     path(
@@ -87,17 +78,15 @@ urlpatterns = [
         UnsavePost.as_view(),
         name="unsave-post",
     ),
-
     # Post analytics
     path(
         "content/<int:post_id>/views/",
         TrackPostView.as_view(),
         name="track-post-view",
     ),
-
-        path(
-    "admin/organization-types/",
-    AdminOrganizationTypes.as_view(),
-    name="admin-organization-types",
-),
+    path(
+        "admin/organization-types/",
+        AdminOrganizationTypes.as_view(),
+        name="admin-organization-types",
+    ),
 ]

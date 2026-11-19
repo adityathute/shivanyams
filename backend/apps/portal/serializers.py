@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
-
+from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (
     AdmitCardDetails,
     ArticleGuideDetails,
@@ -64,22 +64,82 @@ class PostLinkSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "post")
 
 
+
 class PostDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostDate
         fields = (
             "id",
             "date_type",
+            "date_format",
+
+            # Multilingual labels
             "label_en",
             "label_mr",
             "label_hi",
+
+            # Single date
             "date",
+            "time",
+
+            # Date range
+            "start_date",
+            "end_date",
+
+            # Month and year
+            "month",
+            "year",
+
+            # Revised date
+            "old_date",
+            "new_date",
+            "old_time",
+            "new_time",
+
+            # Multilingual descriptions
             "description_en",
             "description_mr",
             "description_hi",
+
+            # Ordering
             "sort_order",
         )
         read_only_fields = ("id",)
+
+    def validate(self, attrs):
+        # Validate the complete object, including existing values
+        # if this serializer is used for an individual instance update.
+        if self.instance:
+            for field in self.Meta.fields:
+                if field == "id":
+                    continue
+                if field not in attrs:
+                    attrs[field] = getattr(self.instance, field)
+
+        candidate = PostDate(**attrs)
+
+        try:
+            candidate.clean()
+        except DjangoValidationError as exc:
+            if hasattr(exc, "message_dict"):
+                raise serializers.ValidationError(exc.message_dict)
+            raise serializers.ValidationError(exc.messages)
+
+        # Revised date with time requires both original and revised times.
+        if candidate.date_format == PostDate.DateFormat.REVISED_WITH_TIME:
+            errors = {}
+
+            if not candidate.old_time:
+                errors["old_time"] = "Original time is required."
+
+            if not candidate.new_time:
+                errors["new_time"] = "Revised time is required."
+
+            if errors:
+                raise serializers.ValidationError(errors)
+
+        return attrs
+
 
 
 class PostResourceSerializer(serializers.ModelSerializer):

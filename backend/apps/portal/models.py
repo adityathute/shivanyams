@@ -404,7 +404,7 @@ class JobPost(TimestampedModel):
     eligible_dob_from = models.DateField(null=True, blank=True)
     eligible_dob_to = models.DateField(null=True, blank=True)
 
-    # Leave empty to use the common JobDetails age calculation date.
+    # Age calculation date for this individual post.
     age_as_on_date = models.DateField(null=True, blank=True)
 
     age_limit_note_en = models.TextField(blank=True)

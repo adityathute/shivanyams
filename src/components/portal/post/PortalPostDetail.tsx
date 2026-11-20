@@ -17,6 +17,7 @@ import {
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { LinkIcon } from "shivanya-ui";
+import { IMPORTANT_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import "../home/UpdatesSection.css";
 
 type CategorySlug =
@@ -1143,7 +1144,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                         <h2>{getDetailLabel("importantLinks", language)}</h2>
                       </div>
                       <div className="portal-important-links-list">
-                        {post.importantLinks.map((group) => (
+                        {post.importantLinks.slice(0, IMPORTANT_LINKS_DISPLAY_LIMIT).map((group) => (
                           <div className="portal-important-link-item" key={group.group_key}>
                             <strong>{getLocalizedText(language, group.label_en, group.label_mr, group.label_hi)}</strong>
                             <div className="portal-important-link-actions">

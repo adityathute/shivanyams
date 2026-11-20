@@ -1167,14 +1167,24 @@
     margin: 20px 0;
   }
 
+  /* Keep the desktop two-column table layout and scroll it horizontally
+     on narrow screens instead of stacking the title and action columns. */
+  .portal-important-links-list {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
   .portal-important-link-item {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(180px, 0.78fr) minmax(260px, 1.2fr);
+    min-width: 520px;
   }
 
   .portal-important-link-item > strong {
     padding: 12px 14px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border-color, #e1e7f0);
+    border-right: 1px solid var(--border-color, #e1e7f0);
+    border-bottom: 0;
   }
 
   .portal-important-link-actions {
@@ -1183,8 +1193,8 @@
   }
 
   .portal-important-link-action {
-    flex: 1 1 135px;
-    min-width: 0;
+    flex: 0 0 auto;
+    min-width: 120px;
   }
 }
 

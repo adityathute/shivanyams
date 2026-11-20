@@ -1339,7 +1339,11 @@ export default function PostEditor({
                 });
 
               return (
-                <div className="post-editor-repeat-card" key={index}>
+                <details className="post-editor-repeat-card post-editor-collapsible" key={index} open={index === 0}>
+                  <summary className="post-editor-card-summary">
+                    <span><strong>{item.label_en || `Date ${index + 1}`}</strong><small>{detailLabel(item.date_type)} · {DATE_FORMAT_OPTIONS.find((format) => format.value === item.date_format)?.label || "Date"}</small></span>
+                    <span className="post-editor-toggle-hint">Show / Hide</span>
+                  </summary>
                   <div className="post-editor-grid">
                     <label>
                       Date type
@@ -1618,7 +1622,7 @@ export default function PostEditor({
                   >
                     Remove date
                   </button>
-                </div>
+                </details>
               );
             })}
           </section>
@@ -1645,7 +1649,11 @@ export default function PostEditor({
               </button>
             </div>
             {importantLinks.map((item, index) => (
-              <div className="post-editor-repeat-card" key={index}>
+              <details className="post-editor-repeat-card post-editor-collapsible" key={index} open={index === 0}>
+                <summary className="post-editor-card-summary">
+                  <span><strong>{item.name_en || `Important Link ${index + 1}`}</strong><small>{item.url || "Add link title and URL"}</small></span>
+                  <span className="post-editor-toggle-hint">Show / Hide</span>
+                </summary>
                 <div className="post-editor-grid">
                   {(["en", "mr", "hi"] as const).map((lang) => (
                     <label key={lang}>
@@ -1695,7 +1703,7 @@ export default function PostEditor({
                 >
                   Remove link
                 </button>
-              </div>
+              </details>
             ))}
           </section>
           <section>
@@ -1741,7 +1749,11 @@ export default function PostEditor({
                 </p>
 
                 {(details.posts as JobPostInput[]).map((post, postIndex) => (
-                  <div className="post-editor-repeat-card" key={postIndex}>
+                  <details className="post-editor-repeat-card post-editor-job-post-card post-editor-collapsible" key={postIndex} open={postIndex === 0}>
+                    <summary className="post-editor-card-summary">
+                      <span><strong>{post.post_number ? `Post ${post.post_number}` : `Post ${postIndex + 1}`} · {post.post_name_en || "Untitled post"}</strong><small>{post.vacancies ?? 0} vacancies · {(post.educations || []).length} education conditions · {(post.fees || []).length} fee categories</small></span>
+                      <span className="post-editor-toggle-hint">Show / Hide</span>
+                    </summary>
                     <h3>Post {postIndex + 1}</h3>
 
                     <div className="post-editor-grid">
@@ -2079,7 +2091,7 @@ export default function PostEditor({
                     >
                       Remove Post
                     </button>
-                  </div>
+                  </details>
                 ))}
                 </div>
               </>

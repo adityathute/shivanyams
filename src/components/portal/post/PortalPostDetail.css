@@ -1263,3 +1263,63 @@
 :root[data-theme="dark"] .portal-faq-answer-inner p { color: var(--text-secondary, #cbd5e1); }
 :root[data-theme="dark"] .portal-faq-chevron { border-color: #93baff; }
 @media (max-width: 600px) { .portal-faq-section { margin: 20px 0 14px; } .portal-faq-section .portal-important-dates-heading h2 { font-size: 16px; } .portal-faq-question { min-height: 49px; padding: 12px 13px; font-size: 13px; } .portal-faq-answer-inner p { padding: 0 13px 13px; font-size: 12px; } }
+
+
+/* Category recommendations shown beside missing post pages. */
+.portal-post-detail .not-found-recommendations {
+  padding: 16px;
+  min-width: 0;
+}
+.portal-post-detail .not-found-post-list {
+  display: grid;
+  gap: 2px;
+}
+.portal-post-detail .not-found-post-link {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr) 14px;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  color: var(--text-primary, #172033);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.portal-post-detail .not-found-post-link:last-child {
+  border-bottom: 0;
+}
+.portal-post-detail .not-found-post-link:hover {
+  color: var(--primary, #007bff);
+}
+.portal-post-detail .not-found-post-rank {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: rgba(0, 123, 255, 0.08);
+  color: var(--primary, #007bff);
+  font-size: 11px;
+  font-weight: 800;
+}
+.portal-post-detail .not-found-post-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+.portal-post-detail .not-found-post-copy strong {
+  overflow-wrap: anywhere;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.portal-post-detail .not-found-post-copy small {
+  color: var(--text-secondary, #64748b);
+  font-size: 10px;
+}
+.portal-post-detail .not-found-post-link > b {
+  color: var(--text-secondary, #64748b);
+  font-size: 18px;
+  font-weight: 500;
+}

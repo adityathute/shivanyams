@@ -618,39 +618,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       : []),
   ];
 
-  const jobInfoRows: [string, string][] = [
-    [
-      getDetailLabel("advertisementNo", language),
-      jobDetails?.advertisement_no || "",
-    ],
-    [
-      getDetailLabel("total", language),
-      jobDetails?.total_posts != null && Number(jobDetails.total_posts) > 0
-        ? `${jobDetails.total_posts} ${getDetailLabel("totalPostsUnit", language)}`
-        : "",
-    ],
-    [
-      getDetailLabel("applicationMode", language),
-      jobDetails?.application_mode || "",
-    ],
-    [
-      getDetailLabel("jobLocation", language),
-      jobDetails?.location || "",
-    ],
-    ...ageInfoRows,
-    ...(jobDetails?.application_fee
-      ? [[getDetailLabel("fee", language), jobDetails.application_fee] as [string, string]]
-      : []),
-    ...(applicationFeeNote
-      ? [[getDetailLabel("feeNote", language), applicationFeeNote] as [string, string]]
-      : []),
-  ].filter(([, value]) =>
-    value !== null &&
-    value !== undefined &&
-    String(value).trim() !== "" &&
-    !(typeof value === "number" && value === 0)
-  );
-
   return (
     <>
       <main className="portal-post-detail">
@@ -722,8 +689,55 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
                   {post.jobDetails ? (
                     <section className="portal-job-details">
-                      <div className={`portal-job-info-grid portal-job-info-grid-count-${Math.min(jobInfoRows.length, 4)}`}>
-                        {jobInfoRows.map(([name, value]) => {
+                      <div className="portal-job-info-grid">
+                        {[
+                          [
+                            getDetailLabel("advertisementNo", language),
+                            post.jobDetails.advertisement_no,
+                          ],
+                          [
+                            getDetailLabel("total", language),
+                            post.jobDetails.total_posts != null
+                              ? `${post.jobDetails.total_posts} ${getDetailLabel("totalPostsUnit", language)}`
+                              : "",
+                          ],
+                          [
+                            getDetailLabel("applicationMode", language),
+                            post.jobDetails.application_mode,
+                          ],
+                          [
+                            getDetailLabel("jobLocation", language),
+                            post.jobDetails.location,
+                          ],
+                          ...ageInfoRows,
+
+                          // Application Fee
+                          ...(jobDetails?.application_fee
+                            ? [
+                                [
+                                  getDetailLabel("fee", language),
+                                  jobDetails.application_fee,
+                                ] as [string, string],
+                              ]
+                            : []),
+
+                          // Multilingual Application Fee Note
+                          ...(applicationFeeNote
+                            ? [
+                                [
+                                  getDetailLabel("feeNote", language),
+                                  applicationFeeNote,
+                                ] as [string, string],
+                              ]
+                            : []),
+                        ]
+                          .filter(
+                            ([, value]) =>
+                              value !== null &&
+                              value !== undefined &&
+                              String(value).trim() !== "",
+                          )
+                          .map(([name, value]) => {
                             const shouldCapitalize =
                               name ===
                                 getDetailLabel("applicationMode", language) ||

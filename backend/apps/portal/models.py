@@ -953,6 +953,26 @@ class PostLink(TimestampedModel):
         return self.name_en
 
 
+class PostFAQ(TimestampedModel):
+    """Multilingual frequently asked questions displayed with a post."""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="faqs")
+    question_en = models.CharField(max_length=500)
+    question_mr = models.CharField(max_length=500, blank=True)
+    question_hi = models.CharField(max_length=500, blank=True)
+    answer_en = models.TextField()
+    answer_mr = models.TextField(blank=True)
+    answer_hi = models.TextField(blank=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [models.Index(fields=("post", "is_active", "sort_order"))]
+
+    def __str__(self):
+        return self.question_en
+
+
 class PostDate(TimestampedModel):
     """Structured important dates for jobs, schemes, exams, admit cards and results."""
 

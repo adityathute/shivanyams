@@ -519,3 +519,25 @@
     justify-content: space-between;
   }
 }
+
+/* Dashboard stat cards adapt to the number of non-zero metrics. */
+.admin-stats.admin-stats-count-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+.admin-stats.admin-stats-count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.admin-stats.admin-stats-count-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 620px) {
+  .admin-stats.admin-stats-count-1 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-stats.admin-stats-count-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-stats.admin-stats-count-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

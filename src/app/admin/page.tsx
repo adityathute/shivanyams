@@ -347,6 +347,8 @@ export default function AdminPage() {
             { label: "Website views", value: websiteViewsCount, analytics: "views" as const },
             { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors" as const },
             { label: "Portal users", value: usersCount },
+            { label: "Post views", value: counts.views },
+            { label: "Post visitors", value: counts.visitors },
           ];
 
           const compactNumber = new Intl.NumberFormat("en", {

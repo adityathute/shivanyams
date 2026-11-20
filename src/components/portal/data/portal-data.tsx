@@ -141,6 +141,7 @@ export type Item = {
   event_date?: string;
   important_dates?: ImportantDate[];
   important_links?: ApiLink[];
+  faqs?: PostFAQ[];
   extra?: Record<string, unknown>;
   job_details?: JobDetails;
 };
@@ -174,6 +175,11 @@ type ApiLink = {
   action_text_hi?: string;
   url: string;
   is_active?: boolean;
+};
+
+export type PostFAQ = {
+  id?: number; question_en: string; question_mr?: string; question_hi?: string;
+  answer_en: string; answer_mr?: string; answer_hi?: string; sort_order?: number; is_active?: boolean;
 };
 
 export type ImportantDate = {
@@ -283,6 +289,7 @@ type ApiPost = {
   updated_at?: string | null;
   important_links?: ApiLink[];
   important_dates?: ImportantDate[];
+  faqs?: PostFAQ[];
   job_details?: {
     advertisement_no?: string;
     education_mode?: "common" | "per_post";
@@ -496,9 +503,8 @@ function mapPost(post: ApiPost, type: ItemType): Item {
       old_time: entry.old_time || null,
       new_time: entry.new_time || null,
     })),
-    important_links: (post.important_links || []).filter(
-      (link) => link.is_active !== false && Boolean(link.url),
-    ),
+    important_links: (post.important_links || []).filter((link) => link.is_active !== false && Boolean(link.url)),
+    faqs: (post.faqs || []).filter((faq) => faq.is_active !== false && Boolean(faq.question_en?.trim() && faq.answer_en?.trim())),
 
     job_details: job
       ? {

@@ -1863,3 +1863,10 @@ padding-right: 24px;
 .post-editor-faq-fields .post-editor-show-translations { flex: 0 0 auto; white-space: nowrap; }
 .post-editor-faq-fields .shivanya-input-wrapper, .post-editor-faq-fields .shivanya-textarea-wrapper { width: 100%; min-width: 0; }
 @media (max-width: 600px) { .post-editor-faq-fields { padding: 12px; } .post-editor-faq-fields .post-editor-translation-heading { align-items: flex-start; flex-wrap: wrap; } }
+
+.post-editor-section-description{
+  color: var(--muted, #64748b);
+    margin: 5px 0 0;
+    font-size: .82rem;
+    line-height: 1.5;
+}

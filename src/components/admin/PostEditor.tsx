@@ -22,6 +22,9 @@ type LinkInput = {
   name_en: string;
   name_mr: string;
   name_hi: string;
+  action_text_en: string;
+  action_text_mr: string;
+  action_text_hi: string;
   url: string;
   sort_order: number;
   is_active: boolean;
@@ -576,6 +579,8 @@ export default function PostEditor({
   const [expandedFeeNoteLanguages, setExpandedFeeNoteLanguages] = useState<string[]>([]);
   const [expandedImportantDateLanguages, setExpandedImportantDateLanguages] = useState<number[]>([]);
   const [expandedImportantDateDescriptionLanguages, setExpandedImportantDateDescriptionLanguages] = useState<number[]>([]);
+  const [expandedImportantLinkTitleLanguages, setExpandedImportantLinkTitleLanguages] = useState<number[]>([]);
+  const [expandedImportantLinkActionLanguages, setExpandedImportantLinkActionLanguages] = useState<number[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -696,7 +701,18 @@ export default function PostEditor({
           meta_description_en: record.meta_description_en || "",
           meta_keywords: (record.meta_keywords || []).join(", "),
         });
-        setImportantLinks(record.important_links || []);
+        setImportantLinks(
+          (record.important_links || []).map((item: LinkInput) => ({
+            ...item,
+            name_en: String(item.name_en ?? ""),
+            name_mr: String(item.name_mr ?? ""),
+            name_hi: String(item.name_hi ?? ""),
+            action_text_en: String(item.action_text_en ?? "Click Here"),
+            action_text_mr: String(item.action_text_mr ?? ""),
+            action_text_hi: String(item.action_text_hi ?? ""),
+            url: String(item.url ?? ""),
+          })),
+        );
         setImportantDates(
           (record.important_dates || []).map((item) =>
             normalizeDateInput(item),
@@ -1169,9 +1185,12 @@ export default function PostEditor({
               }
             : details,
 
-        important_links: importantLinks.filter(
-          (item) => item.name_en.trim() && item.url.trim(),
-        ),
+        important_links: importantLinks
+          .filter((item) => item.name_en.trim() && item.url.trim())
+          .map((item) => ({
+            ...item,
+            action_text_en: item.action_text_en.trim() || "Click Here",
+          })),
         important_dates: importantDates
           .filter((item) => item.label_en.trim())
           .map((item) => ({
@@ -2265,7 +2284,7 @@ export default function PostEditor({
               );
             })}
           </section>
-<section>
+<section className="post-editor-important-links">
             <div className="post-editor-section-heading">
               <h2>Important Links</h2>
               <button
@@ -2277,6 +2296,9 @@ export default function PostEditor({
                       name_en: "",
                       name_mr: "",
                       name_hi: "",
+                      action_text_en: "Click Here",
+                      action_text_mr: "",
+                      action_text_hi: "",
                       url: "",
                       sort_order: items.length,
                       is_active: true,
@@ -2287,65 +2309,123 @@ export default function PostEditor({
                 ＋ Add link
               </button>
             </div>
-            {importantLinks.map((item, index) => (
-              <details className="post-editor-repeat-card post-editor-collapsible" key={index}>
-                <summary className="post-editor-card-summary">
-                  <span><strong>{item.name_en || `Important Link ${index + 1}`}</strong><small>{item.url || "Add link title and URL"}</small></span>
-                  
-                </summary>
-                <div className="post-editor-grid">
-                  {([activeLanguage] as const).map((lang) => (
-                    <label key={lang}>
-                      Link title ({lang.toUpperCase()})
-                      <input
-                        value={item[`name_${lang}`]}
-                        onChange={(event) =>
-                          setImportantLinks((rows) =>
-                            rows.map((row, i) =>
-                              i === index
-                                ? {
-                                    ...row,
-                                    [`name_${lang}`]: event.target.value,
-                                  }
-                                : row,
-                            ),
-                          )
-                        }
-                      />
-                    </label>
-                  ))}
-                  <label>
-                    URL
-                    <input
+            {importantLinks.map((item, index) => {
+              const titleLanguages: ContentLanguage[] = expandedImportantLinkTitleLanguages.includes(index)
+                ? ["en", "mr", "hi"]
+                : [activeLanguage];
+              const actionLanguages: ContentLanguage[] = expandedImportantLinkActionLanguages.includes(index)
+                ? ["en", "mr", "hi"]
+                : [activeLanguage];
+
+              const updateLink = (changes: Partial<LinkInput>) =>
+                setImportantLinks((rows) =>
+                  rows.map((row, rowIndex) =>
+                    rowIndex === index ? { ...row, ...changes } : row,
+                  ),
+                );
+
+              return (
+                <details className="post-editor-repeat-card post-editor-collapsible" key={index}>
+                  <summary className="post-editor-card-summary">
+                    <span>
+                      <strong>{item.name_en || `Important Link ${index + 1}`}</strong>
+                      <small>{item.url || "Add link title and URL"}</small>
+                    </span>
+                  </summary>
+
+                  <div className="post-editor-important-link-fields">
+                    <div className="post-editor-link-translation">
+                      <div className="post-editor-translation-heading">
+                        <span>Link Title</span>
+                        <button
+                          type="button"
+                          className="post-editor-show-translations"
+                          aria-expanded={expandedImportantLinkTitleLanguages.includes(index)}
+                          onClick={() => setExpandedImportantLinkTitleLanguages((current) =>
+                            current.includes(index)
+                              ? current.filter((linkIndex) => linkIndex !== index)
+                              : [...current, index]
+                          )}
+                        >
+                          {expandedImportantLinkTitleLanguages.includes(index)
+                            ? "− Hide other languages"
+                            : "+ Show other languages"}
+                        </button>
+                      </div>
+                      <div className="post-editor-grid post-editor-link-language-grid">
+                        {titleLanguages.map((lang) => (
+                          <Input
+                            key={lang}
+                            label={`Link title (${lang.toUpperCase()})`}
+                            value={String(item[`name_${lang}`] ?? "")}
+                            onChange={(event) => updateLink({ [`name_${lang}`]: event.target.value })}
+                            fullWidth
+                            size="sm"
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="post-editor-link-translation">
+                      <div className="post-editor-translation-heading">
+                        <span>Action Button Text</span>
+                        <button
+                          type="button"
+                          className="post-editor-show-translations"
+                          aria-expanded={expandedImportantLinkActionLanguages.includes(index)}
+                          onClick={() => setExpandedImportantLinkActionLanguages((current) =>
+                            current.includes(index)
+                              ? current.filter((linkIndex) => linkIndex !== index)
+                              : [...current, index]
+                          )}
+                        >
+                          {expandedImportantLinkActionLanguages.includes(index)
+                            ? "− Hide other languages"
+                            : "+ Show other languages"}
+                        </button>
+                      </div>
+                      <div className="post-editor-grid post-editor-link-language-grid">
+                        {actionLanguages.map((lang) => (
+                          <Input
+                            key={lang}
+                            label={`Action text (${lang.toUpperCase()})`}
+                            value={String(item[`action_text_${lang}`] ?? "")}
+                            onChange={(event) => updateLink({ [`action_text_${lang}`]: event.target.value })}
+                            placeholder={lang === "en" ? "Click Here / Apply Online / Download PDF" : ""}
+                            fullWidth
+                            size="sm"
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <Input
                       type="url"
+                      label="URL"
                       value={item.url}
-                      onChange={(event) =>
+                      onChange={(event) => updateLink({ url: event.target.value })}
+                      placeholder="https://"
+                      fullWidth
+                      size="sm"
+                    />
+                  </div>
+
+                  <div className="post-editor-card-actions">
+                    <button
+                      type="button"
+                      className="post-editor-remove"
+                      onClick={() =>
                         setImportantLinks((rows) =>
-                          rows.map((row, i) =>
-                            i === index
-                              ? { ...row, url: event.target.value }
-                              : row,
-                          ),
+                          rows.filter((_, i) => i !== index),
                         )
                       }
-                    />
-                  </label>
-                </div>
-                <div className="post-editor-card-actions">
-                  <button
-                    type="button"
-                    className="post-editor-remove"
-                    onClick={() =>
-                      setImportantLinks((rows) =>
-                        rows.filter((_, i) => i !== index),
-                      )
-                    }
-                  >
-                    Remove link
-                  </button>
-                </div>
-              </details>
-            ))}
+                    >
+                      Remove link
+                    </button>
+                  </div>
+                </details>
+              );
+            })}
           </section>
           <section>
             <h2>Post Settings</h2>

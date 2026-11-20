@@ -249,7 +249,7 @@ export default function AdminPage() {
             { label: "Drafts", value: counts.drafts },
             { label: "Pending review", value: counts.review },
             { label: "Total views", value: counts.views },
-            { label: "Unique visitors", value: counts.visitors },
+            { label: "Unique post visitors", value: counts.visitors },
           ].filter((item) => item.value > 0);
 
           return statItems.length > 0 ? (

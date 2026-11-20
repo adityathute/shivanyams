@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
+import { Select } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
 import { slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
@@ -1161,36 +1162,49 @@ export default function PostEditor({
               <h2>Post Information</h2>
             </div>
             <div className="post-editor-grid post-editor-meta-row">
+              <Select
+                label="Category"
+                value={kind.api}
+                disabled={editing}
+                fullWidth
+                size="md"
+                options={KINDS.filter((item) => categories.some((category) => category.slug === item.slug)).map((item) => ({
+                  value: item.api,
+                  label: item.label,
+                }))}
+                onChange={(event) => changeKind(event.target.value)}
+              />
+              <Select
+                label="Default Language"
+                value={form.default_language}
+                fullWidth
+                size="md"
+                options={[
+                  { value: "en", label: "English" },
+                  { value: "mr", label: "Marathi" },
+                  { value: "hi", label: "Hindi" },
+                ]}
+                onChange={(event) => {
+                  const nextLanguage = event.target.value as ContentLanguage;
+                  update("default_language", nextLanguage);
+                  setActiveLanguage(nextLanguage);
+                  setPostInfoLanguages({ title: [nextLanguage], summary: [nextLanguage], body: [nextLanguage] });
+                }}
+              />
+              <Select
+                label="Government Organization Type"
+                value={organizationType}
+                fullWidth
+                size="md"
+                options={[
+                  { value: "", label: "Select organization type (Optional)" },
+                  ...organizationTypes.map((type) => ({ value: type.value, label: type.label })),
+                ]}
+                onChange={(event) => setOrganizationType(event.target.value)}
+              />
               <label>
-                Category
-                <select value={kind.api} disabled={editing} onChange={(event) => changeKind(event.target.value)}>
-                  {KINDS.filter((item) => categories.some((category) => category.slug === item.slug)).map((item) => (
-                    <option key={item.api} value={item.api}>{item.label}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Default Language
-                <select
-                  value={form.default_language}
-                  onChange={(event) => {
-                    const nextLanguage = event.target.value as ContentLanguage;
-                    update("default_language", nextLanguage);
-                    setActiveLanguage(nextLanguage);
-                    setPostInfoLanguages({ title: [nextLanguage], summary: [nextLanguage], body: [nextLanguage] });
-                  }}
-                >
-                  <option value="en">English</option>
-                  <option value="mr">Marathi</option>
-                  <option value="hi">Hindi</option>
-                </select>
-              </label>
-              <label>
-                Government Organization Type
-                <select value={organizationType} onChange={(event) => setOrganizationType(event.target.value)}>
-                  <option value="">Select organization type (Optional)</option>
-                  {organizationTypes.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
-                </select>
+                Location
+                <input value={form.location} onChange={(event) => update("location", event.target.value)} />
               </label>
             </div>
 
@@ -1289,10 +1303,7 @@ export default function PostEditor({
               </div>
             </div>
 
-            <div className="post-editor-grid post-editor-location-row">
-              <label>Location<input value={form.location} onChange={(event) => update("location", event.target.value)} /></label>
-              <label>State<input value={form.state} onChange={(event) => update("state", event.target.value)} /></label>
-              <label>Country<input value={form.country} onChange={(event) => update("country", event.target.value)} /></label>
+            <div className="post-editor-grid post-editor-single-column">
               <label>
                 Featured Image URL
                 <input type="url" value={form.featured_image_url} onChange={(event) => update("featured_image_url", event.target.value)} />

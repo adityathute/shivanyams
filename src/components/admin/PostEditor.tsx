@@ -1429,6 +1429,12 @@ export default function PostEditor({
                   <div className="post-editor-section-heading post-editor-job-heading">
                     <h3>Individual Recruitment Posts</h3>
                     <div className="post-editor-job-heading-actions">
+                      <Checkbox
+                        label="Applications Open"
+                        checked={Boolean(details.applications_open)}
+                        onChange={(event) => updateDetail("applications_open", event.target.checked)}
+                        size="sm"
+                      />
                       <div className="post-editor-mode-switch" role="group" aria-label="Educational qualification mode">
                         <span>Education</span>
                         <button
@@ -1466,6 +1472,25 @@ export default function PostEditor({
                       <small>Calculated from individual posts</small>
                     </div>
                   </div>
+
+                {details.education_mode === "common" ? (
+                  <div className="post-editor-common-education">
+                    <div className="post-editor-subsection-heading">
+                      <div>
+                        <h4>Educational Qualification</h4>
+                        <small>One qualification shared by all recruitment posts</small>
+                      </div>
+                    </div>
+                    <Textarea
+                      label={`Qualification (${activeLanguage.toUpperCase()})`}
+                      rows={3}
+                      value={String(details.educational_qualification || "")}
+                      onChange={(event) => updateDetail("educational_qualification", event.target.value)}
+                      fullWidth
+                      size="sm"
+                    />
+                  </div>
+                ) : null}
 
                 {(details.posts as JobPostInput[]).map((post, postIndex) => (
                   <details className="post-editor-repeat-card post-editor-job-post-card post-editor-collapsible" key={postIndex}>

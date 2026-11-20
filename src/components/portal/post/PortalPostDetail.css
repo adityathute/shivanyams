@@ -450,6 +450,34 @@
   background: var(--border-color, #e5e7eb);
 }
 
+.portal-job-info-primary-grid {
+  display: grid;
+  grid-column: 1 / -1;
+  min-width: 0;
+  gap: 1px;
+  background: var(--border-color, #e5e7eb);
+}
+
+.portal-job-info-primary-grid-count-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.portal-job-info-primary-grid-count-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.portal-job-info-primary-grid-count-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.portal-job-info-primary-grid-count-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+:root[data-theme="dark"] .portal-job-info-primary-grid {
+  background: var(--border-color, #303746);
+}
+
 .portal-job-info-item {
   display: flex;
   flex-direction: column;

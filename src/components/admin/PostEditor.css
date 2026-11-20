@@ -1513,3 +1513,50 @@
 .post-editor-add-month-year:hover { border-color: #9bb5d4; background: #eaf1fa; color: #1f4e7d; }
 @media (max-width: 520px) { .post-editor-month-year-row { grid-template-columns: minmax(0, 1fr) minmax(90px, 0.7fr); } .post-editor-month-year-row > button { grid-column: 1 / -1; justify-self: start; } }
 
+
+
+/* Important Dates: display order, date type and format share one compact row. */
+.post-editor-date-controls-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 12px;
+}
+.post-editor-date-controls-row > label {
+  min-width: 0;
+  width: 100%;
+}
+.post-editor-date-description-section {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 12px;
+}
+.post-editor-date-description-section > .post-editor-translation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding-right: 12px;
+  box-sizing: border-box;
+}
+.post-editor-date-description-section > .post-editor-grid {
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+}
+.post-editor-date-description-section > .post-editor-grid > label,
+.post-editor-date-description-section textarea {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 650px) {
+  .post-editor-date-controls-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .post-editor-date-description-section > .post-editor-translation-heading {
+    padding-right: 4px;
+  }
+}

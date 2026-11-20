@@ -8,6 +8,7 @@ from .models import (
     ExaminationDetails,
     JobDetails,
     JobPost,
+    JobPostEducation,
     JobPostFee,
     JobVacancyBreakdown,
     Post,
@@ -486,6 +487,18 @@ class JobDetailsAdmin(PostDetailAdmin):
     )
 
 
+class JobPostEducationInline(admin.TabularInline):
+    model = JobPostEducation
+    extra = 0
+    fields = (
+        "qualification_en",
+        "qualification_mr",
+        "qualification_hi",
+        "sort_order",
+    )
+    ordering = ("sort_order", "id")
+
+
 class JobPostFeeInline(admin.TabularInline):
     model = JobPostFee
     extra = 0
@@ -537,7 +550,7 @@ class JobPostAdmin(admin.ModelAdmin):
 
     readonly_fields = ("created_at", "updated_at")
 
-    inlines = (JobPostFeeInline,)
+    inlines = (JobPostEducationInline, JobPostFeeInline)
 
 @admin.register(JobVacancyBreakdown)
 class JobVacancyBreakdownAdmin(admin.ModelAdmin):

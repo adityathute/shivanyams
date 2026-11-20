@@ -1426,7 +1426,7 @@ export default function PostEditor({
             </div>
           </section>
           <section>
-            {kind.api !== "jobs" && <h2>{kind.label} Details</h2>}
+            <h2>{kind.label} Details</h2>
  
             {kind.api === "jobs" && (
               <>

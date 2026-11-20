@@ -920,6 +920,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
                             );
+                            const commonEducationItems = jobDetails.education_is_common_field
+                              ? [jobDetails.educational_qualification].filter(Boolean)
+                              : rows[0]?.educationItems.length
+                                ? rows[0].educationItems
+                                : [jobDetails.educational_qualification].filter(Boolean);
 
                             return (
                               <>
@@ -962,15 +967,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   </tfoot>
                                 </table>
                               </div>
-                              {jobDetails.education_mode === "common" && (rows[0]?.educationItems.length || jobDetails.educational_qualification) ? (
+                              {jobDetails.education_mode === "common" && commonEducationItems.length ? (
                                 <div className="portal-job-detail-group portal-education-details">
                                   <h2>{getDetailLabel("qualification", language)}</h2>
                                   <div className="portal-job-detail-row">
                                     <ul>
-                                      {(rows[0]?.educationItems.length
-                                        ? rows[0].educationItems
-                                        : [jobDetails.educational_qualification]
-                                      ).map((item, itemIndex) => (
+                                      {commonEducationItems.map((item, itemIndex) => (
                                         <li key={itemIndex}>{item}</li>
                                       ))}
                                     </ul>

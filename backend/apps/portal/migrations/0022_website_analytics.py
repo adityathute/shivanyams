@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 "ordering": ("-viewed_at",),
                 "indexes": [
                     models.Index(fields=["path", "viewed_at"], name="portal_web_path_view_idx"),
-                    models.Index(fields=["visitor", "viewed_at"], name="portal_web_visit_view_idx"),
+                    models.Index(fields=["visitor", "viewed_at"], name="portal_site_visit_view_idx"),
                 ],
             },
         ),

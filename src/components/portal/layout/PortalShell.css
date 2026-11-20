@@ -711,3 +711,13 @@
 [data-theme="dark"] .footer-bottom > span {
   color: #64748b;
 }
+
+.footer-useful-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-useful-link svg {
+  flex-shrink: 0;
+}

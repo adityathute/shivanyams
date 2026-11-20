@@ -38,6 +38,7 @@ import {
   VideoIcon,
   ExaminationIcon,
   ToolsIcon,
+  LinkIcon,
 } from "shivanya-ui";
 
 export function PortalFooter() {
@@ -65,7 +66,9 @@ export function PortalFooter() {
         const data = Array.isArray(payload) ? payload : (payload.results ?? []);
 
         setCategories(
-          data.filter((category) => category.is_active ?? category.active ?? false),
+          data.filter(
+            (category) => category.is_active ?? category.active ?? false,
+          ),
         );
       } catch (error) {
         if (!controller.signal.aborted) {
@@ -199,7 +202,9 @@ export function PortalFooter() {
             <h3>{getBaseText("importantSections", language)}</h3>
 
             {[...categories]
-              .filter((category) => category.is_active ?? category.active ?? false)
+              .filter(
+                (category) => category.is_active ?? category.active ?? false,
+              )
               .map((category) => ({
                 ...category,
                 slug: normalizeCategorySlug(category.slug),
@@ -228,16 +233,19 @@ export function PortalFooter() {
               })}
           </div>
 
-          <div>
+          <div className="footer-useful-links-col">
             <h3>{getBaseText("usefulLinks", language)}</h3>
+
             {links.slice(0, 8).map((link) => (
               <a
                 key={link.id}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="footer-useful-link"
               >
-                {getLinkTitle(link, language)}
+                <LinkIcon size={16} />
+                <span>{getLinkTitle(link, language)}</span>
               </a>
             ))}
           </div>

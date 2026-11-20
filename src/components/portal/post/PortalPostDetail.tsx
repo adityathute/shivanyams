@@ -1209,7 +1209,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
               <aside className="right-column">
                 <section className="panelin important-panel">
                   <div className="section-heading">
-                    <h2>{t("importantSections")}</h2>
+                    <h2>{t("usefulLinks")}</h2>
                     <span>{t("usefulLinks")}</span>
                   </div>
 

@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { usePortalData, type ImportantDate } from "../data/portal-data";
+import { usePortalData, type ImportantDate, type PostFAQ } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { PortalFooter } from "../layout/footer/PortalFooter";
 import { PortalContentNotFound } from "./PortalContentNotFound";
@@ -284,10 +284,9 @@ const detailLabels = {
     hi: "महत्वपूर्ण तिथियां",
   },
   importantLinks: {
-    en: "Important Links",
-    mr: "महत्त्वाच्या लिंक्स",
-    hi: "महत्वपूर्ण लिंक",
+    en: "Important Links", mr: "महत्त्वाच्या लिंक्स", hi: "महत्वपूर्ण लिंक",
   },
+  faqs: { en: "Frequently Asked Questions", mr: "वारंवार विचारले जाणारे प्रश्न", hi: "अक्सर पूछे जाने वाले प्रश्न" },
   watchVideo: { en: "Watch video", mr: "व्हिडिओ पाहा", hi: "वीडियो देखें" },
   visitWebsite: {
     en: "Visit official website",
@@ -355,6 +354,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [expandedFaqItems, setExpandedFaqItems] = useState<number[]>([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -408,6 +408,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             endDate: "",
             eventDate: "",
             importantDates: [] as ImportantDate[],
+            faqs: [] as PostFAQ[],
             importantLinks: [] as {
               group_key: string;
               label_en: string;
@@ -475,6 +476,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           endDate: item.end_date || "",
           eventDate: item.event_date || "",
           importantDates: item.important_dates || [],
+          faqs: item.faqs || [],
           importantLinks: (() => {
             const groups = new Map<string, { group_key: string; label_en: string; label_mr: string; label_hi: string; actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[] }>();
             (item.important_links || []).filter((entry) => entry.is_active !== false && Boolean(entry.url)).forEach((entry, index) => {
@@ -1154,6 +1156,30 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  {post.faqs.length ? (
+                    <section className="portal-faq-section">
+                      <div className="portal-important-dates-heading"><h2>{getDetailLabel("faqs", language)}</h2></div>
+                      <div className="portal-faq-list">
+                        {post.faqs.map((faq, index) => {
+                          const isExpanded = expandedFaqItems.includes(index);
+                          const question = getLocalizedText(language, faq.question_en, faq.question_mr, faq.question_hi) || faq.question_en;
+                          const answer = getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en;
+                          return (
+                            <div className={`portal-faq-item${isExpanded ? " is-open" : ""}`} key={faq.id ?? index}>
+                              <button type="button" className="portal-faq-question" aria-expanded={isExpanded} aria-controls={`portal-faq-answer-${faq.id ?? index}`}
+                                onClick={() => setExpandedFaqItems((current) => isExpanded ? current.filter((item) => item !== index) : [...current, index])}>
+                                <span>{question}</span><span className="portal-faq-chevron" aria-hidden="true" />
+                              </button>
+                              <div id={`portal-faq-answer-${faq.id ?? index}`} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
+                                <div className="portal-faq-answer-inner"><p>{answer}</p></div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </section>
                   ) : null}

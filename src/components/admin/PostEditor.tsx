@@ -828,6 +828,20 @@ export default function PostEditor({
         const result = await response.json();
         if (!controller.signal.aborted) {
           setSlugAvailable(Boolean(result.available));
+
+          // Automatically use the first available suggested slug when a collision is found.
+          if (
+            !result.available &&
+            typeof result.suggested_slug === "string" &&
+            result.suggested_slug &&
+            result.suggested_slug !== slug
+          ) {
+            setForm((current) =>
+              current.slug.trim() === slug
+                ? { ...current, slug: result.suggested_slug }
+                : current,
+            );
+          }
         }
       } catch (error) {
         if (!controller.signal.aborted) {

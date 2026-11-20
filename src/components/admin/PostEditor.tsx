@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { Select } from "shivanya-ui";
+import { Input, Select, Textarea } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
 import { slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
@@ -1161,6 +1161,7 @@ export default function PostEditor({
             <div className="post-editor-section-title-row">
               <h2>Post Information</h2>
             </div>
+
             <div className="post-editor-grid post-editor-meta-row">
               <Select
                 label="Category"
@@ -1202,10 +1203,13 @@ export default function PostEditor({
                 ]}
                 onChange={(event) => setOrganizationType(event.target.value)}
               />
-              <label>
-                Location
-                <input value={form.location} onChange={(event) => update("location", event.target.value)} />
-              </label>
+              <Input
+                label="Location"
+                value={form.location}
+                onChange={(event) => update("location", event.target.value)}
+                fullWidth
+                size="md"
+              />
             </div>
 
             <div className="post-editor-translation-group">
@@ -1221,31 +1225,36 @@ export default function PostEditor({
                 </button>
               </div>
               <div className="post-editor-grid post-editor-title-grid">
-                <label>
-                  Title ({form.default_language.toUpperCase()}) *
-                  <input
-                    required
-                    maxLength={240}
-                    value={form[`title_${form.default_language}`]}
-                    onChange={(event) => update(`title_${form.default_language}`, event.target.value)}
-                  />
-                </label>
-                <label>
-                  URL Slug
-                  <input value={form.slug} onChange={(event) => update("slug", event.target.value)} placeholder="Generated from English title" />
-                </label>
+                <Input
+                  label={`Title (${form.default_language.toUpperCase()})`}
+                  required
+                  maxLength={240}
+                  value={form[`title_${form.default_language}`]}
+                  onChange={(event) => update(`title_${form.default_language}`, event.target.value)}
+                  fullWidth
+                  size="md"
+                />
+                <Input
+                  label="URL Slug"
+                  value={form.slug}
+                  onChange={(event) => update("slug", event.target.value)}
+                  placeholder="Generated from English title"
+                  fullWidth
+                  size="md"
+                />
               </div>
               {postInfoLanguages.title.length === 3 && (
                 <div className="post-editor-grid post-editor-title-translations">
                   {(["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
-                    <label key={language}>
-                      Title ({language.toUpperCase()})
-                      <input
-                        maxLength={240}
-                        value={form[`title_${language}`]}
-                        onChange={(event) => update(`title_${language}`, event.target.value)}
-                      />
-                    </label>
+                    <Input
+                      key={language}
+                      label={`Title (${language.toUpperCase()})`}
+                      maxLength={240}
+                      value={form[`title_${language}`]}
+                      onChange={(event) => update(`title_${language}`, event.target.value)}
+                      fullWidth
+                      size="md"
+                    />
                   ))}
                 </div>
               )}
@@ -1264,15 +1273,24 @@ export default function PostEditor({
                 </button>
               </div>
               <div className="post-editor-grid post-editor-single-column">
-                <label>
-                  Short Description ({form.default_language.toUpperCase()})
-                  <textarea rows={3} value={form[`summary_${form.default_language}`]} onChange={(event) => update(`summary_${form.default_language}`, event.target.value)} />
-                </label>
+                <Textarea
+                  label={`Short Description (${form.default_language.toUpperCase()})`}
+                  rows={3}
+                  value={form[`summary_${form.default_language}`]}
+                  onChange={(event) => update(`summary_${form.default_language}`, event.target.value)}
+                  fullWidth
+                  size="md"
+                />
                 {postInfoLanguages.summary.length === 3 && (["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
-                  <label key={language}>
-                    Short Description ({language.toUpperCase()})
-                    <textarea rows={3} value={form[`summary_${language}`]} onChange={(event) => update(`summary_${language}`, event.target.value)} />
-                  </label>
+                  <Textarea
+                    key={language}
+                    label={`Short Description (${language.toUpperCase()})`}
+                    rows={3}
+                    value={form[`summary_${language}`]}
+                    onChange={(event) => update(`summary_${language}`, event.target.value)}
+                    fullWidth
+                    size="md"
+                  />
                 ))}
               </div>
             </div>
@@ -1290,24 +1308,37 @@ export default function PostEditor({
                 </button>
               </div>
               <div className="post-editor-grid post-editor-single-column">
-                <label>
-                  Full Content ({form.default_language.toUpperCase()})
-                  <textarea rows={8} value={form[`body_${form.default_language}`]} onChange={(event) => update(`body_${form.default_language}`, event.target.value)} />
-                </label>
+                <Textarea
+                  label={`Full Content (${form.default_language.toUpperCase()})`}
+                  rows={8}
+                  value={form[`body_${form.default_language}`]}
+                  onChange={(event) => update(`body_${form.default_language}`, event.target.value)}
+                  fullWidth
+                  size="md"
+                />
                 {postInfoLanguages.body.length === 3 && (["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
-                  <label key={language}>
-                    Full Content ({language.toUpperCase()})
-                    <textarea rows={6} value={form[`body_${language}`]} onChange={(event) => update(`body_${language}`, event.target.value)} />
-                  </label>
+                  <Textarea
+                    key={language}
+                    label={`Full Content (${language.toUpperCase()})`}
+                    rows={6}
+                    value={form[`body_${language}`]}
+                    onChange={(event) => update(`body_${language}`, event.target.value)}
+                    fullWidth
+                    size="md"
+                  />
                 ))}
               </div>
             </div>
 
             <div className="post-editor-grid post-editor-single-column">
-              <label>
-                Featured Image URL
-                <input type="url" value={form.featured_image_url} onChange={(event) => update("featured_image_url", event.target.value)} />
-              </label>
+              <Input
+                type="url"
+                label="Featured Image URL"
+                value={form.featured_image_url}
+                onChange={(event) => update("featured_image_url", event.target.value)}
+                fullWidth
+                size="md"
+              />
             </div>
           </section>
           <section>

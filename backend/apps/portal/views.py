@@ -569,7 +569,6 @@ class TrackPostView(APIView):
 
 class TrackWebsiteView(APIView):
     permission_classes = [permissions.AllowAny]
-    authentication_classes = []
 
     def post(self, request):
         visitor_id = request.data.get("visitor_id")

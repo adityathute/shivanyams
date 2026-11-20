@@ -14,6 +14,15 @@ import "./admin.css";
 type PaginatedPosts = { results?: AdminPost[]; next?: string | null };
 
 type WebsiteAnalyticsPage = { path: string; views: number; unique_visitors: number; last_viewed: string | null };
+type WebsiteVisitorRow = {
+  visitor_id: string; visitor_type: "user" | "anonymous"; full_name: string;
+  ip_address: string | null; first_seen: string; last_seen: string; last_viewed: string | null;
+  total_views: number; total_pages: number; device: string; language: string;
+};
+type WebsiteViewEvent = {
+  viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string;
+  ip_address: string | null; visitor_id: string; device: string; language: string; referrer_url: string;
+};
 
 type AdminPost = {
   id: number;
@@ -70,9 +79,9 @@ export default function AdminPage() {
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
-  const [analyticsType, setAnalyticsType] = useState<"views" | "visitors" | null>(null);
+  const [analyticsType, setAnalyticsType] = useState<"views" | "visitors" | "users" | null>(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>([]);
-  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);\n  const [analyticsVisitors, setAnalyticsVisitors] = useState<WebsiteVisitorRow[]>([]);\n  const [selectedVisitor, setSelectedVisitor] = useState<WebsiteVisitorRow | null>(null);\n  const [visitorPages, setVisitorPages] = useState<WebsiteAnalyticsPage[]>([]);\n  const [selectedAnalyticsPath, setSelectedAnalyticsPath] = useState<string | null>(null);\n  const [analyticsEvents, setAnalyticsEvents] = useState<WebsiteViewEvent[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -195,17 +204,56 @@ export default function AdminPage() {
     views: posts.reduce((sum, post) => sum + (post.views_count || 0), 0),
   }), [posts]);
 
-  function openWebsiteAnalytics(type: "views" | "visitors") {
+  function openWebsiteAnalytics(type: "views" | "visitors" | "users") {
     setAnalyticsType(type);
+    setSelectedVisitor(null);
+    setVisitorPages([]);
+    setSelectedAnalyticsPath(null);
+    setAnalyticsEvents([]);
     setAnalyticsLoading(true);
-    adminFetch(API_URL + "/admin/website-analytics/", { cache: "no-store" })
+    const query = type === "views" ? "" : `?type=visitors${type === "users" ? "&authenticated=true" : ""}`;
+    adminFetch(API_URL + "/admin/website-analytics/" + query, { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Unable to load website analytics (${response.status}).`);
         return response.json();
       })
-      .then((payload: { pages?: WebsiteAnalyticsPage[] }) => setAnalyticsPages(payload.pages ?? []))
+      .then((payload: { pages?: WebsiteAnalyticsPage[]; visitors?: WebsiteVisitorRow[] }) => {
+        setAnalyticsPages(payload.pages ?? []);
+        setAnalyticsVisitors(payload.visitors ?? []);
+      })
       .catch((err) => setError(err instanceof Error ? err.message : "Unable to load website analytics."))
       .finally(() => setAnalyticsLoading(false));
+  }
+
+  async function openVisitorDetails(visitor: WebsiteVisitorRow) {
+    setSelectedVisitor(visitor);
+    setSelectedAnalyticsPath(null);
+    setAnalyticsLoading(true);
+    try {
+      const response = await adminFetch(API_URL + "/admin/website-analytics/?type=visitors&visitor_id=" + encodeURIComponent(visitor.visitor_id), { cache: "no-store" });
+      if (!response.ok) throw new Error(`Unable to load visitor pages (${response.status}).`);
+      const payload = await response.json();
+      setVisitorPages(payload.pages ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load visitor pages.");
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }
+
+  async function openPageEvents(path: string) {
+    setSelectedAnalyticsPath(path);
+    setAnalyticsLoading(true);
+    try {
+      const response = await adminFetch(API_URL + "/admin/website-analytics/?path=" + encodeURIComponent(path), { cache: "no-store" });
+      if (!response.ok) throw new Error(`Unable to load page views (${response.status}).`);
+      const payload = await response.json();
+      setAnalyticsEvents(payload.events ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load page views.");
+    } finally {
+      setAnalyticsLoading(false);
+    }
   }
 
   function deletePost(post: AdminPost) {
@@ -340,8 +388,8 @@ export default function AdminPage() {
         </header>
 
         {(() => {
-          const statItems: { label: string; value: number; analytics?: "views" | "visitors"; group: "users" | "website" | "posts" | "content" }[] = [
-            { label: "Portal users", value: usersCount, group: "users" },
+          const statItems: { label: string; value: number; analytics?: "views" | "visitors" | "users"; group: "users" | "website" | "posts" | "content" }[] = [
+            { label: "Portal users", value: usersCount, analytics: "users", group: "users" },
             { label: "Website views", value: websiteViewsCount, analytics: "views", group: "website" },
             { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors", group: "website" },
             { label: "Post views", value: counts.views, group: "posts" },
@@ -363,7 +411,7 @@ export default function AdminPage() {
               {statItems.map((item) => (
                 <article key={item.label} className={`admin-stat-card admin-stat-${item.group}${item.analytics ? " admin-stat-clickable" : ""}`}>
                   {item.analytics ? (
-                    <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} by page`}>
+                    <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} details`}>
                       <span>{item.label}<small className="admin-stat-open-indicator">View details ↗</small></span>
                       <strong>{compactNumber.format(item.value)}</strong>
                     </button>
@@ -452,31 +500,55 @@ export default function AdminPage() {
           <section className="admin-analytics-modal" role="dialog" aria-modal="true" aria-labelledby="admin-analytics-title">
             <header>
               <div>
-                <h2 id="admin-analytics-title">Website {analyticsType === "views" ? "Views" : "Visitors"}</h2>
-                <p>Page-by-page website analytics. Visitor counts are unique across the website.</p>
+                <h2 id="admin-analytics-title">{selectedVisitor ? "Visitor details" : selectedAnalyticsPath ? "Page view details" : analyticsType === "views" ? "Website Views" : analyticsType === "users" ? "Portal Users" : "Website Visitors"}</h2>
+                <p>{selectedVisitor ? "Pages visited by this browser or device." : selectedAnalyticsPath ? "Individual visits recorded for this page." : analyticsType === "views" ? "Select a page to inspect its individual page views." : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}</p>
               </div>
               <button type="button" onClick={() => setAnalyticsType(null)} aria-label="Close analytics">×</button>
             </header>
-            {analyticsLoading ? <div className="admin-empty">Loading analytics...</div> : analyticsPages.length === 0 ? (
-              <div className="admin-empty">No website visits recorded yet.</div>
-            ) : (
-              <div className="admin-analytics-table-wrap">
-                <table className="admin-analytics-table">
-                  <thead><tr><th>Page link</th><th>Total views</th><th>Unique visitors</th><th>Last viewed</th></tr></thead>
-                  <tbody>
-                    {[...analyticsPages].sort((a, b) => analyticsType === "views" ? b.views - a.views : b.unique_visitors - a.unique_visitors).map((item) => (
-                      <tr key={item.path}>
-                        <td><a href={item.path} target="_blank" rel="noreferrer">{item.path}</a></td>
-                        <td>{item.views.toLocaleString("en-IN")}</td>
-                        <td>{item.unique_visitors.toLocaleString("en-IN")}</td>
-                        <td>{item.last_viewed ? new Date(item.last_viewed).toLocaleString() : "—"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {(selectedVisitor || selectedAnalyticsPath) && <button type="button" className="admin-analytics-back" onClick={() => { setSelectedVisitor(null); setVisitorPages([]); setSelectedAnalyticsPath(null); setAnalyticsEvents([]); }}>← Back to list</button>}
+            {analyticsLoading ? <div className="admin-empty">Loading analytics...</div> : selectedVisitor ? (
+              <div className="admin-analytics-detail">
+                <div className="admin-visitor-summary">
+                  <strong>{selectedVisitor.visitor_type === "user" ? selectedVisitor.full_name || "Registered user" : "Anonymous"}</strong>
+                  <span>IP: {selectedVisitor.ip_address || "Not available"}</span>
+                  <span>{selectedVisitor.total_pages} pages · {selectedVisitor.total_views} total views</span>
+                  <span>First visit: {new Date(selectedVisitor.first_seen).toLocaleString()}</span>
+                  <span>Last visit: {new Date(selectedVisitor.last_seen).toLocaleString()}</span>
+                  <span>Device: {selectedVisitor.device} · Language: {selectedVisitor.language || "—"}</span>
+                </div>
+                <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
+                  <thead><tr><th>Page visited</th><th>Views</th><th>Last viewed</th></tr></thead>
+                  <tbody>{visitorPages.map((item) => <tr key={item.path}><td><a href={item.path} target="_blank" rel="noreferrer">{item.path}</a></td><td>{item.views.toLocaleString("en-IN")}</td><td>{item.last_viewed ? new Date(item.last_viewed).toLocaleString() : "—"}</td></tr>)}</tbody>
+                </table></div>
               </div>
+            ) : selectedAnalyticsPath ? (
+              <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
+                <thead><tr><th>Visitor</th><th>IP address</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
+                <tbody>{analyticsEvents.map((event, index) => <tr key={event.visitor_id + event.viewed_at + index}><td>{event.visitor_type === "user" ? event.full_name || "Registered user" : "Anonymous"}</td><td>{event.ip_address || "—"}</td><td>{event.device}</td><td>{event.language || "—"}</td><td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td><td>{new Date(event.viewed_at).toLocaleString()}</td></tr>)}</tbody>
+              </table></div>
+            ) : analyticsType === "views" ? (
+              analyticsPages.length === 0 ? <div className="admin-empty">No website views recorded yet.</div> : (
+                <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
+                  <thead><tr><th>Page link</th><th>Total views</th><th>Unique visitors</th><th>Last viewed</th></tr></thead>
+                  <tbody>{[...analyticsPages].sort((a, b) => b.views - a.views).map((item) => <tr key={item.path}>
+                    <td><button type="button" className="admin-analytics-link" onClick={() => void openPageEvents(item.path)}>{item.path}</button></td>
+                    <td>{item.views.toLocaleString("en-IN")}</td><td>{item.unique_visitors.toLocaleString("en-IN")}</td><td>{item.last_viewed ? new Date(item.last_viewed).toLocaleString() : "—"}</td>
+                  </tr>)}</tbody>
+                </table></div>
+              )
+            ) : (
+              analyticsVisitors.length === 0 ? <div className="admin-empty">No visitors recorded yet.</div> : (
+                <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
+                  <thead><tr><th>Visitor</th><th>IP address</th><th>Pages</th><th>Total views</th><th>Device</th><th>Language</th><th>First visit</th><th>Last visit</th></tr></thead>
+                  <tbody>{analyticsVisitors.map((visitor) => <tr key={visitor.visitor_id}>
+                    <td><button type="button" className="admin-analytics-link" onClick={() => void openVisitorDetails(visitor)}>{visitor.visitor_type === "user" ? visitor.full_name || "Registered user" : "Anonymous"}</button></td>
+                    <td>{visitor.ip_address || "—"}</td><td>{visitor.total_pages}</td><td>{visitor.total_views}</td><td>{visitor.device}</td><td>{visitor.language || "—"}</td>
+                    <td>{new Date(visitor.first_seen).toLocaleString()}</td><td>{new Date(visitor.last_seen).toLocaleString()}</td>
+                  </tr>)}</tbody>
+                </table></div>
+              )
             )}
-            <footer><span>{analyticsPages.length} pages tracked</span><button type="button" onClick={() => setAnalyticsType(null)}>Close</button></footer>
+            <footer><span>{selectedVisitor ? visitorPages.length + " pages visited" : selectedAnalyticsPath ? analyticsEvents.length + " recent view events" : analyticsType === "views" ? analyticsPages.length + " pages tracked" : analyticsVisitors.length + " unique browsers/devices"}</span><button type="button" onClick={() => setAnalyticsType(null)}>Close</button></footer>
           </section>
         </div>
       )}

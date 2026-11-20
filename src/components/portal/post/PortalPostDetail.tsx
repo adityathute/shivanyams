@@ -286,7 +286,7 @@ const detailLabels = {
   importantLinks: {
     en: "Important Links", mr: "महत्त्वाच्या लिंक्स", hi: "महत्वपूर्ण लिंक",
   },
-  faqs: { en: "Frequently Asked Questions", mr: "वारंवार विचारले जाणारे प्रश्न", hi: "अक्सर पूछे जाने वाले प्रश्न" },
+  faqs: { en: "Frequently Asked Questions (FAQ)", mr: "वारंवार विचारले जाणारे प्रश्न (FAQ)", hi: "अक्सर पूछे जाने वाले प्रश्न (FAQ)" },
   watchVideo: { en: "Watch video", mr: "व्हिडिओ पाहा", hi: "वीडियो देखें" },
   visitWebsite: {
     en: "Visit official website",

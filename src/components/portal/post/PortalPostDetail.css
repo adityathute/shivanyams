@@ -1323,3 +1323,25 @@
   font-size: 18px;
   font-weight: 500;
 }
+
+
+/* A 404 without recommendations must span the complete content area. */
+.portal-post-detail .content-layout.no-sidebar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.portal-post-detail .content-layout.no-sidebar > .post-detail-main {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: none;
+}
+
+/* Purple ranking theme for category recommendations. */
+.portal-post-detail .not-found-post-rank {
+  background: rgba(141, 61, 224, 0.12);
+  color: #8d3de0;
+}
+.portal-post-detail .not-found-post-link:hover .not-found-post-rank {
+  background: #8d3de0;
+  color: #fff;
+}

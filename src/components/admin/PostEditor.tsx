@@ -1606,6 +1606,92 @@ export default function PostEditor({
                       </div>
                     </div>
 
+                    <h4>Age Criteria</h4>
+                    <div className="post-editor-grid">
+                      <Select
+                        label="Age Criteria"
+                        value={post.age_criteria_type}
+                        options={[
+                          { value: "", label: "Select age criteria for this post" },
+                          ...DETAIL_OPTIONS.age_criteria_type.map((option) => ({ value: option, label: detailLabel(option) })),
+                        ]}
+                        onChange={(event) => updateJobPost(postIndex, "age_criteria_type", event.target.value)}
+                        fullWidth
+                        size="sm"
+                      />
+
+                      {post.age_criteria_type === "age_range" ||
+                      post.age_criteria_type === "minimum_only" ? (
+                        <Input type="number" label="Minimum Age" min={0} value={post.age_min ?? ""} onChange={(event) => updateJobPost(postIndex, "age_min", event.target.value === "" ? null : Number(event.target.value))} fullWidth size="sm" />
+                      ) : null}
+
+                      {post.age_criteria_type === "age_range" ||
+                      post.age_criteria_type === "maximum_only" ? (
+                        <Input type="number" label="Maximum Age" min={0} value={post.age_max ?? ""} onChange={(event) => updateJobPost(postIndex, "age_max", event.target.value === "" ? null : Number(event.target.value))} fullWidth size="sm" />
+                      ) : null}
+
+                      {post.age_criteria_type &&
+                      !["dob_range", "text_only"].includes(
+                        post.age_criteria_type,
+                      ) ? (
+                        <Input type="date" label="Age As On Date" value={post.age_as_on_date ?? ""} onChange={(event) => updateJobPost(postIndex, "age_as_on_date", event.target.value)} fullWidth size="sm" />
+                      ) : null}
+
+                      {post.age_criteria_type === "dob_range" ? (
+                        <>
+                          <Input type="date" label="Eligible Date of Birth From" value={post.eligible_dob_from ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_from", event.target.value)} fullWidth size="sm" />
+
+                          <Input type="date" label="Eligible Date of Birth To" value={post.eligible_dob_to ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_to", event.target.value)} fullWidth size="sm" />
+                        </>
+                      ) : null}
+
+                      {([activeLanguage] as const).map((lang) => (
+                        <Textarea key={lang} label={`Age Limit Note (${lang.toUpperCase()})`} rows={2} value={post[`age_limit_note_${lang}`]} onChange={(event) => updateJobPost(postIndex, `age_limit_note_${lang}`, event.target.value)} fullWidth size="sm" />
+                      ))}
+                    </div>
+
+
+                    <section className="post-editor-post-detail-section post-editor-fees-section">
+                      <div className="post-editor-subsection-heading">
+                      <div><h4>Application fees</h4><small>Fees can be different for each post</small></div>
+                      <button className="post-editor-add-button" type="button" onClick={() => addJobPostFee(postIndex)}>
+                        <span aria-hidden="true">＋</span> Add fee category
+                      </button>
+                    </div>
+
+                    {post.fees.map((fee, feeIndex) => (
+                      <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={feeIndex}>
+                        <summary className="post-editor-card-summary">
+                          <span><strong>Fee category {feeIndex + 1}</strong><small>{fee.category_name_en || "Add category"}{fee.fee_amount !== "" ? ` · ₹${fee.fee_amount}` : ""}</small></span>
+                        </summary>
+
+                        <div className="post-editor-grid">
+                          {([activeLanguage] as const).map((lang) => (
+                            <Input key={lang} label={`Category (${lang.toUpperCase()})`} value={fee[`category_name_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `category_name_${lang}`, event.target.value)} fullWidth size="sm" />
+                          ))}
+
+                          <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
+
+                          {([activeLanguage] as const).map((lang) => (
+                            <Textarea key={lang} label={`Fee Note (${lang.toUpperCase()})`} rows={2} value={fee[`fee_note_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `fee_note_${lang}`, event.target.value)} fullWidth size="sm" />
+                          ))}
+                        </div>
+
+                        <div className="post-editor-card-actions">
+                          <button
+                            type="button"
+                            className="post-editor-remove"
+                            onClick={() => removeJobPostFee(postIndex, feeIndex)}
+                          >
+                            Remove fee category
+                          </button>
+                        </div>
+                      </details>
+                    ))}
+
+                    </section>
+
+
                     {details.education_mode === "per_post" ? (
                       <section className="post-editor-post-detail-section post-editor-education-section">
                       <div className="post-editor-subsection-heading">
@@ -1662,90 +1748,6 @@ export default function PostEditor({
                       ))}
                       </section>
                     ) : null}
-
-                    <h4>Age Criteria</h4>
-                    <div className="post-editor-grid">
-                      <Select
-                        label="Age Criteria"
-                        value={post.age_criteria_type}
-                        options={[
-                          { value: "", label: "Select age criteria for this post" },
-                          ...DETAIL_OPTIONS.age_criteria_type.map((option) => ({ value: option, label: detailLabel(option) })),
-                        ]}
-                        onChange={(event) => updateJobPost(postIndex, "age_criteria_type", event.target.value)}
-                        fullWidth
-                        size="sm"
-                      />
-
-                      {post.age_criteria_type === "age_range" ||
-                      post.age_criteria_type === "minimum_only" ? (
-                        <Input type="number" label="Minimum Age" min={0} value={post.age_min ?? ""} onChange={(event) => updateJobPost(postIndex, "age_min", event.target.value === "" ? null : Number(event.target.value))} fullWidth size="sm" />
-                      ) : null}
-
-                      {post.age_criteria_type === "age_range" ||
-                      post.age_criteria_type === "maximum_only" ? (
-                        <Input type="number" label="Maximum Age" min={0} value={post.age_max ?? ""} onChange={(event) => updateJobPost(postIndex, "age_max", event.target.value === "" ? null : Number(event.target.value))} fullWidth size="sm" />
-                      ) : null}
-
-                      {post.age_criteria_type &&
-                      !["dob_range", "text_only"].includes(
-                        post.age_criteria_type,
-                      ) ? (
-                        <Input type="date" label="Age As On Date" value={post.age_as_on_date ?? ""} onChange={(event) => updateJobPost(postIndex, "age_as_on_date", event.target.value)} fullWidth size="sm" />
-                      ) : null}
-
-                      {post.age_criteria_type === "dob_range" ? (
-                        <>
-                          <Input type="date" label="Eligible Date of Birth From" value={post.eligible_dob_from ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_from", event.target.value)} fullWidth size="sm" />
-
-                          <Input type="date" label="Eligible Date of Birth To" value={post.eligible_dob_to ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_to", event.target.value)} fullWidth size="sm" />
-                        </>
-                      ) : null}
-
-                      {([activeLanguage] as const).map((lang) => (
-                        <Textarea key={lang} label={`Age Limit Note (${lang.toUpperCase()})`} rows={2} value={post[`age_limit_note_${lang}`]} onChange={(event) => updateJobPost(postIndex, `age_limit_note_${lang}`, event.target.value)} fullWidth size="sm" />
-                      ))}
-                    </div>
-
-                    <section className="post-editor-post-detail-section post-editor-fees-section">
-                      <div className="post-editor-subsection-heading">
-                      <div><h4>Application fees</h4><small>Fees can be different for each post</small></div>
-                      <button className="post-editor-add-button" type="button" onClick={() => addJobPostFee(postIndex)}>
-                        <span aria-hidden="true">＋</span> Add fee category
-                      </button>
-                    </div>
-
-                    {post.fees.map((fee, feeIndex) => (
-                      <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={feeIndex}>
-                        <summary className="post-editor-card-summary">
-                          <span><strong>Fee category {feeIndex + 1}</strong><small>{fee.category_name_en || "Add category"}{fee.fee_amount !== "" ? ` · ₹${fee.fee_amount}` : ""}</small></span>
-                        </summary>
-
-                        <div className="post-editor-grid">
-                          {([activeLanguage] as const).map((lang) => (
-                            <Input key={lang} label={`Category (${lang.toUpperCase()})`} value={fee[`category_name_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `category_name_${lang}`, event.target.value)} fullWidth size="sm" />
-                          ))}
-
-                          <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
-
-                          {([activeLanguage] as const).map((lang) => (
-                            <Textarea key={lang} label={`Fee Note (${lang.toUpperCase()})`} rows={2} value={fee[`fee_note_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `fee_note_${lang}`, event.target.value)} fullWidth size="sm" />
-                          ))}
-                        </div>
-
-                        <div className="post-editor-card-actions">
-                          <button
-                            type="button"
-                            className="post-editor-remove"
-                            onClick={() => removeJobPostFee(postIndex, feeIndex)}
-                          >
-                            Remove fee category
-                          </button>
-                        </div>
-                      </details>
-                    ))}
-
-                    </section>
 
                     <div className="post-editor-card-actions post-editor-post-actions">
                       <button

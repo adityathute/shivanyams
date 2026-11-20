@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
+import { ConfirmDialog } from "shivanya-ui";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
@@ -60,6 +61,7 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [refreshKey, setRefreshKey] = useState(0);
   const [busyPost, setBusyPost] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminPost | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
@@ -170,10 +172,17 @@ export default function AdminPage() {
     visitors: posts.reduce((sum, post) => sum + (post.unique_visitors_count || 0), 0),
   }), [posts]);
 
-  async function deletePost(post: AdminPost) {
-    if (!window.confirm(`Delete "${post.title_en}"? This cannot be undone.`)) return;
+  function deletePost(post: AdminPost) {
+    setError("");
+    setDeleteTarget(post);
+  }
+
+  async function confirmDeletePost() {
+    if (!deleteTarget) return;
+    const post = deleteTarget;
     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
     if (!kind) return;
+
     setBusyPost(post.id);
     try {
       const response = await adminFetch(`${API_URL}/admin/content/${kind.api}/${post.slug}/`, {
@@ -181,6 +190,8 @@ export default function AdminPage() {
       });
       if (!response.ok) throw new Error(`Delete failed (${response.status}).`);
       setPosts((current) => current.filter((item) => item.id !== post.id));
+      setSelectedIds((current) => current.filter((id) => id !== post.id));
+      setDeleteTarget(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to delete post.");
     } finally {
@@ -363,6 +374,26 @@ export default function AdminPage() {
           {selectedIds.length > 0 && <div className="admin-bulk-bar"><strong>{selectedIds.length} selected</strong><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("published")}>Publish selected</button><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("archived")}>Archive selected</button><button onClick={() => setSelectedIds([])}>Clear selection</button></div>}
         </section>
       </div>
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete post?"
+        message={
+          deleteTarget
+            ? `Are you sure you want to permanently delete "${deleteTarget.title_en}"? This action cannot be undone.`
+            : "This action cannot be undone."
+        }
+        confirmText="Delete post"
+        cancelText="Cancel"
+        variant="danger"
+        size="md"
+        loading={deleteTarget !== null && busyPost === deleteTarget.id}
+        closeOnOverlayClick={busyPost === null}
+        closeOnEscape={busyPost === null}
+        onCancel={() => {
+          if (busyPost === null) setDeleteTarget(null);
+        }}
+        onConfirm={() => void confirmDeletePost()}
+      />
       <footer className="admin-footer">ShivanyaMS · Content Administration</footer>
     </main>
   );

@@ -558,6 +558,26 @@ class TrackPostView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+class AdminDashboardStats(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        # Portal does not own the Auth user table; count distinct authenticated
+        # identities recorded through Portal ownership or user activity.
+        user_ids = set()
+        identity_queries = (
+            Post.objects.exclude(owner_auth_id="").values_list("owner_auth_id", flat=True),
+            Comment.objects.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            PostReaction.objects.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            SavedPost.objects.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            PostVisitor.objects.exclude(auth_user_id="").values_list("auth_user_id", flat=True),
+            PostView.objects.exclude(auth_user_id="").values_list("auth_user_id", flat=True),
+        )
+        for identities in identity_queries:
+            user_ids.update(identities)
+        return Response({"users_count": len(user_ids)})
+
+
 class AdminOrganizationTypes(APIView):
     permission_classes = [IsAuthenticated, IsPortalAdmin]
 

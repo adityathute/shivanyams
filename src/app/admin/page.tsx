@@ -287,7 +287,7 @@ export default function AdminPage() {
       post.updated_at ?? "",
     ]);
     const csv = [columns, ...rows].map((row) => row.map((value) =>
-      `"${String(value ?? "").replaceAll('"', '""')} "`.trimEnd().replace(/"$/, '"')
+      `"${String(value ?? "").replaceAll('"', '""')}"`
     ).join(",")).join("\r\n");
     // UTF-8 BOM helps Excel correctly recognize Marathi/Hindi and other Unicode text.
     const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8;" });

@@ -1218,7 +1218,7 @@ export default function PostEditor({
               <div className="post-editor-grid">
                 {postInfoLanguages.title.includes("en") && (
                   <label>
-                    Title (English) *
+                    Title (English) {form.default_language === "en" ? "*" : ""}
                     <input
                       required={form.default_language === "en"}
                       maxLength={240}

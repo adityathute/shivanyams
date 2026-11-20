@@ -451,20 +451,7 @@
 }
 
  
-/* Keep the post summary grid balanced based on fields that actually have values. */
-.portal-job-info-grid.portal-job-info-grid-count-1 {
-  grid-template-columns: minmax(0, 1fr);
-}
-.portal-job-info-grid.portal-job-info-grid-count-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.portal-job-info-grid.portal-job-info-grid-count-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.portal-job-info-grid.portal-job-info-grid-count-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-.portal-job-info-grid[class*="portal-job-info-grid-count-"] > .portal-job-info-item {
+.portal-job-info-item {
   grid-column: auto !important;
 }
 

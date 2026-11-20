@@ -49,6 +49,23 @@ export function createPostSlug(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+function getAnalyticsCsrfToken() {
+  if (typeof document === "undefined") return null;
+
+  const prefix = "csrftoken=";
+  const cookie = document.cookie
+    .split("; ")
+    .find((entry) => entry.startsWith(prefix));
+
+  if (!cookie) return null;
+
+  try {
+    return decodeURIComponent(cookie.slice(prefix.length));
+  } catch {
+    return cookie.slice(prefix.length);
+  }
+}
+
 function getAnalyticsVisitorId() {
   const storageKey = "shivanyams_visitor_id";
 
@@ -537,10 +554,16 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         ? "mobile"
         : "desktop";
 
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    const csrfToken = getAnalyticsCsrfToken();
+    if (csrfToken) headers["X-CSRFToken"] = csrfToken;
+
     void fetch(getPortalApiUrl(`content/${postId}/views/`), {
       method: "POST",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         visitor_id: visitorId,
         language,

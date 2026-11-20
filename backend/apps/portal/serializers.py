@@ -63,6 +63,7 @@ class PostLinkSerializer(serializers.ModelSerializer):
             "action_text_en",
             "action_text_mr",
             "action_text_hi",
+            "group_key",
             "url",
             "sort_order",
             "is_active",

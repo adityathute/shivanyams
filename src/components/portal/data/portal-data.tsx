@@ -140,6 +140,7 @@ export type Item = {
   end_date?: string;
   event_date?: string;
   important_dates?: ImportantDate[];
+  important_links?: ApiLink[];
   extra?: Record<string, unknown>;
   job_details?: JobDetails;
 };
@@ -494,6 +495,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
       old_time: entry.old_time || null,
       new_time: entry.new_time || null,
     })),
+    important_links: (post.important_links || []).filter(
+      (link) => link.is_active !== false && Boolean(link.url),
+    ),
 
     job_details: job
       ? {

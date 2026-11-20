@@ -8,30 +8,27 @@
 .portal-post-detail-inner {
   width: 100%;
   margin: 0 auto;
+}
+
+/* Both columns use native sticky positioning. The shorter column sticks
+   while the taller column continues scrolling, and releases at the end
+   of the shared content-layout row. */
+.portal-post-detail .content-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.95fr) minmax(270px, 0.85fr);
-  column-gap: 16px;
-  row-gap: 16px;
+  gap: 16px;
   align-items: start;
 }
 
-/* The content-layout wrapper is transparent so the post and sidebar share
-   the taller outer detail section as their sticky containing block. */
-.portal-post-detail .content-layout {
-  display: contents;
-}
-
-.post-detail-main {
-  min-width: 0;
-}
-
+.portal-post-detail .post-detail-main,
 .portal-post-detail .right-column {
   position: sticky;
   top: 16px;
   align-self: start;
   min-width: 0;
-  min-height: 0;
-  height: fit-content;
+}
+
+.portal-post-detail .right-column {
   display: grid;
   gap: 12px;
 }
@@ -44,8 +41,13 @@
 
 @media (max-width: 760px) {
   .portal-post-detail .content-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 10px;
+  }
+
+  .portal-post-detail .post-detail-main,
+  .portal-post-detail .right-column {
+    position: static;
   }
 }
 
@@ -205,18 +207,13 @@
 }
 
 .portal-post-category-grid {
-  grid-column: 1 / -1;
   min-width: 0;
-  padding: 0;
+  margin-top: 12px;
+  padding: 0 16px;
 }
 
-.portal-post-category-grid .category-grid{
+.portal-post-category-grid .category-grid {
   margin: 0;
-}
-
-/* Keep the post full width when there is no sidebar. */
-.portal-post-detail-inner:has(.content-layout.no-sidebar) {
-  grid-template-columns: minmax(0, 1fr);
 }
 
 .portal-post-detail .content-layout.no-sidebar .post-detail-main {
@@ -224,20 +221,9 @@
   max-width: none;
 }
 
-@media (max-width: 1100px) {
-  .portal-post-detail-inner {
-    grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
-  }
-}
-
-@media (max-width: 760px) {
-  .portal-post-detail-inner {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 10px;
-  }
-
+@media (max-width: 600px) {
   .portal-post-category-grid {
-    margin-top: 12px;
+    padding: 0 12px;
   }
 }
 
@@ -316,9 +302,12 @@
     min-width: 0;
   }
 
+  .portal-post-detail .post-detail-main,
   .portal-post-detail .right-column {
     position: static;
-    grid-column: 1 / -1;
+  }
+
+  .portal-post-detail .right-column {
     margin-top: 8px;
   }
 }

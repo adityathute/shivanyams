@@ -1585,7 +1585,7 @@ export default function PostEditor({
                               : [...current, postIndex]
                           )}
                         >
-                          {expandedPostLanguages.includes(postIndex) ? "− Hide other languages" : "+ Show other languages"}
+                          {expandedPostLanguages.includes(postIndex) ? "Hide other languages" : "+ Show other languages"}
                         </button>
                       </div>
                       <div className="post-editor-grid post-editor-single-column">

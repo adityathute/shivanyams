@@ -432,6 +432,9 @@ function detailTemplate(api: string): Record<string, unknown> {
       age_mode: "per_post",
       fee_mode: "per_post",
       educational_qualification: "",
+      educational_qualification_en: "",
+      educational_qualification_mr: "",
+      educational_qualification_hi: "",
       age_criteria_type: "age_range",
       age_min: null,
       age_max: null,
@@ -565,6 +568,7 @@ export default function PostEditor({
   const [organizationType, setOrganizationType] = useState("");
   const [activeLanguage, setActiveLanguage] = useState<ContentLanguage>("en");
   const [postInfoLanguages, setPostInfoLanguages] = useState<Record<PostInfoFieldGroup, ContentLanguage[]>>({ title: ["en"], summary: ["en"], body: ["en"] });
+  const [commonEducationLanguages, setCommonEducationLanguages] = useState<ContentLanguage[]>(["en"]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -663,6 +667,7 @@ export default function PostEditor({
         const defaultLanguage = (record.default_language || "en") as ContentLanguage;
         setActiveLanguage(defaultLanguage);
         setPostInfoLanguages({ title: [defaultLanguage], summary: [defaultLanguage], body: [defaultLanguage] });
+        setCommonEducationLanguages([defaultLanguage]);
         setForm({
           ...EMPTY,
           title_en: record.title_en || "",
@@ -700,6 +705,11 @@ export default function PostEditor({
         };
 
         if (kind.api === "jobs") {
+          const defaultEducationKey = `educational_qualification_${defaultLanguage}`;
+          const legacyEducation = String(data?.educational_qualification || "");
+          if (!template[defaultEducationKey] && legacyEducation) {
+            template[defaultEducationKey] = legacyEducation;
+          }
           const existingPosts = Array.isArray(data?.posts)
             ? (data.posts as Record<string, unknown>[])
             : [];
@@ -784,6 +794,18 @@ export default function PostEditor({
           ? [form.default_language]
           : [form.default_language, ...otherLanguages],
       };
+    });
+  }
+
+  function toggleCommonEducationLanguages() {
+    setCommonEducationLanguages((current) => {
+      const otherLanguages = (["en", "mr", "hi"] as const).filter(
+        (language) => language !== form.default_language,
+      );
+      const showingAll = otherLanguages.every((language) => current.includes(language));
+      return showingAll
+        ? [form.default_language as ContentLanguage]
+        : [form.default_language as ContentLanguage, ...otherLanguages];
     });
   }
 
@@ -1404,7 +1426,7 @@ export default function PostEditor({
             </div>
           </section>
           <section>
-            <h2>{kind.label} Details</h2>
+            {kind.api !== "jobs" && <h2>{kind.label} Details</h2>}
  
             {kind.api === "jobs" && (
               <>
@@ -1475,20 +1497,46 @@ export default function PostEditor({
 
                 {details.education_mode === "common" ? (
                   <div className="post-editor-common-education">
-                    <div className="post-editor-subsection-heading">
+                    <div className="post-editor-translation-heading">
                       <div>
                         <h4>Educational Qualification</h4>
                         <small>One qualification shared by all recruitment posts</small>
                       </div>
+                      <button
+                        type="button"
+                        className="post-editor-show-translations"
+                        aria-expanded={commonEducationLanguages.length === 3}
+                        onClick={toggleCommonEducationLanguages}
+                      >
+                        {commonEducationLanguages.length === 3 ? "− Hide other languages" : "+ Show other languages"}
+                      </button>
                     </div>
-                    <Textarea
-                      label={`Qualification (${activeLanguage.toUpperCase()})`}
-                      rows={3}
-                      value={String(details.educational_qualification || "")}
-                      onChange={(event) => updateDetail("educational_qualification", event.target.value)}
-                      fullWidth
-                      size="sm"
-                    />
+                    <div className="post-editor-grid post-editor-single-column">
+                      <Textarea
+                        label={`Qualification (${form.default_language.toUpperCase()})`}
+                        rows={3}
+                        value={String(details[`educational_qualification_${form.default_language}`] || "")}
+                        onChange={(event) => {
+                          updateDetail(`educational_qualification_${form.default_language}`, event.target.value);
+                          updateDetail("educational_qualification", event.target.value);
+                        }}
+                        fullWidth
+                        size="sm"
+                      />
+                      {commonEducationLanguages.length === 3 && (["en", "mr", "hi"] as const)
+                        .filter((language) => language !== form.default_language)
+                        .map((language) => (
+                          <Textarea
+                            key={language}
+                            label={`Qualification (${language.toUpperCase()})`}
+                            rows={3}
+                            value={String(details[`educational_qualification_${language}`] || "")}
+                            onChange={(event) => updateDetail(`educational_qualification_${language}`, event.target.value)}
+                            fullWidth
+                            size="sm"
+                          />
+                        ))}
+                    </div>
                   </div>
                 ) : null}
 
@@ -1693,6 +1741,9 @@ export default function PostEditor({
                     "age_mode",
                     "fee_mode",
                     "educational_qualification",
+                    "educational_qualification_en",
+                    "educational_qualification_mr",
+                    "educational_qualification_hi",
                     "age_criteria_type",
                     "age_min",
                     "age_max",

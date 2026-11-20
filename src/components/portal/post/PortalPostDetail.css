@@ -450,11 +450,6 @@
   background: var(--border-color, #e5e7eb);
 }
 
- 
-.portal-job-info-item {
-  grid-column: auto !important;
-}
-
 .portal-job-info-item {
   display: flex;
   flex-direction: column;

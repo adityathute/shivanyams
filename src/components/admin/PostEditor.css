@@ -1962,3 +1962,10 @@ padding-right: 24px;
   font-weight: 500;
   line-height: 1.5;
 }
+
+
+/* Highlight only unavailable post slugs; available slugs keep the normal input style. */
+.post-editor-form .shivanya-input-container:has(.post-editor-slug-unavailable) {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.12) !important;
+}

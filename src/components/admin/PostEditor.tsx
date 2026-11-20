@@ -569,6 +569,7 @@ export default function PostEditor({
   const [activeLanguage, setActiveLanguage] = useState<ContentLanguage>("en");
   const [postInfoLanguages, setPostInfoLanguages] = useState<Record<PostInfoFieldGroup, ContentLanguage[]>>({ title: ["en"], summary: ["en"], body: ["en"] });
   const [commonEducationLanguages, setCommonEducationLanguages] = useState<ContentLanguage[]>(["en"]);
+  const [expandedPostLanguages, setExpandedPostLanguages] = useState<number[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -1551,7 +1552,7 @@ export default function PostEditor({
                       
                     </summary>
                     <div className="post-editor-post-body">
-                    <div className="post-editor-grid">
+                    <div className="post-editor-post-meta-row">
                       <Input
                         label="Post Number"
                         required
@@ -1560,25 +1561,6 @@ export default function PostEditor({
                         fullWidth
                         size="sm"
                       />
-
-                      {([activeLanguage] as const).map((lang) => (
-                        <Input
-                          key={lang}
-                          label={`Title (${lang.toUpperCase()})`}
-                          required={lang === "en"}
-                          value={post[`post_name_${lang}`]}
-                          onChange={(event) =>
-                            updateJobPost(
-                              postIndex,
-                              `post_name_${lang}`,
-                              event.target.value,
-                            )
-                          }
-                          fullWidth
-                          size="sm"
-                        />
-                      ))}
-
                       <Input
                         type="number"
                         label="Vacancies"
@@ -1588,6 +1570,39 @@ export default function PostEditor({
                         fullWidth
                         size="sm"
                       />
+                    </div>
+
+                    <div className="post-editor-post-title-section">
+                      <div className="post-editor-translation-heading">
+                        <span>Post Title</span>
+                        <button
+                          type="button"
+                          className="post-editor-show-translations"
+                          aria-expanded={expandedPostLanguages.includes(postIndex)}
+                          onClick={() => setExpandedPostLanguages((current) =>
+                            current.includes(postIndex)
+                              ? current.filter((index) => index !== postIndex)
+                              : [...current, postIndex]
+                          )}
+                        >
+                          {expandedPostLanguages.includes(postIndex) ? "− Hide other languages" : "+ Show other languages"}
+                        </button>
+                      </div>
+                      <div className="post-editor-grid post-editor-single-column">
+                        {([activeLanguage, ...(expandedPostLanguages.includes(postIndex)
+                          ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== activeLanguage)
+                          : [])] as ContentLanguage[]).map((lang) => (
+                          <Input
+                            key={lang}
+                            label={`Title (${lang.toUpperCase()})`}
+                            required={lang === "en"}
+                            value={post[`post_name_${lang}`]}
+                            onChange={(event) => updateJobPost(postIndex, `post_name_${lang}`, event.target.value)}
+                            fullWidth
+                            size="sm"
+                          />
+                        ))}
+                      </div>
                     </div>
 
                     {details.education_mode === "per_post" ? (

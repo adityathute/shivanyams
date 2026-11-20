@@ -566,3 +566,22 @@
 @media (max-width: 620px) {
   .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+
+/* Center admin table columns while keeping post titles left-aligned. */
+.admin-post-table th,
+.admin-post-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.admin-post-table th:nth-child(2),
+.admin-post-table td:nth-child(2) {
+  min-width: 250px;
+  text-align: left;
+  white-space: normal;
+}
+
+.admin-row-actions {
+  justify-content: center;
+}

@@ -23,6 +23,7 @@ type AdminPost = {
   created_at?: string;
   views_count?: number;
   unique_visitors_count?: number;
+  users_count?: number;
   is_active?: boolean;
 };
 
@@ -315,7 +316,7 @@ export default function AdminPage() {
           ) : (
             <div className="admin-table-wrap">
               <table className="admin-post-table">
-                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Visitors</th><th>Created</th><th>Actions</th></tr></thead>
+                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Visitors</th><th>Users</th><th>Created</th><th>Actions</th></tr></thead>
                 <tbody>
                   {visiblePosts.map((post) => {
                     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
@@ -327,6 +328,7 @@ export default function AdminPage() {
                         <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>
                         <td>{(post.views_count || 0).toLocaleString()}</td>
                         <td>{(post.unique_visitors_count || 0).toLocaleString()}</td>
+                        <td>{(post.users_count || 0).toLocaleString()}</td>
                         <td>{post.created_at ? new Date(post.created_at).toLocaleDateString() : "—"}</td>
                         <td>
                           <div className="admin-row-actions">

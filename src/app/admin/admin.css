@@ -917,3 +917,273 @@
   width: 100%;
   text-align: center;
 }
+
+
+/* Modern visitor analytics and visitor-detail experience. */
+.admin-analytics-overlay {
+  padding: 24px;
+  background: rgba(15, 23, 42, .66);
+  backdrop-filter: blur(7px);
+}
+
+.admin-analytics-modal {
+  width: min(1180px, 100%);
+  max-height: min(88vh, 900px);
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  background: #f8fafc;
+  box-shadow: 0 28px 90px rgba(15, 23, 42, .28);
+}
+
+.admin-analytics-modal > header {
+  flex-shrink: 0;
+  padding: 22px 26px;
+  background: linear-gradient(120deg, #ffffff 0%, #f5f3ff 100%);
+  border-bottom: 1px solid #e9e5f5;
+}
+
+.admin-analytics-modal > header > div {
+  min-width: 0;
+}
+
+.admin-analytics-modal h2 {
+  color: #172554;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.45px;
+}
+
+.admin-analytics-modal p {
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.admin-analytics-modal > header button {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #fff;
+  color: #475569;
+  font-size: 25px;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.admin-analytics-modal > header button:hover {
+  background: #f1f5f9;
+  color: #111827;
+  transform: rotate(90deg);
+}
+
+/* Large, easy-to-find return button above visitor information. */
+.admin-analytics-back {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: calc(100% - 44px);
+  min-height: 54px;
+  box-sizing: border-box;
+  margin: 18px 22px 16px;
+  padding: 12px 18px;
+  border: 1px solid #ddd6fe;
+  border-radius: 12px;
+  background: linear-gradient(110deg, #f5f3ff 0%, #eef2ff 100%);
+  color: #5b21b6;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: left;
+  box-shadow: 0 3px 10px rgba(91, 33, 182, .06);
+  transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.admin-analytics-back:hover {
+  border-color: #a78bfa;
+  background: linear-gradient(110deg, #ede9fe 0%, #e0e7ff 100%);
+  box-shadow: 0 7px 18px rgba(91, 33, 182, .12);
+  transform: translateY(-1px);
+}
+
+.admin-analytics-back:focus-visible,
+.admin-analytics-modal button:focus-visible,
+.admin-analytics-link:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, .28);
+  outline-offset: 2px;
+}
+
+.admin-analytics-detail {
+  padding: 0 22px 22px;
+}
+
+/* Visitor identity and metadata become separate readable information tiles. */
+.admin-visitor-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+  margin: 0 0 18px;
+  border: 1px solid #e7e5f4;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(30, 41, 59, .045);
+  color: #475569;
+  font-size: 13px;
+}
+
+.admin-visitor-summary strong {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  grid-column: 1 / -1;
+  width: auto;
+  box-sizing: border-box;
+  padding: 13px 16px;
+  border: 1px solid #ddd6fe;
+  border-radius: 11px;
+  background: linear-gradient(110deg, #f5f3ff 0%, #eef2ff 100%);
+  color: #4c1d95;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+  overflow-wrap: anywhere;
+}
+
+.admin-visitor-summary span {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1px solid #e8edf5;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.admin-analytics-table-wrap {
+  max-width: 100%;
+  border: 1px solid #e5eaf2;
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(30, 41, 59, .04);
+}
+
+.admin-analytics-table {
+  white-space: normal;
+}
+
+.admin-analytics-table th {
+  padding: 15px 17px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .65px;
+}
+
+.admin-analytics-table td {
+  padding: 15px 17px;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-analytics-table tbody tr {
+  transition: background .15s ease;
+}
+
+.admin-analytics-table tbody tr:hover {
+  background: #f8faff;
+}
+
+.admin-analytics-table td:first-child {
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.admin-analytics-table a {
+  color: #6d28d9;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.admin-analytics-table a:hover {
+  color: #4c1d95;
+  text-decoration: underline;
+}
+
+.admin-analytics-modal > footer {
+  flex-shrink: 0;
+  padding: 15px 22px;
+  background: #fff;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.admin-analytics-modal > footer button {
+  min-height: 38px;
+  padding: 8px 17px;
+  border-color: #ddd6fe;
+  border-radius: 9px;
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-size: 12px;
+  transition: background .18s ease;
+}
+
+.admin-analytics-modal > footer button:hover {
+  background: #ede9fe;
+}
+
+@media (max-width: 760px) {
+  .admin-analytics-overlay { padding: 12px; }
+  .admin-analytics-modal { max-height: 92vh; border-radius: 14px; }
+  .admin-analytics-modal > header { padding: 17px; }
+  .admin-analytics-modal h2 { font-size: 19px; }
+  .admin-analytics-back {
+    width: calc(100% - 28px);
+    min-height: 50px;
+    margin: 14px 14px;
+    padding: 11px 14px;
+  }
+  .admin-analytics-detail { padding: 0 14px 14px; }
+  .admin-visitor-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    padding: 12px;
+  }
+  .admin-visitor-summary strong { font-size: 17px; }
+  .admin-visitor-summary span { font-size: 12px; padding: 10px; }
+  .admin-analytics-table th,
+  .admin-analytics-table td { padding: 12px; }
+}
+
+@media (max-width: 480px) {
+  .admin-analytics-overlay { padding: 7px; }
+  .admin-analytics-modal { max-height: 95vh; border-radius: 12px; }
+  .admin-analytics-modal > header { padding: 14px; gap: 10px; }
+  .admin-analytics-modal h2 { font-size: 17px; }
+  .admin-analytics-modal p { font-size: 11px; }
+  .admin-analytics-modal > header button { width: 35px; height: 35px; flex-basis: 35px; }
+  .admin-analytics-back {
+    width: calc(100% - 22px);
+    min-height: 48px;
+    margin: 11px 11px 13px;
+    font-size: 13px;
+  }
+  .admin-analytics-detail { padding: 0 11px 11px; }
+  .admin-visitor-summary {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+  .admin-visitor-summary strong { min-height: 50px; font-size: 16px; }
+  .admin-visitor-summary span { min-height: 42px; }
+  .admin-analytics-modal > footer { padding: 12px; }
+}

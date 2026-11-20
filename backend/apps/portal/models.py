@@ -543,6 +543,31 @@ class JobPost(TimestampedModel):
         return f"{self.post_number} - {self.post_name_en}"
 
 
+class JobPostEducation(TimestampedModel):
+    """
+    One educational eligibility condition for an individual recruitment post.
+    Multiple rows allow OR/alternative qualifications to be listed separately.
+    """
+
+    job_post = models.ForeignKey(
+        JobPost,
+        on_delete=models.CASCADE,
+        related_name="educations",
+    )
+
+    qualification_en = models.TextField()
+    qualification_mr = models.TextField(blank=True)
+    qualification_hi = models.TextField(blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+
+    def __str__(self):
+        return f"{self.job_post} - {self.qualification_en[:80]}"
+
+
 class JobPostFee(TimestampedModel):
     """
     Category-wise application fees for an individual recruitment post.

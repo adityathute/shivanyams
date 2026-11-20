@@ -502,7 +502,7 @@ export default function AdminPage() {
         <div className="admin-analytics-overlay" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget) setAnalyticsType(null);
         }}>
-          <section className="admin-analytics-modal" role="dialog" aria-modal="true" aria-labelledby="admin-analytics-title">
+          <section className={`admin-analytics-modal${selectedVisitor ? " admin-analytics-modal-visitor" : ""}`} role="dialog" aria-modal="true" aria-labelledby="admin-analytics-title">
             <header className="admin-analytics-header">
               {(selectedVisitor || selectedAnalyticsPath) && (
                 <IconButton

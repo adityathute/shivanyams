@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { AnimatedNumber, ConfirmDialog, IconButton, ArrowLeftIcon, CloseIcon } from "shivanya-ui";
+import { AnimatedNumber, ConfirmDialog, IconButton, ArrowLeftIcon, CloseIcon, Select } from "shivanya-ui";
 import { API_URL, categoryConfig, normalizeCategorySlug } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
@@ -464,24 +464,16 @@ export default function AdminPage() {
 
           <div className="admin-filters">
             <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search by post title or slug..." aria-label="Search posts" />
-            <select value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value); setPage(1); }} aria-label="Filter by category">
-              <option value="all">All categories</option>
-              {CONTENT_KINDS.map((kind) => <option key={kind.slug} value={kind.slug}>{kind.label}</option>)}
-            </select>
-            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter by publishing status">
-              {STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? "All publishing statuses" : statusLabel(status)}</option>)}
-            </select>
-            <select value={activeFilter} onChange={(event) => { setActiveFilter(event.target.value); setPage(1); }} aria-label="Filter by active status">
-              <option value="all">Active & inactive</option><option value="active">Active posts</option><option value="inactive">Inactive posts</option>
-            </select>
-            <select value={updatedWithin} onChange={(event) => { setUpdatedWithin(event.target.value); setPage(1); }} aria-label="Filter by update date">
-              <option value="all">Updated any time</option><option value="1">Updated in 24 hours</option><option value="7">Updated in 7 days</option><option value="30">Updated in 30 days</option>
-            </select>
-            <select value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setPage(1); }} aria-label="Sort posts">
-              <option value="newest">Created: newest</option><option value="oldest">Created: oldest</option>
-              <option value="updated">Updated: newest</option><option value="updated_oldest">Updated: oldest</option>
-              <option value="title">Title A–Z</option><option value="views">Most views</option><option value="visitors">Most visitors</option>
-            </select>
+            <Select size="sm" fullWidth value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value); setPage(1); }} aria-label="Filter by category"
+              options={[{ value: "all", label: "All categories" }, ...CONTENT_KINDS.map((kind) => ({ value: kind.slug, label: kind.label }))]} />
+            <Select size="sm" fullWidth value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter by publishing status"
+              options={STATUS_OPTIONS.map((status) => ({ value: status, label: status === "all" ? "All publishing statuses" : statusLabel(status) }))} />
+            <Select size="sm" fullWidth value={activeFilter} onChange={(event) => { setActiveFilter(event.target.value); setPage(1); }} aria-label="Filter by active status"
+              options={[{ value: "all", label: "Active & inactive" }, { value: "active", label: "Active posts" }, { value: "inactive", label: "Inactive posts" }]} />
+            <Select size="sm" fullWidth value={updatedWithin} onChange={(event) => { setUpdatedWithin(event.target.value); setPage(1); }} aria-label="Filter by update date"
+              options={[{ value: "all", label: "Updated any time" }, { value: "1", label: "Updated in 24 hours" }, { value: "7", label: "Updated in 7 days" }, { value: "30", label: "Updated in 30 days" }]} />
+            <Select size="sm" fullWidth value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setPage(1); }} aria-label="Sort posts"
+              options={[{ value: "newest", label: "Created: newest" }, { value: "oldest", label: "Created: oldest" }, { value: "updated", label: "Updated: newest" }, { value: "updated_oldest", label: "Updated: oldest" }, { value: "title", label: "Title A–Z" }, { value: "views", label: "Most views" }, { value: "visitors", label: "Most visitors" }]} />
           </div>
 
           {error && <div className="admin-error">{error}</div>}

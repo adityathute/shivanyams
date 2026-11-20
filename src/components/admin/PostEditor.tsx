@@ -574,6 +574,8 @@ export default function PostEditor({
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   const [organizationType, setOrganizationType] = useState("");
   const [activeLanguage, setActiveLanguage] = useState<ContentLanguage>("en");
@@ -676,6 +678,7 @@ export default function PostEditor({
           );
         const record = payload as PostRecord;
         setOrganizationType(record.organization_type || "");
+        setSlugManuallyEdited(false);
         const defaultLanguage = (record.default_language || "en") as ContentLanguage;
         setActiveLanguage(defaultLanguage);
         setPostInfoLanguages({ title: [defaultLanguage], summary: [defaultLanguage], body: [defaultLanguage] });
@@ -794,6 +797,51 @@ export default function PostEditor({
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
+
+  function updateTitle(value: string) {
+    const titleKey = `title_${form.default_language as ContentLanguage}` as keyof FormState;
+    setForm((current) => ({
+      ...current,
+      [titleKey]: value,
+      ...(!slugManuallyEdited ? { slug: slugify(value) } : {}),
+    }));
+  }
+
+  useEffect(() => {
+    const slug = form.slug.trim();
+    if (!slug) {
+      setSlugAvailable(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      try {
+        const params = new URLSearchParams({ slug });
+        if (editing && editSlug) params.set("exclude_slug", editSlug);
+
+        const response = await adminFetch(
+          `${API_URL}/admin/content/slug-availability/?${params.toString()}`,
+          { signal: controller.signal },
+        );
+        if (!response.ok) throw new Error("Unable to check slug availability.");
+        const result = await response.json();
+        if (!controller.signal.aborted) {
+          setSlugAvailable(Boolean(result.available));
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error("Slug availability check failed:", error);
+          setSlugAvailable(null);
+        }
+      }
+    }, 350);
+
+    return () => {
+      window.clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [form.slug, editSlug, editing]);
 
   function addTags(value: string) {
     const nextTags = value.split(",").map((tag) => tag.trim()).filter(Boolean);
@@ -1357,15 +1405,19 @@ export default function PostEditor({
                   required
                   maxLength={240}
                   value={String(form[`title_${form.default_language as ContentLanguage}`] ?? "")}
-                  onChange={(event) => update(`title_${form.default_language as ContentLanguage}`, event.target.value)}
+                  onChange={(event) => updateTitle(event.target.value)}
                   fullWidth
                   size="sm"
                 />
                 <Input
                   label="URL Slug"
                   value={form.slug}
-                  onChange={(event) => update("slug", event.target.value)}
-                  placeholder="Generated from English title"
+                  onChange={(event) => {
+                    setSlugManuallyEdited(true);
+                    update("slug", event.target.value);
+                  }}
+                  placeholder="Generated automatically from title"
+                  className={slugAvailable === false ? "post-editor-slug-unavailable" : ""}
                   fullWidth
                   size="sm"
                 />

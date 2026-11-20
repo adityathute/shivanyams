@@ -5,6 +5,17 @@
   align-items: start;
 }
 
+/* Keep whichever home-page column is shorter in view while the taller
+   column continues scrolling. Both sticky items release at the end of
+   their shared grid row. */
+.content-layout > :first-child,
+.content-layout > .right-column {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+  min-width: 0;
+}
+
 .panelin {
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -344,6 +355,11 @@
   .content-layout {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .content-layout > :first-child,
+  .content-layout > .right-column {
+    position: static;
   }
   .section-heading {
     padding: 11px 12px;

@@ -1607,6 +1607,7 @@ export default function PostEditor({
 
                     {details.education_mode === "per_post" ? (
                       <>
+                      <section className="post-editor-post-detail-section post-editor-education-section">
                       <div className="post-editor-subsection-heading">
                         <div><h4>Educational Qualification</h4><small>Post-specific eligibility conditions</small></div>
                         <button className="post-editor-add-button" type="button" onClick={() => addJobPostEducation(postIndex)}>
@@ -1686,7 +1687,8 @@ export default function PostEditor({
                       ))}
                     </div>
 
-                    <div className="post-editor-subsection-heading">
+                    <section className="post-editor-post-detail-section post-editor-fees-section">
+                      <div className="post-editor-subsection-heading">
                       <div><h4>Application fees</h4><small>Fees can be different for each post</small></div>
                       <button className="post-editor-add-button" type="button" onClick={() => addJobPostFee(postIndex)}>
                         <span aria-hidden="true">＋</span> Add fee category

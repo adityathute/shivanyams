@@ -63,8 +63,8 @@
   font-size: 12px;
   font-weight: 700;
 }
-.post-editor-form input,
-.post-editor-form textarea,
+.post-editor-form input:not(.shivanya-input),
+.post-editor-form textarea:not(.shivanya-textarea),
 .post-editor-form select:not(.shivanya-select) {
   box-sizing: border-box;
   width: 100%;
@@ -80,13 +80,13 @@
     sans-serif;
   outline: none;
 }
-.post-editor-form input:focus,
-.post-editor-form textarea:focus,
+.post-editor-form input:not(.shivanya-input):focus,
+.post-editor-form textarea:not(.shivanya-textarea):focus,
 .post-editor-form select:not(.shivanya-select):focus {
   border-color: #6da0ff;
   box-shadow: 0 0 0 3px #075be814;
 }
-.post-editor-form textarea {
+.post-editor-form textarea:not(.shivanya-textarea) {
   resize: vertical;
   line-height: 1.6;
 }
@@ -268,14 +268,14 @@
   gap: 5px;
   font-size: 11px;
 }
-.post-editor-form input,
-.post-editor-form textarea,
+.post-editor-form input:not(.shivanya-input),
+.post-editor-form textarea:not(.shivanya-textarea),
 .post-editor-form select:not(.shivanya-select) {
   padding: 8px 10px;
   border-radius: 6px;
   font-size: 12px;
 }
-.post-editor-form textarea {
+.post-editor-form textarea:not(.shivanya-textarea) {
   line-height: 1.45;
 }
 .post-editor-grid {
@@ -833,4 +833,25 @@
   .post-editor-meta-row {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+
+/* Use Shivanya UI form controls in Post Information without admin-native overrides */
+.post-editor-meta-row > .shivanya-input-wrapper,
+.post-editor-title-grid > .shivanya-input-wrapper,
+.post-editor-title-translations > .shivanya-input-wrapper,
+.post-editor-single-column > .shivanya-textarea-field,
+.post-editor-single-column > .shivanya-input-wrapper {
+  min-width: 0;
+  width: 100%;
+}
+.post-editor-form .shivanya-input-label,
+.post-editor-form .shivanya-textarea-label {
+  color: #334762;
+  font-family: Inter, Hind, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+.post-editor-form .shivanya-textarea-field {
+  gap: 5px;
 }

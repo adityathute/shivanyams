@@ -680,9 +680,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             getDetailLabel("jobLocation", language),
                             post.jobDetails.location,
                           ],
-                          ...(jobDetails?.education_mode !== "per_post" && jobDetails?.educational_qualification
-                            ? [[getDetailLabel("qualification", language), jobDetails.educational_qualification] as [string, string]]
-                            : []),
                           ...ageInfoRows,
 
                           // Application Fee
@@ -818,12 +815,29 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 entry.post_name_mr,
                                 entry.post_name_hi,
                               );
-                              const qualification = getLocalizedText(
+                              const educations = Array.isArray(entry.educations)
+                                ? entry.educations
+                                    .map((education: any) =>
+                                      getLocalizedText(
+                                        language,
+                                        education.qualification_en,
+                                        education.qualification_mr,
+                                        education.qualification_hi,
+                                      ),
+                                    )
+                                    .filter(Boolean)
+                                : [];
+                              const legacyQualification = getLocalizedText(
                                 language,
                                 entry.educational_qualification_en,
                                 entry.educational_qualification_mr,
                                 entry.educational_qualification_hi,
                               );
+                              const educationItems = educations.length
+                                ? educations
+                                : legacyQualification
+                                  ? [legacyQualification]
+                                  : [];
                               const department = getLocalizedText(
                                 language,
                                 entry.department_en,
@@ -877,7 +891,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               return {
                                 entry,
                                 postName: postName || entry.post_name_en || "—",
-                                qualification,
+                                educationItems,
                                 department,
                                 ageValue,
                                 ageAsOn: entry.age_as_on_date
@@ -889,9 +903,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             });
 
                             const showDepartment = rows.some((row) => row.department);
-                            const showEducation =
-                              jobDetails.education_mode === "per_post" &&
-                              rows.some((row) => row.qualification);
                             const showAge =
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageValue);
@@ -919,7 +930,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       <th>{getDetailLabel("postName", language)}</th>
                                       <th>{getDetailLabel("vacancies", language)}</th>
                                       {showDepartment ? <th>{getDetailLabel("department", language)}</th> : null}
-                                      {showEducation ? <th>{getDetailLabel("qualification", language)}</th> : null}
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
@@ -932,7 +942,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                         <td className="portal-post-wise-name">{row.postName}</td>
                                         <td>{row.entry.vacancies != null ? Number(row.entry.vacancies).toLocaleString("en-IN") : "—"}</td>
                                         {showDepartment ? <td>{row.department || "—"}</td> : null}
-                                        {showEducation ? <td>{row.qualification || "—"}</td> : null}
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
@@ -945,7 +954,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       <th>{getDetailLabel("total", language)}</th>
                                       <th>{totalVacancies.toLocaleString("en-IN")}</th>
                                       {showDepartment ? <td></td> : null}
-                                      {showEducation ? <td></td> : null}
                                       {showAge ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
@@ -953,8 +961,38 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   </tfoot>
                                 </table>
                               </div>
+                              {jobDetails.education_mode === "common" && jobDetails.educational_qualification ? (
+                                <div className="portal-job-detail-group portal-education-details">
+                                  <h3>{getDetailLabel("qualification", language)}</h3>
+                                  <div className="portal-job-detail-row">
+                                    <span>{jobDetails.educational_qualification}</span>
+                                  </div>
+                                </div>
+                              ) : null}
+                              {jobDetails.education_mode === "per_post" && rows.some((row) => row.educationItems.length) ? (
+                                <div className="portal-job-detail-group portal-education-details">
+                                  <h3>{getDetailLabel("qualification", language)}</h3>
+                                  {rows.filter((row) => row.educationItems.length).map((row, index) => (
+                                    <div className="portal-job-detail-row" key={row.entry.id || row.entry.post_number || index}>
+                                      <strong>{row.postName}</strong>
+                                      <div>
+                                        {row.educationItems.map((item, itemIndex) => (
+                                          <p key={itemIndex}>{item}</p>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : null}
                             );
                           })()}
+                        </div>
+                      ) : jobDetails.education_mode === "common" && jobDetails.educational_qualification ? (
+                        <div className="portal-job-detail-group portal-education-details">
+                          <h2>{getDetailLabel("qualification", language)}</h2>
+                          <div className="portal-job-detail-row">
+                            <span>{jobDetails.educational_qualification}</span>
+                          </div>
                         </div>
                       ) : null}
 

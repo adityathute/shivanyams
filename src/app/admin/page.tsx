@@ -81,7 +81,8 @@ export default function AdminPage() {
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
   const [analyticsType, setAnalyticsType] = useState<"views" | "visitors" | "users" | null>(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>([]);
-  const [analyticsLoading, setAnalyticsLoading] = useState(false);\n  const [analyticsVisitors, setAnalyticsVisitors] = useState<WebsiteVisitorRow[]>([]);\n  const [selectedVisitor, setSelectedVisitor] = useState<WebsiteVisitorRow | null>(null);\n  const [visitorPages, setVisitorPages] = useState<WebsiteAnalyticsPage[]>([]);\n  const [selectedAnalyticsPath, setSelectedAnalyticsPath] = useState<string | null>(null);\n  const [analyticsEvents, setAnalyticsEvents] = useState<WebsiteViewEvent[]>([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsVisitors, setAnalyticsVisitors] = useState<WebsiteVisitorRow[]>([]);\n  const [selectedVisitor, setSelectedVisitor] = useState<WebsiteVisitorRow | null>(null);\n  const [visitorPages, setVisitorPages] = useState<WebsiteAnalyticsPage[]>([]);\n  const [selectedAnalyticsPath, setSelectedAnalyticsPath] = useState<string | null>(null);\n  const [analyticsEvents, setAnalyticsEvents] = useState<WebsiteViewEvent[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");

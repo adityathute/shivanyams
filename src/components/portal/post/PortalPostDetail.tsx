@@ -499,14 +499,30 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   }, [category, data.items, data.videos, slug, language]);
 
   const visibleImportantLinks = useMemo(() => {
-    let remaining = POST_IMPORTANT_LINKS_DISPLAY_LIMIT;
+    const limitedActions = (post?.importantLinks ?? [])
+      .flatMap((group) =>
+        group.actions.map((action) => ({ group, action })),
+      )
+      .slice(0, POST_IMPORTANT_LINKS_DISPLAY_LIMIT);
 
-    return (post?.importantLinks ?? []).flatMap((group) => {
-      const actions = group.actions.slice(0, remaining);
-      remaining -= actions.length;
+    return limitedActions.reduce<NonNullable<typeof post>["importantLinks"]>(
+      (groups, { group, action }) => {
+        const existingGroup = groups.find(
+          (item) => item.group_key === group.group_key,
+        );
 
-      return actions.length ? [{ ...group, actions }] : [];
-    });
+        if (existingGroup) {
+          return groups.map((item) =>
+            item.group_key === group.group_key
+              ? { ...item, actions: [...item.actions, action] }
+              : item,
+          );
+        }
+
+        return [...groups, { ...group, actions: [action] }];
+      },
+      [],
+    );
   }, [post]);
 
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;

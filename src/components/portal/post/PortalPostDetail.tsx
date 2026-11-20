@@ -749,24 +749,15 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   ];
 
   const primarySummaryRows: [string, string | number | null | undefined][] = [
+    [getDetailLabel("advertisementNo", language) ?? "", post?.jobDetails?.advertisement_no] as [string, string | number | null | undefined],
     [
-      getDetailLabel("advertisementNo", language),
-      post?.jobDetails?.advertisement_no,
-    ],
-    [
-      getDetailLabel("total", language),
+      getDetailLabel("total", language) ?? "",
       post?.jobDetails?.total_posts != null && Number(post.jobDetails.total_posts) > 0
         ? `${post.jobDetails.total_posts} ${getDetailLabel("totalPostsUnit", language)}`
         : "",
-    ],
-    [
-      getDetailLabel("applicationMode", language),
-      post?.jobDetails?.application_mode,
-    ],
-    [
-      getDetailLabel("jobLocation", language),
-      post?.jobDetails?.location,
-    ],
+    ] as [string, string | number | null | undefined],
+    [getDetailLabel("applicationMode", language) ?? "", post?.jobDetails?.application_mode] as [string, string | number | null | undefined],
+    [getDetailLabel("jobLocation", language) ?? "", post?.jobDetails?.location] as [string, string | number | null | undefined],
   ].filter(([, value]) =>
     value !== null &&
     value !== undefined &&

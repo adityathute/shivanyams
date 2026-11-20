@@ -560,6 +560,8 @@ export default function PostEditor({
     KINDS.find((item) => item.api === initialKind) ?? KINDS[0],
   );
   const [form, setForm] = useState<FormState>(EMPTY);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
   const [details, setDetails] = useState<Record<string, unknown>>(
     detailTemplate(initialKind),
   );
@@ -696,8 +698,10 @@ export default function PostEditor({
           default_language: record.default_language || "en",
           meta_title_en: record.meta_title_en || "",
           meta_description_en: record.meta_description_en || "",
-          meta_keywords: (record.meta_keywords || []).join(", "),
+          meta_keywords: "",
         });
+        setTags(Array.isArray(record.meta_keywords) ? record.meta_keywords.filter(Boolean) : []);
+        setTagInput("");
         setImportantLinks(
           (record.important_links || []).map((item: LinkInput, index) => ({
             ...item,
@@ -789,6 +793,29 @@ export default function PostEditor({
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
+
+  function addTags(value: string) {
+    const nextTags = value.split(",").map((tag) => tag.trim()).filter(Boolean);
+    if (!nextTags.length) return;
+    setTags((current) => {
+      const seen = new Set(current.map((tag) => tag.toLocaleLowerCase()));
+      return [...current, ...nextTags.filter((tag) => {
+        const key = tag.toLocaleLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })];
+    });
+  }
+
+  function handleTagInputChange(value: string) {
+    if (!value.includes(",")) { setTagInput(value); return; }
+    const parts = value.split(",");
+    addTags(parts.slice(0, -1).join(","));
+    setTagInput(parts[parts.length - 1] || "");
+  }
+
+  function commitTagInput() { addTags(tagInput); setTagInput(""); }
 
   function changeKind(api: string) {
     const next = KINDS.find((item) => item.api === api);
@@ -1152,10 +1179,7 @@ export default function PostEditor({
         ...form,
         organization_type: organizationType,
         slug: form.slug || slugify(form.title_en),
-        meta_keywords: form.meta_keywords
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
+        meta_keywords: tags,
 
         [kind.detailKey]:
           kind.api === "jobs"
@@ -2464,20 +2488,30 @@ export default function PostEditor({
                 />
               </label>
             </div>
-            <label>
-              Related Tags (comma separated)
-              <input
-                value={form.meta_keywords}
-                onChange={(event) =>
-                  update("meta_keywords", event.target.value)
-                }
-                placeholder="e.g. Police Bharti, Maharashtra, Graduate"
-              />
-              <small>
-                Enter tags separated by commas. These appear as clickable gray
-                tags on the post.
-              </small>
-            </label>
+            <div className="post-editor-tags-field">
+              <label htmlFor="post-related-tags">Related Tags</label>
+              <div className="post-editor-tags-input" onClick={() => document.getElementById("post-related-tags")?.focus()}>
+                {tags.map((tag, index) => (
+                  <span className="post-editor-tag-chip" key={tag + "-" + index}>
+                    {tag}
+                    <button type="button" aria-label={"Remove " + tag} onClick={() => setTags((current) => current.filter((_, tagIndex) => tagIndex !== index))}>×</button>
+                  </span>
+                ))}
+                <input
+                  id="post-related-tags"
+                  value={tagInput}
+                  onChange={(event) => handleTagInputChange(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") { event.preventDefault(); commitTagInput(); }
+                    else if (event.key === "Backspace" && !tagInput && tags.length) setTags((current) => current.slice(0, -1));
+                  }}
+                  onBlur={commitTagInput}
+                  placeholder={tags.length ? "Add another tag..." : "Type a tag and press comma or Enter"}
+                  aria-label="Add related tag"
+                />
+              </div>
+              <small>Press comma, Enter or Shift + Enter to add a tag. Each tag appears as a separate clickable chip on the post.</small>
+            </div>
           </section>
           <div className="post-editor-actions">
             <button type="button" onClick={() => router.push("/admin")}>

@@ -1602,3 +1602,11 @@
     justify-self: start;
   }
 }
+
+
+/* Important Dates: keep every input, select and textarea at the same UI font size. */
+.post-editor-important-dates input,
+.post-editor-important-dates select,
+.post-editor-important-dates textarea {
+  font-size: 0.875rem !important;
+}

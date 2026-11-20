@@ -197,7 +197,6 @@
   padding: 14px;
   border: 1px solid #e7edf5;
   border-radius: 8px;
-  background: #fbfcff;
   display: grid;
   gap: 12px;
 }
@@ -469,8 +468,6 @@
   justify-content: space-between;
   gap: 12px;
   margin-top: 8px;
-  padding: 10px 0 8px;
-  border-bottom: 1px solid #e9eef5;
 }
 .post-editor-subsection-heading > div {
   display: grid;
@@ -519,7 +516,6 @@
 .post-editor-nested-card {
   margin-top: 7px;
   border-color: #e5eaf1;
-  background: #fbfcfe;
 }
 .post-editor-nested-card > .post-editor-card-summary {
   min-height: 40px;
@@ -594,7 +590,8 @@
   justify-content: flex-end;
   width: auto;
   min-height: 38px;
-  margin: 4px 13px 12px;
+  margin: 0;
+  margin-top: 12px;
   padding-top: 9px;
   border-top: 1px solid #edf1f6;
   box-sizing: border-box;
@@ -816,10 +813,6 @@
 .post-editor-collapsible[open] > .post-editor-card-summary,
 .post-editor-collapsible[open] > .post-editor-card-summary:hover {
   background: #f4f6f9;
-}
-
-.post-editor-nested-card > .post-editor-card-summary:hover {
-  background: #f1f4f8;
 }
 
 .post-editor-language-switch button:focus-visible {
@@ -1353,8 +1346,6 @@
 
 .post-editor-post-detail-section > .post-editor-subsection-heading {
   margin: 0;
-  padding: 0 0 10px;
-  border-bottom: 1px solid #e8edf3;
 }
 
 .post-editor-post-detail-section > .post-editor-repeat-card {

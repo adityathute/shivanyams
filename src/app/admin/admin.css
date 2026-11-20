@@ -889,3 +889,32 @@
     font-weight: 700;
   }
 }
+
+/* Center dashboard stat labels and values, uppercase labels, and remove side markers. */
+.admin-stats .admin-stat-card {
+  justify-items: center;
+  text-align: center;
+}
+
+.admin-stats .admin-stat-card::before {
+  display: none;
+  content: none;
+}
+
+.admin-stats .admin-stat-card > span,
+.admin-stats .admin-stat-clickable button > span {
+  justify-content: center;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.admin-stats .admin-stat-clickable button {
+  justify-items: center;
+  text-align: center;
+}
+
+.admin-stats .admin-stat-card > strong,
+.admin-stats .admin-stat-clickable button > strong {
+  width: 100%;
+  text-align: center;
+}

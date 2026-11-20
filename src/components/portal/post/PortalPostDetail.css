@@ -1267,7 +1267,7 @@
 
 /* Category recommendations shown beside missing post pages. */
 .portal-post-detail .not-found-recommendations {
-  padding: 16px;
+  padding: 12px;
   min-width: 0;
 }
 .portal-post-detail .not-found-post-list {
@@ -1279,7 +1279,7 @@
   grid-template-columns: 25px minmax(0, 1fr) 14px;
   align-items: center;
   gap: 10px;
-  padding: 11px 2px;
+  padding: 9px 2px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
   color: var(--text-primary, #172033);
   text-decoration: none;

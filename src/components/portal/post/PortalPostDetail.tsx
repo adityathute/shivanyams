@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ImportantDate, type PostFAQ } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
@@ -16,7 +16,7 @@ import {
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { LinkIcon } from "shivanya-ui";
+import { LinkIcon, MailIcon, Button } from "shivanya-ui";
 import {
   POST_IMPORTANT_LINKS_DISPLAY_LIMIT,
   POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT,
@@ -350,6 +350,7 @@ function getOrganizationTypeLabel(value: string | undefined, language: string) {
 
 export function PortalPostDetail({ category }: { category: CategorySlug }) {
   const params = useParams<{ slug: string }>();
+  const router = useRouter();
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -1257,6 +1258,25 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                       <b>›</b>
                     </a>
                   ))}
+                </section>
+
+                <section className="subscribe-panel">
+                  <div className="subscribe-icon">
+                    <MailIcon />
+                  </div>
+
+                  <div className="subscribe-content">
+                    <h3>{t("subscribeTitle")}</h3>
+                    <p>{t("subscribeDescription")}</p>
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => router.push("/contact")}
+                  >
+                    {t("contactButton")}
+                  </Button>
                 </section>
               </aside>
             )}

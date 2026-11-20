@@ -814,6 +814,10 @@ export default function PostEditor({
     });
   }
 
+  const commonEducationExpanded = (["en", "mr", "hi"] as const)
+    .filter((language) => language !== form.default_language)
+    .every((language) => commonEducationLanguages.includes(language));
+
   function updateDetail(key: string, value: unknown) {
     if (key === "age_criteria_type") {
       const criteriaType = String(value);
@@ -1510,10 +1514,10 @@ export default function PostEditor({
                       <button
                         type="button"
                         className="post-editor-show-translations"
-                        aria-expanded={commonEducationLanguages.length === 3}
+                        aria-expanded={commonEducationExpanded}
                         onClick={toggleCommonEducationLanguages}
                       >
-                        {commonEducationLanguages.length === 3 ? "− Hide other languages" : "+ Show other languages"}
+                        {commonEducationExpanded ? "Hide other languages" : "+ Show other languages"}
                       </button>
                     </div>
                     <div className="post-editor-grid post-editor-common-education-fields">
@@ -1528,7 +1532,7 @@ export default function PostEditor({
                         fullWidth
                         size="sm"
                       />
-                      {commonEducationLanguages.length === 3 && (
+                      {commonEducationExpanded && (
                         <div className="post-editor-common-education-translations">
                           {(["en", "mr", "hi"] as const)
                             .filter((language) => language !== form.default_language)

@@ -522,10 +522,10 @@ export default function AdminPage() {
               </div>
               <IconButton
                 size="sm"
-                variant="outline"
-                className="admin-analytics-close"
+                // variant="outline"
+                // className="admin-analytics-close"
                 onClick={() => setAnalyticsType(null)}
-                aria-label="Close analytics"
+                aria-label="Close"
                 title="Close analytics"
               >
                 <CloseIcon />

@@ -369,3 +369,179 @@
     display: none;
   }
 }
+
+
+/* Professional compact controls and nested repeatable fields */
+.post-editor-page {
+  color: #17263b;
+  background: #f5f7fb;
+}
+.post-editor-form section {
+  border-color: #e3e9f2;
+  box-shadow: 0 2px 8px rgba(25, 45, 75, 0.035);
+}
+.post-editor-job-post-card {
+  border-color: #dfe6f0;
+  background: #fff;
+  margin-top: 8px;
+}
+.post-editor-job-post-card > .post-editor-card-summary {
+  min-height: 48px;
+  background: #f8fafd;
+}
+.post-editor-card-summary {
+  position: relative;
+  padding: 12px 42px 12px 14px;
+  transition: background 140ms ease;
+}
+.post-editor-card-summary:hover {
+  background: #f1f5fb;
+}
+.post-editor-card-summary::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 1.7px solid #64748b;
+  border-bottom: 1.7px solid #64748b;
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 140ms ease;
+}
+.post-editor-collapsible[open] > .post-editor-card-summary::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+.post-editor-card-summary strong {
+  color: #26374e;
+  font-size: 12px;
+}
+.post-editor-card-summary small {
+  color: #7b899b;
+  font-size: 10px;
+}
+.post-editor-post-body {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 4px;
+}
+.post-editor-subsection-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid #e9eef5;
+}
+.post-editor-subsection-heading > div {
+  display: grid;
+  gap: 3px;
+}
+.post-editor-subsection-heading h4 {
+  margin: 0;
+  color: #30435d;
+  font-size: 12px;
+  font-weight: 750;
+}
+.post-editor-subsection-heading small {
+  color: #8793a4;
+  font-size: 10px;
+  font-weight: 500;
+}
+.post-editor-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid #cbd8e9;
+  border-radius: 6px;
+  background: #fff;
+  color: #315b91;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.post-editor-add-button:hover {
+  border-color: #8eacd2;
+  background: #f3f7fc;
+  color: #174b88;
+}
+.post-editor-add-button span {
+  font-size: 15px;
+  line-height: 10px;
+}
+.post-editor-nested-card {
+  margin-top: 7px;
+  border-color: #e5eaf1;
+  background: #fbfcfe;
+}
+.post-editor-nested-card > .post-editor-card-summary {
+  min-height: 40px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.post-editor-nested-card[open] {
+  padding-bottom: 2px;
+}
+.post-editor-remove {
+  min-height: 28px;
+  padding: 5px 8px;
+  border: 1px solid #f0dada;
+  border-radius: 5px;
+  background: #fffafa;
+  color: #a34444;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.post-editor-remove:hover {
+  border-color: #e5bcbc;
+  background: #fff1f1;
+}
+.post-editor-collapsible[open] > .post-editor-grid,
+.post-editor-collapsible[open] > .post-editor-post-body {
+  margin-left: 13px;
+  margin-right: 13px;
+}
+.post-editor-collapsible[open] > .post-editor-remove {
+  margin: 5px 13px 12px auto;
+}
+.post-editor-collapsible[open] > .post-editor-subsection-heading {
+  margin-left: 13px;
+  margin-right: 13px;
+}
+.post-editor-collapsible[open] > .post-editor-repeat-card {
+  margin-left: 13px;
+  margin-right: 13px;
+}
+.post-editor-collapsible[open] > .post-editor-grid:last-child {
+  margin-bottom: 12px;
+}
+.post-editor-collapsible > summary:focus-visible {
+  outline: 2px solid #719bd0;
+  outline-offset: -3px;
+}
+@media (max-width: 650px) {
+  .post-editor-subsection-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .post-editor-add-button {
+    min-height: 30px;
+  }
+  .post-editor-card-summary {
+    padding-left: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-editor-card-summary,
+  .post-editor-card-summary::after,
+  .post-editor-add-button {
+    transition: none;
+  }
+}

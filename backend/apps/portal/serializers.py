@@ -14,6 +14,7 @@ from .models import (
     JobVacancyBreakdown,
     Post,
     PostDate,
+    PostFAQ,
     PostLink,
     PostReaction,
     PostRelation,
@@ -69,6 +70,13 @@ class PostLinkSerializer(serializers.ModelSerializer):
             "is_active",
         )
         read_only_fields = ("id", "post")
+
+
+class PostFAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostFAQ
+        fields = ("id", "question_en", "question_mr", "question_hi", "answer_en", "answer_mr", "answer_hi", "sort_order", "is_active")
+        read_only_fields = ("id",)
 
 
 class PostDateSerializer(serializers.ModelSerializer):
@@ -524,6 +532,7 @@ DETAIL_SERIALIZERS = {
 class PostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     important_links = PostLinkSerializer(many=True, read_only=True)
+    faqs = PostFAQSerializer(many=True, read_only=True)
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
@@ -585,6 +594,7 @@ class PostSerializer(serializers.ModelSerializer):
             "is_featured",
             "is_active",
             "important_links",
+            "faqs",
             "important_dates",
             "resources",
             "related_posts",
@@ -670,7 +680,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
     """Admin-facing post writer with optional category-specific detail objects."""
 
     important_links = PostLinkSerializer(many=True, required=False)
-    important_dates = PostDateSerializer(many=True, required=False)
+    faqs = PostFAQSerializer(many=True, required=False)
     resources = PostResourceSerializer(many=True, required=False)
     related_posts = PostRelationSerializer(
         source="outgoing_relations", many=True, required=False
@@ -719,6 +729,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
             "is_featured",
             "is_active",
             "important_links",
+            "faqs",
             "important_dates",
             "resources",
             "related_posts",
@@ -816,6 +827,9 @@ class PostWriteSerializer(serializers.ModelSerializer):
                 "post",
                 post,
             )
+
+        if "faqs" in nested_data:
+            cls._replace_many(post.faqs, nested_data["faqs"], "post", post)
 
         if "important_dates" in nested_data:
             cls._replace_many(

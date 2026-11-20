@@ -1171,16 +1171,14 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </section>
                   ) : null}
 
-                  {post.link ? (
+                  {category === "videos" && post.link ? (
                     <a
                       className="portal-post-action"
                       href={post.link}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {category === "videos"
-                        ? getDetailLabel("watchVideo", language)
-                        : getDetailLabel("visitWebsite", language)}
+                      {getDetailLabel("watchVideo", language)}
                       <span aria-hidden="true">↗</span>
                     </a>
                   ) : null}

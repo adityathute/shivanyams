@@ -630,7 +630,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       }
       return b.date.localeCompare(a.date);
     });
-    return sorted.slice(0, 8);
+    return sorted.slice(0, 5);
   }, [categoryPosts, hasViewedCategoryPosts]);
 
   const jobAgeDetails = post?.jobDetails;

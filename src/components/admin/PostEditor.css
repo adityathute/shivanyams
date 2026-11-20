@@ -1561,3 +1561,44 @@
     padding-right: 4px;
   }
 }
+
+
+/* Important Dates use shared Shivanya UI controls consistently. */
+.post-editor-important-dates .shivanya-input-wrapper,
+.post-editor-important-dates .shivanya-select-field,
+.post-editor-important-dates .shivanya-textarea-field {
+  width: 100%;
+  min-width: 0;
+}
+.post-editor-important-dates .post-editor-date-value-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.post-editor-important-dates .post-editor-month-year-row {
+  grid-template-columns: minmax(0, 1fr) minmax(110px, 0.65fr) auto;
+  align-items: end;
+}
+.post-editor-important-dates .post-editor-month-year-row .shivanya-select-field,
+.post-editor-important-dates .post-editor-month-year-row .shivanya-input-wrapper {
+  min-width: 0;
+  width: 100%;
+  padding-right: 0;
+}
+.post-editor-important-dates .post-editor-month-year-row .shivanya-select,
+.post-editor-important-dates .post-editor-month-year-row select {
+  padding-right: 8px !important;
+}
+.post-editor-important-dates .post-editor-field-label {
+  color: #334762;
+  font: 700 11px Inter, Hind, sans-serif;
+}
+@media (max-width: 650px) {
+  .post-editor-important-dates .post-editor-date-value-grid,
+  .post-editor-important-dates .post-editor-month-year-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .post-editor-important-dates .post-editor-month-year-row > button {
+    grid-column: auto;
+    justify-self: start;
+  }
+}

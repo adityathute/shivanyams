@@ -831,12 +831,17 @@
   padding-top: 0;
 }
 
-.portal-education-details .portal-job-detail-row p {
+.portal-education-details ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.portal-education-details li {
   margin: 0 0 8px;
   white-space: pre-line;
 }
 
-.portal-education-details .portal-job-detail-row p:last-child {
+.portal-education-details li:last-child {
   margin-bottom: 0;
 }
 

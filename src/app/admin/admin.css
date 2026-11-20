@@ -612,7 +612,7 @@
 .admin-analytics-modal p { margin: 0; color: #748299; font-size: 12px; }
 .admin-analytics-modal > header button {
   width: 32px; height: 32px; border: 1px solid #dbe4f0; border-radius: 7px;
-  background: #fff; color: #405571; font-size: 22px; cursor: pointer;
+  background: #fff; color: #405571; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .admin-analytics-table-wrap { overflow: auto; }
 .admin-analytics-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
@@ -905,7 +905,6 @@
 .admin-stats .admin-stat-clickable button > span {
   justify-content: center;
   text-align: center;
-  text-transform: uppercase;
 }
 
 .admin-stats .admin-stat-clickable button {

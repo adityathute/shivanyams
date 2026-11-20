@@ -17,7 +17,7 @@ import {
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { LinkIcon } from "shivanya-ui";
-import { IMPORTANT_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
+import { POST_IMPORTANT_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import "../home/UpdatesSection.css";
 
 type CategorySlug =
@@ -499,7 +499,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   }, [category, data.items, data.videos, slug, language]);
 
   const visibleImportantLinks = useMemo(() => {
-    let remaining = IMPORTANT_LINKS_DISPLAY_LIMIT;
+    let remaining = POST_IMPORTANT_LINKS_DISPLAY_LIMIT;
 
     return (post?.importantLinks ?? []).flatMap((group) => {
       const actions = group.actions.slice(0, remaining);

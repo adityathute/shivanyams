@@ -1384,3 +1384,26 @@
     max-height: 34vh;
   }
 }
+
+
+/* Keep analytics icon buttons transparent; only the close icon turns red and rotates. */
+.admin-analytics-modal > header .admin-analytics-back-icon,
+.admin-analytics-modal > header .admin-analytics-close {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.admin-analytics-modal > header .admin-analytics-back-icon:hover {
+  background: transparent !important;
+  color: #6d28d9 !important;
+}
+
+.admin-analytics-modal > header .admin-analytics-close:hover {
+  background: transparent !important;
+  color: #e11d48 !important;
+  box-shadow: none !important;
+}
+
+.admin-analytics-modal > header .admin-analytics-close:hover .shivanya-icon-button-icon {
+  color: #e11d48 !important;
+}

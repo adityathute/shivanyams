@@ -523,7 +523,6 @@ export default function AdminPage() {
               <IconButton
                 size="sm"
                 variant="outline"
-                iconRotateOnHover
                 className="admin-analytics-close"
                 onClick={() => setAnalyticsType(null)}
                 aria-label="Close analytics"
@@ -575,7 +574,7 @@ export default function AdminPage() {
                 </table></div>
               )
             )}
-            <footer><span>{selectedVisitor ? visitorPages.length + " pages visited" : selectedAnalyticsPath ? analyticsEvents.length + " recent view events" : analyticsType === "views" ? analyticsPages.length + " pages tracked" : analyticsVisitors.length + " unique browsers/devices"}</span><button type="button" onClick={() => setAnalyticsType(null)}>Close</button></footer>
+            <footer><span>{selectedVisitor ? visitorPages.length + " pages visited" : selectedAnalyticsPath ? analyticsEvents.length + " recent view events" : analyticsType === "views" ? analyticsPages.length + " pages tracked" : analyticsVisitors.length + " unique browsers/devices"}</span></footer>
           </section>
         </div>
       )}

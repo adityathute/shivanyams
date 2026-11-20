@@ -137,6 +137,23 @@ class PublicContent(viewsets.ReadOnlyModelViewSet):
         return public_posts_for_kind(self.kwargs["kind"])
 
 
+class AdminSlugAvailability(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        slug = str(request.query_params.get("slug", "")).strip()
+        exclude_slug = str(request.query_params.get("exclude_slug", "")).strip()
+
+        if not slug:
+            return Response({"available": False}, status=status.HTTP_400_BAD_REQUEST)
+
+        queryset = Post.objects.filter(slug=slug)
+        if exclude_slug:
+            queryset = queryset.exclude(slug=exclude_slug)
+
+        return Response({"available": not queryset.exists()})
+
+
 class AdminContent(viewsets.ModelViewSet):
     permission_classes = [IsPortalAdmin]
     lookup_field = "slug"

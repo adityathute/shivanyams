@@ -1085,6 +1085,7 @@
 .post-editor-job-primary-fields > .shivanya-select-field {
   min-width: 0;
   width: 100%;
+  gap: 4px;
 }
 @media (max-width: 520px) {
   .post-editor-job-primary-fields {
@@ -1130,4 +1131,8 @@
   .post-editor-common-education-fields {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.shivanya-checkbox-label{
+  font-size: 11px;
 }

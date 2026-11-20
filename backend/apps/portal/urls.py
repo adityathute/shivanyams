@@ -54,6 +54,9 @@ urlpatterns = [
         content_detail,
         name="content-detail",
     ),
+    # Website-wide page analytics
+    path("website-views/", TrackWebsiteView.as_view(), name="track-website-view"),
+    path("admin/website-analytics/", AdminWebsiteAnalytics.as_view(), name="admin-website-analytics"),
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management

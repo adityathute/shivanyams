@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.db.models import Count, F, Prefetch, Q
+from django.db.models import Count, F, Max, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -627,7 +627,7 @@ class AdminWebsiteAnalytics(APIView):
             .annotate(
                 views=Count("id"),
                 unique_visitors=Count("visitor_id", distinct=True),
-                last_viewed=__import__("django.db.models", fromlist=["Max"]).Max("viewed_at"),
+                last_viewed=Max("viewed_at"),
             )
             .order_by("-views", "path")
         )

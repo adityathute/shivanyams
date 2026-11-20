@@ -45,8 +45,9 @@ function PortalShell({ children }: { children: ReactNode }) {
 
   // Record each public route visit for website-wide analytics.
   useEffect(() => {
-    if (!pathname || pathname.startsWith("/admin") || lastTrackedPath.current === pathname) return;
+    if (!pathname || lastTrackedPath.current === pathname) return;
     lastTrackedPath.current = pathname;
+    if (pathname.startsWith("/admin")) return;
 
     let visitorId = "";
     try {

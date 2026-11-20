@@ -2371,7 +2371,7 @@ export default function PostEditor({
                               })}>Remove</button>
                             </div>
                             <div className="post-editor-link-translation">
-                              <div className="post-editor-translation-heading">
+                              <div className="post-editor-translation-heading2">
                                 <span>Button Text</span>
                                 <button type="button" className="post-editor-show-translations"
                                   aria-expanded={expandedImportantLinkActionLanguages.includes(actionKey)}

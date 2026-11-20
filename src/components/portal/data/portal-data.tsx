@@ -735,6 +735,9 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
           url: post.video_details?.video_url || item.link,
           thumbnail: post.video_details?.thumbnail_url || item.image || "",
           language: post.video_details?.available_languages?.join(", ") || "",
+          views_count: item.views_count,
+          date: item.date,
+          published_at: post.published_at || "",
         });
       }
 

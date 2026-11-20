@@ -1421,7 +1421,7 @@ export default function PostEditor({
                       <div className="post-editor-subsection-heading">
                         <div><h4>Educational Qualification</h4><small>Post-specific eligibility conditions</small></div>
                         <button className="post-editor-add-button" type="button" onClick={() => addJobPostEducation(postIndex)}>
-                          <span aria-hidden="true">＋</span> Add condition
+                          <span aria-hidden="true">＋</span> Add education condition
                         </button>
                       </div>
   
@@ -1449,9 +1449,11 @@ export default function PostEditor({
                               </label>
                             ))}
                           </div>
-                          <button className="post-editor-remove" type="button" onClick={() => removeJobPostEducation(postIndex, educationIndex)}>
-                            Remove condition
-                          </button>
+                          <div className="post-editor-card-actions">
+                            <button className="post-editor-remove" type="button" onClick={() => removeJobPostEducation(postIndex, educationIndex)}>
+                              Remove condition
+                            </button>
+                          </div>
                         </details>
                       ))}
                       </>
@@ -1664,23 +1666,27 @@ export default function PostEditor({
                           ))}
                         </div>
 
-                        <button
-                          type="button"
-                          className="post-editor-remove"
-                          onClick={() => removeJobPostFee(postIndex, feeIndex)}
-                        >
-                          Remove Fee Category
-                        </button>
+                        <div className="post-editor-card-actions">
+                          <button
+                            type="button"
+                            className="post-editor-remove"
+                            onClick={() => removeJobPostFee(postIndex, feeIndex)}
+                          >
+                            Remove fee category
+                          </button>
+                        </div>
                       </details>
                     ))}
 
-                    <button
-                      type="button"
-                      className="post-editor-remove"
-                      onClick={() => removeJobPost(postIndex)}
-                    >
-                      Remove Post
-                    </button>
+                    <div className="post-editor-card-actions post-editor-post-actions">
+                      <button
+                        type="button"
+                        className="post-editor-remove"
+                        onClick={() => removeJobPost(postIndex)}
+                      >
+                        Remove post
+                      </button>
+                    </div>
                     </div>
                   </details>
                 ))}
@@ -2196,17 +2202,19 @@ export default function PostEditor({
                     </label>
                   </div>
 
-                  <button
-                    type="button"
-                    className="post-editor-remove"
-                    onClick={() =>
-                      setImportantDates((rows) =>
-                        rows.filter((_, rowIndex) => rowIndex !== index),
-                      )
-                    }
-                  >
-                    Remove date
-                  </button>
+                  <div className="post-editor-card-actions">
+                    <button
+                      type="button"
+                      className="post-editor-remove"
+                      onClick={() =>
+                        setImportantDates((rows) =>
+                          rows.filter((_, rowIndex) => rowIndex !== index),
+                        )
+                      }
+                    >
+                      Remove date
+                    </button>
+                  </div>
                 </details>
               );
             })}
@@ -2277,17 +2285,19 @@ export default function PostEditor({
                     />
                   </label>
                 </div>
-                <button
-                  type="button"
-                  className="post-editor-remove"
-                  onClick={() =>
-                    setImportantLinks((rows) =>
-                      rows.filter((_, i) => i !== index),
-                    )
-                  }
-                >
-                  Remove link
-                </button>
+                <div className="post-editor-card-actions">
+                  <button
+                    type="button"
+                    className="post-editor-remove"
+                    onClick={() =>
+                      setImportantLinks((rows) =>
+                        rows.filter((_, i) => i !== index),
+                      )
+                    }
+                  >
+                    Remove link
+                  </button>
+                </div>
               </details>
             ))}
           </section>

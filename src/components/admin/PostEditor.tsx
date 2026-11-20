@@ -1065,6 +1065,10 @@ export default function PostEditor({
           kind.api === "jobs"
             ? {
                 ...details,
+                total_vacancies: ((details.posts as JobPostInput[]) || []).reduce(
+                  (total, post) => total + Number(post.vacancies || 0),
+                  0,
+                ),
                 age_as_on_date: normalizeApiDate(details.age_as_on_date),
                 eligible_dob_from: normalizeApiDate(details.eligible_dob_from),
                 eligible_dob_to: normalizeApiDate(details.eligible_dob_to),
@@ -1384,7 +1388,7 @@ export default function PostEditor({
                     <div className="post-editor-vacancy-total">
                       <span>Total vacancies</span>
                       <strong>{((details.posts as JobPostInput[]) || []).reduce((total, post) => total + Number(post.vacancies || 0), 0).toLocaleString("en-IN")}</strong>
-                      <small>From individual posts</small>
+                      <small>Calculated from individual posts</small>
                     </div>
                   </div>
 

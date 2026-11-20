@@ -17,10 +17,7 @@ import {
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { LinkIcon, MailIcon, Button } from "shivanya-ui";
-import {
-  POST_IMPORTANT_LINKS_DISPLAY_LIMIT,
-  POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT,
-} from "../utils/important-links-config";
+import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import "../home/UpdatesSection.css";
 
 type CategorySlug =
@@ -501,33 +498,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         }
       : null;
   }, [category, data.items, data.videos, slug, language]);
-
-  const visibleImportantLinks = useMemo(() => {
-    const limitedActions = (post?.importantLinks ?? [])
-      .flatMap((group) =>
-        group.actions.map((action) => ({ group, action })),
-      )
-      .slice(0, POST_IMPORTANT_LINKS_DISPLAY_LIMIT);
-
-    return limitedActions.reduce<NonNullable<typeof post>["importantLinks"]>(
-      (groups, { group, action }) => {
-        const existingGroup = groups.find(
-          (item) => item.group_key === group.group_key,
-        );
-
-        if (existingGroup) {
-          return groups.map((item) =>
-            item.group_key === group.group_key
-              ? { ...item, actions: [...item.actions, action] }
-              : item,
-          );
-        }
-
-        return [...groups, { ...group, actions: [action] }];
-      },
-      [],
-    );
-  }, [post]);
 
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(
@@ -1169,13 +1139,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </section>
                   ) : null}
 
-                  {visibleImportantLinks.length ? (
+                  {post.importantLinks.length ? (
                     <section className="portal-important-links">
                       <div className="portal-important-dates-heading">
                         <h2>{getDetailLabel("importantLinks", language)}</h2>
                       </div>
                       <div className="portal-important-links-list">
-                        {visibleImportantLinks.map((group) => (
+                        {post.importantLinks.map((group) => (
                           <div className="portal-important-link-item" key={group.group_key}>
                             <strong>{getLocalizedText(language, group.label_en, group.label_mr, group.label_hi)}</strong>
                             <div className="portal-important-link-actions">

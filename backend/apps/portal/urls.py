@@ -12,6 +12,7 @@ from .views import (
     PostReactions,
     TrackPostView,
     AdminPostReview,
+    AdminSlugAvailability,
     AdminOrganizationTypes,
     AdminDashboardStats,
     TrackWebsiteView,
@@ -60,6 +61,7 @@ urlpatterns = [
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management
+    path("admin/content/slug-availability/", AdminSlugAvailability.as_view(), name="admin-slug-availability"),
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
     path(
         "admin/content/<int:post_id>/review/",

@@ -817,7 +817,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               );
                               const educations = Array.isArray(entry.educations)
                                 ? entry.educations
-                                    .map((education: any) =>
+                                    .map((education) =>
                                       getLocalizedText(
                                         language,
                                         education.qualification_en,

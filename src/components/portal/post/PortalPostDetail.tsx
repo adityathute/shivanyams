@@ -603,10 +603,22 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     ? getCategoryTitle(categoryRecord, language as CategoryLanguage)
     : "";
 
-  const categoryPosts = useMemo(
-    () => data.items.filter((item) => item.type === categoryItemTypes[category]),
-    [category, data.items],
-  );
+  const categoryPosts = useMemo(() => {
+    if (category === "videos") {
+      return data.videos.map((video) => ({
+        id: video.id,
+        slug: video.slug,
+        title: video.title,
+        title_en: video.title_en,
+        title_mr: video.title_mr,
+        title_hi: video.title_hi,
+        views_count: video.views_count,
+        date: video.date || video.published_at || "",
+      }));
+    }
+
+    return data.items.filter((item) => item.type === categoryItemTypes[category]);
+  }, [category, data.items, data.videos]);
   const hasViewedCategoryPosts = categoryPosts.some(
     (item) => Number(item.views_count) > 0,
   );
@@ -618,7 +630,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       }
       return b.date.localeCompare(a.date);
     });
-    return sorted.slice(0, 5);
+    return sorted.slice(0, 8);
   }, [categoryPosts, hasViewedCategoryPosts]);
 
   const jobAgeDetails = post?.jobDetails;

@@ -13,6 +13,8 @@ import "./admin.css";
 
 type PaginatedPosts = { results?: AdminPost[]; next?: string | null };
 
+type WebsiteAnalyticsPage = { path: string; views: number; unique_visitors: number; last_viewed: string | null };
+
 type AdminPost = {
   id: number;
   slug: string;
@@ -65,6 +67,11 @@ export default function AdminPage() {
   const isAdmin = user?.roles?.includes("admin") === true;
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [usersCount, setUsersCount] = useState(0);
+  const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
+  const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
+  const [analyticsType, setAnalyticsType] = useState<"views" | "visitors" | null>(null);
+  const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>([]);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -138,8 +145,12 @@ export default function AdminPage() {
         }
         return response.json();
       })
-      .then((payload: { users_count?: number }) => {
-        if (active) setUsersCount(Number(payload.users_count) || 0);
+      .then((payload: { users_count?: number; website_views_count?: number; website_visitors_count?: number }) => {
+        if (active) {
+          setUsersCount(Number(payload.users_count) || 0);
+          setWebsiteViewsCount(Number(payload.website_views_count) || 0);
+          setWebsiteVisitorsCount(Number(payload.website_visitors_count) || 0);
+        }
       })
       .catch((err) => {
         if (active) setError(err instanceof Error ? err.message : "Unable to load user statistics.");
@@ -182,6 +193,19 @@ export default function AdminPage() {
     views: posts.reduce((sum, post) => sum + (post.views_count || 0), 0),
     visitors: posts.reduce((sum, post) => sum + (post.unique_visitors_count || 0), 0),
   }), [posts]);
+
+  function openWebsiteAnalytics(type: "views" | "visitors") {
+    setAnalyticsType(type);
+    setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/website-analytics/", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Unable to load website analytics (${response.status}).`);
+        return response.json();
+      })
+      .then((payload: { pages?: WebsiteAnalyticsPage[] }) => setAnalyticsPages(payload.pages ?? []))
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load website analytics."))
+      .finally(() => setAnalyticsLoading(false));
+  }
 
   function deletePost(post: AdminPost) {
     setError("");
@@ -320,8 +344,8 @@ export default function AdminPage() {
             { label: "Published", value: counts.published },
             { label: "Drafts", value: counts.drafts },
             { label: "Pending review", value: counts.review },
-            { label: "Total views", value: counts.views },
-            { label: "Unique post visitors", value: counts.visitors },
+            { label: "Website views", value: websiteViewsCount, analytics: "views" as const },
+            { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors" as const },
             { label: "Portal users", value: usersCount },
           ];
 
@@ -334,9 +358,15 @@ export default function AdminPage() {
           return (
             <section className="admin-stats">
               {statItems.map((item) => (
-                <article key={item.label}>
-                  <span>{item.label}</span>
-                  <strong>{compactNumber.format(item.value)}</strong>
+                <article key={item.label} className={item.analytics ? "admin-stat-clickable" : undefined}>
+                  {item.analytics ? (
+                    <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} by page`}>
+                      <span>{item.label} ↗</span>
+                      <strong>{compactNumber.format(item.value)}</strong>
+                    </button>
+                  ) : (
+                    <><span>{item.label}</span><strong>{compactNumber.format(item.value)}</strong></>
+                  )}
                 </article>
               ))}
             </section>
@@ -412,6 +442,41 @@ export default function AdminPage() {
           {selectedIds.length > 0 && <div className="admin-bulk-bar"><strong>{selectedIds.length} selected</strong><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("published")}>Publish selected</button><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("archived")}>Archive selected</button><button onClick={() => setSelectedIds([])}>Clear selection</button></div>}
         </section>
       </div>
+      {analyticsType && (
+        <div className="admin-analytics-overlay" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setAnalyticsType(null);
+        }}>
+          <section className="admin-analytics-modal" role="dialog" aria-modal="true" aria-labelledby="admin-analytics-title">
+            <header>
+              <div>
+                <h2 id="admin-analytics-title">Website {analyticsType === "views" ? "Views" : "Visitors"}</h2>
+                <p>Page-by-page website analytics. Visitor counts are unique across the website.</p>
+              </div>
+              <button type="button" onClick={() => setAnalyticsType(null)} aria-label="Close analytics">×</button>
+            </header>
+            {analyticsLoading ? <div className="admin-empty">Loading analytics...</div> : analyticsPages.length === 0 ? (
+              <div className="admin-empty">No website visits recorded yet.</div>
+            ) : (
+              <div className="admin-analytics-table-wrap">
+                <table className="admin-analytics-table">
+                  <thead><tr><th>Page link</th><th>Total views</th><th>Unique visitors</th><th>Last viewed</th></tr></thead>
+                  <tbody>
+                    {[...analyticsPages].sort((a, b) => analyticsType === "views" ? b.views - a.views : b.unique_visitors - a.unique_visitors).map((item) => (
+                      <tr key={item.path}>
+                        <td><a href={item.path} target="_blank" rel="noreferrer">{item.path}</a></td>
+                        <td>{item.views.toLocaleString("en-IN")}</td>
+                        <td>{item.unique_visitors.toLocaleString("en-IN")}</td>
+                        <td>{item.last_viewed ? new Date(item.last_viewed).toLocaleString() : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <footer><span>{analyticsPages.length} pages tracked</span><button type="button" onClick={() => setAnalyticsType(null)}>Close</button></footer>
+          </section>
+        </div>
+      )}
       <ConfirmDialog
         open={deleteTarget !== null}
         title="Delete post?"

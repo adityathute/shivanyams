@@ -560,6 +560,7 @@ export default function PostEditor({
   const [notice, setNotice] = useState("");
 
   const [organizationType, setOrganizationType] = useState("");
+  const [activeLanguage, setActiveLanguage] = useState<"en" | "mr" | "hi">("en");
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -655,6 +656,7 @@ export default function PostEditor({
           );
         const record = payload as PostRecord;
         setOrganizationType(record.organization_type || "");
+        setActiveLanguage((record.default_language || "en") as "en" | "mr" | "hi");
         setForm({
           ...EMPTY,
           title_en: record.title_en || "",
@@ -1133,8 +1135,17 @@ export default function PostEditor({
         {notice && <div className="post-editor-notice">{notice}</div>}
         <form className="post-editor-form" onSubmit={submit}>
           <section>
-            <h2>Post Information</h2>
-            <div className="post-editor-grid">
+            <div className="post-editor-section-title-row">
+              <h2>Post Information</h2>
+              <div className="post-editor-language-switch" role="group" aria-label="Visible content language">
+                {([activeLanguage] as const).map((lang) => (
+                  <button key={lang} type="button" className={activeLanguage === lang ? "active" : ""} aria-pressed={activeLanguage === lang} onClick={() => setActiveLanguage(lang)}>
+                    {lang === "en" ? "English" : lang === "mr" ? "Marathi" : "Hindi"}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="post-editor-grid post-editor-meta-row">
               <label>
                 Category
                 <select
@@ -1288,9 +1299,11 @@ export default function PostEditor({
                 Default Language
                 <select
                   value={form.default_language}
-                  onChange={(event) =>
-                    update("default_language", event.target.value)
-                  }
+                  onChange={(event) => {
+                    const nextLanguage = event.target.value as "en" | "mr" | "hi";
+                    update("default_language", nextLanguage);
+                    setActiveLanguage(nextLanguage);
+                  }}
                 >
                   <option value="en">English</option>
                   <option value="mr">Marathi</option>

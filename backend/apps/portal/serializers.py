@@ -9,6 +9,7 @@ from .models import (
     ExaminationDetails,
     JobDetails,
     JobPost,
+    JobPostEducation,
     JobPostFee,
     JobVacancyBreakdown,
     Post,
@@ -196,6 +197,19 @@ class JobVacancyBreakdownSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
+class JobPostEducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobPostEducation
+        fields = (
+            "id",
+            "qualification_en",
+            "qualification_mr",
+            "qualification_hi",
+            "sort_order",
+        )
+        read_only_fields = ("id",)
+
+
 class JobPostFeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPostFee
@@ -216,6 +230,7 @@ class JobPostFeeSerializer(serializers.ModelSerializer):
 
 class JobPostSerializer(serializers.ModelSerializer):
     fees = JobPostFeeSerializer(many=True, required=False)
+    educations = JobPostEducationSerializer(many=True, required=False)
 
     class Meta:
         model = JobPost
@@ -243,6 +258,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "age_limit_note_hi",
             "sort_order",
             "fees",
+            "educations",
         )
         read_only_fields = ("id",)
 
@@ -252,14 +268,14 @@ class JobPostSerializer(serializers.ModelSerializer):
 
         if self.instance:
             for field in self.Meta.fields:
-                if field in ("id", "fees"):
+                if field in ("id", "fees", "educations"):
                     continue
                 values[field] = getattr(self.instance, field)
 
         values.update({
             key: value
             for key, value in attrs.items()
-            if key != "fees"
+            if key not in ("fees", "educations")
         })
 
         if self.instance:
@@ -377,6 +393,7 @@ class JobDetailsSerializer(serializers.ModelSerializer):
         for post_data in posts:
             post_data = dict(post_data)
             fees = post_data.pop("fees", [])
+            educations = post_data.pop("educations", [])
 
             job_post = JobPost.objects.create(
                 job=job,
@@ -387,6 +404,12 @@ class JobDetailsSerializer(serializers.ModelSerializer):
                 JobPostFee.objects.create(
                     job_post=job_post,
                     **fee,
+                )
+
+            for education in educations:
+                JobPostEducation.objects.create(
+                    job_post=job_post,
+                    **education,
                 )
 
         # The notification total is derived from its individual post vacancies.

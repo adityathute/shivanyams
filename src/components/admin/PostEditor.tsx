@@ -1927,7 +1927,7 @@ export default function PostEditor({
                 <details className="post-editor-repeat-card post-editor-collapsible" key={index}>
                   <summary className="post-editor-card-summary">
                     <span><strong>{item.label_en || `Date ${index + 1}`}</strong><small>{detailLabel(item.date_type)} · {DATE_FORMAT_OPTIONS.find((format) => format.value === item.date_format)?.label || "Date"}</small></span>
-                    <span className="post-editor-toggle-hint">Show / Hide</span>
+                    
                   </summary>
                   <div className="post-editor-grid">
                     <label>
@@ -2234,10 +2234,10 @@ export default function PostEditor({
               </button>
             </div>
             {importantLinks.map((item, index) => (
-              <details className="post-editor-repeat-card post-editor-collapsible" key={index} open={index === 0}>
+              <details className="post-editor-repeat-card post-editor-collapsible" key={index}>
                 <summary className="post-editor-card-summary">
                   <span><strong>{item.name_en || `Important Link ${index + 1}`}</strong><small>{item.url || "Add link title and URL"}</small></span>
-                  <span className="post-editor-toggle-hint">Show / Hide</span>
+                  
                 </summary>
                 <div className="post-editor-grid">
                   {(["en", "mr", "hi"] as const).map((lang) => (

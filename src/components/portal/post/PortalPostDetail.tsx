@@ -498,6 +498,17 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       : null;
   }, [category, data.items, data.videos, slug, language]);
 
+  const visibleImportantLinks = useMemo(() => {
+    let remaining = IMPORTANT_LINKS_DISPLAY_LIMIT;
+
+    return (post?.importantLinks ?? []).flatMap((group) => {
+      const actions = group.actions.slice(0, remaining);
+      remaining -= actions.length;
+
+      return actions.length ? [{ ...group, actions }] : [];
+    });
+  }, [post]);
+
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(
     (entry) => entry.slug === categoryApiSlug,
@@ -1138,13 +1149,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </section>
                   ) : null}
 
-                  {post.importantLinks.length ? (
+                  {visibleImportantLinks.length ? (
                     <section className="portal-important-links">
                       <div className="portal-important-dates-heading">
                         <h2>{getDetailLabel("importantLinks", language)}</h2>
                       </div>
                       <div className="portal-important-links-list">
-                        {post.importantLinks.slice(0, IMPORTANT_LINKS_DISPLAY_LIMIT).map((group) => (
+                        {visibleImportantLinks.map((group) => (
                           <div className="portal-important-link-item" key={group.group_key}>
                             <strong>{getLocalizedText(language, group.label_en, group.label_mr, group.label_hi)}</strong>
                             <div className="portal-important-link-actions">

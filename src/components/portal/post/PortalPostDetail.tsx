@@ -1361,10 +1361,26 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                   ) : null}
                 </article>
               ) : (
-                <PortalContentNotFound
-                  categoryLabel={label || category}
-                  categoryHref={`/${category}`}
-                />
+                <>
+                  <PortalContentNotFound
+                    categoryLabel={label || category}
+                    categoryHref={`/${category}`}
+                  />
+                  {!data.loading && recommendedPosts.length === 0 ? (
+                    <section className="subscribe-panel not-found-subscribe-panel">
+                      <div className="subscribe-icon">
+                        <MailIcon />
+                      </div>
+                      <div className="subscribe-content">
+                        <h3>{t("subscribeTitle")}</h3>
+                        <p>{t("subscribeDescription")}</p>
+                      </div>
+                      <Button variant="primary" size="sm" onClick={() => router.push("/contact")}>
+                        {t("contactButton")}
+                      </Button>
+                    </section>
+                  ) : null}
+                </>
               )}
             </div>
 
@@ -1437,6 +1453,20 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     </div>
                   </section>
                 )}
+                {!post && recommendedPosts.length > 0 && recommendedPosts.length <= 3 ? (
+                  <section className="subscribe-panel not-found-subscribe-panel">
+                    <div className="subscribe-icon">
+                      <MailIcon />
+                    </div>
+                    <div className="subscribe-content">
+                      <h3>{t("subscribeTitle")}</h3>
+                      <p>{t("subscribeDescription")}</p>
+                    </div>
+                    <Button variant="primary" size="sm" onClick={() => router.push("/contact")}>
+                      {t("contactButton")}
+                    </Button>
+                  </section>
+                ) : null}
               </aside>
             )}
           </div>

@@ -2,10 +2,9 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "shivanya-auth";
 import { Checkbox, Input, Select, Textarea } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
-import { slugify } from "../../app/admin/admin-utils";
+import { adminFetch, slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
 
 type OrganizationType = {
@@ -555,7 +554,6 @@ export default function PostEditor({
   editSlug?: string;
 }) {
   const router = useRouter();
-  const { getAccessToken } = useAuth();
   const editing = Boolean(editSlug);
   const [categories, setCategories] = useState<Category[]>([]);
   const [kind, setKind] = useState(
@@ -603,12 +601,7 @@ export default function PostEditor({
 
     const loadOrganizationTypes = async () => {
       try {
-        const token = await getAccessToken();
-
-        const response = await fetch(`${API_URL}/admin/organization-types/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await adminFetch(`${API_URL}/admin/organization-types/`, {
           signal: controller.signal,
         });
 
@@ -628,7 +621,7 @@ export default function PostEditor({
     loadOrganizationTypes();
 
     return () => controller.abort();
-  }, [getAccessToken]);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -669,12 +662,9 @@ export default function PostEditor({
     const controller = new AbortController();
     async function loadPost() {
       try {
-        const response = await fetch(
+        const response = await adminFetch(
           `${API_URL}/admin/content/${kind.api}/${editSlug}/`,
-          {
-            signal: controller.signal,
-            headers: { Authorization: `Bearer ${await getAccessToken()}` },
-          },
+          { signal: controller.signal },
         );
         const payload = await response.json();
         if (!response.ok)
@@ -1151,11 +1141,6 @@ export default function PostEditor({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
-    const token = await getAccessToken();
-    if (!token) {
-      setNotice("Your login token was not found. Please sign in again.");
-      return;
-    }
     if (!activeCategory) {
       setNotice("The selected category is not active in the backend.");
       return;
@@ -1223,12 +1208,9 @@ export default function PostEditor({
       const url = editing
         ? `${API_URL}/admin/content/${kind.api}/${editSlug}/`
         : `${API_URL}/admin/content/${kind.api}/`;
-      const response = await fetch(url, {
+      const response = await adminFetch(url, {
         method: editing ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const result = await response.json().catch(() => ({}));

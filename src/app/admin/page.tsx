@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
+import { adminFetch } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
@@ -46,7 +47,7 @@ function statusLabel(status: string) {
 
 export default function AdminPage() {
   const router = useRouter();
-  const { user, loading, getAccessToken } = useAuth();
+  const { user, loading } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [postsLoading, setPostsLoading] = useState(true);
@@ -62,13 +63,6 @@ export default function AdminPage() {
   const [sortOrder, setSortOrder] = useState("newest");
 
   const loadPosts = useCallback(async () => {
-    const token = await getAccessToken();
-    if (!token) {
-      setError("Your session token was not found. Please sign in again.");
-      setPostsLoading(false);
-      return;
-    }
-
     setPostsLoading(true);
     setError("");
     try {
@@ -78,8 +72,7 @@ export default function AdminPage() {
           const rows: AdminPost[] = [];
           while (url) {
             const requestUrl: string = url;
-            const response: Response = await fetch(requestUrl, {
-              headers: { Authorization: `Bearer ${token}` },
+            const response: Response = await adminFetch(requestUrl, {
               cache: "no-store",
             });
             if (!response.ok) {
@@ -111,7 +104,7 @@ export default function AdminPage() {
     } finally {
       setPostsLoading(false);
     }
-  }, [getAccessToken]);
+  }, []);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -157,9 +150,8 @@ export default function AdminPage() {
     if (!kind) return;
     setBusyPost(post.id);
     try {
-      const response = await fetch(`${API_URL}/admin/content/${kind.api}/${post.slug}/`, {
+      const response = await adminFetch(`${API_URL}/admin/content/${kind.api}/${post.slug}/`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${await getAccessToken()}` },
       });
       if (!response.ok) throw new Error(`Delete failed (${response.status}).`);
       setPosts((current) => current.filter((item) => item.id !== post.id));
@@ -173,12 +165,9 @@ export default function AdminPage() {
   async function changeStatus(post: AdminPost, status: string) {
     setBusyPost(post.id);
     try {
-      const response = await fetch(`${API_URL}/admin/content/${post.id}/review/`, {
+      const response = await adminFetch(`${API_URL}/admin/content/${post.id}/review/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${await getAccessToken()}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
       const payload = await response.json().catch(() => ({}));
@@ -198,9 +187,9 @@ export default function AdminPage() {
     setBusyPost(-1);
     try {
       const results = await Promise.all(targets.map(async (post) => {
-        const response = await fetch(`${API_URL}/admin/content/${post.id}/review/`, {
+        const response = await adminFetch(`${API_URL}/admin/content/${post.id}/review/`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAccessToken()}` },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status }),
         });
         if (!response.ok) throw new Error(`Could not update "${post.title_en}".`);

@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
-import { getAccessToken, slugify } from "../admin-utils";
+import { adminFetch, slugify } from "../admin-utils";
 
 import "../add-post/AddPostPage.css";
 
@@ -49,12 +49,6 @@ export default function AddContentPage() {
   async function submitContent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
-    const token = getAccessToken();
-    if (!token) {
-      setNotice("Your login token was not found. Please sign in again.");
-      return;
-    }
-
     let extra: Record<string, unknown>;
     try {
       const parsed: unknown = JSON.parse(form.extra || "{}");
@@ -69,9 +63,9 @@ export default function AddContentPage() {
 
     setSaving(true);
     try {
-      const response = await fetch(API_URL + "/admin/content/", {
+      const response = await adminFetch(API_URL + "/admin/content/", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kind: form.kind, title: form.title, slug: form.slug || slugify(form.title),
           summary: form.summary, body: form.body, organization: form.organization,

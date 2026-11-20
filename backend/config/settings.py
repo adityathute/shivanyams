@@ -54,12 +54,21 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STATIC_URL = "static/"
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", default="", cast=Csv())
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default=",".join(CORS_ALLOWED_ORIGINS),
+    cast=Csv(),
+)
 
 AUTH_ME_URL = config(
     "AUTH_ME_URL",
     default="http://127.0.0.1:8000/api/v1/auth/me/",
 )
 AUTH_REQUEST_TIMEOUT = config("AUTH_REQUEST_TIMEOUT", default=4, cast=int)
+AUTH_ACCESS_COOKIE_NAME = config(
+    "AUTH_ACCESS_COOKIE_NAME", default="shivanya_access"
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

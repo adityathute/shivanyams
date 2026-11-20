@@ -1168,7 +1168,7 @@ export default function PostEditor({
                 value={kind.api}
                 disabled={editing}
                 fullWidth
-                size="md"
+                size="sm"
                 options={KINDS.filter((item) => categories.some((category) => category.slug === item.slug)).map((item) => ({
                   value: item.api,
                   label: item.label,
@@ -1179,7 +1179,7 @@ export default function PostEditor({
                 label="Default Language"
                 value={form.default_language}
                 fullWidth
-                size="md"
+                size="sm"
                 options={[
                   { value: "en", label: "English" },
                   { value: "mr", label: "Marathi" },
@@ -1196,7 +1196,7 @@ export default function PostEditor({
                 label="Government Organization Type"
                 value={organizationType}
                 fullWidth
-                size="md"
+                size="sm"
                 options={[
                   { value: "", label: "Select organization type (Optional)" },
                   ...organizationTypes.map((type) => ({ value: type.value, label: type.label })),
@@ -1208,7 +1208,7 @@ export default function PostEditor({
                 value={form.location}
                 onChange={(event) => update("location", event.target.value)}
                 fullWidth
-                size="md"
+                size="sm"
               />
             </div>
 
@@ -1232,7 +1232,7 @@ export default function PostEditor({
                   value={form[`title_${form.default_language}`]}
                   onChange={(event) => update(`title_${form.default_language}`, event.target.value)}
                   fullWidth
-                  size="md"
+                  size="sm"
                 />
                 <Input
                   label="URL Slug"
@@ -1240,7 +1240,7 @@ export default function PostEditor({
                   onChange={(event) => update("slug", event.target.value)}
                   placeholder="Generated from English title"
                   fullWidth
-                  size="md"
+                  size="sm"
                 />
               </div>
               {postInfoLanguages.title.length === 3 && (
@@ -1253,7 +1253,7 @@ export default function PostEditor({
                       value={form[`title_${language}`]}
                       onChange={(event) => update(`title_${language}`, event.target.value)}
                       fullWidth
-                      size="md"
+                      size="sm"
                     />
                   ))}
                 </div>
@@ -1279,7 +1279,7 @@ export default function PostEditor({
                   value={form[`summary_${form.default_language}`]}
                   onChange={(event) => update(`summary_${form.default_language}`, event.target.value)}
                   fullWidth
-                  size="md"
+                  size="sm"
                 />
                 {postInfoLanguages.summary.length === 3 && (["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
                   <Textarea
@@ -1289,7 +1289,7 @@ export default function PostEditor({
                     value={form[`summary_${language}`]}
                     onChange={(event) => update(`summary_${language}`, event.target.value)}
                     fullWidth
-                    size="md"
+                    size="sm"
                   />
                 ))}
               </div>
@@ -1314,7 +1314,7 @@ export default function PostEditor({
                   value={form[`body_${form.default_language}`]}
                   onChange={(event) => update(`body_${form.default_language}`, event.target.value)}
                   fullWidth
-                  size="md"
+                  size="sm"
                 />
                 {postInfoLanguages.body.length === 3 && (["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
                   <Textarea
@@ -1324,7 +1324,7 @@ export default function PostEditor({
                     value={form[`body_${language}`]}
                     onChange={(event) => update(`body_${language}`, event.target.value)}
                     fullWidth
-                    size="md"
+                    size="sm"
                   />
                 ))}
               </div>
@@ -1337,7 +1337,7 @@ export default function PostEditor({
                 value={form.featured_image_url}
                 onChange={(event) => update("featured_image_url", event.target.value)}
                 fullWidth
-                size="md"
+                size="sm"
               />
             </div>
           </section>
@@ -1406,20 +1406,21 @@ export default function PostEditor({
                       </label>
 
                       {([activeLanguage] as const).map((lang) => (
-                        <label key={lang}>
-                          Post Name ({lang.toUpperCase()}) *
-                          <input
-                            required={lang === "en"}
-                            value={post[`post_name_${lang}`]}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                `post_name_${lang}`,
-                                event.target.value,
-                              )
-                            }
-                          />
-                        </label>
+                        <Input
+                          key={lang}
+                          label={`Title (${lang.toUpperCase()})`}
+                          required={lang === "en"}
+                          value={post[`post_name_${lang}`]}
+                          onChange={(event) =>
+                            updateJobPost(
+                              postIndex,
+                              `post_name_${lang}`,
+                              event.target.value,
+                            )
+                          }
+                          fullWidth
+                          size="sm"
+                        />
                       ))}
 
                       {([activeLanguage] as const).map((lang) => (

@@ -594,24 +594,49 @@ class TrackWebsiteView(APIView):
         if not isinstance(referrer_url, str):
             referrer_url = ""
         auth_user_id = str(request.user.id) if request.user.is_authenticated else ""
+        user_data = getattr(request.user, "auth_data", {}) if auth_user_id else {}
+        full_name = ""
+        if isinstance(user_data, dict):
+            full_name = str(user_data.get("full_name") or "").strip()
+            if not full_name:
+                full_name = " ".join(
+                    part for part in (
+                        str(user_data.get("first_name") or "").strip(),
+                        str(user_data.get("last_name") or "").strip(),
+                    ) if part
+                )
+        # Use the direct peer address. Do not trust arbitrary X-Forwarded-For
+        # headers because they can be supplied by visitors.
+        ip_address = request.META.get("REMOTE_ADDR") or None
 
         with transaction.atomic():
             visitor, _ = WebsiteVisitor.objects.get_or_create(
                 visitor_id=visitor_id,
-                defaults={"auth_user_id": auth_user_id},
+                defaults={
+                    "auth_user_id": auth_user_id,
+                    "full_name": full_name[:240],
+                    "ip_address": ip_address,
+                },
             )
-            update_fields = []
+            update_fields = ["last_seen_at"]
             if auth_user_id and visitor.auth_user_id != auth_user_id:
                 visitor.auth_user_id = auth_user_id
                 update_fields.append("auth_user_id")
+            if full_name and visitor.full_name != full_name[:240]:
+                visitor.full_name = full_name[:240]
+                update_fields.append("full_name")
+            if ip_address and visitor.ip_address != ip_address:
+                visitor.ip_address = ip_address
+                update_fields.append("ip_address")
             visitor.last_seen_at = timezone.now()
-            update_fields.append("last_seen_at")
             visitor.save(update_fields=update_fields)
             WebsiteView.objects.create(
                 visitor=visitor,
                 path=path,
                 referrer_url=referrer_url[:1000],
                 auth_user_id=auth_user_id,
+                full_name=full_name[:240],
+                ip_address=ip_address,
                 language=language,
                 device=device,
             )
@@ -622,6 +647,64 @@ class AdminWebsiteAnalytics(APIView):
     permission_classes = [IsPortalAdmin]
 
     def get(self, request):
+        analytics_type = request.query_params.get("type", "views")
+        visitor_id = request.query_params.get("visitor_id")
+        path = request.query_params.get("path")
+
+        if analytics_type == "visitors":
+            visitors = WebsiteVisitor.objects.annotate(
+                total_views=Count("views"),
+                total_pages=Count("views__path", distinct=True),
+                last_viewed=Max("views__viewed_at"),
+            ).order_by("-last_seen_at")
+            if request.query_params.get("authenticated") == "true":
+                visitors = visitors.exclude(auth_user_id="")
+            elif request.query_params.get("authenticated") == "false":
+                visitors = visitors.filter(auth_user_id="")
+            rows = [{
+                "visitor_id": item.visitor_id,
+                "visitor_type": "user" if item.auth_user_id else "anonymous",
+                "full_name": item.full_name if item.auth_user_id else "",
+                "ip_address": item.ip_address,
+                "first_seen": item.first_seen_at,
+                "last_seen": item.last_seen_at,
+                "last_viewed": item.last_viewed,
+                "total_views": item.total_views,
+                "total_pages": item.total_pages,
+                "device": item.views.order_by("-viewed_at").values_list("device", flat=True).first() or "unknown",
+                "language": item.views.order_by("-viewed_at").values_list("language", flat=True).first() or "",
+            } for item in visitors[:500]]
+            if visitor_id:
+                page_rows = (
+                    WebsiteView.objects.filter(visitor__visitor_id=visitor_id)
+                    .values("path")
+                    .annotate(views=Count("id"), last_viewed=Max("viewed_at"))
+                    .order_by("-views", "path")
+                )
+                return Response({"visitor": next((row for row in rows if row["visitor_id"] == visitor_id), None), "pages": list(page_rows)})
+            return Response({
+                "visitors_count": WebsiteVisitor.objects.count(),
+                "users_count": WebsiteVisitor.objects.exclude(auth_user_id="").values("auth_user_id").distinct().count(),
+                "visitors": rows,
+            })
+
+        if path:
+            events = WebsiteView.objects.filter(path=path).select_related("visitor").order_by("-viewed_at")[:500]
+            return Response({
+                "path": path,
+                "views": WebsiteView.objects.filter(path=path).count(),
+                "events": [{
+                    "viewed_at": event.viewed_at,
+                    "visitor_type": "user" if event.auth_user_id else "anonymous",
+                    "full_name": event.full_name if event.auth_user_id else "",
+                    "ip_address": event.ip_address,
+                    "visitor_id": event.visitor.visitor_id,
+                    "device": event.device,
+                    "language": event.language,
+                    "referrer_url": event.referrer_url,
+                } for event in events],
+            })
+
         page_rows = (
             WebsiteView.objects.values("path")
             .annotate(
@@ -636,7 +719,6 @@ class AdminWebsiteAnalytics(APIView):
             "visitors_count": WebsiteVisitor.objects.count(),
             "pages": list(page_rows),
         })
-
 
 class AdminDashboardStats(APIView):
     permission_classes = [IsPortalAdmin]

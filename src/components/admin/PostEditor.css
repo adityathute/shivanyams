@@ -665,3 +665,21 @@
     transition: none;
   }
 }
+
+
+/* Avoid half-empty two-column rows when the selected language leaves one field */
+.post-editor-grid:has(> label:only-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.post-editor-language-switch {
+  flex-shrink: 0;
+}
+
+.post-editor-job-post-card > .post-editor-card-summary:hover {
+  color: #203b5a;
+}
+
+.post-editor-job-post-card[open] > .post-editor-card-summary:hover {
+  background: #eef2f6;
+}

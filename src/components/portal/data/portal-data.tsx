@@ -123,6 +123,7 @@ export type Item = {
   summary_mr?: string;
   summary_hi?: string;
   date: string;
+  views_count?: number;
   description: string;
   link: string;
   type: ItemType;
@@ -287,6 +288,7 @@ type ApiPost = {
   featured_image_url?: string;
   published_at?: string | null;
   updated_at?: string | null;
+  views_count?: number;
   important_links?: ApiLink[];
   important_dates?: ImportantDate[];
   faqs?: PostFAQ[];
@@ -469,6 +471,7 @@ function mapPost(post: ApiPost, type: ItemType): Item {
     summary_hi: post.summary_hi || "",
 
     date: getDate(post.published_at || post.event_date || post.start_date),
+    views_count: Number(post.views_count) || 0,
 
     description: getPostSummary(post),
     link: getPostLink(post),

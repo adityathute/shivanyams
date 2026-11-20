@@ -634,3 +634,14 @@
   .admin-analytics-modal { max-height: 88vh; }
   .admin-analytics-modal > header, .admin-analytics-modal > footer { padding: 14px; }
 }
+
+
+/* Center labels and values in every dashboard statistics card. */
+.admin-stats article {
+  text-align: center;
+  justify-items: center;
+}
+.admin-stat-clickable button {
+  text-align: center;
+  justify-items: center;
+}

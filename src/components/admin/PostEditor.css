@@ -1774,7 +1774,6 @@
   line-height: 1.5;
 }
 .post-editor-important-links .post-editor-link-group {
-  margin-top: 14px;
   overflow: hidden;
   border: 1px solid var(--border-color, #dce3ed);
   border-radius: 12px;

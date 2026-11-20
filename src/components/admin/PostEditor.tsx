@@ -2125,7 +2125,7 @@ export default function PostEditor({
                         {item.month_years.map((entry, pairIndex) => (
                           <div key={pairIndex} className="post-editor-grid post-editor-month-year-row">
                             <Select
-                              aria-label="Month"
+                              label="Month"
                               value={entry.month}
                               options={[
                                 { value: "", label: "Select month" },
@@ -2140,7 +2140,7 @@ export default function PostEditor({
                               size="sm"
                             />
                             <Input
-                              aria-label="Year"
+                              label="Year"
                               type="number"
                               required
                               min={1}

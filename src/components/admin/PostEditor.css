@@ -683,3 +683,54 @@
 .post-editor-job-post-card[open] > .post-editor-card-summary:hover {
   background: #eef2f6;
 }
+
+
+/* Per-field translation controls in Post Information */
+.post-editor-translation-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 1px 0 -3px;
+}
+.post-editor-translation-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 5px 9px;
+  border: 1px solid #dce4ee;
+  border-radius: 6px;
+  background: #fff;
+  color: #64748b;
+  font: 600 10px Inter, Hind, sans-serif;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.post-editor-translation-controls button:hover {
+  border-color: #aebfd3;
+  background: #f5f8fc;
+  color: #31577f;
+}
+.post-editor-translation-controls button.active {
+  border-color: #b9cbe0;
+  background: #eef4fa;
+  color: #294f78;
+}
+.post-editor-translation-controls button:focus-visible {
+  outline: 2px solid #8ba8c8;
+  outline-offset: 2px;
+}
+@media (max-width: 520px) {
+  .post-editor-translation-controls {
+    gap: 5px;
+  }
+  .post-editor-translation-controls button {
+    flex: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-editor-translation-controls button {
+    transition: none;
+  }
+}

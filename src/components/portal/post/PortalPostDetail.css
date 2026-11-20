@@ -8,13 +8,17 @@
 .portal-post-detail-inner {
   width: 100%;
   margin: 0 auto;
-}
-
-.portal-post-detail .content-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.95fr) minmax(270px, 0.85fr);
-  gap: 16px;
+  column-gap: 16px;
+  row-gap: 16px;
   align-items: start;
+}
+
+/* The content-layout wrapper is transparent so the post and sidebar share
+   the taller outer detail section as their sticky containing block. */
+.portal-post-detail .content-layout {
+  display: contents;
 }
 
 .post-detail-main {
@@ -22,19 +26,14 @@
 }
 
 .portal-post-detail .right-column {
-  position: static;
+  position: sticky;
+  top: 16px;
   align-self: start;
   min-width: 0;
   min-height: 0;
   height: fit-content;
   display: grid;
   gap: 12px;
-}
-
-/* Stick only when the links column is shorter than the post content. */
-.portal-post-detail .right-column.can-stick {
-  position: sticky;
-  top: 16px;
 }
 
 @media (max-width: 1100px) {
@@ -206,20 +205,17 @@
 }
 
 .portal-post-category-grid {
-  padding: 0 16px;
+  grid-column: 1 / -1;
+  min-width: 0;
+  padding: 0;
 }
 
 .portal-post-category-grid .category-grid{
   margin: 0;
 }
 
-/* Post found: two columns */
-.portal-post-detail .content-layout.has-sidebar {
-  grid-template-columns: minmax(0, 1.95fr) minmax(270px, 0.85fr);
-}
-
-/* Post not found: full width */
-.portal-post-detail .content-layout.no-sidebar {
+/* Keep the post full width when there is no sidebar. */
+.portal-post-detail-inner:has(.content-layout.no-sidebar) {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -229,20 +225,20 @@
 }
 
 @media (max-width: 1100px) {
-  .portal-post-detail .content-layout.has-sidebar {
+  .portal-post-detail-inner {
     grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
   }
 }
 
 @media (max-width: 760px) {
-  .portal-post-detail .content-layout {
-    grid-template-columns: 1fr;
-    gap: 10px;
+  .portal-post-detail-inner {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 10px;
   }
 
   .portal-post-category-grid {
-  margin-top: 12px;
-}
+    margin-top: 12px;
+  }
 }
 
 /* Bottom spacing only when post exists */
@@ -314,10 +310,6 @@
 
 /* Mobile: Right sidebar below the post */
 @media (max-width: 760px) {
-  .portal-post-detail .content-layout.has-sidebar {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .portal-post-detail .post-detail-main,
   .portal-post-detail .right-column {
     width: 100%;

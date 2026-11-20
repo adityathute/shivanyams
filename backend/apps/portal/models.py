@@ -1503,6 +1503,48 @@ class PostView(models.Model):
         return f"{self.post.title_en} - {self.viewed_at}"
 
 
+class WebsiteVisitor(models.Model):
+    """One first-party visitor identity across the entire public website."""
+
+    visitor_id = models.CharField(max_length=128, unique=True)
+    auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
+    first_seen_at = models.DateTimeField(auto_now_add=True)
+    last_seen_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.visitor_id
+
+
+class WebsiteView(models.Model):
+    """One page-view event for any public website route."""
+
+    visitor = models.ForeignKey(
+        WebsiteVisitor,
+        on_delete=models.CASCADE,
+        related_name="views",
+    )
+    path = models.CharField(max_length=1000, db_index=True)
+    referrer_url = models.CharField(max_length=1000, blank=True)
+    auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
+    language = models.CharField(
+        max_length=2,
+        choices=LanguageChoices.choices,
+        default=LanguageChoices.ENGLISH,
+    )
+    device = models.CharField(max_length=12, default="unknown")
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-viewed_at",)
+        indexes = [
+            models.Index(fields=("path", "viewed_at")),
+            models.Index(fields=("visitor", "viewed_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.path} - {self.viewed_at}"
+
+
 class PostStatusHistory(models.Model):
     """Immutable audit trail for post review and publishing transitions."""
 

@@ -1929,7 +1929,8 @@ export default function PostEditor({
                     hiddenJobFields.includes(key) ||
                     key === "education_mode" ||
                     key === "posts" ||
-                    key === "total_vacancies"
+                    key === "total_vacancies" ||
+                    key === "vacancy_breakdowns"
                   ) {
                     return null;
                   }

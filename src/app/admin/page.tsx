@@ -22,6 +22,7 @@ type AdminPost = {
   published_at?: string | null;
   created_at?: string;
   views_count?: number;
+  unique_visitors_count?: number;
   is_active?: boolean;
 };
 
@@ -142,6 +143,7 @@ export default function AdminPage() {
     drafts: posts.filter((post) => post.status === "draft").length,
     review: posts.filter((post) => post.status === "pending_review").length,
     views: posts.reduce((sum, post) => sum + (post.views_count || 0), 0),
+    visitors: posts.reduce((sum, post) => sum + (post.unique_visitors_count || 0), 0),
   }), [posts]);
 
   async function deletePost(post: AdminPost) {
@@ -206,10 +208,10 @@ export default function AdminPage() {
   }
 
   function exportCsv() {
-    const columns = ["title_en", "slug", "category", "status", "views_count", "created_at"];
+    const columns = ["title_en", "slug", "category", "status", "views_count", "unique_visitors_count", "created_at"];
     const rows = sortedPosts.map((post) => [
       post.title_en, post.slug, post.category.name_en, post.status,
-      post.views_count ?? 0, post.created_at ?? "",
+      post.views_count ?? 0, post.unique_visitors_count ?? 0, post.created_at ?? "",
     ]);
     const csv = [columns, ...rows].map((row) => row.map((value) =>
       `"${String(value ?? "").replaceAll('"', '""')}"`
@@ -247,6 +249,7 @@ export default function AdminPage() {
             { label: "Drafts", value: counts.drafts },
             { label: "Pending review", value: counts.review },
             { label: "Total views", value: counts.views },
+            { label: "Unique visitors", value: counts.visitors },
           ].filter((item) => item.value > 0);
 
           return statItems.length > 0 ? (
@@ -288,7 +291,7 @@ export default function AdminPage() {
           ) : (
             <div className="admin-table-wrap">
               <table className="admin-post-table">
-                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Created</th><th>Actions</th></tr></thead>
+                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Visitors</th><th>Created</th><th>Actions</th></tr></thead>
                 <tbody>
                   {visiblePosts.map((post) => {
                     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
@@ -299,6 +302,7 @@ export default function AdminPage() {
                         <td>{kind?.label || post.category.name_en}</td>
                         <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>
                         <td>{(post.views_count || 0).toLocaleString()}</td>
+                        <td>{(post.unique_visitors_count || 0).toLocaleString()}</td>
                         <td>{post.created_at ? new Date(post.created_at).toLocaleDateString() : "—"}</td>
                         <td>
                           <div className="admin-row-actions">

@@ -846,3 +846,30 @@
   align-content: center;
   padding: 10px 9px;
 }
+
+
+/* Larger dashboard numbers and a minimal analytics arrow indicator. */
+.admin-stats .admin-stat-card > strong,
+.admin-stats .admin-stat-clickable button > strong {
+  font-size: clamp(27px, 2.35vw, 34px);
+  line-height: 1.08;
+}
+.admin-stats .admin-stat-open-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border-radius: 50%;
+  background: #edf5ff;
+  color: #075be8;
+  font-size: 15px;
+  line-height: 1;
+}
+@media (max-width: 520px) {
+  .admin-stats .admin-stat-card > strong,
+  .admin-stats .admin-stat-clickable button > strong {
+    font-size: 27px;
+  }
+}

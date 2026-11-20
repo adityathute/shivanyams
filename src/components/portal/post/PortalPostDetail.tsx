@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ImportantDate, type PostFAQ } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { PortalFooter } from "../layout/footer/PortalFooter";
@@ -355,9 +355,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     getBaseText(key, language);
   const [categories, setCategories] = useState<Category[]>([]);
   const [expandedFaqItems, setExpandedFaqItems] = useState<number[]>([]);
-  const mainColumnRef = useRef<HTMLDivElement | null>(null);
-  const sidebarRef = useRef<HTMLElement | null>(null);
-  const [sidebarCanStick, setSidebarCanStick] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -500,41 +497,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       : null;
   }, [category, data.items, data.videos, slug, language]);
 
-  useEffect(() => {
-    const mainColumn = mainColumnRef.current;
-    const sidebar = sidebarRef.current;
-
-    if (!post || data.loading || !mainColumn || !sidebar) {
-      setSidebarCanStick(false);
-      return;
-    }
-
-    const updateSidebarPosition = () => {
-      if (window.innerWidth <= 760) {
-        setSidebarCanStick(false);
-        return;
-      }
-
-      const mainHeight = mainColumn.getBoundingClientRect().height;
-      const sidebarHeight = sidebar.getBoundingClientRect().height;
-
-      // Sticky is enabled only when the sidebar is shorter than the post column.
-      setSidebarCanStick(sidebarHeight < mainHeight);
-    };
-
-    updateSidebarPosition();
-
-    const resizeObserver = new ResizeObserver(updateSidebarPosition);
-    resizeObserver.observe(mainColumn);
-    resizeObserver.observe(sidebar);
-    window.addEventListener("resize", updateSidebarPosition);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updateSidebarPosition);
-    };
-  }, [post, data.loading, links.length]);
-
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(
     (entry) => entry.slug === categoryApiSlug,
@@ -661,7 +623,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           <div
             className={`content-layout ${post && !data.loading ? "has-sidebar" : "no-sidebar"}`}
           >
-            <div className="post-detail-main" ref={mainColumnRef}>
+            <div className="post-detail-main">
               {data.loading ? (
                 <div className="portal-post-loading">Loading...</div>
               ) : post ? (
@@ -1244,7 +1206,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
             {/* RIGHT SIDE: Important Links - only when post exists */}
             {post && !data.loading && (
-              <aside ref={sidebarRef} className={`right-column${sidebarCanStick ? " can-stick" : ""}`}>
+              <aside className="right-column">
                 <section className="panelin important-panel">
                   <div className="section-heading">
                     <h2>{t("usefulLinks")}</h2>
@@ -1268,12 +1230,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
               </aside>
             )}
           </div>
+
+          <div className="portal-post-category-grid">
+            <CategoryGrid language={language as CategoryLanguage} />
+          </div>
         </div>
       </main>
-
-      <div className="portal-post-category-grid">
-        <CategoryGrid language={language as CategoryLanguage} />
-      </div>
 
       <PortalFooter />
     </>

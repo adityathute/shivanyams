@@ -1258,3 +1258,36 @@
     min-width: 34px;
   }
 }
+
+
+/* Analytics refinements: keep the back arrow still and scroll long visitor tables. */
+.admin-analytics-modal > header button:hover {
+  transform: none;
+}
+
+.admin-analytics-modal > header button {
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.admin-analytics-detail {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.admin-analytics-detail .admin-analytics-table-wrap {
+  max-height: min(48vh, 480px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.admin-analytics-detail .admin-analytics-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.admin-analytics-modal > footer {
+  flex-shrink: 0;
+}

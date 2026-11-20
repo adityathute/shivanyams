@@ -1465,3 +1465,39 @@
     padding-right: 8px;
   }
 }
+
+/* Keep language toggles visible and readable throughout Job Details. */
+.post-editor-translation-heading {
+  min-width: 0;
+}
+
+.post-editor-translation-heading > .post-editor-show-translations {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+  visibility: visible;
+  opacity: 1;
+  max-width: 100%;
+}
+
+.post-editor-common-education .post-editor-translation-heading {
+  gap: 12px;
+}
+
+.post-editor-common-education .post-editor-translation-heading > div {
+  min-width: 0;
+}
+
+@media (max-width: 520px) {
+  .post-editor-common-education .post-editor-translation-heading {
+    align-items: flex-start;
+  }
+
+  .post-editor-common-education .post-editor-translation-heading > .post-editor-show-translations {
+    margin-left: auto;
+  }
+}
+

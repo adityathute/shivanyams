@@ -937,6 +937,7 @@ class PostLink(TimestampedModel):
     action_text_en = models.CharField(max_length=120, blank=True, default="Click Here")
     action_text_mr = models.CharField(max_length=120, blank=True, default="")
     action_text_hi = models.CharField(max_length=120, blank=True, default="")
+    group_key = models.CharField(max_length=64, blank=True, default="", db_index=True)
 
     url = models.URLField(max_length=1000)
     sort_order = models.PositiveSmallIntegerField(default=0)

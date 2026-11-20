@@ -946,7 +946,7 @@ class PostLink(TimestampedModel):
     class Meta:
         ordering = ("sort_order", "id")
         indexes = [
-            models.Index(fields=("post", "is_active", "sort_order")),
+            models.Index(fields=("post", "is_active", "sort_order"), name="portal_faq_post_act_idx"),
         ]
 
     def __str__(self):

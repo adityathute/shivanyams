@@ -531,13 +531,36 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     jobAgeDetails?.application_fee_note_hi,
   );
 
-  const ageInfoRows: [string, string][] =
-    jobDetails?.age_mode === "per_post"
-      ? []
-      : [
-    ...(ageLimitValue
+  const overallPostAgeLimitValue = (() => {
+    if (jobDetails?.age_mode !== "per_post" || !jobDetails.posts?.length) {
+      return ageLimitValue;
+    }
+
+    const minimumAges = jobDetails.posts
+      .map((entry) => entry.age_min)
+      .filter((value): value is number => value != null && Number.isFinite(Number(value)))
+      .map(Number);
+    const maximumAges = jobDetails.posts
+      .map((entry) => entry.age_max)
+      .filter((value): value is number => value != null && Number.isFinite(Number(value)))
+      .map(Number);
+
+    if (!minimumAges.length && !maximumAges.length) return ageLimitValue;
+
+    const min = minimumAges.length ? Math.min(...minimumAges) : null;
+    const max = maximumAges.length ? Math.max(...maximumAges) : null;
+
+    if (min != null && max != null) {
+      return `${min} – ${max} ${getDetailLabel("years", language)}`;
+    }
+    if (min != null) return `${min}+ ${getDetailLabel("years", language)}`;
+    return `${getDetailLabel("upTo", language)} ${max} ${getDetailLabel("years", language)}`;
+  })();
+
+  const ageInfoRows: [string, string][] = [
+    ...(overallPostAgeLimitValue
       ? [
-          [getDetailLabel("ageLimit", language), ageLimitValue] as [
+          [getDetailLabel("ageLimit", language), overallPostAgeLimitValue] as [
             string,
             string,
           ],
@@ -663,7 +686,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           ...ageInfoRows,
 
                           // Application Fee
-                          ...(jobDetails?.fee_mode !== "per_post" && jobDetails?.application_fee
+                          ...(jobDetails?.application_fee
                             ? [
                                 [
                                   getDetailLabel("fee", language),
@@ -673,7 +696,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             : []),
 
                           // Multilingual Application Fee Note
-                          ...(jobDetails?.fee_mode !== "per_post" && applicationFeeNote
+                          ...(applicationFeeNote
                             ? [
                                 [
                                   getDetailLabel("feeNote", language),
@@ -875,6 +898,14 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             const showAgeNote =
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageNote);
+                            const hasCommonFee = Boolean(
+                              jobDetails.application_fee != null &&
+                              String(jobDetails.application_fee).trim(),
+                            );
+                            const showPostFees =
+                              !hasCommonFee &&
+                              jobDetails.fee_mode === "per_post" &&
+                              rows.some((row) => row.fees.length);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -892,6 +923,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       {showEducation ? <th>{getDetailLabel("qualification", language)}</th> : null}
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
+                                      {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -904,6 +936,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                         {showEducation ? <td>{row.qualification || "—"}</td> : null}
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
+                                        {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
                                   </tbody>

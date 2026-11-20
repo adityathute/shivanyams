@@ -572,6 +572,8 @@ export default function PostEditor({
   const [expandedPostLanguages, setExpandedPostLanguages] = useState<number[]>([]);
   const [expandedEducationLanguages, setExpandedEducationLanguages] = useState<string[]>([]);
   const [expandedAgeLanguages, setExpandedAgeLanguages] = useState<number[]>([]);
+  const [expandedFeeCategoryLanguages, setExpandedFeeCategoryLanguages] = useState<string[]>([]);
+  const [expandedFeeNoteLanguages, setExpandedFeeNoteLanguages] = useState<string[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -1693,16 +1695,81 @@ export default function PostEditor({
                           <span><strong>Fee category {feeIndex + 1}</strong><small>{fee.category_name_en || "Add category"}{fee.fee_amount !== "" ? ` · ₹${fee.fee_amount}` : ""}</small></span>
                         </summary>
 
-                        <div className="post-editor-grid">
-                          {([activeLanguage] as const).map((lang) => (
-                            <Input key={lang} label={`Category (${lang.toUpperCase()})`} value={fee[`category_name_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `category_name_${lang}`, event.target.value)} fullWidth size="sm" />
-                          ))}
+                        <div className="post-editor-fee-fields">
+                          <div className="post-editor-fee-amount">
+                            <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
+                          </div>
 
-                          <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
+                          <div className="post-editor-fee-translation">
+                            <div className="post-editor-translation-heading">
+                              <span>Category</span>
+                              <button
+                                type="button"
+                                className="post-editor-show-translations"
+                                aria-expanded={expandedFeeCategoryLanguages.includes(`${postIndex}-${feeIndex}`)}
+                                onClick={() => {
+                                  const feeKey = `${postIndex}-${feeIndex}`;
+                                  setExpandedFeeCategoryLanguages((current) =>
+                                    current.includes(feeKey)
+                                      ? current.filter((key) => key !== feeKey)
+                                      : [...current, feeKey]
+                                  );
+                                }}
+                              >
+                                {expandedFeeCategoryLanguages.includes(`${postIndex}-${feeIndex}`) ? "Hide other languages" : "+ Show other languages"}
+                              </button>
+                            </div>
+                            <div className="post-editor-grid post-editor-single-column">
+                              {([form.default_language as ContentLanguage, ...(expandedFeeCategoryLanguages.includes(`${postIndex}-${feeIndex}`)
+                                ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== form.default_language)
+                                : [])] as ContentLanguage[]).map((lang) => (
+                                <Input
+                                  key={lang}
+                                  label={`Category (${lang.toUpperCase()})`}
+                                  value={fee[`category_name_${lang}`]}
+                                  onChange={(event) => updateJobPostFee(postIndex, feeIndex, `category_name_${lang}`, event.target.value)}
+                                  fullWidth
+                                  size="sm"
+                                />
+                              ))}
+                            </div>
+                          </div>
 
-                          {([activeLanguage] as const).map((lang) => (
-                            <Textarea key={lang} label={`Fee Note (${lang.toUpperCase()})`} rows={2} value={fee[`fee_note_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `fee_note_${lang}`, event.target.value)} fullWidth size="sm" />
-                          ))}
+                          <div className="post-editor-fee-translation">
+                            <div className="post-editor-translation-heading">
+                              <span>Fee Note</span>
+                              <button
+                                type="button"
+                                className="post-editor-show-translations"
+                                aria-expanded={expandedFeeNoteLanguages.includes(`${postIndex}-${feeIndex}`)}
+                                onClick={() => {
+                                  const feeKey = `${postIndex}-${feeIndex}`;
+                                  setExpandedFeeNoteLanguages((current) =>
+                                    current.includes(feeKey)
+                                      ? current.filter((key) => key !== feeKey)
+                                      : [...current, feeKey]
+                                  );
+                                }}
+                              >
+                                {expandedFeeNoteLanguages.includes(`${postIndex}-${feeIndex}`) ? "Hide other languages" : "+ Show other languages"}
+                              </button>
+                            </div>
+                            <div className="post-editor-grid post-editor-single-column">
+                              {([form.default_language as ContentLanguage, ...(expandedFeeNoteLanguages.includes(`${postIndex}-${feeIndex}`)
+                                ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== form.default_language)
+                                : [])] as ContentLanguage[]).map((lang) => (
+                                <Textarea
+                                  key={lang}
+                                  label={`Fee Note (${lang.toUpperCase()})`}
+                                  rows={2}
+                                  value={fee[`fee_note_${lang}`]}
+                                  onChange={(event) => updateJobPostFee(postIndex, feeIndex, `fee_note_${lang}`, event.target.value)}
+                                  fullWidth
+                                  size="sm"
+                                />
+                              ))}
+                            </div>
+                          </div>
                         </div>
 
                         <div className="post-editor-card-actions">

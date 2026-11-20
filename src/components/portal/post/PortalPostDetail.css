@@ -835,7 +835,8 @@
 .portal-post-wise-table th,
 .portal-post-wise-table td {
   padding: 12px 14px;
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  border-right: 1px solid rgba(148, 163, 184, 0.18);
   background: var(--surface, #fff);
   color: var(--text-primary, #172033);
   text-align: center;
@@ -843,7 +844,13 @@
   overflow-wrap: anywhere;
 }
 
+.portal-post-wise-table th:last-child,
+.portal-post-wise-table td:last-child {
+  border-right: 0;
+}
+
 .portal-post-wise-table thead th {
+  background: var(--surface-muted, #f5f7fa);
   font-weight: 750;
   white-space: nowrap;
 }
@@ -861,6 +868,7 @@
 .portal-post-wise-table tfoot th,
 .portal-post-wise-table tfoot td {
   border-bottom: 0;
+  background: var(--surface-muted, #f5f7fa);
   font-weight: 800;
 }
 
@@ -875,8 +883,15 @@
 
 :root[data-theme="dark"] .portal-post-wise-table th,
 :root[data-theme="dark"] .portal-post-wise-table td {
+  border-color: rgba(148, 163, 184, 0.14);
   background: var(--surface, #171c28);
   color: var(--text-primary, #f8fafc);
+}
+
+:root[data-theme="dark"] .portal-post-wise-table thead th,
+:root[data-theme="dark"] .portal-post-wise-table tfoot th,
+:root[data-theme="dark"] .portal-post-wise-table tfoot td {
+  background: var(--surface-muted, #202838);
 }
 
 @media (max-width: 600px) {

@@ -873,3 +873,19 @@
     font-size: 27px;
   }
 }
+
+/* Make dashboard metric values prominent and consistently bold. */
+.admin-stats .admin-stat-card > strong,
+.admin-stats .admin-stat-clickable button > strong {
+  font-size: clamp(32px, 2.8vw, 40px);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+@media (max-width: 520px) {
+  .admin-stats .admin-stat-card > strong,
+  .admin-stats .admin-stat-clickable button > strong {
+    font-size: 30px;
+    font-weight: 700;
+  }
+}

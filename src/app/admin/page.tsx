@@ -17,11 +17,11 @@ type WebsiteAnalyticsPage = { path: string; views: number; unique_visitors: numb
 type WebsiteVisitorRow = {
   visitor_id: string; visitor_type: "user" | "anonymous"; full_name: string;
   ip_address: string | null; first_seen: string; last_seen: string; last_viewed: string | null;
-  total_views: number; total_pages: number; device: string; language: string;
+  total_views: number; total_pages: number; device: string; browser: string; language: string;
 };
 type WebsiteViewEvent = {
   viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string;
-  ip_address: string | null; visitor_id: string; device: string; language: string; referrer_url: string;
+  ip_address: string | null; visitor_id: string; device: string; browser: string; language: string; referrer_url: string;
 };
 
 type AdminPost = {
@@ -411,7 +411,7 @@ export default function AdminPage() {
                 <article key={item.label} className={`admin-stat-card admin-stat-${item.group}${item.analytics ? " admin-stat-clickable" : ""}`}>
                   {item.analytics ? (
                     <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} details`}>
-                      <span>{item.label}<small className="admin-stat-open-indicator">View details ↗</small></span>
+                      <span>{item.label}<small className="admin-stat-open-indicator" aria-hidden="true">↗</small></span>
                       <strong><AnimatedNumber value={item.value} /></strong>
                     </button>
                   ) : (
@@ -513,6 +513,7 @@ export default function AdminPage() {
                   <span>{selectedVisitor.total_pages} pages · {selectedVisitor.total_views} total views</span>
                   <span>First visit: {new Date(selectedVisitor.first_seen).toLocaleString()}</span>
                   <span>Last visit: {new Date(selectedVisitor.last_seen).toLocaleString()}</span>
+                  <span>Browser: {selectedVisitor.browser || "Unknown"}</span>
                   <span>Device: {selectedVisitor.device} · Language: {selectedVisitor.language || "—"}</span>
                 </div>
                 <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
@@ -522,8 +523,8 @@ export default function AdminPage() {
               </div>
             ) : selectedAnalyticsPath ? (
               <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
-                <thead><tr><th>Visitor</th><th>IP address</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
-                <tbody>{analyticsEvents.map((event, index) => <tr key={event.visitor_id + event.viewed_at + index}><td>{event.visitor_type === "user" ? event.full_name || "Registered user" : "Anonymous"}</td><td>{event.ip_address || "—"}</td><td>{event.device}</td><td>{event.language || "—"}</td><td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td><td>{new Date(event.viewed_at).toLocaleString()}</td></tr>)}</tbody>
+                <thead><tr><th>Visitor</th><th>IP address</th><th>Browser</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
+                <tbody>{analyticsEvents.map((event, index) => <tr key={event.visitor_id + event.viewed_at + index}><td>{event.visitor_type === "user" ? event.full_name || "Registered user" : "Anonymous"}</td><td>{event.ip_address || "—"}</td><td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td><td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td><td>{new Date(event.viewed_at).toLocaleString()}</td></tr>)}</tbody>
               </table></div>
             ) : analyticsType === "views" ? (
               analyticsPages.length === 0 ? <div className="admin-empty">No website views recorded yet.</div> : (
@@ -538,10 +539,10 @@ export default function AdminPage() {
             ) : (
               analyticsVisitors.length === 0 ? <div className="admin-empty">No visitors recorded yet.</div> : (
                 <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
-                  <thead><tr><th>Visitor</th><th>IP address</th><th>Pages</th><th>Total views</th><th>Device</th><th>Language</th><th>First visit</th><th>Last visit</th></tr></thead>
+                  <thead><tr><th>Visitor</th><th>IP address</th><th>Browser</th><th>Device</th><th>Pages</th><th>Total views</th><th>Language</th><th>First visit</th><th>Last visit</th></tr></thead>
                   <tbody>{analyticsVisitors.map((visitor) => <tr key={visitor.visitor_id}>
                     <td><button type="button" className="admin-analytics-link" onClick={() => void openVisitorDetails(visitor)}>{visitor.visitor_type === "user" ? visitor.full_name || "Registered user" : "Anonymous"}</button></td>
-                    <td>{visitor.ip_address || "—"}</td><td>{visitor.total_pages}</td><td>{visitor.total_views}</td><td>{visitor.device}</td><td>{visitor.language || "—"}</td>
+                    <td>{visitor.ip_address || "—"}</td><td>{visitor.browser || "Unknown"}</td><td>{visitor.device}</td><td>{visitor.total_pages}</td><td>{visitor.total_views}</td><td>{visitor.language || "—"}</td>
                     <td>{new Date(visitor.first_seen).toLocaleString()}</td><td>{new Date(visitor.last_seen).toLocaleString()}</td>
                   </tr>)}</tbody>
                 </table></div>

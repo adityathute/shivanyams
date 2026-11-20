@@ -339,7 +339,7 @@ export default function AdminPage() {
         </header>
 
         {(() => {
-          const statItems = [
+          const statItems: { label: string; value: number; analytics?: "views" | "visitors" }[] = [
             { label: "Total posts", value: counts.total },
             { label: "Published", value: counts.published },
             { label: "Drafts", value: counts.drafts },

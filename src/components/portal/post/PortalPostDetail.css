@@ -120,8 +120,7 @@
 }
 
 .portal-post-summary {
-  margin: 16px 0;
-  margin-top: 12px;
+  margin: 12px 0;
 }
 
 .portal-post-not-found p {
@@ -316,7 +315,7 @@
 .portal-post-taxonomy {
   align-items: center;
   gap: 8px;
-  margin: -8px 0 12px;
+  margin: 12px 0 0 0;
 }
 
 .portal-post-taxonomy a {

@@ -962,11 +962,18 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   </tfoot>
                                 </table>
                               </div>
-                              {jobDetails.education_mode === "common" && jobDetails.educational_qualification ? (
+                              {jobDetails.education_mode === "common" && (rows[0]?.educationItems.length || jobDetails.educational_qualification) ? (
                                 <div className="portal-job-detail-group portal-education-details">
                                   <h2>{getDetailLabel("qualification", language)}</h2>
                                   <div className="portal-job-detail-row">
-                                    <span>{jobDetails.educational_qualification}</span>
+                                    <div>
+                                      {(rows[0]?.educationItems.length
+                                        ? rows[0].educationItems
+                                        : [jobDetails.educational_qualification]
+                                      ).map((item, itemIndex) => (
+                                        <p key={itemIndex}>{item}</p>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
                               ) : null}

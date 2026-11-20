@@ -1318,8 +1318,8 @@ export default function PostEditor({
                   label={`Title (${form.default_language.toUpperCase()})`}
                   required
                   maxLength={240}
-                  value={form[`title_${form.default_language}`]}
-                  onChange={(event) => update(`title_${form.default_language}`, event.target.value)}
+                  value={form[`title_${form.default_language as ContentLanguage}`]}
+                  onChange={(event) => update(`title_${form.default_language as ContentLanguage}`, event.target.value)}
                   fullWidth
                   size="sm"
                 />
@@ -1365,8 +1365,8 @@ export default function PostEditor({
                 <Textarea
                   label={`Short Description (${form.default_language.toUpperCase()})`}
                   rows={3}
-                  value={form[`summary_${form.default_language}`]}
-                  onChange={(event) => update(`summary_${form.default_language}`, event.target.value)}
+                  value={form[`summary_${form.default_language as ContentLanguage}`]}
+                  onChange={(event) => update(`summary_${form.default_language as ContentLanguage}`, event.target.value)}
                   fullWidth
                   size="sm"
                 />
@@ -1400,8 +1400,8 @@ export default function PostEditor({
                 <Textarea
                   label={`Full Content (${form.default_language.toUpperCase()})`}
                   rows={8}
-                  value={form[`body_${form.default_language}`]}
-                  onChange={(event) => update(`body_${form.default_language}`, event.target.value)}
+                  value={form[`body_${form.default_language as ContentLanguage}`]}
+                  onChange={(event) => update(`body_${form.default_language as ContentLanguage}`, event.target.value)}
                   fullWidth
                   size="sm"
                 />

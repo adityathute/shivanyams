@@ -1519,7 +1519,7 @@
 /* Important Dates: display order, date type and format share one compact row. */
 .post-editor-date-controls-row {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: end;
   gap: 12px;
 }

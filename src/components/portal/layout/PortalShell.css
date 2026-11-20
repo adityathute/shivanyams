@@ -524,6 +524,7 @@
   .portal-footer {
     padding: 22px 15px 0;
     margin: 10px;
+    margin-top: 0;
   }
   .footer-main {
     grid-template-columns: 1fr 1fr;

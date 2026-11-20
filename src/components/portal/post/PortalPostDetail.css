@@ -223,7 +223,7 @@
 
 @media (max-width: 600px) {
   .portal-post-category-grid {
-    padding: 0 12px;
+    padding: 0;
   }
 }
 

@@ -798,6 +798,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
     def _pop_nested_data(validated_data):
         nested_names = (
             "important_links",
+            "faqs",
             "important_dates",
             "resources",
             "outgoing_relations",

@@ -571,6 +571,7 @@ export default function PostEditor({
   const [commonEducationLanguages, setCommonEducationLanguages] = useState<ContentLanguage[]>(["en"]);
   const [expandedPostLanguages, setExpandedPostLanguages] = useState<number[]>([]);
   const [expandedEducationLanguages, setExpandedEducationLanguages] = useState<string[]>([]);
+  const [expandedAgeLanguages, setExpandedAgeLanguages] = useState<number[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -1607,7 +1608,7 @@ export default function PostEditor({
                     </div>
 
                     <h4>Age Criteria</h4>
-                    <div className="post-editor-grid">
+                    <div className="post-editor-grid post-editor-age-fields">
                       <Select
                         label="Age Criteria"
                         value={post.age_criteria_type}
@@ -1640,16 +1641,43 @@ export default function PostEditor({
                       {post.age_criteria_type === "dob_range" ? (
                         <>
                           <Input type="date" label="Eligible Date of Birth From" value={post.eligible_dob_from ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_from", event.target.value)} fullWidth size="sm" />
-
                           <Input type="date" label="Eligible Date of Birth To" value={post.eligible_dob_to ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_to", event.target.value)} fullWidth size="sm" />
                         </>
                       ) : null}
-
-                      {([activeLanguage] as const).map((lang) => (
-                        <Textarea key={lang} label={`Age Limit Note (${lang.toUpperCase()})`} rows={2} value={post[`age_limit_note_${lang}`]} onChange={(event) => updateJobPost(postIndex, `age_limit_note_${lang}`, event.target.value)} fullWidth size="sm" />
-                      ))}
                     </div>
 
+                    <div className="post-editor-age-note-section">
+                      <div className="post-editor-translation-heading">
+                        <span>Age Limit Note</span>
+                        <button
+                          type="button"
+                          className="post-editor-show-translations"
+                          aria-expanded={expandedAgeLanguages.includes(postIndex)}
+                          onClick={() => setExpandedAgeLanguages((current) =>
+                            current.includes(postIndex)
+                              ? current.filter((index) => index !== postIndex)
+                              : [...current, postIndex]
+                          )}
+                        >
+                          {expandedAgeLanguages.includes(postIndex) ? "Hide other languages" : "+ Show other languages"}
+                        </button>
+                      </div>
+                      <div className="post-editor-grid post-editor-single-column">
+                        {([form.default_language as ContentLanguage, ...(expandedAgeLanguages.includes(postIndex)
+                          ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== form.default_language)
+                          : [])] as ContentLanguage[]).map((lang) => (
+                          <Textarea
+                            key={lang}
+                            label={`Age Limit Note (${lang.toUpperCase()})`}
+                            rows={2}
+                            value={post[`age_limit_note_${lang}`]}
+                            onChange={(event) => updateJobPost(postIndex, `age_limit_note_${lang}`, event.target.value)}
+                            fullWidth
+                            size="sm"
+                          />
+                        ))}
+                      </div>
+                    </div>
 
                     <section className="post-editor-post-detail-section post-editor-fees-section">
                       <div className="post-editor-subsection-heading">

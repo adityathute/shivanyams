@@ -1634,8 +1634,6 @@
   gap: 9px;
   width: 100%;
   min-width: 0;
-  padding-top: 11px;
-  border-top: 1px solid #edf1f6;
 }
 .post-editor-important-links .post-editor-link-language-grid {
   grid-template-columns: minmax(0, 1fr);
@@ -1644,6 +1642,7 @@
 .post-editor-important-links .post-editor-link-language-grid > .shivanya-input-wrapper {
   width: 100%;
   min-width: 0;
+    padding-right: 24px;
 }
 .post-editor-important-links .post-editor-link-translation .post-editor-translation-heading {
   display: flex;

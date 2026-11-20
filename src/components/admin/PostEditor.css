@@ -1620,3 +1620,52 @@
 .post-editor-form textarea {
   font-size: 0.875rem !important;
 }
+
+
+/* Important Links: separate translated title and action label controls. */
+.post-editor-important-links .post-editor-important-link-fields {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+}
+.post-editor-important-links .post-editor-link-translation {
+  display: grid;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  padding-top: 11px;
+  border-top: 1px solid #edf1f6;
+}
+.post-editor-important-links .post-editor-link-language-grid {
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+}
+.post-editor-important-links .post-editor-link-language-grid > .shivanya-input-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+.post-editor-important-links .post-editor-link-translation .post-editor-translation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+.post-editor-important-links .post-editor-link-translation .post-editor-show-translations {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.post-editor-important-links .post-editor-important-link-fields > .shivanya-input-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 520px) {
+  .post-editor-important-links .post-editor-link-translation .post-editor-translation-heading {
+    align-items: flex-start;
+  }
+  .post-editor-important-links .post-editor-link-translation .post-editor-show-translations {
+    margin-left: auto;
+  }
+}

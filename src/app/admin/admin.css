@@ -1453,3 +1453,89 @@
 .admin-post-table .admin-category-badge.guide { color: #d97706; border-color: #d97706; }
 .admin-post-table .admin-category-badge.video { color: #dc2626; border-color: #dc2626; }
 .admin-post-table .admin-category-badge.tool { color: #4b5563; border-color: #4b5563; }
+
+
+/* Admin post activity, latest update and expanded filters. */
+.admin-latest-updated {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 0 18px;
+  padding: 16px 20px;
+  border: 1px solid #dce6f4;
+  border-left: 3px solid #7c3aed;
+  border-radius: 10px;
+  background: #fff;
+}
+.admin-latest-updated-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.admin-latest-updated-label {
+  color: #7c3aed;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .9px;
+}
+.admin-latest-updated-copy strong {
+  overflow: hidden;
+  color: #1b304d;
+  font-size: 14px;
+  text-overflow: ellipsis;
+}
+.admin-latest-updated-copy small {
+  color: #8492a4;
+  font-size: 11px;
+}
+.admin-latest-updated > a {
+  flex: 0 0 auto;
+  color: #6d28d9;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.admin-filters {
+  grid-template-columns: minmax(200px, 1.5fr) repeat(5, minmax(135px, 1fr));
+}
+.admin-activity-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid currentColor;
+  border-radius: 30px;
+  padding: 4px 8px;
+  background: transparent;
+  font-size: 10px;
+  font-weight: 750;
+}
+.admin-activity-badge.active {
+  color: #16804a;
+}
+.admin-activity-badge.inactive {
+  color: #c24141;
+}
+@media (max-width: 1200px) {
+  .admin-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .admin-filters input {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 620px) {
+  .admin-latest-updated {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px;
+  }
+  .admin-latest-updated-copy strong {
+    white-space: normal;
+  }
+  .admin-filters {
+    grid-template-columns: 1fr;
+  }
+  .admin-filters input {
+    grid-column: auto;
+  }
+}

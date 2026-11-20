@@ -799,6 +799,60 @@
 }
 
 
+/* Educational qualifications shown below the recruitment table */
+.portal-education-details {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 22px;
+  padding: 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  background: var(--surface-muted, #f5f7fa);
+  color: var(--text-primary, #172033);
+}
+
+.portal-education-details h2 {
+  margin: 0;
+  color: var(--text-primary, #172033);
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.portal-education-details .portal-job-detail-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.35fr) minmax(0, 1fr);
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.portal-education-details .portal-job-detail-row:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.portal-education-details .portal-job-detail-row p {
+  margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+.portal-education-details .portal-job-detail-row p:last-child {
+  margin-bottom: 0;
+}
+
+:root[data-theme="dark"] .portal-education-details {
+  border-color: var(--border-color, #30394a);
+  background: var(--surface-muted, #202838);
+  color: var(--text-primary, #f8fafc);
+}
+
+@media (max-width: 600px) {
+  .portal-education-details .portal-job-detail-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
 /* Individual recruitment post details table */
 .portal-post-wise-details {
   display: grid;

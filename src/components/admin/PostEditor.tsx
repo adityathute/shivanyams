@@ -1650,22 +1650,6 @@ export default function PostEditor({
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
                 if (kind.api === "jobs") {
-                  const commonOnlyFields = [
-                    "educational_qualification",
-                    "age_criteria_type",
-                    "age_min",
-                    "age_max",
-                    "age_as_on_date",
-                    "eligible_dob_from",
-                    "eligible_dob_to",
-                    "age_limit_note_en",
-                    "age_limit_note_mr",
-                    "age_limit_note_hi",
-                    "application_fee",
-                    "application_fee_note_en",
-                    "application_fee_note_mr",
-                    "application_fee_note_hi",
-                  ];
                   const hiddenJobFields = [
                     "advertisement_no",
                     "application_mode",
@@ -1702,8 +1686,7 @@ export default function PostEditor({
                     hiddenJobFields.includes(key) ||
                     key === "education_mode" ||
                     key === "posts" ||
-                    key === "total_vacancies" ||
-
+                    key === "total_vacancies"
                   ) {
                     return null;
                   }

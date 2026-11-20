@@ -10,8 +10,3 @@ export const HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT = 8;
  */
 export const POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT = 5;
 
-/**
- * Maximum number of individual Important Link actions shown inside post details.
- * Change this value independently from both Useful Links limits.
- */
-export const POST_IMPORTANT_LINKS_DISPLAY_LIMIT = 5;

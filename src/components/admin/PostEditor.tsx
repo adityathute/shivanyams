@@ -574,6 +574,7 @@ export default function PostEditor({
   const [expandedAgeLanguages, setExpandedAgeLanguages] = useState<number[]>([]);
   const [expandedFeeCategoryLanguages, setExpandedFeeCategoryLanguages] = useState<string[]>([]);
   const [expandedFeeNoteLanguages, setExpandedFeeNoteLanguages] = useState<string[]>([]);
+  const [expandedImportantDateLanguages, setExpandedImportantDateLanguages] = useState<number[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -2103,21 +2104,38 @@ export default function PostEditor({
                         ))}
                       </select>
                     </label>
-                    {([activeLanguage] as const).map((lang) => (
-                      <label key={lang}>
-                        Label ({lang.toUpperCase()}) *
-                        <input
-                          required={lang === "en"}
-                          maxLength={180}
-                          value={item[`label_${lang}`]}
-                          onChange={(event) =>
-                            updateDate({
-                              [`label_${lang}`]: event.target.value,
-                            })
-                          }
-                        />
-                      </label>
-                    ))}
+                    <div className="post-editor-date-label-section">
+                      <div className="post-editor-translation-heading">
+                        <span>Label</span>
+                        <button
+                          type="button"
+                          className="post-editor-show-translations"
+                          aria-expanded={expandedImportantDateLanguages.includes(index)}
+                          onClick={() => setExpandedImportantDateLanguages((current) =>
+                            current.includes(index)
+                              ? current.filter((dateIndex) => dateIndex !== index)
+                              : [...current, index]
+                          )}
+                        >
+                          {expandedImportantDateLanguages.includes(index) ? "− Hide other languages" : "+ Show other languages"}
+                        </button>
+                      </div>
+                      <div className="post-editor-grid post-editor-single-column">
+                        {([activeLanguage, ...(expandedImportantDateLanguages.includes(index)
+                          ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== activeLanguage)
+                          : [])] as ContentLanguage[]).map((lang) => (
+                          <label key={lang}>
+                            Label ({lang.toUpperCase()}) {lang === "en" ? "*" : ""}
+                            <input
+                              required={lang === "en"}
+                              maxLength={180}
+                              value={String(item[`label_${lang}`] ?? "")}
+                              onChange={(event) => updateDate({ [`label_${lang}`]: event.target.value })}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
                   {item.date_format === "single" ? (
@@ -2175,15 +2193,14 @@ export default function PostEditor({
                   ) : null}
 
                   {item.date_format === "month_year" ? (
-                    <div className="post-editor-grid">
+                    <div className="post-editor-month-year-section">
                       <div className="post-editor-field">
                         <label>Month / Year *</label>
 
                         {item.month_years.map((entry, index) => (
                           <div
                             key={index}
-                            className="post-editor-grid"
-                            style={{ marginBottom: 8 }}
+                            className="post-editor-grid post-editor-month-year-row"
                           >
                             <select
                               required
@@ -2240,6 +2257,7 @@ export default function PostEditor({
 
                         <button
                           type="button"
+                          className="post-editor-add-month-year"
                           onClick={() =>
                             updateDate({
                               month_years: [

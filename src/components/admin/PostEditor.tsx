@@ -2158,7 +2158,7 @@ export default function PostEditor({
                             />
                             <button
                               type="button"
-                              onClick={() => updateDate({ month_years: item.month_years.filter((_, pairIndex) => pairIndex !== pairIndex) })}
+                              onClick={() => updateDate({ month_years: item.month_years.filter((_, removeIndex) => removeIndex !== pairIndex) })}
                             >
                               Remove
                             </button>

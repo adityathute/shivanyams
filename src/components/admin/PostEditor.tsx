@@ -60,6 +60,13 @@ type JobPostFeeInput = {
   sort_order: number;
 };
 
+type JobPostEducationInput = {
+  qualification_en: string;
+  qualification_mr: string;
+  qualification_hi: string;
+  sort_order: number;
+};
+
 type JobPostInput = {
   post_number: string;
   post_name_en: string;
@@ -83,7 +90,15 @@ type JobPostInput = {
   age_limit_note_hi: string;
   sort_order: number;
   fees: JobPostFeeInput[];
+  educations: JobPostEducationInput[];
 };
+
+const createEmptyJobPostEducation = (sort_order: number): JobPostEducationInput => ({
+  qualification_en: "",
+  qualification_mr: "",
+  qualification_hi: "",
+  sort_order,
+});
 
 const createEmptyJobPostFee = (): JobPostFeeInput => ({
   category_name_en: "",
@@ -119,6 +134,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   age_limit_note_hi: "",
   sort_order,
   fees: [],
+  educations: [],
 });
 
 const DATE_TYPE_OPTIONS = [
@@ -693,6 +709,23 @@ export default function PostEditor({
                       : String(fee.fee_amount),
                 }))
               : [],
+            educations: Array.isArray(post.educations)
+              ? (post.educations as Record<string, unknown>[]).map((education, educationIndex) => ({
+                  ...createEmptyJobPostEducation(educationIndex),
+                  ...education,
+                }))
+              : (
+                  post.educational_qualification_en ||
+                  post.educational_qualification_mr ||
+                  post.educational_qualification_hi
+                )
+                ? [{
+                    qualification_en: String(post.educational_qualification_en || ""),
+                    qualification_mr: String(post.educational_qualification_mr || ""),
+                    qualification_hi: String(post.educational_qualification_hi || ""),
+                    sort_order: 0,
+                  }]
+                : [],
           }));
         }
 
@@ -829,6 +862,52 @@ export default function PostEditor({
     });
   }
 
+  function addJobPostEducation(postIndex: number) {
+    setDetails((current) => {
+      const posts = [...(current.posts as JobPostInput[])];
+      const educations = posts[postIndex].educations || [];
+      posts[postIndex] = {
+        ...posts[postIndex],
+        educations: [
+          ...educations,
+          createEmptyJobPostEducation(educations.length),
+        ],
+      };
+      return { ...current, posts };
+    });
+  }
+
+  function updateJobPostEducation(
+    postIndex: number,
+    educationIndex: number,
+    key: string,
+    value: string,
+  ) {
+    setDetails((current) => {
+      const posts = [...(current.posts as JobPostInput[])];
+      const educations = [...(posts[postIndex].educations || [])];
+      educations[educationIndex] = {
+        ...educations[educationIndex],
+        [key]: value,
+      };
+      posts[postIndex] = { ...posts[postIndex], educations };
+      return { ...current, posts };
+    });
+  }
+
+  function removeJobPostEducation(postIndex: number, educationIndex: number) {
+    setDetails((current) => {
+      const posts = [...(current.posts as JobPostInput[])];
+      posts[postIndex] = {
+        ...posts[postIndex],
+        educations: (posts[postIndex].educations || [])
+          .filter((_, index) => index !== educationIndex)
+          .map((education, index) => ({ ...education, sort_order: index })),
+      };
+      return { ...current, posts };
+    });
+  }
+
   function addJobPostFee(postIndex: number) {
     setDetails((current) => {
       const posts = [...(current.posts as JobPostInput[])];
@@ -923,6 +1002,13 @@ export default function PostEditor({
         fee_amount:
           fee.fee_amount.trim() === "" ? null : Number(fee.fee_amount),
       })),
+      educations: (post.educations || [])
+        .filter((education) =>
+          education.qualification_en.trim() ||
+          education.qualification_mr.trim() ||
+          education.qualification_hi.trim()
+        )
+        .map((education, index) => ({ ...education, sort_order: index })),
     };
   }
 
@@ -1715,25 +1801,44 @@ export default function PostEditor({
                       </label>
                     </div>
 
-                    <h4>Educational Qualification</h4>
-                    <div className="post-editor-grid">
-                      {(["en", "mr", "hi"] as const).map((lang) => (
-                        <label key={lang}>
-                          Qualification ({lang.toUpperCase()})
-                          <textarea
-                            rows={3}
-                            value={post[`educational_qualification_${lang}`]}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                `educational_qualification_${lang}`,
-                                event.target.value,
-                              )
-                            }
-                          />
-                        </label>
-                      ))}
-                    </div>
+                    <h4>Educational Qualification / Conditions</h4>
+                    <button
+                      type="button"
+                      onClick={() => addJobPostEducation(postIndex)}
+                    >
+                      + Add Education Condition
+                    </button>
+
+                    {(post.educations || []).map((education, educationIndex) => (
+                      <div className="post-editor-repeat-card" key={educationIndex}>
+                        <h5>Education Condition {educationIndex + 1}</h5>
+                        <div className="post-editor-grid">
+                          {(["en", "mr", "hi"] as const).map((lang) => (
+                            <label key={lang}>
+                              Qualification ({lang.toUpperCase()})
+                              <textarea
+                                rows={3}
+                                value={education[`qualification_${lang}`]}
+                                onChange={(event) =>
+                                  updateJobPostEducation(
+                                    postIndex,
+                                    educationIndex,
+                                    `qualification_${lang}`,
+                                    event.target.value,
+                                  )
+                                }
+                              />
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeJobPostEducation(postIndex, educationIndex)}
+                        >
+                          Remove Condition
+                        </button>
+                      </div>
+                    ))}
 
                     <h4>Age Criteria</h4>
                     <div className="post-editor-grid">

@@ -964,7 +964,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               </div>
                               {jobDetails.education_mode === "common" && jobDetails.educational_qualification ? (
                                 <div className="portal-job-detail-group portal-education-details">
-                                  <h3>{getDetailLabel("qualification", language)}</h3>
+                                  <h2>{getDetailLabel("qualification", language)}</h2>
                                   <div className="portal-job-detail-row">
                                     <span>{jobDetails.educational_qualification}</span>
                                   </div>

@@ -240,13 +240,26 @@ export default function AdminPage() {
           </div>
         </header>
 
-        <section className="admin-stats">
-          <article><span>Total posts</span><strong>{counts.total}</strong></article>
-          <article><span>Published</span><strong>{counts.published}</strong></article>
-          <article><span>Drafts</span><strong>{counts.drafts}</strong></article>
-          <article><span>Pending review</span><strong>{counts.review}</strong></article>
-          <article><span>Total views</span><strong>{counts.views.toLocaleString()}</strong></article>
-        </section>
+        {(() => {
+          const statItems = [
+            { label: "Total posts", value: counts.total },
+            { label: "Published", value: counts.published },
+            { label: "Drafts", value: counts.drafts },
+            { label: "Pending review", value: counts.review },
+            { label: "Total views", value: counts.views },
+          ].filter((item) => item.value > 0);
+
+          return statItems.length > 0 ? (
+            <section className={`admin-stats admin-stats-count-${Math.min(statItems.length, 3)}`}>
+              {statItems.map((item) => (
+                <article key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value.toLocaleString()}</strong>
+                </article>
+              ))}
+            </section>
+          ) : null;
+        })()}
 
         <section className="admin-post-panel">
           <div className="admin-panel-heading">

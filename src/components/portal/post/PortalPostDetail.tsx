@@ -875,16 +875,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             const showAgeNote =
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageNote);
-                            const showPostFees =
-                              jobDetails.fee_mode === "per_post" &&
-                              rows.some((row) => row.fees.length);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
                             );
 
                             return (
-                              <>
                               <div className="portal-post-wise-table-wrap">
                                 <table className="portal-post-wise-table">
                                   <thead>
@@ -924,21 +920,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   </tfoot>
                                 </table>
                               </div>
-                              {showPostFees ? (
-                                <div className="portal-post-wise-fees-common">
-                                  <h3>{getDetailLabel("fee", language)}</h3>
-                                  {rows.filter((row) => row.fees.length).map((row, index) => (
-                                    <div
-                                      className="portal-post-wise-fee-common-row"
-                                      key={row.entry.id || `fee-${row.entry.post_number}-${index}`}
-                                    >
-                                      <strong>{row.postName}</strong>
-                                      <span>{row.fees.join("; ")}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : null}
-                              </>
                             );
                           })()}
                         </div>

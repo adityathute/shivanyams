@@ -1163,6 +1163,21 @@ export default function PostEditor({
                 </select>
               </label>
               <label>
+                Default Language
+                <select
+                  value={form.default_language}
+                  onChange={(event) => {
+                    const nextLanguage = event.target.value as "en" | "mr" | "hi";
+                    update("default_language", nextLanguage);
+                    setActiveLanguage(nextLanguage);
+                  }}
+                >
+                  <option value="en">English</option>
+                  <option value="mr">Marathi</option>
+                  <option value="hi">Hindi</option>
+                </select>
+              </label>
+              <label>
                 Government Organization Type
                 <select
                   value={organizationType}

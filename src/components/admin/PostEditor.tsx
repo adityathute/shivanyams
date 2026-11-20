@@ -1851,11 +1851,9 @@ export default function PostEditor({
                             Remove Condition
                           </button>
                         </div>
-  
+                      ))}
                       </>
                     ) : null}
-
-                    ))}
 
                     <h4>Age Criteria</h4>
                     <div className="post-editor-grid">

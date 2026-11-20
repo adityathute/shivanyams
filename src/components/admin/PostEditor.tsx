@@ -1511,7 +1511,7 @@ export default function PostEditor({
                         {commonEducationLanguages.length === 3 ? "− Hide other languages" : "+ Show other languages"}
                       </button>
                     </div>
-                    <div className="post-editor-grid post-editor-single-column">
+                    <div className="post-editor-grid post-editor-common-education-fields">
                       <Textarea
                         label={`Qualification (${form.default_language.toUpperCase()})`}
                         rows={3}
@@ -1523,19 +1523,23 @@ export default function PostEditor({
                         fullWidth
                         size="sm"
                       />
-                      {commonEducationLanguages.length === 3 && (["en", "mr", "hi"] as const)
-                        .filter((language) => language !== form.default_language)
-                        .map((language) => (
-                          <Textarea
-                            key={language}
-                            label={`Qualification (${language.toUpperCase()})`}
-                            rows={3}
-                            value={String(details[`educational_qualification_${language}`] || "")}
-                            onChange={(event) => updateDetail(`educational_qualification_${language}`, event.target.value)}
-                            fullWidth
-                            size="sm"
-                          />
-                        ))}
+                      {commonEducationLanguages.length === 3 && (
+                        <div className="post-editor-common-education-translations">
+                          {(["en", "mr", "hi"] as const)
+                            .filter((language) => language !== form.default_language)
+                            .map((language) => (
+                              <Textarea
+                                key={language}
+                                label={`Qualification (${language.toUpperCase()})`}
+                                rows={3}
+                                value={String(details[`educational_qualification_${language}`] || "")}
+                                onChange={(event) => updateDetail(`educational_qualification_${language}`, event.target.value)}
+                                fullWidth
+                                size="sm"
+                              />
+                            ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : null}

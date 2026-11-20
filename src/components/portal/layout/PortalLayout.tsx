@@ -2,7 +2,7 @@
 
 import "./PortalShell.css";
 
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -24,6 +24,7 @@ function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const { language, setLanguage } = usePortalLanguage();
+  const lastTrackedPath = useRef<string | null>(null);
 
   // A saved account preference takes precedence once authentication is loaded.
   useEffect(() => {
@@ -44,7 +45,8 @@ function PortalShell({ children }: { children: ReactNode }) {
 
   // Record each public route visit for website-wide analytics.
   useEffect(() => {
-    if (!pathname || pathname.startsWith("/admin")) return;
+    if (!pathname || pathname.startsWith("/admin") || lastTrackedPath.current === pathname) return;
+    lastTrackedPath.current = pathname;
 
     let visitorId = "";
     try {

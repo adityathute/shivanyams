@@ -810,12 +810,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               const ageType = entry.age_criteria_type;
                               const ageValue =
                                 ageType === "text_only"
-                                  ? getLocalizedText(
-                                      language,
-                                      entry.age_limit_note_en,
-                                      entry.age_limit_note_mr,
-                                      entry.age_limit_note_hi,
-                                    )
+                                  ? ""
                                   : entry.age_min != null && entry.age_max != null
                                     ? `${entry.age_min} – ${entry.age_max} ${getDetailLabel("years", language)}`
                                     : entry.age_min != null

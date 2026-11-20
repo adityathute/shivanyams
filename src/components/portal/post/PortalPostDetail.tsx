@@ -618,6 +618,32 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       : []),
   ];
 
+  const primarySummaryRows: [string, string | number | null | undefined][] = [
+    [
+      getDetailLabel("advertisementNo", language),
+      post?.jobDetails?.advertisement_no,
+    ],
+    [
+      getDetailLabel("total", language),
+      post?.jobDetails?.total_posts != null && Number(post.jobDetails.total_posts) > 0
+        ? `${post.jobDetails.total_posts} ${getDetailLabel("totalPostsUnit", language)}`
+        : "",
+    ],
+    [
+      getDetailLabel("applicationMode", language),
+      post?.jobDetails?.application_mode,
+    ],
+    [
+      getDetailLabel("jobLocation", language),
+      post?.jobDetails?.location,
+    ],
+  ].filter(([, value]) =>
+    value !== null &&
+    value !== undefined &&
+    String(value).trim() !== "" &&
+    String(value).trim() !== "0"
+  );
+
   return (
     <>
       <main className="portal-post-detail">
@@ -690,25 +716,31 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                   {post.jobDetails ? (
                     <section className="portal-job-details">
                       <div className="portal-job-info-grid">
+                        {primarySummaryRows.length > 0 ? (
+                          <div
+                            className={`portal-job-info-primary-grid portal-job-info-primary-grid-count-${primarySummaryRows.length}`}
+                          >
+                            {primarySummaryRows.map(([name, value]) => {
+                              const shouldCapitalize =
+                                name === getDetailLabel("applicationMode", language) ||
+                                name === getDetailLabel("jobLocation", language);
+                              const formattedValue = shouldCapitalize
+                                ? String(value).charAt(0).toUpperCase() +
+                                  String(value).slice(1)
+                                : value;
+
+                              return (
+                                <div className="portal-job-info-item" key={name}>
+                                  <span className="portal-job-info-label">{name}</span>
+                                  <strong className="portal-job-info-value">
+                                    {formattedValue}
+                                  </strong>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : null}
                         {[
-                          [
-                            getDetailLabel("advertisementNo", language),
-                            post.jobDetails.advertisement_no,
-                          ],
-                          [
-                            getDetailLabel("total", language),
-                            post.jobDetails.total_posts != null
-                              ? `${post.jobDetails.total_posts} ${getDetailLabel("totalPostsUnit", language)}`
-                              : "",
-                          ],
-                          [
-                            getDetailLabel("applicationMode", language),
-                            post.jobDetails.application_mode,
-                          ],
-                          [
-                            getDetailLabel("jobLocation", language),
-                            post.jobDetails.location,
-                          ],
                           ...ageInfoRows,
 
                           // Application Fee

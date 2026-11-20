@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { AnimatedNumber, ConfirmDialog } from "shivanya-ui";
+import { AnimatedNumber, ConfirmDialog, IconButton, ArrowLeftIcon, CloseIcon } from "shivanya-ui";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
@@ -503,14 +503,35 @@ export default function AdminPage() {
           if (event.target === event.currentTarget) setAnalyticsType(null);
         }}>
           <section className="admin-analytics-modal" role="dialog" aria-modal="true" aria-labelledby="admin-analytics-title">
-            <header>
+            <header className="admin-analytics-header">
+              {(selectedVisitor || selectedAnalyticsPath) && (
+                <IconButton
+                  size="sm"
+                  variant="ghost"
+                  className="admin-analytics-back-icon"
+                  onClick={() => { setSelectedVisitor(null); setVisitorPages([]); setSelectedAnalyticsPath(null); setAnalyticsEvents([]); }}
+                  aria-label="Back to list"
+                  title="Back to list"
+                >
+                  <ArrowLeftIcon />
+                </IconButton>
+              )}
               <div>
                 <h2 id="admin-analytics-title">{selectedVisitor ? "Visitor details" : selectedAnalyticsPath ? "Page view details" : analyticsType === "views" ? "Website Views" : analyticsType === "users" ? "Portal Users" : "Website Visitors"}</h2>
                 <p>{selectedVisitor ? "Pages visited by this browser or device." : selectedAnalyticsPath ? "Individual visits recorded for this page." : analyticsType === "views" ? "Select a page to inspect its individual page views." : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}</p>
               </div>
-              <button type="button" onClick={() => setAnalyticsType(null)} aria-label="Close analytics">×</button>
+              <IconButton
+                size="sm"
+                variant="outline"
+                iconRotateOnHover
+                className="admin-analytics-close"
+                onClick={() => setAnalyticsType(null)}
+                aria-label="Close analytics"
+                title="Close analytics"
+              >
+                <CloseIcon />
+              </IconButton>
             </header>
-            {(selectedVisitor || selectedAnalyticsPath) && <button type="button" className="admin-analytics-back" onClick={() => { setSelectedVisitor(null); setVisitorPages([]); setSelectedAnalyticsPath(null); setAnalyticsEvents([]); }}>← Back to list</button>}
             {analyticsLoading ? <div className="admin-empty">Loading analytics...</div> : selectedVisitor ? (
               <div className="admin-analytics-detail">
                 <div className="admin-visitor-summary">

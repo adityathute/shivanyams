@@ -415,7 +415,7 @@ export default function AdminPage() {
                       <strong><AnimatedNumber value={item.value} /></strong>
                     </button>
                   ) : (
-                    <><span>{item.label}</span><strong>{compactNumber.format(item.value)}</strong></>
+                    <><span>{item.label}</span><strong><AnimatedNumber value={item.value} /></strong></>
                   )}
                 </article>
               ))}

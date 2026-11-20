@@ -13,6 +13,7 @@ from .models import (
     JobVacancyBreakdown,
     Post,
     PostDate,
+    PostFAQ,
     PostLink,
     PostReaction,
     PostRelation,
@@ -54,6 +55,13 @@ class PostLinkInline(admin.TabularInline):
     model = PostLink
     extra = 0
     fields = ("group_key", "name_en", "name_mr", "name_hi", "action_text_en", "action_text_mr", "action_text_hi", "url", "sort_order", "is_active")
+    ordering = ("sort_order", "id")
+
+
+class PostFAQInline(admin.StackedInline):
+    model = PostFAQ
+    extra = 0
+    fields = (("sort_order", "is_active"), "question_en", ("question_mr", "question_hi"), "answer_en", ("answer_mr", "answer_hi"))
     ordering = ("sort_order", "id")
 
 
@@ -211,6 +219,7 @@ class PostAdmin(admin.ModelAdmin):
     list_select_related = ("category",)
     inlines = (
         PostLinkInline,
+        PostFAQInline,
         PostDateInline,
         PostResourceInline,
         PostRelationInline,

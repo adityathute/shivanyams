@@ -340,16 +340,16 @@ export default function AdminPage() {
         </header>
 
         {(() => {
-          const statItems: { label: string; value: number; analytics?: "views" | "visitors" }[] = [
-            { label: "Total posts", value: counts.total },
-            { label: "Published", value: counts.published },
-            { label: "Drafts", value: counts.drafts },
-            { label: "Pending review", value: counts.review },
-            { label: "Website views", value: websiteViewsCount, analytics: "views" as const },
-            { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors" as const },
-            { label: "Portal users", value: usersCount },
-            { label: "Post views", value: counts.views },
-            { label: "Post visitors", value: postVisitorsCount },
+          const statItems: { label: string; value: number; analytics?: "views" | "visitors"; group: "users" | "website" | "posts" | "content" }[] = [
+            { label: "Portal users", value: usersCount, group: "users" },
+            { label: "Website views", value: websiteViewsCount, analytics: "views", group: "website" },
+            { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors", group: "website" },
+            { label: "Post views", value: counts.views, group: "posts" },
+            { label: "Post visitors", value: postVisitorsCount, group: "posts" },
+            { label: "Published posts", value: counts.published, group: "content" },
+            { label: "Total posts", value: counts.total, group: "content" },
+            { label: "Drafts", value: counts.drafts, group: "content" },
+            { label: "Pending review", value: counts.review, group: "content" },
           ];
 
           const compactNumber = new Intl.NumberFormat("en", {
@@ -361,10 +361,10 @@ export default function AdminPage() {
           return (
             <section className="admin-stats">
               {statItems.map((item) => (
-                <article key={item.label} className={item.analytics ? "admin-stat-clickable" : undefined}>
+                <article key={item.label} className={`admin-stat-card admin-stat-${item.group}${item.analytics ? " admin-stat-clickable" : ""}`}>
                   {item.analytics ? (
                     <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} by page`}>
-                      <span>{item.label} ↗</span>
+                      <span>{item.label}<small className="admin-stat-open-indicator">View details ↗</small></span>
                       <strong>{compactNumber.format(item.value)}</strong>
                     </button>
                   ) : (

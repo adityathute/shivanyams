@@ -814,3 +814,23 @@
     transition: none;
   }
 }
+
+
+/* Post Information: compact metadata row with Location as the final field */
+.post-editor-meta-row {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.post-editor-meta-row > label,
+.post-editor-meta-row > [class*="select"] {
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .post-editor-meta-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .post-editor-meta-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

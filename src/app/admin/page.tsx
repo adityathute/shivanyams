@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ConfirmDialog } from "shivanya-ui";
+import { AnimatedNumber, ConfirmDialog } from "shivanya-ui";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
@@ -400,12 +400,6 @@ export default function AdminPage() {
             { label: "Pending review", value: counts.review, group: "content" },
           ];
 
-          const compactNumber = new Intl.NumberFormat("en", {
-            notation: "compact",
-            compactDisplay: "short",
-            maximumFractionDigits: 1,
-          });
-
           return (
             <section className="admin-stats">
               {statItems.map((item) => (
@@ -413,7 +407,7 @@ export default function AdminPage() {
                   {item.analytics ? (
                     <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} details`}>
                       <span>{item.label}<small className="admin-stat-open-indicator">View details ↗</small></span>
-                      <strong>{compactNumber.format(item.value)}</strong>
+                      <strong><AnimatedNumber value={item.value} /></strong>
                     </button>
                   ) : (
                     <><span>{item.label}</span><strong>{compactNumber.format(item.value)}</strong></>

@@ -100,6 +100,9 @@ export type JobDetails = {
     label_en: string;
     label_mr: string;
     label_hi: string;
+    action_text_en: string;
+    action_text_mr: string;
+    action_text_hi: string;
     url: string;
   }[];
 };

@@ -987,6 +987,7 @@
 .post-editor-age-fields > * {
   min-width: 0;
   width: 100%;
+  gap: 4px;
 }
 
 .post-editor-age-note-section {

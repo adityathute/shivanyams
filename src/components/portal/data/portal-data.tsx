@@ -164,6 +164,9 @@ type ApiLink = {
   name_en?: string;
   name_mr?: string;
   name_hi?: string;
+  action_text_en?: string;
+  action_text_mr?: string;
+  action_text_hi?: string;
   url: string;
   is_active?: boolean;
 };
@@ -554,6 +557,9 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             label_en: link.name_en || "",
             label_mr: link.name_mr || "",
             label_hi: link.name_hi || "",
+            action_text_en: link.action_text_en || "Click Here",
+            action_text_mr: link.action_text_mr || "",
+            action_text_hi: link.action_text_hi || "",
             url: link.url,
           })),
           posts: (job.posts || []).map((post) => ({

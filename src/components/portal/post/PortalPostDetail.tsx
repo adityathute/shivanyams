@@ -966,14 +966,14 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 <div className="portal-job-detail-group portal-education-details">
                                   <h2>{getDetailLabel("qualification", language)}</h2>
                                   <div className="portal-job-detail-row">
-                                    <div>
+                                    <ul>
                                       {(rows[0]?.educationItems.length
                                         ? rows[0].educationItems
                                         : [jobDetails.educational_qualification]
                                       ).map((item, itemIndex) => (
-                                        <p key={itemIndex}>{item}</p>
+                                        <li key={itemIndex}>{item}</li>
                                       ))}
-                                    </div>
+                                    </ul>
                                   </div>
                                 </div>
                               ) : null}
@@ -983,11 +983,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   {rows.filter((row) => row.educationItems.length).map((row, index) => (
                                     <div className="portal-job-detail-row" key={row.entry.id || row.entry.post_number || index}>
                                       <strong>{row.postName}</strong>
-                                      <div>
+                                      <ul>
                                         {row.educationItems.map((item, itemIndex) => (
-                                          <p key={itemIndex}>{item}</p>
+                                          <li key={itemIndex}>{item}</li>
                                         ))}
-                                      </div>
+                                      </ul>
                                     </div>
                                   ))}
                                 </div>

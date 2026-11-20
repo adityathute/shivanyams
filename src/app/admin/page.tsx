@@ -98,6 +98,8 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [updatedWithin, setUpdatedWithin] = useState("all");
   const [refreshKey, setRefreshKey] = useState(0);
   const [statsAnimationKey, setStatsAnimationKey] = useState(0);
   const [busyPost, setBusyPost] = useState<number | null>(null);
@@ -191,20 +193,31 @@ export default function AdminPage() {
   const filteredPosts = useMemo(() => posts.filter((post) => {
     const categoryMatch = categoryFilter === "all" || post.category.slug === categoryFilter;
     const statusMatch = statusFilter === "all" || post.status === statusFilter;
+    const activeMatch = activeFilter === "all" || (activeFilter === "active" ? post.is_active !== false : post.is_active === false);
+    const updatedAt = post.updated_at ? new Date(post.updated_at).getTime() : 0;
+    const age = Date.now() - updatedAt;
+    const updatedMatch = updatedWithin === "all" || (updatedAt > 0 && age <= Number(updatedWithin) * 24 * 60 * 60 * 1000);
     const query = search.trim().toLowerCase();
     const searchMatch = !query || [post.title_en, post.title_mr, post.slug]
       .some((value) => value?.toLowerCase().includes(query));
-    return categoryMatch && statusMatch && searchMatch;
-  }), [posts, categoryFilter, statusFilter, search]);
+    return categoryMatch && statusMatch && activeMatch && updatedMatch && searchMatch;
+  }), [posts, categoryFilter, statusFilter, activeFilter, updatedWithin, search]);
 
   const sortedPosts = useMemo(() => [...filteredPosts].sort((a, b) => {
-    const aDate = new Date(a.created_at || a.published_at || 0).getTime();
-    const bDate = new Date(b.created_at || b.published_at || 0).getTime();
-    if (sortOrder === "oldest") return aDate - bDate;
+    const aCreated = new Date(a.created_at || a.published_at || 0).getTime();
+    const bCreated = new Date(b.created_at || b.published_at || 0).getTime();
+    const aUpdated = new Date(a.updated_at || a.created_at || 0).getTime();
+    const bUpdated = new Date(b.updated_at || b.created_at || 0).getTime();
+    if (sortOrder === "oldest") return aCreated - bCreated;
+    if (sortOrder === "updated") return bUpdated - aUpdated;
+    if (sortOrder === "updated_oldest") return aUpdated - bUpdated;
     if (sortOrder === "title") return (a.title_en || "").localeCompare(b.title_en || "");
     if (sortOrder === "views") return (b.views_count || 0) - (a.views_count || 0);
-    return bDate - aDate;
+    if (sortOrder === "visitors") return (b.unique_visitors_count || 0) - (a.unique_visitors_count || 0);
+    return bCreated - aCreated;
   }), [filteredPosts, sortOrder]);
+  const latestUpdatedPost = useMemo(() => [...posts].sort((a, b) => new Date(b.updated_at || b.created_at || 0).getTime() - new Date(a.updated_at || a.created_at || 0).getTime())[0] ?? null, [posts]);
+  const latestUpdatedKind = latestUpdatedPost ? CONTENT_KINDS.find((item) => item.slug === latestUpdatedPost.category.slug) : undefined;
   const pageCount = Math.max(1, Math.ceil(sortedPosts.length / pageSize));
   const visiblePosts = sortedPosts.slice((page - 1) * pageSize, page * pageSize);
   const visibleIds = visiblePosts.map((post) => post.id);
@@ -432,6 +445,17 @@ export default function AdminPage() {
           );
         })()}
 
+        {latestUpdatedPost && (
+          <section className="admin-latest-updated">
+            <div className="admin-latest-updated-copy">
+              <span className="admin-latest-updated-label">LATEST UPDATED POST</span>
+              <strong>{latestUpdatedPost.title_en || latestUpdatedPost.slug}</strong>
+              <small>{latestUpdatedKind?.label || latestUpdatedPost.category.name_en} · Updated {latestUpdatedPost.updated_at ? new Date(latestUpdatedPost.updated_at).toLocaleString() : "date unavailable"}</small>
+            </div>
+            <Link href={`/admin/edit-post/${latestUpdatedKind?.api || "jobs"}/${latestUpdatedPost.slug}`}>Open post ↗</Link>
+          </section>
+        )}
+
         <section className="admin-post-panel">
           <div className="admin-panel-heading">
             <div><h2>All Posts</h2><p>View, search, edit and manage every category.</p></div>
@@ -444,12 +468,19 @@ export default function AdminPage() {
               <option value="all">All categories</option>
               {CONTENT_KINDS.map((kind) => <option key={kind.slug} value={kind.slug}>{kind.label}</option>)}
             </select>
-            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter by status">
-              {STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? "All statuses" : statusLabel(status)}</option>)}
+            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter by publishing status">
+              {STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? "All publishing statuses" : statusLabel(status)}</option>)}
+            </select>
+            <select value={activeFilter} onChange={(event) => { setActiveFilter(event.target.value); setPage(1); }} aria-label="Filter by active status">
+              <option value="all">Active & inactive</option><option value="active">Active posts</option><option value="inactive">Inactive posts</option>
+            </select>
+            <select value={updatedWithin} onChange={(event) => { setUpdatedWithin(event.target.value); setPage(1); }} aria-label="Filter by update date">
+              <option value="all">Updated any time</option><option value="1">Updated in 24 hours</option><option value="7">Updated in 7 days</option><option value="30">Updated in 30 days</option>
             </select>
             <select value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setPage(1); }} aria-label="Sort posts">
-              <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
-              <option value="title">Title A–Z</option><option value="views">Most views</option>
+              <option value="newest">Created: newest</option><option value="oldest">Created: oldest</option>
+              <option value="updated">Updated: newest</option><option value="updated_oldest">Updated: oldest</option>
+              <option value="title">Title A–Z</option><option value="views">Most views</option><option value="visitors">Most visitors</option>
             </select>
           </div>
 
@@ -459,7 +490,7 @@ export default function AdminPage() {
           ) : (
             <div className="admin-table-wrap">
               <table className="admin-post-table">
-                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Visitors</th><th>Users</th><th>Created</th><th>Updated</th><th>Actions</th></tr></thead>
+                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Activity</th><th>Views</th><th>Visitors</th><th>Users</th><th>Created</th><th>Updated</th><th>Actions</th></tr></thead>
                 <tbody>
                   {visiblePosts.map((post) => {
                     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
@@ -469,6 +500,7 @@ export default function AdminPage() {
                         <td><strong>{post.title_en || post.slug}</strong><small>/{post.slug}</small></td>
                         <td><span className={`admin-category-badge ${categoryConfig[normalizeCategorySlug(post.category.slug)]?.type || "tool"}`}>{kind?.label || post.category.name_en}</span></td>
                         <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>
+                        <td><span className={`admin-activity-badge ${post.is_active === false ? "inactive" : "active"}`}>{post.is_active === false ? "Inactive" : "Active"}</span></td>
                         <td>{formatCompactNumber(post.views_count)}</td>
                         <td>{formatCompactNumber(post.unique_visitors_count)}</td>
                         <td>{formatCompactNumber(post.users_count)}</td>
@@ -490,7 +522,7 @@ export default function AdminPage() {
             </div>
           )}
           <div className="admin-table-footer">
-            <span>Showing {sortedPosts.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, sortedPosts.length)} of {sortedPosts.length} filtered posts · {posts.length} total</span>
+            <span>Showing {sortedPosts.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, sortedPosts.length)} of {sortedPosts.length} filtered posts · {posts.filter((post) => post.is_active !== false).length} active · {posts.filter((post) => post.is_active === false).length} inactive · {posts.length} total</span>
             <div className="admin-pagination">
               <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page"><option value={10}>10 rows</option><option value={15}>15 rows</option><option value={25}>25 rows</option><option value={50}>50 rows</option></select>
               <button disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button>

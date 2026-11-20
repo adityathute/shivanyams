@@ -1508,6 +1508,8 @@ class WebsiteVisitor(models.Model):
 
     visitor_id = models.CharField(max_length=128, unique=True)
     auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
+    full_name = models.CharField(max_length=240, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
     first_seen_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(auto_now=True)
 
@@ -1526,6 +1528,8 @@ class WebsiteView(models.Model):
     path = models.CharField(max_length=1000, db_index=True)
     referrer_url = models.CharField(max_length=1000, blank=True)
     auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
+    full_name = models.CharField(max_length=240, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
     language = models.CharField(
         max_length=2,
         choices=LanguageChoices.choices,

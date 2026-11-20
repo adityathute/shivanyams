@@ -575,6 +575,7 @@ export default function PostEditor({
   const [expandedFeeCategoryLanguages, setExpandedFeeCategoryLanguages] = useState<string[]>([]);
   const [expandedFeeNoteLanguages, setExpandedFeeNoteLanguages] = useState<string[]>([]);
   const [expandedImportantDateLanguages, setExpandedImportantDateLanguages] = useState<number[]>([]);
+  const [expandedImportantDateDescriptionLanguages, setExpandedImportantDateDescriptionLanguages] = useState<number[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -2075,7 +2076,21 @@ export default function PostEditor({
                     <span><strong>{item.label_en || `Date ${index + 1}`}</strong><small>{detailLabel(item.date_type)} · {DATE_FORMAT_OPTIONS.find((format) => format.value === item.date_format)?.label || "Date"}</small></span>
                     
                   </summary>
-                  <div className="post-editor-grid">
+                  <div className="post-editor-grid post-editor-date-controls-row">
+                    <label>
+                      Display order
+                      <input
+                        type="number"
+                        min={0}
+                        step={1}
+                        value={item.sort_order}
+                        onChange={(event) =>
+                          updateDate({
+                            sort_order: Number(event.target.value) || 0,
+                          })
+                        }
+                      />
+                    </label>
                     <label>
                       Date type
                       <select
@@ -2327,36 +2342,41 @@ export default function PostEditor({
                     </div>
                   ) : null}
 
-                  <div className="post-editor-grid">
-                    {([activeLanguage] as const).map((lang) => (
-                      <label key={lang}>
-                        Description ({lang.toUpperCase()})
-                        <textarea
-                          rows={2}
-                          maxLength={500}
-                          value={item[`description_${lang}`]}
-                          onChange={(event) =>
-                            updateDate({
-                              [`description_${lang}`]: event.target.value,
-                            })
-                          }
-                        />
-                      </label>
-                    ))}
-                    <label>
-                      Display order
-                      <input
-                        type="number"
-                        min={0}
-                        step={1}
-                        value={item.sort_order}
-                        onChange={(event) =>
-                          updateDate({
-                            sort_order: Number(event.target.value) || 0,
-                          })
-                        }
-                      />
-                    </label>
+                  <div className="post-editor-date-description-section">
+                    <div className="post-editor-translation-heading">
+                      <span>Description</span>
+                      <button
+                        type="button"
+                        className="post-editor-show-translations"
+                        aria-expanded={expandedImportantDateDescriptionLanguages.includes(index)}
+                        onClick={() => setExpandedImportantDateDescriptionLanguages((current) =>
+                          current.includes(index)
+                            ? current.filter((dateIndex) => dateIndex !== index)
+                            : [...current, index]
+                        )}
+                      >
+                        {expandedImportantDateDescriptionLanguages.includes(index) ? "− Hide other languages" : "+ Show other languages"}
+                      </button>
+                    </div>
+                    <div className="post-editor-grid post-editor-single-column">
+                      {([activeLanguage, ...(expandedImportantDateDescriptionLanguages.includes(index)
+                        ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== activeLanguage)
+                        : [])] as ContentLanguage[]).map((lang) => (
+                        <label key={lang}>
+                          Description ({lang.toUpperCase()})
+                          <textarea
+                            rows={3}
+                            maxLength={500}
+                            value={String(item[`description_${lang}`] ?? "")}
+                            onChange={(event) =>
+                              updateDate({
+                                [`description_${lang}`]: event.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="post-editor-card-actions">

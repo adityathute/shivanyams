@@ -634,3 +634,34 @@
 @media(max-width:760px){.post-editor-meta-row,.post-editor-location-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.post-editor-meta-row,.post-editor-location-row{grid-template-columns:minmax(0,1fr)}.post-editor-location-row label:nth-child(4){grid-column:auto}.post-editor-language-switch{width:100%}.post-editor-language-switch button{flex:1}}
 @media(prefers-reduced-motion:reduce){.post-editor-language-switch button,.post-editor-job-post-card>.post-editor-card-summary{transition:none}}
+
+
+/* Calm hover and expanded state for every collapsible row */
+.post-editor-collapsible > .post-editor-card-summary {
+  background: #fafbfd;
+  transition: background-color 150ms ease;
+}
+
+.post-editor-collapsible > .post-editor-card-summary:hover {
+  background: #f1f4f8;
+}
+
+.post-editor-collapsible[open] > .post-editor-card-summary,
+.post-editor-collapsible[open] > .post-editor-card-summary:hover {
+  background: #f4f6f9;
+}
+
+.post-editor-nested-card > .post-editor-card-summary:hover {
+  background: #f1f4f8;
+}
+
+.post-editor-language-switch button:focus-visible {
+  outline: 2px solid #8ba8c8;
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-editor-collapsible > .post-editor-card-summary {
+    transition: none;
+  }
+}

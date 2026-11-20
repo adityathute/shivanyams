@@ -17,7 +17,10 @@ import {
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { LinkIcon } from "shivanya-ui";
-import { POST_IMPORTANT_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
+import {
+  POST_IMPORTANT_LINKS_DISPLAY_LIMIT,
+  POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT,
+} from "../utils/important-links-config";
 import "../home/UpdatesSection.css";
 
 type CategorySlug =
@@ -1241,7 +1244,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     <span>{t("usefulLinks")}</span>
                   </div>
 
-                  {links.map((link) => (
+                  {links.slice(0, POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT).map((link) => (
                     <a
                       className="important-link"
                       href={link.url}

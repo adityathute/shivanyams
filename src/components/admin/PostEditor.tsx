@@ -1037,6 +1037,63 @@ export default function PostEditor({
     };
   }
 
+  function getAutomaticJobModes(posts: JobPostInput[]) {
+    const ageValues = posts.map((post) => ({
+      age_criteria_type: post.age_criteria_type || "",
+      age_min: post.age_min ?? null,
+      age_max: post.age_max ?? null,
+      age_as_on_date: post.age_as_on_date || "",
+      eligible_dob_from: post.eligible_dob_from || "",
+      eligible_dob_to: post.eligible_dob_to || "",
+      age_limit_note_en: post.age_limit_note_en.trim(),
+      age_limit_note_mr: post.age_limit_note_mr.trim(),
+      age_limit_note_hi: post.age_limit_note_hi.trim(),
+    }));
+    const hasAgeData = ageValues.some((item) =>
+      item.age_criteria_type ||
+      item.age_min !== null ||
+      item.age_max !== null ||
+      item.age_as_on_date ||
+      item.eligible_dob_from ||
+      item.eligible_dob_to ||
+      item.age_limit_note_en ||
+      item.age_limit_note_mr ||
+      item.age_limit_note_hi
+    );
+    const sameAge = ageValues.length > 0 &&
+      ageValues.every((item) => JSON.stringify(item) === JSON.stringify(ageValues[0]));
+
+    const feeValues = posts.map((post) =>
+      (post.fees || [])
+        .filter((fee) =>
+          fee.category_name_en.trim() ||
+          fee.category_name_mr.trim() ||
+          fee.category_name_hi.trim() ||
+          fee.fee_amount.trim() ||
+          fee.fee_note_en.trim() ||
+          fee.fee_note_mr.trim() ||
+          fee.fee_note_hi.trim()
+        )
+        .map((fee) => ({
+          category_name_en: fee.category_name_en.trim(),
+          category_name_mr: fee.category_name_mr.trim(),
+          category_name_hi: fee.category_name_hi.trim(),
+          fee_amount: fee.fee_amount.trim(),
+          fee_note_en: fee.fee_note_en.trim(),
+          fee_note_mr: fee.fee_note_mr.trim(),
+          fee_note_hi: fee.fee_note_hi.trim(),
+        }))
+    );
+    const hasFeeData = feeValues.some((fees) => fees.length > 0);
+    const sameFees = feeValues.length > 0 &&
+      feeValues.every((fees) => JSON.stringify(fees) === JSON.stringify(feeValues[0]));
+
+    return {
+      age_mode: hasAgeData && sameAge ? "common" : "per_post",
+      fee_mode: hasFeeData && sameFees ? "common" : "per_post",
+    };
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
@@ -1065,6 +1122,7 @@ export default function PostEditor({
           kind.api === "jobs"
             ? {
                 ...details,
+                ...getAutomaticJobModes((details.posts as JobPostInput[]) || []),
                 total_vacancies: ((details.posts as JobPostInput[]) || []).reduce(
                   (total, post) => total + Number(post.vacancies || 0),
                   0,
@@ -1350,6 +1408,23 @@ export default function PostEditor({
  
             {kind.api === "jobs" && (
               <>
+                <div className="post-editor-grid post-editor-job-primary-fields">
+                  <Input
+                    label="Advertisement No"
+                    value={String(details.advertisement_no ?? "")}
+                    onChange={(event) => updateDetail("advertisement_no", event.target.value)}
+                    fullWidth
+                    size="sm"
+                  />
+                  <Select
+                    label="Application Mode"
+                    value={String(details.application_mode ?? "online")}
+                    options={DETAIL_OPTIONS.application_mode.map((option) => ({ value: option, label: detailLabel(option) }))}
+                    onChange={(event) => updateDetail("application_mode", event.target.value)}
+                    fullWidth
+                    size="sm"
+                  />
+                </div>
                 <div className="post-editor-job-posts">
                   <div className="post-editor-section-heading post-editor-job-heading">
                     <h3>Individual Recruitment Posts</h3>
@@ -1422,17 +1497,6 @@ export default function PostEditor({
                               event.target.value,
                             )
                           }
-                          fullWidth
-                          size="sm"
-                        />
-                      ))}
-
-                      {([activeLanguage] as const).map((lang) => (
-                        <Input
-                          key={lang}
-                          label={`Department (${lang.toUpperCase()})`}
-                          value={post[`department_${lang}`]}
-                          onChange={(event) => updateJobPost(postIndex, `department_${lang}`, event.target.value)}
                           fullWidth
                           size="sm"
                         />
@@ -1602,32 +1666,44 @@ export default function PostEditor({
                     "application_fee_note_mr",
                     "application_fee_note_hi",
                   ];
+                  const hiddenJobFields = [
+                    "advertisement_no",
+                    "application_mode",
+                    "recruitment_type",
+                    "department",
+                    "designation",
+                    "apply_url",
+                    "apply_email",
+                    "selection_process",
+                    "exam_pattern",
+                    "syllabus",
+                    "physical_test_details",
+                    "interview_details",
+                    "official_notification_url",
+                    "official_website",
+                    "age_mode",
+                    "fee_mode",
+                    "educational_qualification",
+                    "age_criteria_type",
+                    "age_min",
+                    "age_max",
+                    "age_as_on_date",
+                    "eligible_dob_from",
+                    "eligible_dob_to",
+                    "age_limit_note_en",
+                    "age_limit_note_mr",
+                    "age_limit_note_hi",
+                    "application_fee",
+                    "application_fee_note_en",
+                    "application_fee_note_mr",
+                    "application_fee_note_hi",
+                  ];
                   if (
+                    hiddenJobFields.includes(key) ||
                     key === "education_mode" ||
                     key === "posts" ||
                     key === "total_vacancies" ||
-                    (commonOnlyFields.includes(key) &&
-                      ((key === "educational_qualification" &&
-                        details.education_mode !== "common") ||
-                        ([
-                          "age_criteria_type",
-                          "age_min",
-                          "age_max",
-                          "age_as_on_date",
-                          "eligible_dob_from",
-                          "eligible_dob_to",
-                          "age_limit_note_en",
-                          "age_limit_note_mr",
-                          "age_limit_note_hi",
-                        ].includes(key) &&
-                        details.age_mode !== "common") ||
-                        ([
-                          "application_fee",
-                          "application_fee_note_en",
-                          "application_fee_note_mr",
-                          "application_fee_note_hi",
-                        ].includes(key) &&
-                        details.fee_mode !== "common")))
+
                   ) {
                     return null;
                   }

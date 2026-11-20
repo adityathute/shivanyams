@@ -1407,3 +1407,31 @@
 .admin-analytics-modal > header .admin-analytics-close:hover .shivanya-icon-button-icon {
   color: #e11d48 !important;
 }
+
+
+/* Category badges in the admin posts table reuse the portal category palette. */
+.admin-post-table .admin-category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  max-width: 100%;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.admin-post-table .admin-category-badge.job { background: #2563eb; }
+.admin-post-table .admin-category-badge.scheme { background: #059669; }
+.admin-post-table .admin-category-badge.exam,
+.admin-post-table .admin-category-badge.examination { background: #4f46e5; }
+.admin-post-table .admin-category-badge.result { background: #7c3aed; }
+.admin-post-table .admin-category-badge.admit { background: #0891b2; }
+.admin-post-table .admin-category-badge.guide { background: #d97706; }
+.admin-post-table .admin-category-badge.video { background: #dc2626; }
+.admin-post-table .admin-category-badge.tool { background: #4b5563; }

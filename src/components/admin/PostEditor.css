@@ -312,9 +312,6 @@
   font-size: 18px;
   line-height: 1;
 }
-.post-editor-collapsible[open] > .post-editor-card-summary::after {
-  content: "−";
-}
 .post-editor-card-summary > span:first-child {
   display: grid;
   gap: 3px;
@@ -339,6 +336,9 @@
 .post-editor-collapsible[open] > :not(summary) {
   margin-left: 12px;
   margin-right: 12px;
+}
+.post-editor-collapsible[open] > :first-child {
+  margin-bottom: 12px;
 }
 .post-editor-collapsible[open] > :last-child {
   margin-bottom: 12px;
@@ -370,7 +370,6 @@
     display: none;
   }
 }
-
 
 /* Professional compact controls and nested repeatable fields */
 .post-editor-page {
@@ -503,7 +502,10 @@
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 .post-editor-add-button:hover {
   border-color: #8eacd2;
@@ -585,7 +587,6 @@
   }
 }
 
-
 /* Consistent action alignment for repeatable editor cards */
 .post-editor-card-actions {
   display: flex;
@@ -612,7 +613,10 @@
   color: #a34444;
   line-height: 1;
   white-space: nowrap;
-  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 
 .post-editor-card-actions .post-editor-remove:hover {
@@ -649,31 +653,155 @@
   }
 }
 
-
 /* Refined editor language controls, info panels and layout */
-.post-editor-section-title-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.post-editor-section-title-row h2{margin:0}
-.post-editor-language-switch{display:inline-flex;align-items:center;gap:3px;padding:3px;border:1px solid #e1e7ef;border-radius:8px;background:#f5f7fa}
-.post-editor-language-switch button{min-height:30px;padding:5px 11px;border:1px solid transparent;border-radius:6px;background:transparent;color:#718096;font:600 11px Inter,Hind,sans-serif;cursor:pointer;transition:background 140ms ease,color 140ms ease,box-shadow 140ms ease}
-.post-editor-language-switch button.active{border-color:#dbe4ef;background:#fff;color:#24476f;box-shadow:0 1px 3px rgba(25,45,75,.08)}
-.post-editor-meta-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-.post-editor-location-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-.post-editor-location-row label:nth-child(4){grid-column:1/-1}
-.post-editor-info-note{display:flex;align-items:flex-start;gap:10px;margin:2px 0;padding:11px 13px;border:1px solid #e2eaf3;border-radius:7px;background:#f7f9fc;color:#52657c}
-.post-editor-info-note p{margin:0;font-size:11px;line-height:1.6}
-.post-editor-info-icon{display:inline-flex;flex:0 0 18px;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid #b9c9dc;border-radius:50%;color:#547293;font-size:11px;font-weight:800}
-.post-editor-vacancy-total{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;padding:10px 13px;border:1px solid #e5eaf1;border-radius:7px;background:#fafbfd;color:#64748b;font-size:11px}
-.post-editor-vacancy-total strong{color:#203c5d;font-size:17px;font-variant-numeric:tabular-nums}
-.post-editor-vacancy-total small{color:#8a97a8;font-size:10px}
-.post-editor-job-post-card>.post-editor-card-summary{background:#f9fafc;transition:background 150ms ease,border-color 150ms ease}
-.post-editor-job-post-card>.post-editor-card-summary:hover{background:#f0f4f8}
-.post-editor-job-post-card[open]>.post-editor-card-summary{background:#f3f6fa;border-bottom:1px solid #e5eaf1}
-.post-editor-job-post-card>.post-editor-card-summary:active{background:#edf2f7}
-.post-editor-job-post-card>.post-editor-card-summary:focus-visible{outline:2px solid #8ba8c8;outline-offset:-2px}
-@media(max-width:760px){.post-editor-meta-row,.post-editor-location-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:520px){.post-editor-meta-row,.post-editor-location-row{grid-template-columns:minmax(0,1fr)}.post-editor-location-row label:nth-child(4){grid-column:auto}.post-editor-language-switch{width:100%}.post-editor-language-switch button{flex:1}}
-@media(prefers-reduced-motion:reduce){.post-editor-language-switch button,.post-editor-job-post-card>.post-editor-card-summary{transition:none}}
-
+.post-editor-section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.post-editor-section-title-row h2 {
+  margin: 0;
+}
+.post-editor-language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #e1e7ef;
+  border-radius: 8px;
+  background: #f5f7fa;
+}
+.post-editor-language-switch button {
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #718096;
+  font:
+    600 11px Inter,
+    Hind,
+    sans-serif;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
+}
+.post-editor-language-switch button.active {
+  border-color: #dbe4ef;
+  background: #fff;
+  color: #24476f;
+  box-shadow: 0 1px 3px rgba(25, 45, 75, 0.08);
+}
+.post-editor-meta-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.post-editor-location-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.post-editor-location-row label:nth-child(4) {
+  grid-column: 1/-1;
+}
+.post-editor-info-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2px 0;
+  padding: 11px 13px;
+  border: 1px solid #e2eaf3;
+  border-radius: 7px;
+  background: #f7f9fc;
+  color: #52657c;
+}
+.post-editor-info-note p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.post-editor-info-icon {
+  display: inline-flex;
+  flex: 0 0 18px;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #b9c9dc;
+  border-radius: 50%;
+  color: #547293;
+  font-size: 11px;
+  font-weight: 800;
+}
+.post-editor-vacancy-total {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 10px 13px;
+  border: 1px solid #e5eaf1;
+  border-radius: 7px;
+  background: #fafbfd;
+  color: #64748b;
+  font-size: 11px;
+}
+.post-editor-vacancy-total strong {
+  color: #203c5d;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.post-editor-vacancy-total small {
+  color: #8a97a8;
+  font-size: 10px;
+}
+.post-editor-job-post-card > .post-editor-card-summary {
+  background: #f9fafc;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+.post-editor-job-post-card > .post-editor-card-summary:hover {
+  background: #f0f4f8;
+}
+.post-editor-job-post-card[open] > .post-editor-card-summary {
+  background: #f3f6fa;
+  border-bottom: 1px solid #e5eaf1;
+}
+.post-editor-job-post-card > .post-editor-card-summary:active {
+  background: #edf2f7;
+}
+.post-editor-job-post-card > .post-editor-card-summary:focus-visible {
+  outline: 2px solid #8ba8c8;
+  outline-offset: -2px;
+}
+@media (max-width: 760px) {
+  .post-editor-meta-row,
+  .post-editor-location-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .post-editor-meta-row,
+  .post-editor-location-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .post-editor-location-row label:nth-child(4) {
+    grid-column: auto;
+  }
+  .post-editor-language-switch {
+    width: 100%;
+  }
+  .post-editor-language-switch button {
+    flex: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-editor-language-switch button,
+  .post-editor-job-post-card > .post-editor-card-summary {
+    transition: none;
+  }
+}
 
 /* Calm hover and expanded state for every collapsible row */
 .post-editor-collapsible > .post-editor-card-summary {
@@ -705,7 +833,6 @@
   }
 }
 
-
 /* Avoid half-empty two-column rows when the selected language leaves one field */
 .post-editor-grid:has(> label:only-child) {
   grid-template-columns: minmax(0, 1fr);
@@ -722,7 +849,6 @@
 .post-editor-job-post-card[open] > .post-editor-card-summary:hover {
   background: #eef2f6;
 }
-
 
 /* Per-field translation controls in Post Information */
 .post-editor-translation-controls {
@@ -742,9 +868,15 @@
   border-radius: 6px;
   background: #fff;
   color: #64748b;
-  font: 600 10px Inter, Hind, sans-serif;
+  font:
+    600 10px Inter,
+    Hind,
+    sans-serif;
   cursor: pointer;
-  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 .post-editor-translation-controls button:hover {
   border-color: #aebfd3;
@@ -773,7 +905,6 @@
     transition: none;
   }
 }
-
 
 .post-editor-translation-group {
   display: grid;
@@ -805,7 +936,6 @@
   }
 }
 
-
 /* Post Information: one control reveals both non-default translations */
 .post-editor-show-translations {
   min-height: 29px;
@@ -814,9 +944,15 @@
   border-radius: 6px;
   background: #fff;
   color: #426181;
-  font: 650 10px Inter, Hind, sans-serif;
+  font:
+    650 10px Inter,
+    Hind,
+    sans-serif;
   cursor: pointer;
-  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 .post-editor-show-translations:hover {
   border-color: #aebfd3;
@@ -854,7 +990,6 @@
   }
 }
 
-
 /* Post Information: compact metadata row with Location as the final field */
 .post-editor-meta-row {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -874,7 +1009,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-
 
 /* Use Shivanya UI form controls in Post Information without admin-native overrides */
 .post-editor-meta-row > .shivanya-input-wrapper,
@@ -917,7 +1051,9 @@
 }
 
 .post-editor-post-body > .post-editor-grid:first-child > label,
-.post-editor-post-body > .post-editor-grid:first-child > .shivanya-input-wrapper {
+.post-editor-post-body
+  > .post-editor-grid:first-child
+  > .shivanya-input-wrapper {
   min-width: 0;
   width: 100%;
   align-self: start;
@@ -928,8 +1064,6 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-
-
 
 /* Jobs Details: compact mode tabs and a combined guidance/vacancy summary */
 .post-editor-job-heading {
@@ -962,7 +1096,10 @@
   border-radius: 6px 0 0 6px;
   background: #fff;
   color: #718096;
-  font: 700 10px Inter, Hind, sans-serif;
+  font:
+    700 10px Inter,
+    Hind,
+    sans-serif;
 }
 .post-editor-mode-switch button {
   min-height: 27px;
@@ -971,16 +1108,22 @@
   border-radius: 5px;
   background: transparent;
   color: #718096;
-  font: 650 10px Inter, Hind, sans-serif;
+  font:
+    650 10px Inter,
+    Hind,
+    sans-serif;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
 }
 .post-editor-mode-switch button.active {
   border-color: #dbe4ef;
   background: #fff;
   color: #24476f;
-  box-shadow: 0 1px 3px rgba(25, 45, 75, .08);
+  box-shadow: 0 1px 3px rgba(25, 45, 75, 0.08);
 }
 .post-editor-mode-switch button:focus-visible {
   outline: 2px solid #8ba8c8;
@@ -1059,7 +1202,10 @@
   gap: 4px;
   margin-bottom: 3px;
   color: #334762;
-  font: 700 11px Inter, Hind, sans-serif;
+  font:
+    700 11px Inter,
+    Hind,
+    sans-serif;
 }
 .post-editor-form .shivanya-checkbox {
   min-width: 0;
@@ -1153,7 +1299,6 @@
   }
 }
 
-
 /* Shared job qualification: default language on the left, translations on the right */
 .post-editor-common-education .post-editor-translation-heading h4 {
   margin: 0 0 2px;
@@ -1189,6 +1334,6 @@
   }
 }
 
-.shivanya-checkbox-label{
+.shivanya-checkbox-label {
   font-size: 11px;
 }

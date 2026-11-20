@@ -965,6 +965,34 @@
 .post-editor-single-column {
   grid-template-columns: minmax(0, 1fr);
 }
+
+/* Keep the age criteria controls on one evenly sized row. */
+.post-editor-age-fields {
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  align-items: start;
+}
+
+.post-editor-age-fields > * {
+  min-width: 0;
+  width: 100%;
+}
+
+.post-editor-age-note-section {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.post-editor-age-note-section > .post-editor-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.post-editor-age-note-section .shivanya-textarea-field {
+  width: 100%;
+  min-width: 0;
+}
+
 .post-editor-single-column > label {
   width: 100%;
 }

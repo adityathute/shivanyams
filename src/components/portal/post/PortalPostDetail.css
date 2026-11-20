@@ -1076,8 +1076,9 @@
   min-width: 0;
   padding: 17px 19px;
   border-right: 1px solid var(--border-color, #e1e7f0);
-  background: #f5f8fe;
+  background: transparent;
   color: #243f70;
+  text-transform: capitalize;
   font-size: 14px;
   font-weight: 800;
   line-height: 1.5;
@@ -1088,6 +1089,7 @@
   display: flex;
   align-items: center;
   align-content: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 9px;
   min-width: 0;
@@ -1111,6 +1113,7 @@
   font-weight: 750;
   line-height: 1.35;
   text-align: center;
+  text-transform: capitalize;
   text-decoration: none;
   overflow-wrap: anywhere;
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
@@ -1144,7 +1147,7 @@
 }
 
 :root[data-theme="dark"] .portal-important-link-item > strong {
-  background: rgba(59, 130, 246, 0.12);
+  background: transparent;
   color: #c8dcff;
 }
 

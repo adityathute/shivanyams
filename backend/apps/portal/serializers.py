@@ -681,6 +681,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
 
     important_links = PostLinkSerializer(many=True, required=False)
     faqs = PostFAQSerializer(many=True, required=False)
+    important_dates = PostDateSerializer(many=True, required=False)
     resources = PostResourceSerializer(many=True, required=False)
     related_posts = PostRelationSerializer(
         source="outgoing_relations", many=True, required=False

@@ -53,7 +53,7 @@ class ImportantLinkAdmin(admin.ModelAdmin):
 class PostLinkInline(admin.TabularInline):
     model = PostLink
     extra = 0
-    fields = ("name_en", "name_mr", "name_hi", "action_text_en", "action_text_mr", "action_text_hi", "url", "sort_order", "is_active")
+    fields = ("group_key", "name_en", "name_mr", "name_hi", "action_text_en", "action_text_mr", "action_text_hi", "url", "sort_order", "is_active")
     ordering = ("sort_order", "id")
 
 

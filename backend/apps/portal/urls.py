@@ -14,6 +14,8 @@ from .views import (
     AdminPostReview,
     AdminOrganizationTypes,
     AdminDashboardStats,
+    TrackWebsiteView,
+    AdminWebsiteAnalytics,
 )
 
 router = DefaultRouter()

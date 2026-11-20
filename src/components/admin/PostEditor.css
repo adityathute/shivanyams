@@ -1156,3 +1156,27 @@
     width: 100%;
   }
 }
+
+
+/* Shared job qualification: default language on the left, translations on the right */
+.post-editor-common-education-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.post-editor-common-education-fields > .shivanya-textarea-field,
+.post-editor-common-education-translations,
+.post-editor-common-education-translations > .shivanya-textarea-field {
+  min-width: 0;
+  width: 100%;
+}
+.post-editor-common-education-translations {
+  display: grid;
+  gap: 10px;
+}
+@media (max-width: 650px) {
+  .post-editor-common-education-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -884,6 +884,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             );
 
                             return (
+                              <>
                               <div className="portal-post-wise-table-wrap">
                                 <table className="portal-post-wise-table">
                                   <thead>
@@ -937,6 +938,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                   ))}
                                 </div>
                               ) : null}
+                              </>
                             );
                           })()}
                         </div>

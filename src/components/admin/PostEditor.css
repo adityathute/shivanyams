@@ -990,6 +990,32 @@
   gap: 4px;
 }
 
+.post-editor-fee-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.post-editor-fee-amount,
+.post-editor-fee-translation {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.post-editor-fee-amount .shivanya-input-wrapper,
+.post-editor-fee-translation .shivanya-input-wrapper,
+.post-editor-fee-translation .shivanya-textarea-field {
+  min-width: 0;
+  width: 100%;
+}
+
+.post-editor-fee-translation > .post-editor-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .post-editor-age-note-section {
   display: grid;
   gap: 10px;

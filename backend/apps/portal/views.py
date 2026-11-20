@@ -19,6 +19,7 @@ from .models import (
     LanguageChoices,
     Post,
     PostDate,
+    PostFAQ,
     PostReaction,
     PostStatusHistory,
     PostView,
@@ -81,6 +82,7 @@ def public_posts_for_kind(kind):
         )
         .prefetch_related(
             "important_links",
+            Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
             Prefetch(
                 "important_dates",
                 queryset=PostDate.objects.order_by("sort_order", "id"),

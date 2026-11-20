@@ -836,20 +836,19 @@
 .portal-post-wise-table td {
   padding: 12px 14px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
+  background: var(--surface, #fff);
+  color: var(--text-primary, #172033);
   text-align: center;
   vertical-align: middle;
   overflow-wrap: anywhere;
 }
 
 .portal-post-wise-table thead th {
-  background: var(--surface-muted, #f5f7fa);
-  color: var(--text-primary, #172033);
   font-weight: 750;
   white-space: nowrap;
 }
 
 .portal-post-wise-table tbody td {
-  color: var(--text-primary, #172033);
   font-weight: 550;
 }
 
@@ -862,7 +861,6 @@
 .portal-post-wise-table tfoot th,
 .portal-post-wise-table tfoot td {
   border-bottom: 0;
-  background: var(--surface-muted, #f5f7fa);
   font-weight: 800;
 }
 
@@ -875,10 +873,9 @@
   color: var(--text-primary, #f8fafc);
 }
 
-:root[data-theme="dark"] .portal-post-wise-table thead th,
-:root[data-theme="dark"] .portal-post-wise-table tfoot th,
-:root[data-theme="dark"] .portal-post-wise-table tfoot td {
-  background: var(--surface-muted, #202838);
+:root[data-theme="dark"] .portal-post-wise-table th,
+:root[data-theme="dark"] .portal-post-wise-table td {
+  background: var(--surface, #171c28);
   color: var(--text-primary, #f8fafc);
 }
 

@@ -277,6 +277,7 @@ type ApiPost = {
   important_dates?: ImportantDate[];
   job_details?: {
     advertisement_no?: string;
+    education_mode?: "common" | "per_post";
     total_vacancies?: number | null;
     designation?: string;
     post_details?: string;

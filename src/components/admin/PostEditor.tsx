@@ -1517,7 +1517,7 @@ export default function PostEditor({
                         aria-expanded={commonEducationExpanded}
                         onClick={toggleCommonEducationLanguages}
                       >
-                        {commonEducationExpanded ? "Hide other languages" : "+ Show other languages"}
+                        {commonEducationExpanded ? "− Hide other languages" : "+ Show other languages"}
                       </button>
                     </div>
                     <div className="post-editor-grid post-editor-common-education-fields">
@@ -1593,7 +1593,7 @@ export default function PostEditor({
                               : [...current, postIndex]
                           )}
                         >
-                          {expandedPostLanguages.includes(postIndex) ? "Hide other languages" : "+ Show other languages"}
+                          {expandedPostLanguages.includes(postIndex) ? "− Hide other languages" : "+ Show other languages"}
                         </button>
                       </div>
                       <div className="post-editor-grid post-editor-single-column">
@@ -1665,7 +1665,7 @@ export default function PostEditor({
                               : [...current, postIndex]
                           )}
                         >
-                          {expandedAgeLanguages.includes(postIndex) ? "Hide other languages" : "+ Show other languages"}
+                          {expandedAgeLanguages.includes(postIndex) ? "− Hide other languages" : "+ Show other languages"}
                         </button>
                       </div>
                       <div className="post-editor-grid post-editor-single-column">
@@ -1720,7 +1720,7 @@ export default function PostEditor({
                                   );
                                 }}
                               >
-                                {expandedFeeCategoryLanguages.includes(`${postIndex}-${feeIndex}`) ? "Hide other languages" : "+ Show other languages"}
+                                {expandedFeeCategoryLanguages.includes(`${postIndex}-${feeIndex}`) ? "− Hide other languages" : "+ Show other languages"}
                               </button>
                             </div>
                             <div className="post-editor-grid post-editor-single-column">
@@ -1755,7 +1755,7 @@ export default function PostEditor({
                                   );
                                 }}
                               >
-                                {expandedFeeNoteLanguages.includes(`${postIndex}-${feeIndex}`) ? "Hide other languages" : "+ Show other languages"}
+                                {expandedFeeNoteLanguages.includes(`${postIndex}-${feeIndex}`) ? "− Hide other languages" : "+ Show other languages"}
                               </button>
                             </div>
                             <div className="post-editor-grid post-editor-single-column">
@@ -1820,7 +1820,7 @@ export default function PostEditor({
                                 );
                               }}
                             >
-                              {expandedEducationLanguages.includes(`${postIndex}-${educationIndex}`) ? "Hide other languages" : "+ Show other languages"}
+                              {expandedEducationLanguages.includes(`${postIndex}-${educationIndex}`) ? "− Hide other languages" : "+ Show other languages"}
                             </button>
                           </div>
                           <div className="post-editor-grid post-editor-single-column">

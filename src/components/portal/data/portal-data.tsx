@@ -165,6 +165,7 @@ export type PortalData = {
 };
 
 type ApiLink = {
+  group_key?: string;
   name_en?: string;
   name_mr?: string;
   name_hi?: string;

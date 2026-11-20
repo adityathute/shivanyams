@@ -920,11 +920,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
                             );
-                            const commonEducationItems = jobDetails.education_is_common_field
-                              ? [jobDetails.educational_qualification].filter(Boolean)
-                              : rows[0]?.educationItems.length
-                                ? rows[0].educationItems
-                                : [jobDetails.educational_qualification].filter(Boolean);
+                            const commonEducationItems =
+                              jobDetails.education_is_common_field && jobDetails.educational_qualification
+                                ? [jobDetails.educational_qualification]
+                                : rows[0]?.educationItems.length
+                                  ? rows[0].educationItems
+                                  : [jobDetails.educational_qualification].filter(Boolean);
 
                             return (
                               <>

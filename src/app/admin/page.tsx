@@ -56,6 +56,12 @@ const STATUS_OPTIONS = [
   "approved", "published", "rejected", "archived",
 ];
 
+function formatPersonName(name: string | null | undefined) {
+  return (name || "").trim().toLowerCase().replace(/(^|[\\s'-])([a-z])/g, (_match, separator, letter) =>
+    separator + letter.toUpperCase()
+  );
+}
+
 function statusLabel(status: string) {
   return status.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
@@ -508,7 +514,7 @@ export default function AdminPage() {
             {analyticsLoading ? <div className="admin-empty">Loading analytics...</div> : selectedVisitor ? (
               <div className="admin-analytics-detail">
                 <div className="admin-visitor-summary">
-                  <strong>{selectedVisitor.visitor_type === "user" ? selectedVisitor.full_name || "Registered user" : "Anonymous"}</strong>
+                  <strong>{selectedVisitor.visitor_type === "user" ? formatPersonName(selectedVisitor.full_name) || "Registered user" : "Anonymous"}</strong>
                   <span>IP: {selectedVisitor.ip_address || "Not available"}</span>
                   <span>{selectedVisitor.total_pages} pages · {selectedVisitor.total_views} total views</span>
                   <span>First visit: {new Date(selectedVisitor.first_seen).toLocaleString()}</span>
@@ -524,7 +530,7 @@ export default function AdminPage() {
             ) : selectedAnalyticsPath ? (
               <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
                 <thead><tr><th>Visitor</th><th>IP address</th><th>Browser</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
-                <tbody>{analyticsEvents.map((event, index) => <tr key={event.visitor_id + event.viewed_at + index}><td>{event.visitor_type === "user" ? event.full_name || "Registered user" : "Anonymous"}</td><td>{event.ip_address || "—"}</td><td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td><td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td><td>{new Date(event.viewed_at).toLocaleString()}</td></tr>)}</tbody>
+                <tbody>{analyticsEvents.map((event, index) => <tr key={event.visitor_id + event.viewed_at + index}><td>{event.visitor_type === "user" ? formatPersonName(event.full_name) || "Registered user" : "Anonymous"}</td><td>{event.ip_address || "—"}</td><td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td><td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td><td>{new Date(event.viewed_at).toLocaleString()}</td></tr>)}</tbody>
               </table></div>
             ) : analyticsType === "views" ? (
               analyticsPages.length === 0 ? <div className="admin-empty">No website views recorded yet.</div> : (
@@ -541,7 +547,7 @@ export default function AdminPage() {
                 <div className="admin-analytics-table-wrap"><table className="admin-analytics-table">
                   <thead><tr><th>Visitor</th><th>IP address</th><th>Browser</th><th>Device</th><th>Pages</th><th>Total views</th><th>Language</th><th>First visit</th><th>Last visit</th></tr></thead>
                   <tbody>{analyticsVisitors.map((visitor) => <tr key={visitor.visitor_id}>
-                    <td><button type="button" className="admin-analytics-link" onClick={() => void openVisitorDetails(visitor)}>{visitor.visitor_type === "user" ? visitor.full_name || "Registered user" : "Anonymous"}</button></td>
+                    <td><button type="button" className="admin-analytics-link" onClick={() => void openVisitorDetails(visitor)}>{visitor.visitor_type === "user" ? formatPersonName(visitor.full_name) || "Registered user" : "Anonymous"}</button></td>
                     <td>{visitor.ip_address || "—"}</td><td>{visitor.browser || "Unknown"}</td><td>{visitor.device}</td><td>{visitor.total_pages}</td><td>{visitor.total_views}</td><td>{visitor.language || "—"}</td>
                     <td>{new Date(visitor.first_seen).toLocaleString()}</td><td>{new Date(visitor.last_seen).toLocaleString()}</td>
                   </tr>)}</tbody>

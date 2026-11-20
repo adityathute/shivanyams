@@ -536,6 +536,7 @@ class PostSerializer(serializers.ModelSerializer):
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
+    users_count = serializers.IntegerField(read_only=True, default=0)
 
     job_details = serializers.SerializerMethodField()
     scheme_details = serializers.SerializerMethodField()
@@ -587,6 +588,7 @@ class PostSerializer(serializers.ModelSerializer):
             "reactions_enabled",
             "views_count",
             "unique_visitors_count",
+            "users_count",
             "likes_count",
             "dislikes_count",
             "comments_count",

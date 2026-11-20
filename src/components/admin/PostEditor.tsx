@@ -703,7 +703,7 @@ export default function PostEditor({
           meta_keywords: (record.meta_keywords || []).join(", "),
         });
         setImportantLinks(
-          (record.important_links || []).map((item: LinkInput) => ({
+          (record.important_links || []).map((item: LinkInput, index) => ({
             ...item,
             name_en: String(item.name_en ?? ""),
             name_mr: String(item.name_mr ?? ""),

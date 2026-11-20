@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
-                ("qualification_en", models.TextField()),
+                ("qualification_en", models.TextField(blank=True)),
                 ("qualification_mr", models.TextField(blank=True)),
                 ("qualification_hi", models.TextField(blank=True)),
                 ("sort_order", models.PositiveSmallIntegerField(default=0)),

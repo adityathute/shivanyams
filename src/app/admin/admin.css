@@ -229,9 +229,9 @@
   gap: 9px;
 }
 .admin-stats span {
-  font-size: 11px;
+  font-size: 30px;
   color: #718198;
-  font-weight: 600;
+  font-weight: 700;
 }
 .admin-stats strong {
   font-size: 25px;
@@ -760,7 +760,7 @@
   border-radius: 9px;
 }
 .admin-stats span {
-  font-size: 10px;
+  font-size: 30px;
   line-height: 1.35;
   white-space: normal;
 }

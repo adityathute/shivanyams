@@ -13,6 +13,7 @@ from .views import (
     TrackPostView,
     AdminPostReview,
     AdminOrganizationTypes,
+    AdminDashboardStats,
 )
 
 router = DefaultRouter()
@@ -51,6 +52,8 @@ urlpatterns = [
         content_detail,
         name="content-detail",
     ),
+    # Admin dashboard statistics
+    path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
     path(

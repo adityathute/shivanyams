@@ -1706,8 +1706,19 @@ export default function PostEditor({
             </p>
 
             {kind.api === "jobs" && (
-              <div className="post-editor-job-posts">
-                <div className="post-editor-section-heading">
+              <>
+                <label className="post-editor-mode-field">
+                  Educational Qualification Mode
+                  <select
+                    value={String(details.education_mode || "per_post")}
+                    onChange={(event) => updateDetail("education_mode", event.target.value)}
+                  >
+                    <option value="common">Same for all posts</option>
+                    <option value="per_post">Different for each post</option>
+                  </select>
+                </label>
+                <div className="post-editor-job-posts">
+                  <div className="post-editor-section-heading">
                   <h3>Individual Recruitment Posts</h3>
                   <button type="button" onClick={addJobPost}>
                     + Add Post
@@ -1801,43 +1812,49 @@ export default function PostEditor({
                       </label>
                     </div>
 
-                    <h4>Educational Qualification / Conditions</h4>
-                    <button
-                      type="button"
-                      onClick={() => addJobPostEducation(postIndex)}
-                    >
-                      + Add Education Condition
-                    </button>
-
-                    {(post.educations || []).map((education, educationIndex) => (
-                      <div className="post-editor-repeat-card" key={educationIndex}>
-                        <h5>Education Condition {educationIndex + 1}</h5>
-                        <div className="post-editor-grid">
-                          {(["en", "mr", "hi"] as const).map((lang) => (
-                            <label key={lang}>
-                              Qualification ({lang.toUpperCase()})
-                              <textarea
-                                rows={3}
-                                value={education[`qualification_${lang}`]}
-                                onChange={(event) =>
-                                  updateJobPostEducation(
-                                    postIndex,
-                                    educationIndex,
-                                    `qualification_${lang}`,
-                                    event.target.value,
-                                  )
-                                }
-                              />
-                            </label>
-                          ))}
+                    {details.education_mode === "per_post" ? (
+                      <>
+                      <h4>Educational Qualification / Conditions</h4>
+                      <button
+                        type="button"
+                        onClick={() => addJobPostEducation(postIndex)}
+                      >
+                        + Add Education Condition
+                      </button>
+  
+                      {(post.educations || []).map((education, educationIndex) => (
+                        <div className="post-editor-repeat-card" key={educationIndex}>
+                          <h5>Education Condition {educationIndex + 1}</h5>
+                          <div className="post-editor-grid">
+                            {(["en", "mr", "hi"] as const).map((lang) => (
+                              <label key={lang}>
+                                Qualification ({lang.toUpperCase()})
+                                <textarea
+                                  rows={3}
+                                  value={education[`qualification_${lang}`]}
+                                  onChange={(event) =>
+                                    updateJobPostEducation(
+                                      postIndex,
+                                      educationIndex,
+                                      `qualification_${lang}`,
+                                      event.target.value,
+                                    )
+                                  }
+                                />
+                              </label>
+                            ))}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeJobPostEducation(postIndex, educationIndex)}
+                          >
+                            Remove Condition
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeJobPostEducation(postIndex, educationIndex)}
-                        >
-                          Remove Condition
-                        </button>
-                      </div>
+  
+                      </>
+                    ) : null}
+
                     ))}
 
                     <h4>Age Criteria</h4>
@@ -2066,7 +2083,8 @@ export default function PostEditor({
                     </button>
                   </div>
                 ))}
-              </div>
+                </div>
+              </>
             )}
 
             <div className="post-editor-grid post-editor-detail-grid">
@@ -2089,6 +2107,7 @@ export default function PostEditor({
                     "application_fee_note_hi",
                   ];
                   if (
+                    key === "education_mode" ||
                     key === "posts" ||
                     key === "total_vacancies" ||
                     (commonOnlyFields.includes(key) &&

@@ -2119,38 +2119,7 @@ export default function PostEditor({
                         ))}
                       </select>
                     </label>
-                    <div className="post-editor-date-label-section">
-                      <div className="post-editor-translation-heading">
-                        <span>Label</span>
-                        <button
-                          type="button"
-                          className="post-editor-show-translations"
-                          aria-expanded={expandedImportantDateLanguages.includes(index)}
-                          onClick={() => setExpandedImportantDateLanguages((current) =>
-                            current.includes(index)
-                              ? current.filter((dateIndex) => dateIndex !== index)
-                              : [...current, index]
-                          )}
-                        >
-                          {expandedImportantDateLanguages.includes(index) ? "− Hide other languages" : "+ Show other languages"}
-                        </button>
-                      </div>
-                      <div className="post-editor-grid post-editor-single-column">
-                        {([activeLanguage, ...(expandedImportantDateLanguages.includes(index)
-                          ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== activeLanguage)
-                          : [])] as ContentLanguage[]).map((lang) => (
-                          <label key={lang}>
-                            Label ({lang.toUpperCase()}) {lang === "en" ? "*" : ""}
-                            <input
-                              required={lang === "en"}
-                              maxLength={180}
-                              value={String(item[`label_${lang}`] ?? "")}
-                              onChange={(event) => updateDate({ [`label_${lang}`]: event.target.value })}
-                            />
-                          </label>
-                        ))}
-                      </div>
-                    </div>
+
                   </div>
 
                   {item.date_format === "single" ? (
@@ -2341,6 +2310,41 @@ export default function PostEditor({
                       ) : null}
                     </div>
                   ) : null}
+
+                  <div className="post-editor-date-label-section">
+                    <div className="post-editor-date-label-section">
+                                          <div className="post-editor-translation-heading">
+                                            <span>Label</span>
+                                            <button
+                                              type="button"
+                                              className="post-editor-show-translations"
+                                              aria-expanded={expandedImportantDateLanguages.includes(index)}
+                                              onClick={() => setExpandedImportantDateLanguages((current) =>
+                                                current.includes(index)
+                                                  ? current.filter((dateIndex) => dateIndex !== index)
+                                                  : [...current, index]
+                                              )}
+                                            >
+                                              {expandedImportantDateLanguages.includes(index) ? "− Hide other languages" : "+ Show other languages"}
+                                            </button>
+                                          </div>
+                                          <div className="post-editor-grid post-editor-single-column">
+                                            {([activeLanguage, ...(expandedImportantDateLanguages.includes(index)
+                                              ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== activeLanguage)
+                                              : [])] as ContentLanguage[]).map((lang) => (
+                                              <label key={lang}>
+                                                Label ({lang.toUpperCase()}) {lang === "en" ? "*" : ""}
+                                                <input
+                                                  required={lang === "en"}
+                                                  maxLength={180}
+                                                  value={String(item[`label_${lang}`] ?? "")}
+                                                  onChange={(event) => updateDate({ [`label_${lang}`]: event.target.value })}
+                                                />
+                                              </label>
+                                            ))}
+                                          </div>
+                                        </div>
+                  </div>
 
                   <div className="post-editor-date-description-section">
                     <div className="post-editor-translation-heading">

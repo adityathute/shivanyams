@@ -655,7 +655,11 @@ class AdminDashboardStats(APIView):
         )
         for identities in identity_queries:
             user_ids.update(identities)
-        return Response({\n            "users_count": len(user_ids),\n            "website_views_count": WebsiteView.objects.count(),\n            "website_visitors_count": WebsiteVisitor.objects.count(),\n        })
+        return Response({
+            "users_count": len(user_ids),
+            "website_views_count": WebsiteView.objects.count(),
+            "website_visitors_count": WebsiteVisitor.objects.count(),
+        })
 
 
 class AdminOrganizationTypes(APIView):

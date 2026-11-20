@@ -1187,3 +1187,74 @@
   .admin-visitor-summary span { min-height: 42px; }
   .admin-analytics-modal > footer { padding: 12px; }
 }
+
+ 
+/* Compact icon-only navigation for visitor and page analytics details. */
+.admin-analytics-modal > .admin-analytics-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-analytics-modal > .admin-analytics-header > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-analytics-modal > header .admin-analytics-back-icon,
+.admin-analytics-modal > header .admin-analytics-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  color: #475569;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.admin-analytics-modal > header .admin-analytics-back-icon {
+  color: #6d28d9;
+  border-color: #ddd6fe;
+  background: #f5f3ff;
+}
+
+.admin-analytics-modal > header .admin-analytics-back-icon:hover {
+  background: #ede9fe;
+  color: #4c1d95;
+}
+
+.admin-analytics-modal > header .admin-analytics-close:hover {
+  background: #fff1f2;
+  color: #e11d48;
+  border-color: #fecdd3;
+}
+
+.admin-analytics-modal > header .admin-analytics-back-icon svg,
+.admin-analytics-modal > header .admin-analytics-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.admin-analytics-modal > header .admin-analytics-close .shivanya-icon-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .admin-analytics-modal > .admin-analytics-header { gap: 8px; }
+  .admin-analytics-modal > header .admin-analytics-back-icon,
+  .admin-analytics-modal > header .admin-analytics-close {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+}

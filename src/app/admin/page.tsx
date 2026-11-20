@@ -69,6 +69,7 @@ export default function AdminPage() {
   const [usersCount, setUsersCount] = useState(0);
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
+  const [postVisitorsCount, setPostVisitorsCount] = useState(0);
   const [analyticsType, setAnalyticsType] = useState<"views" | "visitors" | null>(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>([]);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
@@ -145,11 +146,12 @@ export default function AdminPage() {
         }
         return response.json();
       })
-      .then((payload: { users_count?: number; website_views_count?: number; website_visitors_count?: number }) => {
+      .then((payload: { users_count?: number; website_views_count?: number; website_visitors_count?: number; post_visitors_count?: number }) => {
         if (active) {
           setUsersCount(Number(payload.users_count) || 0);
           setWebsiteViewsCount(Number(payload.website_views_count) || 0);
           setWebsiteVisitorsCount(Number(payload.website_visitors_count) || 0);
+          setPostVisitorsCount(Number(payload.post_visitors_count) || 0);
         }
       })
       .catch((err) => {
@@ -191,7 +193,6 @@ export default function AdminPage() {
     drafts: posts.filter((post) => post.status === "draft").length,
     review: posts.filter((post) => post.status === "pending_review").length,
     views: posts.reduce((sum, post) => sum + (post.views_count || 0), 0),
-    visitors: posts.reduce((sum, post) => sum + (post.unique_visitors_count || 0), 0),
   }), [posts]);
 
   function openWebsiteAnalytics(type: "views" | "visitors") {
@@ -348,7 +349,7 @@ export default function AdminPage() {
             { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors" as const },
             { label: "Portal users", value: usersCount },
             { label: "Post views", value: counts.views },
-            { label: "Post visitors", value: counts.visitors },
+            { label: "Post visitors", value: postVisitorsCount },
           ];
 
           const compactNumber = new Intl.NumberFormat("en", {

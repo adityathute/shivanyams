@@ -539,6 +539,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
     void fetch(getPortalApiUrl(`content/${postId}/views/`), {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         visitor_id: visitorId,

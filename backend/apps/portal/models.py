@@ -555,7 +555,7 @@ class JobPostEducation(TimestampedModel):
         related_name="educations",
     )
 
-    qualification_en = models.TextField()
+    qualification_en = models.TextField(blank=True)
     qualification_mr = models.TextField(blank=True)
     qualification_hi = models.TextField(blank=True)
 

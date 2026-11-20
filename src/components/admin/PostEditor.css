@@ -1058,3 +1058,17 @@
     transition: none;
   }
 }
+
+/* Preserve the SDK checkbox's inline control-and-label layout inside the admin form */
+.post-editor-form .shivanya-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  min-height: 32px;
+  font-size: 11px;
+}
+.post-editor-form .shivanya-checkbox-content {
+  display: inline-flex;
+  align-items: center;
+}

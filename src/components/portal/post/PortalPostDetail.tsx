@@ -904,7 +904,6 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             );
                             const showPostFees =
                               !hasCommonFee &&
-                              jobDetails.fee_mode === "per_post" &&
                               rows.some((row) => row.fees.length);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),

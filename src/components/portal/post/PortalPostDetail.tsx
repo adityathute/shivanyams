@@ -19,6 +19,10 @@ import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { LinkIcon, MailIcon, Button } from "shivanya-ui";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
+import {
+  NOT_FOUND_RECOMMENDATIONS_LIMIT,
+  getNotFoundRecommendationText,
+} from "./not-found-recommendations-config";
 import "../home/UpdatesSection.css";
 
 type CategorySlug =
@@ -630,7 +634,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       }
       return b.date.localeCompare(a.date);
     });
-    return sorted.slice(0, 5);
+    return sorted.slice(0, NOT_FOUND_RECOMMENDATIONS_LIMIT);
   }, [categoryPosts, hasViewedCategoryPosts]);
 
   const jobAgeDetails = post?.jobDetails;
@@ -1412,8 +1416,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                 ) : (
                   <section className="panelin not-found-recommendations">
                     <div className="section-heading">
-                      <h2>{hasViewedCategoryPosts ? "Most Viewed" : "Latest"} {label || category}</h2>
-                      <span>{hasViewedCategoryPosts ? "Popular posts" : "Recent posts"}</span>
+                      <h2>{getNotFoundRecommendationText(hasViewedCategoryPosts ? "mostViewed" : "latest", language)} {label || category}</h2>
+                      <span>{getNotFoundRecommendationText(hasViewedCategoryPosts ? "popularPosts" : "recentPosts", language)}</span>
                     </div>
                     <div className="not-found-post-list">
                       {recommendedPosts.map((item, index) => (
@@ -1425,7 +1429,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                           <span className="not-found-post-rank">{index + 1}</span>
                           <span className="not-found-post-copy">
                             <strong>{getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) || item.title}</strong>
-                            <small>{(Number(item.views_count) || 0).toLocaleString("en-IN")} views</small>
+                            <small>{(Number(item.views_count) || 0).toLocaleString(language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN")} {getNotFoundRecommendationText("views", language)}</small>
                           </span>
                           <b aria-hidden="true">›</b>
                         </Link>

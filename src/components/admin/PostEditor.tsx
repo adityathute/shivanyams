@@ -1318,7 +1318,7 @@ export default function PostEditor({
                   label={`Title (${form.default_language.toUpperCase()})`}
                   required
                   maxLength={240}
-                  value={form[`title_${form.default_language as ContentLanguage}`]}
+                  value={String(form[`title_${form.default_language as ContentLanguage}`] ?? "")}
                   onChange={(event) => update(`title_${form.default_language as ContentLanguage}`, event.target.value)}
                   fullWidth
                   size="sm"
@@ -1339,7 +1339,7 @@ export default function PostEditor({
                       key={language}
                       label={`Title (${language.toUpperCase()})`}
                       maxLength={240}
-                      value={form[`title_${language}`]}
+                      value={String(form[`title_${language}`] ?? "")}
                       onChange={(event) => update(`title_${language}`, event.target.value)}
                       fullWidth
                       size="sm"
@@ -1365,7 +1365,7 @@ export default function PostEditor({
                 <Textarea
                   label={`Short Description (${form.default_language.toUpperCase()})`}
                   rows={3}
-                  value={form[`summary_${form.default_language as ContentLanguage}`]}
+                  value={String(form[`summary_${form.default_language as ContentLanguage}`] ?? "")}
                   onChange={(event) => update(`summary_${form.default_language as ContentLanguage}`, event.target.value)}
                   fullWidth
                   size="sm"
@@ -1375,7 +1375,7 @@ export default function PostEditor({
                     key={language}
                     label={`Short Description (${language.toUpperCase()})`}
                     rows={3}
-                    value={form[`summary_${language}`]}
+                    value={String(form[`summary_${language}`] ?? "")}
                     onChange={(event) => update(`summary_${language}`, event.target.value)}
                     fullWidth
                     size="sm"
@@ -1400,7 +1400,7 @@ export default function PostEditor({
                 <Textarea
                   label={`Full Content (${form.default_language.toUpperCase()})`}
                   rows={8}
-                  value={form[`body_${form.default_language as ContentLanguage}`]}
+                  value={String(form[`body_${form.default_language as ContentLanguage}`] ?? "")}
                   onChange={(event) => update(`body_${form.default_language as ContentLanguage}`, event.target.value)}
                   fullWidth
                   size="sm"
@@ -1410,7 +1410,7 @@ export default function PostEditor({
                     key={language}
                     label={`Full Content (${language.toUpperCase()})`}
                     rows={6}
-                    value={form[`body_${language}`]}
+                    value={String(form[`body_${language}`] ?? "")}
                     onChange={(event) => update(`body_${language}`, event.target.value)}
                     fullWidth
                     size="sm"
@@ -1600,7 +1600,7 @@ export default function PostEditor({
                             key={lang}
                             label={`Title (${lang.toUpperCase()})`}
                             required={lang === "en"}
-                            value={post[`post_name_${lang}`]}
+                            value={String(post[`post_name_${lang}`] ?? "")}
                             onChange={(event) => updateJobPost(postIndex, `post_name_${lang}`, event.target.value)}
                             fullWidth
                             size="sm"
@@ -1672,7 +1672,7 @@ export default function PostEditor({
                             key={lang}
                             label={`Age Limit Note (${lang.toUpperCase()})`}
                             rows={2}
-                            value={post[`age_limit_note_${lang}`]}
+                            value={String(post[`age_limit_note_${lang}`] ?? "")}
                             onChange={(event) => updateJobPost(postIndex, `age_limit_note_${lang}`, event.target.value)}
                             fullWidth
                             size="sm"
@@ -1726,7 +1726,7 @@ export default function PostEditor({
                                 <Input
                                   key={lang}
                                   label={`Category (${lang.toUpperCase()})`}
-                                  value={fee[`category_name_${lang}`]}
+                                  value={String(fee[`category_name_${lang}`] ?? "")}
                                   onChange={(event) => updateJobPostFee(postIndex, feeIndex, `category_name_${lang}`, event.target.value)}
                                   fullWidth
                                   size="sm"
@@ -1762,7 +1762,7 @@ export default function PostEditor({
                                   key={lang}
                                   label={`Fee Note (${lang.toUpperCase()})`}
                                   rows={2}
-                                  value={fee[`fee_note_${lang}`]}
+                                  value={String(fee[`fee_note_${lang}`] ?? "")}
                                   onChange={(event) => updateJobPostFee(postIndex, feeIndex, `fee_note_${lang}`, event.target.value)}
                                   fullWidth
                                   size="sm"
@@ -1827,7 +1827,7 @@ export default function PostEditor({
                                 key={lang}
                                 label={`Qualification (${lang.toUpperCase()})`}
                                 rows={3}
-                                value={education[`qualification_${lang}`]}
+                                value={String(education[`qualification_${lang}`] ?? "")}
                                 onChange={(event) => updateJobPostEducation(postIndex, educationIndex, `qualification_${lang}`, event.target.value)}
                                 fullWidth
                                 size="sm"

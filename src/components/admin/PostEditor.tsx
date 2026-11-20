@@ -1138,7 +1138,7 @@ export default function PostEditor({
             <div className="post-editor-section-title-row">
               <h2>Post Information</h2>
               <div className="post-editor-language-switch" role="group" aria-label="Visible content language">
-                {([activeLanguage] as const).map((lang) => (
+                {(["en", "mr", "hi"] as const).map((lang) => (
                   <button key={lang} type="button" className={activeLanguage === lang ? "active" : ""} aria-pressed={activeLanguage === lang} onClick={() => setActiveLanguage(lang)}>
                     {lang === "en" ? "English" : lang === "mr" ? "Marathi" : "Hindi"}
                   </button>
@@ -1194,6 +1194,7 @@ export default function PostEditor({
               </label>
             </div>
             <div className="post-editor-grid">
+{activeLanguage === "en" && (
               <label>
                 Title (English) *
                 <input
@@ -1203,7 +1204,9 @@ export default function PostEditor({
                   onChange={(event) => update("title_en", event.target.value)}
                 />
               </label>
-              <label>
+
+              )}
+                            <label>
                 URL Slug
                 <input
                   value={form.slug}
@@ -1211,6 +1214,7 @@ export default function PostEditor({
                   placeholder="Generated from English title"
                 />
               </label>
+{activeLanguage === "mr" && (
               <label>
                 Title (Marathi)
                 <input
@@ -1218,6 +1222,9 @@ export default function PostEditor({
                   onChange={(event) => update("title_mr", event.target.value)}
                 />
               </label>
+
+              )}
+              {activeLanguage === "hi" && (
               <label>
                 Title (Hindi)
                 <input
@@ -1225,7 +1232,10 @@ export default function PostEditor({
                   onChange={(event) => update("title_hi", event.target.value)}
                 />
               </label>
-            </div>
+
+              )}
+                          </div>
+{activeLanguage === "en" && (
             <label>
               Short Description (English)
               <textarea
@@ -1234,7 +1244,10 @@ export default function PostEditor({
                 onChange={(event) => update("summary_en", event.target.value)}
               />
             </label>
-            <div className="post-editor-grid">
+
+              )}
+                          <div className="post-editor-grid">
+{activeLanguage === "mr" && (
               <label>
                 Short Description (Marathi)
                 <textarea
@@ -1243,6 +1256,9 @@ export default function PostEditor({
                   onChange={(event) => update("summary_mr", event.target.value)}
                 />
               </label>
+
+              )}
+              {activeLanguage === "hi" && (
               <label>
                 Short Description (Hindi)
                 <textarea
@@ -1251,7 +1267,10 @@ export default function PostEditor({
                   onChange={(event) => update("summary_hi", event.target.value)}
                 />
               </label>
-            </div>
+
+              )}
+                          </div>
+{activeLanguage === "en" && (
             <label>
               Full Content (English)
               <textarea
@@ -1260,7 +1279,10 @@ export default function PostEditor({
                 onChange={(event) => update("body_en", event.target.value)}
               />
             </label>
-            <div className="post-editor-grid">
+
+              )}
+                          <div className="post-editor-grid">
+{activeLanguage === "mr" && (
               <label>
                 Full Content (Marathi)
                 <textarea
@@ -1269,6 +1291,9 @@ export default function PostEditor({
                   onChange={(event) => update("body_mr", event.target.value)}
                 />
               </label>
+
+              )}
+              {activeLanguage === "hi" && (
               <label>
                 Full Content (Hindi)
                 <textarea
@@ -1277,7 +1302,9 @@ export default function PostEditor({
                   onChange={(event) => update("body_hi", event.target.value)}
                 />
               </label>
-            </div>
+
+              )}
+                          </div>
             <div className="post-editor-grid post-editor-location-row">
               <label>
                 Location

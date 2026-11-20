@@ -990,6 +990,20 @@
   gap: 4px;
 }
 
+.post-editor-fee-translation .post-editor-translation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.post-editor-fee-translation .post-editor-show-translations {
+  flex: 0 0 auto;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 .post-editor-fee-fields {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

@@ -408,6 +408,15 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             endDate: "",
             eventDate: "",
             importantDates: [] as ImportantDate[],
+            importantLinks: [] as {
+              label_en: string;
+              label_mr: string;
+              label_hi: string;
+              action_text_en: string;
+              action_text_mr: string;
+              action_text_hi: string;
+              url: string;
+            }[],
             jobDetails: undefined,
           }
         : null;
@@ -468,6 +477,17 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           endDate: item.end_date || "",
           eventDate: item.event_date || "",
           importantDates: item.important_dates || [],
+          importantLinks: (item.important_links || [])
+            .filter((entry) => entry.is_active !== false && Boolean(entry.url))
+            .map((entry) => ({
+              label_en: entry.name_en || "",
+              label_mr: entry.name_mr || "",
+              label_hi: entry.name_hi || "",
+              action_text_en: entry.action_text_en || "Click Here",
+              action_text_mr: entry.action_text_mr || "",
+              action_text_hi: entry.action_text_hi || "",
+              url: entry.url,
+            })),
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
@@ -1017,35 +1037,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                         </div>
                       ) : null}
 
-                      {post.jobDetails.important_links.length ? (
-                        <div className="portal-job-detail-group">
-                          <h2>{getDetailLabel("importantLinks", language)}</h2>
-                          {post.jobDetails.important_links.map(
-                            (entry, index) => (
-                              <div
-                                className="portal-job-detail-row"
-                                key={index}
-                              >
-                                <strong>
-                                  {getLocalizedText(
-                                    language,
-                                    entry.label_en,
-                                    entry.label_mr,
-                                    entry.label_hi,
-                                  )}
-                                </strong>
-                                <a
-                                  href={entry.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  {entry.url}
-                                </a>
-                              </div>
-                            ),
-                          )}
-                        </div>
-                      ) : null}
+
                     </section>
                   ) : null}
 
@@ -1139,6 +1131,42 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             </div>
                           );
                         })}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  {post.importantLinks.length ? (
+                    <section className="portal-important-links">
+                      <div className="portal-important-dates-heading">
+                        <h2>{getDetailLabel("importantLinks", language)}</h2>
+                      </div>
+                      <div className="portal-important-links-list">
+                        {post.importantLinks.map((entry, index) => (
+                          <div className="portal-important-link-item" key={index}>
+                            <strong>
+                              {getLocalizedText(
+                                language,
+                                entry.label_en,
+                                entry.label_mr,
+                                entry.label_hi,
+                              )}
+                            </strong>
+                            <a
+                              className="portal-important-link-action"
+                              href={entry.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {getLocalizedText(
+                                language,
+                                entry.action_text_en || "Click Here",
+                                entry.action_text_mr,
+                                entry.action_text_hi,
+                              ) || "Click Here"}
+                              <span aria-hidden="true">↗</span>
+                            </a>
+                          </div>
+                        ))}
                       </div>
                     </section>
                   ) : null}

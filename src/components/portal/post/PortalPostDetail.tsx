@@ -1,8 +1,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePortalData, type ImportantDate, type PostFAQ } from "../data/portal-data";
+import { usePortalData, type ImportantDate, type Item, type PostFAQ } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { PortalFooter } from "../layout/footer/PortalFooter";
 import { PortalContentNotFound } from "./PortalContentNotFound";
@@ -37,6 +38,17 @@ const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
   results: "result",
   "admit-cards": "admit",
   guides: "guide",
+  tools: "tool",
+};
+
+const categoryItemTypes: Record<CategorySlug, Item["type"]> = {
+  jobs: "job",
+  schemes: "scheme",
+  examination: "examination",
+  results: "result",
+  "admit-cards": "admit",
+  guides: "guide",
+  videos: "video",
   tools: "tool",
 };
 
@@ -591,6 +603,24 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
     ? getCategoryTitle(categoryRecord, language as CategoryLanguage)
     : "";
 
+  const categoryPosts = useMemo(
+    () => data.items.filter((item) => item.type === categoryItemTypes[category]),
+    [category, data.items],
+  );
+  const hasViewedCategoryPosts = categoryPosts.some(
+    (item) => Number(item.views_count) > 0,
+  );
+  const recommendedPosts = useMemo(() => {
+    const sorted = [...categoryPosts].sort((a, b) => {
+      if (hasViewedCategoryPosts) {
+        return (Number(b.views_count) || 0) - (Number(a.views_count) || 0)
+          || b.date.localeCompare(a.date);
+      }
+      return b.date.localeCompare(a.date);
+    });
+    return sorted.slice(0, 8);
+  }, [categoryPosts, hasViewedCategoryPosts]);
+
   const jobAgeDetails = post?.jobDetails;
   const jobDetails = post?.jobDetails;
 
@@ -733,7 +763,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       <main className="portal-post-detail">
         <div className="portal-post-detail-inner">
           <div
-            className={`content-layout ${post && !data.loading ? "has-sidebar" : "no-sidebar"}`}
+            className={`content-layout ${!data.loading && (post || recommendedPosts.length > 0) ? "has-sidebar" : "no-sidebar"}`}
           >
             <div className="post-detail-main">
               {data.loading ? (
@@ -1322,9 +1352,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
               )}
             </div>
 
-            {/* RIGHT SIDE: Important Links - only when post exists */}
-            {post && !data.loading && (
+            {/* Right sidebar: useful links for a post, or category recommendations for a 404. */}
+            {!data.loading && (post || recommendedPosts.length > 0) && (
               <aside className="right-column">
+                {post ? (
+                <>
                 <section className="panelin important-panel">
                   <div className="section-heading">
                     <h2>{t("usefulLinks")}</h2>
@@ -1364,6 +1396,31 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                     {t("contactButton")}
                   </Button>
                 </section>
+                </>
+                ) : (
+                  <section className="panelin not-found-recommendations">
+                    <div className="section-heading">
+                      <h2>{hasViewedCategoryPosts ? "Most Viewed" : "Latest"} {label || category}</h2>
+                      <span>{hasViewedCategoryPosts ? "Popular posts" : "Recent posts"}</span>
+                    </div>
+                    <div className="not-found-post-list">
+                      {recommendedPosts.map((item, index) => (
+                        <Link
+                          className="not-found-post-link"
+                          href={`/${category}/${item.slug || createPostSlug(item.title)}`}
+                          key={item.id}
+                        >
+                          <span className="not-found-post-rank">{index + 1}</span>
+                          <span className="not-found-post-copy">
+                            <strong>{getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) || item.title}</strong>
+                            <small>{(Number(item.views_count) || 0).toLocaleString("en-IN")} views</small>
+                          </span>
+                          <b aria-hidden="true">›</b>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                )}
               </aside>
             )}
           </div>

@@ -1118,9 +1118,21 @@
 
 
 /* Shared job qualification: default language on the left, translations on the right */
+.post-editor-common-education .post-editor-translation-heading h4 {
+  margin: 0 0 2px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+.post-editor-common-education .post-editor-translation-heading small {
+  display: block;
+  color: #7b8797;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 500;
+}
 .post-editor-common-education-fields {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 12px;
 }

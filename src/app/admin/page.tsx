@@ -99,6 +99,7 @@ export default function AdminPage() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [statsAnimationKey, setStatsAnimationKey] = useState(0);
   const [busyPost, setBusyPost] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminPost | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -143,6 +144,7 @@ export default function AdminPage() {
         new Date(b.created_at || b.published_at || 0).getTime() -
         new Date(a.created_at || a.published_at || 0).getTime()
       ));
+      setStatsAnimationKey((value) => value + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load posts.");
     } finally {
@@ -172,6 +174,7 @@ export default function AdminPage() {
           setWebsiteViewsCount(Number(payload.website_views_count) || 0);
           setWebsiteVisitorsCount(Number(payload.website_visitors_count) || 0);
           setPostVisitorsCount(Number(payload.post_visitors_count) || 0);
+          setStatsAnimationKey((value) => value + 1);
         }
       })
       .catch((err) => {
@@ -418,7 +421,7 @@ export default function AdminPage() {
                   {item.analytics ? (
                     <button type="button" onClick={() => openWebsiteAnalytics(item.analytics!)} aria-label={`View ${item.label.toLowerCase()} details`}>
                       <span>{item.label}<small className="admin-stat-open-indicator" aria-hidden="true">↗</small></span>
-                      <strong><AnimatedNumber value={item.value} /></strong>
+                      <strong><AnimatedNumber key={`${item.label}-${statsAnimationKey}`} value={item.value} /></strong>
                     </button>
                   ) : (
                     <><span>{item.label}</span><strong><AnimatedNumber value={item.value} /></strong></>

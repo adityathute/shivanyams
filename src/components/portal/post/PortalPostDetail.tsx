@@ -902,9 +902,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                               jobDetails.application_fee != null &&
                               String(jobDetails.application_fee).trim(),
                             );
-                            const showPostFees =
-                              !hasCommonFee &&
-                              rows.some((row) => row.fees.length);
+                            const showPostFees = rows.some(
+                              (row) => row.fees.length > 0,
+                            );
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,

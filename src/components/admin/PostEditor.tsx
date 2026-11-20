@@ -2323,7 +2323,7 @@ export default function PostEditor({
                   });
                 });
               return (
-                <details className="post-editor-repeat-card post-editor-collapsible post-editor-link-group" key={groupKey} open>
+                <details className="post-editor-repeat-card post-editor-collapsible post-editor-link-group" key={groupKey}>
                   <summary className="post-editor-card-summary">
                     <span>
                       <strong>{first.name_en || `Important Link Group ${groupIndex + 1}`}</strong>

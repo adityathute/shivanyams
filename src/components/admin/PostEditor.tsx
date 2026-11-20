@@ -1606,7 +1606,6 @@ export default function PostEditor({
                     </div>
 
                     {details.education_mode === "per_post" ? (
-                      <>
                       <section className="post-editor-post-detail-section post-editor-education-section">
                       <div className="post-editor-subsection-heading">
                         <div><h4>Educational Qualification</h4><small>Post-specific eligibility conditions</small></div>
@@ -1640,7 +1639,7 @@ export default function PostEditor({
                           </div>
                         </details>
                       ))}
-                      </>
+                      </section>
                     ) : null}
 
                     <h4>Age Criteria</h4>
@@ -1724,6 +1723,8 @@ export default function PostEditor({
                         </div>
                       </details>
                     ))}
+
+                    </section>
 
                     <div className="post-editor-card-actions post-editor-post-actions">
                       <button

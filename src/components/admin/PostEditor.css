@@ -1857,9 +1857,9 @@ padding-right: 24px;
 .post-editor-faqs { display: grid; gap: 12px; min-width: 0; }
 .post-editor-faqs .post-editor-section-heading { align-items: center; }
 .post-editor-faqs .post-editor-section-heading > button { flex: 0 0 auto; }
-.post-editor-faq-fields { display: grid; gap: 16px; min-width: 0; padding: 16px; }
+.post-editor-faq-fields { display: grid; gap: 16px; min-width: 0; }
 .post-editor-faq-fields > .post-editor-link-translation { display: grid; gap: 9px; min-width: 0; }
-.post-editor-faq-fields .post-editor-translation-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.post-editor-faq-fields .post-editor-translation-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-right: 0; }
 .post-editor-faq-fields .post-editor-show-translations { flex: 0 0 auto; white-space: nowrap; }
 .post-editor-faq-fields .shivanya-input-wrapper, .post-editor-faq-fields .shivanya-textarea-wrapper { width: 100%; min-width: 0; }
 @media (max-width: 600px) { .post-editor-faq-fields { padding: 12px; } .post-editor-faq-fields .post-editor-translation-heading { align-items: flex-start; flex-wrap: wrap; } }

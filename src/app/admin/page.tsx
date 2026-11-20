@@ -257,7 +257,6 @@ export default function AdminPage() {
     const columns = [
       "id",
       "title_en",
-      "title_mr",
       "slug",
       "category",
       "category_slug",
@@ -273,7 +272,6 @@ export default function AdminPage() {
     const rows = sortedPosts.map((post) => [
       post.id,
       post.title_en,
-      post.title_mr ?? "",
       post.slug,
       post.category.name_en,
       post.category.slug,

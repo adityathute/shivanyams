@@ -1091,3 +1091,68 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Jobs Details: clearer education mode tabs and compact application status */
+.post-editor-job-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.post-editor-job-heading-actions > .shivanya-checkbox {
+  margin: 0;
+  flex: 0 0 auto;
+}
+.post-editor-job-heading-actions .post-editor-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 10px;
+  background: var(--surface-muted, #f3f4f6);
+}
+.post-editor-job-heading-actions .post-editor-mode-switch > span {
+  padding: 0 8px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.post-editor-job-heading-actions .post-editor-mode-switch button {
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.post-editor-job-heading-actions .post-editor-mode-switch button:hover {
+  background: var(--surface, #fff);
+  border-color: var(--border, #d1d5db);
+}
+.post-editor-job-heading-actions .post-editor-mode-switch button.active {
+  background: var(--surface, #fff);
+  border-color: var(--border, #cbd5e1);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  color: var(--text, #111827);
+}
+.post-editor-common-education {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 16px;
+  padding: 14px;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 12px;
+  background: var(--surface-muted, #f9fafb);
+}
+@media (max-width: 680px) {
+  .post-editor-job-heading-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}

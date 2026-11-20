@@ -409,13 +409,11 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             eventDate: "",
             importantDates: [] as ImportantDate[],
             importantLinks: [] as {
+              group_key: string;
               label_en: string;
               label_mr: string;
               label_hi: string;
-              action_text_en: string;
-              action_text_mr: string;
-              action_text_hi: string;
-              url: string;
+              actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[];
             }[],
             jobDetails: undefined,
           }
@@ -477,17 +475,19 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
           endDate: item.end_date || "",
           eventDate: item.event_date || "",
           importantDates: item.important_dates || [],
-          importantLinks: (item.important_links || [])
-            .filter((entry) => entry.is_active !== false && Boolean(entry.url))
-            .map((entry) => ({
-              label_en: entry.name_en || "",
-              label_mr: entry.name_mr || "",
-              label_hi: entry.name_hi || "",
-              action_text_en: entry.action_text_en || "Click Here",
-              action_text_mr: entry.action_text_mr || "",
-              action_text_hi: entry.action_text_hi || "",
-              url: entry.url,
-            })),
+          importantLinks: (() => {
+            const groups = new Map<string, { group_key: string; label_en: string; label_mr: string; label_hi: string; actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[] }>();
+            (item.important_links || []).filter((entry) => entry.is_active !== false && Boolean(entry.url)).forEach((entry, index) => {
+              const key = entry.group_key || `legacy-${index}`;
+              let group = groups.get(key);
+              if (!group) {
+                group = { group_key: key, label_en: entry.name_en || "", label_mr: entry.name_mr || "", label_hi: entry.name_hi || "", actions: [] };
+                groups.set(key, group);
+              }
+              group.actions.push({ action_text_en: entry.action_text_en || "Click Here", action_text_mr: entry.action_text_mr || "", action_text_hi: entry.action_text_hi || "", url: entry.url });
+            });
+            return Array.from(groups.values());
+          })(),
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
@@ -1141,30 +1141,17 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                         <h2>{getDetailLabel("importantLinks", language)}</h2>
                       </div>
                       <div className="portal-important-links-list">
-                        {post.importantLinks.map((entry, index) => (
-                          <div className="portal-important-link-item" key={index}>
-                            <strong>
-                              {getLocalizedText(
-                                language,
-                                entry.label_en,
-                                entry.label_mr,
-                                entry.label_hi,
-                              )}
-                            </strong>
-                            <a
-                              className="portal-important-link-action"
-                              href={entry.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {getLocalizedText(
-                                language,
-                                entry.action_text_en || "Click Here",
-                                entry.action_text_mr,
-                                entry.action_text_hi,
-                              ) || "Click Here"}
-                              <span aria-hidden="true">↗</span>
-                            </a>
+                        {post.importantLinks.map((group) => (
+                          <div className="portal-important-link-item" key={group.group_key}>
+                            <strong>{getLocalizedText(language, group.label_en, group.label_mr, group.label_hi)}</strong>
+                            <div className="portal-important-link-actions">
+                              {group.actions.map((action, actionIndex) => (
+                                <a className="portal-important-link-action" href={action.url} key={actionIndex} target="_blank" rel="noopener noreferrer">
+                                  {getLocalizedText(language, action.action_text_en || "Click Here", action.action_text_mr, action.action_text_hi) || "Click Here"}
+                                  <span aria-hidden="true">↗</span>
+                                </a>
+                              ))}
+                            </div>
                           </div>
                         ))}
                       </div>

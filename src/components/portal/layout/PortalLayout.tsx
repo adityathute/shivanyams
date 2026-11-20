@@ -14,6 +14,7 @@ import SiteMobileFooter from "./footer/SiteMobileFooter";
 import { PortalHeader } from "./header/PortalHeader";
 import { getPortalNavigation } from "./sidebar/PortalSidebar";
 import { PortalDataProvider } from "../data/portal-data";
+import { getPortalApiUrl } from "../category/CategoryGrid";
 import {
   PortalLanguageProvider,
   usePortalLanguage,
@@ -40,6 +41,52 @@ function PortalShell({ children }: { children: ReactNode }) {
       document.cookie = `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
     } catch {}
   }, [language]);
+
+  // Record each public route visit for website-wide analytics.
+  useEffect(() => {
+    if (!pathname || pathname.startsWith("/admin")) return;
+
+    let visitorId = "";
+    try {
+      visitorId = localStorage.getItem("shivanyams-visitor-id") || "";
+      if (!visitorId) {
+        visitorId = typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem("shivanyams-visitor-id", visitorId);
+      }
+    } catch {
+      return;
+    }
+
+    const userAgent = navigator.userAgent;
+    const device = /ipad|tablet/i.test(userAgent)
+      ? "tablet"
+      : /mobile|android|iphone/i.test(userAgent)
+        ? "mobile"
+        : "desktop";
+    const csrfToken = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("csrftoken="))
+      ?.split("=")[1];
+
+    void fetch(getPortalApiUrl("website-views/"), {
+      method: "POST",
+      credentials: "include",
+      keepalive: true,
+      headers: {
+        "Content-Type": "application/json",
+        ...(csrfToken ? { "X-CSRFToken": decodeURIComponent(csrfToken) } : {}),
+      },
+      body: JSON.stringify({
+        visitor_id: visitorId,
+        path: pathname,
+        referrer_url: document.referrer,
+        language: document.documentElement.lang || "en",
+        device,
+      }),
+    }).catch((error) => console.error("Website view tracking failed:", error));
+  }, [pathname]);
 
   const navigation = getPortalNavigation(language, loading ? null : user);
 

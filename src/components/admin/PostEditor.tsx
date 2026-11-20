@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { Input, Select, Textarea } from "shivanya-ui";
+import { Checkbox, Input, Select, Textarea } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
 import { slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
@@ -1343,44 +1343,50 @@ export default function PostEditor({
           </section>
           <section>
             <h2>{kind.label} Details</h2>
-            <p className="post-editor-help">
-              Complete the fields for this content category. Optional fields can
-              remain empty.
-            </p>
-
+ 
             {kind.api === "jobs" && (
               <>
-                <label className="post-editor-mode-field">
-                  Educational Qualification Mode
-                  <select
-                    value={String(details.education_mode || "per_post")}
-                    onChange={(event) => updateDetail("education_mode", event.target.value)}
-                  >
-                    <option value="common">Same for all posts</option>
-                    <option value="per_post">Different for each post</option>
-                  </select>
-                </label>
                 <div className="post-editor-job-posts">
-                  <div className="post-editor-section-heading">
-                  <h3>Individual Recruitment Posts</h3>
-                  <button type="button" onClick={addJobPost}>
-                    + Add Post
-                  </button>
-                </div>
-                <div className="post-editor-info-note">
-                  <span className="post-editor-info-icon" aria-hidden="true">i</span>
-                  <p>
-                    Add education, age criteria and application fees for each post.
-                    Matching details will be grouped on the public page, while different
-                    details will be displayed separately.
-                  </p>
-                </div>
-
-                <div className="post-editor-vacancy-total">
-                  <span>Total vacancies</span>
-                  <strong>{((details.posts as JobPostInput[]) || []).reduce((total, post) => total + (post.vacancies ?? 0), 0).toLocaleString("en-IN")}</strong>
-                  <small>Calculated from individual posts</small>
-                </div>
+                  <div className="post-editor-section-heading post-editor-job-heading">
+                    <h3>Individual Recruitment Posts</h3>
+                    <div className="post-editor-job-heading-actions">
+                      <div className="post-editor-mode-switch" role="group" aria-label="Educational qualification mode">
+                        <span>Education</span>
+                        <button
+                          type="button"
+                          className={details.education_mode === "common" ? "active" : ""}
+                          aria-pressed={details.education_mode === "common"}
+                          onClick={() => updateDetail("education_mode", "common")}
+                        >
+                          Same for all
+                        </button>
+                        <button
+                          type="button"
+                          className={details.education_mode !== "common" ? "active" : ""}
+                          aria-pressed={details.education_mode !== "common"}
+                          onClick={() => updateDetail("education_mode", "per_post")}
+                        >
+                          Per post
+                        </button>
+                      </div>
+                      <button type="button" onClick={addJobPost}>+ Add Post</button>
+                    </div>
+                  </div>
+                  <div className="post-editor-job-overview">
+                    <div className="post-editor-info-note">
+                      <span className="post-editor-info-icon" aria-hidden="true">i</span>
+                      <p>
+                        Add education, age criteria and application fees for each post.
+                        Matching details are grouped on the public page; different details
+                        are shown separately.
+                      </p>
+                    </div>
+                    <div className="post-editor-vacancy-total">
+                      <span>Total vacancies</span>
+                      <strong>{((details.posts as JobPostInput[]) || []).reduce((total, post) => total + Number(post.vacancies || 0), 0).toLocaleString("en-IN")}</strong>
+                      <small>From individual posts</small>
+                    </div>
+                  </div>
 
                 {(details.posts as JobPostInput[]).map((post, postIndex) => (
                   <details className="post-editor-repeat-card post-editor-job-post-card post-editor-collapsible" key={postIndex}>
@@ -1390,20 +1396,14 @@ export default function PostEditor({
                     </summary>
                     <div className="post-editor-post-body">
                     <div className="post-editor-grid">
-                      <label>
-                        Post Number *
-                        <input
-                          required
-                          value={post.post_number}
-                          onChange={(event) =>
-                            updateJobPost(
-                              postIndex,
-                              "post_number",
-                              event.target.value,
-                            )
-                          }
-                        />
-                      </label>
+                      <Input
+                        label="Post Number"
+                        required
+                        value={post.post_number}
+                        onChange={(event) => updateJobPost(postIndex, "post_number", event.target.value)}
+                        fullWidth
+                        size="sm"
+                      />
 
                       {([activeLanguage] as const).map((lang) => (
                         <Input
@@ -1424,38 +1424,25 @@ export default function PostEditor({
                       ))}
 
                       {([activeLanguage] as const).map((lang) => (
-                        <label key={lang}>
-                          Department ({lang.toUpperCase()})
-                          <input
-                            value={post[`department_${lang}`]}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                `department_${lang}`,
-                                event.target.value,
-                              )
-                            }
-                          />
-                        </label>
+                        <Input
+                          key={lang}
+                          label={`Department (${lang.toUpperCase()})`}
+                          value={post[`department_${lang}`]}
+                          onChange={(event) => updateJobPost(postIndex, `department_${lang}`, event.target.value)}
+                          fullWidth
+                          size="sm"
+                        />
                       ))}
 
-                      <label>
-                        Vacancies
-                        <input
-                          type="number"
-                          min={0}
-                          value={post.vacancies ?? ""}
-                          onChange={(event) =>
-                            updateJobPost(
-                              postIndex,
-                              "vacancies",
-                              event.target.value === ""
-                                ? null
-                                : Number(event.target.value),
-                            )
-                          }
-                        />
-                      </label>
+                      <Input
+                        type="number"
+                        label="Vacancies"
+                        min={0}
+                        value={post.vacancies ?? ""}
+                        onChange={(event) => updateJobPost(postIndex, "vacancies", event.target.value === "" ? null : Number(event.target.value))}
+                        fullWidth
+                        size="sm"
+                      />
                     </div>
 
                     {details.education_mode === "per_post" ? (
@@ -1474,21 +1461,15 @@ export default function PostEditor({
                           </summary>
                           <div className="post-editor-grid">
                             {([activeLanguage] as const).map((lang) => (
-                              <label key={lang}>
-                                Qualification ({lang.toUpperCase()})
-                                <textarea
-                                  rows={3}
-                                  value={education[`qualification_${lang}`]}
-                                  onChange={(event) =>
-                                    updateJobPostEducation(
-                                      postIndex,
-                                      educationIndex,
-                                      `qualification_${lang}`,
-                                      event.target.value,
-                                    )
-                                  }
-                                />
-                              </label>
+                              <Textarea
+                                key={lang}
+                                label={`Qualification (${lang.toUpperCase()})`}
+                                rows={3}
+                                value={education[`qualification_${lang}`]}
+                                onChange={(event) => updateJobPostEducation(postIndex, educationIndex, `qualification_${lang}`, event.target.value)}
+                                fullWidth
+                                size="sm"
+                              />
                             ))}
                           </div>
                           <div className="post-editor-card-actions">
@@ -1503,28 +1484,17 @@ export default function PostEditor({
 
                     <h4>Age Criteria</h4>
                     <div className="post-editor-grid">
-                      <label>
-                        Age Criteria
-                        <select
-                          value={post.age_criteria_type}
-                          onChange={(event) =>
-                            updateJobPost(
-                              postIndex,
-                              "age_criteria_type",
-                              event.target.value,
-                            )
-                          }
-                        >
-                          <option value="">
-                            Select age criteria for this post
-                          </option>
-                          {DETAIL_OPTIONS.age_criteria_type.map((option) => (
-                            <option key={option} value={option}>
-                              {detailLabel(option)}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
+                      <Select
+                        label="Age Criteria"
+                        value={post.age_criteria_type}
+                        options={[
+                          { value: "", label: "Select age criteria for this post" },
+                          ...DETAIL_OPTIONS.age_criteria_type.map((option) => ({ value: option, label: detailLabel(option) })),
+                        ]}
+                        onChange={(event) => updateJobPost(postIndex, "age_criteria_type", event.target.value)}
+                        fullWidth
+                        size="sm"
+                      />
 
                       {post.age_criteria_type === "age_range" ||
                       post.age_criteria_type === "minimum_only" ? (

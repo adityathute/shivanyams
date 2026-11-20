@@ -799,14 +799,13 @@
 }
 
 
-/* Educational qualifications - simple text layout */
+/* Educational qualifications */
 .portal-education-details {
   display: grid;
-  gap: 12px;
-  margin: 16px 0 22px;
+  gap: 14px;
+  margin: 20px 0 24px;
   padding: 0;
   border: 0;
-  border-radius: 0;
   background: transparent;
   color: var(--text-primary, #172033);
   box-shadow: none;
@@ -815,22 +814,27 @@
 .portal-education-details h2,
 .portal-education-details h3 {
   margin: 0;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
   color: var(--text-primary, #172033);
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 750;
+  line-height: 1.4;
 }
 
 .portal-education-details .portal-job-detail-row {
   display: block;
   padding: 0;
   border: 0;
+  color: var(--text-secondary, #475569);
+  font-size: 14px;
+  line-height: 1.75;
 }
 
 .portal-education-post-card {
-  padding: 0 0 12px;
+  padding: 0 0 14px;
   border: 0;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 0;
   background: transparent;
 }
 
@@ -840,80 +844,61 @@
 }
 
 .portal-education-post-heading {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 5px;
+  display: block;
   margin: 0 0 8px;
-  padding: 7px 10px;
-  border-left: 3px solid var(--primary, #64748b);
-  border-radius: 0 6px 6px 0;
-  background: var(--surface-muted, rgba(148, 163, 184, 0.08));
-}
-
-.portal-education-post-number {
-  display: inline;
-  min-height: 0;
   padding: 0;
   border: 0;
-  border-radius: 0;
   background: transparent;
-  color: var(--text-primary, #172033);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0;
+  line-height: 1.55;
 }
 
 .portal-education-post-heading strong {
   color: var(--text-primary, #172033);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 750;
-  line-height: 1.55;
+  line-height: inherit;
   overflow-wrap: anywhere;
 }
 
 .portal-education-post-card ul,
 .portal-education-details > .portal-job-detail-row ul {
-  display: block;
+  display: grid;
+  gap: 7px;
   margin: 0;
-  padding-left: 20px;
+  padding: 0 0 0 21px;
   color: var(--text-secondary, #475569);
+  list-style: disc;
 }
 
 .portal-education-post-card li,
 .portal-education-details > .portal-job-detail-row li {
-  margin: 0 0 5px;
-  padding-left: 0;
-  line-height: 1.6;
+  margin: 0;
+  padding-left: 2px;
+  font-size: 14px;
+  line-height: 1.75;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
-.portal-education-post-card li:last-child,
-.portal-education-details > .portal-job-detail-row li:last-child {
-  margin-bottom: 0;
-}
-
-.portal-education-post-card li::marker {
-  color: var(--primary, #64748b);
+.portal-education-post-card li::marker,
+.portal-education-details > .portal-job-detail-row li::marker {
+  color: var(--text-secondary, #8792a3);
   font-size: 0.9em;
 }
 
 :root[data-theme="dark"] .portal-education-details h2,
 :root[data-theme="dark"] .portal-education-details h3,
-:root[data-theme="dark"] .portal-education-post-number,
 :root[data-theme="dark"] .portal-education-post-heading strong {
   color: var(--text-primary, #f8fafc);
 }
 
+:root[data-theme="dark"] .portal-education-details h2,
+:root[data-theme="dark"] .portal-education-details h3,
 :root[data-theme="dark"] .portal-education-post-card {
   border-color: var(--border-color, #303746);
 }
 
-:root[data-theme="dark"] .portal-education-post-heading {
-  background: rgba(148, 163, 184, 0.07);
-  border-left-color: var(--primary, #94a3b8);
-}
-
+:root[data-theme="dark"] .portal-education-details .portal-job-detail-row,
 :root[data-theme="dark"] .portal-education-post-card ul,
 :root[data-theme="dark"] .portal-education-details > .portal-job-detail-row ul {
   color: var(--text-secondary, #cbd5e1);
@@ -921,13 +906,25 @@
 
 @media (max-width: 600px) {
   .portal-education-details {
-    gap: 10px;
-    margin: 14px 0 18px;
+    gap: 12px;
+    margin: 16px 0 20px;
   }
 
   .portal-education-details h2,
   .portal-education-details h3 {
     font-size: 16px;
+  }
+
+  .portal-education-post-heading strong,
+  .portal-education-post-card li,
+  .portal-education-details > .portal-job-detail-row li,
+  .portal-education-details .portal-job-detail-row {
+    font-size: 13px;
+  }
+
+  .portal-education-post-card ul,
+  .portal-education-details > .portal-job-detail-row ul {
+    padding-left: 19px;
   }
 }
 

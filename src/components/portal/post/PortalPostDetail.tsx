@@ -185,6 +185,16 @@ const detailLabels = {
     mr: "जागा",
     hi: "पद",
   },
+  postNumber: {
+    en: "Post No.",
+    mr: "पद क्र.",
+    hi: "पद क्र.",
+  },
+  postName: {
+    en: "Name of the Post",
+    mr: "पदाचे नाव",
+    hi: "पद का नाम",
+  },
   feeNote: {
     en: "Application Fee Note",
     mr: "अर्ज शुल्क सूचना",
@@ -777,135 +787,158 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                       {jobDetails?.posts?.length ? (
                         <div className="portal-post-wise-details">
                           <h2>{getDetailLabel("postDetails", language)}</h2>
-                          {jobDetails.posts.map((entry, index) => {
-                            const postName = getLocalizedText(
-                              language,
-                              entry.post_name_en,
-                              entry.post_name_mr,
-                              entry.post_name_hi,
-                            );
-                            const qualification = getLocalizedText(
-                              language,
-                              entry.educational_qualification_en,
-                              entry.educational_qualification_mr,
-                              entry.educational_qualification_hi,
-                            );
-                            const department = getLocalizedText(
-                              language,
-                              entry.department_en,
-                              entry.department_mr,
-                              entry.department_hi,
-                            );
-                            const ageType = entry.age_criteria_type;
-                            const ageValue =
-                              ageType === "text_only"
-                                ? ""
-                                : entry.age_min != null && entry.age_max != null
-                                  ? `${entry.age_min} – ${entry.age_max} ${getDetailLabel("years", language)}`
-                                  : entry.age_min != null
-                                    ? `${entry.age_min}+ ${getDetailLabel("years", language)}`
-                                    : entry.age_max != null
-                                      ? `${getDetailLabel("upTo", language)} ${entry.age_max} ${getDetailLabel("years", language)}`
-                                      : [
-                                          entry.eligible_dob_from
-                                            ? formatDate(entry.eligible_dob_from, language)
-                                            : "",
-                                          entry.eligible_dob_to
-                                            ? formatDate(entry.eligible_dob_to, language)
-                                            : "",
-                                        ].filter(Boolean).join(" – ");
-                            const ageNote = getLocalizedText(
-                              language,
-                              entry.age_limit_note_en,
-                              entry.age_limit_note_mr,
-                              entry.age_limit_note_hi,
+                          {(() => {
+                            const rows = jobDetails.posts.map((entry) => {
+                              const postName = getLocalizedText(
+                                language,
+                                entry.post_name_en,
+                                entry.post_name_mr,
+                                entry.post_name_hi,
+                              );
+                              const qualification = getLocalizedText(
+                                language,
+                                entry.educational_qualification_en,
+                                entry.educational_qualification_mr,
+                                entry.educational_qualification_hi,
+                              );
+                              const department = getLocalizedText(
+                                language,
+                                entry.department_en,
+                                entry.department_mr,
+                                entry.department_hi,
+                              );
+                              const ageType = entry.age_criteria_type;
+                              const ageValue =
+                                ageType === "text_only"
+                                  ? getLocalizedText(
+                                      language,
+                                      entry.age_limit_note_en,
+                                      entry.age_limit_note_mr,
+                                      entry.age_limit_note_hi,
+                                    )
+                                  : entry.age_min != null && entry.age_max != null
+                                    ? `${entry.age_min} – ${entry.age_max} ${getDetailLabel("years", language)}`
+                                    : entry.age_min != null
+                                      ? `${entry.age_min}+ ${getDetailLabel("years", language)}`
+                                      : entry.age_max != null
+                                        ? `${getDetailLabel("upTo", language)} ${entry.age_max} ${getDetailLabel("years", language)}`
+                                        : [
+                                            entry.eligible_dob_from
+                                              ? formatDate(entry.eligible_dob_from, language)
+                                              : "",
+                                            entry.eligible_dob_to
+                                              ? formatDate(entry.eligible_dob_to, language)
+                                              : "",
+                                          ].filter(Boolean).join(" – ");
+                              const ageNote = getLocalizedText(
+                                language,
+                                entry.age_limit_note_en,
+                                entry.age_limit_note_mr,
+                                entry.age_limit_note_hi,
+                              );
+                              const fees = (entry.fees || []).map((fee) => {
+                                const categoryName = getLocalizedText(
+                                  language,
+                                  fee.category_name_en,
+                                  fee.category_name_mr,
+                                  fee.category_name_hi,
+                                );
+                                const feeNote = getLocalizedText(
+                                  language,
+                                  fee.fee_note_en,
+                                  fee.fee_note_mr,
+                                  fee.fee_note_hi,
+                                );
+                                const amount = fee.fee_amount != null && fee.fee_amount !== ""
+                                  ? `₹${Number(fee.fee_amount).toLocaleString("en-IN")}`
+                                  : "—";
+                                return [categoryName || fee.category_name_en, amount, feeNote]
+                                  .filter(Boolean)
+                                  .join(": ");
+                              });
+                              return {
+                                entry,
+                                postName: postName || entry.post_name_en || "—",
+                                qualification,
+                                department,
+                                ageValue,
+                                ageAsOn: entry.age_as_on_date
+                                  ? formatDate(entry.age_as_on_date, language)
+                                  : "",
+                                ageNote,
+                                fees,
+                              };
+                            });
+
+                            const showDepartment = rows.some((row) => row.department);
+                            const showEducation =
+                              jobDetails.education_mode === "per_post" &&
+                              rows.some((row) => row.qualification);
+                            const showAge =
+                              jobDetails.age_mode === "per_post" &&
+                              rows.some((row) => row.ageValue);
+                            const showAgeAsOn =
+                              jobDetails.age_mode === "per_post" &&
+                              rows.some((row) => row.ageAsOn);
+                            const showAgeNote =
+                              jobDetails.age_mode === "per_post" &&
+                              rows.some((row) => row.ageNote);
+                            const showFees =
+                              jobDetails.fee_mode === "per_post" &&
+                              rows.some((row) => row.fees.length);
+                            const totalVacancies = rows.reduce(
+                              (total, row) => total + (Number(row.entry.vacancies) || 0),
+                              0,
                             );
 
                             return (
-                              <article
-                                className="portal-post-wise-item"
-                                key={entry.id || `${entry.post_number}-${index}`}
-                              >
-                                <h3>
-                                  {entry.post_number ? `${entry.post_number}. ` : ""}
-                                  {postName || entry.post_name_en}
-                                </h3>
-
-                                <div className="portal-post-wise-grid">
-                                  {entry.vacancies != null ? (
-                                    <div>
-                                      <span>{getDetailLabel("vacancies", language)}</span>
-                                      <strong>{entry.vacancies.toLocaleString("en-IN")}</strong>
-                                    </div>
-                                  ) : null}
-                                  {department ? (
-                                    <div>
-                                      <span>{getDetailLabel("department", language)}</span>
-                                      <strong>{department}</strong>
-                                    </div>
-                                  ) : null}
-                                  {jobDetails.education_mode === "per_post" && qualification ? (
-                                    <div className="portal-post-wise-full">
-                                      <span>{getDetailLabel("qualification", language)}</span>
-                                      <strong>{qualification}</strong>
-                                    </div>
-                                  ) : null}
-                                  {jobDetails.age_mode === "per_post" && ageValue ? (
-                                    <div>
-                                      <span>{getDetailLabel("ageLimit", language)}</span>
-                                      <strong>{ageValue}</strong>
-                                    </div>
-                                  ) : null}
-                                  {jobDetails.age_mode === "per_post" && entry.age_as_on_date ? (
-                                    <div>
-                                      <span>{getDetailLabel("ageAsOn", language)}</span>
-                                      <strong>{formatDate(entry.age_as_on_date, language)}</strong>
-                                    </div>
-                                  ) : null}
-                                  {jobDetails.age_mode === "per_post" && ageNote ? (
-                                    <div className="portal-post-wise-full">
-                                      <span>{getDetailLabel(ageType === "text_only" ? "ageLimit" : "ageNote", language)}</span>
-                                      <strong>{ageNote}</strong>
-                                    </div>
-                                  ) : null}
-                                </div>
-
-                                {jobDetails.fee_mode === "per_post" && entry.fees?.length ? (
-                                  <div className="portal-post-wise-fees">
-                                    <h4>{getDetailLabel("fee", language)}</h4>
-                                    {entry.fees.map((fee, feeIndex) => {
-                                      const categoryName = getLocalizedText(
-                                        language,
-                                        fee.category_name_en,
-                                        fee.category_name_mr,
-                                        fee.category_name_hi,
-                                      );
-                                      const feeNote = getLocalizedText(
-                                        language,
-                                        fee.fee_note_en,
-                                        fee.fee_note_mr,
-                                        fee.fee_note_hi,
-                                      );
-                                      return (
-                                        <div
-                                          className="portal-post-wise-fee"
-                                          key={fee.id || `${fee.category_name_en}-${feeIndex}`}
-                                        >
-                                          <strong>{categoryName || fee.category_name_en}</strong>
-                                          <span>
-                                            {fee.fee_amount
-                                              ? `₹${Number(fee.fee_amount).toLocaleString("en-IN")}`
-                                              : "—"}
-                                          </span>
-                                          {feeNote ? <small>{feeNote}</small> : null}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                ) : null}
-                              </article>
+                              <div className="portal-post-wise-table-wrap">
+                                <table className="portal-post-wise-table">
+                                  <thead>
+                                    <tr>
+                                      <th>{getDetailLabel("postNumber", language)}</th>
+                                      <th>{getDetailLabel("postName", language)}</th>
+                                      <th>{getDetailLabel("vacancies", language)}</th>
+                                      {showDepartment ? <th>{getDetailLabel("department", language)}</th> : null}
+                                      {showEducation ? <th>{getDetailLabel("qualification", language)}</th> : null}
+                                      {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
+                                      {showAgeAsOn ? <th>{getDetailLabel("ageAsOn", language)}</th> : null}
+                                      {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
+                                      {showFees ? <th>{getDetailLabel("fee", language)}</th> : null}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {rows.map((row, index) => (
+                                      <tr key={row.entry.id || `${row.entry.post_number}-${index}`}>
+                                        <td>{row.entry.post_number ?? index + 1}</td>
+                                        <td className="portal-post-wise-name">{row.postName}</td>
+                                        <td>{row.entry.vacancies != null ? Number(row.entry.vacancies).toLocaleString("en-IN") : "—"}</td>
+                                        {showDepartment ? <td>{row.department || "—"}</td> : null}
+                                        {showEducation ? <td>{row.qualification || "—"}</td> : null}
+                                        {showAge ? <td>{row.ageValue || "—"}</td> : null}
+                                        {showAgeAsOn ? <td>{row.ageAsOn || "—"}</td> : null}
+                                        {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
+                                        {showFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                  <tfoot>
+                                    <tr>
+                                      <td></td>
+                                      <th>{getDetailLabel("total", language)}</th>
+                                      <th>{totalVacancies.toLocaleString("en-IN")}</th>
+                                      {showDepartment ? <td></td> : null}
+                                      {showEducation ? <td></td> : null}
+                                      {showAge ? <td></td> : null}
+                                      {showAgeAsOn ? <td></td> : null}
+                                      {showAgeNote ? <td></td> : null}
+                                      {showFees ? <td></td> : null}
+                                    </tr>
+                                  </tfoot>
+                                </table>
+                              </div>
                             );
-                          })}
+                          })()}
                         </div>
                       ) : null}
 

@@ -77,7 +77,7 @@ export function PortalLayout({
       config={{
         baseUrl:
           process.env.NEXT_PUBLIC_AUTH_BASE_URL ?? "http://localhost:8000",
-        mode: "token",
+        mode: "cookie",
       }}
     >
       <PortalDataProvider>

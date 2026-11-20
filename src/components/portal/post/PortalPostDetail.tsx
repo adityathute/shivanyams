@@ -872,13 +872,10 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                             const showAge =
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageValue);
-                            const showAgeAsOn =
-                              jobDetails.age_mode === "per_post" &&
-                              rows.some((row) => row.ageAsOn);
                             const showAgeNote =
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageNote);
-                            const showFees =
+                            const showPostFees =
                               jobDetails.fee_mode === "per_post" &&
                               rows.some((row) => row.fees.length);
                             const totalVacancies = rows.reduce(
@@ -897,9 +894,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       {showDepartment ? <th>{getDetailLabel("department", language)}</th> : null}
                                       {showEducation ? <th>{getDetailLabel("qualification", language)}</th> : null}
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
-                                      {showAgeAsOn ? <th>{getDetailLabel("ageAsOn", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
-                                      {showFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -911,9 +906,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                         {showDepartment ? <td>{row.department || "—"}</td> : null}
                                         {showEducation ? <td>{row.qualification || "—"}</td> : null}
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
-                                        {showAgeAsOn ? <td>{row.ageAsOn || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
-                                        {showFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
                                   </tbody>
@@ -925,13 +918,25 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       {showDepartment ? <td></td> : null}
                                       {showEducation ? <td></td> : null}
                                       {showAge ? <td></td> : null}
-                                      {showAgeAsOn ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
-                                      {showFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>
                                 </table>
                               </div>
+                              {showPostFees ? (
+                                <div className="portal-post-wise-fees-common">
+                                  <h3>{getDetailLabel("fee", language)}</h3>
+                                  {rows.filter((row) => row.fees.length).map((row, index) => (
+                                    <div
+                                      className="portal-post-wise-fee-common-row"
+                                      key={row.entry.id || `fee-${row.entry.post_number}-${index}`}
+                                    >
+                                      <strong>{row.postName}</strong>
+                                      <span>{row.fees.join("; ")}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : null}
                             );
                           })()}
                         </div>

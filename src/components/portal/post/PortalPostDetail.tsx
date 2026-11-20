@@ -948,6 +948,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                       {showEducation ? <td></td> : null}
                                       {showAge ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
+                                      {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>
                                 </table>

@@ -844,7 +844,11 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: 5px;
-  margin: 0 0 6px;
+  margin: 0 0 8px;
+  padding: 7px 10px;
+  border-left: 3px solid var(--primary, #64748b);
+  border-radius: 0 6px 6px 0;
+  background: var(--surface-muted, rgba(148, 163, 184, 0.08));
 }
 
 .portal-education-post-number {
@@ -863,8 +867,9 @@
 .portal-education-post-heading strong {
   color: var(--text-primary, #172033);
   font-size: 14px;
-  font-weight: 700;
-  line-height: 1.5;
+  font-weight: 750;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .portal-education-post-card ul,
@@ -889,7 +894,8 @@
 }
 
 .portal-education-post-card li::marker {
-  color: var(--text-secondary, #64748b);
+  color: var(--primary, #64748b);
+  font-size: 0.9em;
 }
 
 :root[data-theme="dark"] .portal-education-details h2,
@@ -901,6 +907,11 @@
 
 :root[data-theme="dark"] .portal-education-post-card {
   border-color: var(--border-color, #303746);
+}
+
+:root[data-theme="dark"] .portal-education-post-heading {
+  background: rgba(148, 163, 184, 0.07);
+  border-left-color: var(--primary, #94a3b8);
 }
 
 :root[data-theme="dark"] .portal-education-post-card ul,

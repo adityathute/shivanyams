@@ -20,6 +20,14 @@ export type ItemType =
   | "video"
   | "tool";
 
+export type JobPostEducation = {
+  id?: number;
+  qualification_en: string;
+  qualification_mr: string;
+  qualification_hi: string;
+  sort_order?: number;
+};
+
 export type JobPostFee = {
   id?: number;
   category_name_en: string;
@@ -56,6 +64,7 @@ export type JobPost = {
   age_limit_note_hi: string;
   sort_order?: number;
   fees: JobPostFee[];
+  educations: JobPostEducation[];
 };
 
 export type JobDetails = {
@@ -68,6 +77,7 @@ export type JobDetails = {
   examination_name: string;
   post_details: string;
   educational_qualification: string;
+  educational_qualifications?: string[];
   location: string;
   age_limit: string;
   age_criteria_type?: string;
@@ -216,6 +226,13 @@ type ApiJobPost = {
   educational_qualification_en?: string;
   educational_qualification_mr?: string;
   educational_qualification_hi?: string;
+  educations?: {
+    id?: number;
+    qualification_en?: string;
+    qualification_mr?: string;
+    qualification_hi?: string;
+    sort_order?: number;
+  }[];
   age_criteria_type?: string;
   age_min?: number | null;
   age_max?: number | null;
@@ -366,10 +383,24 @@ function sameForEveryPost<T>(posts: T[], getValue: (post: T) => unknown) {
 
 function mapPost(post: ApiPost, type: ItemType): Item {
   const job = post.job_details;
-  const postDetailsAreCommon = sameForEveryPost(job?.posts || [], (entry) => [
-    normalizeComparable(entry.educational_qualification_en),
-    normalizeComparable(entry.educational_qualification_mr),
-    normalizeComparable(entry.educational_qualification_hi),
+  const jobPosts = job?.posts || [];
+  const educationIsCommon = sameForEveryPost(jobPosts, (entry) => {
+    const conditions = (entry.educations || [])
+      .map((education) => [
+        normalizeComparable(education.qualification_en),
+        normalizeComparable(education.qualification_mr),
+        normalizeComparable(education.qualification_hi),
+      ])
+      .sort((a, b) => String(a[0]).localeCompare(String(b[0])));
+    return conditions.length
+      ? conditions
+      : [[
+          normalizeComparable(entry.educational_qualification_en),
+          normalizeComparable(entry.educational_qualification_mr),
+          normalizeComparable(entry.educational_qualification_hi),
+        ]];
+  });
+  const ageIsCommon = sameForEveryPost(jobPosts, (entry) => [
     normalizeComparable(entry.age_criteria_type),
     entry.age_min ?? null,
     entry.age_max ?? null,
@@ -379,6 +410,8 @@ function mapPost(post: ApiPost, type: ItemType): Item {
     normalizeComparable(entry.age_limit_note_en),
     normalizeComparable(entry.age_limit_note_mr),
     normalizeComparable(entry.age_limit_note_hi),
+  ]);
+  const feesAreCommon = sameForEveryPost(jobPosts, (entry) =>
     (entry.fees || [])
       .map((fee) => [
         normalizeComparable(fee.category_name_en),
@@ -390,7 +423,7 @@ function mapPost(post: ApiPost, type: ItemType): Item {
         normalizeComparable(fee.fee_note_hi),
       ])
       .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
-  ]);
+  );
 
   return {
     id: String(post.id),
@@ -462,12 +495,22 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             job.total_vacancies == null ? "" : String(job.total_vacancies),
           examination_name: "",
           post_details: job.post_details || job.designation || "",
-          education_mode: postDetailsAreCommon ? "common" : "per_post",
-          age_mode: postDetailsAreCommon ? "common" : "per_post",
-          fee_mode: postDetailsAreCommon ? "common" : "per_post",
+          education_mode: educationIsCommon ? "common" : "per_post",
+          age_mode: ageIsCommon ? "common" : "per_post",
+          fee_mode: feesAreCommon ? "common" : "per_post",
           educational_qualification:
+            job.posts?.[0]?.educations?.[0]?.qualification_en ||
             job.posts?.[0]?.educational_qualification_en ||
             job.educational_qualification || "",
+          educational_qualifications: (job.posts?.[0]?.educations || [])
+            .map((education) => education.qualification_en || "")
+            .filter(Boolean)
+            .length
+            ? (job.posts?.[0]?.educations || [])
+                .map((education) => education.qualification_en || "")
+                .filter(Boolean)
+            : [job.posts?.[0]?.educational_qualification_en || job.educational_qualification || ""]
+                .filter(Boolean),
           location: post.location || "",
           age_limit: [job.posts?.[0]?.age_min, job.posts?.[0]?.age_max]
             .filter((value) => value != null)
@@ -531,6 +574,13 @@ function mapPost(post: ApiPost, type: ItemType): Item {
               post.educational_qualification_mr || "",
             educational_qualification_hi:
               post.educational_qualification_hi || "",
+            educations: (post.educations || []).map((education) => ({
+              id: education.id,
+              qualification_en: education.qualification_en || "",
+              qualification_mr: education.qualification_mr || "",
+              qualification_hi: education.qualification_hi || "",
+              sort_order: education.sort_order ?? 0,
+            })),
             age_criteria_type: post.age_criteria_type || "",
             age_min: post.age_min ?? null,
             age_max: post.age_max ?? null,

@@ -49,6 +49,16 @@ function statusLabel(status: string) {
   return status.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+const compactNumberFormat = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
+  maximumFractionDigits: 1,
+});
+
+function formatCompactNumber(value: number | undefined) {
+  return compactNumberFormat.format(Number(value) || 0);
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -344,9 +354,9 @@ export default function AdminPage() {
                         <td><strong>{post.title_en || post.slug}</strong><small>/{post.slug}</small></td>
                         <td>{kind?.label || post.category.name_en}</td>
                         <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>
-                        <td>{(post.views_count || 0).toLocaleString()}</td>
-                        <td>{(post.unique_visitors_count || 0).toLocaleString()}</td>
-                        <td>{(post.users_count || 0).toLocaleString()}</td>
+                        <td>{formatCompactNumber(post.views_count)}</td>
+                        <td>{formatCompactNumber(post.unique_visitors_count)}</td>
+                        <td>{formatCompactNumber(post.users_count)}</td>
                         <td>{post.created_at ? new Date(post.created_at).toLocaleDateString() : "—"}</td>
                         <td>{post.updated_at ? new Date(post.updated_at).toLocaleDateString() : "—"}</td>
                         <td>

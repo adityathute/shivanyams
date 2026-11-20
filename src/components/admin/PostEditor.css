@@ -240,3 +240,132 @@
   background: #fff;
   color: #1d304b;
 }
+
+/* Compact admin editor layout */
+.post-editor-page {
+  padding: 12px;
+}
+.post-editor-form {
+  gap: 10px;
+}
+.post-editor-form section {
+  padding: 16px;
+  gap: 11px;
+  border-radius: 9px;
+}
+.post-editor-form h2 {
+  font-size: 16px;
+}
+.post-editor-form h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.post-editor-form h4 {
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.post-editor-form label {
+  gap: 5px;
+  font-size: 11px;
+}
+.post-editor-form input,
+.post-editor-form textarea,
+.post-editor-form select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.post-editor-form textarea {
+  line-height: 1.45;
+}
+.post-editor-grid {
+  gap: 10px;
+}
+.post-editor-repeat-card {
+  padding: 11px;
+  gap: 10px;
+}
+.post-editor-collapsible {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+.post-editor-card-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  cursor: pointer;
+  list-style: none;
+  color: #243750;
+  font-size: 12px;
+}
+.post-editor-card-summary::-webkit-details-marker {
+  display: none;
+}
+.post-editor-card-summary::after {
+  content: "+";
+  order: 3;
+  color: #64748b;
+  font-size: 18px;
+  line-height: 1;
+}
+.post-editor-collapsible[open] > .post-editor-card-summary::after {
+  content: "−";
+}
+.post-editor-card-summary > span:first-child {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.post-editor-card-summary strong {
+  font-size: 12px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.post-editor-card-summary small {
+  color: #78879b;
+  font-size: 10px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.post-editor-toggle-hint {
+  color: #718198;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.post-editor-collapsible[open] > :not(summary) {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+.post-editor-collapsible[open] > :last-child {
+  margin-bottom: 12px;
+}
+.post-editor-job-post-card {
+  margin-top: 8px;
+}
+.post-editor-job-post-card > .post-editor-card-summary {
+  background: #f8faff;
+}
+.post-editor-help {
+  padding: 8px 10px;
+  font-size: 11px;
+}
+.post-editor-section-heading button {
+  padding: 7px 9px;
+}
+@media (max-width: 650px) {
+  .post-editor-page {
+    padding: 12px 9px 24px;
+  }
+  .post-editor-form section {
+    padding: 12px;
+  }
+  .post-editor-card-summary {
+    padding: 10px;
+  }
+  .post-editor-toggle-hint {
+    display: none;
+  }
+}

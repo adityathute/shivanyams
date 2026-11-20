@@ -570,6 +570,7 @@ export default function PostEditor({
   const [postInfoLanguages, setPostInfoLanguages] = useState<Record<PostInfoFieldGroup, ContentLanguage[]>>({ title: ["en"], summary: ["en"], body: ["en"] });
   const [commonEducationLanguages, setCommonEducationLanguages] = useState<ContentLanguage[]>(["en"]);
   const [expandedPostLanguages, setExpandedPostLanguages] = useState<number[]>([]);
+  const [expandedEducationLanguages, setExpandedEducationLanguages] = useState<string[]>([]);
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -1619,8 +1620,28 @@ export default function PostEditor({
                           <summary className="post-editor-card-summary">
                             <span><strong>Education condition {educationIndex + 1}</strong><small>{education.qualification_en || "Add qualification details"}</small></span>
                           </summary>
-                          <div className="post-editor-grid">
-                            {([activeLanguage] as const).map((lang) => (
+                          <div className="post-editor-translation-heading">
+                            <span>Qualification</span>
+                            <button
+                              type="button"
+                              className="post-editor-show-translations"
+                              aria-expanded={expandedEducationLanguages.includes(`${postIndex}-${educationIndex}`)}
+                              onClick={() => {
+                                const educationKey = `${postIndex}-${educationIndex}`;
+                                setExpandedEducationLanguages((current) =>
+                                  current.includes(educationKey)
+                                    ? current.filter((key) => key !== educationKey)
+                                    : [...current, educationKey]
+                                );
+                              }}
+                            >
+                              {expandedEducationLanguages.includes(`${postIndex}-${educationIndex}`) ? "Hide other languages" : "+ Show other languages"}
+                            </button>
+                          </div>
+                          <div className="post-editor-grid post-editor-single-column">
+                            {([form.default_language as ContentLanguage, ...(expandedEducationLanguages.includes(`${postIndex}-${educationIndex}`)
+                              ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== form.default_language)
+                              : [])] as ContentLanguage[]).map((lang) => (
                               <Textarea
                                 key={lang}
                                 label={`Qualification (${lang.toUpperCase()})`}

@@ -411,6 +411,8 @@ const EMPTY = {
 };
 
 type FormState = typeof EMPTY;
+type ContentLanguage = "en" | "mr" | "hi";
+type PostInfoFieldGroup = "title" | "summary" | "body";
 
 function detailKeyFor(api: string) {
   return KINDS.find((item) => item.api === api)?.detailKey ?? "job_details";
@@ -560,7 +562,8 @@ export default function PostEditor({
   const [notice, setNotice] = useState("");
 
   const [organizationType, setOrganizationType] = useState("");
-  const [activeLanguage, setActiveLanguage] = useState<"en" | "mr" | "hi">("en");
+  const [activeLanguage, setActiveLanguage] = useState<ContentLanguage>("en");
+  const [postInfoLanguages, setPostInfoLanguages] = useState<Record<PostInfoFieldGroup, ContentLanguage[]>>({ title: ["en"], summary: ["en"], body: ["en"] });
 
   const activeCategory = useMemo(
     () => categories.find((item) => item.slug === kind.slug),
@@ -656,7 +659,9 @@ export default function PostEditor({
           );
         const record = payload as PostRecord;
         setOrganizationType(record.organization_type || "");
-        setActiveLanguage((record.default_language || "en") as "en" | "mr" | "hi");
+        const defaultLanguage = (record.default_language || "en") as ContentLanguage;
+        setActiveLanguage(defaultLanguage);
+        setPostInfoLanguages({ title: [defaultLanguage], summary: [defaultLanguage], body: [defaultLanguage] });
         setForm({
           ...EMPTY,
           title_en: record.title_en || "",
@@ -762,6 +767,14 @@ export default function PostEditor({
     setKind(next);
     const template = detailTemplate(next.api);
     setDetails(template);
+  }
+
+  function togglePostInfoLanguage(group: PostInfoFieldGroup, language: ContentLanguage) {
+    setPostInfoLanguages((current) => {
+      if (language === form.default_language) return current;
+      const visible = current[group];
+      return { ...current, [group]: visible.includes(language) ? visible.filter((item) => item !== language) : [...visible, language] };
+    });
   }
 
   function updateDetail(key: string, value: unknown) {
@@ -1137,13 +1150,6 @@ export default function PostEditor({
           <section>
             <div className="post-editor-section-title-row">
               <h2>Post Information</h2>
-              <div className="post-editor-language-switch" role="group" aria-label="Visible content language">
-                {(["en", "mr", "hi"] as const).map((lang) => (
-                  <button key={lang} type="button" className={activeLanguage === lang ? "active" : ""} aria-pressed={activeLanguage === lang} onClick={() => setActiveLanguage(lang)}>
-                    {lang === "en" ? "English" : lang === "mr" ? "Marathi" : "Hindi"}
-                  </button>
-                ))}
-              </div>
             </div>
             <div className="post-editor-grid post-editor-meta-row">
               <label>
@@ -1167,9 +1173,10 @@ export default function PostEditor({
                 <select
                   value={form.default_language}
                   onChange={(event) => {
-                    const nextLanguage = event.target.value as "en" | "mr" | "hi";
+                    const nextLanguage = event.target.value as ContentLanguage;
                     update("default_language", nextLanguage);
                     setActiveLanguage(nextLanguage);
+                    setPostInfoLanguages({ title: [nextLanguage], summary: [nextLanguage], body: [nextLanguage] });
                   }}
                 >
                   <option value="en">English</option>
@@ -1194,8 +1201,29 @@ export default function PostEditor({
               </label>
               
             </div>
+            <div className="post-editor-translation-controls" role="group" aria-label="Title translations">
+              {(["en", "mr", "hi"] as const).filter((lang) => lang !== form.default_language).map((lang) => (
+                <button key={lang} type="button" className={postInfoLanguages.title.includes(lang) ? "active" : ""} aria-pressed={postInfoLanguages.title.includes(lang)} onClick={() => togglePostInfoLanguage("title", lang)}>
+                  {postInfoLanguages.title.includes(lang) ? "− Hide " : "+ Show "}{lang === "mr" ? "Marathi" : lang === "hi" ? "Hindi" : "English"}
+                </button>
+              ))}
+            </div>
             <div className="post-editor-grid">
-{activeLanguage === "en" && (
+            <div className="post-editor-translation-controls" role="group" aria-label="Short description translations">
+              {(["en", "mr", "hi"] as const).filter((lang) => lang !== form.default_language).map((lang) => (
+                <button key={lang} type="button" className={postInfoLanguages.summary.includes(lang) ? "active" : ""} aria-pressed={postInfoLanguages.summary.includes(lang)} onClick={() => togglePostInfoLanguage("summary", lang)}>
+                  {postInfoLanguages.summary.includes(lang) ? "− Hide " : "+ Show "}{lang === "mr" ? "Marathi" : lang === "hi" ? "Hindi" : "English"}
+                </button>
+              ))}
+            </div>
+            <div className="post-editor-translation-controls" role="group" aria-label="Full content translations">
+              {(["en", "mr", "hi"] as const).filter((lang) => lang !== form.default_language).map((lang) => (
+                <button key={lang} type="button" className={postInfoLanguages.body.includes(lang) ? "active" : ""} aria-pressed={postInfoLanguages.body.includes(lang)} onClick={() => togglePostInfoLanguage("body", lang)}>
+                  {postInfoLanguages.body.includes(lang) ? "− Hide " : "+ Show "}{lang === "mr" ? "Marathi" : lang === "hi" ? "Hindi" : "English"}
+                </button>
+              ))}
+            </div>
+{postInfoLanguages.title.includes("en") && (
               <label>
                 Title (English) *
                 <input
@@ -1215,7 +1243,7 @@ export default function PostEditor({
                   placeholder="Generated from English title"
                 />
               </label>
-{activeLanguage === "mr" && (
+{postInfoLanguages.title.includes("mr") && (
               <label>
                 Title (Marathi)
                 <input
@@ -1225,7 +1253,7 @@ export default function PostEditor({
               </label>
 
               )}
-              {activeLanguage === "hi" && (
+              {postInfoLanguages.title.includes("hi") && (
               <label>
                 Title (Hindi)
                 <input
@@ -1236,9 +1264,9 @@ export default function PostEditor({
 
               )}
                           </div>
-{activeLanguage === "en" && (
-            <label>
-              Short Description (English)
+{postInfoLanguages.summary.includes("en") && (
+              <label>
+                Short Description (English)
               <textarea
                 rows={3}
                 value={form.summary_en}
@@ -1248,7 +1276,7 @@ export default function PostEditor({
 
               )}
                           <div className="post-editor-grid">
-{activeLanguage === "mr" && (
+{postInfoLanguages.summary.includes("mr") && (
               <label>
                 Short Description (Marathi)
                 <textarea
@@ -1259,7 +1287,7 @@ export default function PostEditor({
               </label>
 
               )}
-              {activeLanguage === "hi" && (
+              {postInfoLanguages.summary.includes("hi") && (
               <label>
                 Short Description (Hindi)
                 <textarea
@@ -1271,9 +1299,9 @@ export default function PostEditor({
 
               )}
                           </div>
-{activeLanguage === "en" && (
-            <label>
-              Full Content (English)
+{postInfoLanguages.body.includes("en") && (
+              <label>
+                Full Content (English)
               <textarea
                 rows={8}
                 value={form.body_en}
@@ -1283,7 +1311,7 @@ export default function PostEditor({
 
               )}
                           <div className="post-editor-grid">
-{activeLanguage === "mr" && (
+{postInfoLanguages.body.includes("mr") && (
               <label>
                 Full Content (Marathi)
                 <textarea
@@ -1294,7 +1322,7 @@ export default function PostEditor({
               </label>
 
               )}
-              {activeLanguage === "hi" && (
+              {postInfoLanguages.body.includes("hi") && (
               <label>
                 Full Content (Hindi)
                 <textarea

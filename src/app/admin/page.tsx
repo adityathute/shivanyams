@@ -51,6 +51,7 @@ export default function AdminPage() {
   const { user, loading } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
   const [posts, setPosts] = useState<AdminPost[]>([]);
+  const [usersCount, setUsersCount] = useState(0);
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -110,6 +111,28 @@ export default function AdminPage() {
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
   }, [loading, isAdmin, router]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    let active = true;
+    adminFetch(API_URL + "/admin/stats/", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}));
+          throw new Error(body.detail || "Unable to load user statistics (" + response.status + ").");
+        }
+        return response.json();
+      })
+      .then((payload: { users_count?: number }) => {
+        if (active) setUsersCount(Number(payload.users_count) || 0);
+      })
+      .catch((err) => {
+        if (active) setError(err instanceof Error ? err.message : "Unable to load user statistics.");
+      });
+
+    return () => { active = false; };
+  }, [isAdmin, refreshKey]);
 
   useEffect(() => {
     if (isAdmin) void loadPosts();
@@ -250,10 +273,11 @@ export default function AdminPage() {
             { label: "Pending review", value: counts.review },
             { label: "Total views", value: counts.views },
             { label: "Unique post visitors", value: counts.visitors },
-          ].filter((item) => item.value > 0);
+            { label: "Users", value: usersCount },
+          ];
 
-          return statItems.length > 0 ? (
-            <section className={`admin-stats admin-stats-count-${Math.min(statItems.length, 3)}`}>
+          return (
+            <section className="admin-stats">
               {statItems.map((item) => (
                 <article key={item.label}>
                   <span>{item.label}</span>
@@ -261,7 +285,7 @@ export default function AdminPage() {
                 </article>
               ))}
             </section>
-          ) : null;
+          );
         })()}
 
         <section className="admin-post-panel">

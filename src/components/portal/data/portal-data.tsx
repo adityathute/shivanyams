@@ -70,6 +70,7 @@ export type JobPost = {
 export type JobDetails = {
   posts?: JobPost[];
   education_mode?: "common" | "per_post";
+  education_is_common_field?: boolean;
   age_mode?: "common" | "per_post";
   fee_mode?: "common" | "per_post";
   advertisement_no: string;
@@ -77,7 +78,6 @@ export type JobDetails = {
   examination_name: string;
   post_details: string;
   educational_qualification: string;
-  educational_qualifications?: string[];
   location: string;
   age_limit: string;
   age_criteria_type?: string;
@@ -495,22 +495,19 @@ function mapPost(post: ApiPost, type: ItemType): Item {
             job.total_vacancies == null ? "" : String(job.total_vacancies),
           examination_name: "",
           post_details: job.post_details || job.designation || "",
-          education_mode: educationIsCommon ? "common" : "per_post",
+          education_mode:
+            job.education_mode === "common" || educationIsCommon
+              ? "common"
+              : "per_post",
+          education_is_common_field: job.education_mode === "common",
           age_mode: ageIsCommon ? "common" : "per_post",
           fee_mode: feesAreCommon ? "common" : "per_post",
           educational_qualification:
-            job.posts?.[0]?.educations?.[0]?.qualification_en ||
-            job.posts?.[0]?.educational_qualification_en ||
-            job.educational_qualification || "",
-          educational_qualifications: (job.posts?.[0]?.educations || [])
-            .map((education) => education.qualification_en || "")
-            .filter(Boolean)
-            .length
-            ? (job.posts?.[0]?.educations || [])
-                .map((education) => education.qualification_en || "")
-                .filter(Boolean)
-            : [job.posts?.[0]?.educational_qualification_en || job.educational_qualification || ""]
-                .filter(Boolean),
+            job.education_mode === "common"
+              ? job.educational_qualification || ""
+              : job.posts?.[0]?.educations?.[0]?.qualification_en ||
+                job.posts?.[0]?.educational_qualification_en ||
+                job.educational_qualification || "",
           location: post.location || "",
           age_limit: [job.posts?.[0]?.age_min, job.posts?.[0]?.age_max]
             .filter((value) => value != null)

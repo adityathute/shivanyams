@@ -1730,6 +1730,8 @@ export default function PostEditor({
                   const hiddenJobFields = [
                     "advertisement_no",
                     "application_mode",
+                    "applications_open",
+                    "post_details",
                     "recruitment_type",
                     "department",
                     "designation",

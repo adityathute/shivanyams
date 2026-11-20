@@ -22,6 +22,7 @@ type AdminPost = {
   status: string;
   published_at?: string | null;
   created_at?: string;
+  updated_at?: string;
   views_count?: number;
   unique_visitors_count?: number;
   users_count?: number;
@@ -333,7 +334,7 @@ export default function AdminPage() {
           ) : (
             <div className="admin-table-wrap">
               <table className="admin-post-table">
-                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Visitors</th><th>Users</th><th>Created</th><th>Actions</th></tr></thead>
+                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Visitors</th><th>Users</th><th>Created</th><th>Updated</th><th>Actions</th></tr></thead>
                 <tbody>
                   {visiblePosts.map((post) => {
                     const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
@@ -347,6 +348,7 @@ export default function AdminPage() {
                         <td>{(post.unique_visitors_count || 0).toLocaleString()}</td>
                         <td>{(post.users_count || 0).toLocaleString()}</td>
                         <td>{post.created_at ? new Date(post.created_at).toLocaleDateString() : "—"}</td>
+                        <td>{post.updated_at ? new Date(post.updated_at).toLocaleDateString() : "—"}</td>
                         <td>
                           <div className="admin-row-actions">
                             <Link href={`/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}`} target="_blank">View</Link>

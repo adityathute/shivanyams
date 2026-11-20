@@ -838,3 +838,11 @@
   .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-stats article { padding: 11px 10px; }
 }
+
+/* Keep the compact metric row short even with the polished card styles above. */
+.admin-stats .admin-stat-card {
+  min-height: 72px;
+  height: auto;
+  align-content: center;
+  padding: 10px 9px;
+}

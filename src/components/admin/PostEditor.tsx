@@ -1498,115 +1498,31 @@ export default function PostEditor({
 
                       {post.age_criteria_type === "age_range" ||
                       post.age_criteria_type === "minimum_only" ? (
-                        <label>
-                          Minimum Age
-                          <input
-                            type="number"
-                            min={0}
-                            value={post.age_min ?? ""}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                "age_min",
-                                event.target.value === ""
-                                  ? null
-                                  : Number(event.target.value),
-                              )
-                            }
-                          />
-                        </label>
+                        <Input type="number" label="Minimum Age" min={0} value={post.age_min ?? ""} onChange={(event) => updateJobPost(postIndex, "age_min", event.target.value === "" ? null : Number(event.target.value))} fullWidth size="sm" />
                       ) : null}
 
                       {post.age_criteria_type === "age_range" ||
                       post.age_criteria_type === "maximum_only" ? (
-                        <label>
-                          Maximum Age
-                          <input
-                            type="number"
-                            min={0}
-                            value={post.age_max ?? ""}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                "age_max",
-                                event.target.value === ""
-                                  ? null
-                                  : Number(event.target.value),
-                              )
-                            }
-                          />
-                        </label>
+                        <Input type="number" label="Maximum Age" min={0} value={post.age_max ?? ""} onChange={(event) => updateJobPost(postIndex, "age_max", event.target.value === "" ? null : Number(event.target.value))} fullWidth size="sm" />
                       ) : null}
 
                       {post.age_criteria_type &&
                       !["dob_range", "text_only"].includes(
                         post.age_criteria_type,
                       ) ? (
-                        <label>
-                          Age As On Date
-                          <input
-                            type="date"
-                            value={post.age_as_on_date ?? ""}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                "age_as_on_date",
-                                event.target.value,
-                              )
-                            }
-                          />
-                        </label>
+                        <Input type="date" label="Age As On Date" value={post.age_as_on_date ?? ""} onChange={(event) => updateJobPost(postIndex, "age_as_on_date", event.target.value)} fullWidth size="sm" />
                       ) : null}
 
                       {post.age_criteria_type === "dob_range" ? (
                         <>
-                          <label>
-                            Eligible Date of Birth From
-                            <input
-                              type="date"
-                              value={post.eligible_dob_from ?? ""}
-                              onChange={(event) =>
-                                updateJobPost(
-                                  postIndex,
-                                  "eligible_dob_from",
-                                  event.target.value,
-                                )
-                              }
-                            />
-                          </label>
+                          <Input type="date" label="Eligible Date of Birth From" value={post.eligible_dob_from ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_from", event.target.value)} fullWidth size="sm" />
 
-                          <label>
-                            Eligible Date of Birth To
-                            <input
-                              type="date"
-                              value={post.eligible_dob_to ?? ""}
-                              onChange={(event) =>
-                                updateJobPost(
-                                  postIndex,
-                                  "eligible_dob_to",
-                                  event.target.value,
-                                )
-                              }
-                            />
-                          </label>
+                          <Input type="date" label="Eligible Date of Birth To" value={post.eligible_dob_to ?? ""} onChange={(event) => updateJobPost(postIndex, "eligible_dob_to", event.target.value)} fullWidth size="sm" />
                         </>
                       ) : null}
 
                       {([activeLanguage] as const).map((lang) => (
-                        <label key={lang}>
-                          Age Limit Note ({lang.toUpperCase()})
-                          <textarea
-                            rows={2}
-                            value={post[`age_limit_note_${lang}`]}
-                            onChange={(event) =>
-                              updateJobPost(
-                                postIndex,
-                                `age_limit_note_${lang}`,
-                                event.target.value,
-                              )
-                            }
-                          />
-                        </label>
+                        <Textarea key={lang} label={`Age Limit Note (${lang.toUpperCase()})`} rows={2} value={post[`age_limit_note_${lang}`]} onChange={(event) => updateJobPost(postIndex, `age_limit_note_${lang}`, event.target.value)} fullWidth size="sm" />
                       ))}
                     </div>
 
@@ -1625,56 +1541,13 @@ export default function PostEditor({
 
                         <div className="post-editor-grid">
                           {([activeLanguage] as const).map((lang) => (
-                            <label key={lang}>
-                              Category ({lang.toUpperCase()})
-                              <input
-                                value={fee[`category_name_${lang}`]}
-                                onChange={(event) =>
-                                  updateJobPostFee(
-                                    postIndex,
-                                    feeIndex,
-                                    `category_name_${lang}`,
-                                    event.target.value,
-                                  )
-                                }
-                              />
-                            </label>
+                            <Input key={lang} label={`Category (${lang.toUpperCase()})`} value={fee[`category_name_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `category_name_${lang}`, event.target.value)} fullWidth size="sm" />
                           ))}
 
-                          <label>
-                            Fee Amount
-                            <input
-                              type="number"
-                              min={0}
-                              step="0.01"
-                              value={fee.fee_amount}
-                              onChange={(event) =>
-                                updateJobPostFee(
-                                  postIndex,
-                                  feeIndex,
-                                  "fee_amount",
-                                  event.target.value,
-                                )
-                              }
-                            />
-                          </label>
+                          <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
 
                           {([activeLanguage] as const).map((lang) => (
-                            <label key={lang}>
-                              Fee Note ({lang.toUpperCase()})
-                              <textarea
-                                rows={2}
-                                value={fee[`fee_note_${lang}`]}
-                                onChange={(event) =>
-                                  updateJobPostFee(
-                                    postIndex,
-                                    feeIndex,
-                                    `fee_note_${lang}`,
-                                    event.target.value,
-                                  )
-                                }
-                              />
-                            </label>
+                            <Textarea key={lang} label={`Fee Note (${lang.toUpperCase()})`} rows={2} value={fee[`fee_note_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `fee_note_${lang}`, event.target.value)} fullWidth size="sm" />
                           ))}
                         </div>
 
@@ -1797,107 +1670,76 @@ export default function PostEditor({
                   );
                 if (isBoolean)
                   return (
-                    <label className="post-editor-check" key={key}>
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        onChange={(event) =>
-                          updateDetail(key, event.target.checked)
-                        }
-                      />
-                      {label}
-                    </label>
+                    <Checkbox
+                      key={key}
+                      label={label}
+                      checked={value}
+                      onChange={(event) => updateDetail(key, event.target.checked)}
+                      size="sm"
+                    />
                   );
                 if (DETAIL_OPTIONS[key])
                   return (
-                    <label key={key}>
-                      {label}
-                      <select
-                        value={String(value ?? "")}
-                        onChange={(event) =>
-                          updateDetail(key, event.target.value)
-                        }
-                      >
-                        {DETAIL_OPTIONS[key].map((option) => (
-                          <option key={option} value={option}>
-                            {detailLabel(option)}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    <Select
+                      key={key}
+                      label={label}
+                      value={String(value ?? "")}
+                      options={DETAIL_OPTIONS[key].map((option) => ({ value: option, label: detailLabel(option) }))}
+                      onChange={(event) => updateDetail(key, event.target.value)}
+                      fullWidth
+                      size="sm"
+                    />
                   );
                 if (isArray)
                   return (
-                    <label key={key}>
-                      {label}{" "}
-                      <input
-                        value={value.join(", ")}
-                        onChange={(event) =>
-                          updateDetail(
-                            key,
-                            event.target.value
-                              .split(",")
-                              .map((item) => item.trim())
-                              .filter(Boolean),
-                          )
-                        }
-                        placeholder="Comma-separated values"
-                      />
-                    </label>
+                    <Input
+                      key={key}
+                      label={label}
+                      value={value.join(", ")}
+                      onChange={(event) => updateDetail(key, event.target.value.split(",").map((item) => item.trim()).filter(Boolean))}
+                      placeholder="Comma-separated values"
+                      fullWidth
+                      size="sm"
+                    />
                   );
                 if (isObject)
                   return (
-                    <label className="post-editor-detail-wide" key={key}>
-                      {label}{" "}
-                      <textarea
-                        rows={5}
-                        value={JSON.stringify(value, null, 2)}
-                        onChange={(event) => {
-                          try {
-                            updateDetail(key, JSON.parse(event.target.value));
-                          } catch {
-                            /* Keep the last valid object while typing. */
-                          }
-                        }}
-                      />
-                    </label>
+                    <Textarea
+                      key={key}
+                      label={label}
+                      rows={5}
+                      value={JSON.stringify(value, null, 2)}
+                      onChange={(event) => {
+                        try {
+                          updateDetail(key, JSON.parse(event.target.value));
+                        } catch {
+                          /* Keep the last valid object while typing. */
+                        }
+                      }}
+                      fullWidth
+                      size="sm"
+                    />
                   );
-                return (
-                  <label key={key}>
-                    {label}
-                    {isLongText ? (
-                      <textarea
-                        rows={4}
-                        value={String(value ?? "")}
-                        onChange={(event) =>
-                          updateDetail(key, event.target.value)
-                        }
-                      />
-                    ) : (
-                      <input
-                        type={
-                          isDate
-                            ? "date"
-                            : isNumber
-                              ? "number"
-                              : /url/i.test(key)
-                                ? "url"
-                                : "text"
-                        }
-                        value={value === null ? "" : String(value)}
-                        onChange={(event) =>
-                          updateDetail(
-                            key,
-                            isNumber
-                              ? event.target.value === ""
-                                ? null
-                                : Number(event.target.value)
-                              : event.target.value,
-                          )
-                        }
-                      />
-                    )}
-                  </label>
+                return isLongText ? (
+                  <Textarea
+                    key={key}
+                    label={label}
+                    rows={4}
+                    value={String(value ?? "")}
+                    onChange={(event) => updateDetail(key, event.target.value)}
+                    fullWidth
+                    size="sm"
+                  />
+                ) : (
+                  <Input
+                    key={key}
+                    label={label}
+                    type={isDate ? "date" : isNumber ? "number" : /url/i.test(key) ? "url" : "text"}
+                    value={value === null ? "" : String(value)}
+                    onChange={(event) => updateDetail(key, isNumber ? (event.target.value === "" ? null : Number(event.target.value)) : event.target.value)}
+                    fullWidth
+                    size="sm"
+                  />
                 );
               })}
             </div>

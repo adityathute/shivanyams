@@ -2,6 +2,7 @@ from django.db import transaction
 import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.text import slugify
 from django.db.models import Count, F, Max, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -151,7 +152,21 @@ class AdminSlugAvailability(APIView):
         if exclude_slug:
             queryset = queryset.exclude(slug=exclude_slug)
 
-        return Response({"available": not queryset.exists()})
+        if not queryset.exists():
+            return Response({"available": True, "suggested_slug": slug})
+
+        # Suggest the first globally unused numeric suffix (example: title-2).
+        base_slug = slugify(slug)[:270].rstrip("-") or "post"
+        suffix = 2
+        suggested_slug = f"{base_slug}-{suffix}"
+        while Post.objects.filter(slug=suggested_slug).exclude(slug=exclude_slug).exists():
+            suffix += 1
+            suggested_slug = f"{base_slug}-{suffix}"
+
+        return Response({
+            "available": False,
+            "suggested_slug": suggested_slug,
+        })
 
 
 class AdminContent(viewsets.ModelViewSet):

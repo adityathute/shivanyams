@@ -190,6 +190,11 @@ const detailLabels = {
     mr: "पद क्र.",
     hi: "पद क्र.",
   },
+  post: {
+    en: "Post",
+    mr: "पद",
+    hi: "पद",
+  },
   postName: {
     en: "Name of the Post",
     mr: "पदाचे नाव",

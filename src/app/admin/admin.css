@@ -276,6 +276,13 @@
   font: inherit;
   font-size: 12px;
 }
+.admin-filters select {
+  padding: 5px 12px;
+  height: 40px;
+}
+.shivanya-select-arrow{
+  top: 20px;
+}
 .admin-table-wrap {
   width: 100%;
   overflow-x: auto;
@@ -352,7 +359,6 @@
 .admin-row-actions a,
 .admin-row-actions button {
   border: 0;
-  background: none;
   color: #075be8;
   text-decoration: none;
   font: inherit;
@@ -1426,33 +1432,21 @@
   white-space: nowrap;
 }
 
-.admin-post-table .admin-category-badge.job { background: #2563eb; }
-.admin-post-table .admin-category-badge.scheme { background: #059669; }
-.admin-post-table .admin-category-badge.exam,
-.admin-post-table .admin-category-badge.examination { background: #4f46e5; }
-.admin-post-table .admin-category-badge.result { background: #7c3aed; }
-.admin-post-table .admin-category-badge.admit { background: #0891b2; }
-.admin-post-table .admin-category-badge.guide { background: #d97706; }
-.admin-post-table .admin-category-badge.video { background: #dc2626; }
-.admin-post-table .admin-category-badge.tool { background: #4b5563; }
-
-
 /* Use lightweight outlined category badges: no filled backgrounds. */
 .admin-post-table .admin-category-badge {
   background: transparent !important;
-  border: 1px solid currentColor;
   font-weight: 700;
 }
 
-.admin-post-table .admin-category-badge.job { color: #2563eb; border-color: #2563eb; }
-.admin-post-table .admin-category-badge.scheme { color: #059669; border-color: #059669; }
+.admin-post-table .admin-category-badge.job { color: #2563eb; }
+.admin-post-table .admin-category-badge.scheme { color: #059669; }
 .admin-post-table .admin-category-badge.exam,
-.admin-post-table .admin-category-badge.examination { color: #4f46e5; border-color: #4f46e5; }
-.admin-post-table .admin-category-badge.result { color: #7c3aed; border-color: #7c3aed; }
-.admin-post-table .admin-category-badge.admit { color: #0891b2; border-color: #0891b2; }
-.admin-post-table .admin-category-badge.guide { color: #d97706; border-color: #d97706; }
-.admin-post-table .admin-category-badge.video { color: #dc2626; border-color: #dc2626; }
-.admin-post-table .admin-category-badge.tool { color: #4b5563; border-color: #4b5563; }
+.admin-post-table .admin-category-badge.examination { color: #4f46e5;}
+.admin-post-table .admin-category-badge.result { color: #7c3aed; }
+.admin-post-table .admin-category-badge.admit { color: #0891b2;}
+.admin-post-table .admin-category-badge.guide { color: #d97706; }
+.admin-post-table .admin-category-badge.video { color: #dc2626; }
+.admin-post-table .admin-category-badge.tool { color: #4b5563; }
 
 
 /* Admin post activity, latest update and expanded filters. */
@@ -1464,7 +1458,6 @@
   margin: 0 0 18px;
   padding: 16px 20px;
   border: 1px solid #dce6f4;
-  border-left: 3px solid #7c3aed;
   border-radius: 10px;
   background: #fff;
 }
@@ -1502,7 +1495,6 @@
 .admin-activity-badge {
   display: inline-flex;
   align-items: center;
-  border: 1px solid currentColor;
   border-radius: 30px;
   padding: 4px 8px;
   background: transparent;

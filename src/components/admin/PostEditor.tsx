@@ -769,11 +769,20 @@ export default function PostEditor({
     setDetails(template);
   }
 
-  function togglePostInfoLanguage(group: PostInfoFieldGroup, language: ContentLanguage) {
+  function togglePostInfoLanguages(group: PostInfoFieldGroup) {
     setPostInfoLanguages((current) => {
-      if (language === form.default_language) return current;
-      const visible = current[group];
-      return { ...current, [group]: visible.includes(language) ? visible.filter((item) => item !== language) : [...visible, language] };
+      const otherLanguages = (["en", "mr", "hi"] as const).filter(
+        (language) => language !== form.default_language,
+      );
+      const showingAll = otherLanguages.every((language) =>
+        current[group].includes(language),
+      );
+      return {
+        ...current,
+        [group]: showingAll
+          ? [form.default_language]
+          : [form.default_language, ...otherLanguages],
+      };
     });
   }
 
@@ -1154,17 +1163,9 @@ export default function PostEditor({
             <div className="post-editor-grid post-editor-meta-row">
               <label>
                 Category
-                <select
-                  value={kind.api}
-                  disabled={editing}
-                  onChange={(event) => changeKind(event.target.value)}
-                >
-                  {KINDS.filter((item) =>
-                    categories.some((category) => category.slug === item.slug),
-                  ).map((item) => (
-                    <option key={item.api} value={item.api}>
-                      {item.label}
-                    </option>
+                <select value={kind.api} disabled={editing} onChange={(event) => changeKind(event.target.value)}>
+                  {KINDS.filter((item) => categories.some((category) => category.slug === item.slug)).map((item) => (
+                    <option key={item.api} value={item.api}>{item.label}</option>
                   ))}
                 </select>
               </label>
@@ -1176,11 +1177,7 @@ export default function PostEditor({
                     const nextLanguage = event.target.value as ContentLanguage;
                     update("default_language", nextLanguage);
                     setActiveLanguage(nextLanguage);
-                    setPostInfoLanguages({
-                      title: [nextLanguage],
-                      summary: [nextLanguage],
-                      body: [nextLanguage],
-                    });
+                    setPostInfoLanguages({ title: [nextLanguage], summary: [nextLanguage], body: [nextLanguage] });
                   }}
                 >
                   <option value="en">English</option>
@@ -1190,16 +1187,9 @@ export default function PostEditor({
               </label>
               <label>
                 Government Organization Type
-                <select
-                  value={organizationType}
-                  onChange={(event) => setOrganizationType(event.target.value)}
-                >
+                <select value={organizationType} onChange={(event) => setOrganizationType(event.target.value)}>
                   <option value="">Select organization type (Optional)</option>
-                  {organizationTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
+                  {organizationTypes.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
                 </select>
               </label>
             </div>
@@ -1207,145 +1197,105 @@ export default function PostEditor({
             <div className="post-editor-translation-group">
               <div className="post-editor-translation-heading">
                 <span>Title</span>
-                <div className="post-editor-translation-controls" role="group" aria-label="Title translations">
-                  {(["en", "mr", "hi"] as const).filter((lang) => lang !== form.default_language).map((lang) => (
-                    <button key={lang} type="button" className={postInfoLanguages.title.includes(lang) ? "active" : ""} aria-pressed={postInfoLanguages.title.includes(lang)} onClick={() => togglePostInfoLanguage("title", lang)}>
-                      {postInfoLanguages.title.includes(lang) ? "− Hide " : "+ Show "}{lang === "mr" ? "Marathi" : lang === "hi" ? "Hindi" : "English"}
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  className="post-editor-show-translations"
+                  aria-expanded={postInfoLanguages.title.length === 3}
+                  onClick={() => togglePostInfoLanguages("title")}
+                >
+                  {postInfoLanguages.title.length === 3 ? "− Hide other languages" : "+ Show other languages"}
+                </button>
               </div>
-              <div className="post-editor-grid">
-                {postInfoLanguages.title.includes("en") && (
-                  <label>
-                    Title (English) {form.default_language === "en" ? "*" : ""}
-                    <input
-                      required={form.default_language === "en"}
-                      maxLength={240}
-                      value={form.title_en}
-                      onChange={(event) => update("title_en", event.target.value)}
-                    />
-                  </label>
-                )}
-                {postInfoLanguages.title.includes("mr") && (
-                  <label>
-                    Title (Marathi) {form.default_language === "mr" ? "*" : ""}
-                    <input
-                      required={form.default_language === "mr"}
-                      maxLength={240}
-                      value={form.title_mr}
-                      onChange={(event) => update("title_mr", event.target.value)}
-                    />
-                  </label>
-                )}
-                {postInfoLanguages.title.includes("hi") && (
-                  <label>
-                    Title (Hindi) {form.default_language === "hi" ? "*" : ""}
-                    <input
-                      required={form.default_language === "hi"}
-                      maxLength={240}
-                      value={form.title_hi}
-                      onChange={(event) => update("title_hi", event.target.value)}
-                    />
-                  </label>
-                )}
+              <div className="post-editor-grid post-editor-title-grid">
                 <label>
-                  URL Slug
+                  Title ({form.default_language.toUpperCase()}) *
                   <input
-                    value={form.slug}
-                    onChange={(event) => update("slug", event.target.value)}
-                    placeholder="Generated from English title"
+                    required
+                    maxLength={240}
+                    value={form[`title_${form.default_language}`]}
+                    onChange={(event) => update(`title_${form.default_language}`, event.target.value)}
                   />
                 </label>
+                <label>
+                  URL Slug
+                  <input value={form.slug} onChange={(event) => update("slug", event.target.value)} placeholder="Generated from English title" />
+                </label>
               </div>
+              {postInfoLanguages.title.length === 3 && (
+                <div className="post-editor-grid post-editor-title-translations">
+                  {(["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
+                    <label key={language}>
+                      Title ({language.toUpperCase()})
+                      <input
+                        maxLength={240}
+                        value={form[`title_${language}`]}
+                        onChange={(event) => update(`title_${language}`, event.target.value)}
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="post-editor-translation-group">
               <div className="post-editor-translation-heading">
                 <span>Short Description</span>
-                <div className="post-editor-translation-controls" role="group" aria-label="Short description translations">
-                  {(["en", "mr", "hi"] as const).filter((lang) => lang !== form.default_language).map((lang) => (
-                    <button key={lang} type="button" className={postInfoLanguages.summary.includes(lang) ? "active" : ""} aria-pressed={postInfoLanguages.summary.includes(lang)} onClick={() => togglePostInfoLanguage("summary", lang)}>
-                      {postInfoLanguages.summary.includes(lang) ? "− Hide " : "+ Show "}{lang === "mr" ? "Marathi" : lang === "hi" ? "Hindi" : "English"}
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  className="post-editor-show-translations"
+                  aria-expanded={postInfoLanguages.summary.length === 3}
+                  onClick={() => togglePostInfoLanguages("summary")}
+                >
+                  {postInfoLanguages.summary.length === 3 ? "− Hide other languages" : "+ Show other languages"}
+                </button>
               </div>
-              <div className="post-editor-grid">
-                {postInfoLanguages.summary.includes("en") && (
-                  <label>
-                    Short Description (English)
-                    <textarea rows={3} value={form.summary_en} onChange={(event) => update("summary_en", event.target.value)} />
+              <div className="post-editor-grid post-editor-single-column">
+                <label>
+                  Short Description ({form.default_language.toUpperCase()})
+                  <textarea rows={3} value={form[`summary_${form.default_language}`]} onChange={(event) => update(`summary_${form.default_language}`, event.target.value)} />
+                </label>
+                {postInfoLanguages.summary.length === 3 && (["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
+                  <label key={language}>
+                    Short Description ({language.toUpperCase()})
+                    <textarea rows={3} value={form[`summary_${language}`]} onChange={(event) => update(`summary_${language}`, event.target.value)} />
                   </label>
-                )}
-                {postInfoLanguages.summary.includes("mr") && (
-                  <label>
-                    Short Description (Marathi)
-                    <textarea rows={3} value={form.summary_mr} onChange={(event) => update("summary_mr", event.target.value)} />
-                  </label>
-                )}
-                {postInfoLanguages.summary.includes("hi") && (
-                  <label>
-                    Short Description (Hindi)
-                    <textarea rows={3} value={form.summary_hi} onChange={(event) => update("summary_hi", event.target.value)} />
-                  </label>
-                )}
+                ))}
               </div>
             </div>
 
             <div className="post-editor-translation-group">
               <div className="post-editor-translation-heading">
                 <span>Full Content</span>
-                <div className="post-editor-translation-controls" role="group" aria-label="Full content translations">
-                  {(["en", "mr", "hi"] as const).filter((lang) => lang !== form.default_language).map((lang) => (
-                    <button key={lang} type="button" className={postInfoLanguages.body.includes(lang) ? "active" : ""} aria-pressed={postInfoLanguages.body.includes(lang)} onClick={() => togglePostInfoLanguage("body", lang)}>
-                      {postInfoLanguages.body.includes(lang) ? "− Hide " : "+ Show "}{lang === "mr" ? "Marathi" : lang === "hi" ? "Hindi" : "English"}
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  className="post-editor-show-translations"
+                  aria-expanded={postInfoLanguages.body.length === 3}
+                  onClick={() => togglePostInfoLanguages("body")}
+                >
+                  {postInfoLanguages.body.length === 3 ? "− Hide other languages" : "+ Show other languages"}
+                </button>
               </div>
-              <div className="post-editor-grid">
-                {postInfoLanguages.body.includes("en") && (
-                  <label>
-                    Full Content (English)
-                    <textarea rows={8} value={form.body_en} onChange={(event) => update("body_en", event.target.value)} />
+              <div className="post-editor-grid post-editor-single-column">
+                <label>
+                  Full Content ({form.default_language.toUpperCase()})
+                  <textarea rows={8} value={form[`body_${form.default_language}`]} onChange={(event) => update(`body_${form.default_language}`, event.target.value)} />
+                </label>
+                {postInfoLanguages.body.length === 3 && (["en", "mr", "hi"] as const).filter((language) => language !== form.default_language).map((language) => (
+                  <label key={language}>
+                    Full Content ({language.toUpperCase()})
+                    <textarea rows={6} value={form[`body_${language}`]} onChange={(event) => update(`body_${language}`, event.target.value)} />
                   </label>
-                )}
-                {postInfoLanguages.body.includes("mr") && (
-                  <label>
-                    Full Content (Marathi)
-                    <textarea rows={6} value={form.body_mr} onChange={(event) => update("body_mr", event.target.value)} />
-                  </label>
-                )}
-                {postInfoLanguages.body.includes("hi") && (
-                  <label>
-                    Full Content (Hindi)
-                    <textarea rows={6} value={form.body_hi} onChange={(event) => update("body_hi", event.target.value)} />
-                  </label>
-                )}
+                ))}
               </div>
             </div>
 
             <div className="post-editor-grid post-editor-location-row">
-              <label>
-                Location
-                <input value={form.location} onChange={(event) => update("location", event.target.value)} />
-              </label>
-              <label>
-                State
-                <input value={form.state} onChange={(event) => update("state", event.target.value)} />
-              </label>
-              <label>
-                Country
-                <input value={form.country} onChange={(event) => update("country", event.target.value)} />
-              </label>
+              <label>Location<input value={form.location} onChange={(event) => update("location", event.target.value)} /></label>
+              <label>State<input value={form.state} onChange={(event) => update("state", event.target.value)} /></label>
+              <label>Country<input value={form.country} onChange={(event) => update("country", event.target.value)} /></label>
               <label>
                 Featured Image URL
-                <input
-                  type="url"
-                  value={form.featured_image_url}
-                  onChange={(event) => update("featured_image_url", event.target.value)}
-                />
+                <input type="url" value={form.featured_image_url} onChange={(event) => update("featured_image_url", event.target.value)} />
               </label>
             </div>
           </section>

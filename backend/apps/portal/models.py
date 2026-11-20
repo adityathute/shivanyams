@@ -1510,6 +1510,7 @@ class WebsiteVisitor(models.Model):
     auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
     full_name = models.CharField(max_length=240, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
+    browser = models.CharField(max_length=40, default="Unknown")
     first_seen_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(auto_now=True)
 
@@ -1530,6 +1531,7 @@ class WebsiteView(models.Model):
     auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
     full_name = models.CharField(max_length=240, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
+    browser = models.CharField(max_length=40, default="Unknown")
     language = models.CharField(
         max_length=2,
         choices=LanguageChoices.choices,

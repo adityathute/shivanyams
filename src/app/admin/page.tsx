@@ -254,15 +254,43 @@ export default function AdminPage() {
   }
 
   function exportCsv() {
-    const columns = ["title_en", "slug", "category", "status", "views_count", "unique_visitors_count", "created_at"];
+    const columns = [
+      "id",
+      "title_en",
+      "title_mr",
+      "slug",
+      "category",
+      "category_slug",
+      "status",
+      "is_active",
+      "views_count",
+      "unique_visitors_count",
+      "users_count",
+      "published_at",
+      "created_at",
+      "updated_at",
+    ];
     const rows = sortedPosts.map((post) => [
-      post.title_en, post.slug, post.category.name_en, post.status,
-      post.views_count ?? 0, post.unique_visitors_count ?? 0, post.created_at ?? "",
+      post.id,
+      post.title_en,
+      post.title_mr ?? "",
+      post.slug,
+      post.category.name_en,
+      post.category.slug,
+      post.status,
+      post.is_active ?? "",
+      post.views_count ?? 0,
+      post.unique_visitors_count ?? 0,
+      post.users_count ?? 0,
+      post.published_at ?? "",
+      post.created_at ?? "",
+      post.updated_at ?? "",
     ]);
     const csv = [columns, ...rows].map((row) => row.map((value) =>
-      `"${String(value ?? "").replaceAll('"', '""')}"`
+      `"${String(value ?? "").replaceAll('"', '""')} "`.trimEnd().replace(/"$/, '"')
     ).join(",")).join("\r\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    // UTF-8 BOM helps Excel correctly recognize Marathi/Hindi and other Unicode text.
+    const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;

@@ -984,8 +984,13 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
                                 <div className="portal-job-detail-group portal-education-details">
                                   <h3>{getDetailLabel("qualification", language)}</h3>
                                   {rows.filter((row) => row.educationItems.length).map((row, index) => (
-                                    <div className="portal-job-detail-row" key={row.entry.id || row.entry.post_number || index}>
-                                      <strong>{row.postName}</strong>
+                                    <div className="portal-education-post-card" key={row.entry.id || row.entry.post_number || index}>
+                                      <div className="portal-education-post-heading">
+                                        <span className="portal-education-post-number">
+                                          {getDetailLabel("post", language)} {row.entry.post_number || index + 1}
+                                        </span>
+                                        <strong>{row.postName || "—"}</strong>
+                                      </div>
                                       <ul>
                                         {row.educationItems.map((item, itemIndex) => (
                                           <li key={itemIndex}>{item}</li>

@@ -277,12 +277,18 @@ export default function AdminPage() {
             { label: "Portal users", value: usersCount },
           ];
 
+          const compactNumber = new Intl.NumberFormat("en", {
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: 1,
+          });
+
           return (
             <section className="admin-stats">
               {statItems.map((item) => (
                 <article key={item.label}>
                   <span>{item.label}</span>
-                  <strong>{item.value.toLocaleString()}</strong>
+                  <strong>{compactNumber.format(item.value)}</strong>
                 </article>
               ))}
             </section>

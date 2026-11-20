@@ -1,4 +1,5 @@
 from django.db import transaction
+import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import Count, F, Max, Prefetch, Q
@@ -607,14 +608,40 @@ class TrackWebsiteView(APIView):
         # Use the direct peer address. Do not trust arbitrary X-Forwarded-For
         # headers because they can be supplied by visitors.
         ip_address = request.META.get("REMOTE_ADDR") or None
+        user_agent = request.META.get("HTTP_USER_AGENT", "").lower()
+        if "edg/" in user_agent:
+            browser = "Edge"
+        elif "opr/" in user_agent or "opera" in user_agent:
+            browser = "Opera"
+        elif "samsungbrowser" in user_agent:
+            browser = "Samsung Internet"
+        elif "firefox/" in user_agent:
+            browser = "Firefox"
+        elif "chrome/" in user_agent or "crios/" in user_agent:
+            browser = "Chrome"
+        elif "safari/" in user_agent:
+            browser = "Safari"
+        else:
+            browser = "Other"
+
+        # Authenticated visitors are grouped by account. Anonymous visitors
+        # are grouped by the requested IP + browser + device combination.
+        if auth_user_id:
+            identity_key = "user:" + hashlib.sha256(auth_user_id.encode("utf-8")).hexdigest()
+        elif ip_address:
+            fingerprint = "|".join((ip_address, browser.lower(), device.lower()))
+            identity_key = "anon:" + hashlib.sha256(fingerprint.encode("utf-8")).hexdigest()
+        else:
+            identity_key = "anon-client:" + visitor_id
 
         with transaction.atomic():
             visitor, _ = WebsiteVisitor.objects.get_or_create(
-                visitor_id=visitor_id,
+                visitor_id=identity_key,
                 defaults={
                     "auth_user_id": auth_user_id,
                     "full_name": full_name[:240],
                     "ip_address": ip_address,
+                    "browser": browser,
                 },
             )
             update_fields = ["last_seen_at"]
@@ -627,6 +654,9 @@ class TrackWebsiteView(APIView):
             if ip_address and visitor.ip_address != ip_address:
                 visitor.ip_address = ip_address
                 update_fields.append("ip_address")
+            if browser and visitor.browser != browser:
+                visitor.browser = browser
+                update_fields.append("browser")
             visitor.last_seen_at = timezone.now()
             visitor.save(update_fields=update_fields)
             WebsiteView.objects.create(
@@ -636,6 +666,7 @@ class TrackWebsiteView(APIView):
                 auth_user_id=auth_user_id,
                 full_name=full_name[:240],
                 ip_address=ip_address,
+                browser=browser,
                 language=language,
                 device=device,
             )
@@ -665,6 +696,7 @@ class AdminWebsiteAnalytics(APIView):
                 "visitor_type": "user" if item.auth_user_id else "anonymous",
                 "full_name": item.full_name if item.auth_user_id else "",
                 "ip_address": item.ip_address,
+                "browser": item.browser,
                 "first_seen": item.first_seen_at,
                 "last_seen": item.last_seen_at,
                 "last_viewed": item.last_viewed,
@@ -698,6 +730,7 @@ class AdminWebsiteAnalytics(APIView):
                     "full_name": event.full_name if event.auth_user_id else "",
                     "ip_address": event.ip_address,
                     "visitor_id": event.visitor.visitor_id,
+                    "browser": event.browser,
                     "device": event.device,
                     "language": event.language,
                     "referrer_url": event.referrer_url,

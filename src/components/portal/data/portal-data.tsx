@@ -157,6 +157,9 @@ export type Video = {
   thumbnail: string;
   language: string;
   slug?: string;
+  views_count?: number;
+  date?: string;
+  published_at?: string;
 };
 
 export type PortalData = {

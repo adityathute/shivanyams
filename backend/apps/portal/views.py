@@ -659,6 +659,8 @@ class AdminDashboardStats(APIView):
             "users_count": len(user_ids),
             "website_views_count": WebsiteView.objects.count(),
             "website_visitors_count": WebsiteVisitor.objects.count(),
+            # Count each visitor once across all posts, not once per post.
+            "post_visitors_count": PostVisitor.objects.values("visitor_id").distinct().count(),
         })
 
 

@@ -506,7 +506,7 @@ export default function AdminPage() {
             <header className="admin-analytics-header">
               {(selectedVisitor || selectedAnalyticsPath) && (
                 <IconButton
-                  size="sm"
+                  size="lg"
                   variant="ghost"
                   className="admin-analytics-back-icon"
                   onClick={() => { setSelectedVisitor(null); setVisitorPages([]); setSelectedAnalyticsPath(null); setAnalyticsEvents([]); }}
@@ -521,7 +521,7 @@ export default function AdminPage() {
                 <p>{selectedVisitor ? "Pages visited by this browser or device." : selectedAnalyticsPath ? "Individual visits recorded for this page." : analyticsType === "views" ? "Select a page to inspect its individual page views." : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}</p>
               </div>
               <IconButton
-                size="sm"
+                size="lg"
                 variant="ghost"
                 iconRotateOnHover
                 className="admin-analytics-close"

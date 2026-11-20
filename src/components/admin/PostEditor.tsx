@@ -1342,13 +1342,12 @@ export default function PostEditor({
                 </p>
 
                 {(details.posts as JobPostInput[]).map((post, postIndex) => (
-                  <details className="post-editor-repeat-card post-editor-job-post-card post-editor-collapsible" key={postIndex} open={postIndex === 0}>
+                  <details className="post-editor-repeat-card post-editor-job-post-card post-editor-collapsible" key={postIndex}>
                     <summary className="post-editor-card-summary">
-                      <span><strong>{post.post_number ? `Post ${post.post_number}` : `Post ${postIndex + 1}`} · {post.post_name_en || "Untitled post"}</strong><small>{post.vacancies ?? 0} vacancies · {(post.educations || []).length} education conditions · {(post.fees || []).length} fee categories</small></span>
-                      <span className="post-editor-toggle-hint">Show / Hide</span>
+                      <span><strong>{post.post_number ? `Post ${post.post_number}` : `Post ${postIndex + 1}`} · {post.post_name_en || "Untitled post"}</strong><small>{post.vacancies ?? 0} vacancies <span aria-hidden="true">·</span> {(post.educations || []).length} education <span aria-hidden="true">·</span> {(post.fees || []).length} fee categories</small></span>
+                      
                     </summary>
-                    <h3>Post {postIndex + 1}</h3>
-
+                    <div className="post-editor-post-body">
                     <div className="post-editor-grid">
                       <label>
                         Post Number *
@@ -1419,17 +1418,18 @@ export default function PostEditor({
 
                     {details.education_mode === "per_post" ? (
                       <>
-                      <h4>Educational Qualification / Conditions</h4>
-                      <button
-                        type="button"
-                        onClick={() => addJobPostEducation(postIndex)}
-                      >
-                        + Add Education Condition
-                      </button>
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Educational Qualification</h4><small>Post-specific eligibility conditions</small></div>
+                        <button className="post-editor-add-button" type="button" onClick={() => addJobPostEducation(postIndex)}>
+                          <span aria-hidden="true">＋</span> Add condition
+                        </button>
+                      </div>
   
                       {(post.educations || []).map((education, educationIndex) => (
-                        <div className="post-editor-repeat-card" key={educationIndex}>
-                          <h5>Education Condition {educationIndex + 1}</h5>
+                        <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={educationIndex}>
+                          <summary className="post-editor-card-summary">
+                            <span><strong>Education condition {educationIndex + 1}</strong><small>{education.qualification_en || "Add qualification details"}</small></span>
+                          </summary>
                           <div className="post-editor-grid">
                             {(["en", "mr", "hi"] as const).map((lang) => (
                               <label key={lang}>
@@ -1449,13 +1449,10 @@ export default function PostEditor({
                               </label>
                             ))}
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => removeJobPostEducation(postIndex, educationIndex)}
-                          >
-                            Remove Condition
+                          <button className="post-editor-remove" type="button" onClick={() => removeJobPostEducation(postIndex, educationIndex)}>
+                            Remove condition
                           </button>
-                        </div>
+                        </details>
                       ))}
                       </>
                     ) : null}
@@ -1599,18 +1596,18 @@ export default function PostEditor({
                       ))}
                     </div>
 
-                    <h4>Application Fees</h4>
-
-                    <button
-                      type="button"
-                      onClick={() => addJobPostFee(postIndex)}
-                    >
-                      + Add Fee Category
-                    </button>
+                    <div className="post-editor-subsection-heading">
+                      <div><h4>Application fees</h4><small>Fees can be different for each post</small></div>
+                      <button className="post-editor-add-button" type="button" onClick={() => addJobPostFee(postIndex)}>
+                        <span aria-hidden="true">＋</span> Add fee category
+                      </button>
+                    </div>
 
                     {post.fees.map((fee, feeIndex) => (
-                      <div className="post-editor-repeat-card" key={feeIndex}>
-                        <h5>Fee Category {feeIndex + 1}</h5>
+                      <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={feeIndex}>
+                        <summary className="post-editor-card-summary">
+                          <span><strong>Fee category {feeIndex + 1}</strong><small>{fee.category_name_en || "Add category"}{fee.fee_amount !== "" ? ` · ₹${fee.fee_amount}` : ""}</small></span>
+                        </summary>
 
                         <div className="post-editor-grid">
                           {(["en", "mr", "hi"] as const).map((lang) => (
@@ -1674,7 +1671,7 @@ export default function PostEditor({
                         >
                           Remove Fee Category
                         </button>
-                      </div>
+                      </details>
                     ))}
 
                     <button
@@ -1684,6 +1681,7 @@ export default function PostEditor({
                     >
                       Remove Post
                     </button>
+                    </div>
                   </details>
                 ))}
                 </div>
@@ -1926,7 +1924,7 @@ export default function PostEditor({
                 });
 
               return (
-                <details className="post-editor-repeat-card post-editor-collapsible" key={index} open={index === 0}>
+                <details className="post-editor-repeat-card post-editor-collapsible" key={index}>
                   <summary className="post-editor-card-summary">
                     <span><strong>{item.label_en || `Date ${index + 1}`}</strong><small>{detailLabel(item.date_type)} · {DATE_FORMAT_OPTIONS.find((format) => format.value === item.date_format)?.label || "Date"}</small></span>
                     <span className="post-editor-toggle-hint">Show / Hide</span>

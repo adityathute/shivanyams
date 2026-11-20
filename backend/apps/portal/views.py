@@ -626,7 +626,7 @@ class AdminWebsiteAnalytics(APIView):
             WebsiteView.objects.values("path")
             .annotate(
                 views=Count("id"),
-                unique_visitors=Count("visitor_id", distinct=True),
+                unique_visitors=Count("visitor", distinct=True),
                 last_viewed=Max("viewed_at"),
             )
             .order_by("-views", "path")

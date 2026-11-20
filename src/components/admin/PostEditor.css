@@ -734,3 +734,34 @@
     transition: none;
   }
 }
+
+
+.post-editor-translation-group {
+  display: grid;
+  gap: 9px;
+  padding-top: 12px;
+  border-top: 1px solid #edf1f6;
+}
+.post-editor-translation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.post-editor-translation-heading > span {
+  color: #344a65;
+  font-size: 12px;
+  font-weight: 750;
+}
+.post-editor-translation-heading .post-editor-translation-controls {
+  margin: 0;
+}
+@media (max-width: 520px) {
+  .post-editor-translation-heading {
+    align-items: flex-start;
+  }
+  .post-editor-translation-heading .post-editor-translation-controls {
+    width: 100%;
+  }
+}

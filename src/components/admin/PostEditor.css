@@ -1752,3 +1752,97 @@
     margin-left: auto;
   }
 }
+
+
+/* Grouped Important Links editor */
+.post-editor-important-links .post-editor-section-heading {
+  align-items: flex-start;
+  gap: 16px;
+}
+.post-editor-important-links .post-editor-section-description {
+  margin: 5px 0 0;
+  color: var(--muted, #64748b);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.post-editor-important-links .post-editor-link-group {
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #dce3ed);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+}
+.post-editor-important-links .post-editor-link-group > .post-editor-card-summary {
+  padding: 14px 16px;
+  background: #f7f9fd;
+}
+.post-editor-important-links .post-editor-link-group > .post-editor-important-link-fields {
+  padding: 16px;
+}
+.post-editor-link-actions-editor {
+  display: grid;
+  gap: 11px;
+  min-width: 0;
+}
+.post-editor-link-actions-heading,
+.post-editor-link-action-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.post-editor-link-actions-heading {
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+.post-editor-link-actions-heading strong {
+  color: var(--text-primary, #1e293b);
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+.post-editor-link-actions-heading button {
+  padding: 7px 11px;
+  border: 1px solid #cbdaf1;
+  border-radius: 7px;
+  background: #f1f6ff;
+  color: #2456a6;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.post-editor-link-action-card {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 9px;
+  background: var(--surface-subtle, #fafbfd);
+}
+.post-editor-link-action-topline {
+  color: var(--text-secondary, #64748b);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+.post-editor-link-action-card .post-editor-link-translation {
+  gap: 7px;
+}
+.post-editor-link-action-card .shivanya-input-wrapper {
+  padding-right: 0 !important;
+}
+@media (max-width: 600px) {
+  .post-editor-important-links .post-editor-section-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .post-editor-important-links .post-editor-section-heading > button {
+    align-self: flex-start;
+  }
+  .post-editor-important-links .post-editor-link-group > .post-editor-important-link-fields {
+    padding: 12px;
+  }
+  .post-editor-link-action-card {
+    padding: 11px;
+  }
+}

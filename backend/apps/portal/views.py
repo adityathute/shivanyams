@@ -24,6 +24,8 @@ from .models import (
     PostStatusHistory,
     PostView,
     PostVisitor,
+    WebsiteVisitor,
+    WebsiteView,
     SavedPost,
     PostOrganizationType,
 )
@@ -565,6 +567,77 @@ class TrackPostView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+class TrackWebsiteView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        visitor_id = request.data.get("visitor_id")
+        path = request.data.get("path")
+        if not isinstance(visitor_id, str) or not visitor_id.strip():
+            raise ValidationError({"visitor_id": "A visitor identifier is required."})
+        if not isinstance(path, str) or not path.startswith("/") or len(path) > 1000:
+            raise ValidationError({"path": "A valid website path is required."})
+        visitor_id = visitor_id.strip()
+        if len(visitor_id) > 128:
+            raise ValidationError({"visitor_id": "Maximum length is 128 characters."})
+        if path.startswith("/admin") or path.startswith("/api/"):
+            return Response({"tracked": False})
+
+        language = request.data.get("language", LanguageChoices.ENGLISH)
+        if language not in {choice[0] for choice in LanguageChoices.choices}:
+            language = LanguageChoices.ENGLISH
+        device = request.data.get("device", "unknown")
+        if device not in {"desktop", "mobile", "tablet", "unknown"}:
+            device = "unknown"
+        referrer_url = request.data.get("referrer_url", "")
+        if not isinstance(referrer_url, str):
+            referrer_url = ""
+        auth_user_id = str(request.user.id) if request.user.is_authenticated else ""
+
+        with transaction.atomic():
+            visitor, _ = WebsiteVisitor.objects.get_or_create(
+                visitor_id=visitor_id,
+                defaults={"auth_user_id": auth_user_id},
+            )
+            update_fields = []
+            if auth_user_id and visitor.auth_user_id != auth_user_id:
+                visitor.auth_user_id = auth_user_id
+                update_fields.append("auth_user_id")
+            visitor.last_seen_at = timezone.now()
+            update_fields.append("last_seen_at")
+            visitor.save(update_fields=update_fields)
+            WebsiteView.objects.create(
+                visitor=visitor,
+                path=path,
+                referrer_url=referrer_url[:1000],
+                auth_user_id=auth_user_id,
+                language=language,
+                device=device,
+            )
+        return Response({"tracked": True}, status=status.HTTP_201_CREATED)
+
+
+class AdminWebsiteAnalytics(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        page_rows = (
+            WebsiteView.objects.values("path")
+            .annotate(
+                views=Count("id"),
+                unique_visitors=Count("visitor_id", distinct=True),
+                last_viewed=__import__("django.db.models", fromlist=["Max"]).Max("viewed_at"),
+            )
+            .order_by("-views", "path")
+        )
+        return Response({
+            "views_count": WebsiteView.objects.count(),
+            "visitors_count": WebsiteVisitor.objects.count(),
+            "pages": list(page_rows),
+        })
+
+
 class AdminDashboardStats(APIView):
     permission_classes = [IsPortalAdmin]
 
@@ -582,7 +655,7 @@ class AdminDashboardStats(APIView):
         )
         for identities in identity_queries:
             user_ids.update(identities)
-        return Response({"users_count": len(user_ids)})
+        return Response({\n            "users_count": len(user_ids),\n            "website_views_count": WebsiteView.objects.count(),\n            "website_visitors_count": WebsiteVisitor.objects.count(),\n        })
 
 
 class AdminOrganizationTypes(APIView):

@@ -1231,9 +1231,9 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             )}
           </div>
 
-          <div className="portal-post-category-grid">
-            <CategoryGrid language={language as CategoryLanguage} />
-          </div>
+        </div>
+        <div className="portal-post-category-grid">
+          <CategoryGrid language={language as CategoryLanguage} />
         </div>
       </main>
 

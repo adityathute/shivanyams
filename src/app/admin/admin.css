@@ -1206,13 +1206,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 36px;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   padding: 0;
   border: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   background: transparent;
   color: #475569;
   font-size: inherit;
@@ -1226,20 +1226,20 @@
 }
 
 .admin-analytics-modal > header .admin-analytics-back-icon:hover {
-  background: #ede9fe;
-  color: #4c1d95;
+  background: #ede9fe !important;
+  color: #4c1d95 !important;
 }
 
 .admin-analytics-modal > header .admin-analytics-close:hover {
-  background: #fff1f2;
-  color: #e11d48;
-  border-color: #fecdd3;
+  background: #ffe4e6 !important;
+  color: #e11d48 !important;
 }
 
 .admin-analytics-modal > header .admin-analytics-back-icon svg,
 .admin-analytics-modal > header .admin-analytics-close svg {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.8;
 }
 
 .admin-analytics-modal > header .admin-analytics-close .shivanya-icon-button-icon {
@@ -1252,10 +1252,15 @@
   .admin-analytics-modal > .admin-analytics-header { gap: 8px; }
   .admin-analytics-modal > header .admin-analytics-back-icon,
   .admin-analytics-modal > header .admin-analytics-close {
-    flex-basis: 34px;
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+  .admin-analytics-modal > header .admin-analytics-back-icon svg,
+  .admin-analytics-modal > header .admin-analytics-close svg {
+    width: 21px;
+    height: 21px;
   }
 }
 

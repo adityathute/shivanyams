@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.db.models import F, Prefetch
+from django.db.models import Count, F, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -150,6 +150,13 @@ class AdminContent(viewsets.ModelViewSet):
 
         return (
             Post.objects.filter(category=category)
+            .annotate(
+                users_count=Count(
+                    "view_events__auth_user_id",
+                    filter=~Q(view_events__auth_user_id=""),
+                    distinct=True,
+                )
+            )
             .select_related(
                 "category",
                 "job_details",

@@ -597,7 +597,7 @@ class TrackWebsiteView(APIView):
         user_data = getattr(request.user, "auth_data", {}) if auth_user_id else {}
         full_name = ""
         if isinstance(user_data, dict):
-            full_name = str(user_data.get("full_name") or "").strip()
+            full_name = str(user_data.get("full_name") or user_data.get("name") or "").strip()
             if not full_name:
                 full_name = " ".join(
                     part for part in (

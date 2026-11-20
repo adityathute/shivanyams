@@ -745,3 +745,96 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-stats .admin-stat-card { transition: none; }
 }
+
+
+/* Compact dashboard statistics: keep all nine cards in one desktop row. */
+.admin-stats {
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.admin-stats article {
+  min-width: 0;
+  padding: 12px 10px;
+  gap: 6px;
+  border-radius: 9px;
+}
+.admin-stats span {
+  font-size: 10px;
+  line-height: 1.35;
+  white-space: normal;
+}
+.admin-stats strong {
+  font-size: clamp(17px, 1.55vw, 22px);
+  line-height: 1.15;
+}
+.admin-stats article button {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.admin-stats .admin-stat-open-indicator {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  color: #075be8;
+  font-weight: 700;
+}
+.admin-analytics-back {
+  margin: 0 22px 12px;
+  padding: 7px 11px;
+  border: 1px solid #dbe4f0;
+  border-radius: 7px;
+  background: #fff;
+  color: #36506f;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-analytics-detail { min-width: 0; }
+.admin-visitor-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 14px 22px;
+  margin-bottom: 12px;
+  background: #f6f8fc;
+  border-bottom: 1px solid #e8edf5;
+  color: #5e7088;
+  font-size: 12px;
+}
+.admin-visitor-summary strong {
+  width: 100%;
+  color: #142c4b;
+  font-size: 15px;
+}
+.admin-analytics-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #075be8;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.admin-analytics-link:hover { text-decoration: underline; }
+.admin-analytics-referrer {
+  max-width: 220px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1250px) {
+  .admin-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .admin-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-stats article { padding: 11px 10px; }
+}

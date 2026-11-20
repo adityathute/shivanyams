@@ -1,4 +1,4 @@
-import { JobsPage } from "../../components/portal/JobsPage";
+import { JobsPage } from "../../components/jobs/JobsPage";
 
 export default function Page() {
   return <JobsPage />;

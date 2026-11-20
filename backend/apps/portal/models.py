@@ -1,7 +1,12 @@
+# Validators can be added to individual fields when business rules require them.
 from django.db import models
+from django.db.models import F, Q
+from django.core.exceptions import ValidationError
 
 
-class Timestamped(models.Model):
+class TimestampedModel(models.Model):
+    """Abstract base for records that need creation and update timestamps."""
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -9,24 +14,38 @@ class Timestamped(models.Model):
         abstract = True
 
 
-class Category(Timestamped):
-    name_en = models.CharField(max_length=120)
-    name_mr = models.CharField(max_length=120)
-    name_hi = models.CharField(max_length=120)
+class LanguageChoices(models.TextChoices):
+    ENGLISH = "en", "English"
+    MARATHI = "mr", "Marathi"
+    HINDI = "hi", "Hindi"
 
-    slug = models.SlugField(unique=True)
+
+class Category(TimestampedModel):
+    """The eight top-level portal categories."""
+
+    name_en = models.CharField(max_length=120)
+    name_mr = models.CharField(max_length=120, blank=True)
+    name_hi = models.CharField(max_length=120, blank=True)
+
+    # Canonical category slug is English-only.
+    slug = models.SlugField(max_length=160, unique=True)
 
     description_en = models.TextField(blank=True)
     description_mr = models.TextField(blank=True)
     description_hi = models.TextField(blank=True)
 
-    active = models.BooleanField(default=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("sort_order", "name_en")
+        verbose_name_plural = "categories"
 
     def __str__(self):
         return self.name_en
 
 
-class ImportantLink(Timestamped):
+class ImportantLink(TimestampedModel):
     name_en = models.CharField(max_length=240)
     name_mr = models.CharField(max_length=240)
     name_hi = models.CharField(max_length=240)
@@ -41,164 +60,1471 @@ class ImportantLink(Timestamped):
         return self.name_en
 
 
-class Company(Timestamped):
-    owner_auth_id = models.CharField(max_length=128, db_index=True)
-    name = models.CharField(max_length=180)
-    slug = models.SlugField(unique=True)
-    description = models.TextField(blank=True)
-    website = models.URLField(blank=True)
-    logo_url = models.URLField(blank=True)
-    city = models.CharField(max_length=120, blank=True)
-    state = models.CharField(max_length=120, blank=True)
-    verified = models.BooleanField(default=False)
+class PostOrganizationType(models.TextChoices):
+    """Simple government organization type choices used directly by posts."""
 
-    def __str__(self):
-        return self.name
+    CENTRAL = "central", "Central Government"
+    STATE = "state", "State Government"
+    DISTRICT = "district", "District Administration"
+    LOCAL = "local", "Local Government"
+    PSU = "psu", "Public Sector Undertaking"
+    UNIVERSITY = "university", "Government University"
+    BANK = "bank", "Government Bank"
+    COURT = "court", "Court"
+    OTHER = "other", "Other Government Organization"
 
 
-class Job(Timestamped):
+class Post(TimestampedModel):
+    """
+    Shared content record for Jobs, Schemes, Examination, Admit Card,
+    Results, Articles & Guides, and Videos.
+
+    Translation policy:
+    - title, summary, body and SEO text can be translated.
+    - slug is one canonical English slug.
+    - organization type, location, media URLs, dates and other structured
+      values are shared rather than duplicated by language.
+    """
+
     class Status(models.TextChoices):
-        DRAFT = "draft"
-        PUBLISHED = "published"
-        CLOSED = "closed"
-        ARCHIVED = "archived"
+        DRAFT = "draft", "Draft"
+        PENDING_REVIEW = "pending_review", "Pending Review"
+        CHANGES_REQUESTED = "changes_requested", "Changes Requested"
+        APPROVED = "approved", "Approved"
+        PUBLISHED = "published", "Published"
+        REJECTED = "rejected", "Rejected"
+        ARCHIVED = "archived", "Archived"
 
-    class Employment(models.TextChoices):
-        FULL_TIME = "full_time"
-        PART_TIME = "part_time"
-        CONTRACT = "contract"
-        INTERNSHIP = "internship"
-        REMOTE = "remote"
-
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="jobs")
-    owner_auth_id = models.CharField(max_length=128, db_index=True)
     category = models.ForeignKey(
-        Category, null=True, blank=True, on_delete=models.SET_NULL, related_name="jobs"
+        Category,
+        on_delete=models.PROTECT,
+        related_name="posts",
     )
-    title = models.CharField(max_length=220)
-    slug = models.SlugField(unique=True)
-    description = models.TextField()
-    requirements = models.TextField(blank=True)
-    responsibilities = models.TextField(blank=True)
-    employment_type = models.CharField(
-        max_length=20, choices=Employment.choices, default=Employment.FULL_TIME
+    organization_type = models.CharField(
+        max_length=20,
+        choices=PostOrganizationType.choices,
+        blank=True,
+        default="",
     )
-    experience_min = models.PositiveSmallIntegerField(default=0)
-    experience_max = models.PositiveSmallIntegerField(null=True, blank=True)
-    salary_min = models.DecimalField(
-        max_digits=12, decimal_places=2, null=True, blank=True
-    )
-    salary_max = models.DecimalField(
-        max_digits=12, decimal_places=2, null=True, blank=True
-    )
-    salary_currency = models.CharField(max_length=3, default="INR")
+
+    # External identity from the existing ShivanyaMS Auth system.
+    owner_auth_id = models.CharField(max_length=128, db_index=True)
+
+    title_en = models.CharField(max_length=240)
+    title_mr = models.CharField(max_length=240, blank=True)
+    title_hi = models.CharField(max_length=240, blank=True)
+
+    # Canonical English-only URL slug.
+    slug = models.SlugField(max_length=280, unique=True)
+
+    summary_en = models.TextField(blank=True)
+    summary_mr = models.TextField(blank=True)
+    summary_hi = models.TextField(blank=True)
+
+    body_en = models.TextField(blank=True)
+    body_mr = models.TextField(blank=True)
+    body_hi = models.TextField(blank=True)
+
+    # Shared metadata.
     location = models.CharField(max_length=180, blank=True)
     state = models.CharField(max_length=120, blank=True)
     country = models.CharField(max_length=120, default="India")
-    remote = models.BooleanField(default=False)
-    apply_url = models.URLField(blank=True)
-    apply_email = models.EmailField(blank=True)
-    deadline = models.DateField(null=True, blank=True)
-    status = models.CharField(
-        max_length=12, choices=Status.choices, default=Status.DRAFT
-    )
-    published_at = models.DateTimeField(null=True, blank=True)
-    views = models.PositiveIntegerField(default=0)
 
-    class Meta:
-        ordering = ["-published_at", "-created_at"]
-        indexes = [
-            models.Index(fields=["status", "published_at"]),
-            models.Index(fields=["location", "status"]),
-        ]
-
-    def __str__(self):
-        return self.title
-
-
-class CandidateProfile(Timestamped):
-    auth_user_id = models.CharField(max_length=128, unique=True)
-    name = models.CharField(max_length=180, blank=True)
-    headline = models.CharField(max_length=220, blank=True)
-    phone = models.CharField(max_length=40, blank=True)
-    city = models.CharField(max_length=120, blank=True)
-    resume_url = models.URLField(blank=True)
-    skills = models.JSONField(default=list, blank=True)
-    experience_years = models.DecimalField(max_digits=4, decimal_places=1, default=0)
-
-
-class Application(Timestamped):
-    class Status(models.TextChoices):
-        SUBMITTED = "submitted"
-        REVIEWING = "reviewing"
-        SHORTLISTED = "shortlisted"
-        REJECTED = "rejected"
-        HIRED = "hired"
-        WITHDRAWN = "withdrawn"
-
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="applications")
-    candidate_auth_id = models.CharField(max_length=128, db_index=True)
-    cover_letter = models.TextField(blank=True)
-    resume_url = models.URLField(blank=True)
-    status = models.CharField(
-        max_length=16, choices=Status.choices, default=Status.SUBMITTED
-    )
-    employer_note = models.TextField(blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["job", "candidate_auth_id"],
-                name="unique_job_candidate_application",
-            )
-        ]
-        ordering = ["-created_at"]
-
-
-class SavedJob(Timestamped):
-    candidate_auth_id = models.CharField(max_length=128, db_index=True)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="saved_jobs")
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["candidate_auth_id", "job"], name="unique_candidate_saved_job"
-            )
-        ]
-
-
-class PortalContent(Timestamped):
-    class Kind(models.TextChoices):
-        SCHEME = "scheme"
-        RESULT = "result"
-        ADMIT_CARD = "admit_card"
-        GUIDE = "guide"
-        VIDEO = "video"
-        UPDATE = "update"
-
-    class Status(models.TextChoices):
-        DRAFT = "draft"
-        PUBLISHED = "published"
-        ARCHIVED = "archived"
-
-    kind = models.CharField(max_length=20, choices=Kind.choices)
-    title = models.CharField(max_length=240)
-    slug = models.SlugField(unique=True)
-    summary = models.TextField(blank=True)
-    body = models.TextField(blank=True)
-    organization = models.CharField(max_length=180, blank=True)
-    location = models.CharField(max_length=180, blank=True)
+    featured_image_url = models.URLField(max_length=1000, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     event_date = models.DateField(null=True, blank=True)
-    source_url = models.URLField(blank=True)
-    image_url = models.URLField(blank=True)
-    extra = models.JSONField(default=dict, blank=True)
-    status = models.CharField(
-        max_length=12, choices=Status.choices, default=Status.DRAFT
+
+    default_language = models.CharField(
+        max_length=2,
+        choices=LanguageChoices.choices,
+        default=LanguageChoices.ENGLISH,
     )
+
+    # Review workflow.
+    status = models.CharField(
+        max_length=24,
+        choices=Status.choices,
+        default=Status.DRAFT,
+        db_index=True,
+    )
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by_auth_id = models.CharField(max_length=128, blank=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by_auth_id = models.CharField(max_length=128, blank=True)
+    review_note = models.TextField(blank=True)
+
+    # Publication workflow.
+    scheduled_at = models.DateTimeField(null=True, blank=True)
     published_at = models.DateTimeField(null=True, blank=True)
+    published_by_auth_id = models.CharField(max_length=128, blank=True)
+
+    # Multilingual SEO. Slug remains English-only.
+    meta_title_en = models.CharField(max_length=240, blank=True)
+    meta_title_mr = models.CharField(max_length=240, blank=True)
+    meta_title_hi = models.CharField(max_length=240, blank=True)
+
+    meta_description_en = models.CharField(max_length=320, blank=True)
+    meta_description_mr = models.CharField(max_length=320, blank=True)
+    meta_description_hi = models.CharField(max_length=320, blank=True)
+
+    meta_keywords = models.JSONField(default=list, blank=True)
+
+    # Public interaction controls.
+    comments_enabled = models.BooleanField(default=True)
+    reactions_enabled = models.BooleanField(default=True)
+
+    # Denormalized counters. Update these transactionally in service methods.
+    views_count = models.PositiveBigIntegerField(default=0)
+    unique_visitors_count = models.PositiveBigIntegerField(default=0)
+    likes_count = models.PositiveIntegerField(default=0)
+    dislikes_count = models.PositiveIntegerField(default=0)
+    comments_count = models.PositiveIntegerField(default=0)
+    saves_count = models.PositiveIntegerField(default=0)
+
+    is_featured = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ["-published_at", "-created_at"]
-        indexes = [models.Index(fields=["kind", "status", "published_at"])]
+        ordering = ("-published_at", "-created_at")
+        indexes = [
+            models.Index(fields=("category", "status", "published_at")),
+            models.Index(fields=("status", "created_at")),
+            models.Index(fields=("owner_auth_id", "status")),
+            models.Index(fields=("is_featured", "status")),
+            models.Index(fields=("organization_type", "status")),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    Q(end_date__isnull=True)
+                    | Q(start_date__isnull=True)
+                    | Q(end_date__gte=F("start_date"))
+                ),
+                name="post_end_date_gte_start_date",
+            ),
+        ]
+
+    def __str__(self):
+        return self.title_en
+
+
+class JobDetails(TimestampedModel):
+    """Structured details for government recruitment notifications."""
+
+    class RecruitmentType(models.TextChoices):
+        REGULAR = "regular", "Regular"
+        CONTRACT = "contract", "Contract"
+        APPRENTICESHIP = "apprenticeship", "Apprenticeship"
+        TEMPORARY = "temporary", "Temporary"
+        DEPUTATION = "deputation", "Deputation"
+        OTHER = "other", "Other"
+
+    class ApplicationMode(models.TextChoices):
+        ONLINE = "online", "Online"
+        OFFLINE = "offline", "Offline"
+        BOTH = "both", "Online and Offline"
+        NOT_APPLICABLE = "not_applicable", "Not Applicable"
+
+    class AgeCriteriaType(models.TextChoices):
+        AGE_RANGE = "age_range", "Minimum and Maximum Age"
+        MINIMUM_ONLY = "minimum_only", "Minimum Age Only"
+        MAXIMUM_ONLY = "maximum_only", "Maximum Age Only"
+        DOB_RANGE = "dob_range", "Date of Birth Range"
+        TEXT_ONLY = "text_only", "Text-based Age Criteria"
+
+    class DetailMode(models.TextChoices):
+        COMMON = "common", "Same for all posts"
+        PER_POST = "per_post", "Different for each post"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="job_details",
+    )
+
+    advertisement_no = models.CharField(max_length=120, blank=True)
+    recruitment_type = models.CharField(
+        max_length=20,
+        choices=RecruitmentType.choices,
+        default=RecruitmentType.REGULAR,
+    )
+
+    total_vacancies = models.PositiveIntegerField(null=True, blank=True)
+    department = models.CharField(max_length=240, blank=True)
+    designation = models.CharField(max_length=240, blank=True)
+    post_details = models.TextField(blank=True)
+
+    # Choose whether these details are shared across all posts or entered per post.
+    education_mode = models.CharField(
+        max_length=12,
+        choices=DetailMode.choices,
+        default=DetailMode.COMMON,
+    )
+    age_mode = models.CharField(
+        max_length=12,
+        choices=DetailMode.choices,
+        default=DetailMode.COMMON,
+    )
+    fee_mode = models.CharField(
+        max_length=12,
+        choices=DetailMode.choices,
+        default=DetailMode.COMMON,
+    )
+
+    educational_qualification = models.TextField(blank=True)
+    # Age eligibility configuration
+    # Legacy notification-wide age fields. New recruitment data stores age
+    # eligibility independently on each JobPost.
+    age_criteria_type = models.CharField(
+        max_length=20,
+        choices=AgeCriteriaType.choices,
+        blank=True,
+        default="",
+    )
+
+    # Standard age limits
+    age_min = models.PositiveSmallIntegerField(null=True, blank=True)
+    age_max = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    # Date on which the candidate's age is calculated.
+    # Example: 17 December 2026
+    age_as_on_date = models.DateField(null=True, blank=True)
+
+    # Direct date-of-birth eligibility, when the notification
+    # provides DOB limits instead of age in years.
+    eligible_dob_from = models.DateField(null=True, blank=True)
+    eligible_dob_to = models.DateField(null=True, blank=True)
+
+    # Additional official age instructions in three languages.
+    age_limit_note_en = models.TextField(blank=True)
+    age_limit_note_mr = models.TextField(blank=True)
+    age_limit_note_hi = models.TextField(blank=True)
+
+    application_fee = models.TextField(blank=True)
+
+    application_fee_note_en = models.TextField(blank=True)
+    application_fee_note_mr = models.TextField(blank=True)
+    application_fee_note_hi = models.TextField(blank=True)
+
+    application_mode = models.CharField(
+        max_length=16,
+        choices=ApplicationMode.choices,
+        default=ApplicationMode.ONLINE,
+    )
+
+    apply_url = models.URLField(max_length=1000, blank=True)
+    apply_email = models.EmailField(blank=True)
+    applications_open = models.BooleanField(default=True)
+
+    selection_process = models.TextField(blank=True)
+    exam_pattern = models.TextField(blank=True)
+    syllabus = models.TextField(blank=True)
+    physical_test_details = models.TextField(blank=True)
+    interview_details = models.TextField(blank=True)
+
+    official_notification_url = models.URLField(max_length=1000, blank=True)
+    official_website = models.URLField(max_length=1000, blank=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("recruitment_type", "applications_open")),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    Q(age_min__isnull=True)
+                    | Q(age_max__isnull=True)
+                    | Q(age_max__gte=F("age_min"))
+                ),
+                name="job_age_max_gte_age_min",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(eligible_dob_from__isnull=True)
+                    | Q(eligible_dob_to__isnull=True)
+                    | Q(eligible_dob_to__gte=F("eligible_dob_from"))
+                ),
+                name="job_eligible_dob_range_valid",
+            ),
+        ]
+
+    def clean(self):
+        # Common age fields are retained for backward compatibility only.
+        # New recruitment posts must store their own age criteria on JobPost.
+        super().clean()
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class JobPost(TimestampedModel):
+    """
+    Individual posts within a recruitment notification.
+    Each post can have its own vacancies and age eligibility.
+    """
+
+    job = models.ForeignKey(
+        JobDetails,
+        on_delete=models.CASCADE,
+        related_name="posts",
+    )
+
+    # Post identification
+    post_number = models.CharField(max_length=40)
+    post_name_en = models.CharField(max_length=240)
+    post_name_mr = models.CharField(max_length=240, blank=True)
+    post_name_hi = models.CharField(max_length=240, blank=True)
+
+    # Optional department
+    department_en = models.CharField(max_length=240, blank=True)
+    department_mr = models.CharField(max_length=240, blank=True)
+    department_hi = models.CharField(max_length=240, blank=True)
+
+    vacancies = models.PositiveIntegerField(null=True, blank=True)
+
+    # Educational qualification for this individual post
+    educational_qualification_en = models.TextField(blank=True)
+    educational_qualification_mr = models.TextField(blank=True)
+    educational_qualification_hi = models.TextField(blank=True)
+
+    # Each post owns its age criteria. An empty value means no age criteria
+    # was supplied for this post; it never inherits JobDetails age fields.
+    age_criteria_type = models.CharField(
+        max_length=20,
+        choices=JobDetails.AgeCriteriaType.choices,
+        blank=True,
+        default="",
+    )
+
+    age_min = models.PositiveSmallIntegerField(null=True, blank=True)
+    age_max = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    eligible_dob_from = models.DateField(null=True, blank=True)
+    eligible_dob_to = models.DateField(null=True, blank=True)
+
+    # Age calculation date for this individual post.
+    age_as_on_date = models.DateField(null=True, blank=True)
+
+    age_limit_note_en = models.TextField(blank=True)
+    age_limit_note_mr = models.TextField(blank=True)
+    age_limit_note_hi = models.TextField(blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("job", "post_number"),
+                name="unique_job_post_number",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(age_min__isnull=True)
+                    | Q(age_max__isnull=True)
+                    | Q(age_max__gte=F("age_min"))
+                ),
+                name="job_post_age_max_gte_min",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(eligible_dob_from__isnull=True)
+                    | Q(eligible_dob_to__isnull=True)
+                    | Q(eligible_dob_to__gte=F("eligible_dob_from"))
+                ),
+                name="job_post_dob_range_valid",
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+
+        # Blank means that this individual post has no age criteria entered.
+        # It must never fall back to the notification-wide legacy age fields.
+        if not self.age_criteria_type:
+            if any(
+                [
+                    self.age_min is not None,
+                    self.age_max is not None,
+                    self.age_as_on_date is not None,
+                    self.eligible_dob_from is not None,
+                    self.eligible_dob_to is not None,
+                    (self.age_limit_note_en or "").strip(),
+                    (self.age_limit_note_mr or "").strip(),
+                    (self.age_limit_note_hi or "").strip(),
+                ]
+            ):
+                errors["age_criteria_type"] = (
+                    "Select an age criteria type when entering post-specific age details."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.AGE_RANGE:
+            if self.age_min is None:
+                errors["age_min"] = "Minimum age is required."
+
+            if self.age_max is None:
+                errors["age_max"] = "Maximum age is required."
+
+            if self.eligible_dob_from or self.eligible_dob_to:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for Age Range criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.MINIMUM_ONLY:
+            if self.age_min is None:
+                errors["age_min"] = "Minimum age is required."
+
+            if self.age_max is not None:
+                errors["age_max"] = (
+                    "Maximum age is not allowed for Minimum Only criteria."
+                )
+
+            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for numeric age criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.MAXIMUM_ONLY:
+            if self.age_max is None:
+                errors["age_max"] = "Maximum age is required."
+
+            if self.age_min is not None:
+                errors["age_min"] = (
+                    "Minimum age is not allowed for Maximum Only criteria."
+                )
+
+            if self.eligible_dob_from is not None or self.eligible_dob_to is not None:
+                errors["eligible_dob_from"] = (
+                    "DOB fields are not allowed for numeric age criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.DOB_RANGE:
+            if self.eligible_dob_from is None:
+                errors["eligible_dob_from"] = "Starting DOB is required."
+
+            if self.eligible_dob_to is None:
+                errors["eligible_dob_to"] = "Ending DOB is required."
+
+            if self.age_min is not None or self.age_max is not None:
+                errors["age_min"] = (
+                    "Numeric age fields are not allowed for DOB Range criteria."
+                )
+
+        elif self.age_criteria_type == JobDetails.AgeCriteriaType.TEXT_ONLY:
+            if not any(
+                [
+                    (self.age_limit_note_en or "").strip(),
+                    (self.age_limit_note_mr or "").strip(),
+                    (self.age_limit_note_hi or "").strip(),
+                ]
+            ):
+                errors["age_limit_note_en"] = (
+                    "Age criteria description is required in at least one language."
+                )
+
+            if (
+                self.age_min is not None
+                or self.age_max is not None
+                or self.eligible_dob_from is not None
+                or self.eligible_dob_to is not None
+            ):
+                errors["age_min"] = (
+                    "Numeric age and DOB fields are not allowed for Text Only criteria."
+                )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def __str__(self):
+        return f"{self.post_number} - {self.post_name_en}"
+
+
+class JobPostEducation(TimestampedModel):
+    """
+    One educational eligibility condition for an individual recruitment post.
+    Multiple rows allow OR/alternative qualifications to be listed separately.
+    """
+
+    job_post = models.ForeignKey(
+        JobPost,
+        on_delete=models.CASCADE,
+        related_name="educations",
+    )
+
+    qualification_en = models.TextField(blank=True)
+    qualification_mr = models.TextField(blank=True)
+    qualification_hi = models.TextField(blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+
+    def __str__(self):
+        return f"{self.job_post} - {self.qualification_en[:80]}"
+
+
+class JobPostFee(TimestampedModel):
+    """
+    Category-wise application fees for an individual recruitment post.
+    """
+
+    job_post = models.ForeignKey(
+        JobPost,
+        on_delete=models.CASCADE,
+        related_name="fees",
+    )
+
+    category_name_en = models.CharField(max_length=120)
+    category_name_mr = models.CharField(max_length=120, blank=True)
+    category_name_hi = models.CharField(max_length=120, blank=True)
+
+    fee_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    fee_note_en = models.CharField(max_length=300, blank=True)
+    fee_note_mr = models.CharField(max_length=300, blank=True)
+    fee_note_hi = models.CharField(max_length=300, blank=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("job_post", "category_name_en"),
+                name="unique_job_post_fee_category",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.job_post} - {self.category_name_en}"
+
+
+class JobVacancyBreakdown(TimestampedModel):
+    """Optional category-wise vacancy counts for a government recruitment."""
+
+    job = models.ForeignKey(
+        JobDetails,
+        on_delete=models.CASCADE,
+        related_name="vacancy_breakdowns",
+    )
+
+    category_name_en = models.CharField(max_length=100)
+    category_name_mr = models.CharField(max_length=100, blank=True)
+    category_name_hi = models.CharField(max_length=100, blank=True)
+
+    vacancies = models.PositiveIntegerField(default=0)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("job", "category_name_en"),
+                name="unique_job_vacancy_category",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.job.post.title_en} - {self.category_name_en}"
+
+
+class SchemeDetails(TimestampedModel):
+    """Structured information for government welfare and public schemes."""
+
+    class SchemeType(models.TextChoices):
+        CENTRAL = "central", "Central Government Scheme"
+        STATE = "state", "State Government Scheme"
+        DISTRICT = "district", "District Scheme"
+        EDUCATION = "education", "Education"
+        FARMER = "farmer", "Farmer"
+        EMPLOYMENT = "employment", "Employment"
+        HEALTH = "health", "Health"
+        FINANCIAL = "financial", "Financial Assistance"
+        OTHER = "other", "Other"
+
+    class ApplicationMode(models.TextChoices):
+        ONLINE = "online", "Online"
+        OFFLINE = "offline", "Offline"
+        BOTH = "both", "Online and Offline"
+        NOT_REQUIRED = "not_required", "No Application Required"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="scheme_details",
+    )
+
+    scheme_type = models.CharField(
+        max_length=20,
+        choices=SchemeType.choices,
+        default=SchemeType.OTHER,
+    )
+    beneficiaries = models.TextField(blank=True)
+    eligibility = models.TextField(blank=True)
+    benefits = models.TextField(blank=True)
+    required_documents = models.TextField(blank=True)
+
+    application_mode = models.CharField(
+        max_length=20,
+        choices=ApplicationMode.choices,
+        default=ApplicationMode.ONLINE,
+    )
+    application_url = models.URLField(max_length=1000, blank=True)
+    official_website = models.URLField(max_length=1000, blank=True)
+    helpline_number = models.CharField(max_length=40, blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class ExaminationDetails(TimestampedModel):
+    """Structured information about recruitment and other examinations."""
+
+    class ExamMode(models.TextChoices):
+        ONLINE = "online", "Online"
+        OFFLINE = "offline", "Offline"
+        BOTH = "both", "Online and Offline"
+        OTHER = "other", "Other"
+
+    class ExamType(models.TextChoices):
+        RECRUITMENT = "recruitment", "Recruitment Examination"
+        ENTRANCE = "entrance", "Entrance Examination"
+        DEPARTMENTAL = "departmental", "Departmental Examination"
+        COMPETITIVE = "competitive", "Competitive Examination"
+        OTHER = "other", "Other"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="examination_details",
+    )
+
+    exam_type = models.CharField(
+        max_length=20,
+        choices=ExamType.choices,
+        default=ExamType.RECRUITMENT,
+    )
+    exam_mode = models.CharField(
+        max_length=12,
+        choices=ExamMode.choices,
+        default=ExamMode.OTHER,
+    )
+
+    exam_name = models.CharField(max_length=240, blank=True)
+    conducting_authority = models.CharField(max_length=240, blank=True)
+    exam_duration_minutes = models.PositiveSmallIntegerField(null=True, blank=True)
+    total_marks = models.PositiveIntegerField(null=True, blank=True)
+    passing_marks = models.CharField(max_length=120, blank=True)
+    negative_marking = models.CharField(max_length=120, blank=True)
+
+    exam_pattern = models.TextField(blank=True)
+    syllabus = models.TextField(blank=True)
+    instructions = models.TextField(blank=True)
+    official_website = models.URLField(max_length=1000, blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class AdmitCardDetails(TimestampedModel):
+    """Structured information for hall tickets and admit cards."""
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="admit_card_details",
+    )
+
+    issuing_authority = models.CharField(max_length=240, blank=True)
+    exam_name = models.CharField(max_length=240, blank=True)
+    release_date = models.DateField(null=True, blank=True)
+    examination_date = models.DateField(null=True, blank=True)
+
+    download_url = models.URLField(max_length=1000, blank=True)
+    login_url = models.URLField(max_length=1000, blank=True)
+    official_website = models.URLField(max_length=1000, blank=True)
+
+    required_credentials = models.TextField(blank=True)
+    download_instructions = models.TextField(blank=True)
+    important_instructions = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class ResultDetails(TimestampedModel):
+    """Structured information for examination and recruitment results."""
+
+    class ResultType(models.TextChoices):
+        WRITTEN = "written", "Written Examination"
+        FINAL = "final", "Final Result"
+        MERIT_LIST = "merit_list", "Merit List"
+        CUT_OFF = "cut_off", "Cut-off"
+        ANSWER_KEY = "answer_key", "Answer Key"
+        SCORECARD = "scorecard", "Scorecard"
+        OTHER = "other", "Other"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="result_details",
+    )
+
+    result_type = models.CharField(
+        max_length=20,
+        choices=ResultType.choices,
+        default=ResultType.OTHER,
+    )
+
+    examination_name = models.CharField(max_length=240, blank=True)
+    result_date = models.DateField(null=True, blank=True)
+
+    result_url = models.URLField(max_length=1000, blank=True)
+    merit_list_url = models.URLField(max_length=1000, blank=True)
+    cut_off_url = models.URLField(max_length=1000, blank=True)
+    scorecard_url = models.URLField(max_length=1000, blank=True)
+    official_website = models.URLField(max_length=1000, blank=True)
+
+    instructions = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class ArticleGuideDetails(TimestampedModel):
+    """Additional metadata for articles, explainers and guides."""
+
+    class ArticleType(models.TextChoices):
+        ARTICLE = "article", "Article"
+        HOW_TO = "how_to", "How-to Guide"
+        CAREER = "career", "Career Guidance"
+        PREPARATION = "preparation", "Exam Preparation"
+        INFORMATION = "information", "Informational Guide"
+        OTHER = "other", "Other"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="article_guide_details",
+    )
+
+    article_type = models.CharField(
+        max_length=20,
+        choices=ArticleType.choices,
+        default=ArticleType.ARTICLE,
+    )
+    reading_time_minutes = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+    )
+    source_name = models.CharField(max_length=240, blank=True)
+    source_url = models.URLField(max_length=1000, blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class VideoDetails(TimestampedModel):
+    """Video metadata; the actual media may be hosted externally or in storage."""
+
+    class Provider(models.TextChoices):
+        YOUTUBE = "youtube", "YouTube"
+        VIMEO = "vimeo", "Vimeo"
+        SELF_HOSTED = "self_hosted", "Self Hosted"
+        OTHER = "other", "Other"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="video_details",
+    )
+
+    provider = models.CharField(
+        max_length=20,
+        choices=Provider.choices,
+        default=Provider.YOUTUBE,
+    )
+    video_url = models.URLField(max_length=1000)
+    embed_url = models.URLField(max_length=1000, blank=True)
+    thumbnail_url = models.URLField(max_length=1000, blank=True)
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True)
+
+    # Language codes for available audio/subtitle versions.
+    available_languages = models.JSONField(default=list, blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class ToolDetails(TimestampedModel):
+    """Configuration and metadata for tools built into ShivanyaMS."""
+
+    class ToolType(models.TextChoices):
+        CALCULATOR = "calculator", "Calculator"
+        CHECKER = "checker", "Eligibility Checker"
+        CONVERTER = "converter", "Converter"
+        GENERATOR = "generator", "Generator"
+        OTHER = "other", "Other"
+
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="tool_details",
+    )
+
+    tool_key = models.SlugField(max_length=120, unique=True)
+    tool_type = models.CharField(
+        max_length=20,
+        choices=ToolType.choices,
+        default=ToolType.OTHER,
+    )
+
+    instructions_en = models.TextField(blank=True)
+    instructions_mr = models.TextField(blank=True)
+    instructions_hi = models.TextField(blank=True)
+
+    configuration = models.JSONField(default=dict, blank=True)
+    is_interactive = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return self.post.title_en
+
+
+class PostLink(TimestampedModel):
+    """Important links displayed with a post, with translated labels."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="important_links",
+    )
+
+    name_en = models.CharField(max_length=240)
+    name_mr = models.CharField(max_length=240, blank=True)
+    name_hi = models.CharField(max_length=240, blank=True)
+
+    action_text_en = models.CharField(max_length=120, blank=True, default="Click Here")
+    action_text_mr = models.CharField(max_length=120, blank=True, default="")
+    action_text_hi = models.CharField(max_length=120, blank=True, default="")
+    group_key = models.CharField(max_length=64, blank=True, default="", db_index=True)
+
+    url = models.URLField(max_length=1000)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [
+            models.Index(fields=("post", "is_active", "sort_order"), name="portal_faq_post_act_idx"),
+        ]
+
+    def __str__(self):
+        return self.name_en
+
+
+class PostFAQ(TimestampedModel):
+    """Multilingual frequently asked questions displayed with a post."""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="faqs")
+    question_en = models.CharField(max_length=500)
+    question_mr = models.CharField(max_length=500, blank=True)
+    question_hi = models.CharField(max_length=500, blank=True)
+    answer_en = models.TextField()
+    answer_mr = models.TextField(blank=True)
+    answer_hi = models.TextField(blank=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [models.Index(fields=("post", "is_active", "sort_order"))]
+
+    def __str__(self):
+        return self.question_en
+
+
+class PostDate(TimestampedModel):
+    """Structured important dates for jobs, schemes, exams, admit cards and results."""
+
+    class DateType(models.TextChoices):
+        APPLICATION_START = "application_start", "Application Start Date"
+        APPLICATION_END = "application_end", "Application Last Date"
+        FEE_LAST_DATE = "fee_last_date", "Fee Payment Last Date"
+        CORRECTION_WINDOW = "correction_window", "Application Correction"
+        APPLICATION_REOPENING = "application_reopening", "Application Reopening"
+
+        PRELIMINARY_EXAM = "preliminary_exam", "Preliminary Examination"
+        MAIN_EXAM = "main_exam", "Main Examination"
+        OTHER_EXAM = "other_exam", "Other Examination"
+
+        # Retained for compatibility with existing records.
+        EXAM_DATE = "exam_date", "Examination Date (Legacy)"
+
+        ADMIT_CARD = "admit_card", "Admit Card Release"
+        ANSWER_KEY = "answer_key", "Answer Key Release"
+        OBJECTION_WINDOW = "objection_window", "Objection Window"
+
+        RESULT = "result", "Result Date"
+        INTERVIEW = "interview", "Interview Date"
+        PHYSICAL_TEST = "physical_test", "Physical Test Date"
+        DOCUMENT_VERIFICATION = "document_verification", "Document Verification"
+
+        OTHER = "other", "Other Important Date"
+
+    class DateFormat(models.TextChoices):
+        SINGLE = "single", "Single Date"
+        RANGE = "range", "Date Range"
+        MONTH_YEAR = "month_year", "Month and Year"
+        REVISED = "revised", "Revised Date"
+        REVISED_WITH_TIME = "revised_with_time", "Revised Date with Time"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="important_dates",
+    )
+
+    # Date category and display format
+    date_type = models.CharField(
+        max_length=30,
+        choices=DateType.choices,
+        default=DateType.OTHER,
+        db_index=True,
+    )
+
+    date_format = models.CharField(
+        max_length=30,
+        choices=DateFormat.choices,
+        default=DateFormat.SINGLE,
+    )
+
+    # Multilingual labels
+    label_en = models.CharField(max_length=180)
+    label_mr = models.CharField(max_length=180, blank=True)
+    label_hi = models.CharField(max_length=180, blank=True)
+
+    # Format 1: Single date
+    date = models.DateField(null=True, blank=True)
+    time = models.TimeField(null=True, blank=True)
+
+    # Format 2: Date range
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    # Format 3: Month and year
+    month = models.PositiveSmallIntegerField(null=True, blank=True)
+    year = models.PositiveSmallIntegerField(null=True, blank=True)
+    month_years = models.JSONField(default=list, blank=True)
+
+    # Formats 4 and 5: Revised dates
+    old_date = models.DateField(null=True, blank=True)
+    new_date = models.DateField(null=True, blank=True)
+
+    # Format 5: Revised date with time
+    old_time = models.TimeField(null=True, blank=True)
+    new_time = models.TimeField(null=True, blank=True)
+
+    # Multilingual descriptions
+    description_en = models.CharField(max_length=500, blank=True)
+    description_mr = models.CharField(max_length=500, blank=True)
+    description_hi = models.CharField(max_length=500, blank=True)
+
+    # Display ordering
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [
+            models.Index(fields=("post", "date_type")),
+            models.Index(fields=("date",)),
+            models.Index(fields=("start_date",)),
+            models.Index(fields=("end_date",)),
+            models.Index(fields=("year", "month")),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        errors = {}
+
+        if self.month is not None and not 1 <= self.month <= 12:
+            errors["month"] = "Month must be between 1 and 12."
+
+        if self.year is not None and not 1 <= self.year <= 9999:
+            errors["year"] = "Enter a valid year."
+
+        if self.date_format == self.DateFormat.SINGLE:
+            if not self.date:
+                errors["date"] = "A date is required for Single Date format."
+
+            if self.start_date or self.end_date:
+                errors["start_date"] = (
+                    "Date range fields are not allowed for Single Date format."
+                )
+                errors["end_date"] = (
+                    "Date range fields are not allowed for Single Date format."
+                )
+
+            if self.old_date or self.new_date:
+                errors["old_date"] = (
+                    "Revised date fields are not allowed for Single Date format."
+                )
+
+            if self.month or self.year:
+                errors["month"] = (
+                    "Month and year fields are not allowed for Single Date format."
+                )
+
+        elif self.date_format == self.DateFormat.RANGE:
+            if not self.start_date:
+                errors["start_date"] = "Start date is required."
+
+            if not self.end_date:
+                errors["end_date"] = "End date is required."
+
+            if self.start_date and self.end_date and self.end_date < self.start_date:
+                errors["end_date"] = "End date cannot be earlier than start date."
+
+            if self.date or self.old_date or self.new_date:
+                errors["date"] = (
+                    "Single and revised date fields are not allowed for Date Range format."
+                )
+
+            if self.month or self.year:
+                errors["month"] = (
+                    "Month and year fields are not allowed for Date Range format."
+                )
+
+        elif self.date_format == self.DateFormat.MONTH_YEAR:
+            # Support both old single month/year and new multiple month/year entries.
+            month_years = self.month_years or []
+
+            if not month_years and self.month and self.year:
+                month_years = [{"month": self.month, "year": self.year}]
+
+            if not month_years:
+                errors["month_years"] = "At least one month and year is required."
+
+            elif not isinstance(month_years, list):
+                errors["month_years"] = "Month and year entries must be a list."
+
+            else:
+                for index, item in enumerate(month_years):
+                    if not isinstance(item, dict):
+                        errors["month_years"] = (
+                            "Each entry must contain a month and year."
+                        )
+                        break
+
+                    month = item.get("month")
+                    year = item.get("year")
+
+                    if (
+                        not isinstance(month, int)
+                        or isinstance(month, bool)
+                        or not 1 <= month <= 12
+                    ):
+                        errors["month_years"] = (
+                            f"Entry {index + 1}: Month must be between 1 and 12."
+                        )
+                        break
+
+                    if (
+                        not isinstance(year, int)
+                        or isinstance(year, bool)
+                        or not 1 <= year <= 9999
+                    ):
+                        errors["month_years"] = (
+                            f"Entry {index + 1}: Enter a valid year."
+                        )
+                        break
+
+            if self.date or self.start_date or self.end_date:
+                errors["date"] = (
+                    "Date fields are not allowed for Month and Year format."
+                )
+
+            if self.old_date or self.new_date:
+                errors["old_date"] = (
+                    "Revised date fields are not allowed for Month and Year format."
+                )
+
+        elif self.date_format in (
+            self.DateFormat.REVISED,
+            self.DateFormat.REVISED_WITH_TIME,
+        ):
+            if not self.old_date:
+                errors["old_date"] = "Original date is required."
+
+            if not self.new_date:
+                errors["new_date"] = "Revised date is required."
+
+            if self.date or self.start_date or self.end_date:
+                errors["date"] = (
+                    "Single and range date fields are not allowed for Revised Date format."
+                )
+
+            if self.month or self.year:
+                errors["month"] = (
+                    "Month and year fields are not allowed for Revised Date format."
+                )
+
+            if self.date_format == self.DateFormat.REVISED and (
+                self.old_time or self.new_time
+            ):
+                errors["old_time"] = (
+                    "Time fields are only allowed for Revised Date with Time format."
+                )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def __str__(self):
+        return self.label_en
+
+
+class PostResource(TimestampedModel):
+    """PDFs, notification files, images and other downloadable resources."""
+
+    class ResourceType(models.TextChoices):
+        PDF = "pdf", "PDF"
+        DOCUMENT = "document", "Document"
+        IMAGE = "image", "Image"
+        DOWNLOAD = "download", "Download"
+        OFFICIAL_LINK = "official_link", "Official Link"
+        OTHER = "other", "Other"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="resources",
+    )
+
+    resource_type = models.CharField(
+        max_length=20,
+        choices=ResourceType.choices,
+        default=ResourceType.OTHER,
+    )
+
+    title_en = models.CharField(max_length=240)
+    title_mr = models.CharField(max_length=240, blank=True)
+    title_hi = models.CharField(max_length=240, blank=True)
+
+    file_url = models.URLField(max_length=1000, blank=True)
+    external_url = models.URLField(max_length=1000, blank=True)
+
+    file_size_bytes = models.PositiveBigIntegerField(null=True, blank=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [
+            models.Index(fields=("post", "resource_type", "is_active")),
+        ]
+
+    def __str__(self):
+        return self.title_en
+
+
+class PostRelation(TimestampedModel):
+    """Connect a job to its exam, admit card, result, guide or video."""
+
+    class RelationType(models.TextChoices):
+        RELATED = "related", "Related Post"
+        EXAMINATION = "examination", "Examination"
+        ADMIT_CARD = "admit_card", "Admit Card"
+        RESULT = "result", "Result"
+        VIDEO = "video", "Video"
+        GUIDE = "guide", "Guide"
+        SCHEME = "scheme", "Scheme"
+
+    source_post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="outgoing_relations",
+    )
+    target_post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="incoming_relations",
+    )
+
+    relation_type = models.CharField(
+        max_length=20,
+        choices=RelationType.choices,
+        default=RelationType.RELATED,
+    )
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("source_post", "target_post", "relation_type"),
+                name="unique_post_relation",
+            ),
+            models.CheckConstraint(
+                condition=~Q(source_post=F("target_post")),
+                name="prevent_self_post_relation",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("source_post", "relation_type")),
+            models.Index(fields=("target_post", "relation_type")),
+        ]
+
+    def __str__(self):
+        return f"{self.source_post} -> {self.target_post}"
+
+
+class PostReaction(TimestampedModel):
+    """One like or dislike per authenticated user per post."""
+
+    class ReactionType(models.TextChoices):
+        LIKE = "like", "Like"
+        DISLIKE = "dislike", "Dislike"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="reactions",
+    )
+    user_auth_id = models.CharField(max_length=128, db_index=True)
+    reaction = models.CharField(max_length=10, choices=ReactionType.choices)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "user_auth_id"),
+                name="unique_user_post_reaction",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("post", "reaction")),
+            models.Index(fields=("user_auth_id", "created_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.user_auth_id} - {self.reaction}"
+
+
+class SavedPost(TimestampedModel):
+    """One saved-post record per authenticated user and post."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="saved_posts",
+    )
+    user_auth_id = models.CharField(max_length=128, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "user_auth_id"),
+                name="unique_user_saved_post",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("user_auth_id", "created_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.user_auth_id} - {self.post.title_en}"
+
+
+class Comment(TimestampedModel):
+    """Moderated comments and threaded replies on any published post."""
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="comments",
+    )
+    user_auth_id = models.CharField(max_length=128, db_index=True)
+
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="replies",
+    )
+
+    content = models.TextField()
+    language = models.CharField(
+        max_length=2,
+        choices=LanguageChoices.choices,
+        default=LanguageChoices.ENGLISH,
+    )
+
+    status = models.CharField(
+        max_length=12,
+        choices=Status.choices,
+        default=Status.PENDING,
+        db_index=True,
+    )
+
+    reviewed_by_auth_id = models.CharField(max_length=128, blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    edited = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("created_at",)
+        indexes = [
+            models.Index(fields=("post", "status", "created_at")),
+            models.Index(fields=("user_auth_id", "created_at")),
+            models.Index(fields=("parent", "status")),
+        ]
+
+    def __str__(self):
+        return f"Comment by {self.user_auth_id}"
+
+
+class PostVisitor(TimestampedModel):
+    """
+    One visitor identity per post.
+
+    visitor_id is a random first-party identifier generated by the client.
+    auth_user_id is optional and comes from the verified Auth session.
+    """
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="visitors",
+    )
+    visitor_id = models.CharField(max_length=128)
+    auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
+
+    first_seen_at = models.DateTimeField(auto_now_add=True)
+    last_seen_at = models.DateTimeField(auto_now=True)
+    visit_count = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "visitor_id"),
+                name="unique_post_visitor",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("post", "last_seen_at")),
+            models.Index(fields=("auth_user_id", "last_seen_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.post.title_en} - {self.visitor_id}"
+
+
+class PostView(models.Model):
+    """Individual post-view events for post-level analytics."""
+
+    class DeviceType(models.TextChoices):
+        DESKTOP = "desktop", "Desktop"
+        MOBILE = "mobile", "Mobile"
+        TABLET = "tablet", "Tablet"
+        UNKNOWN = "unknown", "Unknown"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="view_events",
+    )
+    visitor = models.ForeignKey(
+        PostVisitor,
+        on_delete=models.CASCADE,
+        related_name="view_events",
+    )
+
+    # Snapshot of verified identity at view time, if authenticated.
+    auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
+
+    language = models.CharField(
+        max_length=2,
+        choices=LanguageChoices.choices,
+        default=LanguageChoices.ENGLISH,
+    )
+    device = models.CharField(
+        max_length=12,
+        choices=DeviceType.choices,
+        default=DeviceType.UNKNOWN,
+    )
+
+    referrer_url = models.URLField(max_length=1000, blank=True)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-viewed_at",)
+        indexes = [
+            models.Index(fields=("post", "viewed_at")),
+            models.Index(fields=("language", "viewed_at")),
+            models.Index(fields=("device", "viewed_at")),
+            models.Index(fields=("visitor", "viewed_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.post.title_en} - {self.viewed_at}"
+
+
+class PostStatusHistory(models.Model):
+    """Immutable audit trail for post review and publishing transitions."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="status_history",
+    )
+
+    previous_status = models.CharField(max_length=24, blank=True)
+    new_status = models.CharField(max_length=24)
+
+    changed_by_auth_id = models.CharField(max_length=128, db_index=True)
+    note = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=("post", "created_at")),
+            models.Index(fields=("changed_by_auth_id", "created_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.post.title_en}: {self.previous_status} -> {self.new_status}"

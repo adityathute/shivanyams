@@ -1,0 +1,239 @@
+.results-characters {
+  --results-circle: #e8d9ff;
+  --results-badge-bg: #ffffff;
+  --results-badge-border: #e4d8f3;
+  --results-badge-shadow: rgba(141, 61, 224, 0.14);
+
+  --results-check-color: #22b573;
+  --results-job-color: #8d3de0;
+  --results-sparkle-color: #ffc928;
+
+  position: relative;
+  width: 445px;
+  max-width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  overflow: visible;
+}
+
+/* Image */
+
+.results-characters-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Animated Background Circle */
+
+.results-character-circle {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--results-circle);
+  z-index: 0;
+
+  /* Hide the circle below the platform */
+  clip-path: inset(0 0 13% 0);
+
+  animation: results-circle-morph 12s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform, border-radius, opacity;
+}
+
+@keyframes results-circle-morph {
+  0%,
+  100% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  20% {
+    border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  40% {
+    border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.8;
+  }
+
+  60% {
+    border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+
+  75% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  90% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+/* Floating badges */
+
+.results-character-badge {
+  position: absolute;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 15px;
+
+  background: var(--results-badge-bg);
+  border: 1px solid var(--results-badge-border);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 8px 25px var(--results-badge-shadow);
+
+  z-index: 2;
+
+  animation: results-badge-float 4s ease-in-out infinite;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.results-character-badge svg {
+  display: block;
+}
+
+/* Success badge */
+
+.results-badge-check {
+  top: 30%;
+  right: 0%;
+
+  color: var(--results-check-color);
+
+  animation-delay: -2s;
+}
+
+/* Job / result badge */
+
+.results-badge-job {
+  bottom: 40%;
+  left: -5%;
+  color: var(--results-job-color);
+
+  transform: rotate(-8deg);
+}
+
+/* Sparkle */
+
+.results-character-sparkle {
+  position: absolute;
+
+  top: 53%;
+  left: 1%;
+
+  color: var(--results-sparkle-color);
+  font-size: 32px;
+
+  z-index: 2;
+
+  animation: results-sparkle 3s ease-in-out infinite;
+}
+
+/* Animations */
+
+@keyframes results-badge-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes results-sparkle {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9) rotate(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(15deg);
+  }
+}
+
+/* Dark theme */
+
+[data-theme="dark"] .results-characters {
+  --results-circle: #352448;
+  --results-badge-bg: #211831;
+  --results-badge-border: #392850;
+  --results-badge-shadow: rgba(0, 0, 0, 0.25);
+
+  --results-check-color: #4ade80;
+  --results-job-color: #c084fc;
+  --results-sparkle-color: #facc15;
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .results-characters {
+    width: 100%;
+  }
+
+  .results-character-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .results-character-badge svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .results-character-sparkle {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 390px) {
+  .results-character-badge {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .results-character-badge,
+  .results-character-sparkle,
+  .results-character-circle {
+    animation: none;
+  }
+}

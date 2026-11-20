@@ -1,412 +1,331 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
+import { API_URL } from "../../components/portal/category/CategoryGrid";
+import type { Category } from "../../components/portal/category/CategoryGrid";
+
 import "./admin.css";
 
-type Item = {
-  id: string;
-  title: string;
-  category: string;
-  date: string;
-  description: string;
-  link: string;
-  type: "job" | "scheme" | "examination" | "exam" | "result" | "admit" | "guide" | "video";
+type PaginatedPosts = { results?: AdminPost[]; next?: string | null };
+
+type AdminPost = {
+  id: number;
+  slug: string;
+  title_en: string;
+  title_mr?: string;
+  category: Category;
+  status: string;
+  published_at?: string | null;
+  created_at?: string;
+  views_count?: number;
+  is_active?: boolean;
 };
-type Video = {
-  id: string;
-  title: string;
-  url: string;
-  thumbnail: string;
-  language: string;
-};
-type Data = { items: Item[]; videos: Video[] };
-const KEY = "shivanyams-portal-data";
-const defaults: Data = { items: [], videos: [] };
-const typeLabels: Record<Item["type"], string> = {
-  job: "नोकरी",
-  scheme: "योजना",
-  examination: "परीक्षा",
-  exam: "परीक्षा",
-  result: "निकाल",
-  admit: "प्रवेशपत्र",
-  exam: "परीक्षा",
-  "batch-exam": "बॅच परीक्षा",
-  guide: "मार्गदर्शक",
-  video: "व्हिडीओ",
-};
-const emptyItem = {
-  title: "",
-  category: "नोकरी",
-  date: new Date().toISOString().slice(0, 10),
-  description: "",
-  link: "",
-  type: "job" as Item["type"],
-};
-const emptyVideo = { title: "", url: "", thumbnail: "", language: "मराठी" };
+
+const CONTENT_KINDS = [
+  { slug: "jobs", label: "Jobs", api: "jobs" },
+  { slug: "schemes", label: "Schemes", api: "schemes" },
+  { slug: "examination", label: "Examination", api: "examination" },
+  { slug: "admit-cards", label: "Admit Cards", api: "admit-card" },
+  { slug: "results", label: "Results", api: "results" },
+  { slug: "articles-guides", label: "Articles & Guides", api: "articles" },
+  { slug: "videos", label: "Videos", api: "videos" },
+  { slug: "tools", label: "Tools", api: "tools" },
+];
+
+const STATUS_OPTIONS = [
+  "all", "draft", "pending_review", "changes_requested",
+  "approved", "published", "rejected", "archived",
+];
+
+function statusLabel(status: string) {
+  return status.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
 
 export default function AdminPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
-
+  const { user, loading, getAccessToken } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
+  const [posts, setPosts] = useState<AdminPost[]>([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [busyPost, setBusyPost] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  const loadPosts = useCallback(async () => {
+    const token = await getAccessToken();
+    if (!token) {
+      setError("Your session token was not found. Please sign in again.");
+      setPostsLoading(false);
+      return;
+    }
+
+    setPostsLoading(true);
+    setError("");
+    try {
+      const responses = await Promise.all(
+        CONTENT_KINDS.map(async (kind) => {
+          let url: string | null = `${API_URL}/admin/content/${kind.api}/`;
+          const rows: AdminPost[] = [];
+          while (url) {
+            const requestUrl: string = url;
+            const response: Response = await fetch(requestUrl, {
+              headers: { Authorization: `Bearer ${token}` },
+              cache: "no-store",
+            });
+            if (!response.ok) {
+              const body = await response.json().catch(() => ({}));
+              throw new Error(body.detail || `Unable to load ${kind.label} (${response.status}).`);
+            }
+            const payload: AdminPost[] | PaginatedPosts = await response.json();
+            const isPaginated = !Array.isArray(payload);
+            const pageRows: AdminPost[] = isPaginated
+              ? (payload as PaginatedPosts).results ?? []
+              : payload as AdminPost[];
+            rows.push(...pageRows);
+            const nextPage = isPaginated ? (payload as PaginatedPosts).next : null;
+            url = nextPage ? new URL(nextPage, API_URL).toString() : null;
+          }
+          return rows.map((post) => ({ ...post, category: post.category ?? ({
+            id: 0, slug: kind.slug, name_en: kind.label,
+            name_mr: kind.label, name_hi: kind.label,
+            description_en: "", description_mr: "", description_hi: "",
+          } as Category) }));
+        }),
+      );
+      setPosts(responses.flat().sort((a, b) =>
+        new Date(b.created_at || b.published_at || 0).getTime() -
+        new Date(a.created_at || a.published_at || 0).getTime()
+      ));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load posts.");
+    } finally {
+      setPostsLoading(false);
+    }
+  }, [getAccessToken]);
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      router.replace("/");
-    }
+    if (!loading && !isAdmin) router.replace("/");
   }, [loading, isAdmin, router]);
 
-  const [data, setData] = useState<Data>(defaults),
-    [kind, setKind] = useState<"item" | "video">("item"),
-    [item, setItem] = useState(emptyItem),
-    [video, setVideo] = useState(emptyVideo),
-    [editing, setEditing] = useState(""),
-    [notice, setNotice] = useState("");
   useEffect(() => {
+    if (isAdmin) void loadPosts();
+  }, [isAdmin, loadPosts, refreshKey]);
+
+  const filteredPosts = useMemo(() => posts.filter((post) => {
+    const categoryMatch = categoryFilter === "all" || post.category.slug === categoryFilter;
+    const statusMatch = statusFilter === "all" || post.status === statusFilter;
+    const query = search.trim().toLowerCase();
+    const searchMatch = !query || [post.title_en, post.title_mr, post.slug]
+      .some((value) => value?.toLowerCase().includes(query));
+    return categoryMatch && statusMatch && searchMatch;
+  }), [posts, categoryFilter, statusFilter, search]);
+
+  const sortedPosts = useMemo(() => [...filteredPosts].sort((a, b) => {
+    const aDate = new Date(a.created_at || a.published_at || 0).getTime();
+    const bDate = new Date(b.created_at || b.published_at || 0).getTime();
+    if (sortOrder === "oldest") return aDate - bDate;
+    if (sortOrder === "title") return (a.title_en || "").localeCompare(b.title_en || "");
+    if (sortOrder === "views") return (b.views_count || 0) - (a.views_count || 0);
+    return bDate - aDate;
+  }), [filteredPosts, sortOrder]);
+  const pageCount = Math.max(1, Math.ceil(sortedPosts.length / pageSize));
+  const visiblePosts = sortedPosts.slice((page - 1) * pageSize, page * pageSize);
+  const visibleIds = visiblePosts.map((post) => post.id);
+  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
+
+  const counts = useMemo(() => ({
+    total: posts.length,
+    published: posts.filter((post) => post.status === "published").length,
+    drafts: posts.filter((post) => post.status === "draft").length,
+    review: posts.filter((post) => post.status === "pending_review").length,
+    views: posts.reduce((sum, post) => sum + (post.views_count || 0), 0),
+  }), [posts]);
+
+  async function deletePost(post: AdminPost) {
+    if (!window.confirm(`Delete "${post.title_en}"? This cannot be undone.`)) return;
+    const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
+    if (!kind) return;
+    setBusyPost(post.id);
     try {
-      const saved = localStorage.getItem(KEY);
-      if (saved) setData(JSON.parse(saved) as Data);
-    } catch {}
-  }, []);
-  function save(next: Data) {
-    localStorage.setItem(KEY, JSON.stringify(next));
-    setData(next);
-    window.dispatchEvent(new Event("shivanyams-content-updated"));
-    setNotice("बदल जतन झाले. वेबसाइट उघडून तपासा.");
-  }
-  function submitItem(e: FormEvent) {
-    e.preventDefault();
-    const nextItem: Item = {
-      ...item,
-      id: editing || crypto.randomUUID(),
-      category: typeLabels[item.type],
-    };
-    const items = editing
-      ? data.items.map((i) => (i.id === editing ? nextItem : i))
-      : [nextItem, ...data.items];
-    save({ ...data, items });
-    setItem(emptyItem);
-    setEditing("");
-  }
-  function submitVideo(e: FormEvent) {
-    e.preventDefault();
-    const nextVideo: Video = { ...video, id: editing || crypto.randomUUID() };
-    const videos = editing
-      ? data.videos.map((v) => (v.id === editing ? nextVideo : v))
-      : [nextVideo, ...data.videos];
-    save({ ...data, videos });
-    setVideo(emptyVideo);
-    setEditing("");
-  }
-  function editItem(i: Item) {
-    setKind("item");
-    setEditing(i.id);
-    setItem({
-      title: i.title,
-      category: i.category,
-      date: i.date,
-      description: i.description,
-      link: i.link,
-      type: i.type,
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  function editVideo(v: Video) {
-    setKind("video");
-    setEditing(v.id);
-    setVideo({
-      title: v.title,
-      url: v.url,
-      thumbnail: v.thumbnail,
-      language: v.language,
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  function removeItem(id: string) {
-    if (window.confirm("हा अपडेट हटवायचा आहे का?"))
-      save({ ...data, items: data.items.filter((i) => i.id !== id) });
-  }
-  function removeVideo(id: string) {
-    if (window.confirm("हा व्हिडिओ हटवायचा आहे का?"))
-      save({ ...data, videos: data.videos.filter((v) => v.id !== id) });
-  }
-  function reset() {
-    if (window.confirm("स्थानिक बदल हटवून नमुना डेटा पुन्हा लोड करायचा?")) {
-      localStorage.removeItem(KEY);
-      setData(defaults);
-      setNotice(
-        "स्थानिक डेटा हटवला. नमुना डेटा दिसण्यासाठी मुख्य पेज रीलोड करा.",
-      );
+      const response = await fetch(`${API_URL}/admin/content/${kind.api}/${post.slug}/`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${await getAccessToken()}` },
+      });
+      if (!response.ok) throw new Error(`Delete failed (${response.status}).`);
+      setPosts((current) => current.filter((item) => item.id !== post.id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to delete post.");
+    } finally {
+      setBusyPost(null);
     }
   }
 
-  if (loading || !isAdmin) {
-    return null;
+  async function changeStatus(post: AdminPost, status: string) {
+    setBusyPost(post.id);
+    try {
+      const response = await fetch(`${API_URL}/admin/content/${post.id}/review/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${await getAccessToken()}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || `Status update failed (${response.status}).`);
+      setPosts((current) => current.map((item) => item.id === post.id ? { ...item, status: payload.status || status, published_at: payload.published_at ?? item.published_at } : item));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to update post status.");
+    } finally {
+      setBusyPost(null);
+    }
   }
+
+  async function bulkChangeStatus(status: "published" | "archived") {
+    const targets = posts.filter((post) => selectedIds.includes(post.id));
+    if (!targets.length) return;
+    if (!window.confirm(`${status === "published" ? "Publish" : "Archive"} ${targets.length} selected posts?`)) return;
+    setBusyPost(-1);
+    try {
+      const results = await Promise.all(targets.map(async (post) => {
+        const response = await fetch(`${API_URL}/admin/content/${post.id}/review/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAccessToken()}` },
+          body: JSON.stringify({ status }),
+        });
+        if (!response.ok) throw new Error(`Could not update "${post.title_en}".`);
+        return post.id;
+      }));
+      setPosts((current) => current.map((post) => results.includes(post.id) ? { ...post, status } : post));
+      setSelectedIds([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Bulk update failed.");
+      void loadPosts();
+    } finally {
+      setBusyPost(null);
+    }
+  }
+
+  function exportCsv() {
+    const columns = ["title_en", "slug", "category", "status", "views_count", "created_at"];
+    const rows = sortedPosts.map((post) => [
+      post.title_en, post.slug, post.category.name_en, post.status,
+      post.views_count ?? 0, post.created_at ?? "",
+    ]);
+    const csv = [columns, ...rows].map((row) => row.map((value) =>
+      `"${String(value ?? "").replaceAll('"', '""')}"`
+    ).join(",")).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "shivanyams-posts.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  if (loading || !isAdmin) return null;
 
   return (
     <main className="admin-page">
-      <div className="admin-wrap">
-        <div className="admin-intro">
-          <span>CONTENT MANAGEMENT</span>
-          <h1>वेबसाइट कंटेंट व्यवस्थापन</h1>
-          <p>
-            नोकरी, योजना, निकाल, मार्गदर्शक आणि YouTube व्हिडिओ जोडा किंवा
-            संपादित करा.
-          </p>
-        </div>
-        <div className="admin-stats">
+      <div className="admin-shell">
+        <header className="admin-topbar">
           <div>
-            <strong>{data.items.length}</strong>
-            <span>अपडेट्स</span>
+            <span className="admin-eyebrow">SHIVANYAMS CONTENT MANAGEMENT</span>
+            <h1>Admin Dashboard</h1>
+            <p>Manage posts, publishing status and website content.</p>
           </div>
-          <div>
-            <strong>{data.videos.length}</strong>
-            <span>व्हिडिओ</span>
+          <div className="admin-top-actions">
+            <Link href="/" target="_blank" className="admin-secondary-button">View website ↗</Link>
+            <Link href="/admin/add-post" className="admin-primary-button">＋ Add New Post</Link>
           </div>
-          <div>
-            <strong>Local</strong>
-            <span>Browser storage</span>
-          </div>
-        </div>
-        <section className="admin-card">
-          <div className="admin-tabs">
-            <button
-              className={kind === "item" ? "on" : ""}
-              onClick={() => {
-                setKind("item");
-                setEditing("");
-              }}
-            >
-              अपडेट / योजना जोडा
-            </button>
-            <button
-              className={kind === "video" ? "on" : ""}
-              onClick={() => {
-                setKind("video");
-                setEditing("");
-              }}
-            >
-              YouTube व्हिडिओ जोडा
-            </button>
-          </div>
-          {notice && <div className="admin-notice">{notice}</div>}
-          {kind === "item" ? (
-            <form className="admin-form" onSubmit={submitItem}>
-              <h2>{editing ? "अपडेट संपादित करा" : "नवीन अपडेट तयार करा"}</h2>
-              <label>
-                शीर्षक *
-                <input
-                  required
-                  value={item.title}
-                  onChange={(e) => setItem({ ...item, title: e.target.value })}
-                  placeholder="उदा. नवीन सरकारी भरती 2026"
-                />
-              </label>
-              <div className="form-pair">
-                <label>
-                  विभाग *
-                  <select
-                    value={item.type}
-                    onChange={(e) =>
-                      setItem({
-                        ...item,
-                        type: e.target.value as Item["type"],
-                        category: typeLabels[e.target.value as Item["type"]],
-                      })
-                    }
-                  >
-                    {Object.entries(typeLabels).map(([value, label]) => (
-                      <option value={value} key={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  प्रकाशन तारीख
-                  <input
-                    type="date"
-                    value={item.date}
-                    onChange={(e) => setItem({ ...item, date: e.target.value })}
-                  />
-                </label>
-              </div>
-              <label>
-                थोडक्यात माहिती
-                <textarea
-                  rows={3}
-                  value={item.description}
-                  onChange={(e) =>
-                    setItem({ ...item, description: e.target.value })
-                  }
-                  placeholder="या अपडेटबद्दल थोडक्यात माहिती"
-                />
-              </label>
-              <label>
-                अधिकृत / माहिती लिंक
-                <input
-                  type="url"
-                  value={item.link}
-                  onChange={(e) => setItem({ ...item, link: e.target.value })}
-                  placeholder="https://example.gov.in"
-                />
-              </label>
-              <div className="admin-actions">
-                <button className="primary" type="submit">
-                  {editing ? "बदल जतन करा" : "अपडेट प्रकाशित करा"}
-                </button>
-                {editing && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditing("");
-                      setItem(emptyItem);
-                    }}
-                  >
-                    रद्द करा
-                  </button>
-                )}
-              </div>
-            </form>
-          ) : (
-            <form className="admin-form" onSubmit={submitVideo}>
-              <h2>
-                {editing ? "व्हिडिओ संपादित करा" : "YouTube व्हिडिओ जोडा"}
-              </h2>
-              <label>
-                व्हिडिओ शीर्षक *
-                <input
-                  required
-                  value={video.title}
-                  onChange={(e) =>
-                    setVideo({ ...video, title: e.target.value })
-                  }
-                  placeholder="व्हिडिओचे शीर्षक"
-                />
-              </label>
-              <label>
-                YouTube लिंक *
-                <input
-                  required
-                  type="url"
-                  value={video.url}
-                  onChange={(e) => setVideo({ ...video, url: e.target.value })}
-                  placeholder="https://www.youtube.com/watch?v=..."
-                />
-              </label>
-              <label>
-                Thumbnail URL (ऐच्छिक)
-                <input
-                  type="url"
-                  value={video.thumbnail}
-                  onChange={(e) =>
-                    setVideo({ ...video, thumbnail: e.target.value })
-                  }
-                  placeholder="https://example.com/thumbnail.jpg"
-                />
-              </label>
-              <label>
-                भाषा
-                <select
-                  value={video.language}
-                  onChange={(e) =>
-                    setVideo({ ...video, language: e.target.value })
-                  }
-                >
-                  <option>मराठी</option>
-                  <option>हिंदी</option>
-                  <option>English</option>
-                </select>
-              </label>
-              <div className="admin-actions">
-                <button className="primary" type="submit">
-                  {editing ? "बदल जतन करा" : "व्हिडिओ जोडा"}
-                </button>
-                {editing && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditing("");
-                      setVideo(emptyVideo);
-                    }}
-                  >
-                    रद्द करा
-                  </button>
-                )}
-              </div>
-            </form>
-          )}
+        </header>
+
+        <section className="admin-stats">
+          <article><span>Total posts</span><strong>{counts.total}</strong></article>
+          <article><span>Published</span><strong>{counts.published}</strong></article>
+          <article><span>Drafts</span><strong>{counts.drafts}</strong></article>
+          <article><span>Pending review</span><strong>{counts.review}</strong></article>
+          <article><span>Total views</span><strong>{counts.views.toLocaleString()}</strong></article>
         </section>
-        <section className="admin-card list-card">
-          <div className="list-head">
-            <h2>प्रकाशित अपडेट्स</h2>
-            <span>{data.items.length} items</span>
+
+        <section className="admin-post-panel">
+          <div className="admin-panel-heading">
+            <div><h2>All Posts</h2><p>View, search, edit and manage every category.</p></div>
+            <div className="admin-toolbar-actions"><button type="button" className="admin-refresh-button" onClick={exportCsv}>↓ Export CSV</button><button type="button" className="admin-refresh-button" onClick={() => setRefreshKey((value) => value + 1)}>↻ Refresh</button></div>
           </div>
-          {data.items.length === 0 ? (
-            <p className="no-content">
-              अद्याप अपडेट नाहीत. वरून पहिला अपडेट जोडा.
-            </p>
-          ) : (
-            data.items.map((i) => (
-              <div className="manage-row" key={i.id}>
-                <div className="manage-type">{i.category}</div>
-                <div className="manage-info">
-                  <strong>{i.title}</strong>
-                  <small>
-                    {i.date} · {i.link || "लिंक दिलेली नाही"}
-                  </small>
-                </div>
-                <button onClick={() => editItem(i)}>संपादित</button>
-                <button className="delete" onClick={() => removeItem(i.id)}>
-                  हटवा
-                </button>
-              </div>
-            ))
-          )}
-        </section>
-        <section className="admin-card list-card">
-          <div className="list-head">
-            <h2>YouTube व्हिडिओ</h2>
-            <span>{data.videos.length} videos</span>
+
+          <div className="admin-filters">
+            <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search by post title or slug..." aria-label="Search posts" />
+            <select value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value); setPage(1); }} aria-label="Filter by category">
+              <option value="all">All categories</option>
+              {CONTENT_KINDS.map((kind) => <option key={kind.slug} value={kind.slug}>{kind.label}</option>)}
+            </select>
+            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter by status">
+              {STATUS_OPTIONS.map((status) => <option key={status} value={status}>{status === "all" ? "All statuses" : statusLabel(status)}</option>)}
+            </select>
+            <select value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setPage(1); }} aria-label="Sort posts">
+              <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+              <option value="title">Title A–Z</option><option value="views">Most views</option>
+            </select>
           </div>
-          {data.videos.length === 0 ? (
-            <p className="no-content">
-              अद्याप व्हिडिओ नाहीत. YouTube लिंक जोडा.
-            </p>
+
+          {error && <div className="admin-error">{error}</div>}
+          {postsLoading ? <div className="admin-empty">Loading posts...</div> : filteredPosts.length === 0 ? (
+            <div className="admin-empty">No posts found for these filters.</div>
           ) : (
-            data.videos.map((v) => (
-              <div className="manage-row" key={v.id}>
-                <div className="manage-type video-type">▶</div>
-                <div className="manage-info">
-                  <strong>{v.title}</strong>
-                  <small>{v.url || "लिंक दिलेली नाही"}</small>
-                </div>
-                <button onClick={() => editVideo(v)}>संपादित</button>
-                <button className="delete" onClick={() => removeVideo(v.id)}>
-                  हटवा
-                </button>
-              </div>
-            ))
+            <div className="admin-table-wrap">
+              <table className="admin-post-table">
+                <thead><tr><th><input type="checkbox" aria-label="Select visible posts" checked={allVisibleSelected} onChange={(event) => setSelectedIds(event.target.checked ? Array.from(new Set([...selectedIds, ...visibleIds])) : selectedIds.filter((id) => !visibleIds.includes(id)))} /></th><th>Post</th><th>Category</th><th>Status</th><th>Views</th><th>Created</th><th>Actions</th></tr></thead>
+                <tbody>
+                  {visiblePosts.map((post) => {
+                    const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
+                    return (
+                      <tr key={post.id}>
+                        <td><input type="checkbox" aria-label={`Select ${post.title_en}`} checked={selectedIds.includes(post.id)} onChange={(event) => setSelectedIds((current) => event.target.checked ? [...current, post.id] : current.filter((id) => id !== post.id))} /></td>
+                        <td><strong>{post.title_en || post.slug}</strong><small>/{post.slug}</small></td>
+                        <td>{kind?.label || post.category.name_en}</td>
+                        <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>
+                        <td>{(post.views_count || 0).toLocaleString()}</td>
+                        <td>{post.created_at ? new Date(post.created_at).toLocaleDateString() : "—"}</td>
+                        <td>
+                          <div className="admin-row-actions">
+                            <Link href={`/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}`} target="_blank">View</Link>
+                            <Link href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`}>Edit</Link>
+                            {post.status !== "published" && <button disabled={busyPost === post.id} onClick={() => void changeStatus(post, "published")}>Publish</button>}
+                            <button className="danger" disabled={busyPost === post.id} onClick={() => void deletePost(post)}>Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
+          <div className="admin-table-footer">
+            <span>Showing {sortedPosts.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, sortedPosts.length)} of {sortedPosts.length} filtered posts · {posts.length} total</span>
+            <div className="admin-pagination">
+              <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page"><option value={10}>10 rows</option><option value={15}>15 rows</option><option value={25}>25 rows</option><option value={50}>50 rows</option></select>
+              <button disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button>
+              <span>Page {page} of {pageCount}</span>
+              <button disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>Next</button>
+            </div>
+          </div>
+          {selectedIds.length > 0 && <div className="admin-bulk-bar"><strong>{selectedIds.length} selected</strong><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("published")}>Publish selected</button><button disabled={busyPost === -1} onClick={() => void bulkChangeStatus("archived")}>Archive selected</button><button onClick={() => setSelectedIds([])}>Clear selection</button></div>}
         </section>
-        <div className="admin-warning">
-          <strong>महत्त्वाची नोंद:</strong> हा frontend-only admin आहे. डेटा
-          फक्त याच browser च्या localStorage मध्ये सेव्ह होतो; दुसऱ्या
-          डिव्हाइसवर दिसणार नाही आणि browser data clear केल्यास हटू शकतो.
-          Backend शिवाय admin login किंवा content access सुरक्षितपणे मर्यादित
-          करता येत नाही. सार्वजनिक deployment आधी सुरक्षित backend जोडणे आवश्यक
-          आहे.
-        </div>
-        <button className="reset-button" onClick={reset}>
-          स्थानिक डेटा हटवा
-        </button>
       </div>
-      <footer className="admin-footer">
-        ShivanyaMS · Frontend Content Admin
-      </footer>
+      <footer className="admin-footer">ShivanyaMS · Content Administration</footer>
     </main>
   );
 }

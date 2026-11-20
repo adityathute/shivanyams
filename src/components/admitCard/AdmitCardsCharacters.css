@@ -1,0 +1,231 @@
+.admit-characters {
+  position: relative;
+  width: 445px;
+  max-width: 100%;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  isolation: isolate;
+  overflow: visible;
+}
+
+/* Image */
+
+.admit-characters-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Animated circle */
+
+.admit-character-circle {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #d5f2fa;
+  z-index: 0;
+
+  /* Hide the circle below the platform */
+  clip-path: inset(0 0 13% 0);
+
+  animation: admit-circle-morph 12s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform, border-radius, opacity;
+}
+
+@keyframes admit-circle-morph {
+  0%,
+  100% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  20% {
+    border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+
+  40% {
+    border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
+    transform: translate(-50%, -50%) scale(0.95);
+    opacity: 0.8;
+  }
+
+  60% {
+    border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+
+  75% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+
+  90% {
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+/* Floating badges */
+
+.admit-character-badge {
+  position: absolute;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 15px;
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 8px 25px rgba(8, 145, 178, 0.15);
+
+  z-index: 2;
+
+  animation: admit-badge-float 4s ease-in-out infinite;
+}
+
+/* Admit card badge */
+
+.admit-badge-card {
+  top: 34%;
+  left: -3%;
+  color: #0891b2;
+
+  transform: rotate(-8deg);
+}
+
+/* Check badge */
+
+.admit-badge-check {
+  top: -5%;
+  right: -6%;
+
+  color: #22b573;
+
+  animation-delay: -2s;
+}
+
+/* Download badge */
+
+.admit-badge-download {
+  bottom: 49%;
+  right: -16px;
+
+  color: #0891b2;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+/* Sparkle */
+
+.admit-character-sparkle {
+  position: absolute;
+
+  top: 51%;
+  right: 3%;
+
+  color: #ffc928;
+  font-size: 32px;
+
+  z-index: 2;
+
+  animation: admit-sparkle 3s ease-in-out infinite;
+}
+
+/* Animations */
+
+@keyframes admit-badge-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes admit-sparkle {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9) rotate(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(15deg);
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .admit-characters {
+    width: 100%;
+  }
+
+  .admit-character-circle {
+    width: 65%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .admit-character-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .admit-character-badge svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .admit-character-sparkle {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 390px) {
+  .admit-character-badge {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Dark theme */
+
+[data-theme="dark"] .admit-character-circle {
+  background: #1e3b46;
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .admit-character-badge,
+  .admit-character-sparkle,
+  .admit-character-circle {
+    animation: none;
+  }
+}

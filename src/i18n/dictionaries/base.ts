@@ -1,4 +1,4 @@
-import type { Language } from "../../components/portal/CategoryGrid";
+import type { Language } from "../../components/portal/category/CategoryGrid";
 
 export const baseDictionary = {
   importantSections: {
@@ -62,21 +62,21 @@ export const baseDictionary = {
   },
 
   heroTitleLine1: {
-    en: "Government Jobs, Schemes and",
+    en: "Government Jobs, Schemes &",
     mr: "सरकारी नोकरी, योजना आणि",
     hi: "सरकारी नौकरी, योजनाएं और",
   },
 
   heroTitleLine2: {
-    en: "Important Updates in One Place",
+    en: "Latest Updates",
     mr: "महत्त्वाच्या अपडेट्स एकाच ठिकाणी",
     hi: "महत्वपूर्ण अपडेट्स एक ही जगह",
   },
 
   heroDescription: {
-    en: "Latest Govt Jobs, Schemes, Results, Admit Cards and Useful Guides in Marathi, Hindi & English.",
-    mr: "नवीनतम सरकारी नोकरी, योजना, निकाल, प्रवेशपत्र आणि उपयुक्त मार्गदर्शक मराठी, हिंदी आणि इंग्रजीमध्ये.",
-    hi: "नवीनतम सरकारी नौकरी, योजनाएं, परिणाम, प्रवेश पत्र और उपयोगी मार्गदर्शिकाएं मराठी, हिंदी और अंग्रेज़ी में।",
+    en: "Latest Govt Jobs, Schemes, Exams, Results, Admit Cards and Useful Guides in Marathi, Hindi & English.",
+    mr: "नवीनतम सरकारी नोकरी, योजना, परीक्षा, निकाल, प्रवेशपत्र आणि उपयुक्त मार्गदर्शक मराठी, हिंदी आणि इंग्रजीमध्ये.",
+    hi: "नवीनतम सरकारी नौकरी, योजनाएं, परीक्षा, परिणाम, प्रवेश पत्र और उपयोगी मार्गदर्शिकाएं मराठी, हिंदी और अंग्रेज़ी में।",
   },
 
   jobsEyebrow: {

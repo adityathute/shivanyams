@@ -1,44 +1,44 @@
 from django.contrib import admin
 
 from .models import (
-    Application,
-    CandidateProfile,
+    AdmitCardDetails,
+    ArticleGuideDetails,
     Category,
+    Comment,
+    ExaminationDetails,
+    JobDetails,
+    JobPost,
+    JobPostEducation,
+    JobPostFee,
+    JobVacancyBreakdown,
+    Post,
+    PostDate,
+    PostFAQ,
+    PostLink,
+    PostReaction,
+    PostRelation,
+    PostResource,
+    PostStatusHistory,
+    PostView,
+    PostVisitor,
+    ResultDetails,
+    SavedPost,
+    SchemeDetails,
+    ToolDetails,
+    VideoDetails,
     ImportantLink,
-    Company,
-    Job,
-    PortalContent,
-    SavedJob,
 )
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = (
-        "name_en",
-        "name_mr",
-        "name_hi",
-        "slug",
-        "active",
-        "created_at",
-        "updated_at",
-    )
-
-    list_filter = ("active",)
-
-    search_fields = (
-        "name_en",
-        "name_mr",
-        "name_hi",
-        "slug",
-        "description_en",
-        "description_mr",
-        "description_hi",
-    )
-
+    list_display = ("name_en", "slug", "sort_order", "is_active", "created_at")
+    list_display_links = ("name_en",)
+    list_filter = ("is_active",)
+    search_fields = ("name_en", "name_mr", "name_hi", "slug")
+    ordering = ("sort_order", "name_en")
     prepopulated_fields = {"slug": ("name_en",)}
-
-    ordering = ("name_en",)
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(ImportantLink)
@@ -51,61 +51,865 @@ class ImportantLinkAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
 
 
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "owner_auth_id", "verified", "city", "state")
-    list_filter = ("verified", "state")
-    search_fields = ("name", "slug", "owner_auth_id", "city", "state")
-    prepopulated_fields = {"slug": ("name",)}
-    readonly_fields = ("created_at", "updated_at")
+class PostLinkInline(admin.TabularInline):
+    model = PostLink
+    extra = 0
+    fields = ("group_key", "name_en", "name_mr", "name_hi", "action_text_en", "action_text_mr", "action_text_hi", "url", "sort_order", "is_active")
+    ordering = ("sort_order", "id")
 
 
-@admin.register(Job)
-class JobAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "company",
-        "category",
-        "employment_type",
-        "status",
-        "published_at",
-        "deadline",
+class PostFAQInline(admin.StackedInline):
+    model = PostFAQ
+    extra = 0
+    fields = (("sort_order", "is_active"), "question_en", ("question_mr", "question_hi"), "answer_en", ("answer_mr", "answer_hi"))
+    ordering = ("sort_order", "id")
+
+
+class PostDateInline(admin.StackedInline):
+    model = PostDate
+    extra = 0
+    show_change_link = True
+
+    fieldsets = (
+        (
+            "Date Category and Format",
+            {"fields": (("date_type", "date_format", "sort_order"),)},
+        ),
+        (
+            "Multilingual Labels",
+            {"fields": (("label_en", "label_mr", "label_hi"),)},
+        ),
+        (
+            "Single Date",
+            {
+                "fields": (("date", "time"),),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Date Range",
+            {
+                "fields": (("start_date", "end_date"),),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Month and Year",
+            {
+                "fields": (
+                    ("month", "year"),
+                    "month_years",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Revised Date",
+            {
+                "fields": (
+                    ("old_date", "new_date"),
+                    ("old_time", "new_time"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Descriptions",
+            {
+                "fields": (
+                    "description_en",
+                    "description_mr",
+                    "description_hi",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
     )
-    list_filter = ("status", "employment_type", "remote", "category", "state")
-    search_fields = ("title", "slug", "company__name", "location", "state")
-    prepopulated_fields = {"slug": ("title",)}
-    autocomplete_fields = ("company", "category")
+
+    ordering = ("sort_order", "id")
+
+
+class PostResourceInline(admin.TabularInline):
+    model = PostResource
+    extra = 0
+    fields = (
+        "resource_type",
+        "title_en",
+        "title_mr",
+        "title_hi",
+        "file_url",
+        "external_url",
+        "sort_order",
+        "is_active",
+    )
+    ordering = ("sort_order", "id")
+
+
+class PostRelationInline(admin.TabularInline):
+    model = PostRelation
+    fk_name = "source_post"
+    extra = 0
+    autocomplete_fields = ("target_post",)
+    fields = ("target_post", "relation_type", "sort_order")
+    ordering = ("sort_order", "id")
+
+
+class PostStatusHistoryInline(admin.TabularInline):
+    model = PostStatusHistory
+    extra = 0
+    can_delete = False
+    fields = (
+        "previous_status",
+        "new_status",
+        "changed_by_auth_id",
+        "note",
+        "created_at",
+    )
+    readonly_fields = fields
+    ordering = ("-created_at",)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = (
+        "title_en",
+        "category",
+        "status",
+        "organization_type",
+        "owner_auth_id",
+        "is_featured",
+        "published_at",
+        "views_count",
+    )
+    list_display_links = ("title_en",)
+    list_filter = (
+        "category",
+        "status",
+        "default_language",
+        "is_featured",
+        "is_active",
+        "comments_enabled",
+        "reactions_enabled",
+    )
+    search_fields = (
+        "title_en",
+        "title_mr",
+        "title_hi",
+        "slug",
+        "summary_en",
+        "owner_auth_id",
+    )
+    autocomplete_fields = ("category",)
+    prepopulated_fields = {"slug": ("title_en",)}
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "views_count",
+        "unique_visitors_count",
+        "likes_count",
+        "dislikes_count",
+        "comments_count",
+        "saves_count",
+    )
     date_hierarchy = "created_at"
-    readonly_fields = ("views", "created_at", "updated_at")
+    ordering = ("-created_at",)
+    list_select_related = ("category",)
+    inlines = (
+        PostLinkInline,
+        PostFAQInline,
+        PostDateInline,
+        PostResourceInline,
+        PostRelationInline,
+        PostStatusHistoryInline,
+    )
+    fieldsets = (
+        (
+            "Post",
+            {
+                "fields": (
+                    "category",
+                    "organization_type",
+                    "owner_auth_id",
+                    "title_en",
+                    "title_mr",
+                    "title_hi",
+                    "slug",
+                    "summary_en",
+                    "summary_mr",
+                    "summary_hi",
+                    "body_en",
+                    "body_mr",
+                    "body_hi",
+                )
+            },
+        ),
+        (
+            "Location and media",
+            {
+                "fields": (
+                    "location",
+                    "state",
+                    "country",
+                    "featured_image_url",
+                    "start_date",
+                    "end_date",
+                    "event_date",
+                    "default_language",
+                )
+            },
+        ),
+        (
+            "Review and publishing",
+            {
+                "fields": (
+                    "status",
+                    "submitted_at",
+                    "reviewed_at",
+                    "reviewed_by_auth_id",
+                    "approved_at",
+                    "approved_by_auth_id",
+                    "review_note",
+                    "scheduled_at",
+                    "published_at",
+                    "published_by_auth_id",
+                )
+            },
+        ),
+        (
+            "SEO",
+            {
+                "fields": (
+                    "meta_title_en",
+                    "meta_title_mr",
+                    "meta_title_hi",
+                    "meta_description_en",
+                    "meta_description_mr",
+                    "meta_description_hi",
+                    "meta_keywords",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Engagement and visibility",
+            {
+                "fields": (
+                    "comments_enabled",
+                    "reactions_enabled",
+                    "is_featured",
+                    "is_active",
+                )
+            },
+        ),
+        (
+            "Analytics counters (managed by application services)",
+            {
+                "fields": (
+                    "views_count",
+                    "unique_visitors_count",
+                    "likes_count",
+                    "dislikes_count",
+                    "comments_count",
+                    "saves_count",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Timestamps",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
+    )
 
 
-@admin.register(CandidateProfile)
-class CandidateProfileAdmin(admin.ModelAdmin):
-    list_display = ("auth_user_id", "name", "headline", "city", "experience_years")
-    search_fields = ("auth_user_id", "name", "headline", "city")
+class PostDetailAdmin(admin.ModelAdmin):
+    list_display = ("post", "created_at", "updated_at")
+    search_fields = ("post__title_en", "post__slug")
+    autocomplete_fields = ("post",)
+    readonly_fields = ("created_at", "updated_at")
+    list_select_related = ("post",)
+
+
+class JobPostInline(admin.StackedInline):
+    model = JobPost
+    extra = 0
+    show_change_link = True
+    ordering = ("sort_order", "id")
+
+    fieldsets = (
+        (
+            "Post Information",
+            {
+                "fields": (
+                    ("post_number", "sort_order"),
+                    ("post_name_en", "post_name_mr", "post_name_hi"),
+                    ("department_en", "department_mr", "department_hi"),
+                    "vacancies",
+                )
+            },
+        ),
+        (
+            "Educational Qualification",
+            {
+                "fields": (
+                    "educational_qualification_en",
+                    "educational_qualification_mr",
+                    "educational_qualification_hi",
+                )
+            },
+        ),
+        (
+            "Post-specific Age Eligibility",
+            {
+                "fields": (
+                    "age_criteria_type",
+                    ("age_min", "age_max"),
+                    "age_as_on_date",
+                    ("eligible_dob_from", "eligible_dob_to"),
+                    "age_limit_note_en",
+                    "age_limit_note_mr",
+                    "age_limit_note_hi",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+@admin.register(JobDetails)
+class JobDetailsAdmin(PostDetailAdmin):
+    inlines = (JobPostInline,)
+
+    list_display = (
+        "post",
+        "recruitment_type",
+        "total_vacancies",
+        "age_criteria_type",
+        "age_min",
+        "age_max",
+        "application_fee",
+        "applications_open",
+        "application_mode",
+        "updated_at",
+    )
+
+    list_filter = (
+        "recruitment_type",
+        "age_criteria_type",
+        "applications_open",
+        "application_mode",
+    )
+
+    search_fields = (
+        "post__title_en",
+        "post__slug",
+        "department",
+        "designation",
+        "advertisement_no",
+    )
+
+    fieldsets = (
+        (
+            "Recruitment Information",
+            {
+                "fields": (
+                    "post",
+                    "advertisement_no",
+                    "recruitment_type",
+                    "total_vacancies",
+                    "department",
+                    "designation",
+                    "post_details",
+                    "educational_qualification",
+                )
+            },
+        ),
+        (
+            "Age Eligibility",
+            {
+                "fields": (
+                    "age_criteria_type",
+                    ("age_min", "age_max"),
+                    "age_as_on_date",
+                    ("eligible_dob_from", "eligible_dob_to"),
+                    "age_limit_note_en",
+                    "age_limit_note_mr",
+                    "age_limit_note_hi",
+                )
+            },
+        ),
+        (
+            "Application Fee",
+            {
+                "fields": (
+                    "application_fee",
+                    "application_fee_note_en",
+                    "application_fee_note_mr",
+                    "application_fee_note_hi",
+                )
+            },
+        ),
+        (
+            "Application Details",
+            {
+                "fields": (
+                    "application_mode",
+                    "apply_url",
+                    "apply_email",
+                    "applications_open",
+                )
+            },
+        ),
+        (
+            "Selection Process",
+            {
+                "fields": (
+                    "selection_process",
+                    "exam_pattern",
+                    "syllabus",
+                    "physical_test_details",
+                    "interview_details",
+                )
+            },
+        ),
+        (
+            "Official Links",
+            {
+                "fields": (
+                    "official_notification_url",
+                    "official_website",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+
+class JobPostEducationInline(admin.TabularInline):
+    model = JobPostEducation
+    extra = 0
+    fields = (
+        "qualification_en",
+        "qualification_mr",
+        "qualification_hi",
+        "sort_order",
+    )
+    ordering = ("sort_order", "id")
+
+
+class JobPostFeeInline(admin.TabularInline):
+    model = JobPostFee
+    extra = 0
+    fields = (
+        "category_name_en",
+        "category_name_mr",
+        "category_name_hi",
+        "fee_amount",
+        "fee_note_en",
+        "fee_note_mr",
+        "fee_note_hi",
+        "sort_order",
+    )
+    ordering = ("sort_order", "id")
+
+
+@admin.register(JobPost)
+class JobPostAdmin(admin.ModelAdmin):
+    list_display = (
+        "post_number",
+        "post_name_en",
+        "job",
+        "vacancies",
+        "age_criteria_type",
+        "age_min",
+        "age_max",
+        "sort_order",
+    )
+
+    list_filter = (
+        "age_criteria_type",
+        "job__recruitment_type",
+    )
+
+    search_fields = (
+        "post_number",
+        "post_name_en",
+        "post_name_mr",
+        "post_name_hi",
+        "department_en",
+        "job__post__title_en",
+    )
+
+    autocomplete_fields = ("job",)
+
+    list_select_related = ("job", "job__post")
+
+    ordering = ("job", "sort_order", "id")
+
+    readonly_fields = ("created_at", "updated_at")
+
+    inlines = (JobPostEducationInline, JobPostFeeInline)
+
+@admin.register(JobVacancyBreakdown)
+class JobVacancyBreakdownAdmin(admin.ModelAdmin):
+    list_display = ("job", "category_name_en", "vacancies", "sort_order")
+    search_fields = ("job__post__title_en", "category_name_en")
+    autocomplete_fields = ("job",)
+    ordering = ("job", "sort_order", "id")
+    list_select_related = ("job", "job__post")
     readonly_fields = ("created_at", "updated_at")
 
 
-@admin.register(Application)
-class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ("job", "candidate_auth_id", "status", "created_at")
-    list_filter = ("status", "created_at")
-    search_fields = ("job__title", "candidate_auth_id")
+@admin.register(SchemeDetails)
+class SchemeDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "scheme_type", "application_mode", "updated_at")
+    list_filter = ("scheme_type", "application_mode")
+    search_fields = ("post__title_en", "post__slug", "beneficiaries", "eligibility")
+
+
+@admin.register(ExaminationDetails)
+class ExaminationDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "exam_type", "exam_mode", "exam_name", "updated_at")
+    list_filter = ("exam_type", "exam_mode")
+    search_fields = (
+        "post__title_en",
+        "post__slug",
+        "exam_name",
+        "conducting_authority",
+    )
+
+
+@admin.register(AdmitCardDetails)
+class AdmitCardDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "issuing_authority", "exam_name", "release_date")
+    search_fields = (
+        "post__title_en",
+        "post__slug",
+        "issuing_authority",
+        "exam_name",
+    )
+    list_filter = ("release_date", "examination_date")
+
+
+@admin.register(ResultDetails)
+class ResultDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "result_type", "examination_name", "result_date")
+    list_filter = ("result_type", "result_date")
+    search_fields = ("post__title_en", "post__slug", "examination_name")
+
+
+@admin.register(ArticleGuideDetails)
+class ArticleGuideDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "article_type", "reading_time_minutes", "updated_at")
+    list_filter = ("article_type",)
+    search_fields = ("post__title_en", "post__slug", "source_name")
+
+
+@admin.register(VideoDetails)
+class VideoDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "provider", "video_url", "duration_seconds", "updated_at")
+    list_filter = ("provider",)
+    search_fields = ("post__title_en", "post__slug", "video_url")
+
+
+@admin.register(ToolDetails)
+class ToolDetailsAdmin(PostDetailAdmin):
+    list_display = ("post", "tool_key", "tool_type", "is_interactive", "updated_at")
+    list_filter = ("tool_type", "is_interactive")
+    search_fields = ("post__title_en", "post__slug", "tool_key")
+
+
+@admin.register(PostLink)
+class PostLinkAdmin(admin.ModelAdmin):
+    list_display = ("name_en", "post", "url", "sort_order", "is_active")
+    list_filter = ("is_active",)
+    search_fields = ("name_en", "name_mr", "name_hi", "post__title_en", "url")
+    autocomplete_fields = ("post",)
+    ordering = ("post", "sort_order", "id")
+    list_select_related = ("post",)
     readonly_fields = ("created_at", "updated_at")
 
 
-@admin.register(SavedJob)
-class SavedJobAdmin(admin.ModelAdmin):
-    list_display = ("candidate_auth_id", "job", "created_at")
-    search_fields = ("candidate_auth_id", "job__title")
+@admin.register(PostDate)
+class PostDateAdmin(admin.ModelAdmin):
+    list_display = (
+        "label_en",
+        "post",
+        "date_type",
+        "date_format",
+        "get_display_date",
+        "sort_order",
+    )
+
+    list_filter = (
+        "date_type",
+        "date_format",
+        "post__category",
+    )
+
+    search_fields = (
+        "label_en",
+        "label_mr",
+        "label_hi",
+        "description_en",
+        "post__title_en",
+        "post__slug",
+    )
+
+    autocomplete_fields = ("post",)
+
+    ordering = ("post", "sort_order", "id")
+
+    list_select_related = ("post", "post__category")
+
+    readonly_fields = ("created_at", "updated_at")
+
+    fieldsets = (
+        (
+            "Date Category",
+            {
+                "fields": (
+                    "post",
+                    ("date_type", "date_format", "sort_order"),
+                )
+            },
+        ),
+        (
+            "Labels",
+            {"fields": (("label_en", "label_mr", "label_hi"),)},
+        ),
+        (
+            "Single Date",
+            {
+                "fields": (("date", "time"),),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Date Range",
+            {
+                "fields": (("start_date", "end_date"),),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Month and Year",
+            {
+                "fields": (
+                    ("month", "year"),
+                    "month_years",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Revised Date",
+            {
+                "fields": (
+                    ("old_date", "new_date"),
+                    ("old_time", "new_time"),
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Descriptions",
+            {
+                "fields": (
+                    "description_en",
+                    "description_mr",
+                    "description_hi",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": ("created_at", "updated_at"),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+
+    def get_display_date(self, obj):
+        if obj.date_format == PostDate.DateFormat.SINGLE:
+            return obj.date or "-"
+
+        if obj.date_format == PostDate.DateFormat.RANGE:
+            return f"{obj.start_date or '-'} to {obj.end_date or '-'}"
+
+        if obj.date_format == PostDate.DateFormat.MONTH_YEAR:
+            if obj.month and obj.year:
+                import calendar
+
+                return f"{calendar.month_name[obj.month]} {obj.year}"
+            return "-"
+
+        if obj.date_format in (
+            PostDate.DateFormat.REVISED,
+            PostDate.DateFormat.REVISED_WITH_TIME,
+        ):
+            return f"{obj.old_date or '-'} → {obj.new_date or '-'}"
+
+        return "-"
+
+    get_display_date.short_description = "Important Date"
+
+
+@admin.register(PostResource)
+class PostResourceAdmin(admin.ModelAdmin):
+    list_display = (
+        "title_en",
+        "post",
+        "resource_type",
+        "file_size_bytes",
+        "sort_order",
+        "is_active",
+    )
+    list_filter = ("resource_type", "is_active")
+    search_fields = ("title_en", "title_mr", "title_hi", "post__title_en")
+    autocomplete_fields = ("post",)
+    ordering = ("post", "sort_order", "id")
+    list_select_related = ("post",)
     readonly_fields = ("created_at", "updated_at")
 
 
-@admin.register(PortalContent)
-class PortalContentAdmin(admin.ModelAdmin):
-    list_display = ("title", "kind", "status", "organization", "published_at")
-    list_filter = ("kind", "status", "location")
-    search_fields = ("title", "slug", "summary", "organization", "location")
-    prepopulated_fields = {"slug": ("title",)}
+@admin.register(PostRelation)
+class PostRelationAdmin(admin.ModelAdmin):
+    list_display = ("source_post", "relation_type", "target_post", "sort_order")
+    list_filter = ("relation_type",)
+    search_fields = (
+        "source_post__title_en",
+        "source_post__slug",
+        "target_post__title_en",
+        "target_post__slug",
+    )
+    autocomplete_fields = ("source_post", "target_post")
+    ordering = ("source_post", "sort_order")
+    list_select_related = ("source_post", "target_post")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(PostReaction)
+class PostReactionAdmin(admin.ModelAdmin):
+    list_display = ("post", "user_auth_id", "reaction", "created_at")
+    list_filter = ("reaction", "created_at")
+    search_fields = ("post__title_en", "user_auth_id")
+    autocomplete_fields = ("post",)
     date_hierarchy = "created_at"
+    list_select_related = ("post",)
     readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(SavedPost)
+class SavedPostAdmin(admin.ModelAdmin):
+    list_display = ("post", "user_auth_id", "created_at")
+    search_fields = ("post__title_en", "user_auth_id")
+    autocomplete_fields = ("post",)
+    date_hierarchy = "created_at"
+    list_select_related = ("post",)
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "post",
+        "user_auth_id",
+        "language",
+        "status",
+        "parent",
+        "created_at",
+    )
+    list_filter = ("status", "language", "created_at")
+    search_fields = ("content", "user_auth_id", "post__title_en")
+    autocomplete_fields = ("post", "parent")
+    date_hierarchy = "created_at"
+    list_select_related = ("post", "parent")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(PostVisitor)
+class PostVisitorAdmin(admin.ModelAdmin):
+    list_display = (
+        "post",
+        "visitor_id",
+        "auth_user_id",
+        "visit_count",
+        "first_seen_at",
+        "last_seen_at",
+    )
+    search_fields = ("post__title_en", "visitor_id", "auth_user_id")
+    autocomplete_fields = ("post",)
+    date_hierarchy = "last_seen_at"
+    list_select_related = ("post",)
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "first_seen_at",
+        "last_seen_at",
+    )
+
+
+@admin.register(PostView)
+class PostViewAdmin(admin.ModelAdmin):
+    list_display = (
+        "post",
+        "visitor",
+        "auth_user_id",
+        "language",
+        "device",
+        "viewed_at",
+    )
+    list_filter = ("language", "device", "viewed_at")
+    search_fields = ("post__title_en", "visitor__visitor_id", "auth_user_id")
+    autocomplete_fields = ("post", "visitor")
+    date_hierarchy = "viewed_at"
+    list_select_related = ("post", "visitor")
+    readonly_fields = ("viewed_at",)
+
+
+@admin.register(PostStatusHistory)
+class PostStatusHistoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "post",
+        "previous_status",
+        "new_status",
+        "changed_by_auth_id",
+        "created_at",
+    )
+    list_filter = ("previous_status", "new_status", "created_at")
+    search_fields = ("post__title_en", "changed_by_auth_id", "note")
+    autocomplete_fields = ("post",)
+    date_hierarchy = "created_at"
+    list_select_related = ("post",)
+    readonly_fields = (
+        "post",
+        "previous_status",
+        "new_status",
+        "changed_by_auth_id",
+        "note",
+        "created_at",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False

@@ -1,4 +1,4 @@
-import { VideosPage } from "../../components/portal/VideosPage";
+import { VideosPage } from "../../components/videos/VideosPage";
 
 export default function VideosPageRoute() {
   return <VideosPage />;

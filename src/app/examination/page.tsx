@@ -1,4 +1,4 @@
-import { ExaminationPage } from "../../components/portal/ExaminationPage";
+import { ExaminationPage } from "../../components/examination/ExaminationPage";
 
 export default function Page() {
   return <ExaminationPage />;

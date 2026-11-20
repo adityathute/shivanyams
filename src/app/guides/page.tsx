@@ -1,4 +1,4 @@
-import { GuidesPage } from "../../components/portal/GuidesPage";
+import { GuidesPage } from "../../components/guide/GuidesPage";
 
 export default function GuidesPageRoute() {
   return <GuidesPage />;

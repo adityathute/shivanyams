@@ -1,0 +1,116 @@
+.hill-flowers {
+  position: absolute;
+  top: -12px;
+  left: 5%;
+  right: 5%;
+  height: 100px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+.hill-flower {
+  position: absolute;
+  bottom: 18px;
+  width: 3px;
+  height: var(--stem-height, 34px);
+  background: var(--flower-stem);
+  border-radius: 4px;
+  transform: rotate(var(--flower-rotation, 0deg));
+  transform-origin: bottom center;
+  transition: background 5s ease;
+}
+
+/* Flower head */
+.hill-flower::before {
+  content: "";
+  position: absolute;
+  top: -17px;
+  left: -9px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at center,
+      var(--flower-center) 0 20%,
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 50% 0%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 100% 50%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 0% 50%,
+      var(--flower-petal-color) 0 32%,
+      transparent 35%
+    );
+  transition: background 5s ease;
+}
+
+/* Leaves */
+.hill-flower::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 15px;
+  width: 12px;
+  height: 6px;
+  background: var(--flower-stem);
+  border-radius: 100% 0 100% 0;
+  transform: rotate(-25deg);
+}
+
+.flower-1 {
+  left: 12%;
+  --stem-height: 28px;
+  --flower-rotation: -8deg;
+  --flower-petal-color: var(--flower-1-color);
+}
+
+.flower-2 {
+  left: 25%;
+  --stem-height: 42px;
+  --flower-rotation: 7deg;
+  --flower-petal-color: var(--flower-2-color);
+}
+
+.flower-3 {
+  left: 40%;
+  --stem-height: 32px;
+  --flower-rotation: -5deg;
+  --flower-petal-color: var(--flower-3-color);
+}
+
+.flower-4 {
+  left: 55%;
+  --stem-height: 46px;
+  --flower-rotation: 8deg;
+  --flower-petal-color: var(--flower-4-color);
+}
+
+@media (max-width: 760px) {
+  .flower-4,
+  .flower-3 {
+    display: none;
+  }
+
+  .flower-1 {
+    left: 20%;
+  }
+
+  .flower-2 {
+    left: 35%;
+  }
+}

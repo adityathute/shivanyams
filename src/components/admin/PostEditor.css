@@ -912,6 +912,15 @@
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
+  padding-right: 24px;
+}
+.post-editor-translation-heading-description {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-right: 24px;
 }
 .post-editor-translation-heading > span {
   color: #344a65;
@@ -1509,7 +1518,7 @@
 .post-editor-month-year-section .post-editor-field { display: grid; gap: 9px; width: 100%; min-width: 0; margin-bottom: 13px;}
 .post-editor-month-year-row { grid-template-columns: minmax(0, 1fr) minmax(110px, 0.65fr) auto; align-items: end; gap: 9px; margin-bottom: 0; }
 .post-editor-month-year-row select, .post-editor-month-year-row input { width: 100%; min-width: 0; }
-.post-editor-month-year-row > button { min-height: 36px; padding: 7px 12px; border: 1px solid #e1a1a1; border-radius: 7px; background: #fff7f7; color: #b42318; font-size: 11px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.post-editor-month-year-row > button { min-height: 32px; padding: 7px 12px; border: 1px solid #e1a1a1; border-radius: 7px; background: #fff7f7; color: #b42318; font-size: 11px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .post-editor-add-month-year { justify-self: start; min-height: 34px; padding: 7px 12px; border: 1px solid #cbd9eb; border-radius: 7px; background: #f5f8fd; color: #315d8a; font-size: 11px; font-weight: 700; cursor: pointer; transition: background 140ms ease, border-color 140ms ease, color 140ms ease; }
 .post-editor-add-month-year:hover { border-color: #9bb5d4; background: #eaf1fa; color: #1f4e7d; }
 @media (max-width: 520px) { .post-editor-month-year-row { grid-template-columns: minmax(0, 1fr) minmax(90px, 0.7fr); } .post-editor-month-year-row > button { grid-column: 1 / -1; justify-self: start; } }
@@ -1577,6 +1586,7 @@
 .post-editor-important-dates .post-editor-month-year-row {
   grid-template-columns: minmax(0, 1fr) minmax(110px, 0.65fr) auto;
   align-items: end;
+  padding-right: 24px;
 }
 .post-editor-important-dates .post-editor-month-year-row .shivanya-select-field,
 .post-editor-important-dates .post-editor-month-year-row .shivanya-input-wrapper {

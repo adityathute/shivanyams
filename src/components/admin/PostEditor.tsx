@@ -2106,15 +2106,15 @@ export default function PostEditor({
 
                   {item.date_format === "single" ? (
                     <div className="post-editor-grid post-editor-date-value-grid">
-                      <Input label="Date *" type="date" required value={item.date} onChange={(event) => updateDate({ date: event.target.value })} fullWidth size="sm" />
+                      <Input label="Date" type="date" required value={item.date} onChange={(event) => updateDate({ date: event.target.value })} fullWidth size="sm" />
                       <Input label="Time (Optional)" type="time" value={item.time} onChange={(event) => updateDate({ time: event.target.value })} fullWidth size="sm" />
                     </div>
                   ) : null}
 
                   {item.date_format === "range" ? (
                     <div className="post-editor-grid post-editor-date-value-grid">
-                      <Input label="Start date *" type="date" required value={item.start_date} onChange={(event) => updateDate({ start_date: event.target.value })} fullWidth size="sm" />
-                      <Input label="End date *" type="date" required min={item.start_date || undefined} value={item.end_date} onChange={(event) => updateDate({ end_date: event.target.value })} fullWidth size="sm" />
+                      <Input label="Start date" type="date" required value={item.start_date} onChange={(event) => updateDate({ start_date: event.target.value })} fullWidth size="sm" />
+                      <Input label="End date" type="date" required min={item.start_date || undefined} value={item.end_date} onChange={(event) => updateDate({ end_date: event.target.value })} fullWidth size="sm" />
                     </div>
                   ) : null}
 
@@ -2177,12 +2177,12 @@ export default function PostEditor({
 
                   {item.date_format === "revised" || item.date_format === "revised_with_time" ? (
                     <div className="post-editor-grid post-editor-date-value-grid">
-                      <Input label="Original date *" type="date" required value={item.old_date} onChange={(event) => updateDate({ old_date: event.target.value })} fullWidth size="sm" />
-                      <Input label="Revised date *" type="date" required value={item.new_date} onChange={(event) => updateDate({ new_date: event.target.value })} fullWidth size="sm" />
+                      <Input label="Original date" type="date" required value={item.old_date} onChange={(event) => updateDate({ old_date: event.target.value })} fullWidth size="sm" />
+                      <Input label="Revised date" type="date" required value={item.new_date} onChange={(event) => updateDate({ new_date: event.target.value })} fullWidth size="sm" />
                       {item.date_format === "revised_with_time" ? (
                         <>
-                          <Input label="Original time *" type="time" required value={item.old_time} onChange={(event) => updateDate({ old_time: event.target.value })} fullWidth size="sm" />
-                          <Input label="Revised time *" type="time" required value={item.new_time} onChange={(event) => updateDate({ new_time: event.target.value })} fullWidth size="sm" />
+                          <Input label="Original time" type="time" required value={item.old_time} onChange={(event) => updateDate({ old_time: event.target.value })} fullWidth size="sm" />
+                          <Input label="Revised time" type="time" required value={item.new_time} onChange={(event) => updateDate({ new_time: event.target.value })} fullWidth size="sm" />
                         </>
                       ) : null}
                     </div>
@@ -2208,7 +2208,7 @@ export default function PostEditor({
                         : [])] as ContentLanguage[]).map((lang) => (
                         <Input
                           key={lang}
-                          label={`Label (${lang.toUpperCase()})${lang === "en" ? " *" : ""}`}
+                          label={`Label (${lang.toUpperCase()})${lang === "en" ? " " : ""}`}
                           required={lang === "en"}
                           maxLength={180}
                           value={String(item[`label_${lang}`] ?? "")}
@@ -2221,7 +2221,7 @@ export default function PostEditor({
                   </div>
 
                   <div className="post-editor-date-description-section">
-                    <div className="post-editor-translation-heading">
+                    <div className="post-editor-translation-heading-description">
                       <span>Description</span>
                       <button
                         type="button"

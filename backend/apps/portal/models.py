@@ -1496,7 +1496,7 @@ class PostView(models.Model):
             models.Index(fields=("post", "viewed_at")),
             models.Index(fields=("language", "viewed_at")),
             models.Index(fields=("device", "viewed_at")),
-            models.Index(fields=("visitor", "viewed_at")),
+            models.Index(fields=("visitor", "viewed_at"), name="portal_web_visit_view_idx"),
         ]
 
     def __str__(self):
@@ -1537,7 +1537,7 @@ class WebsiteView(models.Model):
     class Meta:
         ordering = ("-viewed_at",)
         indexes = [
-            models.Index(fields=("path", "viewed_at")),
+            models.Index(fields=("path", "viewed_at"), name="portal_web_path_view_idx"),
             models.Index(fields=("visitor", "viewed_at")),
         ]
 

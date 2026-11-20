@@ -130,7 +130,7 @@ export function HomePage() {
                 <span>{t("usefulLinks")}</span>
               </div>
 
-              {links.slice(0, IMPORTANT_LINKS_DISPLAY_LIMIT).map((link) => (
+              {links.slice(0, HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT).map((link) => (
                 <a
                   className="important-link"
                   href={link.url}

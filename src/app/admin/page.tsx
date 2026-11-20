@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { AnimatedNumber, ConfirmDialog, IconButton, ArrowLeftIcon, CloseIcon } from "shivanya-ui";
-import { API_URL } from "../../components/portal/category/CategoryGrid";
+import { API_URL, categoryConfig, normalizeCategorySlug } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
@@ -467,7 +467,7 @@ export default function AdminPage() {
                       <tr key={post.id}>
                         <td><input type="checkbox" aria-label={`Select ${post.title_en}`} checked={selectedIds.includes(post.id)} onChange={(event) => setSelectedIds((current) => event.target.checked ? [...current, post.id] : current.filter((id) => id !== post.id))} /></td>
                         <td><strong>{post.title_en || post.slug}</strong><small>/{post.slug}</small></td>
-                        <td>{kind?.label || post.category.name_en}</td>
+                        <td><span className={`admin-category-badge ${categoryConfig[normalizeCategorySlug(post.category.slug)]?.type || "tool"}`}>{kind?.label || post.category.name_en}</span></td>
                         <td><span className={`admin-status status-${post.status}`}>{statusLabel(post.status)}</span></td>
                         <td>{formatCompactNumber(post.views_count)}</td>
                         <td>{formatCompactNumber(post.unique_visitors_count)}</td>

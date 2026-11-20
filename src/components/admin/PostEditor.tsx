@@ -1177,6 +1177,21 @@ export default function PostEditor({
                   ))}
                 </select>
               </label>
+              <label>
+                Default Language
+                <select
+                  value={form.default_language}
+                  onChange={(event) => {
+                    const nextLanguage = event.target.value as "en" | "mr" | "hi";
+                    update("default_language", nextLanguage);
+                    setActiveLanguage(nextLanguage);
+                  }}
+                >
+                  <option value="en">English</option>
+                  <option value="mr">Marathi</option>
+                  <option value="hi">Hindi</option>
+                </select>
+              </label>
             </div>
             <div className="post-editor-grid">
               <label>
@@ -1263,7 +1278,7 @@ export default function PostEditor({
                 />
               </label>
             </div>
-            <div className="post-editor-grid">
+            <div className="post-editor-grid post-editor-location-row">
               <label>
                 Location
                 <input
@@ -1295,21 +1310,7 @@ export default function PostEditor({
                   }
                 />
               </label>
-              <label>
-                Default Language
-                <select
-                  value={form.default_language}
-                  onChange={(event) => {
-                    const nextLanguage = event.target.value as "en" | "mr" | "hi";
-                    update("default_language", nextLanguage);
-                    setActiveLanguage(nextLanguage);
-                  }}
-                >
-                  <option value="en">English</option>
-                  <option value="mr">Marathi</option>
-                  <option value="hi">Hindi</option>
-                </select>
-              </label>
+
             </div>
           </section>
           <section>
@@ -1338,21 +1339,20 @@ export default function PostEditor({
                     + Add Post
                   </button>
                 </div>
-                <div className="post-editor-grid">
-                  <p className="post-editor-help">
-                    Enter education, age criteria and application fees for each post.
-                    The public page will automatically show matching details once
-                    when they are the same, and separately when they differ.
+                <div className="post-editor-info-note">
+                  <span className="post-editor-info-icon" aria-hidden="true">i</span>
+                  <p>
+                    Add education, age criteria and application fees for each post.
+                    Matching details will be grouped on the public page, while different
+                    details will be displayed separately.
                   </p>
                 </div>
 
-                <p className="post-editor-help">
-                  Total vacancies:{" "}
-                  {((details.posts as JobPostInput[]) || [])
-                    .reduce((total, post) => total + (post.vacancies ?? 0), 0)
-                    .toLocaleString("en-IN")}
-                  {" "} (calculated from individual posts)
-                </p>
+                <div className="post-editor-vacancy-total">
+                  <span>Total vacancies</span>
+                  <strong>{((details.posts as JobPostInput[]) || []).reduce((total, post) => total + (post.vacancies ?? 0), 0).toLocaleString("en-IN")}</strong>
+                  <small>Calculated from individual posts</small>
+                </div>
 
                 {(details.posts as JobPostInput[]).map((post, postIndex) => (
                   <details className="post-editor-repeat-card post-editor-job-post-card post-editor-collapsible" key={postIndex}>
@@ -1377,7 +1377,7 @@ export default function PostEditor({
                         />
                       </label>
 
-                      {(["en", "mr", "hi"] as const).map((lang) => (
+                      {([activeLanguage] as const).map((lang) => (
                         <label key={lang}>
                           Post Name ({lang.toUpperCase()}) *
                           <input
@@ -1394,7 +1394,7 @@ export default function PostEditor({
                         </label>
                       ))}
 
-                      {(["en", "mr", "hi"] as const).map((lang) => (
+                      {([activeLanguage] as const).map((lang) => (
                         <label key={lang}>
                           Department ({lang.toUpperCase()})
                           <input
@@ -1444,7 +1444,7 @@ export default function PostEditor({
                             <span><strong>Education condition {educationIndex + 1}</strong><small>{education.qualification_en || "Add qualification details"}</small></span>
                           </summary>
                           <div className="post-editor-grid">
-                            {(["en", "mr", "hi"] as const).map((lang) => (
+                            {([activeLanguage] as const).map((lang) => (
                               <label key={lang}>
                                 Qualification ({lang.toUpperCase()})
                                 <textarea
@@ -1593,7 +1593,7 @@ export default function PostEditor({
                         </>
                       ) : null}
 
-                      {(["en", "mr", "hi"] as const).map((lang) => (
+                      {([activeLanguage] as const).map((lang) => (
                         <label key={lang}>
                           Age Limit Note ({lang.toUpperCase()})
                           <textarea
@@ -1625,7 +1625,7 @@ export default function PostEditor({
                         </summary>
 
                         <div className="post-editor-grid">
-                          {(["en", "mr", "hi"] as const).map((lang) => (
+                          {([activeLanguage] as const).map((lang) => (
                             <label key={lang}>
                               Category ({lang.toUpperCase()})
                               <input
@@ -1660,7 +1660,7 @@ export default function PostEditor({
                             />
                           </label>
 
-                          {(["en", "mr", "hi"] as const).map((lang) => (
+                          {([activeLanguage] as const).map((lang) => (
                             <label key={lang}>
                               Fee Note ({lang.toUpperCase()})
                               <textarea
@@ -1977,7 +1977,7 @@ export default function PostEditor({
                         ))}
                       </select>
                     </label>
-                    {(["en", "mr", "hi"] as const).map((lang) => (
+                    {([activeLanguage] as const).map((lang) => (
                       <label key={lang}>
                         Label ({lang.toUpperCase()}) *
                         <input
@@ -2184,7 +2184,7 @@ export default function PostEditor({
                   ) : null}
 
                   <div className="post-editor-grid">
-                    {(["en", "mr", "hi"] as const).map((lang) => (
+                    {([activeLanguage] as const).map((lang) => (
                       <label key={lang}>
                         Description ({lang.toUpperCase()})
                         <textarea
@@ -2261,7 +2261,7 @@ export default function PostEditor({
                   
                 </summary>
                 <div className="post-editor-grid">
-                  {(["en", "mr", "hi"] as const).map((lang) => (
+                  {([activeLanguage] as const).map((lang) => (
                     <label key={lang}>
                       Link title ({lang.toUpperCase()})
                       <input

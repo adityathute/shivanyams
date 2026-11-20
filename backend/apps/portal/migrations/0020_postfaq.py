@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
             ],
             options={"ordering": ("sort_order", "id")},
         ),
-        migrations.AddIndex(model_name="postfaq", index=models.Index(fields=["post", "is_active", "sort_order"], name="portal_faq_post_active_order_idx")),
+        migrations.AddIndex(model_name="postfaq", index=models.Index(fields=["post", "is_active", "sort_order"], name="portal_faq_post_act_idx")),
     ]

@@ -42,6 +42,11 @@ urlpatterns = [
     # results, articles, videos and tools.
     path("content/<str:kind>/", content_list, name="content-list"),
     path(
+        "content/<int:post_id>/views/",
+        TrackPostView.as_view(),
+        name="track-post-view",
+    ),
+    path(
         "content/<str:kind>/<slug:slug>/",
         content_detail,
         name="content-detail",
@@ -79,11 +84,6 @@ urlpatterns = [
         name="unsave-post",
     ),
     # Post analytics
-    path(
-        "content/<int:post_id>/views/",
-        TrackPostView.as_view(),
-        name="track-post-view",
-    ),
     path(
         "admin/organization-types/",
         AdminOrganizationTypes.as_view(),

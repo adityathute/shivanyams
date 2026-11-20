@@ -1870,3 +1870,95 @@ padding-right: 24px;
     font-size: .82rem;
     line-height: 1.5;
 }
+
+/* Related tags input: editable chips with inline keyboard entry. */
+.post-editor-tags-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+.post-editor-tags-field > label {
+  color: #334762;
+  font-size: 11px;
+  font-weight: 700;
+}
+.post-editor-tags-input {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid #dbe4f0;
+  border-radius: 7px;
+  background: #fff;
+  cursor: text;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.post-editor-tags-input:focus-within {
+  border-color: #6da0ff;
+  box-shadow: 0 0 0 3px #075be814;
+}
+.post-editor-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 5px 7px 5px 10px;
+  border: 1px solid #dce3ec;
+  border-radius: 6px;
+  background: #f1f4f8;
+  color: #46566b;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.post-editor-tag-chip button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #77869a;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.post-editor-tag-chip button:hover {
+  background: #e1e7ef;
+  color: #a33c3c;
+}
+.post-editor-tags-input input,
+.post-editor-form .post-editor-tags-input input {
+  flex: 1 1 150px;
+  width: auto !important;
+  min-width: 120px;
+  min-height: 28px;
+  padding: 4px 2px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #1d304b;
+  font: 400 12px Inter, Hind, sans-serif;
+}
+.post-editor-tags-input input:focus {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.post-editor-tags-field > small {
+  color: #78879b;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePortalData, type ImportantDate, type PostFAQ } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { PortalFooter } from "../layout/footer/PortalFooter";
@@ -47,6 +47,25 @@ export function createPostSlug(value: string) {
     .trim()
     .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-|-$/g, "");
+}
+
+function getAnalyticsVisitorId() {
+  const storageKey = "shivanyams_visitor_id";
+
+  try {
+    const existing = window.localStorage.getItem(storageKey);
+    if (existing) return existing;
+
+    const visitorId =
+      typeof window.crypto?.randomUUID === "function"
+        ? window.crypto.randomUUID()
+        : `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+    window.localStorage.setItem(storageKey, visitorId);
+    return visitorId;
+  } catch {
+    return `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
 }
 
 function formatDate(value: string, language: string) {
@@ -389,6 +408,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       );
       return video
         ? {
+            postId: Number(video.id),
             title:
               getLocalizedText(
                 language,
@@ -433,6 +453,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
 
     return item
       ? {
+          postId: Number(item.id),
           title:
             getLocalizedText(
               language,
@@ -498,6 +519,45 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         }
       : null;
   }, [category, data.items, data.videos, slug, language]);
+
+  const trackedPostIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const postId = post?.postId;
+    if (!postId || !Number.isSafeInteger(postId) || postId <= 0) return;
+    if (trackedPostIdRef.current === postId) return;
+
+    trackedPostIdRef.current = postId;
+
+    const visitorId = getAnalyticsVisitorId();
+    const userAgent = navigator.userAgent;
+    const device = /ipad|tablet/i.test(userAgent)
+      ? "tablet"
+      : /mobile|android|iphone|ipod/i.test(userAgent)
+        ? "mobile"
+        : "desktop";
+
+    void fetch(getPortalApiUrl(`content/${postId}/views/`), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        visitor_id: visitorId,
+        language,
+        device,
+        referrer_url: document.referrer,
+      }),
+      keepalive: true,
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(`View tracking failed (${response.status}).`);
+      }
+    }).catch((error) => {
+      if (trackedPostIdRef.current === postId) {
+        trackedPostIdRef.current = null;
+      }
+      console.error("Post view tracking failed:", error);
+    });
+  }, [post?.postId, language]);
 
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(

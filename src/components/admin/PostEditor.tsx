@@ -31,6 +31,8 @@ type LinkInput = {
   is_active: boolean;
 };
 
+type FAQInput = { question_en: string; question_mr: string; question_hi: string; answer_en: string; answer_mr: string; answer_hi: string; sort_order: number; is_active: boolean; };
+
 type DateInput = {
   date_type: string;
   date_format: string;
@@ -275,6 +277,7 @@ type PostRecord = {
   meta_keywords?: string[];
   category?: Category;
   important_links?: LinkInput[];
+  faqs?: FAQInput[];
   important_dates?: DateInput[];
   job_details?: Record<string, unknown> | null;
   scheme_details?: Record<string, unknown> | null;
@@ -563,6 +566,9 @@ export default function PostEditor({
     detailTemplate(initialKind),
   );
   const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);
+  const [faqs, setFaqs] = useState<FAQInput[]>([]);
+  const [expandedFaqQuestionLanguages, setExpandedFaqQuestionLanguages] = useState<number[]>([]);
+  const [expandedFaqAnswerLanguages, setExpandedFaqAnswerLanguages] = useState<number[]>([]);
   const [importantDates, setImportantDates] = useState<DateInput[]>([]);
 
   const [loading, setLoading] = useState(editing);
@@ -715,11 +721,8 @@ export default function PostEditor({
             url: String(item.url ?? ""),
           })),
         );
-        setImportantDates(
-          (record.important_dates || []).map((item) =>
-            normalizeDateInput(item),
-          ),
-        );
+        setFaqs((record.faqs || []).map((item: FAQInput) => ({ ...item, question_en: String(item.question_en ?? ""), question_mr: String(item.question_mr ?? ""), question_hi: String(item.question_hi ?? ""), answer_en: String(item.answer_en ?? ""), answer_mr: String(item.answer_mr ?? ""), answer_hi: String(item.answer_hi ?? ""), sort_order: Number(item.sort_order ?? 0), is_active: item.is_active ?? true })));
+        setImportantDates((record.important_dates || []).map((item) => normalizeDateInput(item)));
         const data = record[
           detailKeyFor(kind.api) as keyof PostRecord
         ] as Record<string, unknown> | null;
@@ -1193,6 +1196,7 @@ export default function PostEditor({
             ...item,
             action_text_en: item.action_text_en.trim() || "Click Here",
           })),
+        faqs: faqs.filter((item) => item.question_en.trim() && item.answer_en.trim()).map((item, index) => ({ ...item, sort_order: index })),
         important_dates: importantDates
           .filter((item) => item.label_en.trim())
           .map((item) => ({
@@ -2405,6 +2409,31 @@ export default function PostEditor({
                   </div>
                 </details>
               );
+            })}
+          </section>
+          <section className="post-editor-faqs">
+            <div className="post-editor-section-heading"><div><h2>Frequently Asked Questions</h2><p className="post-editor-section-description">Add common questions and answers. Translate each question and answer independently.</p></div>
+              <button type="button" onClick={() => setFaqs((items) => [...items, { question_en: "", question_mr: "", question_hi: "", answer_en: "", answer_mr: "", answer_hi: "", sort_order: items.length, is_active: true }])}>＋ Add FAQ</button>
+            </div>
+            {faqs.map((faq, index) => {
+              const questionLanguages: ContentLanguage[] = expandedFaqQuestionLanguages.includes(index) ? ["en", "mr", "hi"] : [activeLanguage];
+              const answerLanguages: ContentLanguage[] = expandedFaqAnswerLanguages.includes(index) ? ["en", "mr", "hi"] : [activeLanguage];
+              const updateFAQ = (changes: Partial<FAQInput>) => setFaqs((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...changes } : item));
+              return <details className="post-editor-repeat-card post-editor-collapsible post-editor-faq-card" key={index}>
+                <summary className="post-editor-card-summary"><span><strong>{faq.question_en || `Question ${index + 1}`}</strong><small>FAQ {index + 1}</small></span></summary>
+                <div className="post-editor-faq-fields">
+                  <div className="post-editor-link-translation">
+                    <div className="post-editor-translation-heading"><span>Question</span><button type="button" className="post-editor-show-translations" aria-expanded={expandedFaqQuestionLanguages.includes(index)} onClick={() => setExpandedFaqQuestionLanguages((current) => current.includes(index) ? current.filter((value) => value !== index) : [...current, index])}>{expandedFaqQuestionLanguages.includes(index) ? "− Hide other languages" : "+ Show other languages"}</button></div>
+                    {questionLanguages.map((lang) => <Input key={lang} label={`Question (${lang.toUpperCase()})`} value={String(faq[`question_${lang}`] ?? "")} onChange={(event) => updateFAQ({ [`question_${lang}`]: event.target.value })} fullWidth size="sm" />)}
+                  </div>
+                  <div className="post-editor-link-translation">
+                    <div className="post-editor-translation-heading"><span>Answer</span><button type="button" className="post-editor-show-translations" aria-expanded={expandedFaqAnswerLanguages.includes(index)} onClick={() => setExpandedFaqAnswerLanguages((current) => current.includes(index) ? current.filter((value) => value !== index) : [...current, index])}>{expandedFaqAnswerLanguages.includes(index) ? "− Hide other languages" : "+ Show other languages"}</button></div>
+                    {answerLanguages.map((lang) => <Textarea key={lang} label={`Answer (${lang.toUpperCase()})`} value={String(faq[`answer_${lang}`] ?? "")} onChange={(event) => updateFAQ({ [`answer_${lang}`]: event.target.value })} rows={4} fullWidth />)}
+                  </div>
+                  <label className="post-editor-check"><input type="checkbox" checked={faq.is_active} onChange={(event) => updateFAQ({ is_active: event.target.checked })} />Show this FAQ on the public post</label>
+                </div>
+                <div className="post-editor-card-actions"><button type="button" className="post-editor-remove" onClick={() => setFaqs((items) => items.filter((_, itemIndex) => itemIndex !== index))}>Remove FAQ</button></div>
+              </details>;
             })}
           </section>
           <section>

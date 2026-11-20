@@ -273,7 +273,7 @@ export default function AdminPage() {
             { label: "Pending review", value: counts.review },
             { label: "Total views", value: counts.views },
             { label: "Unique post visitors", value: counts.visitors },
-            { label: "Users", value: usersCount },
+            { label: "Portal users", value: usersCount },
           ];
 
           return (

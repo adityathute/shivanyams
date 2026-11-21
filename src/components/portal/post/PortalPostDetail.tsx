@@ -24,6 +24,7 @@ import {
   getNotFoundRecommendationText,
 } from "./not-found-recommendations-config";
 import "../home/UpdatesSection.css";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 export type CategorySlug =
   | "jobs"
@@ -412,7 +413,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(getPortalApiUrl("categories/"), { signal: controller.signal })
+    authenticatedFetch(getPortalApiUrl("categories/"), { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Unable to load categories.");
         return response.json();
@@ -577,7 +578,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     const csrfToken = getAnalyticsCsrfToken();
     if (csrfToken) headers["X-CSRFToken"] = csrfToken;
 
-    void fetch(getPortalApiUrl(`content/${postId}/views/`), {
+    void authenticatedFetch(getPortalApiUrl(`content/${postId}/views/`), {
       method: "POST",
       credentials: "include",
       headers,

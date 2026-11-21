@@ -1456,9 +1456,11 @@ export default function PostEditor({
               Manage multilingual content and category-specific information.
             </p>
           </div>
-          <button type="button" onClick={() => void leaveEditor()}>
-            ← Back to dashboard
-          </button>
+          <div className="post-editor-header-actions">
+            <button type="button" onClick={() => void leaveEditor()}>
+              ← Back to dashboard
+            </button>
+          </div>
         </header>
         {notice && <div className="post-editor-notice">{notice}</div>}
         <form className="post-editor-form" onSubmit={submit}>

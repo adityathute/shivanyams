@@ -43,23 +43,18 @@
   transform: translateY(-1px);
 }
 
-.portal-post-reaction-actions .portal-action-like { color: #2563eb; }
 .portal-post-reaction-actions .portal-action-like:hover,
 .portal-post-reaction-actions .portal-action-like.is-active { color: #2563eb; }
 
-.portal-post-reaction-actions .portal-action-dislike { color: #ef4444; }
 .portal-post-reaction-actions .portal-action-dislike:hover,
 .portal-post-reaction-actions .portal-action-dislike.is-active { color: #ef4444; }
 
-.portal-post-reaction-actions .portal-action-share { color: #64748b; }
-.portal-post-reaction-actions .portal-action-share:hover { color: #475569; }
+.portal-post-reaction-actions .portal-action-share:hover { color: #64748b; }
 
-.portal-post-reaction-actions .portal-action-bookmark { color: #f97316; }
 .portal-post-reaction-actions .portal-action-bookmark:hover,
 .portal-post-reaction-actions .portal-action-bookmark.is-active { color: #f97316; }
 
-.portal-post-reaction-actions .portal-action-report { color: #eab308; }
-.portal-post-reaction-actions .portal-action-report:hover { color: #ca8a04; }
+.portal-post-reaction-actions .portal-action-report:hover { color: #eab308; }
 
 .portal-post-reaction-actions button strong {
   color: inherit;

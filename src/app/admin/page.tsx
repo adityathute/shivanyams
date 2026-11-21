@@ -409,6 +409,7 @@ export default function AdminPage() {
             <p>Manage posts, publishing status and website content.</p>
           </div>
           <div className="admin-top-actions">
+            <Link href="/admin/comments" className="admin-secondary-button">Comments & reports</Link>
             <Link href="/" target="_blank" className="admin-secondary-button">View website ↗</Link>
             <Link href="/admin/add-post" className="admin-primary-button">＋ Add New Post</Link>
           </div>

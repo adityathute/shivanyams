@@ -1457,6 +1457,10 @@ export default function PostEditor({
             </p>
           </div>
           <div className="post-editor-header-actions">
+            <div className="post-editor-save-status" aria-live="polite">
+              <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />
+              {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
+            </div>
             <button type="button" onClick={() => void leaveEditor()}>
               ← Back to dashboard
             </button>
@@ -2750,10 +2754,6 @@ export default function PostEditor({
             </div>
           </section>
           <div className="post-editor-actions post-editor-actions-draft">
-            <div className="post-editor-save-status" aria-live="polite">
-              <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />
-              {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
-            </div>
             <div className="post-editor-action-buttons">
               <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>
               <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("draft")}>Save as Draft</button>

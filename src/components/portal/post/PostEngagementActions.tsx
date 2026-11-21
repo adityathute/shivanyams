@@ -144,7 +144,12 @@ export function PostEngagementActions({ postId, title }: Props) {
     } catch {
       return;
     }
-    const visitorId = window.localStorage.getItem("shivanyams-visitor-id") || "";
+    let visitorId = "";
+    try {
+      visitorId = window.localStorage.getItem("shivanyams-visitor-id") || "";
+    } catch {
+      visitorId = "";
+    }
     await authenticatedFetch(getPortalApiUrl(`content/${postId}/shares/`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },

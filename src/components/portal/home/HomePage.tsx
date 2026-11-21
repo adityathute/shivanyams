@@ -12,10 +12,10 @@ import { MailIcon } from "shivanya-ui";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { useRouter } from "next/navigation";
 import { LinkIcon } from "shivanya-ui";
 import { HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
-import { createPostSlug } from "../post/PortalPostDetail";\nimport { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
+import { createPostSlug } from "../post/PortalPostDetail";
+import { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
 
 export function HomePage() {
   const { language: selectedLanguage } = usePortalLanguage();

@@ -524,6 +524,11 @@ class AdminComments(APIView):
             data = CommentSerializer(comment, context={"request": request}).data
             data["post_title"] = comment.post.title_en
             data["report_count"] = comment.reports.exclude(status=CommentReport.Status.DISMISSED).count()
+            data["reports"] = list(
+                comment.reports.order_by("-created_at").values(
+                    "id", "reporter_auth_id", "reason", "details", "status", "created_at"
+                )
+            )
             rows.append(data)
         return Response(rows)
 

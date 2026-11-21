@@ -111,3 +111,24 @@
 :root[data-theme="dark"] .newsletter-subscribe-dialog {
   background: var(--surface, #171c28);
 }
+
+
+.newsletter-subscribe-inline {
+  margin: 7px 0 0;
+  color: #dc2626;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.newsletter-subscribe-inline.success {
+  color: #059669;
+}
+
+.subscribe-button:disabled {
+  cursor: default;
+  opacity: .8;
+}
+
+:root[data-theme="dark"] .newsletter-subscribe-inline.success {
+  color: #34d399;
+}

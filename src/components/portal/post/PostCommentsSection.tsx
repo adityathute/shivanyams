@@ -129,13 +129,9 @@ export function PostCommentsSection({ postId, language }: Props) {
     });
   }, [comments, sort]);
 
-  async function submitComment(content: string, parentId: number | null) {
+  async function postComment(content: string, parentId: number | null) {
     const trimmed = content.trim();
     if (!trimmed || submitting) return;
-    if (!user) {
-      openLogin(() => { void submitComment(trimmed, parentId); });
-      return;
-    }
     setSubmitting(true);
     setError("");
     try {
@@ -159,11 +155,16 @@ export function PostCommentsSection({ postId, language }: Props) {
     }
   }
 
-  async function reactToComment(commentId: number, reaction: "like" | "dislike") {
+  function submitComment(content: string, parentId: number | null) {
+    if (!content.trim() || submitting) return;
     if (!user) {
-      openLogin(() => { void reactToComment(commentId, reaction); });
+      openLogin(() => { void postComment(content, parentId); });
       return;
     }
+    void postComment(content, parentId);
+  }
+
+  async function sendCommentReaction(commentId: number, reaction: "like" | "dislike") {
     const target = findComment(comments, commentId);
     const method = target?.user_reaction === reaction ? "DELETE" : "POST";
     const response = await authenticatedFetch(getPortalApiUrl(`comments/${commentId}/reactions/`), {
@@ -184,11 +185,15 @@ export function PostCommentsSection({ postId, language }: Props) {
     })));
   }
 
-  async function reportComment(commentId: number) {
+  function reactToComment(commentId: number, reaction: "like" | "dislike") {
     if (!user) {
-      openLogin(() => { void reportComment(commentId); });
+      openLogin(() => { void sendCommentReaction(commentId, reaction); });
       return;
     }
+    void sendCommentReaction(commentId, reaction);
+  }
+
+  async function sendCommentReport(commentId: number) {
     const reason = window.prompt("Why are you reporting this comment? (spam, abuse, misinformation, other)");
     if (!reason?.trim()) return;
     const response = await authenticatedFetch(getPortalApiUrl(`comments/${commentId}/reports/`), {
@@ -203,6 +208,14 @@ export function PostCommentsSection({ postId, language }: Props) {
     const payload = await response.json();
     if (payload.hidden) await loadComments();
     setError(payload.hidden ? "This comment was hidden after multiple reports." : "Thank you. Your report was submitted.");
+  }
+
+  function reportComment(commentId: number) {
+    if (!user) {
+      openLogin(() => { void sendCommentReport(commentId); });
+      return;
+    }
+    void sendCommentReport(commentId);
   }
 
   return (

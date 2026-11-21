@@ -393,6 +393,10 @@ class NewsletterSubscribe(APIView):
         if not email or len(email) > 254 or "@" not in email:
             raise ValidationError({"email": "Enter a valid email address."})
 
+        already_subscribed = NewsletterSubscription.objects.filter(
+            email=email,
+            is_active=True,
+        ).exists()
         subscription, created = NewsletterSubscription.objects.update_or_create(
             email=email,
             defaults={
@@ -403,7 +407,7 @@ class NewsletterSubscribe(APIView):
         )
         response_data = {
             "subscribed": subscription.is_active,
-            "already_subscribed": not created,
+            "already_subscribed": already_subscribed,
             "email": subscription.email,
         }
         if not is_authenticated:

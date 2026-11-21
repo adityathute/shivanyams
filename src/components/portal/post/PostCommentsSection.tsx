@@ -66,6 +66,7 @@ function CommentThread({
   onSubmitReply: () => void;
   submitting: boolean;
 }) {
+  const [repliesExpanded, setRepliesExpanded] = useState(false);
   const date = new Date(item.created_at);
   const dateLabel = Number.isNaN(date.getTime())
     ? ""
@@ -90,6 +91,12 @@ function CommentThread({
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
             <button type="button" onClick={() => onReply(item.id)}>Reply</button>
+            {item.replies?.length ? (
+              <button type="button" className="portal-comment-toggle-replies" onClick={() => setRepliesExpanded((expanded) => !expanded)} aria-expanded={repliesExpanded}>
+                <span className={`portal-comment-replies-chevron${repliesExpanded ? " is-expanded" : ""}`} aria-hidden="true">⌄</span>
+                {repliesExpanded ? "Hide replies" : `Show ${item.replies.length} ${item.replies.length === 1 ? "reply" : "replies"}`}
+              </button>
+            ) : null}
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
           </div>
         </div>
@@ -104,7 +111,7 @@ function CommentThread({
           </div>
         </div>
       ) : null}
-      {item.replies?.length ? (
+      {item.replies?.length && repliesExpanded ? (
         <div className="portal-comment-replies">
           {item.replies.map((reply) => (
             <CommentThread

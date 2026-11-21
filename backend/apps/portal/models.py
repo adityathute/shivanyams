@@ -192,7 +192,7 @@ class Post(TimestampedModel):
         ordering = ("-published_at", "-created_at")
         indexes = [
             models.Index(fields=("category", "status", "published_at")),
-            models.Index(fields=("status", "created_at")),
+            models.Index(fields=("status", "created_at"), name="portal_com_status_37aa2f_idx"),
             models.Index(fields=("owner_auth_id", "status")),
             models.Index(fields=("is_featured", "status")),
             models.Index(fields=("organization_type", "status")),
@@ -1334,7 +1334,7 @@ class PostReaction(TimestampedModel):
         ]
         indexes = [
             models.Index(fields=("post", "reaction")),
-            models.Index(fields=("user_auth_id", "created_at")),
+            models.Index(fields=("user_auth_id", "created_at"), name="portal_com_user_id_4d2b3a_idx"),
         ]
 
     def __str__(self):
@@ -1444,7 +1444,7 @@ class CommentReaction(TimestampedModel):
             ),
         ]
         indexes = [
-            models.Index(fields=("comment", "reaction")),
+            models.Index(fields=("comment", "reaction"), name="portal_com_comment_1c9f2a_idx"),
             models.Index(fields=("user_auth_id", "created_at")),
         ]
 
@@ -1481,7 +1481,7 @@ class CommentReport(TimestampedModel):
         ]
         indexes = [
             models.Index(fields=("status", "created_at")),
-            models.Index(fields=("comment", "status")),
+            models.Index(fields=("comment", "status"), name="portal_com_comment_2c3b8a_idx"),
         ]
 
 
@@ -1505,8 +1505,8 @@ class PostSubscription(TimestampedModel):
             ),
         ]
         indexes = [
-            models.Index(fields=("post", "is_active")),
-            models.Index(fields=("user_auth_id", "is_active")),
+            models.Index(fields=("post", "is_active"), name="portal_pos_post_id_a1bc3d_idx"),
+            models.Index(fields=("user_auth_id", "is_active"), name="portal_pos_user_id_9d2c4e_idx"),
         ]
 
 
@@ -1524,8 +1524,8 @@ class PostShare(TimestampedModel):
 
     class Meta:
         indexes = [
-            models.Index(fields=("post", "created_at")),
-            models.Index(fields=("post", "channel")),
+            models.Index(fields=("post", "created_at"), name="portal_pos_post_id_b2cd4e_idx"),
+            models.Index(fields=("post", "channel"), name="portal_pos_post_id_c3de5f_idx"),
         ]
 
 

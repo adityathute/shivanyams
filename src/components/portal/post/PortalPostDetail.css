@@ -1423,18 +1423,23 @@
 
 @media (max-width: 760px) {
   .portal-post-compact-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 12px;
   }
 
   .portal-post-meta-compact {
-    width: 100%;
+    width: auto;
   }
 
-  .portal-post-engagement-actions,
+  .portal-post-engagement-actions {
+    width: auto;
+    margin-left: auto;
+  }
+
   .portal-post-reaction-actions {
-    width: 100%;
+    width: auto;
   }
 }
 

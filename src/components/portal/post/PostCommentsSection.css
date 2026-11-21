@@ -132,7 +132,7 @@
   position: absolute;
   z-index: 0;
   top: 30px;
-  bottom: 27;
+  bottom: 27px;
   left: 15px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   pointer-events: none;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
 import { Button } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -51,7 +51,7 @@ function CommentThread({
     : date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <article className="portal-comment-item" style={{ "--comment-depth": Math.min(depth, 3) } as CSSProperties & { "--comment-depth": number }}>
+    <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}`}>
       <div className="portal-comment-main">
         <div className="portal-comment-avatar" aria-hidden="true">U</div>
         <div className="portal-comment-content">

@@ -1,8 +1,14 @@
 .portal-comments-section {
-  margin: 22px 0 8px;
-  padding: 18px 0 4px;
-  border-top: 1px solid var(--border-color, #e5e7eb);
-  color: var(--foreground, inherit);
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 16px 0 8px;
+  padding: 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 20px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, inherit);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
 }
 
 .portal-comments-heading,
@@ -94,7 +100,11 @@
 @keyframes comment-reply-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 640px) {
-  .portal-comments-section { margin-top: 18px; padding-top: 15px; }
+  .portal-comments-section {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 15px;
+  }
   .portal-comments-heading { align-items: flex-start; }
   .portal-comments-heading select { max-width: 125px; }
   .portal-comment-composer { display: grid; padding: 9px; }

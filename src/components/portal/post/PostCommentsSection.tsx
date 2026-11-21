@@ -101,7 +101,7 @@ function CommentThread({
             <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${item.dislikes_count} dislikes`}>
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
-            <button type="button" onClick={() => onReply(item.id)}>Reply</button>
+            <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button>
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
           </div>
           {replyCount > 0 && !repliesExpanded ? (

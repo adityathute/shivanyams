@@ -356,20 +356,53 @@ class AdminPostReview(APIView):
 class NewsletterSubscribe(APIView):
     permission_classes = [permissions.AllowAny]
 
+    def get(self, request):
+        if not getattr(request.user, "is_authenticated", False):
+            return Response({"subscribed": False})
+
+        auth_data = getattr(request.user, "auth_data", {})
+        email = str(auth_data.get("email", "")).strip().lower() if isinstance(auth_data, dict) else ""
+        if not email:
+            return Response({"subscribed": False})
+
+        subscription = NewsletterSubscription.objects.filter(
+            email=email,
+            is_active=True,
+        ).first()
+        return Response({"subscribed": subscription is not None, "email": email})
+
     def post(self, request):
-        email = str(request.data.get("email", "")).strip().lower()
+        is_authenticated = bool(getattr(request.user, "is_authenticated", False))
+        if is_authenticated:
+            auth_data = getattr(request.user, "auth_data", {})
+            email = str(auth_data.get("email", "")).strip().lower() if isinstance(auth_data, dict) else ""
+            if not email:
+                raise ValidationError({"email": "Your account does not have an email address."})
+            user_auth_id = str(request.user.id)
+        else:
+            email = str(request.data.get("email", "")).strip().lower()
+            user_auth_id = ""
+
         language = request.data.get("language", LanguageChoices.ENGLISH)
         if language not in {choice[0] for choice in LanguageChoices.choices}:
             language = LanguageChoices.ENGLISH
         if not email or len(email) > 254 or "@" not in email:
             raise ValidationError({"email": "Enter a valid email address."})
-        user_auth_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+
         subscription, created = NewsletterSubscription.objects.update_or_create(
             email=email,
-            defaults={"user_auth_id": user_auth_id, "language": language, "is_active": True},
+            defaults={
+                "user_auth_id": user_auth_id,
+                "language": language,
+                "is_active": True,
+            },
         )
         return Response(
-            {"subscribed": subscription.is_active, "email": subscription.email, "created": created},
+            {
+                "subscribed": subscription.is_active,
+                "already_subscribed": not created,
+                "email": subscription.email,
+            },
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
 
@@ -441,6 +474,17 @@ class UnsavePost(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+def get_comment_author_profile(request):
+    auth_data = getattr(request.user, "auth_data", {})
+    if not isinstance(auth_data, dict):
+        auth_data = {}
+    first_name = str(auth_data.get("first_name") or "").strip()
+    last_name = str(auth_data.get("last_name") or "").strip()
+    full_name = " ".join(part for part in (first_name, last_name) if part).strip()
+    avatar = str(auth_data.get("avatar") or "").strip()
+    return full_name, avatar
+
+
 class PostComments(APIView):
     def get_permissions(self):
         if self.request.method == "POST":
@@ -488,10 +532,13 @@ class PostComments(APIView):
                 {"parent": "Choose an approved comment from this post to reply to."}
             )
 
+        author_name, author_avatar = get_comment_author_profile(request)
         with transaction.atomic():
             comment = serializer.save(
                 post=post,
                 user_auth_id=str(request.user.id),
+                author_name=author_name,
+                author_avatar=author_avatar,
                 status=Comment.Status.APPROVED,
                 is_admin_reply=False,
             )
@@ -629,7 +676,8 @@ class AdminComments(APIView):
         content = str(request.data.get("content", "")).strip()
         if not content or len(content) > 10000:
             raise ValidationError({"content": "Enter a reply up to 10,000 characters."})
-        comment = Comment.objects.create(post=post, parent=parent, user_auth_id=str(request.user.id), content=content, language=post.default_language, status=Comment.Status.APPROVED, reviewed_by_auth_id=str(request.user.id), reviewed_at=timezone.now(), is_admin_reply=True)
+        author_name, author_avatar = get_comment_author_profile(request)
+        comment = Comment.objects.create(post=post, parent=parent, user_auth_id=str(request.user.id), author_name=author_name, author_avatar=author_avatar, content=content, language=post.default_language, status=Comment.Status.APPROVED, reviewed_by_auth_id=str(request.user.id), reviewed_at=timezone.now(), is_admin_reply=True)
         Post.objects.filter(pk=post.pk).update(comments_count=F("comments_count") + 1)
         return Response(CommentSerializer(comment, context={"request": request}).data, status=status.HTTP_201_CREATED)
 

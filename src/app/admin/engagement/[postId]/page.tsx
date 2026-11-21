@@ -83,7 +83,7 @@ export default function AdminPostEngagementPage() {
     return () => { active = false; };
   }, [isAdmin, params.postId]);
 
-  const selectedRows = useMemo(() => {
+  const selectedRows = useMemo<DetailRow[]>(() => {
     if (!payload) return [];
     const details = payload.details;
     if (selected === "likes") {

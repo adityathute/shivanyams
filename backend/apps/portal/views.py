@@ -516,10 +516,40 @@ def get_comment_author_profile(request):
     auth_data = getattr(request.user, "auth_data", {})
     if not isinstance(auth_data, dict):
         auth_data = {}
-    first_name = str(auth_data.get("first_name") or "").strip()
-    last_name = str(auth_data.get("last_name") or "").strip()
+
+    profile_data = auth_data.get("profile")
+    if not isinstance(profile_data, dict):
+        profile_data = {}
+
+    first_name = str(auth_data.get("first_name") or profile_data.get("first_name") or "").strip()
+    last_name = str(auth_data.get("last_name") or profile_data.get("last_name") or "").strip()
     full_name = " ".join(part for part in (first_name, last_name) if part).strip()
-    avatar = str(auth_data.get("avatar") or "").strip()
+
+    if not full_name:
+        full_name = str(
+            auth_data.get("name")
+            or profile_data.get("name")
+            or auth_data.get("username")
+            or ""
+        ).strip()
+
+    full_name = " ".join(word[:1].upper() + word[1:].lower() for word in full_name.split())
+
+    avatar_value = (
+        auth_data.get("avatar")
+        or auth_data.get("avatar_url")
+        or auth_data.get("profile_image")
+        or auth_data.get("profile_picture")
+        or auth_data.get("picture")
+        or profile_data.get("avatar")
+        or profile_data.get("avatar_url")
+        or profile_data.get("profile_image")
+        or ""
+    )
+    avatar = str(avatar_value).strip()
+    if avatar:
+        avatar = request.build_absolute_uri(avatar)
+
     return full_name, avatar
 
 

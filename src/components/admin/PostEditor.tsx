@@ -2754,9 +2754,9 @@ export default function PostEditor({
             </div>
             <div className="post-editor-action-buttons">
               <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>
-              <button type="button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
-              <button type="submit" disabled={saving || autosaveState === "saving" || !activeCategory}>{saving ? "Saving..." : "Save & Exit"}</button>
-              <button type="button" className="post-editor-publish-button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("published")}>Publish</button>
+              <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
+              <button type="submit" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory}>{saving ? "Saving..." : "Save & Exit"}</button>
+              <button type="button" className="post-editor-publish-button" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("published")}>Publish</button>
             </div>
           </div>
         </form>

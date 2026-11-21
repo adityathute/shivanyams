@@ -908,15 +908,11 @@ class PostWriteSerializer(serializers.ModelSerializer):
                 )
 
 
-class CommentReplySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ("id", "user_auth_id", "content", "language", "created_at")
-        read_only_fields = fields
-
-
 class CommentSerializer(serializers.ModelSerializer):
     replies = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
+    dislikes_count = serializers.SerializerMethodField()
+    user_reaction = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -930,6 +926,10 @@ class CommentSerializer(serializers.ModelSerializer):
             "status",
             "reviewed_at",
             "edited",
+            "is_admin_reply",
+            "likes_count",
+            "dislikes_count",
+            "user_reaction",
             "replies",
             "created_at",
             "updated_at",
@@ -941,6 +941,10 @@ class CommentSerializer(serializers.ModelSerializer):
             "status",
             "reviewed_at",
             "edited",
+            "is_admin_reply",
+            "likes_count",
+            "dislikes_count",
+            "user_reaction",
             "replies",
             "created_at",
             "updated_at",
@@ -950,7 +954,26 @@ class CommentSerializer(serializers.ModelSerializer):
         replies = obj.replies.filter(status=Comment.Status.APPROVED).order_by(
             "created_at"
         )
-        return CommentReplySerializer(replies, many=True, context=self.context).data
+        return CommentSerializer(replies, many=True, context=self.context).data
+
+    def get_likes_count(self, obj):
+        return obj.reactions.filter(
+            reaction="like"
+        ).count()
+
+    def get_dislikes_count(self, obj):
+        return obj.reactions.filter(
+            reaction="dislike"
+        ).count()
+
+    def get_user_reaction(self, obj):
+        request = self.context.get("request")
+        if not request or not getattr(request.user, "is_authenticated", False):
+            return None
+        reaction = obj.reactions.filter(
+            user_auth_id=str(request.user.id)
+        ).values_list("reaction", flat=True).first()
+        return reaction
 
     def validate_content(self, value):
         value = value.strip()

@@ -22,6 +22,7 @@ const labels = {
     email: "Email address",
     placeholder: "Enter your email address",
     submit: "Subscribe",
+    subscribed: "Subscribed",
     close: "Close",
     success: "You are subscribed to ShivanyaMS updates.",
     alreadySubscribed: "This email is already subscribed to updates.",
@@ -40,6 +41,7 @@ const labels = {
     email: "ईमेल पत्ता",
     placeholder: "तुमचा ईमेल पत्ता टाका",
     submit: "सबस्क्राइब करा",
+    subscribed: "सबस्क्राइब केले",
     close: "बंद करा",
     success: "तुम्ही ShivanyaMS अपडेट्ससाठी सबस्क्राइब केले आहे.",
     alreadySubscribed: "हा ईमेल आधीपासून अपडेट्ससाठी सबस्क्राइब आहे.",
@@ -58,6 +60,7 @@ const labels = {
     email: "ईमेल पता",
     placeholder: "अपना ईमेल पता दर्ज करें",
     submit: "सब्सक्राइब करें",
+    subscribed: "सब्सक्राइब किया",
     close: "बंद करें",
     success: "आपने ShivanyaMS अपडेट्स के लिए सब्सक्राइब कर लिया है।",
     alreadySubscribed: "यह ईमेल पहले से ही अपडेट्स के लिए सब्सक्राइब है।",
@@ -76,6 +79,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const isAccountSubscribed = Boolean(user && subscribed);
   const [unsubscribeToken, setUnsubscribeToken] = useState("");
 
   const subscribe = useCallback(async (guestEmail?: string) => {
@@ -169,7 +173,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
 
   function handleSubscribeClick() {
     setMessage("");
-    if (subscribed) {
+    if (user && subscribed) {
       void unsubscribe();
       return;
     }
@@ -195,18 +199,18 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
   return (
     <>
       <div className="subscribe-content newsletter-subscribe-content">
-        <h3>{subscribed ? t.subscribedTitle : t.title}</h3>
+        <h3>{isAccountSubscribed ? t.subscribedTitle : t.title}</h3>
         <p>{t.description}</p>
       </div>
       <button
         type="button"
-        className={`subscribe-button${subscribed ? " is-subscribed" : ""}`}
+        className={`subscribe-button${isAccountSubscribed ? " is-subscribed" : ""}`}
         onClick={handleSubscribeClick}
         disabled={authLoading || busy || checking}
-        aria-label={subscribed ? t.unsubscribe : t.button}
-        aria-pressed={subscribed}
+        aria-label={isAccountSubscribed ? t.unsubscribe : t.button}
+        aria-pressed={isAccountSubscribed}
       >
-        {authLoading || busy || checking ? "…" : subscribed ? t.unsubscribe : t.button}
+        {authLoading || busy || checking ? "…" : isAccountSubscribed ? t.unsubscribe : t.button}
       </button>
       {message && !open && !subscribed ? (
         <p className={success ? "newsletter-subscribe-inline success" : "newsletter-subscribe-inline"} role="status">
@@ -233,16 +237,20 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
                 placeholder={t.placeholder}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                disabled={busy || success}
+                disabled={busy}
               />
               {message ? <div className={success ? "newsletter-subscribe-message success" : "newsletter-subscribe-message"} role="status">{message}</div> : null}
-              {success ? (
-                <button type="button" className="newsletter-subscribe-submit" onClick={() => setOpen(false)}>{t.close}</button>
-              ) : (
-                <button type="submit" className="newsletter-subscribe-submit" disabled={busy}>
-                  {busy ? "…" : t.submit}
+              <div className="newsletter-subscribe-actions">
+                <button type="submit" className="newsletter-subscribe-submit" disabled={busy || success}>
+                  {busy && !success ? "…" : success ? t.subscribed : t.submit}
                 </button>
-              )}
+                {success ? (
+                  <button type="button" className="newsletter-subscribe-unsubscribe" onClick={() => void unsubscribe()} disabled={busy}>
+                    {busy ? "…" : t.unsubscribe}
+                  </button>
+                ) : null}
+              </div>
+              <button type="button" className="newsletter-subscribe-modal-close" onClick={() => setOpen(false)} disabled={busy}>{t.close}</button>
             </form>
           </section>
         </div>,

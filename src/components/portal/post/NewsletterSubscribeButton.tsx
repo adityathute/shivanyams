@@ -12,6 +12,10 @@ const labels = {
   en: {
     button: "Subscribe",
     subscribed: "Subscribed",
+    unsubscribe: "Unsubscribe",
+    subscribedInfo: "You are subscribed to email updates. You can unsubscribe at any time.",
+    unsubscribeSuccess: "You have been unsubscribed from email updates.",
+    unsubscribeError: "Unable to unsubscribe right now. Please try again.",
     title: "Stay Updated",
     description: "Get new posts, important updates and ShivanyaMS announcements by email.",
     email: "Email address",
@@ -25,6 +29,10 @@ const labels = {
   mr: {
     button: "सबस्क्राइब करा",
     subscribed: "सबस्क्राइब केले",
+    unsubscribe: "सबस्क्रिप्शन बंद करा",
+    subscribedInfo: "तुम्ही ईमेल अपडेट्ससाठी सबस्क्राइब केले आहे. तुम्ही कधीही सबस्क्रिप्शन बंद करू शकता.",
+    unsubscribeSuccess: "तुमचे ईमेल अपडेट्स सबस्क्रिप्शन बंद केले आहे.",
+    unsubscribeError: "सध्या सबस्क्रिप्शन बंद करता आले नाही. पुन्हा प्रयत्न करा.",
     title: "नवीन अपडेट्स मिळवा",
     description: "नवीन पोस्ट, महत्त्वाच्या अपडेट्स आणि ShivanyaMS च्या सूचना ईमेलद्वारे मिळवा.",
     email: "ईमेल पत्ता",
@@ -38,6 +46,10 @@ const labels = {
   hi: {
     button: "सब्सक्राइब करें",
     subscribed: "सब्सक्राइब किया",
+    unsubscribe: "अनसब्सक्राइब करें",
+    subscribedInfo: "आप ईमेल अपडेट्स के लिए सब्सक्राइब हैं। आप कभी भी अनसब्सक्राइब कर सकते हैं।",
+    unsubscribeSuccess: "आपका ईमेल अपडेट्स सब्सक्रिप्शन बंद कर दिया गया है।",
+    unsubscribeError: "अभी अनसब्सक्राइब नहीं हो सका। कृपया फिर से प्रयास करें.",
     title: "अपडेट रहें",
     description: "नई पोस्ट, जरूरी अपडेट और ShivanyaMS की घोषणाएँ ईमेल से पाएँ।",
     email: "ईमेल पता",
@@ -60,6 +72,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [unsubscribeToken, setUnsubscribeToken] = useState("");
 
   const subscribe = useCallback(async (guestEmail?: string) => {
     setBusy(true);
@@ -78,6 +91,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
         throw new Error(payload.email?.[0] || payload.detail || t.error);
       }
       setSubscribed(Boolean(payload.subscribed));
+      setUnsubscribeToken(payload.unsubscribe_token || "");
       setSuccess(true);
       setMessage(t.success);
       if (guestEmail) setEmail(guestEmail.trim().toLowerCase());
@@ -126,6 +140,29 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
     };
   }, [user, t.success]);
 
+  const unsubscribe = useCallback(async () => {
+    setBusy(true);
+    setMessage("");
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl("newsletter/subscribe/"), {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user ? {} : { email: email.trim().toLowerCase(), unsubscribe_token: unsubscribeToken }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || t.unsubscribeError);
+      setSubscribed(false);
+      setUnsubscribeToken("");
+      setSuccess(true);
+      setMessage(t.unsubscribeSuccess);
+    } catch (error) {
+      setSuccess(false);
+      setMessage(error instanceof Error ? error.message : t.unsubscribeError);
+    } finally {
+      setBusy(false);
+    }
+  }, [email, unsubscribeToken, user, t.unsubscribeError, t.unsubscribeSuccess]);
+
   function handleSubscribeClick() {
     setMessage("");
     if (subscribed) return;
@@ -152,7 +189,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
     <>
       <button
         type="button"
-        className="subscribe-button"
+        className={`subscribe-button${subscribed ? " is-subscribed" : ""}`}
         onClick={handleSubscribeClick}
         disabled={authLoading || busy || checking || subscribed}
         aria-label={subscribed ? t.subscribed : t.button}
@@ -160,7 +197,15 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       >
         {authLoading || busy || checking ? "…" : subscribed ? t.subscribed : t.button}
       </button>
-      {message && !open ? (
+      {subscribed ? (
+        <div className="newsletter-subscribed-state">
+          <p className="newsletter-subscribe-inline success" role="status">{t.subscribedInfo}</p>
+          <button type="button" className="newsletter-unsubscribe-button" onClick={() => void unsubscribe()} disabled={busy || checking}>
+            {busy ? "…" : t.unsubscribe}
+          </button>
+        </div>
+      ) : null}
+      {message && !open && !subscribed ? (
         <p className={success ? "newsletter-subscribe-inline success" : "newsletter-subscribe-inline"} role="status">
           {message}
         </p>

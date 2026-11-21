@@ -10,28 +10,11 @@ import {
   MailIcon,
   ShieldCheckIcon,
   ToolsIcon,
+  BookmarkIcon,
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";
 import { sidebarTranslations } from "@/i18n/dictionaries/sidebar";
-
-function SavedBookmarkIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.8L6 21V4.75Z" />
-    </svg>
-  );
-}
 
 type PortalUser = {
   roles?: string[];
@@ -95,7 +78,7 @@ export function getPortalNavigation(
           {
             label: translate(language, sidebarTranslations, "saved"),
             href: "/saved",
-            icon: <SavedBookmarkIcon />,
+            icon: <BookmarkIcon size={19} />,
           },
         ]
       : []),

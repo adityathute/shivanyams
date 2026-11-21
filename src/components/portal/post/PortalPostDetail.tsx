@@ -456,6 +456,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             category: video.language,
             date: "",
             updatedDate: "",
+            createdAt: "",
+            updatedAt: "",
             link: video.url,
             image: video.thumbnail,
             body: "",
@@ -514,6 +516,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             ) || item.category,
           updatedDate: item.updated_date || "",
           date: item.date,
+          createdAt: item.created_at || "",
+          updatedAt: item.updated_at || "",
           link: item.link,
           image: item.image || "",
           body:
@@ -556,6 +560,17 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
         }
       : null;
   }, [category, data.items, data.videos, slug, language, previewItem]);
+
+  const hasPostBeenUpdated = Boolean(
+    post?.createdAt &&
+      post?.updatedAt &&
+      new Date(post.updatedAt).getTime() > new Date(post.createdAt).getTime(),
+  );
+  const displayPostDate = post
+    ? hasPostBeenUpdated
+      ? post.updatedAt
+      : post.createdAt || post.date
+    : "";
 
   const trackedPostIdRef = useRef<number | null>(null);
 
@@ -793,12 +808,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     <div className="portal-post-meta portal-post-meta-compact">
                       <span>{post.category || label}</span>
                       <div className="portal-post-dates">
-                        {(post.updatedDate || post.date) ? (
+                        {displayPostDate ? (
                           <div className="portal-post-date-group">
                             <span className="portal-post-date-label">
-                              {getDetailLabel(post.updatedDate ? "lastUpdated" : "posted", language)}:
+                              {getDetailLabel(hasPostBeenUpdated ? "lastUpdated" : "posted", language)}:
                             </span>
-                            <time>{formatDate(post.updatedDate || post.date, language)}</time>
+                            <time>{formatDate(displayPostDate, language)}</time>
                           </div>
                         ) : null}
                       </div>

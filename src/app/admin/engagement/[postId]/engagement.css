@@ -34,10 +34,15 @@
 }
 
 .admin-engagement-stat > span i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-style: normal;
   font-size: 1.1rem;
   color: var(--primary, #a78bfa);
 }
+.admin-engagement-stat > span i.is-like { color: #2563eb; }
+.admin-engagement-stat > span i.is-dislike { color: #ef4444; }
 
 .admin-engagement-stat > span small {
   margin-left: auto;

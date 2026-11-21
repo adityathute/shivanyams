@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { Avatar, Button, DislikeIcon, LikeIcon, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, LikeIcon, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -84,7 +84,7 @@ function CommentThread({
     : date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}${repliesExpanded ? " is-replies-expanded" : ""}`}>
+    <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}${replyCount > 0 ? " has-replies" : ""}${repliesExpanded ? " is-replies-expanded" : ""}`}>
       <div className="portal-comment-main">
         <Avatar size="sm" name={formatAuthorName(item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member"))} src={item.author_avatar?.trim() || undefined} />
         <div className="portal-comment-content">
@@ -106,8 +106,10 @@ function CommentThread({
           </div>
           {replyCount > 0 ? (
             <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={repliesExpanded} aria-label={repliesExpanded ? "Hide replies" : `Show ${replyCount} replies`}>
-              <span className={`portal-comment-replies-chevron${repliesExpanded ? " is-expanded" : ""}`} aria-hidden="true">⌄</span>
-              <span>{replyCount} {replyCount === 1 ? "reply" : "replies"}</span>
+              <span>{repliesExpanded ? "Hide replies" : `${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}</span>
+              <span className="portal-comment-toggle-arrow" aria-hidden="true">
+                {repliesExpanded ? <ArrowUpIcon size={15} /> : <ArrowDownIcon size={15} />}
+              </span>
             </button>
           ) : null}
         </div>
@@ -144,12 +146,7 @@ function CommentThread({
             <button type="button" className="portal-comment-load-more" onClick={showMoreReplies}>
               Show {Math.min(5, replyCount - visibleReplies)} more {replyCount - visibleReplies === 1 ? "reply" : "replies"}
             </button>
-          ) : (
-            <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies}>
-              <span className="portal-comment-replies-chevron is-expanded" aria-hidden="true">⌄</span>
-              Hide replies
-            </button>
-          )}
+          ) : null}
         </div>
       ) : null}
     </article>

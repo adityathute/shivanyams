@@ -1688,3 +1688,39 @@ class PostStatusHistory(models.Model):
 
     def __str__(self):
         return f"{self.post.title_en}: {self.previous_status} -> {self.new_status}"
+
+
+
+class NewsletterSubscription(TimestampedModel):
+    """Email subscriber for general ShivanyaMS news, promotions and updates."""
+    email = models.EmailField(max_length=254, unique=True)
+    user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
+    language = models.CharField(max_length=2, choices=LanguageChoices.choices, default=LanguageChoices.ENGLISH)
+    is_active = models.BooleanField(default=True, db_index=True)
+
+    class Meta:
+        indexes = [models.Index(fields=("is_active", "created_at"), name="portal_news_active_created_idx")]
+
+    def __str__(self):
+        return self.email
+
+
+class PostReport(TimestampedModel):
+    """Authenticated user report about an inaccurate or inappropriate post."""
+    class Status(models.TextChoices):
+        OPEN = "open", "Open"
+        REVIEWED = "reviewed", "Reviewed"
+        DISMISSED = "dismissed", "Dismissed"
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="reports")
+    reporter_auth_id = models.CharField(max_length=128, db_index=True)
+    reason = models.CharField(max_length=60)
+    details = models.TextField(blank=True)
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.OPEN, db_index=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("post", "reporter_auth_id"), name="unique_user_post_report")]
+        indexes = [models.Index(fields=("post", "status"), name="portal_post_report_status_idx")]
+
+    def __str__(self):
+        return f"{self.post.title_en}: {self.reason}"

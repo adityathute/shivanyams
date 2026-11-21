@@ -156,10 +156,21 @@
   transition: color .16s ease, background-color .16s ease;
 }
 .portal-comment-toggle-replies {
+  position: relative;
   justify-content: flex-start;
   width: fit-content;
   margin-top: 5px;
   text-align: left;
+}
+/* Horizontal branch from the comment's vertical rail to its collapsed reply count. */
+.portal-comment-toggle-replies::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -24px;
+  width: 24px;
+  border-top: 1.5px solid var(--border-color, #cbd5e1);
+  pointer-events: none;
 }
 .portal-comment-toggle-replies:hover,
 .portal-comment-load-more:hover {

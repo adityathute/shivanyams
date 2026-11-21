@@ -649,7 +649,7 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
     }
     visited.add(nextUrl);
 
-    const response: Response = await fetch(nextUrl, { signal });
+    const response: Response = await authenticatedFetch(nextUrl, { signal });
     if (!response.ok) {
       throw new Error(`Request failed (${response.status}): ${nextUrl}`);
     }

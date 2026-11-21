@@ -201,3 +201,32 @@
   background: #b91c1c;
   color: #fff;
 }
+
+
+.subscribe-button.is-subscribed {
+  border-color: #dc2626;
+  background: transparent;
+  color: #dc2626;
+}
+
+.subscribe-button.is-subscribed:hover:not(:disabled) {
+  border-color: #b91c1c;
+  background: #dc2626;
+  color: #fff;
+}
+
+.subscribe-button.is-subscribed:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 3px;
+}
+
+:root[data-theme="dark"] .subscribe-button.is-subscribed {
+  border-color: #f87171;
+  color: #f87171;
+}
+
+:root[data-theme="dark"] .subscribe-button.is-subscribed:hover:not(:disabled) {
+  border-color: #ef4444;
+  background: #b91c1c;
+  color: #fff;
+}

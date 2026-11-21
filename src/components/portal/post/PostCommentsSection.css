@@ -444,11 +444,12 @@
 }
 .portal-comment-inline-reply-footer {
   justify-content: flex-end;
+  margin-top: 3px;
 }
 .portal-comment-inline-reply-footer > span {
   margin-right: auto;
 }
-.portal-comment-inline-reply-footer button,
+/* .portal-comment-inline-reply-footer button,
 .portal-comment-report-panel > div:last-child button:first-child {
   padding: 5px 8px;
   border: 0;
@@ -456,7 +457,7 @@
   color: var(--muted-foreground, #9298a2);
   font-size: 0.75rem;
   cursor: pointer;
-}
+} */
 .portal-comment-inline-reply-footer button.is-primary {
   padding: 6px 11px;
   border: 1px solid var(--primary, #8b5cf6);

@@ -117,7 +117,7 @@ function CommentThread({
           <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={250} fullWidth size="sm" autoFocus />
           <div className="portal-comment-inline-reply-footer">
             <span>{replyDraft.length}/250</span>
-            <Button type="button" size="sm" variant="primary" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
+            <Button type="button" size="sm" variant="outline" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
             <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={onSubmitReply}>Reply</Button>
           </div>
         </div>
@@ -399,7 +399,7 @@ export function PostCommentsSection({ postId, language }: Props) {
             <Textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} placeholder="Write your reply..." rows={4} maxLength={250} fullWidth size="sm" autoFocus />
             <div className="portal-comment-reply-modal-footer">
               <span>{replyDraft.length}/250</span>
-              <Button type="button" size="sm" variant="primary" disabled={submitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
+              <Button type="button" size="sm" variant="outline" disabled={submitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
               <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
                 {submitting ? "Sending..." : "Reply"}
               </Button>

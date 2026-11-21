@@ -24,14 +24,19 @@
   position: absolute;
   top: 10px;
   right: 12px;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
+  background: transparent !important;
+  box-shadow: none !important;
   color: var(--text-secondary, #64748b);
-  font-size: 23px;
-  cursor: pointer;
+}
+
+.newsletter-subscribe-close:hover {
+  background: transparent !important;
+  color: #e11d48 !important;
+  box-shadow: none !important;
+}
+
+.newsletter-subscribe-close:hover .shivanya-icon-button-icon {
+  color: #e11d48 !important;
 }
 
 .newsletter-subscribe-eyebrow {

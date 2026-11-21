@@ -566,11 +566,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       post?.updatedAt &&
       new Date(post.updatedAt).getTime() > new Date(post.createdAt).getTime(),
   );
-  const displayPostDate = post
-    ? hasPostBeenUpdated
-      ? post.updatedAt
-      : post.createdAt || post.date
-    : "";
+  const createdPostDate = post?.createdAt || post?.date || "";
+  const updatedPostDate = hasPostBeenUpdated ? post?.updatedAt || "" : "";
 
   const trackedPostIdRef = useRef<number | null>(null);
 
@@ -808,12 +805,20 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     <div className="portal-post-meta portal-post-meta-compact">
                       <span>{post.category || label}</span>
                       <div className="portal-post-dates">
-                        {displayPostDate ? (
+                        {createdPostDate ? (
                           <div className="portal-post-date-group">
                             <span className="portal-post-date-label">
-                              {getDetailLabel(hasPostBeenUpdated ? "lastUpdated" : "posted", language)}:
+                              {getDetailLabel("posted", language)}:
                             </span>
-                            <time>{formatDate(displayPostDate, language)}</time>
+                            <time dateTime={createdPostDate}>{formatDate(createdPostDate, language)}</time>
+                          </div>
+                        ) : null}
+                        {updatedPostDate ? (
+                          <div className="portal-post-date-group">
+                            <span className="portal-post-date-label">
+                              {getDetailLabel("lastUpdated", language)}:
+                            </span>
+                            <time dateTime={updatedPostDate}>{formatDate(updatedPostDate, language)}</time>
                           </div>
                         ) : null}
                       </div>

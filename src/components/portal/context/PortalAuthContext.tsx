@@ -25,7 +25,7 @@ export function PortalAuthProvider({ children }: { children: ReactNode }) {
   const previousUser = useRef<string | null>(null);
 
   useEffect(() => {
-    const currentUser = user ? String(user.id ?? user.email ?? "authenticated") : null;
+    const currentUser = user ? String(user.id ?? "authenticated") : null;
     if (!loading && currentUser && !previousUser.current && pendingAction.current) {
       const action = pendingAction.current;
       pendingAction.current = null;

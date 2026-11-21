@@ -71,7 +71,7 @@
 .portal-comment-item { margin-top: 15px; }
 .portal-comment-main { display: flex; align-items: flex-start; gap: 9px; }
 .portal-comment-main { position: relative; }
-.portal-comment-item.is-replies-expanded > .portal-comment-main::after {
+.portal-comment-item.has-replies > .portal-comment-main::after {
   content: "";
   position: absolute;
   top: 30px;
@@ -103,14 +103,14 @@
 .portal-comment-actions button.portal-comment-dislike.is-active { color: #ef4444; }
 .portal-comment-actions .portal-comment-report { margin-left: 0; opacity: .8; }
 .portal-comment-toggle-replies,
-.portal-comment-load-more,
-.portal-comment-hide-replies {
+.portal-comment-load-more {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: 7px;
-  padding: 3px 0;
+  padding: 5px 8px;
   border: 0;
+  border-radius: 7px;
   background: transparent;
   color: var(--primary, #64748b);
   font: inherit;
@@ -118,12 +118,30 @@
   font-weight: 650;
   line-height: 1.4;
   cursor: pointer;
-  transition: color .16s ease;
+  transition: color .16s ease, background-color .16s ease;
+}
+.portal-comment-toggle-replies {
+  justify-content: space-between;
+  width: min(100%, 220px);
+  margin-top: 5px;
 }
 .portal-comment-toggle-replies:hover,
-.portal-comment-load-more:hover,
-.portal-comment-hide-replies:hover { color: var(--text-primary, #334155); }
-.portal-comment-toggle-replies { margin-top: 5px; }
+.portal-comment-load-more:hover {
+  color: var(--text-primary, #334155);
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-toggle-replies:focus-visible,
+.portal-comment-load-more:focus-visible {
+  outline: 2px solid var(--primary, #8b5cf6);
+  outline-offset: 2px;
+}
+.portal-comment-toggle-arrow {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
 .portal-comment-replies {
   position: relative;
   margin: 8px 0 0 14px;
@@ -156,20 +174,12 @@
   pointer-events: none;
 }
 .portal-comment-replies > .portal-comment-item:first-child { margin-top: 0; }
-.portal-comment-replies > .portal-comment-load-more,
-.portal-comment-replies > .portal-comment-hide-replies {
+.portal-comment-replies > .portal-comment-load-more {
   position: relative;
   margin: 10px 0 2px -1px;
   padding: 4px 0;
 }
 .portal-comment-item.is-deep > .portal-comment-replies { margin-left: 8px; }
-.portal-comment-replies-chevron {
-  display: inline-block;
-  font-size: 15px;
-  line-height: 1;
-  transition: transform .18s ease;
-}
-.portal-comment-replies-chevron.is-expanded { transform: rotate(180deg); }
 .portal-comment-inline-reply { position: relative; display: grid; gap: 7px; margin: 9px 0 3px 39px; padding: 9px; border: 1px solid var(--border-color, #e5e7eb); border-radius: 9px; background: var(--surface, #fff); animation: comment-reply-in .18s ease-out; }
 .portal-comment-inline-reply::before { content: ""; position: absolute; top: -10px; left: -15px; height: 20px; border-left: 1.5px solid var(--border-color, #cbd5e1); }
 .portal-comment-inline-reply::after { content: ""; position: absolute; top: 9px; left: -15px; width: 14px; border-top: 1.5px solid var(--border-color, #cbd5e1); }

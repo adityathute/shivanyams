@@ -1381,6 +1381,8 @@ class Comment(TimestampedModel):
         related_name="comments",
     )
     user_auth_id = models.CharField(max_length=128, db_index=True)
+    author_name = models.CharField(max_length=255, blank=True)
+    author_avatar = models.CharField(max_length=1000, blank=True)
 
     parent = models.ForeignKey(
         "self",

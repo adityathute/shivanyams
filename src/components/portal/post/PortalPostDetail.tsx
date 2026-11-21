@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePortalData, type ImportantDate, type Item, type PostFAQ } from "../data/portal-data";
@@ -17,7 +17,7 @@ import {
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { LinkIcon, MailIcon, Button } from "shivanya-ui";
+import { LinkIcon, MailIcon } from "shivanya-ui";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import {
   NOT_FOUND_RECOMMENDATIONS_LIMIT,
@@ -26,7 +26,7 @@ import {
 import "../home/UpdatesSection.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PostCommentsSection } from "./PostCommentsSection";
-import { PostEngagementActions } from "./PostEngagementActions";
+import { PostEngagementActions } from "./PostEngagementActions";\nimport { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
 
 export type CategorySlug =
   | "jobs"
@@ -788,35 +788,26 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               ) : post ? (
                 <>
                 <article className="portal-post-card">
-                  <div className="portal-post-meta">
-                    <span>{post.category || label}</span>
-
-                    <div className="portal-post-dates">
-                      {post.date ? (
-                        <div className="portal-post-date-group">
-                          <span className="portal-post-date-label">
-                            {getDetailLabel("posted", language)}:
-                          </span>
-                          <time>{formatDate(post.date, language)}</time>
-                        </div>
-                      ) : null}
-
-                      {post.updatedDate && post.updatedDate !== post.date ? (
-                        <div className="portal-post-date-group">
-                          <span className="portal-post-date-label">
-                            {getDetailLabel("lastUpdated", language)}:
-                          </span>
-                          <time>{formatDate(post.updatedDate, language)}</time>
-                        </div>
-                      ) : null}
+                  <div className="portal-post-compact-header">
+                    <div className="portal-post-meta portal-post-meta-compact">
+                      <span>{post.category || label}</span>
+                      <div className="portal-post-dates">
+                        {(post.updatedDate || post.date) ? (
+                          <div className="portal-post-date-group">
+                            <span className="portal-post-date-label">
+                              {getDetailLabel(post.updatedDate ? "lastUpdated" : "posted", language)}:
+                            </span>
+                            <time>{formatDate(post.updatedDate || post.date, language)}</time>
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
+                    {!previewItem ? (
+                      <PostEngagementActions postId={post.postId} title={post.title} />
+                    ) : null}
                   </div>
 
                   <h1>{post.title}</h1>
-
-                  {!previewItem ? (
-                    <PostEngagementActions postId={post.postId} title={post.title} />
-                  ) : null}
 
                   {post.description ? (
                     <p className="portal-post-summary">{post.description}</p>
@@ -1387,9 +1378,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         <h3>{t("subscribeTitle")}</h3>
                         <p>{t("subscribeDescription")}</p>
                       </div>
-                      <Button variant="primary" size="sm" onClick={() => document.getElementById("post-subscribe")?.scrollIntoView({ behavior: "smooth", block: "center" })}>
-                        {t("contactButton")}
-                      </Button>
+                      <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                     </section>
                   ) : null}
                 </>
@@ -1432,13 +1421,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     <p>{t("subscribeDescription")}</p>
                   </div>
 
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => router.push("/contact")}
-                  >
-                    {t("contactButton")}
-                  </Button>
+                  <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                 </section>
                 </>
                 ) : (
@@ -1474,9 +1457,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       <h3>{t("subscribeTitle")}</h3>
                       <p>{t("subscribeDescription")}</p>
                     </div>
-                    <Button variant="primary" size="sm" onClick={() => router.push("/contact")}>
-                      {t("contactButton")}
-                    </Button>
+                    <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                   </section>
                 ) : null}
               </aside>

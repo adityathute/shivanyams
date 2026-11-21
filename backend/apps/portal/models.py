@@ -1334,7 +1334,7 @@ class PostReaction(TimestampedModel):
         ]
         indexes = [
             models.Index(fields=("post", "reaction")),
-            models.Index(fields=("user_auth_id", "created_at"), name="portal_com_user_id_4d2b3a_idx"),
+            models.Index(fields=("user_auth_id", "created_at")),
         ]
 
     def __str__(self):
@@ -1445,7 +1445,7 @@ class CommentReaction(TimestampedModel):
         ]
         indexes = [
             models.Index(fields=("comment", "reaction"), name="portal_com_comment_1c9f2a_idx"),
-            models.Index(fields=("user_auth_id", "created_at")),
+            models.Index(fields=("user_auth_id", "created_at"), name="portal_com_user_id_4d2b3a_idx"),
         ]
 
 

@@ -469,6 +469,11 @@ class PostCommentReports(APIView):
 class PostSubscriptions(APIView):
     permission_classes = [IsPortalIdentity]
 
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
+        subscription = PostSubscription.objects.filter(post=post, user_auth_id=str(request.user.id), is_active=True).first()
+        return Response({"subscribed": subscription is not None, "email": subscription.email if subscription else ""})
+
     def post(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
         auth_data = getattr(request.user, "auth_data", {})
@@ -588,6 +593,11 @@ class AdminPostEngagement(APIView):
 
 class PostReactions(APIView):
     permission_classes = [IsPortalIdentity]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
+        reaction = PostReaction.objects.filter(post=post, user_auth_id=str(request.user.id)).values_list("reaction", flat=True).first()
+        return Response({"reaction": reaction, "likes_count": post.likes_count, "dislikes_count": post.dislikes_count})
 
     def post(self, request, post_id):
         reaction_type = request.data.get("reaction")

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
+import { Avatar } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../admin-utils";
 import "../admin.css";
@@ -24,6 +25,8 @@ type CommentRow = {
   post_title: string;
   parent: number | null;
   user_auth_id: string;
+  author_name: string;
+  author_avatar: string;
   content: string;
   status: string;
   is_admin_reply: boolean;
@@ -178,9 +181,12 @@ export default function AdminCommentsPage() {
               {comments.map((comment) => (
                 <article className="admin-comment-card" key={comment.id}>
                   <div className="admin-comment-card-head">
-                    <div>
-                      <strong>{comment.is_admin_reply ? "ShivanyaMS Admin" : `User ${comment.user_auth_id}`}</strong>
-                      <span>{comment.post_title} · #{comment.id}{comment.parent ? ` · Reply to #${comment.parent}` : ""}</span>
+                    <div className="admin-comment-author">
+                      <Avatar size="sm" name={comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={comment.author_avatar?.trim() || undefined} />
+                      <div>
+                        <strong>{comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : `User ${comment.user_auth_id}`)}</strong>
+                        <span>{comment.post_title} · #{comment.id}{comment.parent ? ` · Reply to #${comment.parent}` : ""}</span>
+                      </div>
                     </div>
                     <span className={`admin-status status-${comment.status}`}>{comment.status}</span>
                   </div>

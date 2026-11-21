@@ -1,0 +1,85 @@
+.portal-post-engagement-actions {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0 24px;
+  padding: 14px;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 12px;
+}
+
+.portal-post-reaction-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.portal-post-reaction-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: .82rem;
+  cursor: pointer;
+}
+
+.portal-post-reaction-actions button strong {
+  font-size: .78rem;
+}
+
+.portal-post-reaction-actions button:hover,
+.portal-post-reaction-actions button.is-active {
+  border-color: var(--primary, #8b5cf6);
+  color: var(--primary, #a78bfa);
+}
+
+.portal-post-subscribe-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border, #30343b);
+}
+
+.portal-post-subscribe-action > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.portal-post-subscribe-action strong {
+  font-size: .86rem;
+}
+
+.portal-post-subscribe-action span {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .76rem;
+  overflow-wrap: anywhere;
+}
+
+.portal-post-engagement-actions > p {
+  margin: 0;
+  color: var(--muted-foreground, #9298a2);
+  font-size: .78rem;
+}
+
+@media (max-width: 560px) {
+  .portal-post-engagement-actions {
+    padding: 11px;
+  }
+
+  .portal-post-reaction-actions button {
+    padding: 7px 9px;
+    font-size: .76rem;
+  }
+
+  .portal-post-subscribe-action {
+    align-items: flex-start;
+  }
+}

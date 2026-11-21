@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { Button } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -22,8 +21,6 @@ export function PostEngagementActions({ postId, title }: Props) {
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [saved, setSaved] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
-  const [subscriptionEmail, setSubscriptionEmail] = useState("");
   const [message, setMessage] = useState("");
 
   const loadPostReaction = useCallback(async () => {
@@ -35,36 +32,20 @@ export function PostEngagementActions({ postId, title }: Props) {
     setDislikes(Number(data.dislikes_count) || 0);
   }, [postId]);
 
-  const loadUserActions = useCallback(async () => {
+  const loadSavedState = useCallback(async () => {
     if (!user) {
       setSaved(false);
-      setSubscribed(false);
-      setSubscriptionEmail("");
       return;
     }
-    const [savedResponse, subscriptionResponse] = await Promise.all([
-      authenticatedFetch(getPortalApiUrl("saved-posts/"), { cache: "no-store" }),
-      authenticatedFetch(getPortalApiUrl(`content/${postId}/subscribe/`), { cache: "no-store" }),
-    ]);
-    if (savedResponse.ok) {
-      const payload = await savedResponse.json();
-      const rows = Array.isArray(payload) ? payload : payload.results || [];
-      setSaved(rows.some((item: { id?: number; post?: { id?: number } }) => Number(item.id ?? item.post?.id) === postId));
-    }
-    if (subscriptionResponse.ok) {
-      const payload = await subscriptionResponse.json();
-      setSubscribed(Boolean(payload.subscribed));
-      setSubscriptionEmail(payload.email || "");
-    }
+    const response = await authenticatedFetch(getPortalApiUrl("saved-posts/"), { cache: "no-store" });
+    if (!response.ok) return;
+    const payload = await response.json();
+    const rows = Array.isArray(payload) ? payload : payload.results || [];
+    setSaved(rows.some((item: { id?: number; post?: { id?: number } }) => Number(item.id ?? item.post?.id) === postId));
   }, [user, postId]);
 
-  useEffect(() => {
-    void loadPostReaction();
-  }, [loadPostReaction]);
-
-  useEffect(() => {
-    void loadUserActions();
-  }, [loadUserActions]);
+  useEffect(() => { void loadPostReaction(); }, [loadPostReaction]);
+  useEffect(() => { void loadSavedState(); }, [loadSavedState]);
 
   async function sendPostReaction(next: "like" | "dislike") {
     const method = reaction === next ? "DELETE" : "POST";
@@ -116,27 +97,32 @@ export function PostEngagementActions({ postId, title }: Props) {
     void sendSavedToggle();
   }
 
-  async function sendSubscriptionToggle() {
-    const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/subscribe/`), {
-      method: subscribed ? "DELETE" : "POST",
+  async function reportPost() {
+    const reason = window.prompt(
+      "Why are you reporting this post? (Incorrect information, outdated information, inappropriate content, broken links)",
+      "Incorrect information",
+    );
+    if (!reason?.trim()) return;
+
+    const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reports/`), {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason: reason.trim() }),
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
-      setMessage(payload.email?.[0] || payload.detail || "Unable to update subscription.");
+      setMessage(payload.detail || "Unable to submit your report.");
       return;
     }
-    setSubscribed(Boolean(payload.subscribed));
-    setSubscriptionEmail(payload.email || "");
-    setMessage(payload.subscribed ? `Subscribed with ${payload.email}.` : "You have unsubscribed from this post.");
+    setMessage(payload.already_reported ? "You have already reported this post." : "Thank you. Your report has been submitted.");
   }
 
-  function toggleSubscription() {
+  function requestReport() {
     if (!user) {
-      openLogin(() => { void sendSubscriptionToggle(); });
+      openLogin(() => { void reportPost(); });
       return;
     }
-    void sendSubscriptionToggle();
+    void reportPost();
   }
 
   async function sharePost() {
@@ -172,23 +158,15 @@ export function PostEngagementActions({ postId, title }: Props) {
   return (
     <section className="portal-post-engagement-actions" aria-label="Post actions">
       <div className="portal-post-reaction-actions">
-        <button type="button" className={reaction === "like" ? "is-active" : ""} onClick={() => void changeReaction("like")}>
-          <span aria-hidden="true">↑</span> Like <strong>{likes.toLocaleString()}</strong>
+        <button type="button" className={reaction === "like" ? "is-active" : ""} onClick={() => void changeReaction("like")} aria-label={`Like, ${likes} likes`}>
+          <span aria-hidden="true">↑</span><span>Like</span><strong>{likes.toLocaleString()}</strong>
         </button>
-        <button type="button" className={reaction === "dislike" ? "is-active" : ""} onClick={() => void changeReaction("dislike")}>
-          <span aria-hidden="true">↓</span> Dislike <strong>{dislikes.toLocaleString()}</strong>
+        <button type="button" className={reaction === "dislike" ? "is-active" : ""} onClick={() => void changeReaction("dislike")} aria-label={`Dislike, ${dislikes} dislikes`}>
+          <span aria-hidden="true">↓</span><span>Dislike</span><strong>{dislikes.toLocaleString()}</strong>
         </button>
-        <button type="button" onClick={() => void sharePost()}><span aria-hidden="true">↗</span> Share</button>
-        <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()}><span aria-hidden="true">▣</span> {saved ? "Saved" : "Save"}</button>
-      </div>
-      <div id="post-subscribe" className="portal-post-subscribe-action">
-        <div>
-          <strong>{subscribed ? "Post updates enabled" : "Get post updates"}</strong>
-          <span>{subscribed ? subscriptionEmail : "Receive email when this post is updated."}</span>
-        </div>
-        <Button size="sm" variant="primary" onClick={() => void toggleSubscription()}>
-          {subscribed ? "Unsubscribe" : "Subscribe"}
-        </Button>
+        <button type="button" onClick={() => void sharePost()}><span aria-hidden="true">↗</span><span>Share</span></button>
+        <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()}><span aria-hidden="true">▣</span><span>{saved ? "Saved" : "Save"}</span></button>
+        <button type="button" onClick={requestReport}><span aria-hidden="true">⚑</span><span>Report</span></button>
       </div>
       {message ? <p role="status">{message}</p> : null}
     </section>

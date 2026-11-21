@@ -26,6 +26,7 @@ import {
 import "../home/UpdatesSection.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PostCommentsSection } from "./PostCommentsSection";
+import { PostEngagementActions } from "./PostEngagementActions";
 
 export type CategorySlug =
   | "jobs"
@@ -1361,6 +1362,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </a>
                   ) : null}
                 </article>
+                <PostEngagementActions postId={post.postId} title={post.title} />
                 <PostCommentsSection postId={post.postId} language={language} />
                 </>
               ) : (

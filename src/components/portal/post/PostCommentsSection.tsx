@@ -297,6 +297,20 @@ export function PostCommentsSection({ postId, language }: Props) {
     setReportTarget(commentId);
   }
 
+  const replyTargetItem = replyTarget ? findComment(comments, replyTarget) : null;
+
+  useEffect(() => {
+    if (!replyTarget) return;
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setReplyTarget(null);
+        setReplyDraft("");
+      }
+    }
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [replyTarget]);
+
   return (
     <section className="portal-comments-section" aria-labelledby="portal-comments-heading">
       <div className="portal-comments-heading">
@@ -355,6 +369,44 @@ export function PostCommentsSection({ postId, language }: Props) {
           />
         ))}
       </div>
+
+      {replyTarget && replyTargetItem ? (
+        <div
+          className="portal-comment-reply-modal"
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setReplyTarget(null);
+              setReplyDraft("");
+            }
+          }}
+        >
+          <div className="portal-comment-reply-modal-panel" role="dialog" aria-modal="true" aria-labelledby="portal-comment-reply-modal-title">
+            <div className="portal-comment-reply-modal-header">
+              <div>
+                <strong id="portal-comment-reply-modal-title">Reply to {formatAuthorName(replyTargetItem.author_name || "this comment")}</strong>
+                <span>{replyTargetItem.content}</span>
+              </div>
+              <button
+                type="button"
+                className="portal-comment-reply-modal-close"
+                onClick={() => { setReplyTarget(null); setReplyDraft(""); }}
+                aria-label="Close reply"
+              >
+                ×
+              </button>
+            </div>
+            <Textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} placeholder="Write your reply..." rows={4} maxLength={250} fullWidth size="sm" autoFocus />
+            <div className="portal-comment-reply-modal-footer">
+              <span>{replyDraft.length}/250</span>
+              <Button type="button" size="sm" variant="primary" disabled={submitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
+              <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
+                {submitting ? "Sending..." : "Reply"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -124,7 +124,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
     return () => {
       active = false;
     };
-  }, [user?.id, user?.email, t.success]);
+  }, [user, t.success]);
 
   function handleSubscribeClick() {
     setMessage("");

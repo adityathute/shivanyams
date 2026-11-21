@@ -1362,8 +1362,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </a>
                   ) : null}
                 </article>
-                <PostEngagementActions postId={post.postId} title={post.title} />
-                <PostCommentsSection postId={post.postId} language={language} />
+                {!previewItem ? (
+                  <>
+                    <PostEngagementActions postId={post.postId} title={post.title} />
+                    <PostCommentsSection postId={post.postId} language={language} />
+                  </>
+                ) : null}
                 </>
               ) : (
                 <>

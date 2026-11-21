@@ -814,6 +814,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
 
                   <h1>{post.title}</h1>
 
+                  {!previewItem ? (
+                    <PostEngagementActions postId={post.postId} title={post.title} />
+                  ) : null}
+
                   {post.description ? (
                     <p className="portal-post-summary">{post.description}</p>
                   ) : null}
@@ -1364,7 +1368,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 </article>
                 {!previewItem ? (
                   <>
-                    <PostEngagementActions postId={post.postId} title={post.title} />
                     <PostCommentsSection postId={post.postId} language={language} />
                   </>
                 ) : null}

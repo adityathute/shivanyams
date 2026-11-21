@@ -1981,15 +1981,3 @@ padding-right: 24px;
 .post-editor-action-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
 .post-editor-actions .post-editor-publish-button, .post-editor-actions .post-editor-publish-button[type="button"] { color: #fff; background: #16845b; border-color: #16845b; }
 @media (max-width: 650px) { .post-editor-actions-draft { align-items: stretch; } .post-editor-action-buttons { width: 100%; } .post-editor-action-buttons button { flex: 1 1 calc(50% - 9px); } }
-
-
-/* Autosave and publishing controls */
-.post-editor-actions-draft { align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
-.post-editor-save-status { display: inline-flex; align-items: center; gap: 8px; color: #718198; font-size: 12px; font-weight: 600; }
-.post-editor-save-dot { width: 7px; height: 7px; border-radius: 50%; background: #94a3b8; }
-.post-editor-save-dot.saving, .post-editor-save-dot.unsaved { background: #d99a28; }
-.post-editor-save-dot.saved { background: #16a36a; }
-.post-editor-save-dot.error { background: #dc4545; }
-.post-editor-action-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
-.post-editor-actions .post-editor-publish-button, .post-editor-actions .post-editor-publish-button[type="button"] { color: #fff; background: #16845b; border-color: #16845b; }
-@media (max-width: 650px) { .post-editor-actions-draft { align-items: stretch; } .post-editor-action-buttons { width: 100%; } .post-editor-action-buttons button { flex: 1 1 calc(50% - 9px); } }

@@ -68,14 +68,13 @@
 .portal-comment-composer-footer button:not([class]) { border: 0; background: transparent; color: var(--muted-foreground, #9298a2); cursor: pointer; }
 .portal-comments-message, .portal-comments-empty { margin: 13px 0; color: var(--muted-foreground, #9298a2); font-size: .83rem; }
 .portal-comments-list { margin-top: 17px; }
-.portal-comment-item { margin-top: 15px; }
+.portal-comment-item { position: relative; margin-top: 15px; }
 .portal-comment-main { display: flex; align-items: flex-start; gap: 9px; }
-.portal-comment-main { position: relative; }
-.portal-comment-item.has-replies > .portal-comment-main::after {
+.portal-comment-item.has-replies::before {
   content: "";
   position: absolute;
   top: 30px;
-  bottom: -8px;
+  bottom: 0;
   left: 14px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   pointer-events: none;
@@ -122,8 +121,9 @@
 }
 .portal-comment-toggle-replies {
   justify-content: space-between;
-  width: min(100%, 220px);
+  width: 100%;
   margin-top: 5px;
+  text-align: left;
 }
 .portal-comment-toggle-replies:hover,
 .portal-comment-load-more:hover {
@@ -147,21 +147,31 @@
   margin: 8px 0 0 14px;
   padding: 0 0 0 20px;
 }
-.portal-comment-replies::before {
+.portal-comment-replies-list {
+  position: relative;
+}
+.portal-comment-replies-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+}
+.portal-comment-replies-list::before {
   content: "";
   position: absolute;
   top: 0;
-  bottom: 30px;
+  bottom: 15px;
   left: 0;
   width: 1.5px;
   background: var(--border-color, #cbd5e1);
   border-radius: 2px;
 }
-.portal-comment-replies > .portal-comment-item {
+.portal-comment-replies-list > .portal-comment-item {
   position: relative;
   margin-top: 12px;
 }
-.portal-comment-replies > .portal-comment-item::before {
+.portal-comment-replies-list > .portal-comment-item::before {
   content: "";
   position: absolute;
   top: 0;
@@ -173,11 +183,32 @@
   border-bottom-left-radius: 10px;
   pointer-events: none;
 }
-.portal-comment-replies > .portal-comment-item:first-child { margin-top: 0; }
-.portal-comment-replies > .portal-comment-load-more {
+.portal-comment-replies-list > .portal-comment-item:first-child { margin-top: 0; }
+.portal-comment-replies-footer .portal-comment-load-more,
+.portal-comment-replies-footer .portal-comment-hide-replies {
   position: relative;
-  margin: 10px 0 2px -1px;
-  padding: 4px 0;
+  margin: 0;
+  padding: 4px 7px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--primary, #64748b);
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: color .16s ease, background-color .16s ease;
+}
+.portal-comment-replies-footer .portal-comment-load-more:hover,
+.portal-comment-replies-footer .portal-comment-hide-replies:hover {
+  color: var(--text-primary, #334155);
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-hide-replies {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 }
 .portal-comment-item.is-deep > .portal-comment-replies { margin-left: 8px; }
 .portal-comment-inline-reply { position: relative; display: grid; gap: 7px; margin: 9px 0 3px 39px; padding: 9px; border: 1px solid var(--border-color, #e5e7eb); border-radius: 9px; background: var(--surface, #fff); animation: comment-reply-in .18s ease-out; }
@@ -209,9 +240,10 @@
   .portal-comment-composer textarea { width: 100%; }
   .portal-comment-composer-footer { margin-top: 8px; }
   .portal-comment-replies { margin-left: 7px; padding-left: 16px; }
-  .portal-comment-replies::before { left: 0; }
-  .portal-comment-replies > .portal-comment-item::before { left: -16px; width: 16px; height: 15px; }
-  .portal-comment-item.is-replies-expanded > .portal-comment-main::after { left: 14px; }
+  .portal-comment-replies-list::before { left: 0; }
+  .portal-comment-replies-list > .portal-comment-item::before { left: -16px; width: 16px; height: 15px; }
+  .portal-comment-item.has-replies::before { left: 14px; }
+  .portal-comment-replies-footer { margin-top: 7px; }
   .portal-comment-inline-reply { margin-left: 25px; }
   .portal-comment-inline-reply::before { left: -11px; }
   .portal-comment-inline-reply::after { left: -11px; width: 10px; }

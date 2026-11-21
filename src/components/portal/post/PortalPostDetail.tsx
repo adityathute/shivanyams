@@ -25,7 +25,7 @@ import {
 } from "./not-found-recommendations-config";
 import "../home/UpdatesSection.css";
 
-type CategorySlug =
+export type CategorySlug =
   | "jobs"
   | "schemes"
   | "examination"

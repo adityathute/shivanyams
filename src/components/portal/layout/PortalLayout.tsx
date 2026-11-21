@@ -16,6 +16,7 @@ import { getPortalNavigation } from "./sidebar/PortalSidebar";
 import { PortalDataProvider } from "../data/portal-data";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { PortalAuthProvider } from "../context/PortalAuthContext";
 import {
   PortalLanguageProvider,
   usePortalLanguage,
@@ -131,11 +132,13 @@ export function PortalLayout({
         mode: "cookie",
       }}
     >
-      <PortalDataProvider>
-        <PortalLanguageProvider initialLanguage={initialLanguage}>
-          <PortalShell>{children}</PortalShell>
-        </PortalLanguageProvider>
-      </PortalDataProvider>
+      <PortalAuthProvider>
+        <PortalDataProvider>
+          <PortalLanguageProvider initialLanguage={initialLanguage}>
+            <PortalShell>{children}</PortalShell>
+          </PortalLanguageProvider>
+        </PortalDataProvider>
+      </PortalAuthProvider>
     </AuthProvider>
   );
 }

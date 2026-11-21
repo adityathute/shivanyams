@@ -75,7 +75,7 @@
   position: absolute;
   z-index: 0;
   top: 30px;
-  bottom: 0;
+  bottom: 7px;
   left: 14px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   pointer-events: none;
@@ -118,6 +118,20 @@
   border-radius: inherit;
   background: transparent;
   transition: background-color .16s ease;
+}
+
+/* Short curved branch joins the thread rail to the Reply control. */
+.portal-comment-actions button.portal-comment-reply-action::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 0;
+  width: 12px;
+  height: 7px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom-left-radius: 7px;
+  pointer-events: none;
 }
 .portal-comment-actions button.portal-comment-reply-action:hover::before,
 .portal-comment-actions button.portal-comment-reply-action:focus-visible::before {
@@ -303,6 +317,7 @@
   .portal-comment-replies { margin-left: 14px; padding-left: 36px; }
   .portal-comment-replies-list > .portal-comment-item::before { left: -36px; width: 36px; height: 15px; }
   .portal-comment-replies-footer .portal-comment-hide-replies::after { left: -16px; width: 16px; height: 12px; }
+  .portal-comment-actions button.portal-comment-reply-action::after { top: -6px; width: 10px; height: 6px; }
   .portal-comment-item.has-replies::before { left: 14px; }
   .portal-comment-replies-footer { margin-top: 7px; }
   .portal-comment-inline-reply { margin-left: 25px; }

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, FavoriteIcon, ReportsIcon, ShareIcon } from "shivanya-ui";
+import { BookmarkIcon, DislikeIcon, LikeIcon, ReportIcon, ShareIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -166,7 +166,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           title="Like"
           aria-label={`Like, ${likes} likes`}
         >
-          <ArrowUpIcon size={15} />
+          <LikeIcon size={15} />
           <strong>{likes.toLocaleString()}</strong>
         </button>
         <button
@@ -176,17 +176,17 @@ export function PostEngagementActions({ postId, title }: Props) {
           title="Dislike"
           aria-label={`Dislike, ${dislikes} dislikes`}
         >
-          <ArrowDownIcon size={15} />
+          <DislikeIcon size={15} />
           <strong>{dislikes.toLocaleString()}</strong>
         </button>
         <button type="button" onClick={() => void sharePost()} title="Share" aria-label="Share post">
           <ShareIcon size={15} />
         </button>
         <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
-          <FavoriteIcon size={15} />
+          <BookmarkIcon size={15} />
         </button>
         <button type="button" onClick={requestReport} title="Report" aria-label="Report post">
-          <ReportsIcon size={15} />
+          <ReportIcon size={15} />
         </button>
       </div>
       {message ? <p role="status">{message}</p> : null}

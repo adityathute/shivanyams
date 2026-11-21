@@ -105,7 +105,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
     } finally {
       setBusy(false);
     }
-  }, [language, user, t.error, t.success]);
+  }, [language, user, t.error, t.success, t.alreadySubscribed]);
 
   useEffect(() => {
     let active = true;

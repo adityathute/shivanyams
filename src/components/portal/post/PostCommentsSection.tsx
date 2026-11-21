@@ -30,6 +30,13 @@ type Props = {
   language: string;
 };
 
+function formatAuthorName(value: string): string {
+  return value
+    .trim()
+    .toLocaleLowerCase()
+    .replace(/(^|[\s-\u2010-\u2015]+)([\p{L}])/gu, (_match, separator, letter) => `${separator}${letter.toLocaleUpperCase()}`);
+}
+
 function countComments(items: CommentItem[]): number {
   return items.reduce((total, item) => total + 1 + countComments(item.replies || []), 0);
 }
@@ -55,10 +62,10 @@ function CommentThread({
   return (
     <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}`}>
       <div className="portal-comment-main">
-        <Avatar size="sm" name={item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={item.author_avatar || undefined} />
+        <Avatar size="sm" name={formatAuthorName(item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member"))} src={item.author_avatar?.trim() || undefined} />
         <div className="portal-comment-content">
           <div className="portal-comment-author-row">
-            <strong>{item.author_name?.trim() || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member")}</strong>
+            <strong>{formatAuthorName(item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member"))}</strong>
             {item.is_admin_reply ? <span className="portal-comment-admin-badge">Admin</span> : null}
             <time dateTime={item.created_at}>{dateLabel}</time>
           </div>

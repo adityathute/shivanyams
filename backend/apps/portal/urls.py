@@ -51,16 +51,44 @@ urlpatterns = [
     # Public content: jobs, schemes, examinations, admit cards,
     # results, articles, videos and tools.
     path("content/<str:kind>/", content_list, name="content-list"),
+
+    # Post-specific endpoints must come before the generic
+    # content/<kind>/<slug>/ route below.
     path(
         "content/<int:post_id>/views/",
         TrackPostView.as_view(),
         name="track-post-view",
     ),
     path(
+        "content/<int:post_id>/comments/",
+        PostComments.as_view(),
+        name="post-comments",
+    ),
+    path(
+        "content/<int:post_id>/reactions/",
+        PostReactions.as_view(),
+        name="post-reactions",
+    ),
+    path(
+        "content/<int:post_id>/subscribe/",
+        PostSubscriptions.as_view(),
+        name="post-subscribe",
+    ),
+    path(
+        "content/<int:post_id>/shares/",
+        PostShares.as_view(),
+        name="post-shares",
+    ),
+    path("comments/<int:comment_id>/reactions/", PostCommentReactions.as_view(), name="comment-reactions"),
+    path("comments/<int:comment_id>/reports/", PostCommentReports.as_view(), name="comment-reports"),
+
+    # Generic public content detail must stay after integer post endpoints.
+    path(
         "content/<str:kind>/<slug:slug>/",
         content_detail,
         name="content-detail",
     ),
+
     # Website-wide page analytics
     path("website-views/", TrackWebsiteView.as_view(), name="track-website-view"),
     path("admin/website-analytics/", AdminWebsiteAnalytics.as_view(), name="admin-website-analytics"),
@@ -79,25 +107,9 @@ urlpatterns = [
         admin_content_detail,
         name="admin-content-detail",
     ),
-    # Admin review and publishing workflow
-    # Comments and replies
-    path(
-        "content/<int:post_id>/comments/",
-        PostComments.as_view(),
-        name="post-comments",
-    ),
-    # Likes and dislikes
-    path(
-        "content/<int:post_id>/reactions/",
-        PostReactions.as_view(),
-        name="post-reactions",
-    ),
-    path("comments/<int:comment_id>/reactions/", PostCommentReactions.as_view(), name="comment-reactions"),
-    path("comments/<int:comment_id>/reports/", PostCommentReports.as_view(), name="comment-reports"),
-    path("content/<int:post_id>/subscribe/", PostSubscriptions.as_view(), name="post-subscribe"),
-    path("content/<int:post_id>/shares/", PostShares.as_view(), name="post-shares"),
     path("admin/comments/", AdminComments.as_view(), name="admin-comments"),
     path("admin/content/<int:post_id>/engagement/", AdminPostEngagement.as_view(), name="admin-post-engagement"),
+
     # Saved posts
     path("saved-posts/", SavedPosts.as_view(), name="saved-posts"),
     path(

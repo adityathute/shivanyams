@@ -183,7 +183,8 @@ export default function AdminPage() {
             comments: Number(payload.comments_count) || 0,
             shares: Number(payload.shares_count) || 0,
             saved: Number(payload.saved_count) || 0,
-            reports: Number(payload.reports_count) || 0,\n            subscribers: Number(payload.newsletter_subscribers_count) || 0,
+            reports: Number(payload.reports_count) || 0,
+            subscribers: Number(payload.newsletter_subscribers_count) || 0,
           });
           setStatsAnimationKey((value) => value + 1);
         }
@@ -395,7 +396,8 @@ export default function AdminPage() {
     ]);
     const csv = [columns, ...rows].map((row) => row.map((value) =>
       `"${String(value ?? "").replaceAll('"', '""')}"`
-    ).join(",")).join("\r\n");
+    ).join(",")).join("\r
+");
     // UTF-8 BOM helps Excel correctly recognize Marathi/Hindi and other Unicode text.
     const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -448,6 +450,7 @@ export default function AdminPage() {
           ];
 
           return (
+            <div className="admin-stats-stack">
             <section className="admin-stats">
               {statItems.map((item) => (
                 <article key={item.label} className={`admin-stat-card admin-stat-${item.group}${item.analytics ? " admin-stat-clickable" : ""}`}>
@@ -470,6 +473,7 @@ export default function AdminPage() {
                 </article>
               ))}
             </section>
+            </div>
           );
         })()}
 

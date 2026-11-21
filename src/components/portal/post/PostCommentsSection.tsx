@@ -47,12 +47,22 @@ function CommentThread({
   onReply,
   onReact,
   onReport,
+  replyTarget,
+  replyDraft,
+  onReplyDraftChange,
+  onCancelReply,
+  onSubmitReply,
 }: {
   item: CommentItem;
   depth: number;
   onReply: (id: number) => void;
   onReact: (id: number, reaction: "like" | "dislike") => void;
   onReport: (id: number) => void;
+  replyTarget: number | null;
+  replyDraft: string;
+  onReplyDraftChange: (value: string) => void;
+  onCancelReply: () => void;
+  onSubmitReply: () => void;
 }) {
   const date = new Date(item.created_at);
   const dateLabel = Number.isNaN(date.getTime())
@@ -82,6 +92,16 @@ function CommentThread({
           </div>
         </div>
       </div>
+      {replyTarget === item.id ? (
+        <div className="portal-comment-inline-reply">
+          <textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={10000} autoFocus />
+          <div className="portal-comment-inline-reply-footer">
+            <span>{replyDraft.length}/10000</span>
+            <button type="button" onClick={onCancelReply}>Cancel</button>
+            <button type="button" className="is-primary" disabled={!replyDraft.trim()} onClick={onSubmitReply}>Reply</button>
+          </div>
+        </div>
+      ) : null}
       {item.replies?.length ? (
         <div className="portal-comment-replies">
           {item.replies.map((reply) => (
@@ -92,6 +112,11 @@ function CommentThread({
               onReply={onReply}
               onReact={onReact}
               onReport={onReport}
+              replyTarget={replyTarget}
+              replyDraft={replyDraft}
+              onReplyDraftChange={onReplyDraftChange}
+              onCancelReply={onCancelReply}
+              onSubmitReply={onSubmitReply}
             />
           ))}
         </div>
@@ -111,6 +136,10 @@ export function PostCommentsSection({ postId, language }: Props) {
   const [replyDraft, setReplyDraft] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
+  const [reportTarget, setReportTarget] = useState<number | null>(null);
+  const [reportReason, setReportReason] = useState("spam");
+  const [reportDetails, setReportDetails] = useState("");
+  const [reporting, setReporting] = useState(false);
 
   const loadComments = useCallback(async () => {
     setLoading(true);
@@ -202,29 +231,37 @@ export function PostCommentsSection({ postId, language }: Props) {
     void sendCommentReaction(commentId, reaction);
   }
 
-  async function sendCommentReport(commentId: number) {
-    const reason = window.prompt("Why are you reporting this comment? (spam, abuse, misinformation, other)");
-    if (!reason?.trim()) return;
-    const response = await authenticatedFetch(getPortalApiUrl(`comments/${commentId}/reports/`), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reason: reason.trim() }),
-    });
-    if (!response.ok) {
-      setError("Unable to report this comment.");
-      return;
+  async function sendCommentReport() {
+    if (!reportTarget || reporting) return;
+    setReporting(true);
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl(`comments/${reportTarget}/reports/`), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: reportReason, details: reportDetails.trim() }),
+      });
+      if (!response.ok) {
+        setError("Unable to report this comment.");
+        return;
+      }
+      const payload = await response.json();
+      setReportTarget(null);
+      setReportDetails("");
+      if (payload.hidden) await loadComments();
+      setError(payload.hidden ? "This comment was hidden after multiple reports." : "Thank you. Your report was submitted.");
+    } finally {
+      setReporting(false);
     }
-    const payload = await response.json();
-    if (payload.hidden) await loadComments();
-    setError(payload.hidden ? "This comment was hidden after multiple reports." : "Thank you. Your report was submitted.");
   }
 
   function reportComment(commentId: number) {
     if (!user) {
-      openLogin(() => { void sendCommentReport(commentId); });
+      openLogin(() => setReportTarget(commentId));
       return;
     }
-    void sendCommentReport(commentId);
+    setReportReason("spam");
+    setReportDetails("");
+    setReportTarget(commentId);
   }
 
   return (
@@ -250,18 +287,17 @@ export function PostCommentsSection({ postId, language }: Props) {
         </div>
       </div>
 
-      {replyTarget ? (
-        <div className="portal-comment-reply-composer">
-          <textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} placeholder="Write your reply..." rows={2} maxLength={10000} />
-          <div className="portal-comment-composer-footer">
-            <button type="button" onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</button>
-            <Button size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={() => void submitComment(replyDraft, replyTarget)}>
-              Reply
-            </Button>
-          </div>
+
+      {reportTarget ? (
+        <div className="portal-comment-report-panel">
+          <div><strong>Report comment</strong><span>Tell us why this comment should be reviewed.</span></div>
+          <select value={reportReason} onChange={(event) => setReportReason(event.target.value)} aria-label="Report reason">
+            <option value="spam">Spam</option><option value="abuse">Abusive or harmful</option><option value="misinformation">Misinformation</option><option value="other">Other</option>
+          </select>
+          <textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" />
+          <div><button type="button" onClick={() => setReportTarget(null)}>Cancel</button><Button size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button></div>
         </div>
       ) : null}
-
       {error ? <p className="portal-comments-message" role="status">{error}</p> : null}
       {loading ? <p className="portal-comments-message">Loading comments...</p> : null}
       {!loading && !comments.length ? <p className="portal-comments-empty">No comments yet. Start the discussion.</p> : null}
@@ -276,7 +312,12 @@ export function PostCommentsSection({ postId, language }: Props) {
               else setReplyTarget(id);
             }}
             onReact={(id, reaction) => void reactToComment(id, reaction)}
-            onReport={(id) => void reportComment(id)}
+            onReport={(id) => reportComment(id)}
+            replyTarget={replyTarget}
+            replyDraft={replyDraft}
+            onReplyDraftChange={setReplyDraft}
+            onCancelReply={() => { setReplyTarget(null); setReplyDraft(""); }}
+            onSubmitReply={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}
           />
         ))}
       </div>

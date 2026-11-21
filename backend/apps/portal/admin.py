@@ -5,6 +5,10 @@ from .models import (
     ArticleGuideDetails,
     Category,
     Comment,
+    CommentReaction,
+    CommentReport,
+    PostSubscription,
+    PostShare,
     ExaminationDetails,
     JobDetails,
     JobPost,
@@ -839,6 +843,42 @@ class CommentAdmin(admin.ModelAdmin):
     autocomplete_fields = ("post", "parent")
     date_hierarchy = "created_at"
     list_select_related = ("post", "parent")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(CommentReaction)
+class CommentReactionAdmin(admin.ModelAdmin):
+    list_display = ("comment", "user_auth_id", "reaction", "created_at")
+    list_filter = ("reaction", "created_at")
+    search_fields = ("comment__content", "user_auth_id", "comment__post__title_en")
+    autocomplete_fields = ("comment",)
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(CommentReport)
+class CommentReportAdmin(admin.ModelAdmin):
+    list_display = ("comment", "reporter_auth_id", "reason", "status", "created_at")
+    list_filter = ("status", "reason", "created_at")
+    search_fields = ("comment__content", "reporter_auth_id", "comment__post__title_en", "details")
+    autocomplete_fields = ("comment",)
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(PostSubscription)
+class PostSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ("post", "email", "user_auth_id", "is_active", "created_at")
+    list_filter = ("is_active", "created_at")
+    search_fields = ("post__title_en", "email", "user_auth_id")
+    autocomplete_fields = ("post",)
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(PostShare)
+class PostShareAdmin(admin.ModelAdmin):
+    list_display = ("post", "channel", "user_auth_id", "visitor_id", "created_at")
+    list_filter = ("channel", "created_at")
+    search_fields = ("post__title_en", "user_auth_id", "visitor_id")
+    autocomplete_fields = ("post",)
     readonly_fields = ("created_at", "updated_at")
 
 

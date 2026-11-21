@@ -116,6 +116,8 @@ export type Item = {
   title_hi?: string;
   category: string;
   updated_date?: string;
+  created_at?: string;
+  updated_at?: string;
   category_en?: string;
   category_mr?: string;
   category_hi?: string;
@@ -465,6 +467,8 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
       post.category?.name_hi ||
       "",
     updated_date: getDate(post.updated_at),
+    created_at: post.created_at || "",
+    updated_at: post.updated_at || "",
     // Preserve all category translations
     category_en: post.category?.name_en || "",
     category_mr: post.category?.name_mr || "",

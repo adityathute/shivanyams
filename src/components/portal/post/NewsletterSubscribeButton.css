@@ -1,0 +1,113 @@
+.newsletter-subscribe-overlay {
+  position: fixed;
+  z-index: 10050;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, .58);
+  backdrop-filter: blur(4px);
+}
+
+.newsletter-subscribe-dialog {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 26px;
+  border: 1px solid var(--border-color, #e3e8ef);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #172033);
+  box-shadow: 0 22px 70px #0003;
+}
+
+.newsletter-subscribe-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.newsletter-subscribe-eyebrow {
+  color: var(--primary, #075be8);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.newsletter-subscribe-dialog h2 {
+  margin: 8px 0 5px;
+  font-size: 23px;
+}
+
+.newsletter-subscribe-dialog > p {
+  margin: 0 0 20px;
+  color: var(--text-secondary, #64748b);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.newsletter-subscribe-dialog form {
+  display: grid;
+  gap: 9px;
+}
+
+.newsletter-subscribe-dialog label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.newsletter-subscribe-dialog input {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 1px solid var(--border-color, #dbe3ed);
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.newsletter-subscribe-dialog input:focus {
+  border-color: var(--primary, #075be8);
+}
+
+.newsletter-subscribe-submit {
+  min-height: 40px;
+  margin-top: 5px;
+  border: 1px solid var(--primary, #075be8);
+  border-radius: 7px;
+  background: var(--primary, #075be8);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.newsletter-subscribe-submit:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.newsletter-subscribe-message {
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.newsletter-subscribe-message.success {
+  color: #059669;
+}
+
+:root[data-theme="dark"] .newsletter-subscribe-dialog {
+  background: var(--surface, #171c28);
+}

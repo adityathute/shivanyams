@@ -575,11 +575,15 @@ export default function PostEditor({
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
   const [autosaveState, setAutosaveState] = useState<"idle" | "unsaved" | "saving" | "saved" | "error">("idle");
+  const [autosaveBusy, setAutosaveBusy] = useState(false);
+  const [autosaveRevision, setAutosaveRevision] = useState(0);
   const [postStatus, setPostStatus] = useState("draft");
   const postIdRef = useRef<number | null>(null);
   const currentSlugRef = useRef(editSlug || "");
   const lastSavedSnapshotRef = useRef("");
   const autosaveInitializedRef = useRef(false);
+  const saveInFlightRef = useRef(false);
+  const pendingSaveRef = useRef(false);
   const [notice, setNotice] = useState("");
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -1316,14 +1320,14 @@ export default function PostEditor({
   }
 
   useEffect(() => {
-    if (!hasUnsavedChanges && autosaveState !== "saving") return;
+    if (!hasUnsavedChanges && !autosaveBusy) return;
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", warnBeforeUnload);
     return () => window.removeEventListener("beforeunload", warnBeforeUnload);
-  }, [hasUnsavedChanges, autosaveState]);
+  }, [hasUnsavedChanges, autosaveBusy]);
 
   async function persistPost() {
     if (!activeCategory) throw new Error("The selected category is not active in the backend.");
@@ -1364,20 +1368,39 @@ export default function PostEditor({
     if (!title || !form.slug.trim() || slugAvailable !== true) return;
     const snapshot = JSON.stringify(payload);
     if (snapshot === lastSavedSnapshotRef.current) return;
+    if (saveInFlightRef.current) {
+      pendingSaveRef.current = true;
+      setAutosaveState("unsaved");
+      return;
+    }
     setAutosaveState("unsaved");
     const timer = window.setTimeout(async () => {
+      if (saveInFlightRef.current) {
+        pendingSaveRef.current = true;
+        return;
+      }
+      saveInFlightRef.current = true;
+      setAutosaveBusy(true);
       setAutosaveState("saving");
       try {
         await persistPost();
       } catch (error) {
         console.error("Post autosave failed:", error);
         setAutosaveState("error");
+      } finally {
+        saveInFlightRef.current = false;
+        setAutosaveBusy(false);
+        if (pendingSaveRef.current) {
+          pendingSaveRef.current = false;
+          setAutosaveRevision((value) => value + 1);
+        }
       }
     }, 1000);
     return () => window.clearTimeout(timer);
-  }, [loading, saving, activeCategory, editing, editSlug, payload, form, slugAvailable]);
+  }, [loading, saving, activeCategory, editing, editSlug, payload, form, slugAvailable, autosaveRevision]);
 
   async function changePostStatus(status: "draft" | "published") {
+    if (saveInFlightRef.current) return;
     setSaving(true);
     setNotice("");
     try {
@@ -1402,6 +1425,7 @@ export default function PostEditor({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (saveInFlightRef.current) return;
     setNotice("");
     setSaving(true);
     try {
@@ -2725,11 +2749,11 @@ export default function PostEditor({
           </section>
           <div className="post-editor-actions post-editor-actions-draft">
             <div className="post-editor-save-status" aria-live="polite">
-              <span className={`post-editor-save-dot ${autosaveState}`} />
-              {autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
+              <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />
+              {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
             </div>
             <div className="post-editor-action-buttons">
-              <button type="button" disabled={saving || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>
+              <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>
               <button type="button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
               <button type="submit" disabled={saving || autosaveState === "saving" || !activeCategory}>{saving ? "Saving..." : "Save & Exit"}</button>
               <button type="button" className="post-editor-publish-button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("published")}>Publish</button>

@@ -84,12 +84,6 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
                 payload = json.loads(response.read().decode("utf-8"))
         except HTTPError as exc:
             if exc.code in (401, 403):
-                # Public read-only endpoints must remain available when a
-                # visitor has an expired/revoked cookie. Treat that request as
-                # anonymous; protected endpoints will still fail permission
-                # checks because no authenticated user is returned.
-                if used_cookie and request.method in ("GET", "HEAD", "OPTIONS", "TRACE"):
-                    return None
                 raise AuthenticationFailed("Invalid or expired access token.")
             if exc.code >= 500:
                 raise AuthServiceUnavailable()
@@ -102,8 +96,6 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
             )
 
         if not payload.get("success"):
-            if used_cookie and request.method in ("GET", "HEAD", "OPTIONS", "TRACE"):
-                return None
             raise AuthenticationFailed("Invalid or expired access token.")
 
         user_data = payload.get("data")

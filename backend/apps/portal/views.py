@@ -242,6 +242,7 @@ class AdminPostReview(APIView):
         Post.Status.PUBLISHED,
         Post.Status.REJECTED,
         Post.Status.ARCHIVED,
+        Post.Status.DRAFT,
     }
 
     def post(self, request, post_id):

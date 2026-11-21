@@ -43,7 +43,7 @@ async function refreshSession(): Promise<boolean> {
   if (csrfToken) headers.set("X-CSRFToken", csrfToken);
 
   try {
-    const response = await fetch(`${authBaseUrl}/accounts/auth/refresh/`, {
+    const response = await fetch(`${authBaseUrl}/api/v1/auth/refresh/`, {
       method: "POST",
       credentials: "include",
       headers,
@@ -67,7 +67,7 @@ function refreshSessionOnce(): Promise<boolean> {
 }
 
 function isRefreshRequest(request: Request) {
-  return new URL(request.url).pathname.replace(/\/+$/, "").endsWith("/accounts/auth/refresh");
+  return new URL(request.url).pathname.replace(/\/+$/, "").endsWith("/auth/refresh");
 }
 
 /**

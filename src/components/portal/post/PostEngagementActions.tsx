@@ -169,7 +169,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           <strong>{subscribed ? "Post updates enabled" : "Get post updates"}</strong>
           <span>{subscribed ? subscriptionEmail : "Receive email when this post is updated."}</span>
         </div>
-        <Button size="sm" variant={subscribed ? "secondary" : "primary"} onClick={() => void toggleSubscription()}>
+        <Button size="sm" variant="primary" onClick={() => void toggleSubscription()}>
           {subscribed ? "Unsubscribe" : "Subscribe"}
         </Button>
       </div>

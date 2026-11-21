@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { getPortalApiUrl } from "../category/CategoryGrid";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 export type ItemType =
   | "job"

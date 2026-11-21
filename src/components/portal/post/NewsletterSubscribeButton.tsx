@@ -51,7 +51,7 @@ const labels = {
 };
 
 export function NewsletterSubscribeButton({ language = "en" }: { language?: Language }) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const t = labels[language] || labels.en;
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -153,11 +153,11 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
         type="button"
         className="subscribe-button"
         onClick={handleSubscribeClick}
-        disabled={busy || checking || subscribed}
+        disabled={authLoading || busy || checking || subscribed}
         aria-label={subscribed ? t.subscribed : t.button}
         aria-pressed={subscribed}
       >
-        {busy || checking ? "…" : subscribed ? t.subscribed : t.button}
+        {authLoading || busy || checking ? "…" : subscribed ? t.subscribed : t.button}
       </button>
       {message && !open ? (
         <p className={success ? "newsletter-subscribe-inline success" : "newsletter-subscribe-inline"} role="status">

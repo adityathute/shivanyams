@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("portal", "0010_jobagerelaxation_jobdetails_age_as_on_date_and_more"),
+        ("portal", "0025_merge_20261120_2323"),
     ]
 
     operations = [

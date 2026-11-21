@@ -178,16 +178,8 @@
   gap: 4px 12px;
   margin: 8px 0 0;
 }
-.portal-comment-replies-list::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 15px;
-  left: -42px;
-  width: 1.5px;
-  background: var(--border-color, #cbd5e1);
-  border-radius: 2px;
-}
+/* The parent comment's vertical branch continues through the reply stack.
+   Each reply elbow below turns from that shared rail toward its avatar. */
 .portal-comment-replies-list > .portal-comment-item {
   position: relative;
   margin-top: 12px;
@@ -280,7 +272,6 @@
   .portal-comment-composer textarea { width: 100%; }
   .portal-comment-composer-footer { margin-top: 8px; }
   .portal-comment-replies { margin-left: 14px; padding-left: 36px; }
-  .portal-comment-replies-list::before { left: -36px; }
   .portal-comment-replies-list > .portal-comment-item::before { left: -36px; width: 36px; height: 15px; }
   .portal-comment-item.has-replies::before { left: 14px; }
   .portal-comment-replies-footer { margin-top: 7px; }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
 import "./NewsletterSubscribeButton.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -23,6 +24,7 @@ const labels = {
     submit: "Subscribe",
     close: "Close",
     success: "You are subscribed to ShivanyaMS updates.",
+    alreadySubscribed: "This email is already subscribed to updates.",
     error: "Unable to subscribe right now. Please try again.",
     invalid: "Please enter a valid email address.",
   },
@@ -40,6 +42,7 @@ const labels = {
     submit: "सबस्क्राइब करा",
     close: "बंद करा",
     success: "तुम्ही ShivanyaMS अपडेट्ससाठी सबस्क्राइब केले आहे.",
+    alreadySubscribed: "हा ईमेल आधीपासून अपडेट्ससाठी सबस्क्राइब आहे.",
     error: "सध्या सबस्क्राइब करता आले नाही. पुन्हा प्रयत्न करा.",
     invalid: "कृपया योग्य ईमेल पत्ता टाका.",
   },
@@ -57,6 +60,7 @@ const labels = {
     submit: "सब्सक्राइब करें",
     close: "बंद करें",
     success: "आपने ShivanyaMS अपडेट्स के लिए सब्सक्राइब कर लिया है।",
+    alreadySubscribed: "यह ईमेल पहले से ही अपडेट्स के लिए सब्सक्राइब है।"
     error: "अभी सब्सक्राइब नहीं हो सका। कृपया फिर से प्रयास करें।",
     invalid: "कृपया सही ईमेल पता दर्ज करें।",
   },
@@ -93,7 +97,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       setSubscribed(Boolean(payload.subscribed));
       setUnsubscribeToken(payload.unsubscribe_token || "");
       setSuccess(true);
-      setMessage(t.success);
+      setMessage(payload.already_subscribed ? t.alreadySubscribed : t.success);
       if (guestEmail) setEmail(guestEmail.trim().toLowerCase());
     } catch (error) {
       setSuccess(false);
@@ -209,7 +213,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
           {message}
         </p>
       ) : null}
-      {open ? (
+      {open && typeof document !== "undefined" ? createPortal(
         <div className="newsletter-subscribe-overlay" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget && !busy) setOpen(false);
         }}>
@@ -241,7 +245,8 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
               )}
             </form>
           </section>
-        </div>
+        </div>,
+        document.body
       ) : null}
     </>
   );

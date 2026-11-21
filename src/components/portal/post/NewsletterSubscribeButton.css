@@ -135,6 +135,7 @@
 
 
 .subscribe-button.is-subscribed {
+  border: 1px solid;
   border-color: #dc2626;
   background: transparent;
   color: #dc2626;

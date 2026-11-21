@@ -26,7 +26,8 @@ import {
 import "../home/UpdatesSection.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PostCommentsSection } from "./PostCommentsSection";
-import { PostEngagementActions } from "./PostEngagementActions";\nimport { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
+import { PostEngagementActions } from "./PostEngagementActions";
+import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
 
 export type CategorySlug =
   | "jobs"

@@ -985,8 +985,15 @@ class CommentSerializer(serializers.ModelSerializer):
         value = value.strip()
         if not value:
             raise serializers.ValidationError("Comment cannot be empty.")
-        if len(value) > 10000:
-            raise serializers.ValidationError("Comment is too long.")
+
+        parent_id = self.initial_data.get("parent")
+        is_reply = parent_id not in (None, "")
+        max_length = 250 if is_reply else 500
+        if len(value) > max_length:
+            label = "reply" if is_reply else "comment"
+            raise serializers.ValidationError(
+                f"A {label} can contain a maximum of {max_length} characters."
+            )
         return value
 
 

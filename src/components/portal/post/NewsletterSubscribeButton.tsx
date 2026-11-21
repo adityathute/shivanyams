@@ -17,6 +17,7 @@ const labels = {
     unsubscribe: "Unsubscribe",
     subscribedInfo: "You are subscribed to email updates. You can unsubscribe at any time.",
     unsubscribeError: "Unable to unsubscribe right now. Please try again.",
+    unsubscribeSuccess: "You have successfully unsubscribed from ShivanyaMS updates.",
     title: "Stay Connected",
     subscribedTitle: "You’re Connected",
     description: "Stay connected with us for important updates.",
@@ -35,6 +36,7 @@ const labels = {
     unsubscribe: "सबस्क्रिप्शन बंद करा",
     subscribedInfo: "तुम्ही ईमेल अपडेट्ससाठी सबस्क्राइब केले आहे. तुम्ही कधीही सबस्क्रिप्शन बंद करू शकता.",
     unsubscribeError: "सध्या सबस्क्रिप्शन बंद करता आले नाही. पुन्हा प्रयत्न करा.",
+    unsubscribeSuccess: "तुम्ही ShivanyaMS अपडेट्समधून यशस्वीरीत्या अनसबस्क्राइब केले आहे.",
     title: "आमच्याशी जोडलेले राहा",
     subscribedTitle: "तुम्ही जोडले गेले आहात",
     description: "महत्त्वाच्या अपडेट्ससाठी आमच्याशी जोडलेले राहा.",
@@ -53,6 +55,7 @@ const labels = {
     unsubscribe: "अनसब्सक्राइब करें",
     subscribedInfo: "आप ईमेल अपडेट्स के लिए सब्सक्राइब हैं। आप कभी भी अनसब्सक्राइब कर सकते हैं।",
     unsubscribeError: "अभी अनसब्सक्राइब नहीं हो सका। कृपया फिर से प्रयास करें.",
+    unsubscribeSuccess: "आपने ShivanyaMS अपडेट्स से सफलतापूर्वक अनसब्सक्राइब कर लिया है।"
     title: "हमसे जुड़े रहें",
     subscribedTitle: "आप हमसे जुड़ गए हैं",
     description: "महत्वपूर्ण अपडेट्स के लिए हमसे जुड़े रहें।",
@@ -160,14 +163,14 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       setSubscribed(false);
       setUnsubscribeToken("");
       setSuccess(false);
-      setMessage("");
+      setMessage(t.unsubscribeSuccess);
     } catch (error) {
       setSuccess(false);
       setMessage(error instanceof Error ? error.message : t.unsubscribeError);
     } finally {
       setBusy(false);
     }
-  }, [email, unsubscribeToken, user, t.unsubscribeError]);
+  }, [email, unsubscribeToken, user, t.unsubscribeError, t.unsubscribeSuccess]);
 
   function handleSubscribeClick() {
     setMessage("");

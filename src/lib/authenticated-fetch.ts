@@ -27,7 +27,7 @@ function readCookie(name: string): string | null {
 function getAuthBaseUrl() {
   return (
     process.env.NEXT_PUBLIC_AUTH_BASE_URL?.trim().replace(/\/+$/, "") ||
-    (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "")
+    "http://localhost:8000"
   );
 }
 

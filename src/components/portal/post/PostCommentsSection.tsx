@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useAuth } from "shivanya-auth";
 import { Button } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -51,7 +51,7 @@ function CommentThread({
     : date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <article className="portal-comment-item" style={{ "--comment-depth": Math.min(depth, 3) } as React.CSSProperties}>
+    <article className="portal-comment-item" style={{ "--comment-depth": Math.min(depth, 3) } as CSSProperties}>
       <div className="portal-comment-main">
         <div className="portal-comment-avatar" aria-hidden="true">U</div>
         <div className="portal-comment-content">
@@ -129,7 +129,7 @@ export function PostCommentsSection({ postId, language }: Props) {
     });
   }, [comments, sort]);
 
-  const submitComment = useCallback(async (content: string, parentId: number | null) => {
+  async function submitComment(content: string, parentId: number | null) {
     const trimmed = content.trim();
     if (!trimmed || submitting) return;
     if (!user) {
@@ -157,9 +157,9 @@ export function PostCommentsSection({ postId, language }: Props) {
     } finally {
       setSubmitting(false);
     }
-  }, [user, openLogin, postId, language, submitting, loadComments]);
+  }
 
-  const reactToComment = useCallback(async (commentId: number, reaction: "like" | "dislike") => {
+  async function reactToComment(commentId: number, reaction: "like" | "dislike") {
     if (!user) {
       openLogin(() => { void reactToComment(commentId, reaction); });
       return;
@@ -182,9 +182,9 @@ export function PostCommentsSection({ postId, language }: Props) {
       dislikes_count: payload.dislikes_count,
       user_reaction: payload.reaction,
     })));
-  }, [user, openLogin, comments]);
+  }
 
-  const reportComment = useCallback(async (commentId: number) => {
+  async function reportComment(commentId: number) {
     if (!user) {
       openLogin(() => { void reportComment(commentId); });
       return;
@@ -203,7 +203,7 @@ export function PostCommentsSection({ postId, language }: Props) {
     const payload = await response.json();
     if (payload.hidden) await loadComments();
     setError(payload.hidden ? "This comment was hidden after multiple reports." : "Thank you. Your report was submitted.");
-  }, [user, openLogin, loadComments]);
+  }
 
   return (
     <section className="portal-comments-section" aria-labelledby="portal-comments-heading">

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";\nimport "./NewsletterSubscribeButton.css";
+import { useState, type FormEvent } from "react";
+import "./NewsletterSubscribeButton.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 

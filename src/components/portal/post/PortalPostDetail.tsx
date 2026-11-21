@@ -25,6 +25,7 @@ import {
 } from "./not-found-recommendations-config";
 import "../home/UpdatesSection.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { PostCommentsSection } from "./PostCommentsSection";
 
 export type CategorySlug =
   | "jobs"
@@ -784,6 +785,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               {data.loading ? (
                 <div className="portal-post-loading">Loading...</div>
               ) : post ? (
+                <>
                 <article className="portal-post-card">
                   <div className="portal-post-meta">
                     <span>{post.category || label}</span>
@@ -1359,6 +1361,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </a>
                   ) : null}
                 </article>
+                <PostCommentsSection postId={post.postId} language={language} />
+                </>
               ) : (
                 <>
                   <PortalContentNotFound

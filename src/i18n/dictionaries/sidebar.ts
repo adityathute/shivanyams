@@ -9,6 +9,7 @@ export const sidebarTranslations = {
     guides: "Articles & Guides",
     videos: "Videos",
     tools: "Tools",
+    saved: "Saved",
     contact: "Contact",
   },
   mr: {
@@ -21,6 +22,7 @@ export const sidebarTranslations = {
     guides: "लेख आणि मार्गदर्शक",
     videos: "व्हिडिओ",
     tools: "टूल्स",
+    saved: "जतन केलेले",
     contact: "संपर्क",
   },
   hi: {
@@ -33,6 +35,7 @@ export const sidebarTranslations = {
     guides: "लेख और मार्गदर्शक",
     videos: "वीडियो",
     tools: "टूल्स",
+    saved: "सहेजे गए",
     contact: "संपर्क",
   },
 } as const;

@@ -1345,3 +1345,26 @@
   background: #8d3de0;
   color: #fff;
 }
+
+
+/* Private unpublished-content preview notice. */
+.portal-post-detail .portal-preview-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0 auto 16px;
+  padding: 11px 14px;
+  border: 1px solid rgba(139, 92, 246, 0.42);
+  border-radius: 9px;
+  color: #7c3aed;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.portal-post-detail .portal-preview-banner strong {
+  font-weight: 800;
+}
+.portal-post-detail .portal-preview-banner span {
+  color: var(--text-secondary, #64748b);
+}

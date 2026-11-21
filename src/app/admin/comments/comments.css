@@ -10,9 +10,9 @@
 .admin-comments-filters select {
   min-height: 38px;
   padding: 8px 11px;
-  border: 1px solid var(--border, #30343b);
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
-  background: var(--surface, transparent);
+  background: var(--surface, #fff);
   color: inherit;
 }
 
@@ -32,7 +32,7 @@
 
 .admin-comment-card {
   padding: 16px;
-  border: 1px solid var(--border, #30343b);
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 11px;
   background: var(--surface, transparent);
 }
@@ -116,7 +116,7 @@
 .admin-comment-actions button,
 .admin-comment-reply button {
   padding: 6px 10px;
-  border: 1px solid var(--border, #30343b);
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 7px;
   background: transparent;
   color: inherit;
@@ -143,7 +143,7 @@
 .admin-comment-reply textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid var(--border, #30343b);
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
   background: transparent;
   color: inherit;
@@ -178,7 +178,7 @@
 
 .admin-report-actions button {
   padding: 4px 7px;
-  border: 1px solid var(--border, #30343b);
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 6px;
   background: transparent;
   color: var(--muted-foreground, #9298a2);
@@ -199,10 +199,10 @@
 .admin-comment-card {
   padding: 14px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--surface, transparent) 96%, var(--foreground, #fff) 4%);
+  background: var(--surface, #fff);
   transition: border-color .16s ease, background .16s ease;
 }
-.admin-comment-card:hover { border-color: color-mix(in srgb, var(--primary, #8b5cf6) 45%, var(--border, #30343b)); }
+.admin-comment-card:hover { border-color: color-mix(in srgb, var(--primary, #8b5cf6) 45%, var(--border-color, #e5e7eb)); }
 .admin-comment-card-head { align-items: flex-start; }
 .admin-comment-author { display: flex !important; grid-template-columns: none !important; align-items: center; gap: 9px !important; }
 .admin-comment-author > .shivanya-avatar { flex: 0 0 32px; width: 32px; height: 32px; }
@@ -246,9 +246,9 @@
   gap: 8px;
   margin-top: 12px;
   padding: 10px;
-  border: 1px solid var(--border, #30343b);
+  border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 9px;
-  background: color-mix(in srgb, var(--surface, transparent) 95%, var(--foreground, #fff) 5%);
+  background: var(--surface, #fff);
 }
 .admin-comment-reply textarea { min-height: 66px; font-size: .83rem; }
 .admin-comment-reply > div { justify-content: flex-end; }

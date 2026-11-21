@@ -161,32 +161,32 @@ export function PostEngagementActions({ postId, title }: Props) {
       <div className="portal-post-reaction-actions">
         <button
           type="button"
-          className={reaction === "like" ? "is-active" : ""}
+          className={`portal-action-like${reaction === "like" ? " is-active" : ""}`}
           onClick={() => void changeReaction("like")}
           title="Like"
           aria-label={`Like, ${likes} likes`}
         >
-          <LikeIcon size={15} />
+          <LikeIcon size={19} />
           <strong>{likes.toLocaleString()}</strong>
         </button>
         <button
           type="button"
-          className={reaction === "dislike" ? "is-active" : ""}
+          className={`portal-action-dislike${reaction === "dislike" ? " is-active" : ""}`}
           onClick={() => void changeReaction("dislike")}
           title="Dislike"
           aria-label={`Dislike, ${dislikes} dislikes`}
         >
-          <DislikeIcon size={15} />
+          <DislikeIcon size={19} />
           <strong>{dislikes.toLocaleString()}</strong>
         </button>
-        <button type="button" onClick={() => void sharePost()} title="Share" aria-label="Share post">
-          <ShareIcon size={15} />
+        <button type="button" className="portal-action-share" onClick={() => void sharePost()} title="Share" aria-label="Share post">
+          <ShareIcon size={19} />
         </button>
-        <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
-          <BookmarkIcon size={15} />
+        <button type="button" className={`portal-action-bookmark${saved ? " is-active" : ""}`} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
+          <BookmarkIcon size={19} />
         </button>
-        <button type="button" onClick={requestReport} title="Report" aria-label="Report post">
-          <ReportIcon size={15} />
+        <button type="button" className="portal-action-report" onClick={requestReport} title="Report" aria-label="Report post">
+          <ReportIcon size={19} />
         </button>
       </div>
       {message ? <p role="status">{message}</p> : null}

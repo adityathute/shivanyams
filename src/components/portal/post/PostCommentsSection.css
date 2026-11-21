@@ -87,10 +87,8 @@
   transition: color .16s ease, transform .16s ease;
 }
 .portal-comment-actions button.portal-comment-reaction:hover { transform: translateY(-1px); }
-.portal-comment-actions button.portal-comment-like,
 .portal-comment-actions button.portal-comment-like:hover,
 .portal-comment-actions button.portal-comment-like.is-active { color: #2563eb; }
-.portal-comment-actions button.portal-comment-dislike,
 .portal-comment-actions button.portal-comment-dislike:hover,
 .portal-comment-actions button.portal-comment-dislike.is-active { color: #ef4444; }
 .portal-comment-actions .portal-comment-report { margin-left: 0; opacity: .8; }

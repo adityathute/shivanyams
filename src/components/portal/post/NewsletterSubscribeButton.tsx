@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
+import { IconButton, CloseIcon } from "shivanya-ui";
 import "./NewsletterSubscribeButton.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
@@ -207,7 +208,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
         aria-label={isAccountSubscribed ? t.unsubscribe : t.button}
         aria-pressed={isAccountSubscribed}
       >
-        {authLoading || busy || checking ? "…" : isAccountSubscribed ? t.unsubscribe : t.button}
+        {isAccountSubscribed ? t.unsubscribe : t.button}
       </button>
       {message && !open && !subscribed ? (
         <p className={success ? "newsletter-subscribe-inline success" : "newsletter-subscribe-inline"} role="status">
@@ -219,7 +220,17 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
           if (event.target === event.currentTarget && !busy) setOpen(false);
         }}>
           <section className="newsletter-subscribe-dialog" role="dialog" aria-modal="true" aria-labelledby="newsletter-subscribe-title">
-            <button type="button" className="newsletter-subscribe-close" onClick={() => setOpen(false)} aria-label={t.close}>×</button>
+            <IconButton
+              size="lg"
+              variant="ghost"
+              iconRotateOnHover
+              className="newsletter-subscribe-close"
+              onClick={() => setOpen(false)}
+              aria-label={t.close}
+              title={t.close}
+            >
+              <CloseIcon />
+            </IconButton>
             <span className="newsletter-subscribe-eyebrow">SHIVANYAMS</span>
             <h2 id="newsletter-subscribe-title">{t.title}</h2>
             <p>{t.description}</p>
@@ -239,10 +250,10 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
               {message ? <div className={success ? "newsletter-subscribe-message success" : "newsletter-subscribe-message"} role="status">{message}</div> : null}
               <div className="newsletter-subscribe-actions">
                 <button type="submit" className="newsletter-subscribe-submit" disabled={busy || success}>
-                  {busy && !success ? "…" : success ? t.subscribed : t.submit}
+                  {success ? t.subscribed : t.submit}
                 </button>
                 <button type="button" className="newsletter-subscribe-unsubscribe" onClick={() => void unsubscribe()} disabled={busy || !success}>
-                  {busy && success ? "…" : t.unsubscribe}
+                  {t.unsubscribe}
                 </button>
               </div>
             </form>

@@ -26,9 +26,9 @@ export const baseDictionary = {
   },
 
   subscribeTitle: {
-    en: "Stay Updated",
-    mr: "नवीन अपडेट्ससाठी तयार राहा",
-    hi: "नवीनतम अपडेट्स से जुड़े रहें",
+    en: "Stay Connected",
+    mr: "आमच्याशी जोडलेले राहा",
+    hi: "हमसे जुड़े रहें",
   },
 
   subscribeDescription: {

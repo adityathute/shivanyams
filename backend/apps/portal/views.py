@@ -513,41 +513,51 @@ class UnsavePost(APIView):
 
 
 def get_comment_author_profile(request):
+    """
+    Read the same profile payload returned by Shivanya Auth's /me/ endpoint.
+    Portal authentication stores payload["data"] on request.user.auth_data.
+    """
     auth_data = getattr(request.user, "auth_data", {})
     if not isinstance(auth_data, dict):
         auth_data = {}
 
-    profile_data = auth_data.get("profile")
-    if not isinstance(profile_data, dict):
-        profile_data = {}
+    # Auth currently returns these fields at the top level. Keep nested
+    # fallbacks for older clients/responses without changing that contract.
+    profile_sources = [auth_data]
+    for source in list(profile_sources):
+        for key in ("user", "profile", "data"):
+            nested = source.get(key)
+            if isinstance(nested, dict):
+                profile_sources.append(nested)
 
-    first_name = str(auth_data.get("first_name") or profile_data.get("first_name") or "").strip()
-    last_name = str(auth_data.get("last_name") or profile_data.get("last_name") or "").strip()
+    def profile_value(*keys):
+        for source in profile_sources:
+            for key in keys:
+                value = source.get(key)
+                if value not in (None, ""):
+                    return value
+        return ""
+
+    first_name = str(profile_value("first_name") or "").strip()
+    last_name = str(profile_value("last_name") or "").strip()
     full_name = " ".join(part for part in (first_name, last_name) if part).strip()
 
     if not full_name:
-        full_name = str(
-            auth_data.get("name")
-            or profile_data.get("name")
-            or auth_data.get("username")
-            or ""
-        ).strip()
+        full_name = str(profile_value("name", "username") or "").strip()
 
-    full_name = " ".join(word[:1].upper() + word[1:].lower() for word in full_name.split())
-
-    avatar_value = (
-        auth_data.get("avatar")
-        or auth_data.get("avatar_url")
-        or auth_data.get("profile_image")
-        or auth_data.get("profile_picture")
-        or auth_data.get("picture")
-        or profile_data.get("avatar")
-        or profile_data.get("avatar_url")
-        or profile_data.get("profile_image")
-        or ""
+    full_name = " ".join(
+        word[:1].upper() + word[1:].lower() for word in full_name.split()
     )
-    avatar = str(avatar_value).strip()
-    if avatar:
+
+    avatar_value = profile_value(
+        "avatar",
+        "avatar_url",
+        "profile_image",
+        "profile_picture",
+        "picture",
+    )
+    avatar = str(avatar_value or "").strip()
+    if avatar and not avatar.startswith(("http://", "https://", "data:")):
         avatar = request.build_absolute_uri(avatar)
 
     return full_name, avatar
@@ -567,6 +577,23 @@ class PostComments(APIView):
             is_active=True,
             comments_enabled=True,
         )
+        # Comment profile details are snapshots. Refresh the signed-in
+        # author's snapshots from the current Auth /me/ payload so comments
+        # created before an avatar was added/changed also show the latest photo.
+        if getattr(request.user, "is_authenticated", False):
+            author_name, author_avatar = get_comment_author_profile(request)
+            author_comments = Comment.objects.filter(
+                user_auth_id=str(request.user.id),
+                is_admin_reply=False,
+            )
+            author_comments.exclude(
+                author_name=author_name,
+                author_avatar=author_avatar,
+            ).update(
+                author_name=author_name,
+                author_avatar=author_avatar,
+            )
+
         comments = (
             Comment.objects.filter(
                 post=post,

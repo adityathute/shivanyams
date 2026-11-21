@@ -34,7 +34,7 @@
   padding: 16px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 11px;
-  background: var(--surface, transparent);
+  background: var(--surface, #fff);
 }
 
 .admin-comment-card-head,

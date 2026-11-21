@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Checkbox, Input, Select, Textarea } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
@@ -255,6 +255,7 @@ function normalizeDateInput(item: Partial<DateInput>): DateInput {
 }
 type PostRecord = {
   id: number;
+  status?: string;
   slug: string;
   organization_type?: string;
   title_en: string;
@@ -573,6 +574,12 @@ export default function PostEditor({
 
   const [loading, setLoading] = useState(editing);
   const [saving, setSaving] = useState(false);
+  const [autosaveState, setAutosaveState] = useState<"idle" | "unsaved" | "saving" | "saved" | "error">("idle");
+  const [postStatus, setPostStatus] = useState("draft");
+  const postIdRef = useRef<number | null>(null);
+  const currentSlugRef = useRef(editSlug || "");
+  const lastSavedSnapshotRef = useRef("");
+  const autosaveInitializedRef = useRef(false);
   const [notice, setNotice] = useState("");
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -677,6 +684,9 @@ export default function PostEditor({
             payload.detail || `Unable to load post (${response.status}).`,
           );
         const record = payload as PostRecord;
+        postIdRef.current = record.id;
+        currentSlugRef.current = record.slug;
+        setPostStatus(record.status || "draft");
         setOrganizationType(record.organization_type || "");
         setSlugManuallyEdited(false);
         const defaultLanguage = (record.default_language || "en") as ContentLanguage;
@@ -1228,17 +1238,7 @@ export default function PostEditor({
     };
   }
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setNotice("");
-    if (!activeCategory) {
-      setNotice("The selected category is not active in the backend.");
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const payload = {
+  const payload = useMemo(() => {
         ...form,
         organization_type: organizationType,
         slug: form.slug || slugify(form.title_en),
@@ -1291,32 +1291,92 @@ export default function PostEditor({
             old_time: item.old_time || null,
             new_time: item.new_time || null,
           })),
-      };
-      const url = editing
-        ? `${API_URL}/admin/content/${kind.api}/${editSlug}/`
-        : `${API_URL}/admin/content/${kind.api}/`;
-      const response = await adminFetch(url, {
-        method: editing ? "PUT" : "POST",
+      }, [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
+
+  async function persistPost() {
+    if (!activeCategory) throw new Error("The selected category is not active in the backend.");
+    const creating = !postIdRef.current && !editing;
+    const slug = String(payload.slug || form.slug || slugify(form.title_en));
+    const url = creating
+      ? `${API_URL}/admin/content/${kind.api}/`
+      : `${API_URL}/admin/content/${kind.api}/${currentSlugRef.current || editSlug}/`;
+    const response = await adminFetch(url, {
+      method: creating ? "POST" : "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, slug }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const message = result.detail || Object.entries(result)
+        .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : String(value)}`)
+        .join(" · ");
+      throw new Error(message || `Save failed (${response.status}).`);
+    }
+    if (typeof result.id === "number") postIdRef.current = result.id;
+    if (typeof result.slug === "string") currentSlugRef.current = result.slug;
+    if (typeof result.status === "string") setPostStatus(result.status);
+    lastSavedSnapshotRef.current = JSON.stringify(payload);
+    setAutosaveState("saved");
+    return result as Record<string, unknown>;
+  }
+
+  useEffect(() => {
+    if (loading || saving || !activeCategory) return;
+    if (editing && !autosaveInitializedRef.current) {
+      autosaveInitializedRef.current = true;
+      lastSavedSnapshotRef.current = JSON.stringify(payload);
+      currentSlugRef.current = editSlug || currentSlugRef.current;
+      return;
+    }
+    const title = String(form[`title_${form.default_language as ContentLanguage}`] || "").trim();
+    if (!title || !form.slug.trim() || slugAvailable !== true) return;
+    const snapshot = JSON.stringify(payload);
+    if (snapshot === lastSavedSnapshotRef.current) return;
+    setAutosaveState("unsaved");
+    const timer = window.setTimeout(async () => {
+      setAutosaveState("saving");
+      try {
+        await persistPost();
+      } catch (error) {
+        console.error("Post autosave failed:", error);
+        setAutosaveState("error");
+      }
+    }, 1000);
+    return () => window.clearTimeout(timer);
+  }, [loading, saving, activeCategory, editing, editSlug, payload, form, slugAvailable]);
+
+  async function changePostStatus(status: "draft" | "published") {
+    setSaving(true);
+    setNotice("");
+    try {
+      await persistPost();
+      const postId = postIdRef.current;
+      if (!postId) throw new Error("The post has not been saved yet.");
+      const response = await adminFetch(`${API_URL}/admin/content/${postId}/review/`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ status }),
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        const message =
-          result.detail ||
-          Object.entries(result)
-            .map(
-              ([key, value]) =>
-                `${key}: ${Array.isArray(value) ? value.join(", ") : String(value)}`,
-            )
-            .join(" · ");
-        throw new Error(message || `Save failed (${response.status}).`);
-      }
+      if (!response.ok) throw new Error(result.detail || `Unable to change post status (${response.status}).`);
+      setPostStatus(result.status || status);
       router.push("/admin");
     } catch (error) {
-      setNotice(
-        error instanceof Error ? error.message : "Unable to save post.",
-      );
+      setNotice(error instanceof Error ? error.message : "Unable to update post.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNotice("");
+    setSaving(true);
+    try {
+      await persistPost();
+      router.push("/admin");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Unable to save post.");
     } finally {
       setSaving(false);
     }
@@ -2631,13 +2691,17 @@ export default function PostEditor({
               <small>Press comma, Enter or Shift + Enter to add a tag. Each tag appears as a separate clickable chip on the post.</small>
             </div>
           </section>
-          <div className="post-editor-actions">
-            <button type="button" onClick={() => router.push("/admin")}>
-              Cancel
-            </button>
-            <button type="submit" disabled={saving || autosaveState === "saving" || !activeCategory}>
-              {saving ? "Saving..." : editing ? "Save Changes" : "Create Draft"}
-            </button>
+          <div className="post-editor-actions post-editor-actions-draft">
+            <div className="post-editor-save-status" aria-live="polite">
+              <span className={`post-editor-save-dot ${autosaveState}`} />
+              {autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : "Draft will be saved automatically"}
+            </div>
+            <div className="post-editor-action-buttons">
+              <button type="button" disabled={saving || autosaveState === "saving"} onClick={() => router.push("/admin")}>Cancel</button>
+              <button type="button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
+              <button type="submit" disabled={saving || autosaveState === "saving" || !activeCategory}>{saving ? "Saving..." : "Save & Exit"}</button>
+              <button type="button" className="post-editor-publish-button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("published")}>Publish</button>
+            </div>
           </div>
         </form>
       </div>

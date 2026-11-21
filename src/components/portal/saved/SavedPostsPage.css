@@ -133,6 +133,10 @@
   text-decoration: none;
 }
 
+.saved-post-link .update-badge.tool {
+  background: #64748b;
+}
+
 .saved-post-link:hover .saved-post-title {
   color: var(--blue);
 }

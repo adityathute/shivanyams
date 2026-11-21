@@ -15,6 +15,7 @@ import { PortalHeader } from "./header/PortalHeader";
 import { getPortalNavigation } from "./sidebar/PortalSidebar";
 import { PortalDataProvider } from "../data/portal-data";
 import { getPortalApiUrl } from "../category/CategoryGrid";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import {
   PortalLanguageProvider,
   usePortalLanguage,
@@ -73,7 +74,7 @@ function PortalShell({ children }: { children: ReactNode }) {
       .find((cookie) => cookie.startsWith("csrftoken="))
       ?.split("=")[1];
 
-    void fetch(getPortalApiUrl("website-views/"), {
+    void authenticatedFetch(getPortalApiUrl("website-views/"), {
       method: "POST",
       credentials: "include",
       keepalive: true,

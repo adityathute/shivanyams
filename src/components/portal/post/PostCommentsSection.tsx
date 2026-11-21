@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { Avatar, Button } from "shivanya-ui";
+import { Avatar, Button, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -94,11 +94,11 @@ function CommentThread({
       </div>
       {replyTarget === item.id ? (
         <div className="portal-comment-inline-reply">
-          <textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={10000} autoFocus />
+          <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={10000} fullWidth size="sm" autoFocus />
           <div className="portal-comment-inline-reply-footer">
             <span>{replyDraft.length}/10000</span>
-            <button type="button" onClick={onCancelReply}>Cancel</button>
-            <button type="button" className="is-primary" disabled={!replyDraft.trim()} onClick={onSubmitReply}>Reply</button>
+            <Button type="button" size="sm" variant="secondary" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
+            <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={onSubmitReply}>Reply</Button>
           </div>
         </div>
       ) : null}
@@ -278,7 +278,7 @@ export function PostCommentsSection({ postId, language }: Props) {
       </div>
 
       <div className="portal-comment-composer">
-        <textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a comment..." rows={3} maxLength={10000} />
+        <Textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a comment..." rows={3} maxLength={10000} fullWidth size="md" />
         <div className="portal-comment-composer-footer">
           <span>{draft.length}/10000</span>
           <Button size="sm" variant="primary" disabled={!draft.trim() || submitting} onClick={() => void submitComment(draft, null)}>
@@ -294,8 +294,8 @@ export function PostCommentsSection({ postId, language }: Props) {
           <select value={reportReason} onChange={(event) => setReportReason(event.target.value)} aria-label="Report reason">
             <option value="spam">Spam</option><option value="abuse">Abusive or harmful</option><option value="misinformation">Misinformation</option><option value="other">Other</option>
           </select>
-          <textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" />
-          <div><button type="button" onClick={() => setReportTarget(null)}>Cancel</button><Button size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button></div>
+          <Textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" fullWidth size="sm" />
+          <div><Button type="button" size="sm" variant="secondary" disabled={reporting} onClick={() => setReportTarget(null)}>Cancel</Button><Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button></div>
         </div>
       ) : null}
       {error ? <p className="portal-comments-message" role="status">{error}</p> : null}

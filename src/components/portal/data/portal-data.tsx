@@ -293,6 +293,7 @@ export type ApiPost = {
   event_date?: string | null;
   featured_image_url?: string;
   published_at?: string | null;
+  created_at?: string | null;
   updated_at?: string | null;
   views_count?: number;
   important_links?: ApiLink[];

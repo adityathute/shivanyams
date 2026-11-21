@@ -95,6 +95,20 @@ export default function AdminCommentsPage() {
     }
   }
 
+  async function updateReportStatus(reportId: number, reportStatus: string) {
+    try {
+      const response = await adminFetch(`${API_URL}/admin/comments/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ report_id: reportId, report_status: reportStatus }),
+      });
+      if (!response.ok) throw new Error("Unable to update report.");
+      await loadComments();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to update report.");
+    }
+  }
+
   async function sendAdminReply() {
     if (!replyTarget || !replyDraft.trim()) return;
     setBusyId(replyTarget.id);
@@ -184,6 +198,7 @@ export default function AdminCommentsPage() {
                           <span>{report.reason}</span>
                           {report.details ? <p>{report.details}</p> : null}
                           <small>{report.status} · {new Date(report.created_at).toLocaleString()}</small>
+                          {report.status === "open" ? <div className="admin-report-actions"><button type="button" onClick={() => void updateReportStatus(report.id, "reviewed")}>Mark reviewed</button><button type="button" onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button></div> : null}
                         </div>
                       ))}
                     </div>

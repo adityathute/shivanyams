@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.core.mail import send_mass_mail
 import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -233,7 +234,25 @@ class AdminContent(viewsets.ModelViewSet):
         )
 
     def perform_update(self, serializer):
-        serializer.save()
+        post = serializer.save()
+        subscriber_emails = set(
+            PostSubscription.objects.filter(post=post, is_active=True)
+            .exclude(email="")
+            .values_list("email", flat=True)
+        )
+        if subscriber_emails:
+            subject = f"Update: {post.title_en}"
+            message = (
+                f'The post "{post.title_en}" has been updated on ShivanyaMS. '
+                "Open ShivanyaMS to view the latest information."
+            )
+            email_messages = tuple(
+                (subject, message, None, [email])
+                for email in sorted(subscriber_emails)
+            )
+            transaction.on_commit(
+                lambda: send_mass_mail(email_messages, fail_silently=True)
+            )
 
 
 class AdminPostReview(APIView):

@@ -124,30 +124,34 @@ function CommentThread({
       ) : null}
       {repliesExpanded ? (
         <div className="portal-comment-replies">
-          {visibleReplyItems.map((reply) => (
-            <CommentThread
-              key={reply.id}
-              item={reply}
-              depth={depth + 1}
-              onReply={onReply}
-              onReact={onReact}
-              onReport={onReport}
-              replyTarget={replyTarget}
-              replyDraft={replyDraft}
-              onReplyDraftChange={onReplyDraftChange}
-              onCancelReply={onCancelReply}
-              onSubmitReply={onSubmitReply}
-              submitting={submitting}
-            />
-          ))}
-          {visibleReplies < replyCount ? (
-            <button type="button" className="portal-comment-load-more" onClick={showMoreReplies}>
-              Show {Math.min(5, replyCount - visibleReplies)} more {replyCount - visibleReplies === 1 ? "reply" : "replies"}
+          <div className="portal-comment-replies-list">
+            {visibleReplyItems.map((reply) => (
+              <CommentThread
+                key={reply.id}
+                item={reply}
+                depth={depth + 1}
+                onReply={onReply}
+                onReact={onReact}
+                onReport={onReport}
+                replyTarget={replyTarget}
+                replyDraft={replyDraft}
+                onReplyDraftChange={onReplyDraftChange}
+                onCancelReply={onCancelReply}
+                onSubmitReply={onSubmitReply}
+                submitting={submitting}
+              />
+            ))}
+          </div>
+          <div className="portal-comment-replies-footer">
+            {visibleReplies < replyCount ? (
+              <button type="button" className="portal-comment-load-more" onClick={showMoreReplies}>
+                Show {Math.min(5, replyCount - visibleReplies)} more {replyCount - visibleReplies === 1 ? "reply" : "replies"}
+              </button>
+            ) : null}
+            <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies} aria-label="Hide replies">
+              Hide replies <ArrowUpIcon size={15} />
             </button>
-          ) : null}
-          <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies} aria-label="Hide replies">
-            Hide replies <ArrowUpIcon size={15} />
-          </button>
+          </div>
         </div>
       ) : null}
     </article>

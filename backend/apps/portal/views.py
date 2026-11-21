@@ -237,6 +237,8 @@ class AdminContent(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         post = serializer.save()
+        if post.status != Post.Status.PUBLISHED or not post.is_active or not post.published_at:
+            return
         subscriber_emails = set(
             PostSubscription.objects.filter(post=post, is_active=True)
             .exclude(email="")

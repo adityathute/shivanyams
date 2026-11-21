@@ -1293,6 +1293,35 @@ export default function PostEditor({
           })),
       }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
 
+  const currentTitle = String(form[`title_${form.default_language as ContentLanguage}`] || "").trim();
+  const hasUnsavedChanges = (editing || Boolean(currentTitle)) && JSON.stringify(payload) !== lastSavedSnapshotRef.current;
+
+  async function leaveEditor() {
+    setNotice("");
+    try {
+      if (hasUnsavedChanges) {
+        if (!editing && (!currentTitle || !form.slug.trim() || slugAvailable !== true)) {
+          if (currentTitle) throw new Error("Wait until the URL slug is confirmed as available before leaving.");
+        } else {
+          await persistPost();
+        }
+      }
+      router.push("/admin");
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Unable to save your changes.");
+    }
+  }
+
+  useEffect(() => {
+    if (!hasUnsavedChanges && autosaveState !== "saving") return;
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeUnload);
+    return () => window.removeEventListener("beforeunload", warnBeforeUnload);
+  }, [hasUnsavedChanges, autosaveState]);
+
   async function persistPost() {
     if (!activeCategory) throw new Error("The selected category is not active in the backend.");
     const creating = !postIdRef.current && !editing;
@@ -1400,7 +1429,7 @@ export default function PostEditor({
               Manage multilingual content and category-specific information.
             </p>
           </div>
-          <button type="button" onClick={() => router.push("/admin")}>
+          <button type="button" onClick={() => void leaveEditor()}>
             ← Back to dashboard
           </button>
         </header>
@@ -2697,7 +2726,7 @@ export default function PostEditor({
               {autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : "Draft will be saved automatically"}
             </div>
             <div className="post-editor-action-buttons">
-              <button type="button" disabled={saving || autosaveState === "saving"} onClick={() => router.push("/admin")}>Cancel</button>
+              <button type="button" disabled={saving || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>
               <button type="button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
               <button type="submit" disabled={saving || autosaveState === "saving" || !activeCategory}>{saving ? "Saving..." : "Save & Exit"}</button>
               <button type="button" className="post-editor-publish-button" disabled={saving || autosaveState === "saving" || !activeCategory} onClick={() => void changePostStatus("published")}>Publish</button>

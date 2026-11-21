@@ -19,6 +19,7 @@ import {
 } from "shivanya-ui";
 
 import type { ItemType } from "../data/portal-data";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 export type Language = "en" | "mr" | "hi";
 
@@ -199,7 +200,7 @@ export function CategoryGrid({
 
     async function fetchCategories() {
       try {
-        const response = await fetch(getPortalApiUrl("categories/"), {
+        const response = await authenticatedFetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 

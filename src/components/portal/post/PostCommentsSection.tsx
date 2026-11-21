@@ -84,7 +84,7 @@ function CommentThread({
     : date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}`}>
+    <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}${repliesExpanded ? " is-replies-expanded" : ""}`}>
       <div className="portal-comment-main">
         <Avatar size="sm" name={formatAuthorName(item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member"))} src={item.author_avatar?.trim() || undefined} />
         <div className="portal-comment-content">
@@ -146,7 +146,7 @@ function CommentThread({
             </button>
           ) : (
             <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies}>
-              <span className="portal-comment-replies-chevron is-expanded" aria-hidden="true">⌃</span>
+              <span className="portal-comment-replies-chevron is-expanded" aria-hidden="true">⌄</span>
               Hide replies
             </button>
           )}

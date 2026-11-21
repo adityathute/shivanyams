@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { Avatar } from "shivanya-ui";
+import { Avatar, DislikeIcon, LikeIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../admin-utils";
 import "../admin.css";
@@ -193,7 +193,10 @@ export default function AdminCommentsPage() {
                   <p className="admin-comment-text">{comment.content}</p>
                   <div className="admin-comment-meta">
                     <span>{new Date(comment.created_at).toLocaleString()}</span>
-                    <span>↑ {comment.likes_count} · ↓ {comment.dislikes_count}</span>
+                    <span className="admin-comment-reactions">
+                      <LikeIcon size={14} aria-hidden="true" /> {comment.likes_count}
+                      <DislikeIcon size={14} aria-hidden="true" /> {comment.dislikes_count}
+                    </span>
                     <span className={comment.report_count ? "has-reports" : ""}>{comment.report_count} reports</span>
                   </div>
                   {comment.reports?.length ? (

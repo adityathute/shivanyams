@@ -1375,10 +1375,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       <div className="subscribe-icon">
                         <MailIcon />
                       </div>
-                      <div className="subscribe-content">
-                        <h3>{t("subscribeTitle")}</h3>
-                        <p>{t("subscribeDescription")}</p>
-                      </div>
                       <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                     </section>
                   ) : null}
@@ -1415,11 +1411,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 <section className="subscribe-panel">
                   <div className="subscribe-icon">
                     <MailIcon />
-                  </div>
-
-                  <div className="subscribe-content">
-                    <h3>{t("subscribeTitle")}</h3>
-                    <p>{t("subscribeDescription")}</p>
                   </div>
 
                   <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />

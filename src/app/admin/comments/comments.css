@@ -168,3 +168,25 @@
     gap: 8px;
   }
 }
+
+
+.admin-report-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.admin-report-actions button {
+  padding: 4px 7px;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  font-size: .72rem;
+  cursor: pointer;
+}
+
+.admin-report-actions button:hover {
+  border-color: var(--primary, #8b5cf6);
+  color: var(--primary, #a78bfa);
+}

@@ -85,6 +85,7 @@ export default function AdminPage() {
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
+  const [engagementStats, setEngagementStats] = useState({ likes: 0, dislikes: 0, comments: 0, shares: 0, saved: 0, reports: 0 });
   const [analyticsType, setAnalyticsType] = useState<"views" | "visitors" | "users" | null>(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>([]);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
@@ -170,12 +171,20 @@ export default function AdminPage() {
         }
         return response.json();
       })
-      .then((payload: { users_count?: number; website_views_count?: number; website_visitors_count?: number; post_visitors_count?: number }) => {
+      .then((payload: { users_count?: number; website_views_count?: number; website_visitors_count?: number; post_visitors_count?: number; likes_count?: number; dislikes_count?: number; comments_count?: number; shares_count?: number; saved_count?: number; reports_count?: number }) => {
         if (active) {
           setUsersCount(Number(payload.users_count) || 0);
           setWebsiteViewsCount(Number(payload.website_views_count) || 0);
           setWebsiteVisitorsCount(Number(payload.website_visitors_count) || 0);
           setPostVisitorsCount(Number(payload.post_visitors_count) || 0);
+          setEngagementStats({
+            likes: Number(payload.likes_count) || 0,
+            dislikes: Number(payload.dislikes_count) || 0,
+            comments: Number(payload.comments_count) || 0,
+            shares: Number(payload.shares_count) || 0,
+            saved: Number(payload.saved_count) || 0,
+            reports: Number(payload.reports_count) || 0,
+          });
           setStatsAnimationKey((value) => value + 1);
         }
       })
@@ -422,6 +431,12 @@ export default function AdminPage() {
             { label: "Website visitors", value: websiteVisitorsCount, analytics: "visitors", group: "website" },
             { label: "Post views", value: counts.views, group: "posts" },
             { label: "Post visitors", value: postVisitorsCount, group: "posts" },
+            { label: "Likes", value: engagementStats.likes, group: "posts" },
+            { label: "Dislikes", value: engagementStats.dislikes, group: "posts" },
+            { label: "Comments & replies", value: engagementStats.comments, group: "posts" },
+            { label: "Shares", value: engagementStats.shares, group: "posts" },
+            { label: "Saved posts", value: engagementStats.saved, group: "posts" },
+            { label: "Open reports", value: engagementStats.reports, group: "posts" },
             { label: "Published posts", value: counts.published, group: "content" },
             { label: "Total posts", value: counts.total, group: "content" },
             { label: "Drafts", value: counts.drafts, group: "content" },

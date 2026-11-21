@@ -194,8 +194,8 @@ export default function AdminCommentsPage() {
                   <div className="admin-comment-meta">
                     <span>{new Date(comment.created_at).toLocaleString()}</span>
                     <span className="admin-comment-reactions">
-                      <LikeIcon size={14} aria-hidden="true" /> {comment.likes_count}
-                      <DislikeIcon size={14} aria-hidden="true" /> {comment.dislikes_count}
+                      <LikeIcon size={14} /> {comment.likes_count}
+                      <DislikeIcon size={14} /> {comment.dislikes_count}
                     </span>
                     <span className={comment.report_count ? "has-reports" : ""}>{comment.report_count} reports</span>
                   </div>

@@ -14,7 +14,6 @@ const labels = {
     subscribed: "Subscribed",
     unsubscribe: "Unsubscribe",
     subscribedInfo: "You are subscribed to email updates. You can unsubscribe at any time.",
-    unsubscribeSuccess: "You have been unsubscribed from email updates.",
     unsubscribeError: "Unable to unsubscribe right now. Please try again.",
     title: "Stay Connected",
     subscribedTitle: "You’re Connected",
@@ -32,7 +31,6 @@ const labels = {
     subscribed: "सबस्क्राइब केले",
     unsubscribe: "सबस्क्रिप्शन बंद करा",
     subscribedInfo: "तुम्ही ईमेल अपडेट्ससाठी सबस्क्राइब केले आहे. तुम्ही कधीही सबस्क्रिप्शन बंद करू शकता.",
-    unsubscribeSuccess: "तुमचे ईमेल अपडेट्स सबस्क्रिप्शन बंद केले आहे.",
     unsubscribeError: "सध्या सबस्क्रिप्शन बंद करता आले नाही. पुन्हा प्रयत्न करा.",
     title: "आमच्याशी जोडलेले राहा",
     subscribedTitle: "तुम्ही जोडले गेले आहात",
@@ -50,7 +48,6 @@ const labels = {
     subscribed: "सब्सक्राइब किया",
     unsubscribe: "अनसब्सक्राइब करें",
     subscribedInfo: "आप ईमेल अपडेट्स के लिए सब्सक्राइब हैं। आप कभी भी अनसब्सक्राइब कर सकते हैं।",
-    unsubscribeSuccess: "आपका ईमेल अपडेट्स सब्सक्रिप्शन बंद कर दिया गया है।",
     unsubscribeError: "अभी अनसब्सक्राइब नहीं हो सका। कृपया फिर से प्रयास करें.",
     title: "हमसे जुड़े रहें",
     subscribedTitle: "आप हमसे जुड़ गए हैं",
@@ -156,15 +153,15 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       if (!response.ok) throw new Error(payload.detail || t.unsubscribeError);
       setSubscribed(false);
       setUnsubscribeToken("");
-      setSuccess(true);
-      setMessage(t.unsubscribeSuccess);
+      setSuccess(false);
+      setMessage("");
     } catch (error) {
       setSuccess(false);
       setMessage(error instanceof Error ? error.message : t.unsubscribeError);
     } finally {
       setBusy(false);
     }
-  }, [email, unsubscribeToken, user, t.unsubscribeError, t.unsubscribeSuccess]);
+  }, [email, unsubscribeToken, user, t.unsubscribeError]);
 
   function handleSubscribeClick() {
     setMessage("");

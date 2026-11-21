@@ -8,6 +8,8 @@ from .views import (
     AdminContent,
     SavedPosts,
     UnsavePost,
+    NewsletterSubscribe,
+    PostReports,
     PostComments,
     PostReactions,
     PostCommentReactions,
@@ -45,7 +47,9 @@ admin_content_detail = AdminContent.as_view(
 urlpatterns = [
     path("", include(router.urls)),
     # Categories
-    path("categories/", Categories.as_view(), name="categories"),\n    path("newsletter/subscribe/", NewsletterSubscribe.as_view(), name="newsletter-subscribe"),\n    path("content/<int:post_id>/reports/", PostReports.as_view(), name="post-reports"),
+    path("categories/", Categories.as_view(), name="categories"),
+    path("newsletter/subscribe/", NewsletterSubscribe.as_view(), name="newsletter-subscribe"),
+    path("content/<int:post_id>/reports/", PostReports.as_view(), name="post-reports"),
     # Important links
     path("important-links/", ImportantLinks.as_view(), name="important-links"),
     # Public content: jobs, schemes, examinations, admit cards,

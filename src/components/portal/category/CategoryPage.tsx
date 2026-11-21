@@ -14,6 +14,7 @@ import {
   type Language,
 } from "./CategoryGrid";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
@@ -135,7 +136,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
 
     async function loadCategories() {
       try {
-        const response = await fetch(getPortalApiUrl("categories/"), {
+        const response = await authenticatedFetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 

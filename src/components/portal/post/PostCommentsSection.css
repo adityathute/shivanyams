@@ -1,0 +1,216 @@
+.portal-comments-section {
+  margin: 28px 0 8px;
+  padding: 22px;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 14px;
+  background: var(--surface, transparent);
+  color: var(--foreground, inherit);
+}
+
+.portal-comments-heading,
+.portal-comment-author-row,
+.portal-comment-composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.portal-comments-heading {
+  margin-bottom: 18px;
+}
+
+.portal-comments-heading h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.portal-comments-heading span,
+.portal-comment-author-row time,
+.portal-comment-composer-footer > span {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .78rem;
+}
+
+.portal-comments-heading select,
+.portal-comment-composer textarea,
+.portal-comment-reply-composer textarea {
+  color: inherit;
+  background: var(--background, transparent);
+  border: 1px solid var(--border, #30343b);
+  border-radius: 9px;
+  outline: none;
+}
+
+.portal-comments-heading select {
+  padding: 7px 10px;
+  font-size: .82rem;
+}
+
+.portal-comment-composer,
+.portal-comment-reply-composer {
+  padding: 12px;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--surface, transparent) 92%, var(--foreground, #fff) 8%);
+}
+
+.portal-comment-composer textarea,
+.portal-comment-reply-composer textarea {
+  display: block;
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  resize: vertical;
+  font: inherit;
+  font-size: .9rem;
+}
+
+.portal-comment-composer textarea:focus,
+.portal-comment-reply-composer textarea:focus,
+.portal-comments-heading select:focus {
+  border-color: var(--primary, #8b5cf6);
+}
+
+.portal-comment-composer-footer {
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.portal-comment-composer-footer button:not([class]) {
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  cursor: pointer;
+}
+
+.portal-comment-reply-composer {
+  margin-top: 12px;
+}
+
+.portal-comments-message,
+.portal-comments-empty {
+  margin: 16px 0;
+  color: var(--muted-foreground, #9298a2);
+  font-size: .88rem;
+}
+
+.portal-comments-list {
+  margin-top: 18px;
+}
+
+.portal-comment-item {
+  margin-top: 14px;
+}
+
+.portal-comment-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.portal-comment-avatar {
+  display: grid;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 50%;
+  color: var(--muted-foreground, #9298a2);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.portal-comment-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.portal-comment-author-row {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.portal-comment-author-row strong {
+  font-size: .86rem;
+}
+
+.portal-comment-admin-badge {
+  padding: 2px 6px;
+  border: 1px solid color-mix(in srgb, #8b5cf6 55%, transparent);
+  border-radius: 5px;
+  color: #a78bfa;
+  font-size: .68rem;
+  font-weight: 700;
+}
+
+.portal-comment-author-row time {
+  margin-left: auto;
+}
+
+.portal-comment-content > p {
+  margin: 6px 0 8px;
+  font-size: .9rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.portal-comment-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.portal-comment-actions button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  font: inherit;
+  font-size: .76rem;
+  cursor: pointer;
+}
+
+.portal-comment-actions button:hover,
+.portal-comment-actions button.is-active {
+  color: var(--primary, #a78bfa);
+}
+
+.portal-comment-actions .portal-comment-report {
+  margin-left: auto;
+  opacity: .8;
+}
+
+.portal-comment-replies {
+  margin: 12px 0 0 22px;
+  padding-left: 13px;
+  border-left: 1px solid var(--border, #30343b);
+}
+
+.portal-comment-replies > .portal-comment-item {
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .portal-comments-section {
+    padding: 15px;
+    border-radius: 11px;
+  }
+
+  .portal-comments-heading {
+    align-items: flex-start;
+  }
+
+  .portal-comments-heading select {
+    max-width: 125px;
+  }
+
+  .portal-comment-replies {
+    margin-left: 12px;
+    padding-left: 9px;
+  }
+}

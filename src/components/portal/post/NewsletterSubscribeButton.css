@@ -99,7 +99,7 @@
 }
 
 .newsletter-subscribe-submit:disabled {
-  cursor: wait;
+  cursor: disabled;
   opacity: .65;
 }
 

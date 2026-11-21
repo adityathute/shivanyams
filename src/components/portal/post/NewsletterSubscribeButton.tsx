@@ -221,7 +221,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
         }}>
           <section className="newsletter-subscribe-dialog" role="dialog" aria-modal="true" aria-labelledby="newsletter-subscribe-title">
             <IconButton
-              size="lg"
+              size="md"
               variant="ghost"
               iconRotateOnHover
               className="newsletter-subscribe-close"

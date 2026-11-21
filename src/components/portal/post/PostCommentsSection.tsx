@@ -52,6 +52,7 @@ function CommentThread({
   onReplyDraftChange,
   onCancelReply,
   onSubmitReply,
+  submitting,
 }: {
   item: CommentItem;
   depth: number;
@@ -63,6 +64,7 @@ function CommentThread({
   onReplyDraftChange: (value: string) => void;
   onCancelReply: () => void;
   onSubmitReply: () => void;
+  submitting: boolean;
 }) {
   const date = new Date(item.created_at);
   const dateLabel = Number.isNaN(date.getTime())
@@ -94,9 +96,9 @@ function CommentThread({
       </div>
       {replyTarget === item.id ? (
         <div className="portal-comment-inline-reply">
-          <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={10000} fullWidth size="sm" autoFocus />
+          <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={250} fullWidth size="sm" autoFocus />
           <div className="portal-comment-inline-reply-footer">
-            <span>{replyDraft.length}/10000</span>
+            <span>{replyDraft.length}/250</span>
             <Button type="button" size="sm" variant="primary" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
             <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={onSubmitReply}>Reply</Button>
           </div>
@@ -117,6 +119,7 @@ function CommentThread({
               onReplyDraftChange={onReplyDraftChange}
               onCancelReply={onCancelReply}
               onSubmitReply={onSubmitReply}
+              submitting={submitting}
             />
           ))}
         </div>
@@ -278,9 +281,9 @@ export function PostCommentsSection({ postId, language }: Props) {
       </div>
 
       <div className="portal-comment-composer">
-        <Textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a comment..." rows={3} maxLength={10000} fullWidth size="md" />
+        <Textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a comment..." rows={3} maxLength={500} fullWidth size="md" />
         <div className="portal-comment-composer-footer">
-          <span>{draft.length}/10000</span>
+          <span>{draft.length}/500</span>
           <Button size="sm" variant="primary" disabled={!draft.trim() || submitting} onClick={() => void submitComment(draft, null)}>
             {submitting ? "Posting..." : "Post comment"}
           </Button>
@@ -318,6 +321,7 @@ export function PostCommentsSection({ postId, language }: Props) {
             onReplyDraftChange={setReplyDraft}
             onCancelReply={() => { setReplyTarget(null); setReplyDraft(""); }}
             onSubmitReply={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}
+            submitting={submitting}
           />
         ))}
       </div>

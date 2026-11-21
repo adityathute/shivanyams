@@ -592,11 +592,16 @@ class AdminPostEngagement(APIView):
 
 
 class PostReactions(APIView):
-    permission_classes = [IsPortalIdentity]
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [IsPortalIdentity()]
 
     def get(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
-        reaction = PostReaction.objects.filter(post=post, user_auth_id=str(request.user.id)).values_list("reaction", flat=True).first()
+        reaction = None
+        if getattr(request.user, "is_authenticated", False):
+            reaction = PostReaction.objects.filter(post=post, user_auth_id=str(request.user.id)).values_list("reaction", flat=True).first()
         return Response({"reaction": reaction, "likes_count": post.likes_count, "dislikes_count": post.dislikes_count})
 
     def post(self, request, post_id):

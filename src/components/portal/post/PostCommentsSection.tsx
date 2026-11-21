@@ -97,7 +97,7 @@ function CommentThread({
           <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={10000} fullWidth size="sm" autoFocus />
           <div className="portal-comment-inline-reply-footer">
             <span>{replyDraft.length}/10000</span>
-            <Button type="button" size="sm" variant="secondary" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
+            <Button type="button" size="sm" variant="primary" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
             <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={onSubmitReply}>Reply</Button>
           </div>
         </div>
@@ -295,7 +295,7 @@ export function PostCommentsSection({ postId, language }: Props) {
             <option value="spam">Spam</option><option value="abuse">Abusive or harmful</option><option value="misinformation">Misinformation</option><option value="other">Other</option>
           </select>
           <Textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" fullWidth size="sm" />
-          <div><Button type="button" size="sm" variant="secondary" disabled={reporting} onClick={() => setReportTarget(null)}>Cancel</Button><Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button></div>
+          <div><Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => setReportTarget(null)}>Cancel</Button><Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button></div>
         </div>
       ) : null}
       {error ? <p className="portal-comments-message" role="status">{error}</p> : null}

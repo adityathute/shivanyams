@@ -182,6 +182,8 @@ class Post(TimestampedModel):
     dislikes_count = models.PositiveIntegerField(default=0)
     comments_count = models.PositiveIntegerField(default=0)
     saves_count = models.PositiveIntegerField(default=0)
+    shares_count = models.PositiveIntegerField(default=0)
+    subscribers_count = models.PositiveIntegerField(default=0)
 
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -1371,6 +1373,7 @@ class Comment(TimestampedModel):
         PENDING = "pending", "Pending"
         APPROVED = "approved", "Approved"
         REJECTED = "rejected", "Rejected"
+        HIDDEN = "hidden", "Hidden"
 
     post = models.ForeignKey(
         Post,
@@ -1404,6 +1407,7 @@ class Comment(TimestampedModel):
     reviewed_by_auth_id = models.CharField(max_length=128, blank=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
     edited = models.BooleanField(default=False)
+    is_admin_reply = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("created_at",)
@@ -1415,6 +1419,114 @@ class Comment(TimestampedModel):
 
     def __str__(self):
         return f"Comment by {self.user_auth_id}"
+
+
+class CommentReaction(TimestampedModel):
+    """One like or dislike per authenticated user per comment."""
+
+    class ReactionType(models.TextChoices):
+        LIKE = "like", "Like"
+        DISLIKE = "dislike", "Dislike"
+
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name="reactions",
+    )
+    user_auth_id = models.CharField(max_length=128, db_index=True)
+    reaction = models.CharField(max_length=10, choices=ReactionType.choices)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("comment", "user_auth_id"),
+                name="unique_user_comment_reaction",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("comment", "reaction")),
+            models.Index(fields=("user_auth_id", "created_at")),
+        ]
+
+
+class CommentReport(TimestampedModel):
+    """One report per authenticated user and comment."""
+
+    class Status(models.TextChoices):
+        OPEN = "open", "Open"
+        REVIEWED = "reviewed", "Reviewed"
+        DISMISSED = "dismissed", "Dismissed"
+
+    comment = models.ForeignKey(
+        Comment,
+        on_delete=models.CASCADE,
+        related_name="reports",
+    )
+    reporter_auth_id = models.CharField(max_length=128, db_index=True)
+    reason = models.CharField(max_length=40)
+    details = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=12,
+        choices=Status.choices,
+        default=Status.OPEN,
+        db_index=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("comment", "reporter_auth_id"),
+                name="unique_user_comment_report",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("status", "created_at")),
+            models.Index(fields=("comment", "status")),
+        ]
+
+
+class PostSubscription(TimestampedModel):
+    """Authenticated user subscribed to email updates for one post."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="subscriptions",
+    )
+    user_auth_id = models.CharField(max_length=128, db_index=True)
+    email = models.EmailField(max_length=254)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "user_auth_id"),
+                name="unique_user_post_subscription",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("post", "is_active")),
+            models.Index(fields=("user_auth_id", "is_active")),
+        ]
+
+
+class PostShare(TimestampedModel):
+    """A recorded share action for a post."""
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="share_events",
+    )
+    user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
+    visitor_id = models.CharField(max_length=128, blank=True, db_index=True)
+    channel = models.CharField(max_length=32, default="other")
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("post", "created_at")),
+            models.Index(fields=("post", "channel")),
+        ]
 
 
 class PostVisitor(TimestampedModel):

@@ -1238,7 +1238,7 @@ export default function PostEditor({
     };
   }
 
-  const payload = useMemo(() => {
+  const payload = useMemo(() => ({
         ...form,
         organization_type: organizationType,
         slug: form.slug || slugify(form.title_en),
@@ -1291,7 +1291,7 @@ export default function PostEditor({
             old_time: item.old_time || null,
             new_time: item.new_time || null,
           })),
-      }, [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
+      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
 
   async function persistPost() {
     if (!activeCategory) throw new Error("The selected category is not active in the backend.");

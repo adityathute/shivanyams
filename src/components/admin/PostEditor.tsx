@@ -1461,9 +1461,6 @@ export default function PostEditor({
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />
               {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
             </div>
-            <button type="button" onClick={() => void leaveEditor()}>
-              ← Back to dashboard
-            </button>
           </div>
         </header>
         {notice && <div className="post-editor-notice">{notice}</div>}

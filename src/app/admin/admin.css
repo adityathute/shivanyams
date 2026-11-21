@@ -359,6 +359,7 @@
 .admin-row-actions a,
 .admin-row-actions button {
   border: 0;
+  background: transparent;
   color: #075be8;
   text-decoration: none;
   font: inherit;

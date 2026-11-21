@@ -1298,6 +1298,7 @@ export default function PostEditor({
 
   async function leaveEditor() {
     setNotice("");
+    setSaving(true);
     try {
       if (hasUnsavedChanges) {
         if (!editing && (!currentTitle || !form.slug.trim() || slugAvailable !== true)) {
@@ -1309,6 +1310,8 @@ export default function PostEditor({
       router.push("/admin");
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Unable to save your changes.");
+    } finally {
+      setSaving(false);
     }
   }
 

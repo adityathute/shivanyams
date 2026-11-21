@@ -104,12 +104,10 @@ function CommentThread({
             <button type="button" onClick={() => onReply(item.id)}>Reply</button>
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
           </div>
-          {replyCount > 0 ? (
-            <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={repliesExpanded} aria-label={repliesExpanded ? "Hide replies" : `Show ${replyCount} replies`}>
-              <span>{repliesExpanded ? "Hide replies" : `${replyCount} ${replyCount === 1 ? "reply" : "replies"}`}</span>
-              <span className="portal-comment-toggle-arrow" aria-hidden="true">
-                {repliesExpanded ? <ArrowUpIcon size={15} /> : <ArrowDownIcon size={15} />}
-              </span>
+          {replyCount > 0 && !repliesExpanded ? (
+            <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={false} aria-label={`Show ${replyCount} replies`}>
+              <span>{replyCount} {replyCount === 1 ? "reply" : "replies"}</span>
+              <span className="portal-comment-toggle-arrow" aria-hidden="true"><ArrowDownIcon size={15} /></span>
             </button>
           ) : null}
         </div>
@@ -147,6 +145,9 @@ function CommentThread({
               Show {Math.min(5, replyCount - visibleReplies)} more {replyCount - visibleReplies === 1 ? "reply" : "replies"}
             </button>
           ) : null}
+          <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies} aria-label="Hide replies">
+            Hide replies <ArrowUpIcon size={15} />
+          </button>
         </div>
       ) : null}
     </article>

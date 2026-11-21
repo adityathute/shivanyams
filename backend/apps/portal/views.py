@@ -1026,6 +1026,12 @@ class AdminDashboardStats(APIView):
             "website_visitors_count": WebsiteVisitor.objects.count(),
             # Count each visitor once across all posts, not once per post.
             "post_visitors_count": PostVisitor.objects.values("visitor_id").distinct().count(),
+            "likes_count": sum(Post.objects.values_list("likes_count", flat=True)) + CommentReaction.objects.filter(reaction=CommentReaction.ReactionType.LIKE).count(),
+            "dislikes_count": sum(Post.objects.values_list("dislikes_count", flat=True)) + CommentReaction.objects.filter(reaction=CommentReaction.ReactionType.DISLIKE).count(),
+            "comments_count": Comment.objects.count(),
+            "shares_count": PostShare.objects.count(),
+            "saved_count": SavedPost.objects.count(),
+            "reports_count": CommentReport.objects.filter(status=CommentReport.Status.OPEN).count(),
         })
 
 

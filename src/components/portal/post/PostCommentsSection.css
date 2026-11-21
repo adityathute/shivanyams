@@ -141,8 +141,8 @@
   transition: color .16s ease, background-color .16s ease;
 }
 .portal-comment-toggle-replies {
-  justify-content: space-between;
-  width: 100%;
+  justify-content: flex-start;
+  width: fit-content;
   margin-top: 5px;
   text-align: left;
 }
@@ -166,7 +166,7 @@
 .portal-comment-replies {
   position: relative;
   margin: 8px 0 0 14px;
-  padding: 0 0 0 20px;
+  padding: 0 0 0 42px;
 }
 .portal-comment-replies-list {
   position: relative;
@@ -183,7 +183,7 @@
   position: absolute;
   top: 0;
   bottom: 15px;
-  left: 0;
+  left: -42px;
   width: 1.5px;
   background: var(--border-color, #cbd5e1);
   border-radius: 2px;
@@ -196,12 +196,12 @@
   content: "";
   position: absolute;
   top: 0;
-  left: -20px;
-  width: 20px;
+  left: -42px;
+  width: 42px;
   height: 16px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   border-bottom: 1.5px solid var(--border-color, #cbd5e1);
-  border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 11px;
   pointer-events: none;
 }
 .portal-comment-replies-list > .portal-comment-item:first-child { margin-top: 0; }
@@ -279,9 +279,9 @@
   .portal-comment-composer { display: grid; padding: 9px; }
   .portal-comment-composer textarea { width: 100%; }
   .portal-comment-composer-footer { margin-top: 8px; }
-  .portal-comment-replies { margin-left: 7px; padding-left: 16px; }
-  .portal-comment-replies-list::before { left: 0; }
-  .portal-comment-replies-list > .portal-comment-item::before { left: -16px; width: 16px; height: 15px; }
+  .portal-comment-replies { margin-left: 14px; padding-left: 36px; }
+  .portal-comment-replies-list::before { left: -36px; }
+  .portal-comment-replies-list > .portal-comment-item::before { left: -36px; width: 36px; height: 15px; }
   .portal-comment-item.has-replies::before { left: 14px; }
   .portal-comment-replies-footer { margin-top: 7px; }
   .portal-comment-inline-reply { margin-left: 25px; }

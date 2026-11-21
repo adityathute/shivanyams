@@ -16,8 +16,9 @@ const labels = {
     subscribedInfo: "You are subscribed to email updates. You can unsubscribe at any time.",
     unsubscribeSuccess: "You have been unsubscribed from email updates.",
     unsubscribeError: "Unable to unsubscribe right now. Please try again.",
-    title: "Stay Updated",
-    description: "Get new posts, important updates and ShivanyaMS announcements by email.",
+    title: "Stay Connected",
+    subscribedTitle: "You’re Connected",
+    description: "Stay connected with us for important updates.",
     email: "Email address",
     placeholder: "Enter your email address",
     submit: "Subscribe",
@@ -33,8 +34,9 @@ const labels = {
     subscribedInfo: "तुम्ही ईमेल अपडेट्ससाठी सबस्क्राइब केले आहे. तुम्ही कधीही सबस्क्रिप्शन बंद करू शकता.",
     unsubscribeSuccess: "तुमचे ईमेल अपडेट्स सबस्क्रिप्शन बंद केले आहे.",
     unsubscribeError: "सध्या सबस्क्रिप्शन बंद करता आले नाही. पुन्हा प्रयत्न करा.",
-    title: "नवीन अपडेट्स मिळवा",
-    description: "नवीन पोस्ट, महत्त्वाच्या अपडेट्स आणि ShivanyaMS च्या सूचना ईमेलद्वारे मिळवा.",
+    title: "आमच्याशी जोडलेले राहा",
+    subscribedTitle: "तुम्ही जोडले गेले आहात",
+    description: "महत्त्वाच्या अपडेट्ससाठी आमच्याशी जोडलेले राहा.",
     email: "ईमेल पत्ता",
     placeholder: "तुमचा ईमेल पत्ता टाका",
     submit: "सबस्क्राइब करा",
@@ -50,8 +52,9 @@ const labels = {
     subscribedInfo: "आप ईमेल अपडेट्स के लिए सब्सक्राइब हैं। आप कभी भी अनसब्सक्राइब कर सकते हैं।",
     unsubscribeSuccess: "आपका ईमेल अपडेट्स सब्सक्रिप्शन बंद कर दिया गया है।",
     unsubscribeError: "अभी अनसब्सक्राइब नहीं हो सका। कृपया फिर से प्रयास करें.",
-    title: "अपडेट रहें",
-    description: "नई पोस्ट, जरूरी अपडेट और ShivanyaMS की घोषणाएँ ईमेल से पाएँ।",
+    title: "हमसे जुड़े रहें",
+    subscribedTitle: "आप हमसे जुड़ गए हैं",
+    description: "महत्वपूर्ण अपडेट्स के लिए हमसे जुड़े रहें।",
     email: "ईमेल पता",
     placeholder: "अपना ईमेल पता दर्ज करें",
     submit: "सब्सक्राइब करें",
@@ -190,6 +193,10 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
 
   return (
     <>
+      <div className="subscribe-content newsletter-subscribe-content">
+        <h3>{subscribed ? t.subscribedTitle : t.title}</h3>
+        <p>{t.description}</p>
+      </div>
       <button
         type="button"
         className={`subscribe-button${subscribed ? " is-subscribed" : ""}`}
@@ -200,14 +207,6 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       >
         {authLoading || busy || checking ? "…" : subscribed ? t.unsubscribe : t.button}
       </button>
-      {subscribed ? (
-        <div className="newsletter-subscribed-state">
-          <p className="newsletter-subscribe-inline success" role="status">{t.subscribedInfo}</p>
-          <button type="button" className="newsletter-unsubscribe-button" onClick={() => void unsubscribe()} disabled={busy || checking}>
-            {busy ? "…" : t.unsubscribe}
-          </button>
-        </div>
-      ) : null}
       {message && !open && !subscribed ? (
         <p className={success ? "newsletter-subscribe-inline success" : "newsletter-subscribe-inline"} role="status">
           {message}

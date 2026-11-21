@@ -76,7 +76,7 @@
   z-index: 0;
   top: 30px;
   bottom: 7px;
-  left: 14px;
+  left: 15px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   pointer-events: none;
 }
@@ -89,7 +89,7 @@
   z-index: 0;
   top: 30px;
   bottom: 0;
-  left: 14px;
+  left: 15px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   pointer-events: none;
 }
@@ -204,9 +204,9 @@
   position: absolute;
   z-index: 1;
   top: 0;
-  left: -42px;
-  width: 42px;
-  height: 16px;
+  left: -41px;
+  width: 41px;
+  height: 15px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   border-bottom: 1.5px solid var(--border-color, #cbd5e1);
   border-bottom-left-radius: 12px;
@@ -254,13 +254,13 @@
 .portal-comment-replies-footer .portal-comment-hide-replies::after {
   content: "";
   position: absolute;
-  top: -12px;
-  left: 0;
-  width: 22px;
-  height: 12px;
+  top: -15px;
+  left: -41px;
+  width: 41px;
+  height: 15px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   border-bottom: 1.5px solid var(--border-color, #cbd5e1);
-  border-bottom-left-radius: 11px;
+  border-bottom-left-radius: 10px;
   pointer-events: none;
 }
 .portal-comment-replies-footer .portal-comment-hide-replies:hover::before,
@@ -302,9 +302,9 @@
   .portal-comment-composer textarea { width: 100%; }
   .portal-comment-composer-footer { margin-top: 8px; }
   .portal-comment-replies { margin-left: 14px; padding-left: 36px; }
-  .portal-comment-replies-list > .portal-comment-item::before { left: -36px; width: 36px; height: 15px; }
-  .portal-comment-replies-footer .portal-comment-hide-replies::after { width: 18px; height: 11px; top: -11px; }
-  .portal-comment-item.has-replies::before { left: 14px; }
+  .portal-comment-replies-list > .portal-comment-item::before { left: -35px; width: 35px; height: 15px; }
+  .portal-comment-replies-footer .portal-comment-hide-replies::after { left: -35px; width: 35px; height: 15px; top: -15px; }
+  .portal-comment-item.has-replies::before { left: 15px; }
   .portal-comment-replies-footer { margin-top: 7px; }
   .portal-comment-inline-reply { margin-left: 25px; }
   .portal-comment-inline-reply::before { left: -11px; }

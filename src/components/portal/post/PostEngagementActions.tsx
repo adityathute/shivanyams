@@ -164,7 +164,7 @@ export function PostEngagementActions({ postId, title }: Props) {
         <button type="button" onClick={() => void sharePost()}><span aria-hidden="true">↗</span> Share</button>
         <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()}><span aria-hidden="true">▣</span> {saved ? "Saved" : "Save"}</button>
       </div>
-      <div className="portal-post-subscribe-action">
+      <div id="post-subscribe" className="portal-post-subscribe-action">
         <div>
           <strong>{subscribed ? "Post updates enabled" : "Get post updates"}</strong>
           <span>{subscribed ? subscriptionEmail : "Receive email when this post is updated."}</span>

@@ -89,6 +89,7 @@ export function getPortalNavigation(
       href: "/tools",
       icon: <ToolsIcon />,
     },
+    { label: "", divider: true },
     ...(user
       ? [
           {
@@ -98,7 +99,6 @@ export function getPortalNavigation(
           },
         ]
       : []),
-    { label: "", divider: true },
     ...(isAdmin
       ? [
           {

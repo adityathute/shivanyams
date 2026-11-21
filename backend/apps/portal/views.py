@@ -240,6 +240,9 @@ class AdminContent(viewsets.ModelViewSet):
             .exclude(email="")
             .values_list("email", flat=True)
         )
+        subscriber_emails.update(
+            NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True)
+        )
         if subscriber_emails:
             subject = f"Update: {post.title_en}"
             message = (
@@ -333,7 +336,58 @@ class AdminPostReview(APIView):
                     note=note,
                 )
 
+            if new_status == Post.Status.PUBLISHED and previous_status != Post.Status.PUBLISHED:
+                newsletter_emails = list(
+                    NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True)
+                )
+                if newsletter_emails:
+                    subject = f"New update: {post.title_en}"
+                    message = f'A new post, "{post.title_en}", is now available on ShivanyaMS. Visit ShivanyaMS to read the latest information.'
+                    email_messages = tuple((subject, message, None, [email]) for email in newsletter_emails)
+                    transaction.on_commit(lambda: send_mass_mail(email_messages, fail_silently=True))
+
         return Response(PostSerializer(post, context={"request": request}).data)
+
+
+class NewsletterSubscribe(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        email = str(request.data.get("email", "")).strip().lower()
+        language = request.data.get("language", LanguageChoices.ENGLISH)
+        if language not in {choice[0] for choice in LanguageChoices.choices}:
+            language = LanguageChoices.ENGLISH
+        if not email or len(email) > 254 or "@" not in email:
+            raise ValidationError({"email": "Enter a valid email address."})
+        user_auth_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+        subscription, created = NewsletterSubscription.objects.update_or_create(
+            email=email,
+            defaults={"user_auth_id": user_auth_id, "language": language, "is_active": True},
+        )
+        return Response(
+            {"subscribed": subscription.is_active, "email": subscription.email, "created": created},
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
+
+
+class PostReports(APIView):
+    permission_classes = [IsPortalIdentity]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True, published_at__isnull=False)
+        reason = str(request.data.get("reason", "")).strip()[:60]
+        details = str(request.data.get("details", "")).strip()[:2000]
+        if not reason:
+            raise ValidationError({"reason": "Please select a report reason."})
+        report, created = PostReport.objects.get_or_create(
+            post=post,
+            reporter_auth_id=str(request.user.id),
+            defaults={"reason": reason, "details": details},
+        )
+        return Response(
+            {"reported": True, "already_reported": not created},
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+        )
 
 
 class SavedPosts(generics.ListAPIView):
@@ -1031,7 +1085,8 @@ class AdminDashboardStats(APIView):
             "comments_count": Comment.objects.count(),
             "shares_count": PostShare.objects.count(),
             "saved_count": SavedPost.objects.count(),
-            "reports_count": CommentReport.objects.filter(status=CommentReport.Status.OPEN).count(),
+            "reports_count": CommentReport.objects.count() + PostReport.objects.count(),
+            "newsletter_subscribers_count": NewsletterSubscription.objects.filter(is_active=True).count(),
         })
 
 

@@ -66,7 +66,18 @@ function CommentThread({
   onSubmitReply: () => void;
   submitting: boolean;
 }) {
-  const [repliesExpanded, setRepliesExpanded] = useState(false);
+  const [visibleReplies, setVisibleReplies] = useState(0);
+  const replyCount = item.replies?.length || 0;
+  const repliesExpanded = visibleReplies > 0;
+  const visibleReplyItems = item.replies?.slice(0, visibleReplies) || [];
+
+  function toggleReplies() {
+    setVisibleReplies((current) => current > 0 ? 0 : Math.min(5, replyCount));
+  }
+
+  function showMoreReplies() {
+    setVisibleReplies((current) => Math.min(replyCount, current + 5));
+  }
   const date = new Date(item.created_at);
   const dateLabel = Number.isNaN(date.getTime())
     ? ""
@@ -91,14 +102,14 @@ function CommentThread({
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
             <button type="button" onClick={() => onReply(item.id)}>Reply</button>
-            {item.replies?.length ? (
-              <button type="button" className="portal-comment-toggle-replies" onClick={() => setRepliesExpanded((expanded) => !expanded)} aria-expanded={repliesExpanded}>
-                <span className={`portal-comment-replies-chevron${repliesExpanded ? " is-expanded" : ""}`} aria-hidden="true">⌄</span>
-                {repliesExpanded ? "Hide replies" : `Show ${item.replies.length} ${item.replies.length === 1 ? "reply" : "replies"}`}
-              </button>
-            ) : null}
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
           </div>
+          {replyCount > 0 ? (
+            <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={repliesExpanded} aria-label={repliesExpanded ? "Hide replies" : `Show ${replyCount} replies`}>
+              <span className={`portal-comment-replies-chevron${repliesExpanded ? " is-expanded" : ""}`} aria-hidden="true">⌄</span>
+              <span>{replyCount} {replyCount === 1 ? "reply" : "replies"}</span>
+            </button>
+          ) : null}
         </div>
       </div>
       {replyTarget === item.id ? (
@@ -111,9 +122,9 @@ function CommentThread({
           </div>
         </div>
       ) : null}
-      {item.replies?.length && repliesExpanded ? (
+      {repliesExpanded ? (
         <div className="portal-comment-replies">
-          {item.replies.map((reply) => (
+          {visibleReplyItems.map((reply) => (
             <CommentThread
               key={reply.id}
               item={reply}
@@ -129,6 +140,16 @@ function CommentThread({
               submitting={submitting}
             />
           ))}
+          {visibleReplies < replyCount ? (
+            <button type="button" className="portal-comment-load-more" onClick={showMoreReplies}>
+              Show {Math.min(5, replyCount - visibleReplies)} more {replyCount - visibleReplies === 1 ? "reply" : "replies"}
+            </button>
+          ) : (
+            <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies}>
+              <span className="portal-comment-replies-chevron is-expanded" aria-hidden="true">⌃</span>
+              Hide replies
+            </button>
+          )}
         </div>
       ) : null}
     </article>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { Avatar, Button, Textarea } from "shivanya-ui";
+import { Avatar, Button, DislikeIcon, LikeIcon, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -83,11 +83,11 @@ function CommentThread({
           </div>
           <p>{item.content}</p>
           <div className="portal-comment-actions">
-            <button type="button" className={item.user_reaction === "like" ? "is-active" : ""} onClick={() => onReact(item.id, "like")}>
-              <span aria-hidden="true">↑</span> {item.likes_count}
+            <button type="button" className={`portal-comment-reaction portal-comment-like${item.user_reaction === "like" ? " is-active" : ""}`} onClick={() => onReact(item.id, "like")} aria-label={`Like comment, ${item.likes_count} likes`}>
+              <LikeIcon size={14} /> {item.likes_count}
             </button>
-            <button type="button" className={item.user_reaction === "dislike" ? "is-active" : ""} onClick={() => onReact(item.id, "dislike")}>
-              <span aria-hidden="true">↓</span> {item.dislikes_count}
+            <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${item.dislikes_count} dislikes`}>
+              <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
             <button type="button" onClick={() => onReply(item.id)}>Reply</button>
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>

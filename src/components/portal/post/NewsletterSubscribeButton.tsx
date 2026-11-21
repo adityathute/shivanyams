@@ -95,6 +95,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       setSubscribed(false);
       setMessage("");
       setSuccess(false);
+      setChecking(false);
       return;
     }
 

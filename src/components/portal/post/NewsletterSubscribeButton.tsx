@@ -244,13 +244,10 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
                 <button type="submit" className="newsletter-subscribe-submit" disabled={busy || success}>
                   {busy && !success ? "…" : success ? t.subscribed : t.submit}
                 </button>
-                {success ? (
-                  <button type="button" className="newsletter-subscribe-unsubscribe" onClick={() => void unsubscribe()} disabled={busy}>
-                    {busy ? "…" : t.unsubscribe}
-                  </button>
-                ) : null}
+                <button type="button" className="newsletter-subscribe-unsubscribe" onClick={() => void unsubscribe()} disabled={busy || !success}>
+                  {busy && success ? "…" : t.unsubscribe}
+                </button>
               </div>
-              <button type="button" className="newsletter-subscribe-modal-close" onClick={() => setOpen(false)} disabled={busy}>{t.close}</button>
             </form>
           </section>
         </div>,

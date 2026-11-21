@@ -190,3 +190,72 @@
   border-color: var(--primary, #8b5cf6);
   color: var(--primary, #a78bfa);
 }
+
+
+/* Refined discussion moderation layout */
+.admin-comments-panel { overflow: hidden; }
+.admin-comments-filters { gap: 10px; margin-bottom: 16px; }
+.admin-comments-list { gap: 10px; }
+.admin-comment-card {
+  padding: 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface, transparent) 96%, var(--foreground, #fff) 4%);
+  transition: border-color .16s ease, background .16s ease;
+}
+.admin-comment-card:hover { border-color: color-mix(in srgb, var(--primary, #8b5cf6) 45%, var(--border, #30343b)); }
+.admin-comment-card-head { align-items: flex-start; }
+.admin-comment-author { display: flex !important; grid-template-columns: none !important; align-items: center; gap: 9px !important; }
+.admin-comment-author > .shivanya-avatar { flex: 0 0 32px; width: 32px; height: 32px; }
+.admin-comment-author > div { display: grid; gap: 3px; min-width: 0; }
+.admin-comment-card-head strong { font-size: .84rem; }
+.admin-comment-card-head > div > span { font-size: .72rem; line-height: 1.4; }
+.admin-comment-text { margin: 12px 0 10px; font-size: .86rem; line-height: 1.5; }
+.admin-comment-meta { gap: 8px 14px; font-size: .72rem; }
+.admin-comment-meta > span { display: inline-flex; align-items: center; gap: 4px; }
+.admin-comment-reports {
+  gap: 9px;
+  margin-top: 12px;
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, #d28b42 25%, transparent);
+  border-left: 2px solid #d28b42;
+  border-radius: 9px;
+  background: color-mix(in srgb, #d28b42 5%, transparent);
+}
+.admin-comment-reports > strong { display: flex; align-items: center; gap: 6px; font-size: .76rem; }
+.admin-comment-reports > div {
+  gap: 5px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, #d28b42 16%, transparent);
+}
+.admin-comment-reports > div:first-of-type { border-top: 0; padding-top: 0; }
+.admin-comment-reports > div > span { font-size: .78rem; font-weight: 650; text-transform: capitalize; }
+.admin-comment-reports p { font-size: .78rem; line-height: 1.45; overflow-wrap: anywhere; }
+.admin-comment-reports small { font-size: .68rem; }
+.admin-report-actions { gap: 6px; margin-top: 3px; }
+.admin-report-actions button { padding: 4px 8px; border-radius: 6px; font-size: .7rem; }
+.admin-comment-actions { gap: 7px; margin-top: 12px; }
+.admin-comment-actions button, .admin-comment-reply button {
+  padding: 6px 9px;
+  border-radius: 7px;
+  font-size: .72rem;
+  transition: border-color .16s ease, color .16s ease, background .16s ease;
+}
+.admin-comment-actions button:disabled, .admin-comment-reply button:disabled { opacity: .5; cursor: not-allowed; }
+.admin-comment-actions button.danger { border-color: color-mix(in srgb, #e17a7a 30%, transparent); }
+.admin-comment-reply {
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--border, #30343b);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface, transparent) 95%, var(--foreground, #fff) 5%);
+}
+.admin-comment-reply textarea { min-height: 66px; font-size: .83rem; }
+.admin-comment-reply > div { justify-content: flex-end; }
+@media (max-width: 760px) {
+  .admin-comment-card { padding: 12px; }
+  .admin-comment-card-head { gap: 8px; }
+  .admin-comment-card-head > .admin-status { flex: 0 0 auto; }
+  .admin-comment-actions { gap: 6px; }
+  .admin-comment-actions button { padding: 6px 8px; }
+}

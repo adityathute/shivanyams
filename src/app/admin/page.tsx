@@ -503,6 +503,7 @@ export default function AdminPage() {
                           <div className="admin-row-actions">
                             <Link href={post.status === "published" && post.is_active !== false && Boolean(post.published_at) ? `/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}` : `/admin/preview/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}`} target="_blank">{post.status === "published" && post.is_active !== false && Boolean(post.published_at) ? "View" : "Preview"}</Link>
                             <Link href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`}>Edit</Link>
+                            <Link href={`/admin/engagement/${post.id}`}>Stats</Link>
                             {post.status !== "published" && <button disabled={busyPost === post.id} onClick={() => void changeStatus(post, "published")}>Publish</button>}
                             <button className="danger" disabled={busyPost === post.id} onClick={() => void deletePost(post)}>Delete</button>
                           </div>

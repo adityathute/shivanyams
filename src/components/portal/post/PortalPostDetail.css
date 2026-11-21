@@ -1368,3 +1368,76 @@
 .portal-post-detail .portal-preview-banner span {
   color: var(--text-secondary, #64748b);
 }
+
+
+/* Compact post heading: category and update date on the left, actions on the right. */
+.portal-post-compact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  margin-bottom: 10px;
+}
+
+.portal-post-meta-compact {
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 10px;
+  margin: 0;
+  font-size: 11px;
+}
+
+.portal-post-meta-compact > span {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+}
+
+.portal-post-meta-compact .portal-post-dates {
+  min-width: 0;
+  gap: 4px 8px;
+}
+
+.portal-post-meta-compact .portal-post-date-group {
+  gap: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.portal-post-meta-compact .portal-post-date-label {
+  color: var(--text-secondary, #718096);
+  font-weight: 500;
+}
+
+.portal-post-meta-compact .portal-post-date-group time {
+  color: var(--text-secondary, #718096);
+}
+
+.portal-post-compact-header + h1 {
+  margin-top: 0;
+}
+
+@media (max-width: 760px) {
+  .portal-post-compact-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .portal-post-meta-compact {
+    width: 100%;
+  }
+
+  .portal-post-engagement-actions,
+  .portal-post-reaction-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .portal-post-meta-compact {
+    flex-wrap: wrap;
+  }
+}

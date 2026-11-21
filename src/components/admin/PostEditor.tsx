@@ -1293,7 +1293,7 @@ export default function PostEditor({
           })),
       }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
 
-  const currentTitle = String(form[`title_${form.default_language as ContentLanguage}`] || "").trim();
+  const currentTitle = String(form.title_en || "").trim();
   const hasUnsavedChanges = !loading && (editing || Boolean(currentTitle)) && JSON.stringify(payload) !== lastSavedSnapshotRef.current;
 
   async function leaveEditor() {
@@ -1360,7 +1360,7 @@ export default function PostEditor({
       currentSlugRef.current = editSlug || currentSlugRef.current;
       return;
     }
-    const title = String(form[`title_${form.default_language as ContentLanguage}`] || "").trim();
+    const title = String(form.title_en || "").trim();
     if (!title || !form.slug.trim() || slugAvailable !== true) return;
     const snapshot = JSON.stringify(payload);
     if (snapshot === lastSavedSnapshotRef.current) return;
@@ -2726,7 +2726,7 @@ export default function PostEditor({
           <div className="post-editor-actions post-editor-actions-draft">
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveState}`} />
-              {autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : "Draft will be saved automatically"}
+              {autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
             </div>
             <div className="post-editor-action-buttons">
               <button type="button" disabled={saving || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>

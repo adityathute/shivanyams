@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Language } from "../category/CategoryGrid";
 import { getPortalApiUrl } from "../category/CategoryGrid";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 export interface ImportantLink {
   id: number;
@@ -27,7 +28,7 @@ export function useImportantLinks() {
 
     async function fetchLinks() {
       try {
-        const response = await fetch(getPortalApiUrl("important-links/"), {
+        const response = await authenticatedFetch(getPortalApiUrl("important-links/"), {
           signal: controller.signal,
         });
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "shivanya-auth";
+import { ArrowDownIcon, ArrowUpIcon, FavoriteIcon, ReportsIcon, ShareIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -158,17 +159,37 @@ export function PostEngagementActions({ postId, title }: Props) {
   return (
     <section className="portal-post-engagement-actions" aria-label="Post actions">
       <div className="portal-post-reaction-actions">
-        <button type="button" className={reaction === "like" ? "is-active" : ""} onClick={() => void changeReaction("like")} aria-label={`Like, ${likes} likes`}>
-          <span aria-hidden="true">↑</span><span>Like</span><strong>{likes.toLocaleString()}</strong>
+        <button
+          type="button"
+          className={reaction === "like" ? "is-active" : ""}
+          onClick={() => void changeReaction("like")}
+          title="Like"
+          aria-label={`Like, ${likes} likes`}
+        >
+          <ArrowUpIcon size={15} />
+          <strong>{likes.toLocaleString()}</strong>
         </button>
-        <button type="button" className={reaction === "dislike" ? "is-active" : ""} onClick={() => void changeReaction("dislike")} aria-label={`Dislike, ${dislikes} dislikes`}>
-          <span aria-hidden="true">↓</span><span>Dislike</span><strong>{dislikes.toLocaleString()}</strong>
+        <button
+          type="button"
+          className={reaction === "dislike" ? "is-active" : ""}
+          onClick={() => void changeReaction("dislike")}
+          title="Dislike"
+          aria-label={`Dislike, ${dislikes} dislikes`}
+        >
+          <ArrowDownIcon size={15} />
+          <strong>{dislikes.toLocaleString()}</strong>
         </button>
-        <button type="button" onClick={() => void sharePost()}><span aria-hidden="true">↗</span><span>Share</span></button>
-        <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()}><span aria-hidden="true">▣</span><span>{saved ? "Saved" : "Save"}</span></button>
-        <button type="button" onClick={requestReport}><span aria-hidden="true">⚑</span><span>Report</span></button>
+        <button type="button" onClick={() => void sharePost()} title="Share" aria-label="Share post">
+          <ShareIcon size={15} />
+        </button>
+        <button type="button" className={saved ? "is-active" : ""} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
+          <FavoriteIcon size={15} />
+        </button>
+        <button type="button" onClick={requestReport} title="Report" aria-label="Report post">
+          <ReportsIcon size={15} />
+        </button>
       </div>
       {message ? <p role="status">{message}</p> : null}
     </section>
-  );
+
 }

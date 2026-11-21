@@ -66,11 +66,7 @@ export function PostEngagementActions({ postId, title }: Props) {
     void loadUserActions();
   }, [loadUserActions]);
 
-  async function changeReaction(next: "like" | "dislike") {
-    if (!user) {
-      openLogin(() => { void changeReaction(next); });
-      return;
-    }
+  async function sendPostReaction(next: "like" | "dislike") {
     const method = reaction === next ? "DELETE" : "POST";
     const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reactions/`), {
       method,
@@ -88,11 +84,15 @@ export function PostEngagementActions({ postId, title }: Props) {
     setMessage("");
   }
 
-  async function toggleSaved() {
+  function changeReaction(next: "like" | "dislike") {
     if (!user) {
-      openLogin(() => { void toggleSaved(); });
+      openLogin(() => { void sendPostReaction(next); });
       return;
     }
+    void sendPostReaction(next);
+  }
+
+  async function sendSavedToggle() {
     const response = saved
       ? await authenticatedFetch(getPortalApiUrl(`saved-posts/${postId}/`), { method: "DELETE" })
       : await authenticatedFetch(getPortalApiUrl("saved-posts/"), {
@@ -108,11 +108,15 @@ export function PostEngagementActions({ postId, title }: Props) {
     setMessage("");
   }
 
-  async function toggleSubscription() {
+  function toggleSaved() {
     if (!user) {
-      openLogin(() => { void toggleSubscription(); });
+      openLogin(() => { void sendSavedToggle(); });
       return;
     }
+    void sendSavedToggle();
+  }
+
+  async function sendSubscriptionToggle() {
     const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/subscribe/`), {
       method: subscribed ? "DELETE" : "POST",
       headers: { "Content-Type": "application/json" },
@@ -125,6 +129,14 @@ export function PostEngagementActions({ postId, title }: Props) {
     setSubscribed(Boolean(payload.subscribed));
     setSubscriptionEmail(payload.email || "");
     setMessage(payload.subscribed ? `Subscribed with ${payload.email}.` : "You have unsubscribed from this post.");
+  }
+
+  function toggleSubscription() {
+    if (!user) {
+      openLogin(() => { void sendSubscriptionToggle(); });
+      return;
+    }
+    void sendSubscriptionToggle();
   }
 
   async function sharePost() {

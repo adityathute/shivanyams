@@ -502,6 +502,15 @@ class PostSubscriptions(APIView):
         subscription, created = PostSubscription.objects.update_or_create(post=post, user_auth_id=str(request.user.id), defaults={"email": email, "is_active": True})
         count = PostSubscription.objects.filter(post=post, is_active=True).count()
         Post.objects.filter(pk=post.pk).update(subscribers_count=count)
+        if created:
+            subject = f"Subscribed to updates: {post.title_en}"
+            message = (
+                f"You are now subscribed to email updates for \"{post.title_en}\". "
+                "We will email you when this post is updated."
+            )
+            transaction.on_commit(
+                lambda: send_mass_mail(((subject, message, None, [email]),), fail_silently=True)
+            )
         return Response({"subscribed": True, "email": subscription.email, "subscribers_count": count, "created": created}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
     def delete(self, request, post_id):

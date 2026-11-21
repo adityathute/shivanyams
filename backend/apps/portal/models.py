@@ -192,7 +192,7 @@ class Post(TimestampedModel):
         ordering = ("-published_at", "-created_at")
         indexes = [
             models.Index(fields=("category", "status", "published_at")),
-            models.Index(fields=("status", "created_at"), name="portal_report_status_created_idx"),
+            models.Index(fields=("status", "created_at"), name="portal_post_status_2815b6_idx"),
             models.Index(fields=("owner_auth_id", "status")),
             models.Index(fields=("is_featured", "status")),
             models.Index(fields=("organization_type", "status")),
@@ -1480,7 +1480,7 @@ class CommentReport(TimestampedModel):
             ),
         ]
         indexes = [
-            models.Index(fields=("status", "created_at"), name="portal_com_status_37aa2f_idx"),
+            models.Index(fields=("status", "created_at"), name="portal_report_status_idx"),
             models.Index(fields=("comment", "status"), name="portal_com_comment_2c3b8a_idx"),
         ]
 

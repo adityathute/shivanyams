@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useAuth } from "shivanya-auth";
 import "./NewsletterSubscribeButton.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
@@ -10,6 +11,7 @@ type Language = "en" | "mr" | "hi";
 const labels = {
   en: {
     button: "Subscribe",
+    subscribed: "Subscribed",
     title: "Stay Updated",
     description: "Get new posts, important updates and ShivanyaMS announcements by email.",
     email: "Email address",
@@ -22,6 +24,7 @@ const labels = {
   },
   mr: {
     button: "सबस्क्राइब करा",
+    subscribed: "सबस्क्राइब केले",
     title: "नवीन अपडेट्स मिळवा",
     description: "नवीन पोस्ट, महत्त्वाच्या अपडेट्स आणि ShivanyaMS च्या सूचना ईमेलद्वारे मिळवा.",
     email: "ईमेल पत्ता",
@@ -34,6 +37,7 @@ const labels = {
   },
   hi: {
     button: "सब्सक्राइब करें",
+    subscribed: "सब्सक्राइब किया",
     title: "अपडेट रहें",
     description: "नई पोस्ट, जरूरी अपडेट और ShivanyaMS की घोषणाएँ ईमेल से पाएँ।",
     email: "ईमेल पता",
@@ -47,12 +51,90 @@ const labels = {
 };
 
 export function NewsletterSubscribeButton({ language = "en" }: { language?: Language }) {
+  const { user } = useAuth();
   const t = labels[language] || labels.en;
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+
+  const subscribe = useCallback(async (guestEmail?: string) => {
+    setBusy(true);
+    setMessage("");
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl("newsletter/subscribe/"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          language,
+          ...(user ? {} : { email: guestEmail?.trim().toLowerCase() || "" }),
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.email?.[0] || payload.detail || t.error);
+      }
+      setSubscribed(Boolean(payload.subscribed));
+      setSuccess(true);
+      setMessage(t.success);
+      if (guestEmail) setEmail(guestEmail.trim().toLowerCase());
+    } catch (error) {
+      setSuccess(false);
+      setMessage(error instanceof Error ? error.message : t.error);
+    } finally {
+      setBusy(false);
+    }
+  }, [language, user, t.error, t.success]);
+
+  useEffect(() => {
+    let active = true;
+    if (!user) {
+      setSubscribed(false);
+      setMessage("");
+      setSuccess(false);
+      return;
+    }
+
+    setChecking(true);
+    authenticatedFetch(getPortalApiUrl("newsletter/subscribe/"), { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then((payload) => {
+        if (!active || !payload) return;
+        setSubscribed(Boolean(payload.subscribed));
+        if (payload.subscribed) {
+          setSuccess(true);
+          setMessage(t.success);
+        } else {
+          setSuccess(false);
+          setMessage("");
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setChecking(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [user?.id, user?.email, t.success]);
+
+  function handleSubscribeClick() {
+    setMessage("");
+    if (subscribed) return;
+    if (user) {
+      void subscribe();
+      return;
+    }
+    setSuccess(false);
+    setOpen(true);
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,35 +144,26 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       setSuccess(false);
       return;
     }
-
-    setBusy(true);
-    setMessage("");
-    try {
-      const response = await authenticatedFetch(getPortalApiUrl("newsletter/subscribe/"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: normalizedEmail, language }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(payload.email?.[0] || payload.detail || t.error);
-      }
-      setSuccess(true);
-      setMessage(t.success);
-      setEmail(normalizedEmail);
-    } catch (error) {
-      setSuccess(false);
-      setMessage(error instanceof Error ? error.message : t.error);
-    } finally {
-      setBusy(false);
-    }
+    await subscribe(normalizedEmail);
   }
 
   return (
     <>
-      <button type="button" className="subscribe-button" onClick={() => { setOpen(true); setMessage(""); }}>
-        {t.button}
+      <button
+        type="button"
+        className="subscribe-button"
+        onClick={handleSubscribeClick}
+        disabled={busy || checking || subscribed}
+        aria-label={subscribed ? t.subscribed : t.button}
+        aria-pressed={subscribed}
+      >
+        {busy || checking ? "…" : subscribed ? t.subscribed : t.button}
       </button>
+      {message && !open ? (
+        <p className={success ? "newsletter-subscribe-inline success" : "newsletter-subscribe-inline"} role="status">
+          {message}
+        </p>
+      ) : null}
       {open ? (
         <div className="newsletter-subscribe-overlay" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget && !busy) setOpen(false);

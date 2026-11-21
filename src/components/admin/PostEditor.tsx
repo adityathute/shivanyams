@@ -1294,7 +1294,7 @@ export default function PostEditor({
       }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
 
   const currentTitle = String(form[`title_${form.default_language as ContentLanguage}`] || "").trim();
-  const hasUnsavedChanges = (editing || Boolean(currentTitle)) && JSON.stringify(payload) !== lastSavedSnapshotRef.current;
+  const hasUnsavedChanges = !loading && (editing || Boolean(currentTitle)) && JSON.stringify(payload) !== lastSavedSnapshotRef.current;
 
   async function leaveEditor() {
     setNotice("");

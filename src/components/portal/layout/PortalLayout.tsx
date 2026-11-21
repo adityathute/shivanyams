@@ -15,7 +15,7 @@ import { PortalHeader } from "./header/PortalHeader";
 import { getPortalNavigation } from "./sidebar/PortalSidebar";
 import { PortalDataProvider } from "../data/portal-data";
 import { getPortalApiUrl } from "../category/CategoryGrid";
-import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { authenticatedFetch, refreshAuthSession } from "../../../lib/authenticated-fetch";
 import { PortalAuthProvider } from "../context/PortalAuthContext";
 import {
   PortalLanguageProvider,
@@ -24,9 +24,38 @@ import {
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const { language, setLanguage } = usePortalLanguage();
   const lastTrackedPath = useRef<string | null>(null);
+  const lastSessionCheck = useRef(Date.now());
+
+  // Refresh the HttpOnly session after the tab has been idle. This prevents
+  // the first interaction after returning from failing with an expired token.
+  useEffect(() => {
+    let active = true;
+
+    const resumeSession = async () => {
+      if (document.visibilityState !== "visible" || !user) return;
+
+      const now = Date.now();
+      if (now - lastSessionCheck.current < 60_000) return;
+      lastSessionCheck.current = now;
+
+      const refreshed = await refreshAuthSession();
+      if (active && refreshed) {
+        await refreshUser();
+      }
+    };
+
+    document.addEventListener("visibilitychange", resumeSession);
+    window.addEventListener("focus", resumeSession);
+
+    return () => {
+      active = false;
+      document.removeEventListener("visibilitychange", resumeSession);
+      window.removeEventListener("focus", resumeSession);
+    };
+  }, [user, refreshUser]);
 
   // A saved account preference takes precedence once authentication is loaded.
   useEffect(() => {

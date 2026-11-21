@@ -165,7 +165,10 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
 
   function handleSubscribeClick() {
     setMessage("");
-    if (subscribed) return;
+    if (subscribed) {
+      void unsubscribe();
+      return;
+    }
     if (user) {
       void subscribe();
       return;
@@ -191,11 +194,11 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
         type="button"
         className={`subscribe-button${subscribed ? " is-subscribed" : ""}`}
         onClick={handleSubscribeClick}
-        disabled={authLoading || busy || checking || subscribed}
-        aria-label={subscribed ? t.subscribed : t.button}
+        disabled={authLoading || busy || checking}
+        aria-label={subscribed ? t.unsubscribe : t.button}
         aria-pressed={subscribed}
       >
-        {authLoading || busy || checking ? "…" : subscribed ? t.subscribed : t.button}
+        {authLoading || busy || checking ? "…" : subscribed ? t.unsubscribe : t.button}
       </button>
       {subscribed ? (
         <div className="newsletter-subscribed-state">

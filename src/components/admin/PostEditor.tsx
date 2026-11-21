@@ -2635,7 +2635,7 @@ export default function PostEditor({
             <button type="button" onClick={() => router.push("/admin")}>
               Cancel
             </button>
-            <button type="submit" disabled={saving || !activeCategory}>
+            <button type="submit" disabled={saving || autosaveState === "saving" || !activeCategory}>
               {saving ? "Saving..." : editing ? "Save Changes" : "Create Draft"}
             </button>
           </div>

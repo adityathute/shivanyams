@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { Button } from "shivanya-ui";
+import { Avatar, Button } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -16,6 +16,8 @@ type CommentItem = {
   content: string;
   language: string;
   is_admin_reply: boolean;
+  author_name: string;
+  author_avatar: string;
   likes_count: number;
   dislikes_count: number;
   user_reaction: Reaction;
@@ -53,10 +55,10 @@ function CommentThread({
   return (
     <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}`}>
       <div className="portal-comment-main">
-        <div className="portal-comment-avatar" aria-hidden="true">U</div>
+        <Avatar size="sm" name={item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={item.author_avatar || undefined} />
         <div className="portal-comment-content">
           <div className="portal-comment-author-row">
-            <strong>{item.is_admin_reply ? "ShivanyaMS Admin" : "Member"}</strong>
+            <strong>{item.author_name?.trim() || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member")}</strong>
             {item.is_admin_reply ? <span className="portal-comment-admin-badge">Admin</span> : null}
             <time dateTime={item.created_at}>{dateLabel}</time>
           </div>

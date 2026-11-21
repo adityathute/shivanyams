@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 "indexes": [
-                    models.Index(fields=["status", "created_at"], name="portal_com_status_37aa2f_idx"),
+                    models.Index(fields=["status", "created_at"], name="portal_report_status_created_idx"),
                     models.Index(fields=["comment", "status"], name="portal_com_comment_2c3b8a_idx"),
                 ],
                 "constraints": [

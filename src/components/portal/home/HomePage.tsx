@@ -8,14 +8,14 @@ import { VideosSection } from "../../videos/VideosSection";
 import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
 import { PortalFooter } from "../layout/footer/PortalFooter";
-import { MailIcon, Button } from "shivanya-ui";
+import { MailIcon } from "shivanya-ui";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
 import { useRouter } from "next/navigation";
 import { LinkIcon } from "shivanya-ui";
 import { HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
-import { createPostSlug } from "../post/PortalPostDetail";
+import { createPostSlug } from "../post/PortalPostDetail";\nimport { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
 
 export function HomePage() {
   const { language: selectedLanguage } = usePortalLanguage();
@@ -155,13 +155,7 @@ export function HomePage() {
                 <p>{t("subscribeDescription")}</p>
               </div>
 
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => router.push("/contact")}
-              >
-                {t("contactButton")}
-              </Button>
+              <NewsletterSubscribeButton language={selectedLanguage} />
             </section>
           </aside>
         </div>

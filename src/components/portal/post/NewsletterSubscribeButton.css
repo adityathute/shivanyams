@@ -132,3 +132,72 @@
 :root[data-theme="dark"] .newsletter-subscribe-inline.success {
   color: #34d399;
 }
+
+
+.newsletter-subscribed-state {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+  margin-top: 8px;
+  max-width: 100%;
+}
+
+.newsletter-subscribed-state .newsletter-subscribe-inline {
+  margin: 0;
+  color: var(--text-secondary, #64748b);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.newsletter-subscribed-state .newsletter-subscribe-inline.success {
+  color: var(--text-secondary, #64748b);
+}
+
+.newsletter-unsubscribe-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid #dc2626;
+  border-radius: 7px;
+  background: transparent;
+  color: #dc2626;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease, opacity .16s ease;
+}
+
+.newsletter-unsubscribe-button:hover:not(:disabled) {
+  border-color: #b91c1c;
+  background: #dc2626;
+  color: #fff;
+}
+
+.newsletter-unsubscribe-button:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 3px;
+}
+
+.newsletter-unsubscribe-button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+:root[data-theme="dark"] .newsletter-subscribed-state .newsletter-subscribe-inline {
+  color: var(--text-secondary, #a1a1aa);
+}
+
+:root[data-theme="dark"] .newsletter-unsubscribe-button {
+  border-color: #f87171;
+  color: #f87171;
+}
+
+:root[data-theme="dark"] .newsletter-unsubscribe-button:hover:not(:disabled) {
+  border-color: #ef4444;
+  background: #b91c1c;
+  color: #fff;
+}

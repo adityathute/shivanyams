@@ -64,7 +64,7 @@
 @media (max-width: 760px) {
   .portal-post-engagement-actions,
   .portal-post-reaction-actions {
-    width: 100%;
+    width: auto;
   }
 
   .portal-post-engagement-actions {

@@ -13,6 +13,10 @@ from rest_framework.permissions import IsAuthenticated
 from .models import (
     Category,
     Comment,
+    CommentReaction,
+    CommentReport,
+    PostSubscription,
+    PostShare,
     ImportantLink,
     JobDetails,
     JobPost,
@@ -381,7 +385,6 @@ class PostComments(APIView):
                 parent__isnull=True,
             )
             .select_related("parent")
-            .prefetch_related("replies")
             .order_by("created_at")
         )
         return Response(
@@ -409,7 +412,8 @@ class PostComments(APIView):
             comment = serializer.save(
                 post=post,
                 user_auth_id=str(request.user.id),
-                status=Comment.Status.PENDING,
+                status=Comment.Status.APPROVED,
+                is_admin_reply=False,
             )
             Post.objects.filter(pk=post.pk).update(
                 comments_count=F("comments_count") + 1
@@ -419,6 +423,148 @@ class PostComments(APIView):
             CommentSerializer(comment, context={"request": request}).data,
             status=status.HTTP_201_CREATED,
         )
+
+class PostCommentReactions(APIView):
+    permission_classes = [IsPortalIdentity]
+
+    def post(self, request, comment_id):
+        reaction_type = request.data.get("reaction")
+        valid = {choice[0] for choice in CommentReaction.ReactionType.choices}
+        if reaction_type not in valid:
+            raise ValidationError({"reaction": "Choose like or dislike."})
+        comment = get_object_or_404(Comment, pk=comment_id, status=Comment.Status.APPROVED, post__status=Post.Status.PUBLISHED, post__is_active=True, post__reactions_enabled=True)
+        reaction, created = CommentReaction.objects.get_or_create(comment=comment, user_auth_id=str(request.user.id), defaults={"reaction": reaction_type})
+        if not created and reaction.reaction != reaction_type:
+            reaction.reaction = reaction_type
+            reaction.save(update_fields=["reaction", "updated_at"])
+        return Response({"reaction": reaction.reaction, "likes_count": comment.reactions.filter(reaction="like").count(), "dislikes_count": comment.reactions.filter(reaction="dislike").count()})
+
+    def delete(self, request, comment_id):
+        comment = get_object_or_404(Comment, pk=comment_id, status=Comment.Status.APPROVED, post__status=Post.Status.PUBLISHED, post__is_active=True)
+        CommentReaction.objects.filter(comment=comment, user_auth_id=str(request.user.id)).delete()
+        return Response({"reaction": None, "likes_count": comment.reactions.filter(reaction="like").count(), "dislikes_count": comment.reactions.filter(reaction="dislike").count()})
+
+
+class PostCommentReports(APIView):
+    permission_classes = [IsPortalIdentity]
+    AUTO_HIDE_REPORT_THRESHOLD = 3
+
+    def post(self, request, comment_id):
+        comment = get_object_or_404(Comment, pk=comment_id, status=Comment.Status.APPROVED, post__status=Post.Status.PUBLISHED, post__is_active=True)
+        reason = str(request.data.get("reason", "")).strip()[:40]
+        details = str(request.data.get("details", "")).strip()[:2000]
+        if not reason:
+            raise ValidationError({"reason": "Please select a report reason."})
+        report, created = CommentReport.objects.get_or_create(comment=comment, reporter_auth_id=str(request.user.id), defaults={"reason": reason, "details": details})
+        report_count = comment.reports.exclude(status=CommentReport.Status.DISMISSED).values("reporter_auth_id").distinct().count()
+        hidden = report_count >= self.AUTO_HIDE_REPORT_THRESHOLD
+        if hidden:
+            Comment.objects.filter(pk=comment.pk, status=Comment.Status.APPROVED).update(status=Comment.Status.HIDDEN)
+        return Response({"reported": True, "already_reported": not created, "report_count": report_count, "hidden": hidden}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+
+class PostSubscriptions(APIView):
+    permission_classes = [IsPortalIdentity]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
+        auth_data = getattr(request.user, "auth_data", {})
+        email = str((auth_data.get("email") if isinstance(auth_data, dict) else "") or getattr(request.user, "email", "") or "").strip().lower()
+        if not email or "@" not in email:
+            raise ValidationError({"email": "A valid email address is required on your account to subscribe."})
+        subscription, created = PostSubscription.objects.update_or_create(post=post, user_auth_id=str(request.user.id), defaults={"email": email, "is_active": True})
+        count = PostSubscription.objects.filter(post=post, is_active=True).count()
+        Post.objects.filter(pk=post.pk).update(subscribers_count=count)
+        return Response({"subscribed": True, "email": subscription.email, "subscribers_count": count, "created": created}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+    def delete(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        PostSubscription.objects.filter(post=post, user_auth_id=str(request.user.id)).update(is_active=False)
+        count = PostSubscription.objects.filter(post=post, is_active=True).count()
+        Post.objects.filter(pk=post.pk).update(subscribers_count=count)
+        return Response({"subscribed": False, "subscribers_count": count})
+
+
+class PostShares(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
+        channel = str(request.data.get("channel", "other")).strip().lower()[:32] or "other"
+        visitor_id = str(request.data.get("visitor_id", "")).strip()[:128]
+        user_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+        PostShare.objects.create(post=post, user_auth_id=user_id, visitor_id=visitor_id, channel=channel)
+        Post.objects.filter(pk=post.pk).update(shares_count=F("shares_count") + 1)
+        post.refresh_from_db(fields=["shares_count"])
+        return Response({"shares_count": post.shares_count}, status=status.HTTP_201_CREATED)
+
+
+class AdminComments(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        queryset = Comment.objects.select_related("post", "parent").all()
+        post_id = request.query_params.get("post")
+        comment_status = request.query_params.get("status")
+        reported = request.query_params.get("reported")
+        search = request.query_params.get("search", "").strip()
+        if post_id:
+            queryset = queryset.filter(post_id=post_id)
+        if comment_status and comment_status != "all":
+            queryset = queryset.filter(status=comment_status)
+        if reported == "true":
+            queryset = queryset.filter(reports__status=CommentReport.Status.OPEN).distinct()
+        if search:
+            queryset = queryset.filter(Q(content__icontains=search) | Q(user_auth_id__icontains=search) | Q(post__title_en__icontains=search))
+        rows = []
+        for comment in queryset.order_by("-created_at")[:250]:
+            data = CommentSerializer(comment, context={"request": request}).data
+            data["post_title"] = comment.post.title_en
+            data["report_count"] = comment.reports.exclude(status=CommentReport.Status.DISMISSED).count()
+            rows.append(data)
+        return Response(rows)
+
+    def post(self, request):
+        post = get_object_or_404(Post, pk=request.data.get("post"), status=Post.Status.PUBLISHED, is_active=True)
+        parent = get_object_or_404(Comment, pk=request.data.get("parent"), post=post, status__in=[Comment.Status.APPROVED, Comment.Status.HIDDEN])
+        content = str(request.data.get("content", "")).strip()
+        if not content or len(content) > 10000:
+            raise ValidationError({"content": "Enter a reply up to 10,000 characters."})
+        comment = Comment.objects.create(post=post, parent=parent, user_auth_id=str(request.user.id), content=content, language=post.default_language, status=Comment.Status.APPROVED, reviewed_by_auth_id=str(request.user.id), reviewed_at=timezone.now(), is_admin_reply=True)
+        Post.objects.filter(pk=post.pk).update(comments_count=F("comments_count") + 1)
+        return Response(CommentSerializer(comment, context={"request": request}).data, status=status.HTTP_201_CREATED)
+
+    def patch(self, request):
+        comment = get_object_or_404(Comment, pk=request.data.get("id"))
+        new_status = str(request.data.get("status", "")).strip()
+        valid = {choice[0] for choice in Comment.Status.choices}
+        if new_status not in valid:
+            raise ValidationError({"status": "Invalid comment status."})
+        comment.status = new_status
+        comment.reviewed_by_auth_id = str(request.user.id)
+        comment.reviewed_at = timezone.now()
+        comment.save(update_fields=["status", "reviewed_by_auth_id", "reviewed_at", "updated_at"])
+        return Response(CommentSerializer(comment, context={"request": request}).data)
+
+
+class AdminPostEngagement(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        comment_ids = Comment.objects.filter(post=post).values_list("id", flat=True)
+        comment_likes = CommentReaction.objects.filter(comment_id__in=comment_ids, reaction="like").count()
+        comment_dislikes = CommentReaction.objects.filter(comment_id__in=comment_ids, reaction="dislike").count()
+        return Response({
+            "post": {"id": post.id, "title": post.title_en},
+            "likes": {"total": post.likes_count + comment_likes, "post": post.likes_count, "comments_and_replies": comment_likes},
+            "dislikes": {"total": post.dislikes_count + comment_dislikes, "post": post.dislikes_count, "comments_and_replies": comment_dislikes},
+            "comments": {"total": Comment.objects.filter(post=post).count(), "approved": Comment.objects.filter(post=post, status=Comment.Status.APPROVED).count(), "hidden": Comment.objects.filter(post=post, status=Comment.Status.HIDDEN).count()},
+            "shares": post.share_events.count(),
+            "saved": post.saved_posts.count(),
+            "subscribers": PostSubscription.objects.filter(post=post, is_active=True).count(),
+            "reports": CommentReport.objects.filter(comment__post=post, status=CommentReport.Status.OPEN).count(),
+        })
 
 
 class PostReactions(APIView):

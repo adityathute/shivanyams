@@ -403,9 +403,12 @@ class PostComments(APIView):
         serializer.is_valid(raise_exception=True)
 
         parent = serializer.validated_data.get("parent")
-        if parent and parent.post_id != post.pk:
+        if parent and (
+            parent.post_id != post.pk
+            or parent.status != Comment.Status.APPROVED
+        ):
             raise ValidationError(
-                {"parent": "The parent comment must belong to this post."}
+                {"parent": "Choose an approved comment from this post to reply to."}
             )
 
         with transaction.atomic():

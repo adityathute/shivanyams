@@ -397,7 +397,7 @@ function getOrganizationTypeLabel(value: string | undefined, language: string) {
   return labels?.[language] || labels?.en || "";
 }
 
-export function PortalPostDetail({ category }: { category: CategorySlug }) {
+export function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
   const params = useParams<{ slug: string }>();
   const router = useRouter();
   const slug = decodeURIComponent(params.slug ?? "");
@@ -433,7 +433,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   }, []);
 
   const post = useMemo(() => {
-    if (category === "videos") {
+    if (category === "videos" && !previewItem) {
       const video = data.videos.find(
         (entry) =>
           (entry.slug || createPostSlug(entry.title)) === slug ||
@@ -476,8 +476,8 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
         : null;
     }
 
-    const type = categoryTypes[category];
-    const item = data.items.find(
+    const type = category === "videos" ? "video" : categoryTypes[category];
+    const item = previewItem || data.items.find(
       (entry) =>
         entry.type === type &&
         ((entry.slug || createPostSlug(entry.title)) === slug ||
@@ -551,11 +551,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
             : undefined,
         }
       : null;
-  }, [category, data.items, data.videos, slug, language]);
+  }, [category, data.items, data.videos, slug, language, previewItem]);
 
   const trackedPostIdRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (previewItem) return;
     const postId = post?.postId;
     if (!postId || !Number.isSafeInteger(postId) || postId <= 0) return;
     if (trackedPostIdRef.current === postId) return;
@@ -597,7 +598,7 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
       }
       console.error("Post view tracking failed:", error);
     });
-  }, [post?.postId, language]);
+  }, [post?.postId, language, previewItem]);
 
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(
@@ -768,6 +769,12 @@ export function PortalPostDetail({ category }: { category: CategorySlug }) {
   return (
     <>
       <main className="portal-post-detail">
+        {previewItem ? (
+          <div className="portal-preview-banner" role="status">
+            <strong>Preview mode</strong>
+            <span>This post is not published. Only authorized admins can view this preview.</span>
+          </div>
+        ) : null}
         <div className="portal-post-detail-inner">
           <div
             className={`content-layout ${!data.loading && (post || recommendedPosts.length > 0) ? "has-sidebar" : "no-sidebar"}`}

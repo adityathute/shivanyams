@@ -80,6 +80,19 @@
   border-left: 1.5px solid var(--border-color, #cbd5e1);
   pointer-events: none;
 }
+
+/* A reply uses ::before for the elbow arriving from its parent branch.
+   Keep its own outgoing vertical branch on ::after so nested threads connect. */
+.portal-comment-replies-list > .portal-comment-item.has-replies::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 30px;
+  bottom: 0;
+  left: 14px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  pointer-events: none;
+}
 .portal-comment-main > .shivanya-avatar { flex: 0 0 30px; width: 30px; height: 30px; font-size: .7rem; }
 .portal-comment-content { min-width: 0; flex: 1; }
 .portal-comment-author-row { justify-content: flex-start; flex-wrap: wrap; gap: 7px; }
@@ -179,8 +192,8 @@
   gap: 4px 12px;
   margin: 8px 0 0;
 }
-/* The parent comment's vertical branch continues through the reply stack.
-   Each reply elbow below turns from that shared rail toward its avatar. */
+/* Each reply elbow turns from its parent's vertical rail toward its avatar.
+   Nested replies get a separate ::after rail, so the elbow cannot overwrite it. */
 .portal-comment-replies-list > .portal-comment-item {
   position: relative;
   margin-top: 12px;

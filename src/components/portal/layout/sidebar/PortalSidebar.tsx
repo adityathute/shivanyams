@@ -12,21 +12,26 @@ import {
   ToolsIcon,
 } from "shivanya-ui";
 
-export const portalNavigation = [
-  { label: "मुख्यपृष्ठ", href: "/", icon: <HomeIcon /> },
-  { label: "सरकारी नोकरी", href: "/jobs", icon: <GovernmentJobIcon /> },
-  { label: "शासकीय योजना", href: "/schemes", icon: <GovernmentSchemeIcon /> },
-  { label: "निकाल", href: "/results", icon: <ResultIcon /> },
-  { label: "प्रवेशपत्र", href: "/admit-cards", icon: <AdmitCardIcon /> },
-  { label: "परीक्षा", href: "/exams", icon: <ExaminationIcon /> },
-  { label: "लेख आणि मार्गदर्शक", href: "/guides", icon: <GuideIcon /> },
-  { label: "व्हिडिओ", href: "/videos", icon: <VideoIcon /> },
-  { label: "टूल्स", href: "/tools", icon: <ToolsIcon /> },
-  { divider: true },
-  { label: "संपर्क", href: "/contact", icon: <MailIcon /> },
-];
 import { translate, type Language } from "shivanya-i18n";
 import { sidebarTranslations } from "@/i18n/dictionaries/sidebar";
+
+function SavedBookmarkIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.8L6 21V4.75Z" />
+    </svg>
+  );
+}
 
 type PortalUser = {
   roles?: string[];
@@ -84,6 +89,15 @@ export function getPortalNavigation(
       href: "/tools",
       icon: <ToolsIcon />,
     },
+    ...(user
+      ? [
+          {
+            label: translate(language, sidebarTranslations, "saved"),
+            href: "/saved",
+            icon: <SavedBookmarkIcon />,
+          },
+        ]
+      : []),
     { label: "", divider: true },
     ...(isAdmin
       ? [

@@ -27,10 +27,10 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 const CATEGORY_ORDER = [
   "jobs",
   "schemes",
+  "articles-guides",
+  "admit-cards",
   "examination",
   "results",
-  "admit-cards",
-  "articles-guides",
   "videos",
   "tools",
 ];

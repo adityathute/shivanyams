@@ -186,3 +186,37 @@
   .newsletter-subscribe-content h3 { font-size: 14px; }
   .newsletter-subscribe-content p { font-size: 11px; }
 }
+
+
+.newsletter-subscribe-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.newsletter-subscribe-actions .newsletter-subscribe-submit {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.newsletter-subscribe-unsubscribe {
+  min-height: 40px;
+  margin-top: 5px;
+  border: 1px solid #dc2626;
+  border-radius: 7px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.newsletter-subscribe-unsubscribe:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+:root[data-theme="dark"] .newsletter-subscribe-unsubscribe {
+  border-color: #f87171;
+  color: #f87171;
+}

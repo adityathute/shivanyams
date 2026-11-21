@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
+import { DislikeIcon, LikeIcon } from "shivanya-ui";
 import { API_URL } from "../../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../../admin-utils";
 import "../../admin.css";
@@ -130,7 +131,12 @@ export default function AdminPostEngagementPage() {
                 const value = typeof raw === "number" ? raw : raw.total;
                 return (
                   <button type="button" key={item.key} className={`admin-engagement-stat${selected === item.key ? " is-selected" : ""}`} onClick={() => setSelected(item.key)}>
-                    <span><i>{item.icon}</i>{item.label}<small>↗</small></span>
+                    <span>
+                      <i className={item.key === "likes" ? "is-like" : item.key === "dislikes" ? "is-dislike" : ""}>
+                        {item.key === "likes" ? <LikeIcon size={16} /> : item.key === "dislikes" ? <DislikeIcon size={16} /> : item.icon}
+                      </i>
+                      {item.label}<small>↗</small>
+                    </span>
                     <strong>{Number(value || 0).toLocaleString("en-IN")}</strong>
                   </button>
                 );

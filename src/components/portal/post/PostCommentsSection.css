@@ -88,6 +88,27 @@
 .portal-comment-content > p { margin: 4px 0 6px; font-size: .86rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
 .portal-comment-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 13px; }
 .portal-comment-actions button { padding: 1px 0; border: 0; background: transparent; color: var(--muted-foreground, #9298a2); font: inherit; font-size: .74rem; cursor: pointer; transition: color .16s ease; }
+.portal-comment-actions button.portal-comment-reply-action {
+  position: relative;
+  z-index: 0;
+  margin-left: -25px;
+  padding: 5px 10px 5px 25px;
+  border-radius: 0 999px 999px 0;
+  isolation: isolate;
+}
+.portal-comment-actions button.portal-comment-reply-action::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  transition: background-color .16s ease;
+}
+.portal-comment-actions button.portal-comment-reply-action:hover::before,
+.portal-comment-actions button.portal-comment-reply-action:focus-visible::before {
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
 .portal-comment-actions button:hover { color: var(--muted-foreground, #64748b); }
 .portal-comment-actions button.portal-comment-reaction {
   display: inline-flex;
@@ -200,9 +221,28 @@
   cursor: pointer;
   transition: color .16s ease, background-color .16s ease;
 }
-.portal-comment-replies-footer .portal-comment-load-more:hover,
-.portal-comment-replies-footer .portal-comment-hide-replies:hover {
+.portal-comment-replies-footer .portal-comment-load-more:hover {
   color: var(--text-primary, #334155);
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-replies-footer .portal-comment-hide-replies {
+  z-index: 0;
+  margin-left: -20px;
+  padding: 5px 10px 5px 20px;
+  border-radius: 0 999px 999px 0;
+  isolation: isolate;
+}
+.portal-comment-replies-footer .portal-comment-hide-replies::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  transition: background-color .16s ease;
+}
+.portal-comment-replies-footer .portal-comment-hide-replies:hover::before,
+.portal-comment-replies-footer .portal-comment-hide-replies:focus-visible::before {
   background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
 }
 .portal-comment-hide-replies {

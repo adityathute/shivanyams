@@ -264,7 +264,7 @@ type ApiJobPost = {
   fees?: ApiJobPostFee[];
 };
 
-type ApiPost = {
+export type ApiPost = {
   id: number | string;
   title_en?: string;
   title_mr?: string;
@@ -402,7 +402,7 @@ function sameForEveryPost<T>(posts: T[], getValue: (post: T) => unknown) {
   return posts.slice(1).every((post) => JSON.stringify(getValue(post)) === first);
 }
 
-function mapPost(post: ApiPost, type: ItemType): Item {
+export function mapPost(post: ApiPost, type: ItemType): Item {
   const job = post.job_details;
   const jobPosts = job?.posts || [];
   const educationIsCommon = sameForEveryPost(jobPosts, (entry) => {

@@ -51,7 +51,7 @@ function CommentThread({
     : date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <article className="portal-comment-item" style={{ "--comment-depth": Math.min(depth, 3) } as CSSProperties}>
+    <article className="portal-comment-item" style={{ "--comment-depth": Math.min(depth, 3) } as CSSProperties & { "--comment-depth": number }}>
       <div className="portal-comment-main">
         <div className="portal-comment-avatar" aria-hidden="true">U</div>
         <div className="portal-comment-content">

@@ -34,7 +34,7 @@ function formatAuthorName(value: string): string {
   return value
     .trim()
     .toLocaleLowerCase()
-    .replace(/(^|[\s-\u2010-\u2015]+)([\p{L}])/gu, (_match, separator, letter) => `${separator}${letter.toLocaleUpperCase()}`);
+    .replace(/(^|[\s\u2010-\u2015-]+)([\p{L}])/gu, (_match, separator, letter) => `${separator}${letter.toLocaleUpperCase()}`);
 }
 
 function countComments(items: CommentItem[]): number {

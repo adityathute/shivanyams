@@ -248,6 +248,20 @@
   background: transparent;
   transition: background-color .16s ease;
 }
+
+/* Continue the parent thread rail with a curved elbow into "Hide replies". */
+.portal-comment-replies-footer .portal-comment-hide-replies::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: -22px;
+  width: 22px;
+  height: 12px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom-left-radius: 11px;
+  pointer-events: none;
+}
 .portal-comment-replies-footer .portal-comment-hide-replies:hover::before,
 .portal-comment-replies-footer .portal-comment-hide-replies:focus-visible::before {
   background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
@@ -288,6 +302,7 @@
   .portal-comment-composer-footer { margin-top: 8px; }
   .portal-comment-replies { margin-left: 14px; padding-left: 36px; }
   .portal-comment-replies-list > .portal-comment-item::before { left: -36px; width: 36px; height: 15px; }
+  .portal-comment-replies-footer .portal-comment-hide-replies::after { left: -16px; width: 16px; height: 12px; }
   .portal-comment-item.has-replies::before { left: 14px; }
   .portal-comment-replies-footer { margin-top: 7px; }
   .portal-comment-inline-reply { margin-left: 25px; }

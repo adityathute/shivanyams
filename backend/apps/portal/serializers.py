@@ -701,6 +701,9 @@ class PostWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = (
+            "id",
+            "status",
+            "updated_at",
             "organization_type",
             "title_en",
             "title_mr",
@@ -745,6 +748,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
             "video_details",
             "tool_details",
         )
+        read_only_fields = ("id", "status", "updated_at")
 
     def validate_slug(self, value):
         queryset = Post.objects.filter(slug=value)

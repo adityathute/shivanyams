@@ -149,11 +149,6 @@ export function HomePage() {
                 <MailIcon />
               </div>
 
-              <div className="subscribe-content">
-                <h3>{t("subscribeTitle")}</h3>
-                <p>{t("subscribeDescription")}</p>
-              </div>
-
               <NewsletterSubscribeButton language={selectedLanguage} />
             </section>
           </aside>

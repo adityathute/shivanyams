@@ -445,7 +445,7 @@ export default function AdminPage() {
           );
         })()}
 
-        {latestUpdatedPost && (
+        {/* {latestUpdatedPost && (
           <section className="admin-latest-updated">
             <div className="admin-latest-updated-copy">
               <span className="admin-latest-updated-label">LATEST UPDATED POST</span>
@@ -454,7 +454,7 @@ export default function AdminPage() {
             </div>
             <Link href={`/admin/edit-post/${latestUpdatedKind?.api || "jobs"}/${latestUpdatedPost.slug}`}>Open post ↗</Link>
           </section>
-        )}
+        )} */}
 
         <section className="admin-post-panel">
           <div className="admin-panel-heading">

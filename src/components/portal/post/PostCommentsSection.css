@@ -539,9 +539,9 @@
     height: 15px;
     top: -1px;
   }
-  .portal-comment-item.has-replies::before {
+  /* .portal-comment-item.has-replies::before {
     left: 15px;
-  }
+  } */
   .portal-comment-replies-footer {
     margin-top: 7px;
   }

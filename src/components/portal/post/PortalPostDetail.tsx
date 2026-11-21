@@ -456,6 +456,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             description: "",
             category: video.language,
             date: "",
+            updatedDate: "",
             link: video.url,
             image: video.thumbnail,
             body: "",

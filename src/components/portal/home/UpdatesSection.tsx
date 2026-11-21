@@ -18,6 +18,7 @@ import { getPortalText } from "../../../i18n/dictionaries/portal-dictionary";
 import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
 import { createPostSlug } from "../post/PortalPostDetail";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 type Props = {
   type?: ItemType | "all";
@@ -133,7 +134,7 @@ export function UpdatesSection({
 
     async function fetchCategories() {
       try {
-        const response = await fetch(getPortalApiUrl("categories/"), {
+        const response = await authenticatedFetch(getPortalApiUrl("categories/"), {
           signal: controller.signal,
         });
 

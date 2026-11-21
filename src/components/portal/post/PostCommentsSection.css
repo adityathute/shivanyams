@@ -41,9 +41,8 @@
 }
 .portal-comments-heading select { padding: 6px 9px; font-size: .77rem; }
 .portal-comment-composer {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  display: grid;
+  gap: 7px;
   padding: 11px 12px;
   border: 1px solid var(--border, #30343b);
   border-radius: 11px;
@@ -98,7 +97,7 @@
   .portal-comments-section { margin-top: 18px; padding-top: 15px; }
   .portal-comments-heading { align-items: flex-start; }
   .portal-comments-heading select { max-width: 125px; }
-  .portal-comment-composer { display: block; padding: 9px; }
+  .portal-comment-composer { display: grid; padding: 9px; }
   .portal-comment-composer textarea { width: 100%; }
   .portal-comment-composer-footer { margin-top: 8px; }
   .portal-comment-replies { margin-left: 8px; padding-left: 9px; }

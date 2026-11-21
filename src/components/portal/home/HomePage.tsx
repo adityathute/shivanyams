@@ -24,7 +24,6 @@ export function HomePage() {
   const { data } = usePortalData();
   const tickerItems = data.items.slice(0, 20);
   const { links, getLinkTitle } = useImportantLinks();
-  const router = useRouter();
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, selectedLanguage);

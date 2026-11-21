@@ -403,7 +403,6 @@ function getOrganizationTypeLabel(value: string | undefined, language: string) {
 
 export function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
   const params = useParams<{ slug: string }>();
-  const router = useRouter();
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();

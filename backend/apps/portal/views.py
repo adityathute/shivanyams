@@ -563,7 +563,7 @@ class AdminPostEngagement(APIView):
         comment_ids = Comment.objects.filter(post=post).values_list("id", flat=True)
         comment_likes = CommentReaction.objects.filter(comment_id__in=comment_ids, reaction="like").count()
         comment_dislikes = CommentReaction.objects.filter(comment_id__in=comment_ids, reaction="dislike").count()
-        return Response({
+        payload = {
             "post": {"id": post.id, "title": post.title_en},
             "likes": {"total": post.likes_count + comment_likes, "post": post.likes_count, "comments_and_replies": comment_likes},
             "dislikes": {"total": post.dislikes_count + comment_dislikes, "post": post.dislikes_count, "comments_and_replies": comment_dislikes},
@@ -572,7 +572,18 @@ class AdminPostEngagement(APIView):
             "saved": post.saved_posts.count(),
             "subscribers": PostSubscription.objects.filter(post=post, is_active=True).count(),
             "reports": CommentReport.objects.filter(comment__post=post, status=CommentReport.Status.OPEN).count(),
-        })
+        }
+        if request.query_params.get("details") == "1":
+            payload["details"] = {
+                "post_reactions": list(post.reactions.order_by("-created_at").values("user_auth_id", "reaction", "created_at")[:500]),
+                "comment_reactions": list(CommentReaction.objects.filter(comment_id__in=comment_ids).order_by("-created_at").values("comment_id", "user_auth_id", "reaction", "created_at")[:1000]),
+                "comments": list(Comment.objects.filter(post=post).order_by("-created_at").values("id", "parent_id", "user_auth_id", "content", "status", "is_admin_reply", "created_at")[:500]),
+                "shares": list(post.share_events.order_by("-created_at").values("user_auth_id", "visitor_id", "channel", "created_at")[:500]),
+                "saved": list(post.saved_posts.order_by("-created_at").values("user_auth_id", "created_at")[:500]),
+                "subscribers": list(PostSubscription.objects.filter(post=post, is_active=True).order_by("-created_at").values("user_auth_id", "email", "created_at")[:500]),
+                "reports": list(CommentReport.objects.filter(comment__post=post).select_related("comment").order_by("-created_at").values("comment_id", "comment__content", "reporter_auth_id", "reason", "details", "status", "created_at")[:500]),
+            }
+        return Response(payload)
 
 
 class PostReactions(APIView):

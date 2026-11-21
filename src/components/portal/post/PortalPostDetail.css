@@ -82,7 +82,7 @@
   gap: 12px;
   margin-bottom: 18px;
   color: var(--text-secondary, #64748b);
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .portal-post-meta > span {
@@ -542,7 +542,7 @@
     line-height: 1.4;
   }
   .portal-job-info-value {
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.45;
   }
 }
@@ -791,7 +791,7 @@
 
   .portal-important-date-value {
     max-width: 45%;
-    font-size: 15px;
+    font-size: 13px;
   }
 
   .portal-important-date-value s {
@@ -939,7 +939,7 @@
   .portal-education-post-card li,
   .portal-education-details > .portal-job-detail-row li,
   .portal-education-details .portal-job-detail-row {
-    font-size: 15px;
+    font-size: 13px;
   }
 
   .portal-education-post-card ul,
@@ -979,7 +979,7 @@
   min-width: 640px;
   border-collapse: collapse;
   color: var(--text-primary, #172033);
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.55;
 }
 
@@ -1132,7 +1132,7 @@
   border-radius: 8px;
   background: #fff;
   color: var(--primary, #007bff);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 750;
   line-height: 1.35;
   text-align: center;
@@ -1255,14 +1255,14 @@
 .portal-faq-answer-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 260ms ease, opacity 220ms ease; }
 .portal-faq-item.is-open .portal-faq-answer-panel { grid-template-rows: 1fr; opacity: 1; }
 .portal-faq-answer-inner { min-height: 0; overflow: hidden; }
-.portal-faq-answer-inner p { margin: 0; padding: 0 17px 16px; color: var(--text-secondary, #596579); font-size: 15px; line-height: 1.75; white-space: pre-line; overflow-wrap: anywhere; }
+.portal-faq-answer-inner p { margin: 0; padding: 0 17px 16px; color: var(--text-secondary, #596579); font-size: 13px; line-height: 1.75; white-space: pre-line; overflow-wrap: anywhere; }
 .portal-faq-question:focus-visible { outline: 2px solid #60a5fa; outline-offset: -3px; }
 :root[data-theme="dark"] .portal-faq-item { border-color: var(--border-color, #303746); background: var(--surface, #171c28); }
 :root[data-theme="dark"] .portal-faq-item.is-open { border-color: #466b9f; }
 :root[data-theme="dark"] .portal-faq-question { color: var(--text-primary, #f8fafc); }
 :root[data-theme="dark"] .portal-faq-answer-inner p { color: var(--text-secondary, #cbd5e1); }
 :root[data-theme="dark"] .portal-faq-chevron { border-color: #93baff; }
-@media (max-width: 600px) { .portal-faq-section { margin: 20px 0 14px; } .portal-faq-section .portal-important-dates-heading h2 { font-size: 16px; } .portal-faq-question { min-height: 49px; padding: 12px 13px; font-size: 15px; } .portal-faq-answer-inner p { padding: 0 13px 13px; font-size: 12px; } }
+@media (max-width: 600px) { .portal-faq-section { margin: 20px 0 14px; } .portal-faq-section .portal-important-dates-heading h2 { font-size: 16px; }  .portal-faq-question { min-height: 49px; padding: 12px 13px; font-size: 13px; } .portal-faq-answer-inner p { padding: 0 13px 13px; font-size: 12px; } }
 
 
 /* Category recommendations shown beside missing post pages. */

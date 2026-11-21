@@ -548,6 +548,16 @@ class AdminComments(APIView):
         return Response(CommentSerializer(comment, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
     def patch(self, request):
+        report_id = request.data.get("report_id")
+        if report_id:
+            report = get_object_or_404(CommentReport, pk=report_id)
+            report_status = str(request.data.get("report_status", "")).strip()
+            valid_report_statuses = {choice[0] for choice in CommentReport.Status.choices}
+            if report_status not in valid_report_statuses:
+                raise ValidationError({"report_status": "Invalid report status."})
+            report.status = report_status
+            report.save(update_fields=["status", "updated_at"])
+            return Response({"report_id": report.id, "status": report.status})
         comment = get_object_or_404(Comment, pk=request.data.get("id"))
         new_status = str(request.data.get("status", "")).strip()
         valid = {choice[0] for choice in Comment.Status.choices}

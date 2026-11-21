@@ -213,8 +213,9 @@
 .admin-comment-meta { gap: 8px 14px; font-size: .72rem; }
 .admin-comment-meta > span { display: inline-flex; align-items: center; gap: 4px; }
 .admin-comment-reactions { gap: 5px !important; }
-.admin-comment-reactions svg:nth-of-type(1) { color: #2563eb; }
-.admin-comment-reactions svg:nth-of-type(2) { color: #ef4444; }
+.admin-comment-reactions svg { color: var(--muted-foreground, #9298a2); transition: color .16s ease; }
+.admin-comment-reactions:hover svg:nth-of-type(1) { color: #2563eb; }
+.admin-comment-reactions:hover svg:nth-of-type(2) { color: #ef4444; }
 .admin-comment-reports {
   gap: 9px;
   margin-top: 12px;

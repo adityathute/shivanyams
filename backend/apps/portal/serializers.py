@@ -593,6 +593,8 @@ class PostSerializer(serializers.ModelSerializer):
             "dislikes_count",
             "comments_count",
             "saves_count",
+            "shares_count",
+            "subscribers_count",
             "is_featured",
             "is_active",
             "important_links",

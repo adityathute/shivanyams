@@ -425,6 +425,14 @@
   width: 25px;
   border-top: 1.5px solid var(--border-color, #cbd5e1);
 }
+.portal-comment-inline-reply::after {
+  top: 9px;
+}
+
+.portal-comment-item.has-replies > .portal-comment-inline-reply::after {
+  top: 88px;
+}
+
 .portal-comment-inline-reply textarea,
 .portal-comment-report-panel textarea {
   width: 100%;

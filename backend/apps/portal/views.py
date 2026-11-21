@@ -17,6 +17,8 @@ from .models import (
     CommentReaction,
     CommentReport,
     PostSubscription,
+    NewsletterSubscription,
+    PostReport,
     PostShare,
     ImportantLink,
     JobDetails,

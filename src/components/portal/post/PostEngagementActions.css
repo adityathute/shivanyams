@@ -1,85 +1,95 @@
 .portal-post-engagement-actions {
-  display: grid;
-  gap: 12px;
-  margin: 18px 0 24px;
-  padding: 14px;
-  border: 1px solid var(--border, #30343b);
-  border-radius: 12px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .portal-post-reaction-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 5px;
 }
 
 .portal-post-reaction-actions button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 11px;
-  border: 1px solid var(--border, #30343b);
-  border-radius: 8px;
+  gap: 5px;
+  min-height: 29px;
+  padding: 4px 7px;
+  border: 1px solid var(--border-color, #e3e8ef);
+  border-radius: 6px;
   background: transparent;
-  color: inherit;
+  color: var(--text-secondary, #64748b);
   font: inherit;
-  font-size: .82rem;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
 }
 
 .portal-post-reaction-actions button strong {
-  font-size: .78rem;
+  color: var(--text-primary, #25364b);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .portal-post-reaction-actions button:hover,
 .portal-post-reaction-actions button.is-active {
-  border-color: var(--primary, #8b5cf6);
-  color: var(--primary, #a78bfa);
+  border-color: var(--primary, #2563eb);
+  color: var(--primary, #2563eb);
 }
 
-.portal-post-subscribe-action {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border, #30343b);
-}
-
-.portal-post-subscribe-action > div {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-}
-
-.portal-post-subscribe-action strong {
-  font-size: .86rem;
-}
-
-.portal-post-subscribe-action span {
-  color: var(--muted-foreground, #9298a2);
-  font-size: .76rem;
-  overflow-wrap: anywhere;
+.portal-post-reaction-actions button.is-active strong {
+  color: inherit;
 }
 
 .portal-post-engagement-actions > p {
-  margin: 0;
-  color: var(--muted-foreground, #9298a2);
-  font-size: .78rem;
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  top: 100%;
+  margin: 4px 0 0;
+  padding: 6px 9px;
+  border: 1px solid var(--border-color, #e3e8ef);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text-secondary, #64748b);
+  font-size: 10px;
+  box-shadow: 0 4px 14px #00000012;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 760px) {
   .portal-post-engagement-actions {
-    padding: 11px;
+    justify-content: flex-start;
+  }
+
+  .portal-post-reaction-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .portal-post-reaction-actions {
+    gap: 4px;
   }
 
   .portal-post-reaction-actions button {
-    padding: 7px 9px;
-    font-size: .76rem;
+    gap: 4px;
+    min-height: 27px;
+    padding: 4px 6px;
+    font-size: 10px;
   }
+}
 
-  .portal-post-subscribe-action {
-    align-items: flex-start;
-  }
+:root[data-theme="dark"] .portal-post-reaction-actions button {
+  border-color: var(--border-color, #303746);
+  color: var(--text-secondary, #aeb8c8);
+}
+
+:root[data-theme="dark"] .portal-post-reaction-actions button strong {
+  color: var(--text-primary, #f8fafc);
 }

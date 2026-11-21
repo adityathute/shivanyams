@@ -117,3 +117,8 @@ async function fetchWithRefresh(request: Request): Promise<Response> {
   // Retry exactly once. A second 401 is returned to the caller.
   return fetch(request.clone());
 }
+
+/** Proactively refresh the shared cookie session when a user returns to the tab. */
+export function refreshAuthSession(): Promise<boolean> {
+  return refreshSessionOnce();
+}

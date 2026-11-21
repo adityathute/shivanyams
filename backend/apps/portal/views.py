@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.core import signing
 from django.core.mail import send_mass_mail
 import hashlib
 from django.shortcuts import get_object_or_404
@@ -355,13 +356,17 @@ class AdminPostReview(APIView):
 
 class NewsletterSubscribe(APIView):
     permission_classes = [permissions.AllowAny]
+    UNSUBSCRIBE_SALT = "portal.newsletter.unsubscribe"
+
+    def get_account_email(self, request):
+        auth_data = getattr(request.user, "auth_data", {})
+        return str(auth_data.get("email", "")).strip().lower() if isinstance(auth_data, dict) else ""
 
     def get(self, request):
         if not getattr(request.user, "is_authenticated", False):
             return Response({"subscribed": False})
 
-        auth_data = getattr(request.user, "auth_data", {})
-        email = str(auth_data.get("email", "")).strip().lower() if isinstance(auth_data, dict) else ""
+        email = self.get_account_email(request)
         if not email:
             return Response({"subscribed": False})
 
@@ -374,8 +379,7 @@ class NewsletterSubscribe(APIView):
     def post(self, request):
         is_authenticated = bool(getattr(request.user, "is_authenticated", False))
         if is_authenticated:
-            auth_data = getattr(request.user, "auth_data", {})
-            email = str(auth_data.get("email", "")).strip().lower() if isinstance(auth_data, dict) else ""
+            email = self.get_account_email(request)
             if not email:
                 raise ValidationError({"email": "Your account does not have an email address."})
             user_auth_id = str(request.user.id)
@@ -397,14 +401,44 @@ class NewsletterSubscribe(APIView):
                 "is_active": True,
             },
         )
+        response_data = {
+            "subscribed": subscription.is_active,
+            "already_subscribed": not created,
+            "email": subscription.email,
+        }
+        if not is_authenticated:
+            response_data["unsubscribe_token"] = signing.dumps(
+                subscription.email,
+                salt=self.UNSUBSCRIBE_SALT,
+            )
         return Response(
-            {
-                "subscribed": subscription.is_active,
-                "already_subscribed": not created,
-                "email": subscription.email,
-            },
+            response_data,
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
+
+    def delete(self, request):
+        is_authenticated = bool(getattr(request.user, "is_authenticated", False))
+        if is_authenticated:
+            email = self.get_account_email(request)
+            if not email:
+                raise ValidationError({"email": "Your account does not have an email address."})
+        else:
+            email = str(request.data.get("email", "")).strip().lower()
+            token = str(request.data.get("unsubscribe_token", "")).strip()
+            if not email or not token:
+                raise ValidationError({"detail": "A valid unsubscribe confirmation is required."})
+            try:
+                signed_email = signing.loads(token, salt=self.UNSUBSCRIBE_SALT)
+            except signing.BadSignature:
+                raise ValidationError({"detail": "This unsubscribe link is invalid. Please subscribe again to get a new one."})
+            if signed_email != email:
+                raise ValidationError({"detail": "This unsubscribe confirmation does not match the email address."})
+
+        subscription = NewsletterSubscription.objects.filter(email=email, is_active=True).first()
+        if subscription:
+            subscription.is_active = False
+            subscription.save(update_fields=["is_active", "updated_at"])
+        return Response({"subscribed": False, "unsubscribed": True})
 
 
 class PostReports(APIView):

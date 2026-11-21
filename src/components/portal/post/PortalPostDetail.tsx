@@ -1380,7 +1380,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         <h3>{t("subscribeTitle")}</h3>
                         <p>{t("subscribeDescription")}</p>
                       </div>
-                      <Button variant="primary" size="sm" onClick={() => router.push("/contact")}>
+                      <Button variant="primary" size="sm" onClick={() => document.getElementById("post-subscribe")?.scrollIntoView({ behavior: "smooth", block: "center" })}>
                         {t("contactButton")}
                       </Button>
                     </section>

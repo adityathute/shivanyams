@@ -526,8 +526,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[];
             }[],
             jobDetails: undefined,
-            videoDetails: null,
-            videoAttachments: [],
+            videoDetails: (video as unknown as { video_details?: Record<string, unknown> }).video_details || null,
+            videoAttachments: (video as unknown as { media_attachments?: Array<Record<string, unknown>> }).media_attachments || [],
             relatedVideos: data.videos.filter((entry) => String(entry.id) !== String(video.id)).slice(0, 4),
           }
         : null;

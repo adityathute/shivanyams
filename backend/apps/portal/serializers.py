@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (
@@ -359,19 +360,32 @@ class JobPostSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({"important_dates": f"{label} has an unsupported date format."})
             if not any(str(item.get(key, "")).strip() for key in ("label_en", "label_mr", "label_hi")):
                 raise serializers.ValidationError({"important_dates": f"{label} needs a label in at least one language."})
-            identity = (date_type, date_format, str(item.get("date") or item.get("start_date") or item.get("month") or "").strip())
+            identity = (
+                date_type,
+                date_format,
+                str(item.get("date") or item.get("start_date") or item.get("old_date") or item.get("month") or "").strip(),
+                str(item.get("end_date") or item.get("new_date") or item.get("year") or "").strip(),
+            )
             if identity in seen_dates:
                 raise serializers.ValidationError({"important_dates": f"{label} duplicates another date entry."})
             seen_dates.add(identity)
-            if date_format == "single" and not item.get("date"):
-                raise serializers.ValidationError({"important_dates": f"{label} requires a date."})
-            if date_format == "range":
-                if not item.get("start_date") or not item.get("end_date"):
-                    raise serializers.ValidationError({"important_dates": f"{label} requires both start and end dates."})
-                if str(item["end_date"]) < str(item["start_date"]):
-                    raise serializers.ValidationError({"important_dates": f"{label} end date cannot precede its start date."})
-            if date_format in ("revised", "revised_with_time") and (not item.get("old_date") or not item.get("new_date")):
-                raise serializers.ValidationError({"important_dates": f"{label} requires original and revised dates."})
+            date_fields = {
+                "single": ("date",),
+                "range": ("start_date", "end_date"),
+                "revised": ("old_date", "new_date"),
+                "revised_with_time": ("old_date", "new_date"),
+            }.get(date_format, ())
+            for date_field in date_fields:
+                raw_date = item.get(date_field)
+                parsed_date = parse_date(str(raw_date)) if raw_date else None
+                if parsed_date is None:
+                    raise serializers.ValidationError({"important_dates": f"{label} requires a valid {date_field.replace('_', ' ')} in YYYY-MM-DD format."})
+            if date_format == "range" and parse_date(str(item["end_date"])) < parse_date(str(item["start_date"])):
+                raise serializers.ValidationError({"important_dates": f"{label} end date cannot precede its start date."})
+            if date_format in ("revised", "revised_with_time") and parse_date(str(item["new_date"])) < parse_date(str(item["old_date"])):
+                raise serializers.ValidationError({"important_dates": f"{label} revised date cannot precede the original date."})
+            if date_format == "revised_with_time" and (not item.get("old_time") or not item.get("new_time")):
+                raise serializers.ValidationError({"important_dates": f"{label} requires both original and revised times."})
             if date_format == "month_year":
                 month = item.get("month")
                 year = item.get("year")

@@ -258,6 +258,22 @@ class JobDetails(TimestampedModel):
     designation = models.CharField(max_length=240, blank=True)
     post_details = models.TextField(blank=True)
 
+    # Compensation and employment terms (all optional because notifications vary).
+    salary_currency = models.CharField(max_length=8, blank=True, default="INR")
+    salary_period = models.CharField(max_length=20, blank=True, default="monthly")
+    salary_min = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    salary_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    pay_scale = models.CharField(max_length=240, blank=True)
+    grade_pay = models.CharField(max_length=120, blank=True)
+    allowances = models.TextField(blank=True)
+    benefits = models.TextField(blank=True)
+    employment_conditions = models.TextField(blank=True)
+    probation_period = models.CharField(max_length=160, blank=True)
+    contract_duration = models.CharField(max_length=160, blank=True)
+    working_hours = models.CharField(max_length=160, blank=True)
+    service_bond = models.TextField(blank=True)
+    retirement_benefits = models.TextField(blank=True)
+
     # Choose whether these details are shared across all posts or entered per post.
     education_mode = models.CharField(
         max_length=12,

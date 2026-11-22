@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 
-type Asset = { id: number; original_name: string; kind: "image" | "document" | "video"; file_size: number; alt_text: string; caption: string; download_url: string; responsive_image_url?: string; image_width?: number; image_height?: number; processing_status?: string; variants?: Record<string, { url: string; width: number; height: number; format: string }>; attachment_id?: number; role?: string };
+type Asset = { id: number; original_name: string; kind: "image" | "document" | "video"; file_size: number; alt_text: string; caption: string; download_url: string; responsive_image_url?: string; image_width?: number; image_height?: number; processing_status?: string; video_duration_seconds?: number | null; video_width?: number | null; video_height?: number | null; video_poster_url?: string | null; video_variants?: Record<string, { path: string; file_size: number; width: number; height: number }>; variants?: Record<string, { url: string; width: number; height: number; format: string }>; attachment_id?: number; role?: string };
 
 export default function EditorialMediaPanel({ postId }: { postId?: number }) {
   const [open, setOpen] = useState(false);
@@ -77,10 +77,10 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
       </label>
       <input aria-label="Search media" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search files..." />
       <div className="editorial-media-list">{assets.map((asset) => <article key={asset.id}>
-        {asset.kind === "video" ? <video className="editorial-media-thumbnail" src={asset.download_url} preload="metadata" controls /> : asset.kind === "image" && asset.variants?.thumbnail?.url
+        {asset.kind === "video" ? <video className="editorial-media-thumbnail" src={asset.video_variants?.mp4_720p ? asset.download_url + "?optimized=1" : asset.download_url} poster={asset.video_poster_url || undefined} preload="metadata" controls /> : asset.kind === "image" && asset.variants?.thumbnail?.url
           ? <img className="editorial-media-thumbnail" src={asset.variants.thumbnail.url} alt={asset.alt_text || asset.original_name} loading="lazy" />
           : <span className="editorial-media-file-icon">{asset.kind === "document" ? "FILE" : "IMAGE"}</span>}
-        <div className="editorial-media-file-info"><strong>{asset.original_name}</strong><small>{asset.kind} · {(asset.file_size / 1024).toFixed(0)} KB{asset.image_width && asset.image_height ? " · " + asset.image_width + "×" + asset.image_height : ""}</small><small>{asset.processing_status || (asset.kind === "video" ? "video ready" : "not processed")}</small></div>
+        <div className="editorial-media-file-info"><strong>{asset.original_name}</strong><small>{asset.kind} · {(asset.file_size / 1024).toFixed(0)} KB{asset.image_width && asset.image_height ? " · " + asset.image_width + "×" + asset.image_height : ""}</small><small>{asset.processing_status || "not processed"}{asset.kind === "video" && asset.video_duration_seconds != null ? " · " + Math.floor(asset.video_duration_seconds / 60) + ":" + String(asset.video_duration_seconds % 60).padStart(2, "0") : ""}{asset.kind === "video" && asset.video_width && asset.video_height ? " · " + asset.video_width + "×" + asset.video_height : ""}</small></div>
         <div className="editorial-media-actions">
           <a href={asset.download_url} target="_blank" rel="noreferrer">Open</a>
           {postId && (attached.includes(asset.id)

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 
-type Asset = { id: number; original_name: string; kind: "image" | "document"; file_size: number; alt_text: string; caption: string; download_url: string; attachment_id?: number; role?: string };
+type Asset = { id: number; original_name: string; kind: "image" | "document"; file_size: number; alt_text: string; caption: string; download_url: string; responsive_image_url?: string; image_width?: number; image_height?: number; processing_status?: string; variants?: Record<string, { url: string; width: number; height: number; format: string }>; attachment_id?: number; role?: string };
 
 export default function EditorialMediaPanel({ postId }: { postId?: number }) {
   const [open, setOpen] = useState(false);
@@ -77,7 +77,10 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
       </label>
       <input aria-label="Search media" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search files..." />
       <div className="editorial-media-list">{assets.map((asset) => <article key={asset.id}>
-        <div><strong>{asset.original_name}</strong><small>{asset.kind} · {(asset.file_size / 1024).toFixed(0)} KB</small></div>
+        {asset.kind === "image" && asset.variants?.thumbnail?.url
+          ? <img className="editorial-media-thumbnail" src={asset.variants.thumbnail.url} alt={asset.alt_text || asset.original_name} loading="lazy" />
+          : <span className="editorial-media-file-icon">{asset.kind === "document" ? "PDF" : "FILE"}</span>}
+        <div className="editorial-media-file-info"><strong>{asset.original_name}</strong><small>{asset.kind} · {(asset.file_size / 1024).toFixed(0)} KB{asset.image_width && asset.image_height ? " · " + asset.image_width + "×" + asset.image_height : ""}</small><small>{asset.processing_status || "pending"}</small></div>
         <div className="editorial-media-actions">
           <a href={asset.download_url} target="_blank" rel="noreferrer">Open</a>
           {postId && (attached.includes(asset.id)

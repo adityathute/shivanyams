@@ -407,6 +407,30 @@ class PublicJobDiscovery(generics.ListAPIView):
         params = self.request.query_params
         queryset = apply_content_discovery_filters(queryset, params, public=True)
 
+        # Organization and geography filters use the canonical shared Post
+        # fields; department/designation use structured recruitment records.
+        for parameter, field in (
+            ("organization_type", "organization_type"),
+            ("location", "location"),
+            ("state", "state"),
+            ("country", "country"),
+        ):
+            value = str(params.get(parameter, "")).strip()
+            if value:
+                queryset = queryset.filter(**{f"{field}__iexact": value})
+
+        for parameter, lookups in (
+            ("department", ("job_details__department__icontains", "job_details__posts__department_en__icontains", "job_details__posts__department_mr__icontains", "job_details__posts__department_hi__icontains")),
+            ("designation", ("job_details__designation__icontains", "job_details__posts__post_name_en__icontains", "job_details__posts__post_name_mr__icontains", "job_details__posts__post_name_hi__icontains")),
+        ):
+            value = str(params.get(parameter, "")).strip()
+            if value:
+                condition = Q()
+                for lookup in lookups:
+                    condition |= Q(**{lookup: value})
+                queryset = queryset.filter(condition)
+
+
         recruitment_type = str(params.get("recruitment_type", "")).strip()
         if recruitment_type:
             allowed = {choice[0] for choice in JobDetails.RecruitmentType.choices}
@@ -481,6 +505,50 @@ class PublicJobDiscovery(generics.ListAPIView):
                 )
 
         return queryset.distinct()
+
+
+class PublicJobDiscoveryFacets(APIView):
+    """Distinct organization, department and geography choices for job filters."""
+
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        jobs = Post.objects.filter(
+            category__slug="jobs",
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        ).select_related("job_details").prefetch_related("job_details__posts")
+
+        def clean(values):
+            return sorted({str(value).strip() for value in values if value and str(value).strip()}, key=str.casefold)
+
+        organization_labels = dict(PostOrganizationType.choices)
+        organization_types = [
+            {"value": value, "label": label}
+            for value, label in PostOrganizationType.choices
+            if jobs.filter(organization_type=value).exists()
+        ]
+        departments = []
+        designations = []
+        for post in jobs:
+            details = getattr(post, "job_details", None)
+            if not details:
+                continue
+            departments.append(details.department)
+            designations.append(details.designation)
+            for item in details.posts.all():
+                departments.extend((item.department_en, item.department_mr, item.department_hi))
+                designations.extend((item.post_name_en, item.post_name_mr, item.post_name_hi))
+
+        return Response({
+            "organization_types": organization_types,
+            "departments": clean(departments),
+            "designations": clean(designations),
+            "locations": clean(jobs.values_list("location", flat=True)),
+            "states": clean(jobs.values_list("state", flat=True)),
+            "countries": clean(jobs.values_list("country", flat=True)),
+        })
 
 
 class AdminSlugAvailability(APIView):

@@ -378,6 +378,10 @@ const detailLabels = {
   experienceRequirements: { en: "Experience requirements", mr: "अनुभवाची अट", hi: "अनुभव संबंधी आवश्यकता" },
   years: { en: "years", mr: "वर्षे", hi: "वर्ष" },
   fee: { en: "Application Fee", mr: "अर्ज शुल्क", hi: "आवेदन शुल्क" },
+  feeExempt: { en: "Exempt", mr: "सूट", hi: "छूट" },
+  paymentOnline: { en: "Online payment", mr: "ऑनलाइन पेमेंट", hi: "ऑनलाइन भुगतान" },
+  paymentOffline: { en: "Offline payment", mr: "ऑफलाइन पेमेंट", hi: "ऑफलाइन भुगतान" },
+  paymentBoth: { en: "Online / Offline", mr: "ऑनलाइन / ऑफलाइन", hi: "ऑनलाइन / ऑफलाइन" },
   applicationMode: {
     en: "Application Mode",
     mr: "अर्ज करण्याची पद्धत",
@@ -1209,10 +1213,31 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   fee.fee_note_mr,
                                   fee.fee_note_hi,
                                 );
-                                const amount = fee.fee_amount != null && fee.fee_amount !== ""
-                                  ? `₹${Number(fee.fee_amount).toLocaleString("en-IN")}`
-                                  : "—";
-                                return [categoryName || fee.category_name_en, amount, feeNote]
+                                const exemptionNote = getLocalizedText(
+                                  language,
+                                  fee.exemption_note_en,
+                                  fee.exemption_note_mr,
+                                  fee.exemption_note_hi,
+                                );
+                                const paymentInstructions = getLocalizedText(
+                                  language,
+                                  fee.payment_instructions_en,
+                                  fee.payment_instructions_mr,
+                                  fee.payment_instructions_hi,
+                                );
+                                const amount = fee.is_exempt
+                                  ? getDetailLabel("feeExempt", language)
+                                  : fee.fee_amount != null && fee.fee_amount !== ""
+                                    ? `₹${Number(fee.fee_amount).toLocaleString("en-IN")}`
+                                    : "—";
+                                const paymentMode = fee.payment_mode === "online"
+                                  ? getDetailLabel("paymentOnline", language)
+                                  : fee.payment_mode === "offline"
+                                    ? getDetailLabel("paymentOffline", language)
+                                    : fee.payment_mode === "both"
+                                      ? getDetailLabel("paymentBoth", language)
+                                      : "";
+                                return [categoryName || fee.category_name_en, amount, exemptionNote, feeNote, paymentMode, paymentInstructions]
                                   .filter(Boolean)
                                   .join(": ");
                               });

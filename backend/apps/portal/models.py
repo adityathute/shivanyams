@@ -901,6 +901,46 @@ class VideoCaptionTrack(TimestampedModel):
     def __str__(self):
         return f"{self.video.post.title_en} — {self.label}"
 
+class VideoCollection(TimestampedModel):
+    class CollectionType(models.TextChoices):
+        PLAYLIST = "playlist", "YouTube Playlist"
+        SERIES = "series", "Video Series"
+        CHANNEL = "channel", "Channel"
+
+    collection_type = models.CharField(max_length=16, choices=CollectionType.choices, default=CollectionType.PLAYLIST)
+    title_en = models.CharField(max_length=180)
+    title_mr = models.CharField(max_length=180, blank=True)
+    title_hi = models.CharField(max_length=180, blank=True)
+    slug = models.SlugField(max_length=200, unique=True)
+    description_en = models.TextField(blank=True)
+    description_mr = models.TextField(blank=True)
+    description_hi = models.TextField(blank=True)
+    external_url = models.URLField(max_length=1000, blank=True)
+    thumbnail_url = models.URLField(max_length=1000, blank=True)
+    is_published = models.BooleanField(default=False, db_index=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "title_en", "id")
+        indexes = [models.Index(fields=("collection_type", "is_published", "sort_order"), name="video_collection_public_idx")]
+
+    def __str__(self):
+        return self.title_en
+
+
+class VideoCollectionItem(TimestampedModel):
+    collection = models.ForeignKey(VideoCollection, on_delete=models.CASCADE, related_name="items")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="video_collections")
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [models.UniqueConstraint(fields=("collection", "post"), name="unique_video_collection_post")]
+        indexes = [models.Index(fields=("collection", "sort_order"), name="video_collection_item_order_idx")]
+
+    def __str__(self):
+        return f"{self.collection.title_en}: {self.post.title_en}"
+
 class ToolDetails(TimestampedModel):
     """Configuration and metadata for tools built into ShivanyaMS."""
 

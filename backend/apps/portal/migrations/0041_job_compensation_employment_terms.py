@@ -7,13 +7,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddConstraint(
-            model_name="jobdetails",
-            constraint=models.CheckConstraint(
-                condition=models.Q(salary_min__isnull=True) | models.Q(salary_max__isnull=True) | models.Q(salary_max__gte=models.F("salary_min")),
-                name="job_salary_max_gte_min",
-            ),
-        ),
         migrations.AddField(
             model_name="jobdetails",
             name="salary_currency",
@@ -83,5 +76,12 @@ class Migration(migrations.Migration):
             model_name="jobdetails",
             name="retirement_benefits",
             field=models.TextField(blank=True),
+        ),
+        migrations.AddConstraint(
+            model_name="jobdetails",
+            constraint=models.CheckConstraint(
+                condition=models.Q(salary_min__isnull=True) | models.Q(salary_max__isnull=True) | models.Q(salary_max__gte=models.F("salary_min")),
+                name="job_salary_max_gte_min",
+            ),
         ),
     ]

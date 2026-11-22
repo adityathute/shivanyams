@@ -30,6 +30,7 @@ from .views import (
     AdminOfficialSourceDetail,
     AdminPostSources,
     AdminPostSourceDetail,
+    AdminContentMetadata,
 )
 
 router = DefaultRouter()
@@ -119,6 +120,8 @@ urlpatterns = [
     ),
     path("admin/comments/", AdminComments.as_view(), name="admin-comments"),
     path("admin/content/<int:post_id>/engagement/", AdminPostEngagement.as_view(), name="admin-post-engagement"),
+
+    path("admin/content-metadata/", AdminContentMetadata.as_view(), name="admin-content-metadata"),
 
     # Official source registry and per-post evidence
     path("admin/official-sources/", AdminOfficialSources.as_view(), name="admin-official-sources"),

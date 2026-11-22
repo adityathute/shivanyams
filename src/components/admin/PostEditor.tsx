@@ -2219,6 +2219,14 @@ export default function PostEditor({
                         <Input type="number" label="Maximum salary" min={0} step="0.01" value={post.salary_max} onChange={(event) => updateJobPost(postIndex, "salary_max", event.target.value)} fullWidth size="sm" />
                         <Input label="Pay scale" value={post.pay_scale} onChange={(event) => updateJobPost(postIndex, "pay_scale", event.target.value)} fullWidth size="sm" />
                         <Input label="Grade pay" value={post.grade_pay} onChange={(event) => updateJobPost(postIndex, "grade_pay", event.target.value)} fullWidth size="sm" />
+                        <Textarea label="Allowances" value={post.allowances} onChange={(event) => updateJobPost(postIndex, "allowances", event.target.value)} rows={2} />
+                        <Textarea label="Benefits" value={post.benefits} onChange={(event) => updateJobPost(postIndex, "benefits", event.target.value)} rows={2} />
+                        <Textarea label="Employment conditions" value={post.employment_conditions} onChange={(event) => updateJobPost(postIndex, "employment_conditions", event.target.value)} rows={2} />
+                        <Input label="Probation period" value={post.probation_period} onChange={(event) => updateJobPost(postIndex, "probation_period", event.target.value)} fullWidth size="sm" />
+                        <Input label="Contract duration" value={post.contract_duration} onChange={(event) => updateJobPost(postIndex, "contract_duration", event.target.value)} fullWidth size="sm" />
+                        <Input label="Working hours" value={post.working_hours} onChange={(event) => updateJobPost(postIndex, "working_hours", event.target.value)} fullWidth size="sm" />
+                        <Textarea label="Service bond" value={post.service_bond} onChange={(event) => updateJobPost(postIndex, "service_bond", event.target.value)} rows={2} />
+                        <Textarea label="Retirement benefits" value={post.retirement_benefits} onChange={(event) => updateJobPost(postIndex, "retirement_benefits", event.target.value)} rows={2} />
                       </div>
                     </section>
 

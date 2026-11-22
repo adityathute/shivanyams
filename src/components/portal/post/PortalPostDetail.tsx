@@ -1312,6 +1312,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 postImportantDates,
                                 applicationLinks,
                                 selectionStages,
+                                compensation: [entry.salary_min != null || entry.salary_max != null ? `${entry.salary_currency || "INR"} ${entry.salary_min ?? "—"} – ${entry.salary_max ?? "—"} / ${entry.salary_period || "monthly"}` : "", entry.pay_scale ? `Pay scale: ${entry.pay_scale}` : "", entry.grade_pay ? `Grade pay: ${entry.grade_pay}` : ""].filter(Boolean).join(" · "),
                                 fees,
                               };
                             });
@@ -1338,6 +1339,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showPostImportantDates = rows.some((row) => row.postImportantDates.length > 0);
                             const showApplicationLinks = rows.some((row) => row.applicationLinks.length > 0);
                             const showSelectionStages = rows.some((row) => row.selectionStages.length > 0);
+                            const showPostCompensation = rows.some((row) => row.compensation);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -1369,6 +1371,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showPostImportantDates ? <th>{getDetailLabel("importantDates", language)}</th> : null}
                                       {showApplicationLinks ? <th>{getDetailLabel("applicationLinks", language)}</th> : null}
                                       {showSelectionStages ? <th>{getDetailLabel("selectionProcess", language)}</th> : null}
+                                      {showPostCompensation ? <th>{language === "mr" ? "वेतन / वेतनश्रेणी" : language === "hi" ? "वेतन / वेतनमान" : "Salary / Pay scale"}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1402,6 +1405,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                           </td>
                                         ) : null}
                                         {showSelectionStages ? <td>{row.selectionStages.length ? <ol className="portal-post-selection-stages">{row.selectionStages.map((stage, stageIndex) => <li key={`${stageIndex}-${stage}`}>{stage}</li>)}</ol> : "—"}</td> : null}
+                                        {showPostCompensation ? <td>{row.compensation || "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}

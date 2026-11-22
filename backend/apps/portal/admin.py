@@ -388,6 +388,7 @@ class JobPostInline(admin.StackedInline):
                     "education_requirements",
                     "subject_requirements",
                     "experience_requirements",
+                    "required_documents",
                 )
             },
         ),

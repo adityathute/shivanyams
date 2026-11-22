@@ -763,6 +763,7 @@ class PostSerializer(serializers.ModelSerializer):
                     if link.asset.kind == "video" and self.context.get("request")
                     else (f"/api/v1/portal/content/media/{link.asset_id}/poster/" if link.asset.kind == "video" else None)
                 ),
+                "optimized_video_mime_type": "video/mp4" if link.asset.kind == "video" and link.asset.video_variants else None,
                 "optimized_video_url": (
                     self.context["request"].build_absolute_uri(f"/api/v1/portal/content/media/{link.asset_id}/?optimized=1")
                     if link.asset.kind == "video" and link.asset.video_variants and self.context.get("request")

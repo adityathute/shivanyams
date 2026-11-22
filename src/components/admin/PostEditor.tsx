@@ -104,6 +104,7 @@ type JobPostInput = {
   vacancies: number | null;
   reservation_rules: Array<Record<string, unknown>>;
   important_dates: Array<Record<string, unknown>>;
+  application_links: Array<Record<string, unknown>>;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -162,6 +163,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   vacancies: null,
   reservation_rules: [],
   important_dates: [],
+  application_links: [],
   educational_qualification_en: "",
   educational_qualification_mr: "",
   educational_qualification_hi: "",
@@ -2057,7 +2059,26 @@ export default function PostEditor({
                         <div><h4>Post-specific important dates</h4><small>Use only when an individual post has dates different from the notification-wide timeline. Keep the values exactly as stated in the official notification.</small></div>
                       </div>
                       <Textarea
-                        label="Post-specific timeline (JSON)"
+                        label="Post-specific application links (JSON)"
+                        rows={7}
+                        value={JSON.stringify(post.application_links ?? [], null, 2)}
+                        onChange={(event) => {
+                          try {
+                            const parsed = JSON.parse(event.target.value);
+                            if (Array.isArray(parsed)) updateJobPost(postIndex, "application_links", parsed);
+                          } catch {
+                            // Keep the last valid list while the user edits JSON.
+                          }
+                        }}
+                        placeholder={'[{"link_type":"apply","label_en":"Apply for this post","label_mr":"या पदासाठी अर्ज करा","label_hi":"इस पद के लिए आवेदन करें","url":"https://official.gov.in/apply/post-1","instructions_en":"Select this post before submitting"}]'}
+                        fullWidth
+                        size="sm"
+                      />
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-dates">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Post-specific important dates</h4>
                         rows={7}
                         value={JSON.stringify(post.important_dates ?? [], null, 2)}
                         onChange={(event) => {

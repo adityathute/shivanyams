@@ -106,6 +106,7 @@ type JobPostInput = {
   age_limit_note_en: string;
   age_limit_note_mr: string;
   age_limit_note_hi: string;
+  age_relaxations: Array<Record<string, unknown>>;
   sort_order: number;
   fees: JobPostFeeInput[];
   educations: JobPostEducationInput[];
@@ -150,6 +151,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   age_limit_note_en: "",
   age_limit_note_mr: "",
   age_limit_note_hi: "",
+  age_relaxations: [],
   sort_order,
   fees: [],
   educations: [],
@@ -1994,6 +1996,28 @@ export default function PostEditor({
                         ))}
                       </div>
                     </div>
+
+                    <section className="post-editor-post-detail-section post-editor-age-relaxations">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Category-wise age relaxation</h4><small>Enter only the relaxation rules stated in the official notification. Keep this list empty when no category-specific relaxation is announced.</small></div>
+                      </div>
+                      <Textarea
+                        label="Age relaxation rules (JSON)"
+                        rows={7}
+                        value={JSON.stringify(post.age_relaxations ?? [], null, 2)}
+                        onChange={(event) => {
+                          try {
+                            const parsed = JSON.parse(event.target.value);
+                            if (Array.isArray(parsed)) updateJobPost(postIndex, "age_relaxations", parsed);
+                          } catch {
+                            // Preserve the last valid value while the JSON is being edited.
+                          }
+                        }}
+                        placeholder={'[{"category_en":"SC","category_mr":"अनुसूचित जाती","category_hi":"अनुसूचित जाति","relaxation_years":5,"maximum_age":40,"note_en":"As per notification"}]'}
+                        fullWidth
+                        size="sm"
+                      />
+                    </section>
 
                     <section className="post-editor-post-detail-section post-editor-fees-section">
                       <div className="post-editor-subsection-heading">

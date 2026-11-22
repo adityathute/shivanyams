@@ -506,6 +506,8 @@ class AdminPostAssignment(APIView):
 
     def get(self, request, post_id):
         roles = self._roles(request)
+        if not roles.intersection({"admin", "reviewer", "content_reviewer", "editor", "content_editor"}):
+            raise PermissionDenied("Editorial access is required.")
         assignment = get_object_or_404(PostAssignment, post_id=post_id)
         if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}) and assignment.assigned_to_auth_id != str(request.user.id):
             raise PermissionDenied("You cannot view this assignment.")
@@ -540,6 +542,8 @@ class AdminPostAssignment(APIView):
     def patch(self, request, post_id):
         assignment = get_object_or_404(PostAssignment, post_id=post_id)
         roles = self._roles(request)
+        if not roles.intersection({"admin", "reviewer", "content_reviewer", "editor", "content_editor"}):
+            raise PermissionDenied("Editorial access is required.")
         if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}) and assignment.assigned_to_auth_id != str(request.user.id):
             raise PermissionDenied("Only the assigned editor can update this task.")
         if "status" not in request.data:

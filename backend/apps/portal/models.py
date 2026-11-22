@@ -2242,3 +2242,62 @@ class EditorialDiscussionComment(models.Model):
 
     def __str__(self):
         return f"Editorial note on {self.post_id} by {self.author_auth_id}"
+
+import uuid
+
+
+def editorial_media_upload_path(instance, filename):
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else "bin"
+    return f"editorial-media/{instance.owner_auth_id}/{uuid.uuid4().hex}.{extension}"
+
+
+class EditorialMediaAsset(models.Model):
+    class Kind(models.TextChoices):
+        IMAGE = "image", "Image"
+        DOCUMENT = "document", "Document"
+
+    owner_auth_id = models.CharField(max_length=128, db_index=True)
+    file = models.FileField(upload_to=editorial_media_upload_path)
+    original_name = models.CharField(max_length=255)
+    kind = models.CharField(max_length=12, choices=Kind.choices, db_index=True)
+    mime_type = models.CharField(max_length=120, blank=True)
+    file_size = models.PositiveBigIntegerField(default=0)
+    alt_text = models.CharField(max_length=500, blank=True)
+    caption = models.CharField(max_length=500, blank=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=("owner_auth_id", "created_at"), name="editorial_media_owner_created_idx"),
+            models.Index(fields=("kind", "is_active"), name="editorial_media_kind_active_idx"),
+        ]
+
+    def __str__(self):
+        return self.original_name
+
+
+class PostMediaAttachment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="media_attachments")
+    asset = models.ForeignKey(EditorialMediaAsset, on_delete=models.PROTECT, related_name="post_attachments")
+    role = models.CharField(max_length=24, default="attachment")
+    sort_order = models.PositiveIntegerField(default=0)
+    alt_text = models.CharField(max_length=500, blank=True)
+    caption = models.CharField(max_length=500, blank=True)
+    created_by_auth_id = models.CharField(max_length=128, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        constraints = [
+            models.UniqueConstraint(fields=("post", "asset"), name="unique_post_media_asset"),
+        ]
+        indexes = [
+            models.Index(fields=("post", "sort_order"), name="post_media_post_order_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.post_id}: {self.asset.original_name}"

@@ -117,7 +117,7 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
             : <button type="button" disabled={busy} onClick={() => void attach(asset)}>Attach</button>)}
         </div>
       </article>)}</div>
-      {postId ? <section className="editorial-caption-manager">
+      {postId && assets.some((asset) => asset.kind === "video" && attached.includes(asset.id)) ? <section className="editorial-caption-manager">
         <strong>Video captions & subtitles</strong>
         <div className="editorial-caption-fields">
           <select aria-label="Caption language" value={captionLanguage} onChange={(e) => { setCaptionLanguage(e.target.value); setCaptionLabel(e.target.selectedOptions[0]?.text || e.target.value); }}><option value="en">English</option><option value="mr">Marathi</option><option value="hi">Hindi</option></select>

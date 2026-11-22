@@ -723,7 +723,7 @@ class PostCommentReports(APIView):
         if not reason:
             raise ValidationError({"reason": "Please select a report reason."})
         report, created = CommentReport.objects.get_or_create(comment=comment, reporter_auth_id=str(request.user.id), defaults={"reason": reason, "details": details})
-        report_count = comment.reports.exclude(status=CommentReport.Status.DISMISSED).values("reporter_auth_id").distinct().count()
+        report_count = comment.reports.filter(status=CommentReport.Status.OPEN).values("reporter_auth_id").distinct().count()
         hidden = report_count >= self.AUTO_HIDE_REPORT_THRESHOLD
         if hidden:
             Comment.objects.filter(pk=comment.pk, status=Comment.Status.APPROVED).update(status=Comment.Status.HIDDEN)
@@ -844,6 +844,7 @@ class AdminComments(APIView):
                     comment=reviewed_comment,
                     status=CommentReport.Status.OPEN,
                 ).update(status=CommentReport.Status.REVIEWED)
+            report.comment.refresh_from_db(fields=["status", "reviewed_at"])
             return Response({
                 "report_id": report.id,
                 "status": report.status,

@@ -25,6 +25,8 @@ from .models import (
     ToolDetails,
     VideoDetails,
     VideoCaptionTrack,
+    VideoCollection,
+    VideoCollectionItem,
     ImportantLink,
     OfficialSource,
     PostSource,
@@ -512,6 +514,89 @@ class ArticleGuideDetailsSerializer(serializers.ModelSerializer):
         exclude = ("id", "post", "created_at", "updated_at")
 
 
+
+
+class VideoCollectionSerializer(serializers.ModelSerializer):
+    items = serializers.SerializerMethodField()
+
+    class Meta:
+        model = VideoCollection
+        fields = ("id", "collection_type", "title_en", "title_mr", "title_hi", "slug", "description_en", "description_mr", "description_hi", "external_url", "thumbnail_url", "is_published", "sort_order", "items")
+
+    def get_items(self, obj):
+        rows = obj.items.select_related("post", "post__category").all()
+        output = []
+        for row in rows:
+            post = row.post
+            if post.status != Post.Status.PUBLISHED or not post.is_active or not post.published_at:
+                continue
+            details = getattr(post, "video_details", None)
+            output.append({
+                "id": post.pk, "slug": post.slug,
+                "title_en": post.title_en, "title_mr": post.title_mr, "title_hi": post.title_hi,
+                "summary_en": post.summary_en, "summary_mr": post.summary_mr, "summary_hi": post.summary_hi,
+                "thumbnail_url": (details.thumbnail_url if details and details.thumbnail_url else post.featured_image_url),
+                "video_url": details.video_url if details else "",
+                "provider": details.provider if details else "youtube",
+                "sort_order": row.sort_order,
+            })
+        return output
+
+
+class VideoCollectionWriteSerializer(serializers.ModelSerializer):
+    video_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False, write_only=True)
+
+    class Meta:
+        model = VideoCollection
+        fields = ("id", "collection_type", "title_en", "title_mr", "title_hi", "slug", "description_en", "description_mr", "description_hi", "external_url", "thumbnail_url", "is_published", "sort_order", "video_ids")
+        read_only_fields = ("id",)
+
+    def validate(self, attrs):
+        from urllib.parse import urlparse
+        url = attrs.get("external_url", getattr(self.instance, "external_url", ""))
+        if url:
+            parsed = urlparse(url)
+            if parsed.scheme != "https" or not parsed.hostname:
+                raise serializers.ValidationError({"external_url": "Use a valid HTTPS YouTube playlist or channel URL."})
+            host = parsed.hostname.lower().removeprefix("www.")
+            if host not in {"youtube.com", "m.youtube.com", "youtu.be"}:
+                raise serializers.ValidationError({"external_url": "Only YouTube playlist and channel links are supported."})
+        ids = attrs.get("video_ids")
+        if ids is not None and len(ids) != len(set(ids)):
+            raise serializers.ValidationError({"video_ids": "A video can appear only once in a collection."})
+        return attrs
+
+    def create(self, validated_data):
+        ids = validated_data.pop("video_ids", [])
+        collection = super().create(validated_data)
+        self._save_items(collection, ids)
+        return collection
+
+    def update(self, instance, validated_data):
+        ids = validated_data.pop("video_ids", None)
+        collection = super().update(instance, validated_data)
+        if ids is not None:
+            self._save_items(collection, ids)
+        return collection
+
+    @staticmethod
+    def _save_items(collection, ids):
+        if not ids:
+            collection.items.all().delete()
+            return
+        posts = list(Post.objects.filter(pk__in=ids, video_details__isnull=False, category__slug="videos"))
+        if len(posts) != len(ids):
+            raise serializers.ValidationError({"video_ids": "Every selected item must be an existing Video post with video details."})
+        collection.items.exclude(post_id__in=ids).delete()
+        existing = {item.post_id: item for item in collection.items.all()}
+        for index, post_id in enumerate(ids):
+            item = existing.get(post_id)
+            if item:
+                if item.sort_order != index:
+                    item.sort_order = index
+                    item.save(update_fields=("sort_order", "updated_at"))
+            else:
+                VideoCollectionItem.objects.create(collection=collection, post_id=post_id, sort_order=index)
 class VideoDetailsSerializer(serializers.ModelSerializer):
     caption_tracks = serializers.SerializerMethodField()
 

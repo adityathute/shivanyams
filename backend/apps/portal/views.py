@@ -555,6 +555,19 @@ class AdminPublishScheduledPosts(APIView):
                 post.save(update_fields=["status", "published_at", "published_by_auth_id", "scheduled_at", "updated_at"])
                 PostStatusHistory.objects.create(post=post, previous_status=Post.Status.APPROVED, new_status=Post.Status.PUBLISHED, changed_by_auth_id=str(request.user.id), note="Published by scheduled publication processor.")
                 published.append(post.id)
+            if published:
+                newsletter_emails = list(
+                    NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True)
+                )
+                if newsletter_emails:
+                    messages = tuple(
+                        (f"New update: {post.title_en}",
+                         f'A new post, "{post.title_en}", is now available on ShivanyaMS. Visit ShivanyaMS to read the latest information.',
+                         None, [email])
+                        for post in due_posts if post.id in published
+                        for email in newsletter_emails
+                    )
+                    transaction.on_commit(lambda: send_mass_mail(messages, fail_silently=True))
         return Response({"published_count": len(published), "post_ids": published})
 
 class NewsletterSubscribe(APIView):

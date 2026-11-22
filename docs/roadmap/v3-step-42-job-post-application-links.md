@@ -7,7 +7,7 @@ Each individual recruitment post can publish its own official application, regis
 - Added `JobPost.application_links` as a JSON field with an empty-list default, preserving existing records.
 - Exposed the field through the nested JobPost API serializer.
 - Validated a maximum of 20 links per post, multilingual labels, supported link types, valid HTTP(S) destinations, duplicate destinations, and bounded text lengths.
-- Added the field to Django Admin and the PostEditor JSON editor.
+- Added the field to Django Admin and a structured PostEditor interface with link type, multilingual labels, destination URL and localized instructions.
 - Added localized public labels and per-post links to the post-wise recruitment table. Links open in a new tab with `noopener noreferrer`.
 - Added migration `0048_job_post_application_links.py`, depending on migration 0047.
 

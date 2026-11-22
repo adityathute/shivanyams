@@ -103,6 +103,7 @@ type JobPostInput = {
   department_hi: string;
   vacancies: number | null;
   reservation_rules: Array<Record<string, unknown>>;
+  important_dates: Array<Record<string, unknown>>;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -160,6 +161,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   department_hi: "",
   vacancies: null,
   reservation_rules: [],
+  important_dates: [],
   educational_qualification_en: "",
   educational_qualification_mr: "",
   educational_qualification_hi: "",
@@ -2048,6 +2050,28 @@ export default function PostEditor({
                           size="sm"
                         />
                       ))}
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-dates">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Post-specific important dates</h4><small>Use only when an individual post has dates different from the notification-wide timeline. Keep the values exactly as stated in the official notification.</small></div>
+                      </div>
+                      <Textarea
+                        label="Post-specific timeline (JSON)"
+                        rows={7}
+                        value={JSON.stringify(post.important_dates ?? [], null, 2)}
+                        onChange={(event) => {
+                          try {
+                            const parsed = JSON.parse(event.target.value);
+                            if (Array.isArray(parsed)) updateJobPost(postIndex, "important_dates", parsed);
+                          } catch {
+                            // Keep the last valid list while the user edits JSON.
+                          }
+                        }}
+                        placeholder={'[{"date_type":"application_end","date_format":"single","label_en":"Last date to apply","label_mr":"अर्ज करण्याची शेवटची तारीख","label_hi":"आवेदन की अंतिम तिथि","date":"2026-12-15","description_en":"For this post only"}]'}
+                        fullWidth
+                        size="sm"
+                      />
                     </section>
 
                     <section className="post-editor-post-detail-section post-editor-age-relaxations">

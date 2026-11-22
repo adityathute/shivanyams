@@ -538,6 +538,7 @@ class PostSerializer(serializers.ModelSerializer):
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
+    official_sources = serializers.SerializerMethodField()
     users_count = serializers.IntegerField(read_only=True, default=0)
 
     job_details = serializers.SerializerMethodField()
@@ -604,6 +605,7 @@ class PostSerializer(serializers.ModelSerializer):
             "important_dates",
             "resources",
             "related_posts",
+            "official_sources",
             "job_details",
             "scheme_details",
             "examination_details",
@@ -661,6 +663,13 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_tool_details(self, obj):
         return self._get_detail(obj, "tool_details", ToolDetailsSerializer)
+
+    def get_official_sources(self, obj):
+        references = obj.official_sources.filter(
+            source__is_active=True,
+            source__verification_status=OfficialSource.VerificationStatus.VERIFIED,
+        ).select_related("source")
+        return PostSourceSerializer(references, many=True, context=self.context).data
 
     def get_related_posts(self, obj):
         relations = obj.outgoing_relations.select_related(

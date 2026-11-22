@@ -47,7 +47,7 @@ from .models import (
     Tag,
     TaxonomyTerm,
 )
-from .permissions import IsPortalAdmin, IsPortalIdentity
+from .permissions import (IsPortalAdmin, IsPortalIdentity, IsPortalContentManager, IsPortalReviewer, IsPortalRevisionManager, get_portal_roles)
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -401,7 +401,7 @@ class AdminSlugAvailability(APIView):
 
 
 class AdminContent(viewsets.ModelViewSet):
-    permission_classes = [IsPortalAdmin]
+    permission_classes = [IsPortalContentManager]
     lookup_field = "slug"
     lookup_url_kwarg = "slug"
 
@@ -450,6 +450,9 @@ class AdminContent(viewsets.ModelViewSet):
                 ),
             )
         )
+        roles = get_portal_roles(self.request.user)
+        if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}):
+            queryset = queryset.filter(owner_auth_id=str(self.request.user.id))
         return apply_content_discovery_filters(
             queryset, self.request.query_params, public=False
         )
@@ -495,7 +498,7 @@ class AdminContent(viewsets.ModelViewSet):
 
 
 class AdminPostReview(APIView):
-    permission_classes = [IsPortalAdmin]
+    permission_classes = [IsPortalReviewer]
 
     ALLOWED_TRANSITIONS = {
         Post.Status.DRAFT: {Post.Status.PENDING_REVIEW, Post.Status.ARCHIVED},
@@ -522,6 +525,8 @@ class AdminPostReview(APIView):
         with transaction.atomic():
             post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
             previous_status = post.status
+            if str(post.owner_auth_id) == str(request.user.id) and new_status in {Post.Status.APPROVED, Post.Status.PUBLISHED}:
+                raise PermissionDenied("Content owners cannot approve or publish their own submissions.")
             if new_status not in self.ALLOWED_TRANSITIONS.get(previous_status, set()):
                 raise ValidationError({"status": f"Cannot move content from {previous_status} to {new_status}."})
             now = timezone.now()
@@ -565,10 +570,11 @@ class AdminPostReview(APIView):
 
 
 class AdminPostRevisions(APIView):
-    permission_classes = [IsPortalAdmin]
+    permission_classes = [IsPortalRevisionManager]
 
     def get(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id)
+        self.check_object_permissions(request, post)
         revisions = post.revisions.all().values(
             "id", "revision_number", "change_note", "created_by_auth_id", "created_at"
         )
@@ -580,6 +586,7 @@ class AdminPostRevisions(APIView):
             raise ValidationError({"revision_id": "A valid revision ID is required."})
         with transaction.atomic():
             post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
+            self.check_object_permissions(request, post)
             revision = get_object_or_404(PostRevision, pk=int(revision_id), post=post)
             snapshot = revision.snapshot or {}
             fields = snapshot.get("fields")
@@ -627,7 +634,7 @@ class AdminPostRevisions(APIView):
 
 
 class AdminSchedulePost(APIView):
-    permission_classes = [IsPortalAdmin]
+    permission_classes = [IsPortalReviewer]
 
     def post(self, request, post_id):
         raw = request.data.get("scheduled_at")
@@ -648,7 +655,7 @@ class AdminSchedulePost(APIView):
 
 
 class AdminPublishScheduledPosts(APIView):
-    permission_classes = [IsPortalAdmin]
+    permission_classes = [IsPortalReviewer]
 
     def post(self, request):
         now = timezone.now()

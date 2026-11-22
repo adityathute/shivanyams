@@ -425,6 +425,7 @@ const detailLabels = {
   applicationClosed: { en: "Applications are closed", mr: "अर्ज बंद झाले आहेत", hi: "आवेदन बंद हैं" },
 
   applicationLinks: { en: "Application links", mr: "अर्जाच्या लिंक्स", hi: "आवेदन लिंक" },
+  selectionProcess: { en: "Selection process", mr: "निवड प्रक्रिया", hi: "चयन प्रक्रिया" },
   importantDates: {
     en: "Important Dates",
     mr: "महत्त्वाच्या तारखा",
@@ -1215,6 +1216,24 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 ].filter(Boolean);
                                 return category ? `${type} · ${category}: ${details.join(" · ")}` : "";
                               }).filter(Boolean);
+                              const selectionStages = (Array.isArray(entry.selection_stages) ? entry.selection_stages : []).map((stage: Record<string, unknown>, stageIndex: number) => {
+                                const title = getLocalizedText(language, String(stage.title_en || ""), String(stage.title_mr || ""), String(stage.title_hi || ""));
+                                const details = getLocalizedText(language, String(stage.details_en || ""), String(stage.details_mr || ""), String(stage.details_hi || ""));
+                                const typeLabels: Record<string, Record<string, string>> = {
+                                  written_exam: { en: "Written examination", mr: "लेखी परीक्षा", hi: "लिखित परीक्षा" },
+                                  skill_test: { en: "Skill test", mr: "कौशल्य चाचणी", hi: "कौशल परीक्षा" },
+                                  physical_test: { en: "Physical test", mr: "शारीरिक चाचणी", hi: "शारीरिक परीक्षा" },
+                                  interview: { en: "Interview", mr: "मुलाखत", hi: "साक्षात्कार" },
+                                  document_verification: { en: "Document verification", mr: "कागदपत्र पडताळणी", hi: "दस्तावेज़ सत्यापन" },
+                                  medical_exam: { en: "Medical examination", mr: "वैद्यकीय तपासणी", hi: "चिकित्सा परीक्षा" },
+                                  trade_test: { en: "Trade test", mr: "व्यवसाय चाचणी", hi: "ट्रेड टेस्ट" },
+                                  other: { en: "Other stage", mr: "इतर टप्पा", hi: "अन्य चरण" },
+                                };
+                                const type = typeLabels[String(stage.stage_type || "other")]?.[language] || typeLabels[String(stage.stage_type || "other")]?.en || "";
+                                const duration = stage.duration_minutes ? `${stage.duration_minutes} ${language === "mr" ? "मिनिटे" : language === "hi" ? "मिनट" : "min"}` : "";
+                                const requirement = stage.mandatory === false ? (language === "mr" ? "पर्यायी" : language === "hi" ? "वैकल्पिक" : "Optional") : (language === "mr" ? "अनिवार्य" : language === "hi" ? "अनिवार्य" : "Mandatory");
+                                return [`${stageIndex + 1}. ${title || type}`, type, requirement, duration, details].filter(Boolean).join(" · ");
+                              }).filter(Boolean);
                               const applicationLinks = (Array.isArray(entry.application_links) ? entry.application_links : []).map((item: Record<string, unknown>) => ({
                                 label: getLocalizedText(language, String(item.label_en || ""), String(item.label_mr || ""), String(item.label_hi || "")),
                                 url: String(item.url || ""),
@@ -1292,6 +1311,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 reservationRules,
                                 postImportantDates,
                                 applicationLinks,
+                                selectionStages,
                                 fees,
                               };
                             });
@@ -1317,6 +1337,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showReservations = rows.some((row) => row.reservationRules.length > 0);
                             const showPostImportantDates = rows.some((row) => row.postImportantDates.length > 0);
                             const showApplicationLinks = rows.some((row) => row.applicationLinks.length > 0);
+                            const showSelectionStages = rows.some((row) => row.selectionStages.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -1347,6 +1368,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showReservations ? <th>{getDetailLabel("reservation", language)}</th> : null}
                                       {showPostImportantDates ? <th>{getDetailLabel("importantDates", language)}</th> : null}
                                       {showApplicationLinks ? <th>{getDetailLabel("applicationLinks", language)}</th> : null}
+                                      {showSelectionStages ? <th>{getDetailLabel("selectionProcess", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1379,6 +1401,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                             ) : "—"}
                                           </td>
                                         ) : null}
+                                        {showSelectionStages ? <td>{row.selectionStages.length ? <ol className="portal-post-selection-stages">{row.selectionStages.map((stage, stageIndex) => <li key={`${stageIndex}-${stage}`}>{stage}</li>)}</ol> : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1398,6 +1421,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showReservations ? <td></td> : null}
                                       {showPostImportantDates ? <td></td> : null}
                                       {showApplicationLinks ? <td></td> : null}
+                                      {showSelectionStages ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

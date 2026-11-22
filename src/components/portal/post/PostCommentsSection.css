@@ -716,6 +716,8 @@
     color: var(--muted-foreground, #9298a2);
     font-size: 0.74rem;
   }
+  .shivanya-select-sm + .shivanya-select-arrow{  right: 16px;
+}
 }
 
 @keyframes comment-reply-modal-fade {
@@ -737,3 +739,5 @@
     transform: translateY(0) scale(1);
   }
 }
+
+

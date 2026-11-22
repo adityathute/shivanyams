@@ -68,6 +68,16 @@ export type JobPost = {
   educations: JobPostEducation[];
 };
 
+export type JobRequiredDocument = {
+  title_en?: string;
+  title_mr?: string;
+  title_hi?: string;
+  mandatory?: boolean;
+  note_en?: string;
+  note_mr?: string;
+  note_hi?: string;
+};
+
 export type JobDetails = {
   posts?: JobPost[];
   education_mode?: "common" | "per_post";
@@ -109,6 +119,10 @@ export type JobDetails = {
   working_hours?: string;
   service_bond?: string;
   retirement_benefits?: string;
+  application_instructions_en?: string;
+  application_instructions_mr?: string;
+  application_instructions_hi?: string;
+  required_documents?: JobRequiredDocument[];
   interview_venue: string;
   important_dates: { label: string; date: string }[];
   important_links: {
@@ -348,6 +362,10 @@ export type ApiPost = {
     working_hours?: string;
     service_bond?: string;
     retirement_benefits?: string;
+    application_instructions_en?: string;
+    application_instructions_mr?: string;
+    application_instructions_hi?: string;
+    required_documents?: JobRequiredDocument[];
     apply_url?: string;
     official_notification_url?: string;
     official_website?: string;
@@ -619,6 +637,10 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
           working_hours: job.working_hours || "",
           service_bond: job.service_bond || "",
           retirement_benefits: job.retirement_benefits || "",
+          application_instructions_en: job.application_instructions_en || "",
+          application_instructions_mr: job.application_instructions_mr || "",
+          application_instructions_hi: job.application_instructions_hi || "",
+          required_documents: Array.isArray(job.required_documents) ? job.required_documents : [],
           interview_venue: job.interview_details || "",
           important_dates: [],
           important_links: (post.important_links || []).map((link) => ({

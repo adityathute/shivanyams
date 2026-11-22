@@ -153,6 +153,7 @@ AUTH_ACCESS_COOKIE_NAME = config(
 # ---------------------------------------------------------------------------
 
 REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": "apps.portal.exceptions.portal_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "apps.portal.authentication.ShivanyaAuthAuthentication",
     ],

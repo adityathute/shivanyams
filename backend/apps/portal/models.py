@@ -2219,3 +2219,26 @@ class PostSource(TimestampedModel):
 
     def __str__(self):
         return self.title or f"{self.source.name}: {self.post.title_en}"
+
+
+class EditorialDiscussionComment(models.Model):
+    """Private editorial discussion note or threaded reply attached to a post."""
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="editorial_discussion")
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies")
+    author_auth_id = models.CharField(max_length=128, db_index=True)
+    content = models.TextField()
+    is_internal = models.BooleanField(default=True)
+    edited_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created_at",)
+        indexes = [
+            models.Index(fields=("post", "created_at"), name="editorial_disc_post_created_idx"),
+            models.Index(fields=("author_auth_id", "created_at"), name="editorial_disc_author_created_idx"),
+        ]
+
+    def __str__(self):
+        return f"Editorial note on {self.post_id} by {self.author_auth_id}"

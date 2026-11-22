@@ -382,6 +382,29 @@ class JobDetailsSerializer(serializers.ModelSerializer):
                 "salary_max": "Maximum salary must be greater than or equal to minimum salary."
             })
 
+        required_documents = values.get("required_documents") or []
+        if not isinstance(required_documents, list):
+            raise serializers.ValidationError({
+                "required_documents": "Provide the required documents as a list."
+            })
+        if len(required_documents) > 50:
+            raise serializers.ValidationError({
+                "required_documents": "A maximum of 50 checklist items is allowed."
+            })
+        for index, document in enumerate(required_documents):
+            if not isinstance(document, dict):
+                raise serializers.ValidationError({
+                    "required_documents": f"Checklist item {index + 1} must be an object."
+                })
+            if not any(str(document.get(field, "")).strip() for field in ("title_en", "title_mr", "title_hi")):
+                raise serializers.ValidationError({
+                    "required_documents": f"Checklist item {index + 1} needs a title in at least one language."
+                })
+            if "mandatory" in document and not isinstance(document["mandatory"], bool):
+                raise serializers.ValidationError({
+                    "required_documents": f"Checklist item {index + 1} mandatory must be true or false."
+                })
+
         candidate = JobDetails(**values)
 
         try:

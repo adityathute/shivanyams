@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Language } from "shivanya-i18n";
 import { VideosCharacters } from "./VideosCharacters";
@@ -11,6 +11,8 @@ import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
+import { getPortalApiUrl } from "../../lib/portal-api";
+import { authenticatedFetch } from "../../lib/authenticated-fetch";
 
 import "./VideosPage.css";
 
@@ -52,10 +54,24 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
   }
 }
 
+type VideoCollectionItem = { id: number; slug: string; title_en: string; title_mr?: string; title_hi?: string; thumbnail_url?: string; sort_order: number };
+type VideoCollection = { id: number; collection_type: "playlist" | "series" | "channel"; title_en: string; title_mr?: string; title_hi?: string; slug: string; description_en?: string; description_mr?: string; description_hi?: string; external_url?: string; thumbnail_url?: string; items: VideoCollectionItem[] };
+
 export function VideosPage() {
   const [query, setQuery] = useState("");
+  const [collections, setCollections] = useState<VideoCollection[]>([]);
 
   const { data } = usePortalData();
+
+  useEffect(() => {
+    const controller = new AbortController();
+    authenticatedFetch(getPortalApiUrl("content/video-collections/"), { signal: controller.signal })
+      .then((response) => { if (!response.ok) throw new Error("Unable to load video collections."); return response.json(); })
+      .then((payload) => setCollections(Array.isArray(payload.results) ? payload.results : []))
+      .catch((error) => { if (!controller.signal.aborted) console.error("Video collections could not be loaded:", error); });
+    return () => controller.abort();
+  }, []);
+
   const { language } = usePortalLanguage();
 
   const t = (key: keyof typeof baseDictionary) =>
@@ -114,6 +130,21 @@ export function VideosPage() {
           </div>
         </section>
 
+        {collections.length > 0 ? <section className="videos-collections-panel">
+          <header><div><span className="videos-eyebrow">WATCH BY COLLECTION</span><h2>Playlists, series & channels</h2><p>Explore curated YouTube playlists and video learning series.</p></div></header>
+          <div className="videos-collections-grid">
+            {collections.map((collection) => {
+              const collectionTitle = language === "mr" ? collection.title_mr || collection.title_en : language === "hi" ? collection.title_hi || collection.title_en : collection.title_en;
+              const collectionDescription = language === "mr" ? collection.description_mr || collection.description_en : language === "hi" ? collection.description_hi || collection.description_en : collection.description_en;
+              return <article className="videos-collection-card" key={collection.id}>
+                {collection.thumbnail_url ? <img src={collection.thumbnail_url} alt="" loading="lazy" /> : <div className="videos-collection-placeholder">{collection.collection_type === "channel" ? "▶" : "▤"}</div>}
+                <div><span>{collection.collection_type === "playlist" ? "YouTube Playlist" : collection.collection_type === "series" ? "Video Series" : "YouTube Channel"}</span><h3>{collectionTitle}</h3>{collectionDescription ? <p>{collectionDescription}</p> : null}
+                  {collection.items.length ? <div className="videos-collection-items">{collection.items.slice(0, 4).map((item) => <Link key={item.id} href={`/videos/${item.slug}`}>{language === "mr" ? item.title_mr || item.title_en : language === "hi" ? item.title_hi || item.title_en : item.title_en}</Link>)}</div> : null}
+                  {collection.external_url ? <a className="videos-collection-external" href={collection.external_url} target="_blank" rel="noopener noreferrer">Open on YouTube ↗</a> : null}
+                </div></article>;
+            })}
+          </div>
+        </section> : null}
         <section className="videos-panel">
           <header className="videos-panel-header">
             <h2>{t("latestVideosGuides")}</h2>

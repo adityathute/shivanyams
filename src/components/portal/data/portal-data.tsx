@@ -51,6 +51,12 @@ export type JobPost = {
   department_mr: string;
   department_hi: string;
   vacancies: number | null;
+  salary_currency?: string;
+  salary_period?: string;
+  salary_min?: string | number | null;
+  salary_max?: string | number | null;
+  pay_scale?: string;
+  grade_pay?: string;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -272,6 +278,12 @@ type ApiJobPost = {
   department_mr?: string;
   department_hi?: string;
   vacancies?: number | null;
+  salary_currency?: string;
+  salary_period?: string;
+  salary_min?: string | number | null;
+  salary_max?: string | number | null;
+  pay_scale?: string;
+  grade_pay?: string;
   educational_qualification_en?: string;
   educational_qualification_mr?: string;
   educational_qualification_hi?: string;
@@ -662,6 +674,12 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
             department_mr: post.department_mr || "",
             department_hi: post.department_hi || "",
             vacancies: post.vacancies ?? null,
+            salary_currency: post.salary_currency || "INR",
+            salary_period: post.salary_period || "monthly",
+            salary_min: post.salary_min ?? null,
+            salary_max: post.salary_max ?? null,
+            pay_scale: post.pay_scale || "",
+            grade_pay: post.grade_pay || "",
             educational_qualification_en:
               post.educational_qualification_en || "",
             educational_qualification_mr:

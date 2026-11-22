@@ -1072,15 +1072,6 @@ class OfficialSourceAdmin(admin.ModelAdmin):
         ("Audit", {"fields": ("created_at", "updated_at")}),
     )
 
-
-@admin.register(PostSource)
-class PostSourceAdmin(admin.ModelAdmin):
-    list_display = ("post", "source", "evidence_type", "title", "is_primary", "published_on", "checked_at")
-    list_filter = ("evidence_type", "is_primary", "source__verification_status")
-    search_fields = ("post__title_en", "source__name", "source__domain", "title", "source_url")
-    autocomplete_fields = ("post", "source")
-    readonly_fields = ("created_at", "updated_at")
-
     def save_model(self, request, obj, form, change):
         if obj.verification_status == OfficialSource.VerificationStatus.VERIFIED:
             from django.utils import timezone
@@ -1091,3 +1082,13 @@ class PostSourceAdmin(admin.ModelAdmin):
             obj.verified_at = None
             obj.verified_by_auth_id = ""
         super().save_model(request, obj, form, change)
+
+
+@admin.register(PostSource)
+class PostSourceAdmin(admin.ModelAdmin):
+    list_display = ("post", "source", "evidence_type", "title", "is_primary", "published_on", "checked_at")
+    list_filter = ("evidence_type", "is_primary", "source__verification_status")
+    search_fields = ("post__title_en", "source__name", "source__domain", "title", "source_url")
+    autocomplete_fields = ("post", "source")
+    readonly_fields = ("created_at", "updated_at")
+

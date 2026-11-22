@@ -97,8 +97,14 @@ def build_post_revision_snapshot(post):
         if hasattr(value, "isoformat"):
             value = value.isoformat()
         fields[model_field.name] = value
+    write_data = dict(PostWriteSerializer(post).data)
+    for relation in write_data.get("related_posts", []):
+        target = relation.pop("target_post", None)
+        if target and target.get("id"):
+            relation["target_post_id"] = target["id"]
     return {
         "fields": fields,
+        "write_data": write_data,
         "tag_ids": list(post.tag_assignments.order_by("tag_id").values_list("tag_id", flat=True)),
         "taxonomy_term_ids": list(post.taxonomy_assignments.order_by("term_id").values_list("term_id", flat=True)),
     }
@@ -579,18 +585,24 @@ class AdminPostRevisions(APIView):
             fields = snapshot.get("fields")
             if not isinstance(fields, dict) or not fields:
                 raise ValidationError({"revision_id": "This revision does not contain a restorable snapshot."})
-            protected = POST_REVISION_EXCLUDED_FIELDS
-            for field_name, value in fields.items():
-                if field_name in protected:
-                    continue
-                try:
-                    model_field = Post._meta.get_field(field_name)
-                except Exception:
-                    continue
-                if not model_field.concrete or model_field.many_to_many or model_field.primary_key:
-                    continue
-                setattr(post, model_field.attname, model_field.to_python(value))
-            post.save()
+            write_data = snapshot.get("write_data")
+            if isinstance(write_data, dict):
+                writer = PostWriteSerializer(post, data=write_data, partial=True)
+                writer.is_valid(raise_exception=True)
+                post = writer.save()
+            else:
+                protected = POST_REVISION_EXCLUDED_FIELDS
+                for field_name, value in fields.items():
+                    if field_name in protected:
+                        continue
+                    try:
+                        model_field = Post._meta.get_field(field_name)
+                    except Exception:
+                        continue
+                    if not model_field.concrete or model_field.many_to_many or model_field.primary_key:
+                        continue
+                    setattr(post, model_field.attname, model_field.to_python(value))
+                post.save()
             tag_ids = snapshot.get("tag_ids", [])
             valid_tag_ids = set(Tag.objects.filter(is_active=True, pk__in=tag_ids).values_list("pk", flat=True))
             PostTag.objects.filter(post=post).exclude(tag_id__in=valid_tag_ids).delete()

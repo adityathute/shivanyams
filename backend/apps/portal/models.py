@@ -413,6 +413,8 @@ class JobPost(TimestampedModel):
     # Official vertical and horizontal reservation distribution for this post.
     # Horizontal reservations are tracked separately and must not be added to vertical totals.
     reservation_rules = models.JSONField(default=list, blank=True)
+    # Dates that differ by individual post within a recruitment notification.
+    important_dates = models.JSONField(default=list, blank=True)
 
     # Educational qualification for this individual post
     educational_qualification_en = models.TextField(blank=True)

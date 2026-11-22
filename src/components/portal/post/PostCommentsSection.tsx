@@ -359,6 +359,13 @@ export function PostCommentsSection({ postId, language }: Props) {
       {error ? <p className="portal-comments-message" role="status">{error}</p> : null}
       {loading ? <p className="portal-comments-message">Loading comments...</p> : null}
       <div className="portal-comments-list">
+        {!loading && !error && comments.length === 0 ? (
+          <div className="portal-comments-empty" role="status">
+            <span className="portal-comments-empty-icon" aria-hidden="true">✦</span>
+            <strong>No comments yet</strong>
+            <p>Be the first to share your thoughts.</p>
+          </div>
+        ) : null}
         {sortedComments.map((item) => (
           <CommentThread
             key={item.id}

@@ -1665,6 +1665,30 @@ class WebsiteView(models.Model):
         return f"{self.path} - {self.viewed_at}"
 
 
+class PostRevision(models.Model):
+    """Immutable, restorable snapshot of an editable post version."""
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="revisions")
+    revision_number = models.PositiveIntegerField()
+    snapshot = models.JSONField()
+    change_note = models.CharField(max_length=500, blank=True)
+    created_by_auth_id = models.CharField(max_length=128, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-revision_number",)
+        constraints = [
+            models.UniqueConstraint(fields=("post", "revision_number"), name="unique_post_revision_number"),
+        ]
+        indexes = [
+            models.Index(fields=("post", "created_at")),
+            models.Index(fields=("created_by_auth_id", "created_at")),
+        ]
+
+    def __str__(self):
+        return f"{self.post.title_en} · revision {self.revision_number}"
+
+
 class PostStatusHistory(models.Model):
     """Immutable audit trail for post review and publishing transitions."""
 

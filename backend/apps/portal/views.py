@@ -895,6 +895,44 @@ class AdminEditorialMediaDownload(APIView):
 
 
 
+class PublicVideoDiscovery(APIView):
+    """Public video listing with reusable tag/topic filters and filter facets."""
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        queryset = Post.objects.filter(
+            category=get_content_category("videos"),
+            video_details__isnull=False,
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        ).select_related("category", "video_details").prefetch_related(
+            "tag_assignments__tag",
+            "taxonomy_assignments__term__taxonomy_type",
+            "video_details__caption_tracks",
+        ).distinct()
+        queryset = apply_content_discovery_filters(queryset, request.query_params, public=True)
+        try:
+            limit = min(max(int(request.query_params.get("limit", 100)), 1), 100)
+        except (TypeError, ValueError):
+            raise ValidationError({"limit": "Use a whole number between 1 and 100."})
+        results = PostSerializer(queryset[:limit], many=True, context={"request": request}).data
+        visible_ids = queryset.values_list("id", flat=True)
+        tags = Tag.objects.filter(is_active=True, post_assignments__post_id__in=visible_ids).distinct().order_by("name_en").values("id", "name_en", "slug")
+        topics = TaxonomyTerm.objects.filter(
+            is_active=True, taxonomy_type__is_active=True,
+            post_assignments__post_id__in=visible_ids,
+        ).select_related("taxonomy_type").distinct().order_by("taxonomy_type__name_en", "sort_order", "name_en").values(
+            "id", "name_en", "name_mr", "name_hi", "slug", "taxonomy_type__slug", "taxonomy_type__name_en"
+        )
+        return Response({
+            "results": results,
+            "facets": {
+                "tags": list(tags),
+                "topics": [{"id": item["id"], "name": item["name_en"], "name_mr": item["name_mr"], "name_hi": item["name_hi"], "slug": item["slug"], "type": item["taxonomy_type__slug"], "type_name": item["taxonomy_type__name_en"]} for item in topics],
+            },
+        })
+
 class PublicVideoCollections(APIView):
     permission_classes = [permissions.AllowAny]
 

@@ -23,6 +23,7 @@ from .models import (
     PostRelation,
     PostResource,
     PostStatusHistory,
+    PostRevision,
     PostView,
     PostVisitor,
     ResultDetails,
@@ -920,6 +921,24 @@ class PostViewAdmin(admin.ModelAdmin):
     date_hierarchy = "viewed_at"
     list_select_related = ("post", "visitor")
     readonly_fields = ("viewed_at",)
+
+
+@admin.register(PostRevision)
+class PostRevisionAdmin(admin.ModelAdmin):
+    list_display = ("post", "revision_number", "created_by_auth_id", "change_note", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("post__title_en", "created_by_auth_id", "change_note")
+    readonly_fields = ("post", "revision_number", "snapshot", "change_note", "created_by_auth_id", "created_at")
+    ordering = ("-created_at",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(PostStatusHistory)

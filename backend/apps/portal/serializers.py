@@ -292,6 +292,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "important_dates",
             "application_links",
             "selection_stages",
+            "work_locations",
             "salary_currency",
             "salary_period",
             "salary_min",
@@ -438,6 +439,40 @@ class JobPostSerializer(serializers.ModelSerializer):
             for key in ("instructions_en", "instructions_mr", "instructions_hi"):
                 if len(str(item.get(key, "") or "")) > 1000:
                     raise serializers.ValidationError({"application_links": f"{label} field {key} is too long."})
+
+        # Validate the post-specific location distribution.
+        work_locations = attrs.get("work_locations", getattr(self.instance, "work_locations", []) if self.instance else []) or []
+        if not isinstance(work_locations, list):
+            raise serializers.ValidationError({"work_locations": "Provide work locations as a list."})
+        if len(work_locations) > 20:
+            raise serializers.ValidationError({"work_locations": "A maximum of 20 work locations is allowed per post."})
+        allowed_location_types = {"state", "district", "city", "office", "remote", "multiple", "other"}
+        seen_locations = set()
+        post_vacancies = attrs.get("vacancies", getattr(self.instance, "vacancies", None) if self.instance else None)
+        for index, location in enumerate(work_locations):
+            label = f"Work location {index + 1}"
+            if not isinstance(location, dict):
+                raise serializers.ValidationError({"work_locations": f"{label} must be an object."})
+            location_type = str(location.get("location_type", "other") or "other").strip().lower()
+            if location_type not in allowed_location_types:
+                raise serializers.ValidationError({"work_locations": f"{label} has an unsupported location type."})
+            fields = ("name_en", "name_mr", "name_hi", "city", "district", "state", "country", "office")
+            values_text = {key: str(location.get(key, "") or "").strip() for key in fields}
+            if not any(values_text.values()):
+                raise serializers.ValidationError({"work_locations": f"{label} needs a location name, city, district, state, country or office."})
+            identity = (location_type, *(values_text[key].casefold() for key in ("city", "district", "state", "country", "office")), *(values_text[key].casefold() for key in ("name_en", "name_mr", "name_hi")))
+            if identity in seen_locations:
+                raise serializers.ValidationError({"work_locations": f"{label} duplicates another location."})
+            seen_locations.add(identity)
+            vacancies = location.get("vacancies")
+            if vacancies not in (None, ""):
+                if isinstance(vacancies, bool) or not str(vacancies).isdigit() or int(vacancies) < 0:
+                    raise serializers.ValidationError({"work_locations": f"{label} vacancies must be a non-negative whole number."})
+                if post_vacancies is not None and int(vacancies) > int(post_vacancies):
+                    raise serializers.ValidationError({"work_locations": f"{label} vacancies cannot exceed this post total."})
+            for key, maximum in (("name_en", 180), ("name_mr", 180), ("name_hi", 180), ("city", 120), ("district", 120), ("state", 120), ("country", 120), ("office", 180), ("note_en", 600), ("note_mr", 600), ("note_hi", 600)):
+                if len(str(location.get(key, "") or "")) > maximum:
+                    raise serializers.ValidationError({"work_locations": f"{label} field {key} is too long."})
 
         # Validate post-specific compensation values.
         salary_min = attrs.get("salary_min", getattr(self.instance, "salary_min", None) if self.instance else None)

@@ -437,6 +437,9 @@ class JobPost(TimestampedModel):
     age_limit_note_mr = models.TextField(blank=True)
     age_limit_note_hi = models.TextField(blank=True)
 
+    # Official category-wise age relaxations for this individual post.
+    age_relaxations = models.JSONField(default=list, blank=True)
+
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:

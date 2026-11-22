@@ -450,6 +450,20 @@ function detailTemplate(api: string): Record<string, unknown> {
       department: "",
       designation: "",
       post_details: "",
+      salary_currency: "INR",
+      salary_period: "monthly",
+      salary_min: null,
+      salary_max: null,
+      pay_scale: "",
+      grade_pay: "",
+      allowances: "",
+      benefits: "",
+      employment_conditions: "",
+      probation_period: "",
+      contract_duration: "",
+      working_hours: "",
+      service_bond: "",
+      retirement_benefits: "",
       education_mode: "per_post",
       age_mode: "per_post",
       fee_mode: "per_post",
@@ -2287,7 +2301,7 @@ export default function PostEditor({
                 const isNumber =
                   typeof value === "number" ||
                   (value === null &&
-                    /count|minutes|marks|seconds|age_min|age_max|vacancies|duration/i.test(
+                    /count|minutes|marks|seconds|age_min|age_max|vacancies|duration|salary_min|salary_max/i.test(
                       key,
                     ));
                 const isDate =
@@ -2295,7 +2309,7 @@ export default function PostEditor({
                   key === "eligible_dob_from" ||
                   key === "eligible_dob_to";
                 const isLongText =
-                  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note|application_fee_note/i.test(
+                  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note|application_fee_note|allowances|employment_conditions|service_bond|retirement_benefits/i.test(
                     key,
                   );
                 if (kind.api === 'videos' && key === 'video_url') {

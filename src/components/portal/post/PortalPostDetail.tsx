@@ -373,6 +373,9 @@ const detailLabels = {
     hi: "आयु संबंधी टिप्पणी",
   },
   ageRelaxation: { en: "Category-wise age relaxation", mr: "प्रवर्गनिहाय वयोमर्यादा सवलत", hi: "श्रेणीवार आयु छूट" },
+  educationRequirements: { en: "Education requirements", mr: "शैक्षणिक पात्रता", hi: "शैक्षणिक योग्यता" },
+  subjectRequirements: { en: "Subject requirements", mr: "विषयाची अट", hi: "विषय संबंधी आवश्यकता" },
+  experienceRequirements: { en: "Experience requirements", mr: "अनुभवाची अट", hi: "अनुभव संबंधी आवश्यकता" },
   years: { en: "years", mr: "वर्षे", hi: "वर्ष" },
   fee: { en: "Application Fee", mr: "अर्ज शुल्क", hi: "आवेदन शुल्क" },
   applicationMode: {
@@ -1179,6 +1182,20 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 ].filter(Boolean);
                                 return category ? `${category}: ${parts.join(" · ")}` : "";
                               }).filter(Boolean);
+                              const formatRequirements = (items: unknown, includeMetrics = false) =>
+                                (Array.isArray(items) ? items : []).map((rule: Record<string, unknown>) => {
+                                  const title = getLocalizedText(language, rule.title_en, rule.title_mr, rule.title_hi);
+                                  const details = getLocalizedText(language, rule.details_en, rule.details_mr, rule.details_hi);
+                                  const metrics = [
+                                    includeMetrics && rule.minimum_percentage != null ? `${rule.minimum_percentage}%` : "",
+                                    includeMetrics && rule.minimum_years != null ? `${rule.minimum_years} ${getDetailLabel("years", language)}` : "",
+                                    rule.mandatory === true ? (language === "mr" ? "अनिवार्य" : language === "hi" ? "अनिवार्य" : "Mandatory") : "",
+                                  ].filter(Boolean);
+                                  return [title, details, metrics.join(" · ")].filter(Boolean).join(": ");
+                                }).filter(Boolean);
+                              const educationRequirements = formatRequirements(entry.education_requirements, true);
+                              const subjectRequirements = formatRequirements(entry.subject_requirements);
+                              const experienceRequirements = formatRequirements(entry.experience_requirements, true);
                               const fees = (entry.fees || []).map((fee) => {
                                 const categoryName = getLocalizedText(
                                   language,
@@ -1210,6 +1227,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   : "",
                                 ageNote,
                                 ageRelaxations,
+                                educationRequirements,
+                                subjectRequirements,
+                                experienceRequirements,
                                 fees,
                               };
                             });
@@ -1222,6 +1242,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageNote);
                             const showAgeRelaxation = rows.some((row) => row.ageRelaxations.length > 0);
+                            const showEducationRequirements = rows.some((row) => row.educationRequirements.length > 0);
+                            const showSubjectRequirements = rows.some((row) => row.subjectRequirements.length > 0);
+                            const showExperienceRequirements = rows.some((row) => row.experienceRequirements.length > 0);
                             const hasCommonFee = Boolean(
                               jobDetails.application_fee != null &&
                               String(jobDetails.application_fee).trim(),
@@ -1253,6 +1276,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
                                       {showAgeRelaxation ? <th>{getDetailLabel("ageRelaxation", language)}</th> : null}
+                                      {showEducationRequirements ? <th>{getDetailLabel("educationRequirements", language)}</th> : null}
+                                      {showSubjectRequirements ? <th>{getDetailLabel("subjectRequirements", language)}</th> : null}
+                                      {showExperienceRequirements ? <th>{getDetailLabel("experienceRequirements", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1266,6 +1292,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
                                         {showAgeRelaxation ? <td>{row.ageRelaxations.length ? row.ageRelaxations.join("; ") : "—"}</td> : null}
+                                        {showEducationRequirements ? <td>{row.educationRequirements.length ? row.educationRequirements.join("; ") : "—"}</td> : null}
+                                        {showSubjectRequirements ? <td>{row.subjectRequirements.length ? row.subjectRequirements.join("; ") : "—"}</td> : null}
+                                        {showExperienceRequirements ? <td>{row.experienceRequirements.length ? row.experienceRequirements.join("; ") : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1279,6 +1308,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showAge ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
                                       {showAgeRelaxation ? <td></td> : null}
+                                      {showEducationRequirements ? <td></td> : null}
+                                      {showSubjectRequirements ? <td></td> : null}
+                                      {showExperienceRequirements ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

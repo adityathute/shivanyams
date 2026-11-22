@@ -27,6 +27,7 @@ from .views import (
     EditorialDiscussion,
     EditorialDiscussionCommentDetail,
     AdminEditorialMedia,
+    PublicEditorialMediaDownload,
     AdminEditorialMediaDetail,
     AdminEditorialMediaDownload,
     AdminPostMedia,
@@ -122,6 +123,7 @@ urlpatterns = [
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management
+    path("content/media/<int:asset_id>/", PublicEditorialMediaDownload.as_view(), name="public-editorial-media-download"),
     path("admin/media/", AdminEditorialMedia.as_view(), name="admin-editorial-media"),
     path("admin/media/<int:asset_id>/", AdminEditorialMediaDetail.as_view(), name="admin-editorial-media-detail"),
     path("admin/media/<int:asset_id>/download/", AdminEditorialMediaDownload.as_view(), name="admin-editorial-media-download"),

@@ -581,6 +581,7 @@ class AdminPostAssignment(APIView):
         due_at = parse_datetime(str(raw_due)) if raw_due else None
         if raw_due and (not due_at or timezone.is_naive(due_at)):
             raise ValidationError({"due_at": "Provide an ISO-8601 date-time with timezone offset."})
+        previous_assignment = PostAssignment.objects.filter(post=post).first()
         assignment, _ = PostAssignment.objects.update_or_create(
             post=post,
             defaults={
@@ -591,6 +592,13 @@ class AdminPostAssignment(APIView):
                 "note": str(request.data.get("note", "")).strip(),
             },
         )
+        if previous_assignment and previous_assignment.assigned_to_auth_id != assigned_to:
+            notify_editorial_user(
+                previous_assignment.assigned_to_auth_id, "assignment_reassigned",
+                "Editorial assignment reassigned",
+                f'"{post.title_en}" has been reassigned to another editor.',
+                actor_auth_id=request.user.id, post=post,
+            )
         notify_editorial_user(
             assigned_to, "assignment_created", "New editorial assignment",
             f'You have been assigned "{post.title_en}".',

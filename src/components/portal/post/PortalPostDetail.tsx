@@ -397,6 +397,10 @@ const detailLabels = {
   workingHours: { en: "Working hours", mr: "कामाचे तास", hi: "कार्य समय" },
   serviceBond: { en: "Service bond", mr: "सेवा बंधपत्र", hi: "सेवा बंधपत्र" },
   retirementBenefits: { en: "Retirement benefits", mr: "निवृत्ती लाभ", hi: "सेवानिवृत्ति लाभ" },
+  applicationInstructions: { en: "How to apply", mr: "अर्ज कसा करावा", hi: "आवेदन कैसे करें" },
+  requiredDocuments: { en: "Required documents checklist", mr: "आवश्यक कागदपत्रांची यादी", hi: "आवश्यक दस्तावेज़ों की सूची" },
+  mandatoryDocument: { en: "Mandatory", mr: "अनिवार्य", hi: "अनिवार्य" },
+  optionalDocument: { en: "Optional", mr: "ऐच्छिक", hi: "वैकल्पिक" },
   recruitmentType: { en: "Recruitment type", mr: "भरतीचा प्रकार", hi: "भर्ती का प्रकार" },
   applicationStatus: { en: "Application status", mr: "अर्जाची स्थिती", hi: "आवेदन की स्थिति" },
   departmentName: { en: "Department", mr: "विभाग", hi: "विभाग" },
@@ -1347,6 +1351,40 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           <h2>{heading}</h2><p>{value}</p>
                         </section>
                       ))}
+                      {(() => {
+                        const instructions = getLocalizedText(language, jobDetails?.application_instructions_en, jobDetails?.application_instructions_mr, jobDetails?.application_instructions_hi);
+                        const documents = Array.isArray(jobDetails?.required_documents) ? jobDetails.required_documents : [];
+                        if (!instructions && documents.length === 0) return null;
+                        return (
+                          <section className="portal-job-extra-section portal-job-application-checklist">
+                            {instructions ? (
+                              <div className="portal-job-application-instructions">
+                                <h2>{getDetailLabel("applicationInstructions", language)}</h2>
+                                <p>{instructions}</p>
+                              </div>
+                            ) : null}
+                            {documents.length ? (
+                              <div className="portal-job-required-documents">
+                                <h2>{getDetailLabel("requiredDocuments", language)}</h2>
+                                <ul>
+                                  {documents.map((document, index) => {
+                                    const title = getLocalizedText(language, document.title_en, document.title_mr, document.title_hi);
+                                    const note = getLocalizedText(language, document.note_en, document.note_mr, document.note_hi);
+                                    if (!title) return null;
+                                    return (
+                                      <li key={index}>
+                                        <span>{title}</span>
+                                        <small>{document.mandatory === false ? getDetailLabel("optionalDocument", language) : getDetailLabel("mandatoryDocument", language)}</small>
+                                        {note ? <p>{note}</p> : null}
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
+                            ) : null}
+                          </section>
+                        );
+                      })()}
                       <div className="portal-job-official-actions">
                         {jobDetails?.apply_url ? <a className="portal-job-action-primary" href={jobDetails.apply_url} target="_blank" rel="noopener noreferrer">{getDetailLabel("applyNow", language)}</a> : null}
                         {jobDetails?.official_notification_url ? <a href={jobDetails.official_notification_url} target="_blank" rel="noopener noreferrer">{getDetailLabel("officialNotification", language)}</a> : null}

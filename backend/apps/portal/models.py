@@ -472,6 +472,8 @@ class JobPost(TimestampedModel):
     education_requirements = models.JSONField(default=list, blank=True)
     subject_requirements = models.JSONField(default=list, blank=True)
     experience_requirements = models.JSONField(default=list, blank=True)
+    # Required documents can vary by individual advertised post.
+    required_documents = models.JSONField(default=list, blank=True)
 
     sort_order = models.PositiveSmallIntegerField(default=0)
 

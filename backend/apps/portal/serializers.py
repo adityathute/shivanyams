@@ -590,7 +590,7 @@ class VideoCollectionWriteSerializer(serializers.ModelSerializer):
         if not ids:
             collection.items.all().delete()
             return
-        posts = list(Post.objects.filter(pk__in=ids, video_details__isnull=False, category__slug="videos"))
+        posts = list(Post.objects.filter(pk__in=ids, video_details__isnull=False))
         if len(posts) != len(ids):
             raise serializers.ValidationError({"video_ids": "Every selected item must be an existing Video post with video details."})
         collection.items.exclude(post_id__in=ids).delete()

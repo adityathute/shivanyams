@@ -188,3 +188,49 @@
   color: #e6edf3;
 }
 
+
+
+.jobs-filter-panel {
+  margin-top: 16px;
+  padding: 20px;
+  border: 1px solid var(--border, #dbe4f0);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--text, #172b45);
+}
+.jobs-filter-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.jobs-filter-heading h2 { margin: 0 0 5px; font-size: 17px; }
+.jobs-filter-heading p { margin: 0; color: var(--muted, #64748b); font-size: 12px; }
+.jobs-clear-filters {
+  flex-shrink: 0; border: 1px solid var(--border, #dbe4f0); border-radius: 6px;
+  padding: 8px 12px; background: transparent; color: inherit; font-size: 11px;
+  font-weight: 700; cursor: pointer;
+}
+.jobs-filter-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;
+}
+.jobs-filter-grid label { display: grid; gap: 6px; color: var(--muted, #64748b); font-size: 11px; font-weight: 700; }
+.jobs-filter-grid input, .jobs-filter-grid select {
+  width: 100%; min-width: 0; height: 38px; border: 1px solid var(--border, #dbe4f0);
+  border-radius: 6px; padding: 0 9px; background: var(--background, #fff);
+  color: var(--text, #172b45); font: inherit; font-size: 12px;
+}
+.jobs-filter-grid input:focus, .jobs-filter-grid select:focus {
+  outline: 2px solid #2563eb55; border-color: #2563eb;
+}
+[data-theme="dark"] .jobs-filter-panel { background: #111b2a; border-color: #293b52; }
+[data-theme="dark"] .jobs-filter-grid input, [data-theme="dark"] .jobs-filter-grid select {
+  background: #0d1117; border-color: #344154; color: #e6edf3;
+}
+@media (max-width: 900px) { .jobs-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) {
+  .jobs-filter-panel { padding: 14px; }
+  .jobs-filter-heading { flex-direction: column; }
+  .jobs-filter-grid { grid-template-columns: 1fr; }
+}

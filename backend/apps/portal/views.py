@@ -660,6 +660,37 @@ class PostComments(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+
+class PostCommentDetail(APIView):
+    permission_classes = [IsPortalIdentity]
+
+    def patch(self, request, comment_id):
+        comment = get_object_or_404(
+            Comment,
+            pk=comment_id,
+            user_auth_id=str(request.user.id),
+            is_admin_reply=False,
+            post__status=Post.Status.PUBLISHED,
+            post__is_active=True,
+            post__comments_enabled=True,
+            status=Comment.Status.APPROVED,
+        )
+        content = str(request.data.get("content", "")).strip()
+        max_length = 250 if comment.parent_id else 500
+        if not content:
+            raise ValidationError({"content": "Comment cannot be empty."})
+        if len(content) > max_length:
+            raise ValidationError({
+                "content": f"This {'reply' if comment.parent_id else 'comment'} can contain a maximum of {max_length} characters."
+            })
+        if content == comment.content:
+            return Response(CommentSerializer(comment, context={"request": request}).data)
+        comment.content = content
+        comment.edited = True
+        comment.save(update_fields=["content", "edited", "updated_at"])
+        return Response(CommentSerializer(comment, context={"request": request}).data)
+
+
 class PostCommentReactions(APIView):
     permission_classes = [IsPortalIdentity]
 
@@ -800,7 +831,24 @@ class AdminComments(APIView):
                 raise ValidationError({"report_status": "Invalid report status."})
             report.status = report_status
             report.save(update_fields=["status", "updated_at"])
-            return Response({"report_id": report.id, "status": report.status})
+            if report_status == CommentReport.Status.REVIEWED:
+                reviewed_comment = report.comment
+                if reviewed_comment.status in (Comment.Status.HIDDEN, Comment.Status.PENDING):
+                    reviewed_comment.status = Comment.Status.APPROVED
+                    reviewed_comment.reviewed_by_auth_id = str(request.user.id)
+                    reviewed_comment.reviewed_at = timezone.now()
+                    reviewed_comment.save(update_fields=[
+                        "status", "reviewed_by_auth_id", "reviewed_at", "updated_at"
+                    ])
+                CommentReport.objects.filter(
+                    comment=reviewed_comment,
+                    status=CommentReport.Status.OPEN,
+                ).update(status=CommentReport.Status.REVIEWED)
+            return Response({
+                "report_id": report.id,
+                "status": report.status,
+                "comment_status": report.comment.status,
+            })
         comment = get_object_or_404(Comment, pk=request.data.get("id"))
         new_status = str(request.data.get("status", "")).strip()
         valid = {choice[0] for choice in Comment.Status.choices}
@@ -810,6 +858,10 @@ class AdminComments(APIView):
         comment.reviewed_by_auth_id = str(request.user.id)
         comment.reviewed_at = timezone.now()
         comment.save(update_fields=["status", "reviewed_by_auth_id", "reviewed_at", "updated_at"])
+        if new_status == Comment.Status.APPROVED:
+            comment.reports.filter(status=CommentReport.Status.OPEN).update(
+                status=CommentReport.Status.REVIEWED
+            )
         return Response(CommentSerializer(comment, context={"request": request}).data)
 
 

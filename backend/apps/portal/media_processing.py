@@ -133,11 +133,20 @@ def process_editorial_video(asset, timeout_seconds=7200):
                 check=True, capture_output=True, timeout=min(timeout_seconds, 300),
             )
             subprocess.run(
-                [ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-i", source_path, "-map", "0:v:0", "-map", "0:a?", "-vf", "scale='min(1280,iw)':-2", "-c:v", "libx264", "-preset", "medium", "-crf", "26", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-max_muxing_queue_size", "1024", output_path],
+                [ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-i", source_path, "-map", "0:v:0", "-map", "0:a?", "-vf", "scale=1280:720:force_original_aspect_ratio=decrease:force_divisible_by=2", "-c:v", "libx264", "-preset", "medium", "-crf", "26", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-max_muxing_queue_size", "1024", output_path],
                 check=True, capture_output=True, timeout=timeout_seconds,
             )
             if not os.path.exists(poster_path) or not os.path.exists(output_path):
                 raise ValueError("FFmpeg did not produce the expected poster and optimized video files.")
+            optimized_probe = subprocess.run(
+                [ffprobe, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "json", output_path],
+                check=True, capture_output=True, text=True, timeout=60,
+            )
+            optimized_stream = next(iter(json.loads(optimized_probe.stdout or "{}").get("streams", [])), {})
+            optimized_width = int(optimized_stream.get("width") or 0)
+            optimized_height = int(optimized_stream.get("height") or 0)
+            if not optimized_width or not optimized_height:
+                raise ValueError("The optimized video dimensions could not be verified.")
             poster_name = "editorial-media/video-posters/{}/{}.jpg".format(asset.pk, token)
             variant_name = "editorial-media/video-variants/{}/{}.mp4".format(asset.pk, token)
             with open(poster_path, "rb") as poster_file:
@@ -149,7 +158,7 @@ def process_editorial_video(asset, timeout_seconds=7200):
             asset.video_width = width
             asset.video_height = height
             asset.video_poster_path = saved_poster
-            asset.video_variants = {"mp4_720p": {"path": saved_variant, "mime_type": "video/mp4", "file_size": optimized_size, "width": min(width, 1280), "height": min(height, 720)}}
+            asset.video_variants = {"mp4_720p": {"path": saved_variant, "mime_type": "video/mp4", "file_size": optimized_size, "width": optimized_width, "height": optimized_height}}
             asset.processing_status = "completed"
             asset.processing_error = ""
             asset.processed_at = timezone.now()

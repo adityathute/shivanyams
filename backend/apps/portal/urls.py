@@ -11,6 +11,7 @@ from .views import (
     NewsletterSubscribe,
     PostReports,
     PostComments,
+    PostCommentDetail,
     PostReactions,
     PostCommentReactions,
     PostCommentReports,
@@ -83,6 +84,7 @@ urlpatterns = [
         PostShares.as_view(),
         name="post-shares",
     ),
+    path("comments/<int:comment_id>/", PostCommentDetail.as_view(), name="comment-detail"),
     path("comments/<int:comment_id>/reactions/", PostCommentReactions.as_view(), name="comment-reactions"),
     path("comments/<int:comment_id>/reports/", PostCommentReports.as_view(), name="comment-reports"),
 

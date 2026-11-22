@@ -101,6 +101,20 @@ def apply_content_discovery_filters(queryset, params, *, public=True):
             | Q(body_mr__icontains=query)
             | Q(body_hi__icontains=query)
             | Q(slug__icontains=query)
+            | Q(meta_title_en__icontains=query)
+            | Q(meta_title_mr__icontains=query)
+            | Q(meta_title_hi__icontains=query)
+            | Q(meta_description_en__icontains=query)
+            | Q(meta_description_mr__icontains=query)
+            | Q(meta_description_hi__icontains=query)
+            | Q(tag_assignments__tag__name_en__icontains=query)
+            | Q(tag_assignments__tag__name_mr__icontains=query)
+            | Q(tag_assignments__tag__name_hi__icontains=query)
+            | Q(tag_assignments__tag__aliases__value__icontains=query)
+            | Q(taxonomy_assignments__term__name_en__icontains=query)
+            | Q(taxonomy_assignments__term__name_mr__icontains=query)
+            | Q(taxonomy_assignments__term__name_hi__icontains=query)
+            | Q(taxonomy_assignments__term__aliases__value__icontains=query)
             | Q(meta_keywords__icontains=query)
         )
 
@@ -122,12 +136,32 @@ def apply_content_discovery_filters(queryset, params, *, public=True):
 
     tag = str(params.get("tag", "")).strip()
     if tag:
-        queryset = queryset.filter(tag_assignments__tag__slug=tag)
+        normalized_tag = " ".join(tag.casefold().split())
+        queryset = queryset.filter(
+            Q(tag_assignments__tag__slug=tag)
+            | Q(tag_assignments__tag__name_en__iexact=tag)
+            | Q(tag_assignments__tag__name_mr__iexact=tag)
+            | Q(tag_assignments__tag__name_hi__iexact=tag)
+            | Q(tag_assignments__tag__aliases__normalized_value=normalized_tag)
+        )
 
     taxonomy = str(params.get("taxonomy", "")).strip()
     if taxonomy:
+        normalized_taxonomy = " ".join(taxonomy.casefold().split())
         queryset = queryset.filter(
-            taxonomy_assignments__term__slug=taxonomy,
+            Q(taxonomy_assignments__term__slug=taxonomy)
+            | Q(taxonomy_assignments__term__name_en__iexact=taxonomy)
+            | Q(taxonomy_assignments__term__name_mr__iexact=taxonomy)
+            | Q(taxonomy_assignments__term__name_hi__iexact=taxonomy)
+            | Q(taxonomy_assignments__term__aliases__normalized_value=normalized_taxonomy),
+            taxonomy_assignments__term__is_active=True,
+            taxonomy_assignments__term__taxonomy_type__is_active=True,
+        )
+
+    taxonomy_type = str(params.get("taxonomy_type", "")).strip()
+    if taxonomy_type:
+        queryset = queryset.filter(
+            taxonomy_assignments__term__taxonomy_type__slug=taxonomy_type,
             taxonomy_assignments__term__is_active=True,
             taxonomy_assignments__term__taxonomy_type__is_active=True,
         )

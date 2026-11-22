@@ -277,6 +277,9 @@ class JobDetails(TimestampedModel):
     application_instructions_mr = models.TextField(blank=True)
     application_instructions_hi = models.TextField(blank=True)
     required_documents = models.JSONField(default=list, blank=True)
+    physical_standards_en = models.TextField(blank=True)
+    physical_standards_mr = models.TextField(blank=True)
+    physical_standards_hi = models.TextField(blank=True)
 
     # Choose whether these details are shared across all posts or entered per post.
     education_mode = models.CharField(

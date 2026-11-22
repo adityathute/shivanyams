@@ -477,6 +477,20 @@ class JobPost(TimestampedModel):
     physical_standards_en = models.TextField(blank=True)
     physical_standards_mr = models.TextField(blank=True)
     physical_standards_hi = models.TextField(blank=True)
+    # Delivery mode and permitted language medium may vary by advertised post.
+    class ExamMode(models.TextChoices):
+        ONLINE = "online", "Online"
+        OFFLINE = "offline", "Offline"
+        COMPUTER_BASED = "computer_based", "Computer-based test"
+        OMR = "omr", "OMR-based"
+        DESCRIPTIVE = "descriptive", "Descriptive"
+        MIXED = "mixed", "Mixed"
+        AS_NOTIFIED = "as_notified", "As notified"
+
+    exam_mode = models.CharField(max_length=24, choices=ExamMode.choices, blank=True)
+    exam_medium_en = models.TextField(blank=True)
+    exam_medium_mr = models.TextField(blank=True)
+    exam_medium_hi = models.TextField(blank=True)
     # Exam structure and syllabus may differ between advertised posts.
     exam_pattern_en = models.TextField(blank=True)
     exam_pattern_mr = models.TextField(blank=True)

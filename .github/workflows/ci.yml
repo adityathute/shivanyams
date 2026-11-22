@@ -2,7 +2,7 @@ name: Application CI
 
 on:
   push:
-    branches: ["Master", "shivanyams-v2"]
+    branches: ["Master", "shiv-v3"]
   pull_request:
     branches: ["Master", "shivanyams-v2"]
 
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: adityathute/shivanya-sdk
-          ref: a6edf73a924dd5cf15a0407b755e2af1cdeaf2dc
+          ref: 8d48b136af002b313910e30e167c3b80e3fc22d7
           path: .ci/shivanya-sdk
 
       - name: Setup Node.js

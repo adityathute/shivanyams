@@ -655,7 +655,7 @@ class AdminEditorialMedia(APIView):
         if kind == EditorialMediaAsset.Kind.IMAGE:
             from .media_processing import inspect_uploaded_image
             try:
-                inspect_uploaded_image(upload)
+                detected_format, image_width, image_height = inspect_uploaded_image(upload)
             except ValueError as exc:
                 raise ValidationError({"file": str(exc)})
         original_name = os.path.basename(upload.name).replace("\\", "_")[:255]

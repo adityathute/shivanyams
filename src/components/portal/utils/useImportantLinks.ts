@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Language } from "../category/CategoryGrid";
-import { getPortalApiUrl } from "../category/CategoryGrid";
+import { getPortalApiUrl } from "../../../lib/portal-api";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 export interface ImportantLink {

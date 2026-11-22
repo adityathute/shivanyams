@@ -625,6 +625,49 @@ export default function AdminPage() {
     }
   }
 
+  const canReviewContent = user?.roles?.some((role) => ["admin", "reviewer", "content_reviewer"].includes(role)) === true;
+
+  async function assignPost(post: AdminPost) {
+    const editorId = window.prompt("Enter the editor user ID to assign this content:");
+    if (!editorId?.trim()) return;
+    const dueInput = window.prompt("Optional deadline (ISO date-time with timezone), e.g. 2026-12-01T17:00:00+05:30:", "");
+    const note = window.prompt("Assignment note (optional):", "") || "";
+    setBusyPost(post.id);
+    try {
+      const response = await adminFetch(`${API_URL}/admin/content/${post.id}/assignment/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          assigned_to_auth_id: editorId.trim(),
+          due_at: dueInput?.trim() || null,
+          note,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || payload.assigned_to_auth_id || "Unable to assign this content.");
+      setError("");
+      window.alert(`Assigned to editor ${payload.assigned_to_auth_id}.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to assign content.");
+    } finally {
+      setBusyPost(null);
+    }
+  }
+
+  async function showAssignmentWorkload() {
+    try {
+      const response = await adminFetch(`${API_URL}/admin/assignment-workload/`, { cache: "no-store" });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || "Unable to load assignment workload.");
+      const lines = (payload.results || []).map((row: { assigned_to_auth_id: string; total: number; assigned: number; in_progress: number; completed: number; cancelled: number }) =>
+        `${row.assigned_to_auth_id}: ${row.total} total | ${row.assigned} assigned | ${row.in_progress} in progress | ${row.completed} completed | ${row.cancelled} cancelled`
+      );
+      window.alert(lines.length ? lines.join("\\n") : "No editorial assignments yet.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load assignment workload.");
+    }
+  }
+
   async function showReviewHistory(post: AdminPost) {
     setBusyPost(post.id);
     try {
@@ -747,6 +790,11 @@ export default function AdminPage() {
     <main className="admin-page">
       <div className="admin-shell">
         <header className="admin-topbar">
+          {canReviewContent && (
+            <button type="button" onClick={() => void showAssignmentWorkload()}>
+              Assignment Workload
+            </button>
+          )}
           <div>
             <span className="admin-eyebrow">SHIVANYAMS CONTENT MANAGEMENT</span>
             <h1>Admin Dashboard</h1>
@@ -1138,6 +1186,11 @@ export default function AdminPage() {
                             <Link href={`/admin/engagement/${post.id}`}>
                               Stats
                             </Link>
+                            {canReviewContent && (
+                              <button disabled={busyPost === post.id} onClick={() => void assignPost(post)}>
+                                Assign
+                              </button>
+                            )}
                             <button disabled={busyPost === post.id} onClick={() => void showReviewHistory(post)}>
                               History
                             </button>

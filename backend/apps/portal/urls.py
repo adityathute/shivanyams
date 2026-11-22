@@ -22,6 +22,8 @@ from .views import (
     AdminPostEngagement,
     TrackPostView,
     AdminPostReview,
+    AdminSchedulePost,
+    AdminPublishScheduledPosts,
     AdminSlugAvailability,
     AdminOrganizationTypes,
     AdminDashboardStats,
@@ -110,6 +112,8 @@ urlpatterns = [
     # Admin content management
     path("admin/content/slug-availability/", AdminSlugAvailability.as_view(), name="admin-slug-availability"),
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
+    path("admin/content/publish-due/", AdminPublishScheduledPosts.as_view(), name="admin-publish-scheduled-content"),
+    path("admin/content/<int:post_id>/schedule/", AdminSchedulePost.as_view(), name="admin-schedule-content"),
     path(
         "admin/content/<int:post_id>/review/",
         AdminPostReview.as_view(),

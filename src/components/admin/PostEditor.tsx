@@ -2086,9 +2086,9 @@ export default function PostEditor({
 
                         <div className="post-editor-fee-fields">
                           <div className="post-editor-fee-amount">
-                            <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
+                            <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} disabled={fee.is_exempt} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
                           <label className="post-editor-checkbox-row">
-                            <input type="checkbox" checked={fee.is_exempt} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "is_exempt", event.target.checked)} />
+                            <input type="checkbox" checked={fee.is_exempt} onChange={(event) => { const exempt = event.target.checked; updateJobPostFee(postIndex, feeIndex, "is_exempt", exempt); updateJobPostFee(postIndex, feeIndex, "fee_amount", exempt ? "" : fee.fee_amount); updateJobPostFee(postIndex, feeIndex, "payment_mode", exempt ? "not_required" : "online"); }} />
                             <span>Application fee exempt for this category</span>
                           </label>
                           <label className="post-editor-field-label">Payment mode</label>

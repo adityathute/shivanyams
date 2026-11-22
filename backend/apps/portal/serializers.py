@@ -287,6 +287,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "department_hi",
             "vacancies",
             "reservation_rules",
+            "important_dates",
             "educational_qualification_en",
             "educational_qualification_mr",
             "educational_qualification_hi",
@@ -336,6 +337,49 @@ class JobPostSerializer(serializers.ModelSerializer):
             if hasattr(exc, "message_dict"):
                 raise serializers.ValidationError(exc.message_dict)
             raise serializers.ValidationError(exc.messages)
+
+        # Validate individual-post dates without changing notification-wide PostDate records.
+        important_dates = attrs.get("important_dates", getattr(self.instance, "important_dates", []) if self.instance else []) or []
+        if not isinstance(important_dates, list):
+            raise serializers.ValidationError({"important_dates": "Provide post-specific important dates as a list."})
+        if len(important_dates) > 40:
+            raise serializers.ValidationError({"important_dates": "A maximum of 40 dates is allowed per post."})
+        allowed_date_types = {choice[0] for choice in PostDate.DateType.choices}
+        allowed_formats = {choice[0] for choice in PostDate.DateFormat.choices}
+        seen_dates = set()
+        for index, item in enumerate(important_dates):
+            label = f"Date {index + 1}"
+            if not isinstance(item, dict):
+                raise serializers.ValidationError({"important_dates": f"{label} must be an object."})
+            date_type = item.get("date_type", "other")
+            date_format = item.get("date_format", "single")
+            if date_type not in allowed_date_types:
+                raise serializers.ValidationError({"important_dates": f"{label} has an unsupported date type."})
+            if date_format not in allowed_formats:
+                raise serializers.ValidationError({"important_dates": f"{label} has an unsupported date format."})
+            if not any(str(item.get(key, "")).strip() for key in ("label_en", "label_mr", "label_hi")):
+                raise serializers.ValidationError({"important_dates": f"{label} needs a label in at least one language."})
+            identity = (date_type, date_format, str(item.get("date") or item.get("start_date") or item.get("month") or "").strip())
+            if identity in seen_dates:
+                raise serializers.ValidationError({"important_dates": f"{label} duplicates another date entry."})
+            seen_dates.add(identity)
+            if date_format == "single" and not item.get("date"):
+                raise serializers.ValidationError({"important_dates": f"{label} requires a date."})
+            if date_format == "range":
+                if not item.get("start_date") or not item.get("end_date"):
+                    raise serializers.ValidationError({"important_dates": f"{label} requires both start and end dates."})
+                if str(item["end_date"]) < str(item["start_date"]):
+                    raise serializers.ValidationError({"important_dates": f"{label} end date cannot precede its start date."})
+            if date_format in ("revised", "revised_with_time") and (not item.get("old_date") or not item.get("new_date")):
+                raise serializers.ValidationError({"important_dates": f"{label} requires original and revised dates."})
+            if date_format == "month_year":
+                month = item.get("month")
+                year = item.get("year")
+                if not month or not year or isinstance(month, bool) or not str(month).isdigit() or not 1 <= int(month) <= 12 or not str(year).isdigit() or not 1 <= int(year) <= 9999:
+                    raise serializers.ValidationError({"important_dates": f"{label} requires a valid month (1–12) and year."})
+            for key in ("label_en", "label_mr", "label_hi", "description_en", "description_mr", "description_hi"):
+                if len(str(item.get(key, "") or "")) > (180 if key.startswith("label") else 500):
+                    raise serializers.ValidationError({"important_dates": f"{label} field {key} is too long."})
 
         # Validate category-wise age relaxation entries from the official notification.
         age_relaxations = attrs.get("age_relaxations", getattr(self.instance, "age_relaxations", [])) or []

@@ -11,6 +11,7 @@ from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 
 from .models import (
@@ -37,6 +38,8 @@ from .models import (
     PostAssignment,
     EditorialNotification,
     EditorialDiscussionComment,
+    EditorialMediaAsset,
+    PostMediaAttachment,
     PostTag,
     PostTaxonomyTerm,
     PostView,
@@ -501,6 +504,201 @@ class AdminContent(viewsets.ModelViewSet):
             )
 
 
+
+
+
+EDITORIAL_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+EDITORIAL_DOCUMENT_EXTENSIONS = {".pdf", ".txt", ".csv", ".doc", ".docx", ".xls", ".xlsx"}
+EDITORIAL_IMAGE_MAX_BYTES = 10 * 1024 * 1024
+EDITORIAL_DOCUMENT_MAX_BYTES = 20 * 1024 * 1024
+
+
+def _media_payload(asset, request):
+    return {
+        "id": asset.id, "owner_auth_id": asset.owner_auth_id,
+        "original_name": asset.original_name, "kind": asset.kind,
+        "mime_type": asset.mime_type, "file_size": asset.file_size,
+        "alt_text": asset.alt_text, "caption": asset.caption,
+        "description": asset.description, "created_at": asset.created_at,
+        "updated_at": asset.updated_at,
+        "download_url": request.build_absolute_uri(f"/api/v1/admin/media/{asset.id}/download/"),
+    }
+
+
+def _can_access_media_post(request, post, write=False):
+    roles = get_portal_roles(request.user)
+    if "admin" in roles:
+        return True
+    if write and roles.intersection({"reviewer", "content_reviewer"}):
+        return False
+    user_id = str(request.user.id)
+    if str(post.owner_auth_id or "") == user_id:
+        return True
+    try:
+        return post.assignment.assigned_to_auth_id == user_id
+    except PostAssignment.DoesNotExist:
+        return False
+
+
+class AdminEditorialMedia(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request):
+        roles = get_portal_roles(request.user)
+        qs = EditorialMediaAsset.objects.filter(is_active=True)
+        if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}):
+            qs = qs.filter(owner_auth_id=str(request.user.id))
+        kind = request.query_params.get("kind")
+        if kind in EditorialMediaAsset.Kind.values:
+            qs = qs.filter(kind=kind)
+        search = request.query_params.get("q", "").strip()
+        if search:
+            qs = qs.filter(Q(original_name__icontains=search) | Q(alt_text__icontains=search) | Q(caption__icontains=search))
+        try:
+            limit = min(max(int(request.query_params.get("limit", 40)), 1), 100)
+        except (TypeError, ValueError):
+            raise ValidationError({"limit": "Provide a number from 1 to 100."})
+        return Response({"results": [_media_payload(item, request) for item in qs[:limit]]})
+
+    def post(self, request):
+        roles = get_portal_roles(request.user)
+        if not roles.intersection({"admin", "editor", "content_editor"}):
+            raise PermissionDenied("Only administrators and editors can upload media.")
+        upload = request.FILES.get("file")
+        if not upload:
+            raise ValidationError({"file": "Choose an image or document to upload."})
+        import os
+        extension = os.path.splitext(upload.name)[1].lower()
+        if extension in EDITORIAL_IMAGE_EXTENSIONS:
+            kind, maximum = EditorialMediaAsset.Kind.IMAGE, EDITORIAL_IMAGE_MAX_BYTES
+        elif extension in EDITORIAL_DOCUMENT_EXTENSIONS:
+            kind, maximum = EditorialMediaAsset.Kind.DOCUMENT, EDITORIAL_DOCUMENT_MAX_BYTES
+        else:
+            raise ValidationError({"file": "Unsupported file type. Allowed images: JPG, PNG, WEBP, GIF. Documents: PDF, TXT, CSV, DOC, DOCX, XLS, XLSX."})
+        if upload.size > maximum:
+            raise ValidationError({"file": f"File exceeds the {maximum // (1024 * 1024)} MB limit."})
+        original_name = os.path.basename(upload.name).replace("\\", "_")[:255]
+        asset = EditorialMediaAsset.objects.create(
+            owner_auth_id=str(request.user.id), file=upload,
+            original_name=original_name, kind=kind,
+            mime_type=(getattr(upload, "content_type", "") or "")[:120],
+            file_size=upload.size,
+            alt_text=str(request.data.get("alt_text", ""))[:500],
+            caption=str(request.data.get("caption", ""))[:500],
+            description=str(request.data.get("description", "")),
+        )
+        return Response(_media_payload(asset, request), status=status.HTTP_201_CREATED)
+
+
+class AdminEditorialMediaDetail(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def _asset(self, request, asset_id):
+        asset = get_object_or_404(EditorialMediaAsset, pk=asset_id, is_active=True)
+        roles = get_portal_roles(request.user)
+        if "admin" not in roles and asset.owner_auth_id != str(request.user.id):
+            if not roles.intersection({"reviewer", "content_reviewer"}):
+                raise PermissionDenied("You cannot access this media asset.")
+        return asset
+
+    def get(self, request, asset_id):
+        return Response(_media_payload(self._asset(request, asset_id), request))
+
+    def patch(self, request, asset_id):
+        asset = self._asset(request, asset_id)
+        roles = get_portal_roles(request.user)
+        if "admin" not in roles and asset.owner_auth_id != str(request.user.id):
+            raise PermissionDenied("Only the asset owner or administrator can edit metadata.")
+        for field in ("alt_text", "caption", "description"):
+            if field in request.data:
+                setattr(asset, field, str(request.data[field])[:500] if field != "description" else str(request.data[field]))
+        asset.save(update_fields=["alt_text", "caption", "description", "updated_at"])
+        return Response(_media_payload(asset, request))
+
+    def delete(self, request, asset_id):
+        asset = self._asset(request, asset_id)
+        roles = get_portal_roles(request.user)
+        if "admin" not in roles and asset.owner_auth_id != str(request.user.id):
+            raise PermissionDenied("Only the asset owner or administrator can archive it.")
+        asset.is_active = False
+        asset.save(update_fields=["is_active", "updated_at"])
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminEditorialMediaDownload(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def get(self, request, asset_id):
+        from django.http import FileResponse
+        asset = get_object_or_404(EditorialMediaAsset, pk=asset_id, is_active=True)
+        roles = get_portal_roles(request.user)
+        if "admin" not in roles and asset.owner_auth_id != str(request.user.id):
+            if not roles.intersection({"reviewer", "content_reviewer"}):
+                allowed = asset.post_attachments.filter(
+                    Q(post__owner_auth_id=str(request.user.id)) |
+                    Q(post__assignment__assigned_to_auth_id=str(request.user.id))
+                ).exists()
+                if not allowed:
+                    raise PermissionDenied("You cannot download this media asset.")
+        try:
+            response = FileResponse(asset.file.open("rb"), as_attachment=True, filename=asset.original_name)
+        except (OSError, ValueError):
+            raise NotFound("The stored media file is unavailable.")
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
+
+class AdminPostMedia(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        if not _can_access_media_post(request, post):
+            raise PermissionDenied("You cannot view media attached to this post.")
+        rows = PostMediaAttachment.objects.filter(post=post, asset__is_active=True).select_related("asset")
+        return Response({"results": [{
+            **_media_payload(item.asset, request),
+            "attachment_id": item.id, "role": item.role,
+            "sort_order": item.sort_order,
+            "alt_text": item.alt_text or item.asset.alt_text,
+            "caption": item.caption or item.asset.caption,
+        } for item in rows]})
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        if not _can_access_media_post(request, post, write=True):
+            raise PermissionDenied("Only the owner, assigned editor or administrator can attach media.")
+        asset = get_object_or_404(EditorialMediaAsset, pk=request.data.get("asset_id"), is_active=True)
+        roles = get_portal_roles(request.user)
+        if "admin" not in roles and asset.owner_auth_id != str(request.user.id):
+            raise PermissionDenied("You can attach only media you own.")
+        role = str(request.data.get("role", "attachment"))
+        if role not in {"featured", "gallery", "attachment", "document"}:
+            raise ValidationError({"role": "Choose featured, gallery, attachment or document."})
+        link, created = PostMediaAttachment.objects.get_or_create(
+            post=post, asset=asset,
+            defaults={
+                "role": role,
+                "sort_order": int(request.data.get("sort_order", 0) or 0),
+                "alt_text": str(request.data.get("alt_text", ""))[:500],
+                "caption": str(request.data.get("caption", ""))[:500],
+                "created_by_auth_id": str(request.user.id),
+            },
+        )
+        return Response({"attachment_id": link.id, **_media_payload(asset, request)}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+
+class AdminPostMediaDetail(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def delete(self, request, post_id, attachment_id):
+        post = get_object_or_404(Post, pk=post_id)
+        if not _can_access_media_post(request, post, write=True):
+            raise PermissionDenied("Only the owner, assigned editor or administrator can detach media.")
+        link = get_object_or_404(PostMediaAttachment, pk=attachment_id, post=post)
+        link.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class EditorialDiscussion(APIView):

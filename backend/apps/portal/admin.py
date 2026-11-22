@@ -565,6 +565,14 @@ class JobPostFeeInline(admin.TabularInline):
         "fee_note_en",
         "fee_note_mr",
         "fee_note_hi",
+        "is_exempt",
+        "exemption_note_en",
+        "exemption_note_mr",
+        "exemption_note_hi",
+        "payment_mode",
+        "payment_instructions_en",
+        "payment_instructions_mr",
+        "payment_instructions_hi",
         "sort_order",
     )
     ordering = ("sort_order", "id")

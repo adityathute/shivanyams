@@ -545,10 +545,14 @@ class VideoCollectionSerializer(serializers.ModelSerializer):
 
 class VideoCollectionWriteSerializer(serializers.ModelSerializer):
     video_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False, write_only=True)
+    current_video_ids = serializers.SerializerMethodField()
+
+    def get_current_video_ids(self, obj):
+        return list(obj.items.order_by("sort_order", "id").values_list("post_id", flat=True))
 
     class Meta:
         model = VideoCollection
-        fields = ("id", "collection_type", "title_en", "title_mr", "title_hi", "slug", "description_en", "description_mr", "description_hi", "external_url", "thumbnail_url", "is_published", "sort_order", "video_ids")
+        fields = ("id", "collection_type", "title_en", "title_mr", "title_hi", "slug", "description_en", "description_mr", "description_hi", "external_url", "thumbnail_url", "is_published", "sort_order", "video_ids", "current_video_ids")
         read_only_fields = ("id",)
 
     def validate(self, attrs):

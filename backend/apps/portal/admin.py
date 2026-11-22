@@ -1052,3 +1052,31 @@ class PostTaxonomyTermAdmin(admin.ModelAdmin):
     search_fields = ("post__title_en", "term__name_en")
     autocomplete_fields = ("post", "term")
     readonly_fields = ("created_at", "updated_at")
+
+
+
+from .models import OfficialSource, PostSource
+
+
+@admin.register(OfficialSource)
+class OfficialSourceAdmin(admin.ModelAdmin):
+    list_display = ("name", "domain", "source_type", "jurisdiction", "verification_status", "is_active", "verified_at")
+    list_filter = ("source_type", "verification_status", "is_active", "jurisdiction")
+    search_fields = ("name", "name_mr", "name_hi", "domain", "jurisdiction")
+    prepopulated_fields = {"slug": ("name",)}
+    readonly_fields = ("verified_at", "verified_by_auth_id", "created_at", "updated_at")
+    fieldsets = (
+        ("Publisher", {"fields": ("name", "name_mr", "name_hi", "slug", "domain", "website_url")}),
+        ("Classification", {"fields": ("source_type", "jurisdiction", "is_active")}),
+        ("Verification", {"fields": ("verification_status", "verified_at", "verified_by_auth_id", "verification_notes")}),
+        ("Audit", {"fields": ("created_at", "updated_at")}),
+    )
+
+
+@admin.register(PostSource)
+class PostSourceAdmin(admin.ModelAdmin):
+    list_display = ("post", "source", "evidence_type", "title", "is_primary", "published_on", "checked_at")
+    list_filter = ("evidence_type", "is_primary", "source__verification_status")
+    search_fields = ("post__title_en", "source__name", "source__domain", "title", "source_url")
+    autocomplete_fields = ("post", "source")
+    readonly_fields = ("created_at", "updated_at")

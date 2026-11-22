@@ -25,8 +25,8 @@ class Migration(migrations.Migration):
                 ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={"ordering": ("-created_at",), "indexes": [
-                models.Index(fields=["owner_auth_id", "created_at"], name="editorial_media_owner_created_idx"),
-                models.Index(fields=["kind", "is_active"], name="editorial_media_kind_active_idx"),
+                models.Index(fields=["owner_auth_id", "created_at"], name="ed_media_owner_created_idx"),
+                models.Index(fields=["kind", "is_active"], name="ed_media_kind_active_idx"),
             ]},
         ),
         migrations.CreateModel(

@@ -137,6 +137,9 @@ type JobPostInput = {
   selection_stages: JobPostSelectionStageInput[];
   work_locations: JobPostWorkLocationInput[];
   required_documents: JobPostRequiredDocumentInput[];
+  physical_standards_en: string;
+  physical_standards_mr: string;
+  physical_standards_hi: string;
   salary_currency: string;
   salary_period: string;
   salary_min: string;
@@ -242,6 +245,9 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   selection_stages: [],
   work_locations: [],
   required_documents: [],
+  physical_standards_en: "",
+  physical_standards_mr: "",
+  physical_standards_hi: "",
   salary_currency: "INR",
   salary_period: "monthly",
   salary_min: "",
@@ -973,6 +979,9 @@ export default function PostEditor({
             salary_max: post.salary_max == null ? "" : String(post.salary_max),
             pay_scale: String(post.pay_scale ?? ""),
             grade_pay: String(post.grade_pay ?? ""),
+            physical_standards_en: String(post.physical_standards_en ?? ""),
+            physical_standards_mr: String(post.physical_standards_mr ?? ""),
+            physical_standards_hi: String(post.physical_standards_hi ?? ""),
             required_documents: Array.isArray(post.required_documents) ? (post.required_documents as Record<string, unknown>[]).map((document, documentIndex) => ({ ...createEmptyJobPostRequiredDocument(documentIndex), ...document, title_en: String(document.title_en ?? ""), title_mr: String(document.title_mr ?? ""), title_hi: String(document.title_hi ?? ""), mandatory: document.mandatory !== false, note_en: String(document.note_en ?? ""), note_mr: String(document.note_mr ?? ""), note_hi: String(document.note_hi ?? ""), sort_order: documentIndex })) : [],
             work_locations: Array.isArray(post.work_locations) ? (post.work_locations as Record<string, unknown>[]).map((location, locationIndex) => ({ ...createEmptyJobPostWorkLocation(locationIndex), ...location, location_type: String(location.location_type ?? "other"), name_en: String(location.name_en ?? ""), name_mr: String(location.name_mr ?? ""), name_hi: String(location.name_hi ?? ""), city: String(location.city ?? ""), district: String(location.district ?? ""), state: String(location.state ?? ""), country: String(location.country ?? ""), office: String(location.office ?? ""), vacancies: location.vacancies == null ? "" : String(location.vacancies), note_en: String(location.note_en ?? ""), note_mr: String(location.note_mr ?? ""), note_hi: String(location.note_hi ?? ""), sort_order: locationIndex })) : [],
             selection_stages: Array.isArray(post.selection_stages)
@@ -2234,6 +2243,15 @@ export default function PostEditor({
                         <Input label="Working hours" value={post.working_hours} onChange={(event) => updateJobPost(postIndex, "working_hours", event.target.value)} fullWidth size="sm" />
                         <Textarea label="Service bond" value={post.service_bond} onChange={(event) => updateJobPost(postIndex, "service_bond", event.target.value)} rows={2} />
                         <Textarea label="Retirement benefits" value={post.retirement_benefits} onChange={(event) => updateJobPost(postIndex, "retirement_benefits", event.target.value)} rows={2} />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-physical-standards">
+                      <div className="post-editor-subsection-heading"><div><h4>Post-specific physical standards</h4><small>Enter official height, chest, weight, endurance, vision or other physical eligibility requirements. Keep language-specific details aligned with the notification.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Physical standards (English)" rows={3} value={post.physical_standards_en} onChange={(event) => updateJobPost(postIndex, "physical_standards_en", event.target.value)} fullWidth />
+                        <Textarea label="Physical standards (Marathi)" rows={3} value={post.physical_standards_mr} onChange={(event) => updateJobPost(postIndex, "physical_standards_mr", event.target.value)} fullWidth />
+                        <Textarea label="Physical standards (Hindi)" rows={3} value={post.physical_standards_hi} onChange={(event) => updateJobPost(postIndex, "physical_standards_hi", event.target.value)} fullWidth />
                       </div>
                     </section>
 

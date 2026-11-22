@@ -43,7 +43,6 @@
   font-size: 0.74rem;
 }
 .portal-comments-heading select,
-.portal-comment-composer textarea,
 .portal-comment-inline-reply textarea,
 .portal-comment-report-panel select,
 .portal-comment-report-panel textarea {
@@ -66,15 +65,7 @@
   background: var(--surface, #fff);
 }
 .portal-comment-composer textarea {
-  display: block;
-  flex: 1;
-  min-width: 0;
-  min-height: 42px;
-  padding: 9px 10px;
-  resize: vertical;
-  font: inherit;
   font-size: 0.86rem;
-  line-height: 1.45;
 }
 .portal-comment-composer textarea:focus,
 .portal-comment-inline-reply textarea:focus,
@@ -101,6 +92,9 @@
   margin: 13px 0;
   color: var(--muted-foreground, #9298a2);
   font-size: 0.83rem;
+}
+.portal-comments-empty {
+  padding-left: 4px;
 }
 .portal-comments-list {
   margin-top: 17px;
@@ -191,12 +185,12 @@
   transition: color 0.16s ease;
 }
 .portal-comment-actions button.portal-comment-reply-action {
-    z-index: 0;
-    isolation: isolate;
-    border-radius: 12px;
-    /* margin-left: -25px; */
-    padding: 6px 9px;
-    position: relative;
+  z-index: 0;
+  isolation: isolate;
+  border-radius: 12px;
+  /* margin-left: -25px; */
+  padding: 6px 9px;
+  position: relative;
 }
 .portal-comment-actions button.portal-comment-reply-action::before {
   content: "";
@@ -430,7 +424,7 @@
 }
 
 .portal-comment-item.has-replies > .portal-comment-inline-reply::after {
-  top:90px;
+  top: 90px;
 }
 
 .portal-comment-inline-reply textarea,
@@ -569,7 +563,6 @@
   }
 }
 
-
 /* Mobile reply composer: use a focused modal instead of the inline thread form. */
 .portal-comment-reply-modal {
   display: none;
@@ -686,11 +679,21 @@
 }
 
 @keyframes comment-reply-modal-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes comment-reply-modal-pop {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

@@ -1788,7 +1788,7 @@ class TaxonomyTerm(TimestampedModel):
                 name="unique_taxonomy_term_slug",
             ),
             models.CheckConstraint(
-                condition=~models.Q(parent=models.F("id")),
+                condition=~Q(parent=F("id")),
                 name="prevent_taxonomy_term_self_parent",
             ),
         ]
@@ -1804,7 +1804,7 @@ class TaxonomyTerm(TimestampedModel):
         super().clean()
         if self.parent_id and self.taxonomy_type_id:
             if self.parent.taxonomy_type_id != self.taxonomy_type_id:
-                raise models.ValidationError(
+                raise ValidationError(
                     {"parent": "Parent term must belong to the same taxonomy type."}
                 )
 

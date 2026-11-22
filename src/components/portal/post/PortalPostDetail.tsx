@@ -29,6 +29,7 @@ import { PostCommentsSection } from "./PostCommentsSection";
 import { PostFAQSection } from "./PostFAQSection";
 import { PostEngagementActions } from "./PostEngagementActions";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
+import { VideoPlayer } from "../../videos/VideoPlayer";
 
 export type CategorySlug =
   | "jobs"
@@ -525,6 +526,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[];
             }[],
             jobDetails: undefined,
+            videoDetails: null,
+            videoAttachments: [],
+            relatedVideos: data.videos.filter((entry) => String(entry.id) !== String(video.id)).slice(0, 4),
           }
         : null;
     }
@@ -604,6 +608,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
+          videoDetails: (item as unknown as { video_details?: Record<string, unknown> }).video_details || null,
+          videoAttachments: (item as unknown as { media_attachments?: Array<Record<string, unknown>> }).media_attachments || [],
+          relatedVideos: data.videos.filter((entry) => String(entry.id) !== String(item.id)).slice(0, 4),
         }
       : null;
   }, [category, data.items, data.videos, slug, language, previewItem]);
@@ -902,6 +909,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         </a>
                       ))}
                     </div>
+                  ) : null}
+
+                  {category === "videos" ? (
+                    <VideoPlayer title={post.title} description={post.description} details={post.videoDetails as never} attachments={post.videoAttachments as never} related={post.relatedVideos as never} />
                   ) : null}
 
                   {post.body ? (

@@ -545,6 +545,7 @@ class PostSerializer(serializers.ModelSerializer):
     official_sources = serializers.SerializerMethodField()
     tags = serializers.SerializerMethodField()
     taxonomy_terms = serializers.SerializerMethodField()
+    media_attachments = serializers.SerializerMethodField()
     users_count = serializers.IntegerField(read_only=True, default=0)
 
     job_details = serializers.SerializerMethodField()
@@ -614,6 +615,7 @@ class PostSerializer(serializers.ModelSerializer):
             "official_sources",
             "tags",
             "taxonomy_terms",
+            "media_attachments",
             "job_details",
             "scheme_details",
             "examination_details",
@@ -691,6 +693,20 @@ class PostSerializer(serializers.ModelSerializer):
                 term__is_active=True,
                 term__taxonomy_type__is_active=True,
             )
+        ]
+
+    def get_media_attachments(self, obj):
+        return [
+            {
+                "id": link.asset_id,
+                "role": link.role,
+                "alt_text": link.alt_text or link.asset.alt_text,
+                "caption": link.caption or link.asset.caption,
+                "kind": link.asset.kind,
+                "original_name": link.asset.original_name,
+                "url": f"/api/v1/portal/content/media/{link.asset_id}/",
+            }
+            for link in obj.media_attachments.select_related("asset").filter(asset__is_active=True)
         ]
 
     def get_official_sources(self, obj):

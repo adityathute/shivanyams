@@ -292,6 +292,12 @@ class JobPostSerializer(serializers.ModelSerializer):
             "important_dates",
             "application_links",
             "selection_stages",
+            "salary_currency",
+            "salary_period",
+            "salary_min",
+            "salary_max",
+            "pay_scale",
+            "grade_pay",
             "educational_qualification_en",
             "educational_qualification_mr",
             "educational_qualification_hi",
@@ -432,6 +438,28 @@ class JobPostSerializer(serializers.ModelSerializer):
             for key in ("instructions_en", "instructions_mr", "instructions_hi"):
                 if len(str(item.get(key, "") or "")) > 1000:
                     raise serializers.ValidationError({"application_links": f"{label} field {key} is too long."})
+
+        # Validate post-specific compensation values.
+        salary_min = attrs.get("salary_min", getattr(self.instance, "salary_min", None) if self.instance else None)
+        salary_max = attrs.get("salary_max", getattr(self.instance, "salary_max", None) if self.instance else None)
+        for field, value in (("salary_min", salary_min), ("salary_max", salary_max)):
+            if value not in (None, ""):
+                try:
+                    amount = float(value)
+                except (TypeError, ValueError):
+                    raise serializers.ValidationError({field: "Enter a valid salary amount."})
+                if amount < 0 or amount > 9999999999.99:
+                    raise serializers.ValidationError({field: "Salary must be between 0 and 9,999,999,999.99."})
+        if salary_min not in (None, "") and salary_max not in (None, "") and float(salary_max) < float(salary_min):
+            raise serializers.ValidationError({"salary_max": "Maximum salary cannot be lower than minimum salary."})
+        for field, maximum in (("salary_currency", 8), ("salary_period", 20), ("pay_scale", 240), ("grade_pay", 120)):
+            value = attrs.get(field, getattr(self.instance, field, "") if self.instance else "") or ""
+            if len(str(value).strip()) > maximum:
+                raise serializers.ValidationError({field: f"This field cannot exceed {maximum} characters."})
+        if salary_min not in (None, "") or salary_max not in (None, ""):
+            currency = attrs.get("salary_currency", getattr(self.instance, "salary_currency", "INR") if self.instance else "INR")
+            if not str(currency or "").strip():
+                raise serializers.ValidationError({"salary_currency": "Currency is required when a salary amount is provided."})
 
         # Validate the ordered selection stages for this individual post.
         selection_stages = attrs.get(

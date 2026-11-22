@@ -540,6 +540,35 @@ def _can_access_media_post(request, post, write=False):
         return False
 
 
+
+class PublicEditorialMediaDownload(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, asset_id):
+        from django.http import FileResponse
+        asset = get_object_or_404(
+            EditorialMediaAsset.objects.filter(
+                is_active=True,
+                post_attachments__post__is_active=True,
+                post_attachments__post__status=Post.Status.PUBLISHED,
+                post_attachments__post__published_at__isnull=False,
+            ).distinct(),
+            pk=asset_id,
+        )
+        try:
+            response = FileResponse(
+                asset.file.open("rb"),
+                as_attachment=(asset.kind == EditorialMediaAsset.Kind.DOCUMENT),
+                filename=asset.original_name,
+                content_type=asset.mime_type or "application/octet-stream",
+            )
+        except (OSError, ValueError):
+            raise NotFound("The published media file is unavailable.")
+        response["X-Content-Type-Options"] = "nosniff"
+        response["Cache-Control"] = "public, max-age=3600"
+        return response
+
+
 class AdminEditorialMedia(APIView):
     permission_classes = [IsAuthenticated, IsPortalRevisionManager]
     parser_classes = [MultiPartParser, FormParser]

@@ -572,8 +572,29 @@
   border-top: 1.5px solid var(--border-color, #cbd5e1);
 }
 .portal-comment-report-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.portal-comment-report-heading > div:first-child {
   display: grid;
+  min-width: 0;
   gap: 2px;
+}
+.portal-comment-report-select {
+  flex: 0 0 126px;
+  width: 126px;
+  max-width: 126px;
+  min-width: 0;
+}
+.portal-comment-report-select .shivanya-select,
+.portal-comment-report-select > * {
+  min-width: 0;
+}
+.portal-comment-report-select .shivanya-select-sm + .shivanya-select-arrow {
+  right: 12px;
 }
 .portal-comment-report-footer {
   display: flex;
@@ -583,6 +604,8 @@
 }
 .portal-comment-report-footer > span {
   margin-right: auto;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.74rem;
 }
 
 @keyframes comment-reply-in {
@@ -649,6 +672,14 @@
   .portal-comment-thread-report::after {
     left: -11px;
     width: 10px;
+  }
+  .portal-comment-report-heading {
+    gap: 8px;
+  }
+  .portal-comment-report-select {
+    flex-basis: 112px;
+    width: 112px;
+    max-width: 112px;
   }
   .portal-comment-inline-reply::before {
     left: -11px;

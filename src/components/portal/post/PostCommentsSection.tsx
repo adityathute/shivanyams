@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, LikeIcon, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -318,10 +318,16 @@ export function PostCommentsSection({ postId, language }: Props) {
           <h2 id="portal-comments-heading">Comments</h2>
           <span>{countComments(comments).toLocaleString()} comments and replies</span>
         </div>
-        <select value={sort} onChange={(event) => setSort(event.target.value as "newest" | "oldest")} aria-label="Sort comments">
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-        </select>
+        <Select
+          aria-label="Sort comments"
+          size="sm"
+          options={[
+            { label: "Newest first", value: "newest" },
+            { label: "Oldest first", value: "oldest" },
+          ]}
+          value={sort}
+          onChange={(event) => setSort(event.target.value as "newest" | "oldest")}
+        />
       </div>
 
       <div className="portal-comment-composer">
@@ -347,7 +353,6 @@ export function PostCommentsSection({ postId, language }: Props) {
       ) : null}
       {error ? <p className="portal-comments-message" role="status">{error}</p> : null}
       {loading ? <p className="portal-comments-message">Loading comments...</p> : null}
-      {!loading && !comments.length ? <p className="portal-comments-empty">No comments yet. Start the discussion.</p> : null}
       <div className="portal-comments-list">
         {sortedComments.map((item) => (
           <CommentThread

@@ -79,6 +79,8 @@ export function VideosPage() {
     return () => controller.abort();
   }, []);
 
+  const { language } = usePortalLanguage();
+
   useEffect(() => {
     const controller = new AbortController();
     const params = new URLSearchParams();
@@ -91,7 +93,7 @@ export function VideosPage() {
         .then((response) => { if (!response.ok) throw new Error("Video discovery unavailable"); return response.json(); })
         .then((payload) => {
           const rows = Array.isArray(payload.results) ? payload.results : [];
-          setDiscoveredVideos(rows.map((post: any) => ({
+          setDiscoveredVideos(rows.map((post: { id: number; slug: string; title_en: string; title_mr?: string; title_hi?: string; default_language?: string; video_details?: { video_url?: string; thumbnail_url?: string } | null; featured_image_url?: string; tags?: DiscoveryVideo["tags"]; taxonomy_terms?: DiscoveryVideo["taxonomy_terms"] }) => ({
             id: post.id, slug: post.slug,
             title: language === "mr" ? post.title_mr || post.title_en : language === "hi" ? post.title_hi || post.title_en : post.title_en,
             language: post.default_language || "", url: post.video_details?.video_url || "",
@@ -107,7 +109,7 @@ export function VideosPage() {
     return () => { window.clearTimeout(handle); controller.abort(); };
   }, [query, selectedTag, selectedTopic, language]);
 
-  const { language } = usePortalLanguage();
+
 
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);

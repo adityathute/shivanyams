@@ -279,6 +279,7 @@ type ApiJobPost = {
   department_mr?: string;
   department_hi?: string;
   vacancies?: number | null;
+  work_locations?: Array<Record<string, unknown>>;
   salary_currency?: string;
   salary_period?: string;
   salary_min?: string | number | null;

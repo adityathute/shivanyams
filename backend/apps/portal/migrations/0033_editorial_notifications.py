@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ("post", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name="editorial_notifications", to="portal.post")),
             ],
             options={"ordering": ("-created_at",), "indexes": [
-                models.Index(fields=["recipient_auth_id", "created_at"], name="editorial_notif_user_created_idx"),
+                models.Index(fields=["recipient_auth_id", "created_at"], name="ed_notif_user_created_idx"),
                 models.Index(fields=["recipient_auth_id", "read_at"], name="editorial_notif_user_read_idx"),
             ]},
         ),

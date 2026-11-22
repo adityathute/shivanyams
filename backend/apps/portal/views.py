@@ -34,6 +34,7 @@ from .models import (
     PostReaction,
     PostStatusHistory,
     PostRevision,
+    PostAssignment,
     PostTag,
     PostTaxonomyTerm,
     PostView,
@@ -452,7 +453,7 @@ class AdminContent(viewsets.ModelViewSet):
         )
         roles = get_portal_roles(self.request.user)
         if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}):
-            queryset = queryset.filter(owner_auth_id=str(self.request.user.id))
+            queryset = queryset.filter(Q(owner_auth_id=str(self.request.user.id)) | Q(assignment__assigned_to_auth_id=str(self.request.user.id)))
         return apply_content_discovery_filters(
             queryset, self.request.query_params, public=False
         )
@@ -495,6 +496,90 @@ class AdminContent(viewsets.ModelViewSet):
             transaction.on_commit(
                 lambda: send_mass_mail(email_messages, fail_silently=True)
             )
+
+
+class AdminPostAssignment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def _roles(self, request):
+        return get_portal_roles(request.user)
+
+    def get(self, request, post_id):
+        roles = self._roles(request)
+        assignment = get_object_or_404(PostAssignment, post_id=post_id)
+        if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}) and assignment.assigned_to_auth_id != str(request.user.id):
+            raise PermissionDenied("You cannot view this assignment.")
+        return Response(self._serialize(assignment))
+
+    def post(self, request, post_id):
+        roles = self._roles(request)
+        if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}):
+            raise PermissionDenied("Only reviewers or administrators can assign content.")
+        post = get_object_or_404(Post, pk=post_id)
+        assigned_to = str(request.data.get("assigned_to_auth_id", "")).strip()
+        if not assigned_to:
+            raise ValidationError({"assigned_to_auth_id": "An editor user ID is required."})
+        if len(assigned_to) > 128:
+            raise ValidationError({"assigned_to_auth_id": "The editor user ID is too long."})
+        raw_due = request.data.get("due_at")
+        due_at = parse_datetime(str(raw_due)) if raw_due else None
+        if raw_due and (not due_at or timezone.is_naive(due_at)):
+            raise ValidationError({"due_at": "Provide an ISO-8601 date-time with timezone offset."})
+        assignment, _ = PostAssignment.objects.update_or_create(
+            post=post,
+            defaults={
+                "assigned_to_auth_id": assigned_to,
+                "assigned_by_auth_id": str(request.user.id),
+                "status": PostAssignment.Status.ASSIGNED,
+                "due_at": due_at,
+                "note": str(request.data.get("note", "")).strip(),
+            },
+        )
+        return Response(self._serialize(assignment), status=status.HTTP_200_OK)
+
+    def patch(self, request, post_id):
+        assignment = get_object_or_404(PostAssignment, post_id=post_id)
+        roles = self._roles(request)
+        if "admin" not in roles and not roles.intersection({"reviewer", "content_reviewer"}) and assignment.assigned_to_auth_id != str(request.user.id):
+            raise PermissionDenied("Only the assigned editor can update this task.")
+        if "status" not in request.data:
+            raise ValidationError({"status": "A task status is required."})
+        allowed = {PostAssignment.Status.ASSIGNED, PostAssignment.Status.IN_PROGRESS, PostAssignment.Status.COMPLETED, PostAssignment.Status.CANCELLED}
+        new_status = request.data.get("status")
+        if new_status not in allowed:
+            raise ValidationError({"status": "Unsupported assignment status."})
+        assignment.status = new_status
+        assignment.save(update_fields=["status", "updated_at"])
+        return Response(self._serialize(assignment))
+
+    @staticmethod
+    def _serialize(assignment):
+        return {
+            "id": assignment.id,
+            "post_id": assignment.post_id,
+            "post_title": assignment.post.title_en,
+            "assigned_to_auth_id": assignment.assigned_to_auth_id,
+            "assigned_by_auth_id": assignment.assigned_by_auth_id,
+            "status": assignment.status,
+            "due_at": assignment.due_at,
+            "note": assignment.note,
+            "assigned_at": assignment.assigned_at,
+            "updated_at": assignment.updated_at,
+        }
+
+
+class AdminAssignmentWorkload(APIView):
+    permission_classes = [IsPortalReviewer]
+
+    def get(self, request):
+        rows = PostAssignment.objects.values("assigned_to_auth_id", "status").annotate(total=Count("id")).order_by("assigned_to_auth_id", "status")
+        workload = {}
+        for row in rows:
+            user_id = row["assigned_to_auth_id"]
+            workload.setdefault(user_id, {"assigned_to_auth_id": user_id, "total": 0, "assigned": 0, "in_progress": 0, "completed": 0, "cancelled": 0})
+            workload[user_id]["total"] += row["total"]
+            workload[user_id][row["status"]] = row["total"]
+        return Response({"results": list(workload.values())})
 
 
 class AdminPostReview(APIView):

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 
-type Collection = { id: number; collection_type: string; title_en: string; slug: string; external_url: string; is_published: boolean; video_ids?: number[] };
+type Collection = { id: number; collection_type: string; title_en: string; slug: string; external_url: string; is_published: boolean; video_ids?: number[]; current_video_ids?: number[]; description_en?: string; thumbnail_url?: string };
 
 export default function VideoCollectionsPanel() {
   const [items, setItems] = useState<Collection[]>([]);
@@ -16,6 +16,7 @@ export default function VideoCollectionsPanel() {
   const [thumbnail, setThumbnail] = useState("");
   const [videoIds, setVideoIds] = useState("");
   const [published, setPublished] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -32,18 +33,25 @@ export default function VideoCollectionsPanel() {
     event.preventDefault(); setBusy(true); setMessage("");
     try {
       const ids = videoIds.split(",").map((value) => Number(value.trim())).filter((value) => Number.isInteger(value) && value > 0);
-      const response = await adminFetch(`${API_URL}/admin/video-collections/`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
+      const response = await adminFetch(editingId ? `${API_URL}/admin/video-collections/${editingId}/` : `${API_URL}/admin/video-collections/`, {
+        method: editingId ? "PATCH" : "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ collection_type: type, title_en: title.trim(), slug: slug.trim(), description_en: description.trim(), external_url: externalUrl.trim(), thumbnail_url: thumbnail.trim(), is_published: published, video_ids: ids }),
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || payload.slug?.[0] || payload.video_ids?.[0] || payload.external_url?.[0] || "Unable to save collection.");
       setTitle(""); setSlug(""); setDescription(""); setExternalUrl(""); setThumbnail(""); setVideoIds(""); setPublished(false);
-      setMessage("Collection created."); await refresh();
+      setMessage(editingId ? "Collection updated." : "Collection created."); setEditingId(null); await refresh();
     } catch (error) { setMessage(error instanceof Error ? error.message : "Unable to save collection."); }
     finally { setBusy(false); }
   }
 
+  function editCollection(item: Collection) {
+    setEditingId(item.id); setType(item.collection_type); setTitle(item.title_en); setSlug(item.slug);
+    setDescription(item.description_en || ""); setExternalUrl(item.external_url || ""); setThumbnail(item.thumbnail_url || "");
+    setVideoIds((item.current_video_ids || []).join(", ")); setPublished(item.is_published); setMessage("Editing collection.");
+  }
+
+  function resetForm() { setEditingId(null); setType("playlist"); setTitle(""); setSlug(""); setDescription(""); setExternalUrl(""); setThumbnail(""); setVideoIds(""); setPublished(false); }
   async function removeCollection(id: number) {
     if (!window.confirm("Delete this collection? Its videos will remain published.")) return;
     setBusy(true);
@@ -63,9 +71,9 @@ export default function VideoCollectionsPanel() {
       <label>Description<textarea rows={2} value={description} onChange={(event) => setDescription(event.target.value)} /></label>
       <label>Video post IDs (comma separated)<input placeholder="Example: 14, 27, 31" value={videoIds} onChange={(event) => setVideoIds(event.target.value)} /><small>Use IDs from existing Video posts. Order here becomes collection order.</small></label>
       <label className="video-collection-publish"><input type="checkbox" checked={published} onChange={(event) => setPublished(event.target.checked)} /> Publish collection</label>
-      <button type="submit" disabled={busy || !title.trim() || !slug.trim()}>{busy ? "Saving…" : "Create collection"}</button>
+      <div className="video-collection-form-actions"><button type="submit" disabled={busy || !title.trim() || !slug.trim()}>{busy ? "Saving…" : editingId ? "Update collection" : "Create collection"}</button>{editingId ? <button type="button" disabled={busy} onClick={resetForm}>Cancel edit</button> : null}</div>
     </form>
-    {items.map((item) => <div className="video-collection-admin-row" key={item.id}><div><strong>{item.title_en}</strong><small>{item.collection_type} · slug: {item.slug} · {item.is_published ? "Published" : "Draft"}</small>{item.external_url ? <a href={item.external_url} target="_blank" rel="noreferrer">Open YouTube link</a> : null}</div><button type="button" disabled={busy} onClick={() => void removeCollection(item.id)}>Delete</button></div>)}
+    {items.map((item) => <div className="video-collection-admin-row" key={item.id}><div><strong>{item.title_en}</strong><small>{item.collection_type} · slug: {item.slug} · {(item.current_video_ids || []).length} videos · {item.is_published ? "Published" : "Draft"}</small>{item.external_url ? <a href={item.external_url} target="_blank" rel="noreferrer">Open YouTube link</a> : null}</div><div className="video-collection-row-actions"><button type="button" disabled={busy} onClick={() => editCollection(item)}>Edit</button><button type="button" disabled={busy} onClick={() => void removeCollection(item.id)}>Delete</button></div></div>)}
     {message ? <p role="status">{message}</p> : null}
   </section>;
 }

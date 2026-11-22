@@ -120,6 +120,49 @@ function formatDate(value: string, language: string) {
       });
 }
 
+
+function formatRelativePostDate(value: string, language: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return formatDate(value, language);
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+  if (seconds < 60) return `${Math.max(1, seconds)} sec ago`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) {
+    const remainingSeconds = seconds % 60;
+    return remainingSeconds > 0
+      ? `${minutes} min ${remainingSeconds} sec ago`
+      : `${minutes} min ago`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0
+      ? `${hours} h ${remainingMinutes} min ago`
+      : `${hours} h ago`;
+  }
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) {
+    const remainingHours = hours % 24;
+    return remainingHours > 0
+      ? `${days} d ${remainingHours} h ago`
+      : `${days} d ago`;
+  }
+
+  if (days < 30) {
+    const weeks = Math.floor(days / 7);
+    const remainingDays = days % 7;
+    return remainingDays > 0
+      ? `${weeks} w ${remainingDays} d ago`
+      : `${weeks} w ago`;
+  }
+
+  return formatDate(value, language);
+}
+
 function formatTime(value: string | null | undefined, language: string) {
   if (!value) return "";
   const [hours, minutes] = value.split(":").map(Number);
@@ -810,7 +853,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             <span className="portal-post-date-label">
                               {getDetailLabel("posted", language)}:
                             </span>
-                            <time dateTime={createdPostDate}>{formatDate(createdPostDate, language)}</time>
+                            <time dateTime={createdPostDate}>{formatRelativePostDate(createdPostDate, language)}</time>
                           </div>
                         ) : null}
                         {updatedPostDate ? (
@@ -818,7 +861,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             <span className="portal-post-date-label">
                               {getDetailLabel("lastUpdated", language)}:
                             </span>
-                            <time dateTime={updatedPostDate}>{formatDate(updatedPostDate, language)}</time>
+                            <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
                           </div>
                         ) : null}
                       </div>

@@ -730,21 +730,11 @@
   }
 }
 
-@media (max-width: 760px) {
-  .ticker {
-    display: none;
-  }
-}
 
-[data-theme="dark"] .ticker-item {
-  color: #c5d5e9;
-  border-right-color: #344154;
-}
 
-[data-theme="dark"] .ticker-item:hover {
-  background: #1c2b40;
-  color: #8dbaff;
-}
+
+
+
 
 /* Scene-dependent colors */
 .hero {

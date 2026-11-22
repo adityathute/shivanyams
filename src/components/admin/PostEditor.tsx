@@ -107,6 +107,9 @@ type JobPostInput = {
   age_limit_note_mr: string;
   age_limit_note_hi: string;
   age_relaxations: Array<Record<string, unknown>>;
+  education_requirements: Array<Record<string, unknown>>;
+  subject_requirements: Array<Record<string, unknown>>;
+  experience_requirements: Array<Record<string, unknown>>;
   sort_order: number;
   fees: JobPostFeeInput[];
   educations: JobPostEducationInput[];
@@ -152,6 +155,9 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   age_limit_note_mr: "",
   age_limit_note_hi: "",
   age_relaxations: [],
+  education_requirements: [],
+  subject_requirements: [],
+  experience_requirements: [],
   sort_order,
   fees: [],
   educations: [],
@@ -1996,6 +2002,35 @@ export default function PostEditor({
                         ))}
                       </div>
                     </div>
+
+                    <section className="post-editor-post-detail-section post-editor-eligibility-requirements">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Education, subject & experience requirements</h4><small>Enter only the conditions published in the official recruitment notice. Existing qualification text and education entries remain supported.</small></div>
+                      </div>
+                      {([
+                        ["education_requirements", "Education requirements", '[{"title_en":"Bachelor degree","title_mr":"पदवी","title_hi":"स्नातक डिग्री","details_en":"Recognized university","minimum_percentage":50,"mandatory":true}]'],
+                        ["subject_requirements", "Subject / specialization requirements", '[{"title_en":"Relevant subject","title_mr":"संबंधित विषय","title_hi":"संबंधित विषय","details_en":"Degree in the specified discipline","mandatory":true}]'],
+                        ["experience_requirements", "Experience requirements", '[{"title_en":"Relevant work experience","title_mr":"संबंधित कामाचा अनुभव","title_hi":"संबंधित कार्य अनुभव","details_en":"Experience in the relevant field","minimum_years":2,"mandatory":true}]'],
+                      ] as const).map(([field, label, example]) => (
+                        <Textarea
+                          key={field}
+                          label={`${label} (JSON)`}
+                          rows={5}
+                          value={JSON.stringify(post[field] ?? [], null, 2)}
+                          onChange={(event) => {
+                            try {
+                              const parsed = JSON.parse(event.target.value);
+                              if (Array.isArray(parsed)) updateJobPost(postIndex, field, parsed);
+                            } catch {
+                              // Keep the last valid list while the user edits JSON.
+                            }
+                          }}
+                          placeholder={example}
+                          fullWidth
+                          size="sm"
+                        />
+                      ))}
+                    </section>
 
                     <section className="post-editor-post-detail-section post-editor-age-relaxations">
                       <div className="post-editor-subsection-heading">

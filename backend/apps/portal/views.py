@@ -627,6 +627,20 @@ class PostComments(APIView):
                 {"parent": "Choose an approved comment from this post to reply to."}
             )
 
+        # A root comment is depth 0; allow replies at depths 1, 2 and 3 only.
+        # Walk the parent chain so clients cannot bypass the limit by posting
+        # directly to the API instead of using the Reply button.
+        if parent:
+            depth = 1
+            ancestor = parent
+            while ancestor.parent_id is not None:
+                depth += 1
+                ancestor = ancestor.parent
+            if depth >= 3:
+                raise ValidationError(
+                    {"parent": "Replies can be nested up to 3 levels only."}
+                )
+
         author_name, author_avatar = get_comment_author_profile(request)
         with transaction.atomic():
             comment = serializer.save(

@@ -324,6 +324,9 @@ class JobPostSerializer(serializers.ModelSerializer):
             "subject_requirements",
             "experience_requirements",
             "required_documents",
+            "physical_standards_en",
+            "physical_standards_mr",
+            "physical_standards_hi",
             "sort_order",
             "fees",
             "educations",
@@ -482,6 +485,13 @@ class JobPostSerializer(serializers.ModelSerializer):
             for key, maximum in (("name_en", 180), ("name_mr", 180), ("name_hi", 180), ("city", 120), ("district", 120), ("state", 120), ("country", 120), ("office", 180), ("note_en", 600), ("note_mr", 600), ("note_hi", 600)):
                 if len(str(location.get(key, "") or "")) > maximum:
                     raise serializers.ValidationError({"work_locations": f"{label} field {key} is too long."})
+
+        for field in ("physical_standards_en", "physical_standards_mr", "physical_standards_hi"):
+            value = attrs.get(field, getattr(self.instance, field, "") if self.instance else "") or ""
+            if not isinstance(value, str):
+                raise serializers.ValidationError({field: "Physical standards must be text."})
+            if len(value) > 4000:
+                raise serializers.ValidationError({field: "Physical standards cannot exceed 4,000 characters."})
 
         # Validate the post-specific required-document checklist.
         required_documents = attrs.get("required_documents", getattr(self.instance, "required_documents", []) if self.instance else []) or []

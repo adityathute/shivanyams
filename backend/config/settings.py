@@ -4,9 +4,14 @@ Keep environment-specific values in the backend environment. Never place
 credentials or private keys in source control or browser-exposed variables.
 """
 from pathlib import Path
+
 from decouple import Csv, config
 
+
+# ---------------------------------------------------------------------------
 # Project paths and core runtime
+# ---------------------------------------------------------------------------
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
@@ -16,7 +21,11 @@ ALLOWED_HOSTS = config(
     cast=Csv(),
 )
 
+
+# ---------------------------------------------------------------------------
 # Django applications and request middleware
+# ---------------------------------------------------------------------------
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -27,8 +36,16 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "django_filters",
-    "apps.portal",
+    "apps.portal.apps.PortalConfig",
 ]
+
+# Preserve middleware ordering:
+# - SecurityMiddleware wraps requests/responses first.
+# - SessionMiddleware runs before AuthenticationMiddleware.
+# - CorsMiddleware runs before CommonMiddleware so preflight responses
+#   receive CORS headers.
+# - CsrfViewMiddleware remains after CommonMiddleware and before auth views.
+# - MessagesMiddleware follows AuthenticationMiddleware.
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -39,9 +56,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -58,7 +77,11 @@ TEMPLATES = [
     },
 ]
 
+
+# ---------------------------------------------------------------------------
 # Database
+# ---------------------------------------------------------------------------
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -70,17 +93,29 @@ DATABASES = {
     }
 }
 
+
+# ---------------------------------------------------------------------------
 # Locale and model defaults
+# ---------------------------------------------------------------------------
+
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# ---------------------------------------------------------------------------
 # Static files
+# ---------------------------------------------------------------------------
+
 STATIC_URL = "static/"
 
+
+# ---------------------------------------------------------------------------
 # Cross-origin browser access and CSRF trust
+# ---------------------------------------------------------------------------
+
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
     default="",
@@ -93,7 +128,11 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv(),
 )
 
+
+# ---------------------------------------------------------------------------
 # Shivanya Auth server-to-server integration
+# ---------------------------------------------------------------------------
+
 AUTH_ME_URL = config(
     "AUTH_ME_URL",
     default="http://127.0.0.1:8000/api/v1/auth/me/",
@@ -108,7 +147,11 @@ AUTH_ACCESS_COOKIE_NAME = config(
     default="shivanya_access",
 )
 
+
+# ---------------------------------------------------------------------------
 # Django REST Framework
+# ---------------------------------------------------------------------------
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "apps.portal.authentication.ShivanyaAuthAuthentication",
@@ -130,7 +173,11 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 20,
 }
 
-# Email delivery: post-update subscriber notifications
+
+# ---------------------------------------------------------------------------
+# Email delivery
+# ---------------------------------------------------------------------------
+
 EMAIL_BACKEND = config(
     "EMAIL_BACKEND",
     default="django.core.mail.backends.smtp.EmailBackend",

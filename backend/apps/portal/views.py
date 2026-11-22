@@ -794,8 +794,12 @@ class AdminPostMedia(APIView):
         if "admin" not in roles and asset.owner_auth_id != str(request.user.id):
             raise PermissionDenied("You can attach only media you own.")
         role = str(request.data.get("role", "attachment"))
-        if role not in {"featured", "gallery", "attachment", "document"}:
-            raise ValidationError({"role": "Choose featured, gallery, attachment or document."})
+        if role not in {"featured", "gallery", "attachment", "document", "video"}:
+            raise ValidationError({"role": "Choose featured, gallery, attachment, document or video."})
+        if asset.kind == EditorialMediaAsset.Kind.VIDEO and role != "video":
+            raise ValidationError({"role": "Video assets must use the video role."})
+        if asset.kind != EditorialMediaAsset.Kind.VIDEO and role == "video":
+            raise ValidationError({"role": "The video role is reserved for video assets."})
         link, created = PostMediaAttachment.objects.get_or_create(
             post=post, asset=asset,
             defaults={

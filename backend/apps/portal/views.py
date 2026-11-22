@@ -1444,6 +1444,10 @@ class AdminContentMetadata(APIView):
             "id", "name_en", "slug",
             "taxonomy_type__slug", "taxonomy_type__name_en",
         )
+        sources = OfficialSource.objects.filter(
+            is_active=True,
+            verification_status=OfficialSource.VerificationStatus.VERIFIED,
+        ).order_by("name").values("id", "name", "domain", "website_url", "source_type")
         return Response({
             "tags": list(tags),
             "taxonomy_terms": [
@@ -1456,4 +1460,5 @@ class AdminContentMetadata(APIView):
                 }
                 for item in terms
             ],
+            "official_sources": list(sources),
         })

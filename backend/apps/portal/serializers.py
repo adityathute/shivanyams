@@ -1,4 +1,4 @@
-from django.db import transaction
+from django.db import transaction\nfrom django.utils import timezone
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (
@@ -1011,3 +1011,55 @@ class SavedPostSerializer(serializers.ModelSerializer):
         model = SavedPost
         fields = ("id", "post", "created_at")
         read_only_fields = fields
+
+
+
+class OfficialSourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OfficialSource
+        fields = (
+            "id", "name", "name_mr", "name_hi", "slug", "domain",
+            "website_url", "source_type", "jurisdiction",
+            "verification_status", "verified_at", "verified_by_auth_id",
+            "verification_notes", "is_active", "created_at", "updated_at",
+        )
+        read_only_fields = ("id", "verified_at", "verified_by_auth_id", "created_at", "updated_at")
+
+    def validate(self, attrs):
+        status_value = attrs.get(
+            "verification_status",
+            getattr(self.instance, "verification_status", OfficialSource.VerificationStatus.UNVERIFIED),
+        )
+        if status_value == OfficialSource.VerificationStatus.VERIFIED:
+            attrs["verified_at"] = timezone.now()
+            request = self.context.get("request")
+            attrs["verified_by_auth_id"] = str(getattr(getattr(request, "user", None), "id", "") or "")
+            if not attrs["verified_by_auth_id"]:
+                raise serializers.ValidationError({
+                    "verification_status": "A verified source must have an authenticated verifier."
+                })
+        elif status_value != OfficialSource.VerificationStatus.VERIFIED and self.instance:
+            attrs["verified_at"] = None
+            attrs["verified_by_auth_id"] = ""
+        return attrs
+
+
+class PostSourceSerializer(serializers.ModelSerializer):
+    source_name = serializers.CharField(source="source.name", read_only=True)
+    source_domain = serializers.CharField(source="source.domain", read_only=True)
+    verification_status = serializers.CharField(source="source.verification_status", read_only=True)
+
+    class Meta:
+        model = PostSource
+        fields = (
+            "id", "post", "source", "source_name", "source_domain",
+            "verification_status", "evidence_type", "title", "source_url",
+            "published_on", "checked_at", "is_primary", "notes",
+            "created_at", "updated_at",
+        )
+        read_only_fields = ("id", "post", "source_name", "source_domain", "verification_status", "created_at", "updated_at")
+
+    def validate_source(self, value):
+        if not value.is_active or value.verification_status != OfficialSource.VerificationStatus.VERIFIED:
+            raise serializers.ValidationError("Select an active, verified official source.")
+        return value

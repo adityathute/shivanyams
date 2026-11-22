@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, EditIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -196,8 +196,8 @@ function CommentThread({
             <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${item.dislikes_count} dislikes`}>
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
+            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button> : null}
-            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}>Edit</button> : null}
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
           </div>
           {replyCount > 0 && !repliesExpanded ? (

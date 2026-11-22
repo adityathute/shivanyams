@@ -36,6 +36,7 @@ from .models import (
     SchemeDetails,
     ToolDetails,
     VideoDetails,
+    VideoCaptionTrack,
     ImportantLink,
 )
 
@@ -625,6 +626,15 @@ class ArticleGuideDetailsAdmin(PostDetailAdmin):
     list_filter = ("article_type",)
     search_fields = ("post__title_en", "post__slug", "source_name")
 
+
+
+
+@admin.register(VideoCaptionTrack)
+class VideoCaptionTrackAdmin(admin.ModelAdmin):
+    list_display = ("video", "language", "label", "is_default", "sort_order", "created_at")
+    list_filter = ("language", "is_default")
+    search_fields = ("video__post__title_en", "label", "language")
+    readonly_fields = ("created_at", "updated_at")
 
 @admin.register(VideoDetails)
 class VideoDetailsAdmin(PostDetailAdmin):

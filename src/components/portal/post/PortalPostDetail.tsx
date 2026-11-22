@@ -384,6 +384,19 @@ const detailLabels = {
     mr: "मुलाखतीचे ठिकाण",
     hi: "साक्षात्कार का स्थान",
   },
+  compensation: { en: "Salary & compensation", mr: "वेतन आणि मोबदला", hi: "वेतन और मुआवज़ा" },
+  salaryRange: { en: "Salary range", mr: "वेतन श्रेणी", hi: "वेतन सीमा" },
+  payScale: { en: "Pay scale", mr: "वेतनश्रेणी", hi: "वेतनमान" },
+  gradePay: { en: "Grade pay", mr: "ग्रेड वेतन", hi: "ग्रेड वेतन" },
+  salaryPeriod: { en: "Pay period", mr: "वेतन कालावधी", hi: "वेतन अवधि" },
+  allowances: { en: "Allowances", mr: "भत्ते", hi: "भत्ते" },
+  benefits: { en: "Benefits", mr: "लाभ", hi: "लाभ" },
+  employmentConditions: { en: "Employment conditions", mr: "नोकरीच्या अटी", hi: "नौकरी की शर्तें" },
+  probationPeriod: { en: "Probation period", mr: "परिविक्षा कालावधी", hi: "परिवीक्षा अवधि" },
+  contractDuration: { en: "Contract duration", mr: "कराराचा कालावधी", hi: "अनुबंध अवधि" },
+  workingHours: { en: "Working hours", mr: "कामाचे तास", hi: "कार्य समय" },
+  serviceBond: { en: "Service bond", mr: "सेवा बंधपत्र", hi: "सेवा बंधपत्र" },
+  retirementBenefits: { en: "Retirement benefits", mr: "निवृत्ती लाभ", hi: "सेवानिवृत्ति लाभ" },
   recruitmentType: { en: "Recruitment type", mr: "भरतीचा प्रकार", hi: "भर्ती का प्रकार" },
   applicationStatus: { en: "Application status", mr: "अर्जाची स्थिती", hi: "आवेदन की स्थिति" },
   departmentName: { en: "Department", mr: "विभाग", hi: "विभाग" },
@@ -1301,6 +1314,14 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         </span>
                         {jobDetails?.recruitment_type ? <span>{getDetailLabel("recruitmentType", language)}: {detailLabelFallback(jobDetails.recruitment_type)}</span> : null}
                       </div>
+                      {(jobDetails?.salary_min != null || jobDetails?.salary_max != null || jobDetails?.pay_scale || jobDetails?.grade_pay) ? (
+                        <section className="portal-job-extra-section portal-job-compensation">
+                          <h2>{getDetailLabel("compensation", language)}</h2>
+                          {jobDetails?.salary_min != null || jobDetails?.salary_max != null ? (
+                            <p>{getDetailLabel("salaryRange", language)}: {jobDetails?.salary_min != null ? Number(jobDetails.salary_min).toLocaleString() : "—"} – {jobDetails?.salary_max != null ? Number(jobDetails.salary_max).toLocaleString() : "—"} {jobDetails?.salary_currency || "INR"}{jobDetails?.salary_period ? " / " + jobDetails.salary_period : ""}</p>
+                          ) : null}
+                        </section>
+                      ) : null}
                       {[
                         [getDetailLabel("departmentName", language), jobDetails?.department],
                         [getDetailLabel("designation", language), jobDetails?.designation],
@@ -1310,6 +1331,17 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         [getDetailLabel("syllabus", language), jobDetails?.syllabus],
                         [getDetailLabel("physicalTest", language), jobDetails?.physical_test_details],
                         [getDetailLabel("interviewDetails", language), jobDetails?.interview_details],
+                        [getDetailLabel("payScale", language), jobDetails?.pay_scale],
+                        [getDetailLabel("gradePay", language), jobDetails?.grade_pay],
+                        [getDetailLabel("salaryPeriod", language), jobDetails?.salary_period],
+                        [getDetailLabel("allowances", language), jobDetails?.allowances],
+                        [getDetailLabel("benefits", language), jobDetails?.benefits],
+                        [getDetailLabel("employmentConditions", language), jobDetails?.employment_conditions],
+                        [getDetailLabel("probationPeriod", language), jobDetails?.probation_period],
+                        [getDetailLabel("contractDuration", language), jobDetails?.contract_duration],
+                        [getDetailLabel("workingHours", language), jobDetails?.working_hours],
+                        [getDetailLabel("serviceBond", language), jobDetails?.service_bond],
+                        [getDetailLabel("retirementBenefits", language), jobDetails?.retirement_benefits],
                       ].filter(([, value]) => Boolean(value && String(value).trim())).map(([heading, value]) => (
                         <section className="portal-job-extra-section" key={heading}>
                           <h2>{heading}</h2><p>{value}</p>

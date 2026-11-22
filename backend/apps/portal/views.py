@@ -518,6 +518,12 @@ def _media_payload(asset, request):
         "id": asset.id, "owner_auth_id": asset.owner_auth_id,
         "original_name": asset.original_name, "kind": asset.kind,
         "mime_type": asset.mime_type, "file_size": asset.file_size,
+        "image_width": asset.image_width,
+        "image_height": asset.image_height,
+        "processing_status": asset.processing_status,
+        "processing_error": asset.processing_error,
+        "variants": {name: {"url": request.build_absolute_uri("/api/v1/portal/content/media/{}/image/?size={}".format(asset.id, name)), "width": details.get("width"), "height": details.get("height"), "format": details.get("format")} for name, details in (asset.variants or {}).items()},
+        "responsive_image_url": request.build_absolute_uri("/api/v1/portal/content/media/{}/image/?size=medium".format(asset.id)),
         "alt_text": asset.alt_text, "caption": asset.caption,
         "description": asset.description, "created_at": asset.created_at,
         "updated_at": asset.updated_at,
@@ -607,6 +613,12 @@ class AdminEditorialMedia(APIView):
             raise ValidationError({"file": "Unsupported file type. Allowed images: JPG, PNG, WEBP, GIF. Documents: PDF, TXT, CSV, DOC, DOCX, XLS, XLSX."})
         if upload.size > maximum:
             raise ValidationError({"file": f"File exceeds the {maximum // (1024 * 1024)} MB limit."})
+        if kind == EditorialMediaAsset.Kind.IMAGE:
+            from .media_processing import inspect_uploaded_image
+            try:
+                inspect_uploaded_image(upload)
+            except ValueError as exc:
+                raise ValidationError({"file": str(exc)})
         original_name = os.path.basename(upload.name).replace("\\", "_")[:255]
         asset = EditorialMediaAsset.objects.create(
             owner_auth_id=str(request.user.id), file=upload,
@@ -617,6 +629,9 @@ class AdminEditorialMedia(APIView):
             caption=str(request.data.get("caption", ""))[:500],
             description=str(request.data.get("description", "")),
         )
+        if kind == EditorialMediaAsset.Kind.IMAGE:
+            from .media_processing import generate_editorial_variants
+            asset = generate_editorial_variants(asset)
         return Response(_media_payload(asset, request), status=status.HTTP_201_CREATED)
 
 

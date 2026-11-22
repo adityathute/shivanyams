@@ -821,9 +821,16 @@ class AdminEditorialMediaDownload(APIView):
                 if not allowed:
                     raise PermissionDenied("You cannot download this media asset.")
         try:
-            response = FileResponse(asset.file.open("rb"), as_attachment=True, filename=asset.original_name)
+            response = FileResponse(
+                asset.file.open("rb"),
+                as_attachment=(asset.kind == EditorialMediaAsset.Kind.DOCUMENT),
+                filename=asset.original_name,
+                content_type=asset.mime_type or "application/octet-stream",
+            )
         except (OSError, ValueError):
             raise NotFound("The stored media file is unavailable.")
+        if asset.kind in {EditorialMediaAsset.Kind.IMAGE, EditorialMediaAsset.Kind.VIDEO}:
+            response["Content-Disposition"] = "inline"
         response["X-Content-Type-Options"] = "nosniff"
         return response
 

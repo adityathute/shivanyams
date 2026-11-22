@@ -566,12 +566,14 @@ class VideoCollectionWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"video_ids": "A video can appear only once in a collection."})
         return attrs
 
+    @transaction.atomic
     def create(self, validated_data):
         ids = validated_data.pop("video_ids", [])
         collection = super().create(validated_data)
         self._save_items(collection, ids)
         return collection
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         ids = validated_data.pop("video_ids", None)
         collection = super().update(instance, validated_data)

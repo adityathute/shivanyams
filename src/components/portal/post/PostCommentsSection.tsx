@@ -10,6 +10,53 @@ import "./PostCommentsSection.css";
 
 type Reaction = "like" | "dislike" | null;
 
+
+function formatCommentRelativeDate(value: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+  if (seconds < 60) return `${Math.max(1, seconds)} sec ago`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) {
+    const remainingSeconds = seconds % 60;
+    return remainingSeconds > 0
+      ? `${minutes} min ${remainingSeconds} sec ago`
+      : `${minutes} min ago`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0
+      ? `${hours} h ${remainingMinutes} min ago`
+      : `${hours} h ago`;
+  }
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) {
+    const remainingHours = hours % 24;
+    return remainingHours > 0
+      ? `${days} d ${remainingHours} h ago`
+      : `${days} d ago`;
+  }
+
+  if (days < 30) {
+    const weeks = Math.floor(days / 7);
+    const remainingDays = days % 7;
+    return remainingDays > 0
+      ? `${weeks} w ${remainingDays} d ago`
+      : `${weeks} w ago`;
+  }
+
+  return date.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 type CommentItem = {
   id: number;
   parent: number | null;
@@ -114,10 +161,7 @@ function CommentThread({
   function showMoreReplies() {
     setVisibleReplies((current) => Math.min(replyCount, current + 5));
   }
-  const date = new Date(item.created_at);
-  const dateLabel = Number.isNaN(date.getTime())
-    ? ""
-    : date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  const dateLabel = formatCommentRelativeDate(item.created_at);
 
   return (
     <article className={`portal-comment-item${depth >= 3 ? " is-deep" : ""}${replyCount > 0 ? " has-replies" : ""}${repliesExpanded ? " is-replies-expanded" : ""}`}>

@@ -26,6 +26,7 @@ import {
 import "../home/UpdatesSection.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PostCommentsSection } from "./PostCommentsSection";
+import { PostFAQSection } from "./PostFAQSection";
 import { PostEngagementActions } from "./PostEngagementActions";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
 
@@ -411,7 +412,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [expandedFaqItems, setExpandedFaqItems] = useState<number[]>([]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -1342,29 +1342,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </section>
                   ) : null}
 
-                  {post.faqs.length ? (
-                    <section className="portal-faq-section">
-                      <div className="portal-important-dates-heading"><h2>{getDetailLabel("faqs", language)}</h2></div>
-                      <div className="portal-faq-list">
-                        {post.faqs.map((faq, index) => {
-                          const isExpanded = expandedFaqItems.includes(index);
-                          const question = getLocalizedText(language, faq.question_en, faq.question_mr, faq.question_hi) || faq.question_en;
-                          const answer = getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en;
-                          return (
-                            <div className={`portal-faq-item${isExpanded ? " is-open" : ""}`} key={faq.id ?? index}>
-                              <button type="button" className="portal-faq-question" aria-expanded={isExpanded} aria-controls={`portal-faq-answer-${faq.id ?? index}`}
-                                onClick={() => setExpandedFaqItems((current) => isExpanded ? current.filter((item) => item !== index) : [...current, index])}>
-                                <span>{question}</span><span className="portal-faq-chevron" aria-hidden="true" />
-                              </button>
-                              <div id={`portal-faq-answer-${faq.id ?? index}`} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
-                                <div className="portal-faq-answer-inner"><p>{answer}</p></div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  ) : null}
 
                   {category === "videos" && post.link ? (
                     <a
@@ -1381,6 +1358,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 {!previewItem ? (
                   <>
                     <PostCommentsSection postId={post.postId} language={language} />
+                    <PostFAQSection faqs={post.faqs} language={language} />
                   </>
                 ) : null}
                 </>

@@ -35,6 +35,7 @@ from .models import (
     PostStatusHistory,
     PostRevision,
     PostAssignment,
+    EditorialNotification,
     PostTag,
     PostTaxonomyTerm,
     PostView,
@@ -49,6 +50,7 @@ from .models import (
     TaxonomyTerm,
 )
 from .permissions import (IsPortalAdmin, IsPortalIdentity, IsPortalContentManager, IsPortalReviewer, IsPortalRevisionManager, get_portal_roles)
+from .editorial_notifications import notify_editorial_user, notify_assignment_deadlines
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -498,6 +500,58 @@ class AdminContent(viewsets.ModelViewSet):
             )
 
 
+
+class EditorialNotifications(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        qs = EditorialNotification.objects.filter(
+            recipient_auth_id=str(request.user.id)
+        ).select_related("post")
+        unread = qs.filter(read_at__isnull=True).count()
+        try:
+            limit = min(max(int(request.query_params.get("limit", 30)), 1), 100)
+        except (TypeError, ValueError):
+            raise ValidationError({"limit": "Provide a number from 1 to 100."})
+        return Response({
+            "unread_count": unread,
+            "results": [{
+                "id": item.id, "event_type": item.event_type, "title": item.title,
+                "message": item.message, "action_url": item.action_url,
+                "post_id": item.post_id, "post_title": item.post.title_en if item.post_id else "",
+                "read_at": item.read_at, "created_at": item.created_at,
+            } for item in qs[:limit]],
+        })
+
+    def post(self, request):
+        ids = request.data.get("ids", [])
+        mark_all = request.data.get("all", False) is True
+        qs = EditorialNotification.objects.filter(
+            recipient_auth_id=str(request.user.id), read_at__isnull=True
+        )
+        if not mark_all:
+            if not isinstance(ids, list) or not ids or len(ids) > 100:
+                raise ValidationError({"ids": "Provide up to 100 notification IDs or set all=true."})
+            qs = qs.filter(pk__in=ids)
+        return Response({"updated": qs.update(read_at=timezone.now())})
+
+
+class AdminSendEditorialReminders(APIView):
+    permission_classes = [IsPortalReviewer]
+
+    def post(self, request):
+        try:
+            window = int(request.data.get("window_hours", 24))
+        except (TypeError, ValueError):
+            raise ValidationError({"window_hours": "Provide an integer from 1 to 168."})
+        if not 1 <= window <= 168:
+            raise ValidationError({"window_hours": "Provide an integer from 1 to 168."})
+        return Response({
+            "notifications_created": notify_assignment_deadlines(window_hours=window),
+            "window_hours": window,
+        })
+
+
 class AdminPostAssignment(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -536,6 +590,12 @@ class AdminPostAssignment(APIView):
                 "due_at": due_at,
                 "note": str(request.data.get("note", "")).strip(),
             },
+        )
+        notify_editorial_user(
+            assigned_to, "assignment_created", "New editorial assignment",
+            f'You have been assigned "{post.title_en}".',
+            actor_auth_id=request.user.id, post=post,
+            action_url=f"/admin/edit-post/{post.category.slug}/{post.slug}",
         )
         return Response(self._serialize(assignment), status=status.HTTP_200_OK)
 
@@ -655,6 +715,25 @@ class AdminPostReview(APIView):
                 update_fields.append("scheduled_at")
             post.save(update_fields=list(set(update_fields)))
             PostStatusHistory.objects.create(post=post, previous_status=previous_status, new_status=new_status, changed_by_auth_id=auth_id, note=note)
+        recipient_ids = {str(post.owner_auth_id or "")}
+        try:
+            recipient_ids.add(str(post.assignment.assigned_to_auth_id))
+        except PostAssignment.DoesNotExist:
+            pass
+        event_type = {
+            Post.Status.PENDING_REVIEW: "content_submitted",
+            Post.Status.APPROVED: "content_approved",
+            Post.Status.CHANGES_REQUESTED: "changes_requested",
+            Post.Status.REJECTED: "content_rejected",
+            Post.Status.PUBLISHED: "content_published",
+        }.get(new_status, "content_status_changed")
+        for recipient_id in recipient_ids:
+            notify_editorial_user(
+                recipient_id, event_type, f"Content {new_status.replace('_', ' ')}",
+                f'"{post.title_en}" status changed from {previous_status} to {new_status}. {note}'.strip(),
+                actor_auth_id=request.user.id, post=post,
+                action_url=f"/admin/edit-post/{post.category.slug}/{post.slug}",
+            )
         return Response(PostSerializer(post, context={"request": request}).data)
 
 

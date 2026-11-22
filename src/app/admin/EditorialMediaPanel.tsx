@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 
+type CaptionTrack = { id: number; language: string; label: string; is_default: boolean; url: string };
 type Asset = { id: number; original_name: string; kind: "image" | "document" | "video"; file_size: number; alt_text: string; caption: string; download_url: string; responsive_image_url?: string; image_width?: number; image_height?: number; processing_status?: string; video_duration_seconds?: number | null; video_width?: number | null; video_height?: number | null; video_poster_url?: string | null; video_variants?: Record<string, { path: string; file_size: number; width: number; height: number }>; variants?: Record<string, { url: string; width: number; height: number; format: string }>; attachment_id?: number; role?: string };
 
 export default function EditorialMediaPanel({ postId }: { postId?: number }) {
@@ -13,6 +14,10 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [query, setQuery] = useState("");
+  const [captionTracks, setCaptionTracks] = useState<CaptionTrack[]>([]);
+  const [captionLanguage, setCaptionLanguage] = useState("en");
+  const [captionLabel, setCaptionLabel] = useState("English");
+  const [captionDefault, setCaptionDefault] = useState(false);
 
   const refresh = useCallback(async () => {
     const response = await adminFetch(`${API_URL}/admin/media/?limit=100&q=${encodeURIComponent(query)}`);
@@ -20,6 +25,9 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
     const data = await response.json();
     setAssets(Array.isArray(data.results) ? data.results : []);
     if (postId) {
+      const captions = await adminFetch(`${API_URL}/admin/content/${postId}/video-captions/`);
+      if (captions.ok) { const captionPayload = await captions.json(); setCaptionTracks(Array.isArray(captionPayload.results) ? captionPayload.results : []); }
+      else setCaptionTracks([]);
       const linked = await adminFetch(`${API_URL}/admin/content/${postId}/media/`);
       if (linked.ok) {
         const payload = await linked.json();
@@ -41,6 +49,27 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
       setMessage("Uploaded successfully."); await refresh();
     } catch (e) { setMessage(e instanceof Error ? e.message : "Upload failed."); }
     finally { setBusy(false); }
+  }
+
+  async function uploadCaption(file?: File) {
+    if (!file || !postId) return;
+    setBusy(true); setMessage("");
+    try {
+      const form = new FormData(); form.append("file", file); form.append("language", captionLanguage); form.append("label", captionLabel); form.append("is_default", String(captionDefault));
+      const response = await adminFetch(`${API_URL}/admin/content/${postId}/video-captions/`, { method: "POST", body: form });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || data.file || data.language || "Caption upload failed.");
+      setMessage("Caption track saved."); await refresh();
+    } catch (e) { setMessage(e instanceof Error ? e.message : "Caption upload failed."); }
+    finally { setBusy(false); }
+  }
+
+  async function deleteCaption(id: number) {
+    setBusy(true);
+    const response = await adminFetch(`${API_URL}/admin/video-captions/${id}/`, { method: "DELETE" });
+    if (response.ok) { setCaptionTracks((current) => current.filter((track) => track.id !== id)); setMessage("Caption track removed."); }
+    else setMessage("Unable to remove caption track.");
+    setBusy(false);
   }
 
   async function attach(asset: Asset) {
@@ -88,6 +117,17 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
             : <button type="button" disabled={busy} onClick={() => void attach(asset)}>Attach</button>)}
         </div>
       </article>)}</div>
+      {postId ? <section className="editorial-caption-manager">
+        <strong>Video captions & subtitles</strong>
+        <div className="editorial-caption-fields">
+          <select aria-label="Caption language" value={captionLanguage} onChange={(e) => { setCaptionLanguage(e.target.value); setCaptionLabel(e.target.selectedOptions[0]?.text || e.target.value); }}><option value="en">English</option><option value="mr">Marathi</option><option value="hi">Hindi</option></select>
+          <input aria-label="Caption label" value={captionLabel} maxLength={80} onChange={(e) => setCaptionLabel(e.target.value)} />
+          <label><input type="checkbox" checked={captionDefault} onChange={(e) => setCaptionDefault(e.target.checked)} /> Default</label>
+          <label className="editorial-caption-upload">Upload .vtt<input type="file" accept=".vtt,text/vtt" disabled={busy} onChange={(e) => { void uploadCaption(e.target.files?.[0]); e.currentTarget.value = ""; }} /></label>
+        </div>
+        {captionTracks.map((track) => <div className="editorial-caption-row" key={track.id}><span><strong>{track.label}</strong><small>{track.language}{track.is_default ? " · Default" : ""}</small></span><button type="button" disabled={busy} onClick={() => void deleteCaption(track.id)}>Remove</button></div>)}
+        <small>Upload WebVTT (.vtt) files up to 2 MB. Tracks appear in the public player CC menu after publication.</small>
+      </section> : null}
       {message && <p role="status">{message}</p>}
       <small>Images: JPG, PNG, WEBP, GIF (max 10 MB). Videos: MP4, MOV, WEBM (max 500 MB). Documents: PDF, TXT, CSV, DOC/DOCX, XLS/XLSX (max 20 MB).</small>
     </section>}

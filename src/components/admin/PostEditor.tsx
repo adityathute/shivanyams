@@ -464,6 +464,10 @@ function detailTemplate(api: string): Record<string, unknown> {
       working_hours: "",
       service_bond: "",
       retirement_benefits: "",
+      application_instructions_en: "",
+      application_instructions_mr: "",
+      application_instructions_hi: "",
+      required_documents: [],
       education_mode: "per_post",
       age_mode: "per_post",
       fee_mode: "per_post",
@@ -2347,6 +2351,27 @@ export default function PostEditor({
                       size="sm"
                     />
                   );
+                if (kind.api === "jobs" && key === "required_documents") {
+                  return (
+                    <Textarea
+                      key={key}
+                      label="Required Documents Checklist (JSON)"
+                      rows={8}
+                      value={JSON.stringify(value ?? [], null, 2)}
+                      onChange={(event) => {
+                        try {
+                          const parsed = JSON.parse(event.target.value);
+                          if (Array.isArray(parsed)) updateDetail(key, parsed);
+                        } catch {
+                          // Keep the last valid checklist while JSON is being edited.
+                        }
+                      }}
+                      placeholder={'[{"title_en":"Aadhaar card","title_mr":"आधार कार्ड","title_hi":"आधार कार्ड","mandatory":true}]'}
+                      fullWidth
+                      size="sm"
+                    />
+                  );
+                }
                 if (isArray)
                   return (
                     <Input

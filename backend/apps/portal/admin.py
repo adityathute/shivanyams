@@ -385,6 +385,7 @@ class JobPostInline(admin.StackedInline):
                     "age_limit_note_en",
                     "age_limit_note_mr",
                     "age_limit_note_hi",
+                    "age_relaxations",
                 ),
                 "classes": ("collapse",),
             },

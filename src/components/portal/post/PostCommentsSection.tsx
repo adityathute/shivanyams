@@ -130,13 +130,27 @@ function CommentThread({
       </div>
       {reportTarget === item.id ? (
         <div className="portal-comment-report-panel portal-comment-thread-report">
-          <div className="portal-comment-report-heading"><strong>Report comment</strong><span>Tell us why this comment should be reviewed.</span></div>
-          <select value={reportReason} onChange={(event) => onReportReasonChange(event.target.value)} aria-label="Report reason">
-            <option value="spam">Spam</option><option value="abuse">Abusive or harmful</option><option value="misinformation">Misinformation</option><option value="other">Other</option>
-          </select>
-          <Textarea value={reportDetails} onChange={(event) => onReportDetailsChange(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" fullWidth size="sm" />
+          <div className="portal-comment-report-heading">
+            <div><strong>Report comment</strong><span>Tell us why this comment should be reviewed.</span></div>
+            <div className="portal-comment-report-select">
+              <Select
+                aria-label="Report reason"
+                size="sm"
+                fullWidth
+                options={[
+                  { label: "Spam", value: "spam" },
+                  { label: "Abusive", value: "abuse" },
+                  { label: "Misinformation", value: "misinformation" },
+                  { label: "Other", value: "other" },
+                ]}
+                value={reportReason}
+                onChange={(event) => onReportReasonChange(event.target.value)}
+              />
+            </div>
+          </div>
+          <Textarea value={reportDetails} onChange={(event) => onReportDetailsChange(event.target.value)} rows={2} maxLength={500} placeholder="Additional details (optional)" fullWidth size="sm" />
           <div className="portal-comment-report-footer">
-            <span />
+            <span>{reportDetails.length}/500</span>
             <Button type="button" size="sm" variant="outline" disabled={reporting} onClick={onCancelReport}>Cancel</Button>
             <Button type="button" size="sm" variant="primary" disabled={reporting} onClick={onSubmitReport}>{reporting ? "Sending..." : "Submit report"}</Button>
           </div>
@@ -400,11 +414,20 @@ export function PostCommentsSection({ postId, language }: Props) {
             item={item}
             depth={0}
             onReply={(id) => {
-              if (!user) openLogin(() => setReplyTarget(id));
-              else setReplyTarget(id);
+              const openReply = () => {
+                setReportTarget(null);
+                setReportDetails("");
+                setReplyTarget(id);
+              };
+              if (!user) openLogin(openReply);
+              else openReply();
             }}
             onReact={(id, reaction) => void reactToComment(id, reaction)}
-            onReport={(id) => reportComment(id)}
+            onReport={(id) => {
+              setReplyTarget(null);
+              setReplyDraft("");
+              reportComment(id);
+            }}
             reportTarget={reportTarget}
             reportReason={reportReason}
             reportDetails={reportDetails}

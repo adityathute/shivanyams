@@ -40,6 +40,8 @@ from .models import (
     PostOrganizationType,
     OfficialSource,
     PostSource,
+    Tag,
+    TaxonomyTerm,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
 from .serializers import (
@@ -1421,3 +1423,37 @@ class AdminPostSourceDetail(APIView):
         item = get_object_or_404(PostSource, pk=source_link_id, post_id=post_id)
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+class AdminContentMetadata(APIView):
+    """Return active normalized metadata choices for the content editor."""
+
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        tags = Tag.objects.filter(is_active=True).order_by("name_en").values(
+            "id", "name_en", "slug"
+        )
+        terms = TaxonomyTerm.objects.filter(
+            is_active=True,
+            taxonomy_type__is_active=True,
+        ).select_related("taxonomy_type").order_by(
+            "taxonomy_type__name_en", "sort_order", "name_en"
+        ).values(
+            "id", "name_en", "slug",
+            "taxonomy_type__slug", "taxonomy_type__name_en",
+        )
+        return Response({
+            "tags": list(tags),
+            "taxonomy_terms": [
+                {
+                    "id": item["id"],
+                    "name": item["name_en"],
+                    "slug": item["slug"],
+                    "type": item["taxonomy_type__slug"],
+                    "type_name": item["taxonomy_type__name_en"],
+                }
+                for item in terms
+            ],
+        })

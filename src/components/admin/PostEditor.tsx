@@ -75,6 +75,14 @@ type JobPostFeeInput = {
   fee_note_en: string;
   fee_note_mr: string;
   fee_note_hi: string;
+  is_exempt: boolean;
+  exemption_note_en: string;
+  exemption_note_mr: string;
+  exemption_note_hi: string;
+  payment_mode: "online" | "offline" | "both" | "not_required";
+  payment_instructions_en: string;
+  payment_instructions_mr: string;
+  payment_instructions_hi: string;
   sort_order: number;
 };
 
@@ -130,6 +138,14 @@ const createEmptyJobPostFee = (): JobPostFeeInput => ({
   fee_note_en: "",
   fee_note_mr: "",
   fee_note_hi: "",
+  is_exempt: false,
+  exemption_note_en: "",
+  exemption_note_mr: "",
+  exemption_note_hi: "",
+  payment_mode: "online",
+  payment_instructions_en: "",
+  payment_instructions_mr: "",
+  payment_instructions_hi: "",
   sort_order: 0,
 });
 
@@ -2071,6 +2087,18 @@ export default function PostEditor({
                         <div className="post-editor-fee-fields">
                           <div className="post-editor-fee-amount">
                             <Input type="number" label="Fee Amount" min={0} step="0.01" value={fee.fee_amount} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "fee_amount", event.target.value)} fullWidth size="sm" />
+                          <label className="post-editor-checkbox-row">
+                            <input type="checkbox" checked={fee.is_exempt} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "is_exempt", event.target.checked)} />
+                            <span>Application fee exempt for this category</span>
+                          </label>
+                          <label className="post-editor-field-label">Payment mode</label>
+                          <select className="post-editor-select" value={fee.payment_mode} onChange={(event) => updateJobPostFee(postIndex, feeIndex, "payment_mode", event.target.value as JobPostFeeInput["payment_mode"])}>
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
+                            <option value="both">Online and Offline</option>
+                            <option value="not_required">No Payment Required</option>
+                          </select>
+
                           </div>
 
                           <div className="post-editor-fee-translation">
@@ -2108,6 +2136,18 @@ export default function PostEditor({
                             </div>
                           </div>
 
+                          <div className="post-editor-fee-translation">
+                            <strong>Exemption reason / conditions</strong>
+                            {(["en", "mr", "hi"] as const).map((lang) => (
+                              <Textarea key={lang} label={`Exemption note (${lang.toUpperCase()})`} rows={2} value={fee[`exemption_note_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `exemption_note_${lang}`, event.target.value)} fullWidth size="sm" />
+                            ))}
+                          </div>
+                          <div className="post-editor-fee-translation">
+                            <strong>Payment instructions</strong>
+                            {(["en", "mr", "hi"] as const).map((lang) => (
+                              <Textarea key={lang} label={`Payment instructions (${lang.toUpperCase()})`} rows={2} value={fee[`payment_instructions_${lang}`]} onChange={(event) => updateJobPostFee(postIndex, feeIndex, `payment_instructions_${lang}`, event.target.value)} fullWidth size="sm" />
+                            ))}
+                          </div>
                           <div className="post-editor-fee-translation">
                             <div className="post-editor-translation-heading">
                               <span>Fee Note</span>

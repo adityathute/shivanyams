@@ -27,6 +27,8 @@ from .models import (
     PostAssignment,
     EditorialNotification,
     EditorialDiscussionComment,
+    EditorialMediaAsset,
+    PostMediaAttachment,
     PostView,
     PostVisitor,
     ResultDetails,
@@ -1146,3 +1148,19 @@ class EditorialDiscussionCommentAdmin(admin.ModelAdmin):
     readonly_fields = ("post", "parent", "author_auth_id", "content", "is_internal", "edited_at", "created_at", "updated_at")
     def has_add_permission(self, request): return False
     def has_change_permission(self, request, obj=None): return False
+
+
+@admin.register(EditorialMediaAsset)
+class EditorialMediaAssetAdmin(admin.ModelAdmin):
+    list_display = ("original_name", "kind", "owner_auth_id", "file_size", "is_active", "created_at")
+    list_filter = ("kind", "is_active", "created_at")
+    search_fields = ("original_name", "owner_auth_id", "alt_text", "caption")
+    readonly_fields = ("owner_auth_id", "file", "original_name", "kind", "mime_type", "file_size", "created_at", "updated_at")
+
+
+@admin.register(PostMediaAttachment)
+class PostMediaAttachmentAdmin(admin.ModelAdmin):
+    list_display = ("post", "asset", "role", "sort_order", "created_by_auth_id", "created_at")
+    list_filter = ("role", "created_at")
+    search_fields = ("post__title_en", "asset__original_name", "created_by_auth_id")
+    autocomplete_fields = ("post", "asset")

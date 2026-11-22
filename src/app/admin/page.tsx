@@ -64,6 +64,8 @@ type AdminPost = {
   category: Category;
   status: string;
   published_at?: string | null;
+  scheduled_at?: string | null;
+  approved_at?: string | null;
   created_at?: string;
   updated_at?: string;
   views_count?: number;
@@ -551,6 +553,54 @@ export default function AdminPage() {
       setError(
         err instanceof Error ? err.message : "Unable to update post status.",
       );
+    } finally {
+      setBusyPost(null);
+    }
+  }
+
+  async function schedulePost(post: AdminPost) {
+    if (post.status !== "approved") {
+      setError("Only approved content can be scheduled.");
+      return;
+    }
+    const localValue = window.prompt("Enter publication date and time (YYYY-MM-DDTHH:mm):");
+    if (!localValue) return;
+    const scheduledAt = new Date(localValue);
+    if (Number.isNaN(scheduledAt.getTime()) || scheduledAt <= new Date()) {
+      setError("Choose a valid future publication date and time.");
+      return;
+    }
+    setBusyPost(post.id);
+    try {
+      const response = await adminFetch(`${API_URL}/admin/content/${post.id}/schedule/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scheduled_at: scheduledAt.toISOString() }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || "Unable to schedule content.");
+      setPosts((current) => current.map((item) => item.id === post.id
+        ? { ...item, scheduled_at: payload.scheduled_at }
+        : item));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to schedule content.");
+    } finally {
+      setBusyPost(null);
+    }
+  }
+
+  async function showReviewHistory(post: AdminPost) {
+    setBusyPost(post.id);
+    try {
+      const response = await adminFetch(`${API_URL}/admin/content/${post.id}/review/`, { cache: "no-store" });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || "Unable to load review history.");
+      const lines = (payload.history || []).map((item: { previous_status: string; new_status: string; changed_by_auth_id: string; note: string; created_at: string }) =>
+        `${item.previous_status || "created"} → ${item.new_status} | ${new Date(item.created_at).toLocaleString()} | ${item.changed_by_auth_id}${item.note ? " | " + item.note : ""}`
+      );
+      window.alert(lines.length ? lines.join("\\n") : "No review history is available.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load review history.");
     } finally {
       setBusyPost(null);
     }
@@ -1044,6 +1094,14 @@ export default function AdminPage() {
                             <Link href={`/admin/engagement/${post.id}`}>
                               Stats
                             </Link>
+                            <button disabled={busyPost === post.id} onClick={() => void showReviewHistory(post)}>
+                              History
+                            </button>
+                            {post.status === "approved" && (
+                              <button disabled={busyPost === post.id} onClick={() => void schedulePost(post)}>
+                                {post.scheduled_at ? "Reschedule" : "Schedule"}
+                              </button>
+                            )}
                             {post.status !== "published" && (
                               <button
                                 disabled={busyPost === post.id}

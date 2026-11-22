@@ -483,6 +483,17 @@ class JobDetailsAdmin(PostDetailAdmin):
             },
         ),
         (
+            "Application Instructions & Candidate Checklist",
+            {
+                "fields": (
+                    "application_instructions_en",
+                    "application_instructions_mr",
+                    "application_instructions_hi",
+                    "required_documents",
+                )
+            },
+        ),
+        (
             "Application Details",
             {
                 "fields": (

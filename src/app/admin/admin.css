@@ -1628,3 +1628,10 @@
 .editorial-media-actions { display:flex; align-items:center; gap:8px; font-size:12px; white-space:nowrap; }
 .editorial-media-popover > small { display:block; margin-top:10px; opacity:.65; font-size:11px; }
 @media (max-width:640px) { .editorial-media-popover { right:-90px; } }
+
+
+.editorial-media-list article { align-items:center; }
+.editorial-media-thumbnail { width:58px; height:48px; flex:0 0 58px; object-fit:cover; border-radius:7px; background:#202631; }
+.editorial-media-file-icon { width:58px; height:48px; flex:0 0 58px; display:grid; place-items:center; border-radius:7px; background:#252c38; font-size:11px; font-weight:700; }
+.editorial-media-file-info { min-width:0; flex:1; }
+.editorial-media-file-info strong { max-width:100%; }

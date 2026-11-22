@@ -521,7 +521,7 @@ def _media_payload(asset, request):
         "alt_text": asset.alt_text, "caption": asset.caption,
         "description": asset.description, "created_at": asset.created_at,
         "updated_at": asset.updated_at,
-        "download_url": request.build_absolute_uri(f"/api/v1/admin/media/{asset.id}/download/"),
+        "download_url": request.build_absolute_uri(f"/api/v1/portal/admin/media/{asset.id}/download/"),
     }
 
 

@@ -562,6 +562,25 @@ function detailTemplate(api: string): Record<string, unknown> {
   };
 }
 
+function getVideoEmbedPreview(provider: unknown, rawUrl: unknown): string {
+  try {
+    const url = new URL(String(rawUrl || ''));
+    if (url.protocol !== 'https:') return '';
+    const host = url.hostname.toLowerCase().replace(/^www\\./, '');
+    if (provider === 'youtube' && ['youtube.com', 'm.youtube.com', 'youtu.be'].includes(host)) {
+      const match = url.pathname.match(/\\/(?:embed|shorts)\\/([A-Za-z0-9_-]{6,})/) || url.pathname.match(/^\\/([A-Za-z0-9_-]{6,})$/) || url.searchParams.get('v')?.match(/^([A-Za-z0-9_-]{6,})$/);
+      const id = typeof match === 'string' ? match : match?.[1];
+      return id ? 'https://www.youtube-nocookie.com/embed/' + id : '';
+    }
+    if (provider === 'vimeo' && ['vimeo.com', 'player.vimeo.com'].includes(host)) {
+      const match = url.pathname.match(/(?:video\\/)?([0-9]{6,})/);
+      return match ? 'https://player.vimeo.com/video/' + match[1] : '';
+    }
+  } catch {
+    return '';
+  }
+  return '';
+}
 export default function PostEditor({
   initialKind = "jobs",
   editSlug,
@@ -2277,6 +2296,19 @@ export default function PostEditor({
                   /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note|application_fee_note/i.test(
                     key,
                   );
+                if (kind.api === 'videos' && key === 'video_url') {
+                  const previewUrl = getVideoEmbedPreview(details.provider, value);
+                  return (
+                    <div className="post-editor-video-source-field" key={key}>
+                      <Input label={label} type="url" value={String(value ?? '')} onChange={(event) => updateDetail(key, event.target.value)} fullWidth size="sm" />
+                      {previewUrl ? (
+                        <div className="post-editor-video-preview">
+                          <iframe src={previewUrl} title="Video preview" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
+                        </div>
+                      ) : <small>Enter a valid HTTPS YouTube or Vimeo link to preview the embed.</small>}
+                    </div>
+                  );
+                }
                 if (isBoolean)
                   return (
                     <Checkbox

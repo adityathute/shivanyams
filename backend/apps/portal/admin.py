@@ -368,6 +368,13 @@ class JobPostInline(admin.StackedInline):
                     ("salary_currency", "salary_period"),
                     ("salary_min", "salary_max"),
                     ("pay_scale", "grade_pay"),
+                    "allowances",
+                    "benefits",
+                    "employment_conditions",
+                    ("probation_period", "contract_duration"),
+                    "working_hours",
+                    "service_bond",
+                    "retirement_benefits",
                 )
             },
         ),

@@ -18,6 +18,7 @@ import {
   normalizeCategorySlug,
 } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
+import EditorialNotificationCenter from "./EditorialNotificationCenter";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
@@ -801,6 +802,7 @@ export default function AdminPage() {
             <p>Manage posts, publishing status and website content.</p>
           </div>
           <div className="admin-top-actions">
+            <EditorialNotificationCenter />
             <Link href="/admin/comments" className="admin-secondary-button">
               Comments & reports
             </Link>

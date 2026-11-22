@@ -471,12 +471,17 @@
   width: 25px;
   border-top: 1.5px solid var(--border-color, #cbd5e1);
 }
-.portal-comment-inline-reply::after {
+.portal-comment-inline-reply::after,
+.portal-comment-thread-report:after {
   top: 9px;
 }
 
 .portal-comment-item.has-replies > .portal-comment-inline-reply::after {
   top: 90px;
+}
+
+.portal-comment-item.has-replies > .portal-comment-thread-report:after {
+  top: 140px;
 }
 
 .portal-comment-inline-reply textarea,

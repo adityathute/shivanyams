@@ -33,6 +33,7 @@ from .views import (
     AdminVideoCaptionTrackDetail,
     PublicVideoCaptionTrack,
     PublicVideoCollections,
+    PublicVideoDiscovery,
     AdminVideoCollections,
     AdminVideoCollectionDetail,
     AdminEditorialVideoPoster,

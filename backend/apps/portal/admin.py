@@ -25,6 +25,7 @@ from .models import (
     PostStatusHistory,
     PostRevision,
     PostAssignment,
+    EditorialNotification,
     PostView,
     PostVisitor,
     ResultDetails,
@@ -1122,3 +1123,14 @@ class PostSourceAdmin(admin.ModelAdmin):
     autocomplete_fields = ("post", "source")
     readonly_fields = ("created_at", "updated_at")
 
+
+
+@admin.register(EditorialNotification)
+class EditorialNotificationAdmin(admin.ModelAdmin):
+    list_display = ("title", "recipient_auth_id", "event_type", "post", "read_at", "created_at")
+    list_filter = ("event_type", "read_at", "created_at")
+    search_fields = ("title", "message", "recipient_auth_id", "actor_auth_id", "post__title_en")
+    readonly_fields = ("recipient_auth_id", "actor_auth_id", "post", "event_type", "title", "message", "action_url", "dedupe_key", "read_at", "created_at")
+    def has_add_permission(self, request): return False
+    def has_change_permission(self, request, obj=None): return False
+    def has_delete_permission(self, request, obj=None): return request.user.is_superuser

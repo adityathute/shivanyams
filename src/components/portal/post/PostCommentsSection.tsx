@@ -318,16 +318,21 @@ export function PostCommentsSection({ postId, language }: Props) {
           <h2 id="portal-comments-heading">Comments</h2>
           <span>{countComments(comments).toLocaleString()} comments and replies</span>
         </div>
-        <Select
-          aria-label="Sort comments"
-          size="sm"
-          options={[
-            { label: "Newest first", value: "newest" },
-            { label: "Oldest first", value: "oldest" },
-          ]}
-          value={sort}
-          onChange={(event) => setSort(event.target.value as "newest" | "oldest")}
-        />
+        {!loading && comments.length > 0 ? (
+          <div className="portal-comments-sort">
+            <Select
+              aria-label="Sort comments"
+              size="sm"
+              fullWidth
+              options={[
+                { label: "Newest first", value: "newest" },
+                { label: "Oldest first", value: "oldest" },
+              ]}
+              value={sort}
+              onChange={(event) => setSort(event.target.value as "newest" | "oldest")}
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="portal-comment-composer">

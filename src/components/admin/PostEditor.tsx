@@ -903,6 +903,14 @@ export default function PostEditor({
               ? (post.application_links as Record<string, unknown>[]).map((link, linkIndex) => ({
                   ...createEmptyJobPostApplicationLink(linkIndex),
                   ...link,
+                  link_type: (link.link_type as JobPostApplicationLinkInput["link_type"]) || "other",
+                  label_en: String(link.label_en ?? ""),
+                  label_mr: String(link.label_mr ?? ""),
+                  label_hi: String(link.label_hi ?? ""),
+                  url: String(link.url ?? ""),
+                  instructions_en: String(link.instructions_en ?? ""),
+                  instructions_mr: String(link.instructions_mr ?? ""),
+                  instructions_hi: String(link.instructions_hi ?? ""),
                 }))
               : [],
             fees: Array.isArray(post.fees)
@@ -1319,8 +1327,18 @@ export default function PostEditor({
       eligible_dob_from: normalizeApiDate(post.eligible_dob_from),
       eligible_dob_to: normalizeApiDate(post.eligible_dob_to),
       application_links: (post.application_links || [])
-        .filter((link) => link.label_en.trim() || link.label_mr.trim() || link.label_hi.trim() || link.url.trim())
-        .map((link, index) => ({ ...link, sort_order: index })),
+        .filter((link) => String(link.label_en ?? "").trim() || String(link.label_mr ?? "").trim() || String(link.label_hi ?? "").trim() || String(link.url ?? "").trim())
+        .map((link, index) => ({
+          ...link,
+          label_en: String(link.label_en ?? "").trim(),
+          label_mr: String(link.label_mr ?? "").trim(),
+          label_hi: String(link.label_hi ?? "").trim(),
+          url: String(link.url ?? "").trim(),
+          instructions_en: String(link.instructions_en ?? ""),
+          instructions_mr: String(link.instructions_mr ?? ""),
+          instructions_hi: String(link.instructions_hi ?? ""),
+          sort_order: index,
+        })),
       fees: post.fees.map((fee) => ({
         ...fee,
         fee_amount:

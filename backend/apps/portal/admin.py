@@ -37,6 +37,8 @@ from .models import (
     ToolDetails,
     VideoDetails,
     VideoCaptionTrack,
+    VideoCollection,
+    VideoCollectionItem,
     ImportantLink,
 )
 
@@ -628,6 +630,24 @@ class ArticleGuideDetailsAdmin(PostDetailAdmin):
 
 
 
+
+
+
+class VideoCollectionItemInline(admin.TabularInline):
+    model = VideoCollectionItem
+    extra = 0
+    autocomplete_fields = ("post",)
+    ordering = ("sort_order", "id")
+
+
+@admin.register(VideoCollection)
+class VideoCollectionAdmin(admin.ModelAdmin):
+    list_display = ("title_en", "collection_type", "is_published", "sort_order", "updated_at")
+    list_filter = ("collection_type", "is_published")
+    search_fields = ("title_en", "title_mr", "title_hi", "slug")
+    prepopulated_fields = {"slug": ("title_en",)}
+    list_editable = ("is_published", "sort_order")
+    inlines = (VideoCollectionItemInline,)
 
 @admin.register(VideoCaptionTrack)
 class VideoCaptionTrackAdmin(admin.ModelAdmin):

@@ -516,6 +516,36 @@ class VideoDetailsSerializer(serializers.ModelSerializer):
         model = VideoDetails
         exclude = ("id", "post", "created_at", "updated_at")
 
+    def validate(self, attrs):
+        from urllib.parse import urlparse
+        import re
+
+        url = attrs.get("video_url", getattr(self.instance, "video_url", ""))
+        parsed = urlparse(url)
+        if parsed.scheme != "https" or not parsed.hostname:
+            raise serializers.ValidationError({"video_url": "Use a secure HTTPS video URL."})
+        host = parsed.hostname.lower().removeprefix("www.")
+        provider = attrs.get("provider", getattr(self.instance, "provider", VideoDetails.Provider.YOUTUBE))
+        embed_url = ""
+        if provider == VideoDetails.Provider.YOUTUBE:
+            if host not in {"youtube.com", "m.youtube.com", "youtu.be"}:
+                raise serializers.ValidationError({"video_url": "The selected provider requires a YouTube URL."})
+            match = re.search(r"(?:v=|youtu\.be/|/embed/|/shorts/)([A-Za-z0-9_-]{6,})", url)
+            if not match:
+                raise serializers.ValidationError({"video_url": "This YouTube URL does not contain a valid video ID."})
+            embed_url = "https://www.youtube-nocookie.com/embed/" + match.group(1)
+        elif provider == VideoDetails.Provider.VIMEO:
+            if host not in {"vimeo.com", "player.vimeo.com"}:
+                raise serializers.ValidationError({"video_url": "The selected provider requires a Vimeo URL."})
+            match = re.search(r"(?:video/)?([0-9]{6,})", parsed.path)
+            if not match:
+                raise serializers.ValidationError({"video_url": "This Vimeo URL does not contain a video ID."})
+            embed_url = "https://player.vimeo.com/video/" + match.group(1)
+        elif provider == VideoDetails.Provider.OTHER:
+            embed_url = ""
+        attrs["embed_url"] = embed_url
+        return attrs
+
 
 class ToolDetailsSerializer(serializers.ModelSerializer):
     class Meta:

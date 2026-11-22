@@ -24,6 +24,7 @@ from .models import (
     SchemeDetails,
     ToolDetails,
     VideoDetails,
+    VideoCaptionTrack,
     ImportantLink,
     OfficialSource,
     PostSource,
@@ -512,9 +513,26 @@ class ArticleGuideDetailsSerializer(serializers.ModelSerializer):
 
 
 class VideoDetailsSerializer(serializers.ModelSerializer):
+    caption_tracks = serializers.SerializerMethodField()
+
     class Meta:
         model = VideoDetails
         exclude = ("id", "post", "created_at", "updated_at")
+
+    def get_caption_tracks(self, obj):
+        request = self.context.get("request")
+        tracks = []
+        for track in obj.caption_tracks.all():
+            url = f"/api/v1/portal/content/video-captions/{track.pk}/"
+            tracks.append({
+                "id": track.pk,
+                "language": track.language,
+                "label": track.label,
+                "is_default": track.is_default,
+                "sort_order": track.sort_order,
+                "url": request.build_absolute_uri(url) if request else url,
+            })
+        return tracks
 
     def validate(self, attrs):
         from urllib.parse import urlparse

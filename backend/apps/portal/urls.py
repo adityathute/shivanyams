@@ -32,6 +32,9 @@ from .views import (
     AdminVideoCaptionTracks,
     AdminVideoCaptionTrackDetail,
     PublicVideoCaptionTrack,
+    PublicVideoCollections,
+    AdminVideoCollections,
+    AdminVideoCollectionDetail,
     AdminEditorialVideoPoster,
     PublicEditorialImageVariant,
     AdminEditorialMediaDetail,
@@ -84,6 +87,7 @@ urlpatterns = [
     # Public content: jobs, schemes, examinations, admit cards,
     # results, articles, videos and tools.
     path("content/search/", PublicContentSearch.as_view(), name="content-search"),
+    path("content/video-collections/", PublicVideoCollections.as_view(), name="public-video-collections"),
     path("content/<str:kind>/", content_list, name="content-list"),
 
     # Post-specific endpoints must come before the generic
@@ -168,6 +172,8 @@ urlpatterns = [
     path("admin/content/<int:post_id>/engagement/", AdminPostEngagement.as_view(), name="admin-post-engagement"),
 
     path("admin/content-metadata/", AdminContentMetadata.as_view(), name="admin-content-metadata"),
+    path("admin/video-collections/", AdminVideoCollections.as_view(), name="admin-video-collections"),
+    path("admin/video-collections/<int:collection_id>/", AdminVideoCollectionDetail.as_view(), name="admin-video-collection-detail"),
 
     # Official source registry and per-post evidence
     path("admin/official-sources/", AdminOfficialSources.as_view(), name="admin-official-sources"),

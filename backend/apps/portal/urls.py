@@ -23,6 +23,8 @@ from .views import (
     TrackPostView,
     AdminPostReview,
     AdminPostAssignment,
+    EditorialNotifications,
+    AdminSendEditorialReminders,
     AdminAssignmentWorkload,
     AdminPostRevisions,
     AdminSchedulePost,
@@ -113,6 +115,8 @@ urlpatterns = [
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management
+    path("editorial/notifications/", EditorialNotifications.as_view(), name="editorial-notifications"),
+    path("admin/editorial/send-reminders/", AdminSendEditorialReminders.as_view(), name="admin-editorial-send-reminders"),
     path("admin/content/<int:post_id>/assignment/", AdminPostAssignment.as_view(), name="admin-post-assignment"),
     path("admin/assignment-workload/", AdminAssignmentWorkload.as_view(), name="admin-assignment-workload"),
     path("admin/content/<int:post_id>/revisions/", AdminPostRevisions.as_view(), name="admin-post-revisions"),

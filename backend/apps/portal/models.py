@@ -410,6 +410,10 @@ class JobPost(TimestampedModel):
 
     vacancies = models.PositiveIntegerField(null=True, blank=True)
 
+    # Official vertical and horizontal reservation distribution for this post.
+    # Horizontal reservations are tracked separately and must not be added to vertical totals.
+    reservation_rules = models.JSONField(default=list, blank=True)
+
     # Educational qualification for this individual post
     educational_qualification_en = models.TextField(blank=True)
     educational_qualification_mr = models.TextField(blank=True)

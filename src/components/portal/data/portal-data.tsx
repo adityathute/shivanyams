@@ -66,6 +66,7 @@ export type JobPost = {
   working_hours?: string;
   service_bond?: string;
   retirement_benefits?: string;
+  required_documents?: JobRequiredDocument[];
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;

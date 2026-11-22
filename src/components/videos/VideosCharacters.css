@@ -1,3 +1,5 @@
+@import "../../styles/shared/character-animations.css";
+
 .videos-characters {
   position: relative;
   width: 445px;
@@ -38,49 +40,12 @@
   background: #f7b8c8;
   z-index: 0;
 
-  animation: videos-circle-morph 12s ease-in-out infinite;
+  animation: shared-character-circle-morph 12s ease-in-out infinite;
 
   transform-origin: center;
   will-change: transform, border-radius, opacity;
 
   clip-path: inset(0 0 13% 0);
-}
-
-@keyframes videos-circle-morph {
-  0%,
-  100% {
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-
-  20% {
-    border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-
-  40% {
-    border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
-    transform: translate(-50%, -50%) scale(0.95);
-    opacity: 0.8;
-  }
-
-  60% {
-    border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.5;
-  }
-
-  75% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-
-  90% {
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.5;
-  }
 }
 
 /* Floating Badges */
@@ -96,7 +61,7 @@
   justify-content: center;
   box-shadow: 0 8px 25px rgba(217, 54, 82, 0.15);
   z-index: 2;
-  animation: videos-badge-float 4s ease-in-out infinite;
+  animation: shared-character-badge-float 4s ease-in-out infinite;
 }
 
 .videos-badge-video {
@@ -129,34 +94,10 @@
   color: #ffc928;
   font-size: 32px;
   z-index: 2;
-  animation: videos-sparkle 3s ease-in-out infinite;
+  animation: shared-character-sparkle 3s ease-in-out infinite;
 }
 
 /* Animations */
-
-@keyframes videos-badge-float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-
-  50% {
-    translate: 0 -7px;
-  }
-}
-
-@keyframes videos-sparkle {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(0.9) rotate(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.15) rotate(15deg);
-  }
-}
 
 /* Responsive */
 

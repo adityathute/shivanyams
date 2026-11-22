@@ -27,6 +27,7 @@ type JobDiscoveryPost = {
   location?: string;
   state?: string;
   country?: string;
+  organization_type?: string;
   job_details?: {
     total_vacancies?: number | null;
     recruitment_type?: string;
@@ -201,7 +202,7 @@ export function JobsPage() {
               {hasSearched && !searchLoading && !searchError && results.map((post) => (
                 <a className="update-row" key={post.id} href={`/jobs/${post.slug || createPostSlug(getTitle(post))}`}>
                   <span className="update-badge job">{post.job_details?.recruitment_type || "Job"}</span>
-                  <span className="update-title">{getTitle(post)}<small>{getSummary(post)}</small></span>
+                  <span className="update-title">{getTitle(post)}<small>{[getSummary(post), post.job_details?.department, post.location, post.state].filter(Boolean).join(" · ")}</small></span>
                   <time>{post.published_at ? new Date(post.published_at).toLocaleDateString(locale,{day:"numeric",month:"short",year:"numeric"}) : t("new")}</time>
                   <span className="new-pill">{post.job_details?.total_vacancies ?? t("new")}</span>
                 </a>

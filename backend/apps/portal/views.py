@@ -675,6 +675,31 @@ class AdminEditorialMedia(APIView):
         return Response(_media_payload(asset, request), status=status.HTTP_201_CREATED)
 
 
+class AdminEditorialMediaVariant(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def get(self, request, asset_id):
+        from django.http import FileResponse
+        asset = get_object_or_404(EditorialMediaAsset, pk=asset_id, is_active=True, kind=EditorialMediaAsset.Kind.IMAGE)
+        roles = get_portal_roles(request.user)
+        if 'admin' not in roles and asset.owner_auth_id != str(request.user.id):
+            if not roles.intersection({'reviewer', 'content_reviewer'}):
+                raise PermissionDenied('You cannot access this image asset.')
+        size = request.query_params.get('size', 'thumbnail')
+        if size not in {'thumbnail', 'medium', 'large'}:
+            raise ValidationError({'size': 'Choose thumbnail, medium or large.'})
+        variant = (asset.variants or {}).get(size)
+        if not variant or not variant.get('path'):
+            raise NotFound('This image variant is not available.')
+        try:
+            response = FileResponse(asset.file.storage.open(variant['path'], 'rb'), content_type='image/webp')
+        except (OSError, ValueError):
+            raise NotFound('The image variant file is unavailable.')
+        response['Content-Disposition'] = 'inline'
+        response['Cache-Control'] = 'private, max-age=3600'
+        response['X-Content-Type-Options'] = 'nosniff'
+        return response
+
 class AdminEditorialMediaDetail(APIView):
     permission_classes = [IsAuthenticated, IsPortalRevisionManager]
 

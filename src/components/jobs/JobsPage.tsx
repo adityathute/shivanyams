@@ -27,7 +27,6 @@ type JobDiscoveryPost = {
   location?: string;
   state?: string;
   country?: string;
-  organization_type?: string;
   job_details?: {
     total_vacancies?: number | null;
     recruitment_type?: string;

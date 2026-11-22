@@ -273,6 +273,12 @@ class JobPostFeeSerializer(serializers.ModelSerializer):
 
 
 class JobPostSerializer(serializers.ModelSerializer):
+    exam_pattern_en = serializers.CharField(required=False, allow_blank=True, max_length=8000)
+    exam_pattern_mr = serializers.CharField(required=False, allow_blank=True, max_length=8000)
+    exam_pattern_hi = serializers.CharField(required=False, allow_blank=True, max_length=8000)
+    syllabus_en = serializers.CharField(required=False, allow_blank=True, max_length=12000)
+    syllabus_mr = serializers.CharField(required=False, allow_blank=True, max_length=12000)
+    syllabus_hi = serializers.CharField(required=False, allow_blank=True, max_length=12000)
     fees = JobPostFeeSerializer(many=True, required=False)
     educations = JobPostEducationSerializer(many=True, required=False)
 
@@ -327,6 +333,12 @@ class JobPostSerializer(serializers.ModelSerializer):
             "physical_standards_en",
             "physical_standards_mr",
             "physical_standards_hi",
+            "exam_pattern_en",
+            "exam_pattern_mr",
+            "exam_pattern_hi",
+            "syllabus_en",
+            "syllabus_mr",
+            "syllabus_hi",
             "sort_order",
             "fees",
             "educations",

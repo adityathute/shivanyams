@@ -589,6 +589,41 @@ export default function AdminPage() {
     }
   }
 
+  async function showRevisions(post: AdminPost) {
+    setBusyPost(post.id);
+    try {
+      const response = await adminFetch(`${API_URL}/admin/content/${post.id}/revisions/`, { cache: "no-store" });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || "Unable to load content versions.");
+      const revisions = payload.revisions || [];
+      if (!revisions.length) {
+        window.alert("No saved versions are available for this content.");
+        return;
+      }
+      const summary = revisions.map((item: { id: number; revision_number: number; change_note: string; created_by_auth_id: string; created_at: string }) =>
+        `ID ${item.id} · Version ${item.revision_number} · ${new Date(item.created_at).toLocaleString()} · ${item.change_note || "Saved version"} · By ${item.created_by_auth_id}`
+      ).join("\\n");
+      const selected = window.prompt(`Saved versions (enter a revision ID to restore):\\n\\n${summary}`);
+      if (!selected) return;
+      if (!/^\\d+$/.test(selected)) throw new Error("Enter a valid revision ID.");
+      if (!window.confirm(`Restore revision ID ${selected}? The current content will be saved as a new version first.`)) return;
+      const restore = await adminFetch(`${API_URL}/admin/content/${post.id}/revisions/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ revision_id: Number(selected) }),
+      });
+      const restored = await restore.json().catch(() => ({}));
+      if (!restore.ok) throw new Error(restored.detail || "Unable to restore this version.");
+      setError("");
+      await loadPosts();
+      window.alert(`Version restored. A new version (${restored.new_revision_number}) was created.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to restore content version.");
+    } finally {
+      setBusyPost(null);
+    }
+  }
+
   async function showReviewHistory(post: AdminPost) {
     setBusyPost(post.id);
     try {
@@ -1104,6 +1139,9 @@ export default function AdminPage() {
                             </Link>
                             <button disabled={busyPost === post.id} onClick={() => void showReviewHistory(post)}>
                               History
+                            </button>
+                            <button disabled={busyPost === post.id} onClick={() => void showRevisions(post)}>
+                              Versions
                             </button>
                             {post.status === "approved" && (
                               <button disabled={busyPost === post.id} onClick={() => void schedulePost(post)}>

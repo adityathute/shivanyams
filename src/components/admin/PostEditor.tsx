@@ -105,6 +105,8 @@ type JobPostApplicationLinkInput = {
   sort_order: number;
 };
 
+type JobPostWorkLocationInput = { location_type: string; name_en: string; name_mr: string; name_hi: string; city: string; district: string; state: string; country: string; office: string; vacancies: string; note_en: string; note_mr: string; note_hi: string; sort_order: number; };
+
 type JobPostSelectionStageInput = {
   stage_type: "written_exam" | "skill_test" | "physical_test" | "interview" | "document_verification" | "medical_exam" | "trade_test" | "other";
   title_en: string;
@@ -131,6 +133,7 @@ type JobPostInput = {
   important_dates: Array<Record<string, unknown>>;
   application_links: Array<Record<string, unknown>>;
   selection_stages: JobPostSelectionStageInput[];
+  work_locations: JobPostWorkLocationInput[];
   salary_currency: string;
   salary_period: string;
   salary_min: string;
@@ -196,6 +199,8 @@ const createEmptyJobPostApplicationLink = (sort_order: number): JobPostApplicati
   sort_order,
 });
 
+const createEmptyJobPostWorkLocation = (sort_order: number): JobPostWorkLocationInput => ({ location_type: "district", name_en: "", name_mr: "", name_hi: "", city: "", district: "", state: "", country: "India", office: "", vacancies: "", note_en: "", note_mr: "", note_hi: "", sort_order });
+
 const createEmptyJobPostSelectionStage = (sort_order: number): JobPostSelectionStageInput => ({
   stage_type: "written_exam",
   title_en: "",
@@ -222,6 +227,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   important_dates: [],
   application_links: [],
   selection_stages: [],
+  work_locations: [],
   salary_currency: "INR",
   salary_period: "monthly",
   salary_min: "",
@@ -945,6 +951,7 @@ export default function PostEditor({
             salary_max: post.salary_max == null ? "" : String(post.salary_max),
             pay_scale: String(post.pay_scale ?? ""),
             grade_pay: String(post.grade_pay ?? ""),
+            work_locations: Array.isArray(post.work_locations) ? (post.work_locations as Record<string, unknown>[]).map((location, locationIndex) => ({ ...createEmptyJobPostWorkLocation(locationIndex), ...location, location_type: String(location.location_type ?? "other"), name_en: String(location.name_en ?? ""), name_mr: String(location.name_mr ?? ""), name_hi: String(location.name_hi ?? ""), city: String(location.city ?? ""), district: String(location.district ?? ""), state: String(location.state ?? ""), country: String(location.country ?? ""), office: String(location.office ?? ""), vacancies: location.vacancies == null ? "" : String(location.vacancies), note_en: String(location.note_en ?? ""), note_mr: String(location.note_mr ?? ""), note_hi: String(location.note_hi ?? ""), sort_order: locationIndex })) : [],
             selection_stages: Array.isArray(post.selection_stages)
               ? (post.selection_stages as Record<string, unknown>[]).map((stage, stageIndex) => ({
                   ...createEmptyJobPostSelectionStage(stageIndex),
@@ -1394,6 +1401,7 @@ export default function PostEditor({
       salary_max: post.salary_max.trim() === "" ? null : Number(post.salary_max),
       pay_scale: post.pay_scale.trim(),
       grade_pay: post.grade_pay.trim(),
+      work_locations: (post.work_locations || []).filter((location) => [location.name_en, location.name_mr, location.name_hi, location.city, location.district, location.state, location.country, location.office].some((value) => String(value ?? "").trim())).map((location, index) => ({ ...location, name_en: location.name_en.trim(), name_mr: location.name_mr.trim(), name_hi: location.name_hi.trim(), city: location.city.trim(), district: location.district.trim(), state: location.state.trim(), country: location.country.trim(), office: location.office.trim(), vacancies: location.vacancies.trim() === "" ? null : Number(location.vacancies), note_en: location.note_en.trim(), note_mr: location.note_mr.trim(), note_hi: location.note_hi.trim(), sort_order: index })),
       selection_stages: (post.selection_stages || [])
         .filter((stage) => stage.title_en.trim() || stage.title_mr.trim() || stage.title_hi.trim())
         .map((stage, index) => ({
@@ -2196,6 +2204,24 @@ export default function PostEditor({
                         <Input label="Pay scale" value={post.pay_scale} onChange={(event) => updateJobPost(postIndex, "pay_scale", event.target.value)} fullWidth size="sm" />
                         <Input label="Grade pay" value={post.grade_pay} onChange={(event) => updateJobPost(postIndex, "grade_pay", event.target.value)} fullWidth size="sm" />
                       </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-work-locations">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Post-specific work locations</h4><small>List district, city, office or remote posting allocations for this advertised post.</small></div>
+                        <button className="post-editor-add-button" type="button" onClick={() => updateJobPost(postIndex, "work_locations", [...post.work_locations, createEmptyJobPostWorkLocation(post.work_locations.length)])}><span aria-hidden="true">＋</span> Add work location</button>
+                      </div>
+                      {post.work_locations.map((location, locationIndex) => (
+                        <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={locationIndex} open>
+                          <summary className="post-editor-card-summary"><span><strong>{location.name_en || location.city || location.district || location.state || `Location ${locationIndex + 1}`}</strong><small>{location.location_type.replaceAll("_", " ")}</small></span></summary>
+                          <div className="post-editor-fee-fields">
+                            <label className="post-editor-field-label">Location type</label>
+                            <select className="post-editor-select" value={location.location_type} onChange={(event) => updateJobPost(postIndex, "work_locations", post.work_locations.map((item, index) => index === locationIndex ? { ...item, location_type: event.target.value } : item))}><option value="state">State</option><option value="district">District</option><option value="city">City</option><option value="office">Office</option><option value="remote">Remote</option><option value="multiple">Multiple locations</option><option value="other">Other</option></select>
+                            {(["name_en","name_mr","name_hi","city","district","state","country","office","vacancies","note_en","note_mr","note_hi"] as const).map((field) => <Input key={field} label={({name_en:"Location name (English)",name_mr:"Location name (Marathi)",name_hi:"Location name (Hindi)",city:"City",district:"District",state:"State",country:"Country",office:"Office / establishment",vacancies:"Vacancies at this location",note_en:"Notes (English)",note_mr:"Notes (Marathi)",note_hi:"Notes (Hindi)"} as Record<string,string>)[field]} type={field === "vacancies" ? "number" : "text"} min={field === "vacancies" ? 0 : undefined} value={location[field]} onChange={(event) => updateJobPost(postIndex, "work_locations", post.work_locations.map((item, index) => index === locationIndex ? { ...item, [field]: event.target.value } : item))} fullWidth size="sm" />)}
+                            <button className="post-editor-remove-button" type="button" onClick={() => updateJobPost(postIndex, "work_locations", post.work_locations.filter((_, index) => index !== locationIndex))}>Remove location</button>
+                          </div>
+                        </details>
+                      ))}
                     </section>
 
                     <section className="post-editor-post-detail-section post-editor-post-selection-stages">

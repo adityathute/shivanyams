@@ -25,6 +25,8 @@ from .models import (
     ToolDetails,
     VideoDetails,
     ImportantLink,
+    OfficialSource,
+    PostSource,
 )
 
 

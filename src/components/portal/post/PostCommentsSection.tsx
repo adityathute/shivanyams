@@ -25,6 +25,7 @@ type CommentItem = {
   dislikes_count: number;
   user_reaction: Reaction;
   created_at: string;
+  updated_at: string;
   replies: CommentItem[];
 };
 

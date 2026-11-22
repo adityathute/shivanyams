@@ -56,10 +56,17 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
 
 type VideoCollectionItem = { id: number; slug: string; title_en: string; title_mr?: string; title_hi?: string; thumbnail_url?: string; sort_order: number };
 type VideoCollection = { id: number; collection_type: "playlist" | "series" | "channel"; title_en: string; title_mr?: string; title_hi?: string; slug: string; description_en?: string; description_mr?: string; description_hi?: string; external_url?: string; thumbnail_url?: string; items: VideoCollectionItem[] };
+type VideoFacet = { id: number; name: string; name_mr?: string; name_hi?: string; slug: string; type?: string; type_name?: string };
+type DiscoveryVideo = { id: number; slug: string; title: string; language: string; url: string; thumbnail: string; tags: { id: number; name: string; slug: string }[]; taxonomy_terms: { id: number; name: string; slug: string; taxonomy_type: string }[] };
 
 export function VideosPage() {
   const [query, setQuery] = useState("");
   const [collections, setCollections] = useState<VideoCollection[]>([]);
+  const [discoveredVideos, setDiscoveredVideos] = useState<DiscoveryVideo[] | null>(null);
+  const [videoTags, setVideoTags] = useState<VideoFacet[]>([]);
+  const [videoTopics, setVideoTopics] = useState<VideoFacet[]>([]);
+  const [selectedTag, setSelectedTag] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState("");
 
   const { data } = usePortalData();
 
@@ -72,6 +79,34 @@ export function VideosPage() {
     return () => controller.abort();
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    if (selectedTag) params.set("tag", selectedTag);
+    if (selectedTopic) params.set("taxonomy", selectedTopic);
+    params.set("limit", "100");
+    const handle = window.setTimeout(() => {
+      authenticatedFetch(getPortalApiUrl(`content/videos/discovery/?${params.toString()}`), { signal: controller.signal })
+        .then((response) => { if (!response.ok) throw new Error("Video discovery unavailable"); return response.json(); })
+        .then((payload) => {
+          const rows = Array.isArray(payload.results) ? payload.results : [];
+          setDiscoveredVideos(rows.map((post: any) => ({
+            id: post.id, slug: post.slug,
+            title: language === "mr" ? post.title_mr || post.title_en : language === "hi" ? post.title_hi || post.title_en : post.title_en,
+            language: post.default_language || "", url: post.video_details?.video_url || "",
+            thumbnail: post.video_details?.thumbnail_url || post.featured_image_url || "",
+            tags: Array.isArray(post.tags) ? post.tags : [],
+            taxonomy_terms: Array.isArray(post.taxonomy_terms) ? post.taxonomy_terms : [],
+          })));
+          setVideoTags(Array.isArray(payload.facets?.tags) ? payload.facets.tags : []);
+          setVideoTopics(Array.isArray(payload.facets?.topics) ? payload.facets.topics : []);
+        })
+        .catch((error) => { if (!controller.signal.aborted) { console.error("Video discovery request failed:", error); setDiscoveredVideos(null); } });
+    }, 250);
+    return () => { window.clearTimeout(handle); controller.abort(); };
+  }, [query, selectedTag, selectedTopic, language]);
+
   const { language } = usePortalLanguage();
 
   const t = (key: keyof typeof baseDictionary) =>
@@ -79,15 +114,11 @@ export function VideosPage() {
 
   const videos = useMemo(() => {
     const term = query.trim().toLowerCase();
-
-    return data.videos.filter(
-      (video) =>
-        !term ||
-        [video.title, video.language].some((value) =>
-          value.toLowerCase().includes(term),
-        ),
+    const source = discoveredVideos ?? data.videos;
+    return source.filter((video) =>
+      !term || [video.title, video.language].some((value) => String(value || "").toLowerCase().includes(term)),
     );
-  }, [data.videos, query]);
+  }, [data.videos, discoveredVideos, query]);
 
   const hasVideos = data.videos.length > 0;
 
@@ -123,6 +154,11 @@ export function VideosPage() {
 
               <button type="submit">{t("search")}</button>
             </form>
+            <div className="videos-discovery-filters" aria-label="Filter videos by topic and tag">
+              <label><span>Topic</span><select value={selectedTopic} onChange={(event) => setSelectedTopic(event.target.value)}><option value="">All topics</option>{videoTopics.map((topic) => <option key={topic.id} value={topic.slug}>{language === "mr" ? topic.name_mr || topic.name : language === "hi" ? topic.name_hi || topic.name : topic.name}</option>)}</select></label>
+              <label><span>Tag</span><select value={selectedTag} onChange={(event) => setSelectedTag(event.target.value)}><option value="">All tags</option>{videoTags.map((tag) => <option key={tag.id} value={tag.slug}>{tag.name}</option>)}</select></label>
+              {(selectedTopic || selectedTag) ? <button type="button" onClick={() => { setSelectedTopic(""); setSelectedTag(""); }}>Clear filters</button> : null}
+            </div>
           </div>
 
           <div className="videos-hero-art" aria-hidden="true">

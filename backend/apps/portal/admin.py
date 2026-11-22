@@ -392,6 +392,12 @@ class JobPostInline(admin.StackedInline):
                     "physical_standards_en",
                     "physical_standards_mr",
                     "physical_standards_hi",
+                    "exam_pattern_en",
+                    "exam_pattern_mr",
+                    "exam_pattern_hi",
+                    "syllabus_en",
+                    "syllabus_mr",
+                    "syllabus_hi",
                 )
             },
         ),

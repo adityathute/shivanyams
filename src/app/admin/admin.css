@@ -1644,3 +1644,20 @@
 .editorial-caption-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border-color, #dce2ea); }
 .editorial-caption-row span { display: grid; gap: 2px; }
 .editorial-caption-row small { color: var(--text-secondary, #718096); }
+
+.video-collections-admin { display: grid; gap: 14px; margin: 18px 0 24px; padding: 18px; border: 1px solid var(--border-color, #dce2ea); border-radius: 14px; background: var(--panel-bg, #fff); }
+.video-collections-admin > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.video-collections-admin h2 { margin: 0 0 4px; font-size: 18px; }
+.video-collections-admin p, .video-collections-admin small { color: var(--text-secondary, #718096); font-size: 12px; }
+.video-collection-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.video-collection-form label { display: grid; gap: 5px; font-size: 12px; font-weight: 600; }
+.video-collection-form input, .video-collection-form select, .video-collection-form textarea { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--border-color, #dce2ea); border-radius: 8px; background: var(--panel-muted, #f8fafc); color: inherit; font: inherit; }
+.video-collection-form label:nth-child(6), .video-collection-form label:nth-child(7) { grid-column: 1 / -1; }
+.video-collection-form .video-collection-publish { display: flex; align-items: center; gap: 8px; }
+.video-collection-form .video-collection-publish input { width: auto; }
+.video-collection-form > button, .video-collection-admin-row > button { justify-self: start; padding: 8px 13px; border: 0; border-radius: 8px; background: var(--primary, #1f2937); color: white; cursor: pointer; }
+.video-collection-admin-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border-color, #dce2ea); }
+.video-collection-admin-row > div { display: grid; gap: 3px; min-width: 0; }
+.video-collection-admin-row small { color: var(--text-secondary, #718096); }
+.video-collection-admin-row a { font-size: 12px; }
+@media (max-width: 640px) { .video-collection-form { grid-template-columns: 1fr; } .video-collection-form label { grid-column: 1 / -1; } .video-collections-admin > header { flex-direction: column; } }

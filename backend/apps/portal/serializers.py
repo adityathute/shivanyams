@@ -279,6 +279,9 @@ class JobPostSerializer(serializers.ModelSerializer):
             "age_limit_note_mr",
             "age_limit_note_hi",
             "age_relaxations",
+            "education_requirements",
+            "subject_requirements",
+            "experience_requirements",
             "sort_order",
             "fees",
             "educations",
@@ -351,6 +354,40 @@ class JobPostSerializer(serializers.ModelSerializer):
                         raise serializers.ValidationError({
                             "age_relaxations": f"{prefix}: {key} must be a whole number from 0 to {maximum}."
                         })
+
+        # Validate structured education, subject and experience requirements.
+        requirement_limits = {
+            "education_requirements": 30,
+            "subject_requirements": 30,
+            "experience_requirements": 20,
+        }
+        for field, maximum_items in requirement_limits.items():
+            rules = attrs.get(field, getattr(self.instance, field, []) if self.instance else []) or []
+            if not isinstance(rules, list):
+                raise serializers.ValidationError({field: "Provide requirements as a list."})
+            if len(rules) > maximum_items:
+                raise serializers.ValidationError({field: f"A maximum of {maximum_items} requirements is allowed."})
+            for index, rule in enumerate(rules):
+                label = f"Requirement {index + 1}"
+                if not isinstance(rule, dict):
+                    raise serializers.ValidationError({field: f"{label} must be an object."})
+                titles = [str(rule.get(key, "")).strip() for key in ("title_en", "title_mr", "title_hi")]
+                details = [str(rule.get(key, "")).strip() for key in ("details_en", "details_mr", "details_hi")]
+                if not any(titles):
+                    raise serializers.ValidationError({field: f"{label} needs a title in at least one language."})
+                if "mandatory" in rule and not isinstance(rule["mandatory"], bool):
+                    raise serializers.ValidationError({field: f"{label} mandatory must be true or false."})
+                for key, maximum in (("minimum_years", 100), ("minimum_percentage", 100), ("maximum_gap_years", 100)):
+                    value = rule.get(key)
+                    if value is not None and value != "":
+                        try:
+                            number = float(value)
+                        except (TypeError, ValueError):
+                            number = -1
+                        if isinstance(value, bool) or number < 0 or number > maximum:
+                            raise serializers.ValidationError({field: f"{label}: {key} must be between 0 and {maximum}."})
+                if field == "experience_requirements" and not (any(details) or rule.get("minimum_years") is not None):
+                    raise serializers.ValidationError({field: f"{label} needs details or a minimum years value."})
 
         # Prevent duplicate fee categories within the same post.
         fees = attrs.get("fees")

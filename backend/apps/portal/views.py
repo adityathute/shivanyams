@@ -524,6 +524,11 @@ def _media_payload(asset, request):
         "image_height": asset.image_height,
         "processing_status": asset.processing_status,
         "processing_error": asset.processing_error,
+        "video_duration_seconds": asset.video_duration_seconds,
+        "video_width": asset.video_width,
+        "video_height": asset.video_height,
+        "video_variants": asset.video_variants or {},
+        "video_poster_url": request.build_absolute_uri("/api/v1/portal/admin/media/{}/poster/".format(asset.id)) if asset.kind == EditorialMediaAsset.Kind.VIDEO else None,
         "variants": {name: {"url": request.build_absolute_uri("/api/v1/portal/admin/media/{}/variant/?size={}".format(asset.id, name)), "width": details.get("width"), "height": details.get("height"), "format": details.get("format")} for name, details in (asset.variants or {}).items()},
         "responsive_image_url": request.build_absolute_uri("/api/v1/portal/admin/media/{}/variant/?size=medium".format(asset.id)),
         "alt_text": asset.alt_text, "caption": asset.caption,
@@ -588,11 +593,15 @@ class PublicEditorialImageVariant(APIView):
         return response
 
 
-def _editorial_video_stream_response(request, asset):
+def _editorial_video_stream_response(request, asset, variant_path=None):
     from django.http import FileResponse, HttpResponse, StreamingHttpResponse
     try:
-        media_file = asset.file.open('rb')
-        total_size = asset.file.size
+        if variant_path:
+            media_file = asset.file.storage.open(variant_path, 'rb')
+            total_size = asset.file.storage.size(variant_path)
+        else:
+            media_file = asset.file.open('rb')
+            total_size = asset.file.size
     except (OSError, ValueError):
         raise NotFound('The published video is unavailable.')
     range_header = request.headers.get('Range', '')
@@ -645,6 +654,44 @@ def _editorial_video_stream_response(request, asset):
     response['Cache-Control'] = 'public, max-age=3600'
     return response
 
+class PublicEditorialVideoPoster(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, asset_id):
+        from django.http import FileResponse
+        asset = get_object_or_404(EditorialMediaAsset.objects.filter(kind=EditorialMediaAsset.Kind.VIDEO, is_active=True, post_attachments__post__is_active=True, post_attachments__post__status=Post.Status.PUBLISHED, post_attachments__post__published_at__isnull=False).distinct(), pk=asset_id)
+        if not asset.video_poster_path:
+            raise NotFound("A video poster is not available yet.")
+        try:
+            response = FileResponse(asset.file.storage.open(asset.video_poster_path, "rb"), content_type="image/jpeg")
+        except (OSError, ValueError):
+            raise NotFound("The video poster file is unavailable.")
+        response["Content-Disposition"] = "inline"
+        response["Cache-Control"] = "public, max-age=86400"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
+
+class AdminEditorialVideoPoster(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def get(self, request, asset_id):
+        from django.http import FileResponse
+        asset = get_object_or_404(EditorialMediaAsset, pk=asset_id, kind=EditorialMediaAsset.Kind.VIDEO, is_active=True)
+        roles = get_portal_roles(request.user)
+        if "admin" not in roles and asset.owner_auth_id != str(request.user.id) and not roles.intersection({"reviewer", "content_reviewer"}):
+            raise PermissionDenied("You cannot access this video poster.")
+        if not asset.video_poster_path:
+            raise NotFound("A video poster is not available yet.")
+        try:
+            response = FileResponse(asset.file.storage.open(asset.video_poster_path, "rb"), content_type="image/jpeg")
+        except (OSError, ValueError):
+            raise NotFound("The video poster file is unavailable.")
+        response["Content-Disposition"] = "inline"
+        response["Cache-Control"] = "private, max-age=3600"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
 class PublicEditorialMediaDownload(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -660,7 +707,11 @@ class PublicEditorialMediaDownload(APIView):
             pk=asset_id,
         )
         if asset.kind == EditorialMediaAsset.Kind.VIDEO:
-            return _editorial_video_stream_response(request, asset)
+            optimized = (asset.video_variants or {}).get("mp4_720p", {}).get("path") if request.query_params.get("optimized") == "1" else None
+            return _editorial_video_stream_response(request, asset, optimized)
+        if asset.kind == EditorialMediaAsset.Kind.VIDEO:
+            optimized = (asset.video_variants or {}).get("mp4_720p", {}).get("path") if request.query_params.get("optimized") == "1" else None
+            return _editorial_video_stream_response(request, asset, optimized)
         try:
             response = FileResponse(
                 asset.file.open("rb"),

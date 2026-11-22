@@ -40,6 +40,8 @@ from .models import (
     EditorialDiscussionComment,
     EditorialMediaAsset,
     PostMediaAttachment,
+    VideoDetails,
+    VideoCaptionTrack,
     PostTag,
     PostTaxonomyTerm,
     PostView,
@@ -885,6 +887,85 @@ class AdminEditorialMediaDownload(APIView):
         response["X-Content-Type-Options"] = "nosniff"
         return response
 
+
+
+
+class AdminVideoCaptionTracks(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        if not _can_access_media_post(request, post):
+            raise PermissionDenied("You cannot view caption tracks for this post.")
+        try:
+            video = post.video_details
+        except VideoDetails.DoesNotExist:
+            raise NotFound("Video metadata has not been configured for this post.")
+        return Response({"results": [self._payload(track, request) for track in video.caption_tracks.all()]})
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        if not _can_access_media_post(request, post, write=True):
+            raise PermissionDenied("Only the owner, assigned editor or administrator can manage captions.")
+        try:
+            video = post.video_details
+        except VideoDetails.DoesNotExist:
+            raise NotFound("Create video metadata before adding caption tracks.")
+        upload = request.FILES.get("file")
+        if not upload:
+            raise ValidationError({"file": "Upload a WebVTT (.vtt) caption file."})
+        if not upload.name.lower().endswith(".vtt") or upload.size > 2 * 1024 * 1024:
+            raise ValidationError({"file": "Caption files must be .vtt and no larger than 2 MB."})
+        header = upload.read(16)
+        upload.seek(0)
+        if not header.lstrip(b"\xef\xbb\xbf \t\r\n").startswith(b"WEBVTT"):
+            raise ValidationError({"file": "The uploaded file is not a valid WebVTT document."})
+        language = str(request.data.get("language", "")).strip().lower()
+        label = str(request.data.get("label", "")).strip()
+        import re
+        if not re.fullmatch(r"[a-z]{2,3}(?:-[a-z0-9]{2,8})?", language):
+            raise ValidationError({"language": "Use a valid language code such as en, mr or hi."})
+        if not label or len(label) > 80:
+            raise ValidationError({"label": "Enter a caption label up to 80 characters."})
+        track, _ = VideoCaptionTrack.objects.update_or_create(
+            video=video, language=language,
+            defaults={"label": label, "file": upload, "is_default": str(request.data.get("is_default", "false")).lower() in {"1", "true", "yes"}, "sort_order": int(request.data.get("sort_order", 0) or 0)},
+        )
+        if track.is_default:
+            video.caption_tracks.exclude(pk=track.pk).update(is_default=False)
+        return Response(self._payload(track, request), status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def _payload(track, request):
+        return {"id": track.pk, "language": track.language, "label": track.label, "is_default": track.is_default, "sort_order": track.sort_order, "url": request.build_absolute_uri(f"/api/v1/portal/content/video-captions/{track.pk}/")}
+
+
+class AdminVideoCaptionTrackDetail(APIView):
+    permission_classes = [IsAuthenticated, IsPortalRevisionManager]
+
+    def delete(self, request, caption_id):
+        track = get_object_or_404(VideoCaptionTrack.objects.select_related("video__post"), pk=caption_id)
+        if not _can_access_media_post(request, track.video.post, write=True):
+            raise PermissionDenied("You cannot delete this caption track.")
+        track.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PublicVideoCaptionTrack(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, caption_id):
+        from django.http import FileResponse
+        track = get_object_or_404(VideoCaptionTrack.objects.filter(video__post__is_active=True, video__post__status=Post.Status.PUBLISHED, video__post__published_at__isnull=False), pk=caption_id)
+        try:
+            response = FileResponse(track.file.open("rb"), content_type="text/vtt; charset=utf-8")
+        except (OSError, ValueError):
+            raise NotFound("The caption file is unavailable.")
+        response["Content-Disposition"] = "inline"
+        response["Cache-Control"] = "public, max-age=86400"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
 
 class AdminPostMedia(APIView):
     permission_classes = [IsAuthenticated, IsPortalRevisionManager]

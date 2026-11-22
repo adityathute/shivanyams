@@ -1312,6 +1312,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 postImportantDates,
                                 applicationLinks,
                                 selectionStages,
+                                workLocations: (Array.isArray(entry.work_locations) ? entry.work_locations : []).map((location) => { const name = getLocalizedText(language, location.name_en, location.name_mr, location.name_hi); const parts = [name, location.office, location.city, location.district, location.state, location.country, location.vacancies != null ? `${location.vacancies} ${getDetailLabel("vacancies", language)}` : "", getLocalizedText(language, location.note_en, location.note_mr, location.note_hi)].filter(Boolean); return parts.join(" · "); }).filter(Boolean),
                                 compensation: [entry.salary_min != null || entry.salary_max != null ? `${entry.salary_currency || "INR"} ${entry.salary_min ?? "—"} – ${entry.salary_max ?? "—"} / ${entry.salary_period || "monthly"}` : "", entry.pay_scale ? `Pay scale: ${entry.pay_scale}` : "", entry.grade_pay ? `Grade pay: ${entry.grade_pay}` : ""].filter(Boolean).join(" · "),
                                 fees,
                               };
@@ -1340,6 +1341,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showApplicationLinks = rows.some((row) => row.applicationLinks.length > 0);
                             const showSelectionStages = rows.some((row) => row.selectionStages.length > 0);
                             const showPostCompensation = rows.some((row) => row.compensation);
+                            const showWorkLocations = rows.some((row) => row.workLocations.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -1372,6 +1374,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showApplicationLinks ? <th>{getDetailLabel("applicationLinks", language)}</th> : null}
                                       {showSelectionStages ? <th>{getDetailLabel("selectionProcess", language)}</th> : null}
                                       {showPostCompensation ? <th>{language === "mr" ? "वेतन / वेतनश्रेणी" : language === "hi" ? "वेतन / वेतनमान" : "Salary / Pay scale"}</th> : null}
+                                      {showWorkLocations ? <th>{language === "mr" ? "नियुक्तीचे ठिकाण" : language === "hi" ? "कार्यस्थल" : "Work location"}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1406,6 +1409,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         ) : null}
                                         {showSelectionStages ? <td>{row.selectionStages.length ? <ol className="portal-post-selection-stages">{row.selectionStages.map((stage, stageIndex) => <li key={`${stageIndex}-${stage}`}>{stage}</li>)}</ol> : "—"}</td> : null}
                                         {showPostCompensation ? <td>{row.compensation || "—"}</td> : null}
+                                        {showWorkLocations ? <td>{row.workLocations.length ? row.workLocations.join("; ") : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}

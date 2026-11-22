@@ -5,6 +5,7 @@ from .views import (
     Categories,
     ImportantLinks,
     PublicContent,
+    PublicContentSearch,
     AdminContent,
     SavedPosts,
     UnsavePost,
@@ -60,6 +61,7 @@ urlpatterns = [
     path("important-links/", ImportantLinks.as_view(), name="important-links"),
     # Public content: jobs, schemes, examinations, admit cards,
     # results, articles, videos and tools.
+    path("content/search/", PublicContentSearch.as_view(), name="content-search"),
     path("content/<str:kind>/", content_list, name="content-list"),
 
     # Post-specific endpoints must come before the generic

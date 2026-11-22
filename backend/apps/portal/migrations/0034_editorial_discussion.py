@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ("post", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="editorial_discussion", to="portal.post")),
             ],
             options={"ordering": ("created_at",), "indexes": [
-                models.Index(fields=["post", "created_at"], name="editorial_disc_post_created_idx"),
-                models.Index(fields=["author_auth_id", "created_at"], name="editorial_disc_author_created_idx"),
+                models.Index(fields=["post", "created_at"], name="ed_disc_post_created_idx"),
+                models.Index(fields=["author_auth_id", "created_at"], name="ed_disc_author_created_idx"),
             ]},
         ),
     ]

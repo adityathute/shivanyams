@@ -17,6 +17,18 @@ type ContentKind = {
   api: string;
   detailKey: string;
 };
+type ContentMetadata = {
+  tags: { id: number; name_en: string; slug: string }[];
+  taxonomy_terms: { id: number; name: string; slug: string; type: string; type_name: string }[];
+  official_sources: { id: number; name: string; domain: string; website_url: string; source_type: string }[];
+};
+type SourceEvidenceInput = {
+  source: number;
+  source_url: string;
+  title: string;
+  evidence_type: string;
+  is_primary: boolean;
+};
 type LinkInput = {
   name_en: string;
   name_mr: string;
@@ -276,6 +288,9 @@ type PostRecord = {
   meta_description_en?: string;
   meta_keywords?: string[];
   category?: Category;
+  tags?: { id: number; name: string; slug: string }[];
+  taxonomy_terms?: { id: number; name: string; slug: string; taxonomy_type: string; relation_type: string }[];
+  official_sources?: { id: number; source: number; source_url: string; title: string; evidence_type: string; is_primary: boolean }[];
   important_links?: LinkInput[];
   faqs?: FAQInput[];
   important_dates?: DateInput[];
@@ -563,6 +578,10 @@ export default function PostEditor({
   const [form, setForm] = useState<FormState>(EMPTY);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [contentMetadata, setContentMetadata] = useState<ContentMetadata>({ tags: [], taxonomy_terms: [], official_sources: [] });
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [selectedTaxonomyTermIds, setSelectedTaxonomyTermIds] = useState<number[]>([]);
+  const [sourceEvidence, setSourceEvidence] = useState<SourceEvidenceInput[]>([]);
   const [details, setDetails] = useState<Record<string, unknown>>(
     detailTemplate(initialKind),
   );
@@ -611,6 +630,26 @@ export default function PostEditor({
   const [organizationTypes, setOrganizationTypes] = useState<
     OrganizationType[]
   >([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadContentMetadata() {
+      try {
+        const response = await adminFetch(`${API_URL}/admin/content-metadata/`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Unable to load content metadata.");
+        const data = await response.json();
+        if (!controller.signal.aborted) setContentMetadata({
+          tags: Array.isArray(data.tags) ? data.tags : [],
+          taxonomy_terms: Array.isArray(data.taxonomy_terms) ? data.taxonomy_terms : [],
+          official_sources: Array.isArray(data.official_sources) ? data.official_sources : [],
+        });
+      } catch (error) {
+        if (!controller.signal.aborted) console.error("Content metadata error:", error);
+      }
+    }
+    void loadContentMetadata();
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -719,6 +758,15 @@ export default function PostEditor({
           meta_keywords: "",
         });
         setTags(Array.isArray(record.meta_keywords) ? record.meta_keywords.filter(Boolean) : []);
+        setSelectedTagIds(Array.isArray(record.tags) ? record.tags.map((item) => item.id) : []);
+        setSelectedTaxonomyTermIds(Array.isArray(record.taxonomy_terms) ? record.taxonomy_terms.map((item) => item.id) : []);
+        setSourceEvidence(Array.isArray(record.official_sources) ? record.official_sources.map((item) => ({
+          source: item.source,
+          source_url: item.source_url,
+          title: item.title || "",
+          evidence_type: item.evidence_type || "general",
+          is_primary: Boolean(item.is_primary),
+        })) : []);
         setTagInput("");
         setImportantLinks(
           (record.important_links || []).map((item: LinkInput, index) => ({
@@ -1247,6 +1295,9 @@ export default function PostEditor({
         organization_type: organizationType,
         slug: form.slug || slugify(form.title_en),
         meta_keywords: tags,
+        tag_ids: selectedTagIds,
+        taxonomy_term_ids: selectedTaxonomyTermIds,
+        official_sources: sourceEvidence.filter((item) => item.source && item.source_url.trim()),
 
         [kind.detailKey]:
           kind.api === "jobs"
@@ -1295,7 +1346,7 @@ export default function PostEditor({
             old_time: item.old_time || null,
             new_time: item.new_time || null,
           })),
-      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
+      }), [form, organizationType, tags, selectedTagIds, selectedTaxonomyTermIds, sourceEvidence, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
 
   const currentTitle = String(form.title_en || "").trim();
   const hasUnsavedChanges = !loading && (editing || Boolean(currentTitle)) && JSON.stringify(payload) !== lastSavedSnapshotRef.current;

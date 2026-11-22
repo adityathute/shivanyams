@@ -1,4 +1,5 @@
-from django.db import transaction\nfrom django.utils import timezone
+from django.db import transaction
+from django.utils import timezone
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (

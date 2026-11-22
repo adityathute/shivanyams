@@ -77,10 +77,10 @@ export default function EditorialMediaPanel({ postId }: { postId?: number }) {
       </label>
       <input aria-label="Search media" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search files..." />
       <div className="editorial-media-list">{assets.map((asset) => <article key={asset.id}>
-        {asset.kind === "video" ? <span className="editorial-media-file-icon">VIDEO</span> : asset.kind === "image" && asset.variants?.thumbnail?.url
+        {asset.kind === "video" ? <video className="editorial-media-thumbnail" src={asset.download_url} preload="metadata" controls /> : asset.kind === "image" && asset.variants?.thumbnail?.url
           ? <img className="editorial-media-thumbnail" src={asset.variants.thumbnail.url} alt={asset.alt_text || asset.original_name} loading="lazy" />
           : <span className="editorial-media-file-icon">{asset.kind === "document" ? "FILE" : "IMAGE"}</span>}
-        <div className="editorial-media-file-info"><strong>{asset.original_name}</strong><small>{asset.kind} · {(asset.file_size / 1024).toFixed(0)} KB{asset.image_width && asset.image_height ? " · " + asset.image_width + "×" + asset.image_height : ""}</small><small>{asset.processing_status || "pending"}</small></div>
+        <div className="editorial-media-file-info"><strong>{asset.original_name}</strong><small>{asset.kind} · {(asset.file_size / 1024).toFixed(0)} KB{asset.image_width && asset.image_height ? " · " + asset.image_width + "×" + asset.image_height : ""}</small><small>{asset.processing_status || (asset.kind === "video" ? "video ready" : "not processed")}</small></div>
         <div className="editorial-media-actions">
           <a href={asset.download_url} target="_blank" rel="noreferrer">Open</a>
           {postId && (attached.includes(asset.id)

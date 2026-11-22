@@ -123,7 +123,9 @@ function formatDate(value: string, language: string) {
 
 function formatRelativePostDate(value: string, language: string) {
   if (!value) return "";
-  const date = new Date(value);
+  const date = /^\\d{4}-\\d{2}-\\d{2}$/.test(value)
+    ? new Date(`${value}T12:00:00`)
+    : new Date(value);
   if (Number.isNaN(date.getTime())) return formatDate(value, language);
   const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
   if (seconds < 60) return `${Math.max(1, seconds)} sec ago`;

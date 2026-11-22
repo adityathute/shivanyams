@@ -48,12 +48,17 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
 
     if (!videoId) return null;
 
-    return `https://www.youtube.com/embed/${videoId}`;
+    return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
   } catch {
     return null;
   }
 }
 
+function getYouTubeThumbnailUrl(url?: string | null): string | null {
+  const embedUrl = getYouTubeEmbedUrl(url);
+  const match = embedUrl?.match(/embed\/([A-Za-z0-9_-]{6,})/);
+  return match ? `https://i.ytimg.com/vi/${match[1]}/hqdefault.jpg` : null;
+}
 type VideoCollectionItem = { id: number; slug: string; title_en: string; title_mr?: string; title_hi?: string; thumbnail_url?: string; sort_order: number };
 type VideoCollection = { id: number; collection_type: "playlist" | "series" | "channel"; title_en: string; title_mr?: string; title_hi?: string; slug: string; description_en?: string; description_mr?: string; description_hi?: string; external_url?: string; thumbnail_url?: string; items: VideoCollectionItem[] };
 type VideoFacet = { id: number; name: string; name_mr?: string; name_hi?: string; slug: string; type?: string; type_name?: string };
@@ -67,6 +72,7 @@ export function VideosPage() {
   const [videoTopics, setVideoTopics] = useState<VideoFacet[]>([]);
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("");
+  const [playingVideoIds, setPlayingVideoIds] = useState<Set<number>>(() => new Set());
 
   const { data } = usePortalData();
 
@@ -208,36 +214,46 @@ export function VideosPage() {
             <div className="videos-grid">
               {videos.map((video) => {
                 const youtubeEmbedUrl = getYouTubeEmbedUrl(video.url);
+                const youtubeThumbnailUrl = getYouTubeThumbnailUrl(video.url);
+                const isPlaying = playingVideoIds.has(video.id);
 
                 return (
                   <div className="videos-card" key={video.id}>
                     <div
                       className="videos-thumbnail"
                       style={{
-                        backgroundImage: youtubeEmbedUrl
-                          ? undefined
-                          : `linear-gradient(0deg, rgba(15, 20, 35, 0.55), transparent 65%), url("${video.thumbnail}")`,
-                      }}
+                        backgroundImage: `linear-gradient(0deg, rgba(15, 20, 35, 0.55), transparent 65%), url("${youtubeThumbnailUrl || video.thumbnail}")`,                      }}
                     >
-                      {youtubeEmbedUrl ? (
+                      {youtubeEmbedUrl && isPlaying ? (
                         <iframe
                           className="videos-youtube-player"
                           src={youtubeEmbedUrl}
                           title={video.title}
                           loading="lazy"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
                           allowFullScreen
                         />
                       ) : (
-                        <>
-                          <span className="videos-play-button">
-                            <VideoIcon size={20} />
-                          </span>
-
-                          <span className="videos-watch-label">
-                            {t("watchVideo")}
-                          </span>
-                        </>
+                        <button
+                          className="videos-play-trigger"
+                          type="button"
+                          aria-label={`Play ${video.title}`}
+                          onClick={() => {
+                            if (!youtubeEmbedUrl) {
+                              window.location.assign(`/videos/${video.slug || createPostSlug(video.title)}`);
+                              return;
+                            }
+                            setPlayingVideoIds((current) => {
+                              const next = new Set(current);
+                              next.add(video.id);
+                              return next;
+                            });
+                          }}
+                        >
+                          <span className="videos-play-button"><VideoIcon size={20} /></span>
+                          <span className="videos-watch-label">{t("watchVideo")}</span>
+                        </button>
                       )}
                     </div>
 

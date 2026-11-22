@@ -36,6 +36,7 @@ from .models import (
     PostRevision,
     PostAssignment,
     EditorialNotification,
+    EditorialDiscussionComment,
     PostTag,
     PostTaxonomyTerm,
     PostView,
@@ -499,6 +500,109 @@ class AdminContent(viewsets.ModelViewSet):
                 lambda: send_mass_mail(email_messages, fail_silently=True)
             )
 
+
+
+
+class EditorialDiscussion(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def _post_access(self, request, post):
+        roles = get_portal_roles(request.user)
+        if not roles.intersection({"admin", "reviewer", "content_reviewer", "editor", "content_editor"}):
+            raise PermissionDenied("Editorial access is required.")
+        if "admin" in roles or roles.intersection({"reviewer", "content_reviewer"}):
+            return
+        user_id = str(request.user.id)
+        if str(post.owner_auth_id or "") == user_id:
+            return
+        try:
+            if post.assignment.assigned_to_auth_id == user_id:
+                return
+        except PostAssignment.DoesNotExist:
+            pass
+        raise PermissionDenied("You must own or be assigned to this content to join its discussion.")
+
+    @staticmethod
+    def _serialize(item, user_id):
+        return {
+            "id": item.id, "post_id": item.post_id, "parent_id": item.parent_id,
+            "author_auth_id": item.author_auth_id, "content": item.content,
+            "is_internal": item.is_internal, "edited_at": item.edited_at,
+            "created_at": item.created_at, "updated_at": item.updated_at,
+            "can_edit": item.author_auth_id == user_id,
+            "replies": [
+                {"id": reply.id, "parent_id": reply.parent_id,
+                 "author_auth_id": reply.author_auth_id, "content": reply.content,
+                 "edited_at": reply.edited_at, "created_at": reply.created_at,
+                 "updated_at": reply.updated_at, "can_edit": reply.author_auth_id == user_id}
+                for reply in item.replies.all()
+            ],
+        }
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        self._post_access(request, post)
+        rows = EditorialDiscussionComment.objects.filter(post=post, parent__isnull=True).prefetch_related("replies")
+        user_id = str(request.user.id)
+        return Response({"post_id": post.id, "results": [self._serialize(item, user_id) for item in rows]})
+
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        self._post_access(request, post)
+        content = str(request.data.get("content", "")).strip()
+        if not content or len(content) > 10000:
+            raise ValidationError({"content": "Enter a discussion message (maximum 10,000 characters)."})
+        parent_id = request.data.get("parent_id")
+        parent = None
+        if parent_id:
+            parent = get_object_or_404(EditorialDiscussionComment, pk=parent_id, post=post)
+            if parent.parent_id:
+                raise ValidationError({"parent_id": "Replies can only be one level deep."})
+        item = EditorialDiscussionComment.objects.create(
+            post=post, parent=parent, author_auth_id=str(request.user.id),
+            content=content, is_internal=True,
+        )
+        participants = {str(post.owner_auth_id or "")}
+        try:
+            participants.add(str(post.assignment.assigned_to_auth_id))
+            participants.add(str(post.assignment.assigned_by_auth_id))
+        except PostAssignment.DoesNotExist:
+            pass
+        for recipient in participants:
+            notify_editorial_user(
+                recipient, "editorial_discussion", "New editorial discussion message",
+                f'A new note was added to "{post.title_en}".',
+                actor_auth_id=request.user.id, post=post,
+                action_url=f"/admin/edit-post/{post.category.slug}/{post.slug}",
+            )
+        return Response(self._serialize(item, str(request.user.id)), status=status.HTTP_201_CREATED)
+
+
+class EditorialDiscussionCommentDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def _get_item(self, request, comment_id):
+        item = get_object_or_404(EditorialDiscussionComment.objects.select_related("post"), pk=comment_id)
+        EditorialDiscussion()._post_access(request, item.post)
+        roles = get_portal_roles(request.user)
+        if item.author_auth_id != str(request.user.id) and "admin" not in roles:
+            raise PermissionDenied("Only the author or an administrator can edit or remove this message.")
+        return item
+
+    def patch(self, request, comment_id):
+        item = self._get_item(request, comment_id)
+        content = str(request.data.get("content", "")).strip()
+        if not content or len(content) > 10000:
+            raise ValidationError({"content": "Enter a message (maximum 10,000 characters)."})
+        item.content = content
+        item.edited_at = timezone.now()
+        item.save(update_fields=["content", "edited_at", "updated_at"])
+        return Response({"id": item.id, "content": item.content, "edited_at": item.edited_at})
+
+    def delete(self, request, comment_id):
+        item = self._get_item(request, comment_id)
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class EditorialNotifications(APIView):

@@ -126,6 +126,7 @@ export default function AdminPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
+  const canManageContent = user?.roles?.some((role) => ["admin", "editor", "content_editor", "reviewer", "content_reviewer"].includes(role)) === true;
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [usersCount, setUsersCount] = useState(0);
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
@@ -241,8 +242,8 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (!loading && !isAdmin) router.replace("/");
-  }, [loading, isAdmin, router]);
+    if (!loading && !canManageContent) router.replace("/");
+  }, [loading, canManageContent, router]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -308,8 +309,8 @@ export default function AdminPage() {
   }, [isAdmin, refreshKey]);
 
   useEffect(() => {
-    if (isAdmin) void loadPosts();
-  }, [isAdmin, loadPosts, refreshKey]);
+    if (canManageContent) void loadPosts();
+  }, [canManageContent, loadPosts, refreshKey]);
 
   const filteredPosts = useMemo(
     () =>
@@ -740,7 +741,7 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   }
 
-  if (loading || !isAdmin) return null;
+  if (loading || !canManageContent) return null;
 
   return (
     <main className="admin-page">

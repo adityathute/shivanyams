@@ -477,6 +477,13 @@ class JobPost(TimestampedModel):
     physical_standards_en = models.TextField(blank=True)
     physical_standards_mr = models.TextField(blank=True)
     physical_standards_hi = models.TextField(blank=True)
+    # Exam structure and syllabus may differ between advertised posts.
+    exam_pattern_en = models.TextField(blank=True)
+    exam_pattern_mr = models.TextField(blank=True)
+    exam_pattern_hi = models.TextField(blank=True)
+    syllabus_en = models.TextField(blank=True)
+    syllabus_mr = models.TextField(blank=True)
+    syllabus_hi = models.TextField(blank=True)
 
     sort_order = models.PositiveSmallIntegerField(default=0)
 

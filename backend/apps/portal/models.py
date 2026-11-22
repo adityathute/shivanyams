@@ -1718,6 +1718,32 @@ class PostAssignment(models.Model):
         return f"{self.post.title_en} → {self.assigned_to_auth_id}"
 
 
+
+class EditorialNotification(models.Model):
+    """Persistent in-app notification for editorial workflow events."""
+
+    recipient_auth_id = models.CharField(max_length=128, db_index=True)
+    actor_auth_id = models.CharField(max_length=128, blank=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True, related_name="editorial_notifications")
+    event_type = models.CharField(max_length=40, db_index=True)
+    title = models.CharField(max_length=180)
+    message = models.TextField()
+    action_url = models.CharField(max_length=500, blank=True)
+    dedupe_key = models.CharField(max_length=180, unique=True, null=True, blank=True)
+    read_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=("recipient_auth_id", "created_at"), name="editorial_notif_user_created_idx"),
+            models.Index(fields=("recipient_auth_id", "read_at"), name="editorial_notif_user_read_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.recipient_auth_id}: {self.title}"
+
+
 class PostStatusHistory(models.Model):
     """Immutable audit trail for post review and publishing transitions."""
 

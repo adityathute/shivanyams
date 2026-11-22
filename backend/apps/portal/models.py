@@ -628,6 +628,19 @@ class JobPostFee(TimestampedModel):
     fee_note_mr = models.CharField(max_length=300, blank=True)
     fee_note_hi = models.CharField(max_length=300, blank=True)
 
+    is_exempt = models.BooleanField(default=False)
+    exemption_note_en = models.CharField(max_length=300, blank=True)
+    exemption_note_mr = models.CharField(max_length=300, blank=True)
+    exemption_note_hi = models.CharField(max_length=300, blank=True)
+    payment_mode = models.CharField(
+        max_length=20,
+        choices=(("online", "Online"), ("offline", "Offline"), ("both", "Online and Offline"), ("not_required", "No Payment Required")),
+        default="online",
+    )
+    payment_instructions_en = models.TextField(blank=True)
+    payment_instructions_mr = models.TextField(blank=True)
+    payment_instructions_hi = models.TextField(blank=True)
+
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:

@@ -1,3 +1,5 @@
+@import "../../styles/shared/character-animations.css";
+
 .guides-page {
   margin-top: 14px;
   color: var(--text, #172b45);
@@ -174,13 +176,13 @@
   background: #ffead0;
   z-index: 0;
 
-  animation: guides-circle-morph 12s ease-in-out infinite;
+  animation: shared-character-circle-morph 12s ease-in-out infinite;
 
   transform-origin: center;
   will-change: transform, border-radius, opacity;
 }
 
-@keyframes guides-circle-morph {
+@keyframes shared-character-circle-morph {
   0%,
   100% {
     border-radius: 50%;

@@ -13,7 +13,10 @@ type Reaction = "like" | "dislike" | null;
 type CommentItem = {
   id: number;
   parent: number | null;
+  user_auth_id: string;
   content: string;
+  reviewed_at: string | null;
+  edited: boolean;
   language: string;
   is_admin_reply: boolean;
   author_name: string;
@@ -47,6 +50,14 @@ function CommentThread({
   onReply,
   onReact,
   onReport,
+  onEdit,
+  currentUserId,
+  editTarget,
+  editDraft,
+  editing,
+  onEditDraftChange,
+  onCancelEdit,
+  onSaveEdit,
   reportTarget,
   reportReason,
   reportDetails,
@@ -67,6 +78,14 @@ function CommentThread({
   onReply: (id: number) => void;
   onReact: (id: number, reaction: "like" | "dislike") => void;
   onReport: (id: number) => void;
+  onEdit: (id: number) => void;
+  currentUserId: string;
+  editTarget: number | null;
+  editDraft: string;
+  editing: boolean;
+  onEditDraftChange: (value: string) => void;
+  onCancelEdit: () => void;
+  onSaveEdit: () => void;
   reportTarget: number | null;
   reportReason: string;
   reportDetails: string;
@@ -108,8 +127,19 @@ function CommentThread({
             <strong>{formatAuthorName(item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member"))}</strong>
             {item.is_admin_reply ? <span className="portal-comment-admin-badge">Admin</span> : null}
             <time dateTime={item.created_at}>{dateLabel}</time>
+            {item.reviewed_at && !item.is_admin_reply ? <span className="portal-comment-reviewed-badge">Reviewed</span> : null}
+            {item.edited ? <span className="portal-comment-edited-label">Edited</span> : null}
           </div>
-          <p>{item.content}</p>
+          {editTarget === item.id ? (
+            <div className="portal-comment-edit-form">
+              <Textarea value={editDraft} onChange={(event) => onEditDraftChange(event.target.value)} rows={3} maxLength={item.parent ? 250 : 500} fullWidth size="sm" autoFocus />
+              <div className="portal-comment-edit-footer">
+                <span>{editDraft.length}/{item.parent ? 250 : 500}</span>
+                <Button type="button" size="sm" variant="outline" disabled={editing} onClick={onCancelEdit}>Cancel</Button>
+                <Button type="button" size="sm" variant="primary" disabled={!editDraft.trim() || editing} onClick={onSaveEdit}>{editing ? "Saving..." : "Save"}</Button>
+              </div>
+            </div>
+          ) : <p>{item.content}</p>}
           <div className="portal-comment-actions">
             <button type="button" className={`portal-comment-reaction portal-comment-like${item.user_reaction === "like" ? " is-active" : ""}`} onClick={() => onReact(item.id, "like")} aria-label={`Like comment, ${item.likes_count} likes`}>
               <LikeIcon size={14} /> {item.likes_count}
@@ -118,6 +148,7 @@ function CommentThread({
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button> : null}
+            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}>Edit</button> : null}
             <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
           </div>
           {replyCount > 0 && !repliesExpanded ? (
@@ -177,6 +208,14 @@ function CommentThread({
                 onReply={onReply}
                 onReact={onReact}
                 onReport={onReport}
+                onEdit={onEdit}
+                currentUserId={currentUserId}
+                editTarget={editTarget}
+                editDraft={editDraft}
+                editing={editing}
+                onEditDraftChange={onEditDraftChange}
+                onCancelEdit={onCancelEdit}
+                onSaveEdit={onSaveEdit}
                 reportTarget={reportTarget}
                 reportReason={reportReason}
                 reportDetails={reportDetails}
@@ -225,6 +264,10 @@ export function PostCommentsSection({ postId, language }: Props) {
   const [reportReason, setReportReason] = useState("spam");
   const [reportDetails, setReportDetails] = useState("");
   const [reporting, setReporting] = useState(false);
+  const [editTarget, setEditTarget] = useState<number | null>(null);
+  const [editDraft, setEditDraft] = useState("");
+  const [editing, setEditing] = useState(false);
+  const currentUserId = String(user?.id ?? "");
 
   const loadComments = useCallback(async () => {
     setLoading(true);
@@ -314,6 +357,46 @@ export function PostCommentsSection({ postId, language }: Props) {
       return;
     }
     void sendCommentReaction(commentId, reaction);
+  }
+
+  async function saveCommentEdit() {
+    if (!editTarget || !editDraft.trim() || editing) return;
+    setEditing(true);
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl(`comments/${editTarget}/`), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: editDraft.trim() }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail || body.content?.[0] || "Unable to edit your comment.");
+      }
+      const updated = await response.json();
+      setComments((current) => updateComment(current, editTarget, (item) => ({
+        ...item,
+        content: updated.content,
+        edited: updated.edited,
+        updated_at: updated.updated_at,
+      })));
+      setEditTarget(null);
+      setEditDraft("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to edit your comment.");
+    } finally {
+      setEditing(false);
+    }
+  }
+
+  function startEditing(commentId: number) {
+    const item = findComment(comments, commentId);
+    if (!item || item.user_auth_id !== currentUserId || item.is_admin_reply) return;
+    setReplyTarget(null);
+    setReplyDraft("");
+    setReportTarget(null);
+    setReportDetails("");
+    setEditTarget(commentId);
+    setEditDraft(item.content);
   }
 
   async function sendCommentReport() {
@@ -424,6 +507,14 @@ export function PostCommentsSection({ postId, language }: Props) {
               else openReply();
             }}
             onReact={(id, reaction) => void reactToComment(id, reaction)}
+            onEdit={startEditing}
+            currentUserId={currentUserId}
+            editTarget={editTarget}
+            editDraft={editDraft}
+            editing={editing}
+            onEditDraftChange={setEditDraft}
+            onCancelEdit={() => { setEditTarget(null); setEditDraft(""); }}
+            onSaveEdit={() => void saveCommentEdit()}
             onReport={(id) => {
               setReplyTarget(null);
               setReplyDraft("");

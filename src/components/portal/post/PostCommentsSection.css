@@ -916,4 +916,50 @@
   }
 }
 
+/* Comment moderation and edit metadata. */
+.portal-comment-reviewed-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border: 1px solid color-mix(in srgb, #d99a24 38%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, #eab308 13%, transparent);
+  color: #b7791f;
+  font-size: 0.64rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
 
+.portal-comment-edited-label {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.66rem;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.portal-comment-actions button.portal-comment-edit-action {
+  color: var(--muted-foreground, #9298a2);
+}
+
+.portal-comment-actions button.portal-comment-edit-action:hover {
+  color: var(--primary, #8b5cf6);
+}
+
+.portal-comment-edit-form {
+  display: grid;
+  gap: 7px;
+  margin: 7px 0 8px;
+}
+
+.portal-comment-edit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.portal-comment-edit-footer > span {
+  margin-right: auto;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.73rem;
+}

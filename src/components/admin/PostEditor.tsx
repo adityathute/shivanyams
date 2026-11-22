@@ -566,14 +566,15 @@ function getVideoEmbedPreview(provider: unknown, rawUrl: unknown): string {
   try {
     const url = new URL(String(rawUrl || ''));
     if (url.protocol !== 'https:') return '';
-    const host = url.hostname.toLowerCase().replace(/^www\\./, '');
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
     if (provider === 'youtube' && ['youtube.com', 'm.youtube.com', 'youtu.be'].includes(host)) {
-      const match = url.pathname.match(/\\/(?:embed|shorts)\\/([A-Za-z0-9_-]{6,})/) || url.pathname.match(/^\\/([A-Za-z0-9_-]{6,})$/) || url.searchParams.get('v')?.match(/^([A-Za-z0-9_-]{6,})$/);
-      const id = typeof match === 'string' ? match : match?.[1];
+      const pathMatch = url.pathname.match(/\/(?:embed|shorts)\/([A-Za-z0-9_-]{6,})/) || url.pathname.match(/^\/([A-Za-z0-9_-]{6,})$/);
+      const queryMatch = url.searchParams.get('v')?.match(/^([A-Za-z0-9_-]{6,})$/);
+      const id = pathMatch?.[1] || queryMatch?.[1];
       return id ? 'https://www.youtube-nocookie.com/embed/' + id : '';
     }
     if (provider === 'vimeo' && ['vimeo.com', 'player.vimeo.com'].includes(host)) {
-      const match = url.pathname.match(/(?:video\\/)?([0-9]{6,})/);
+      const match = url.pathname.match(/(?:video\/)?([0-9]{6,})/);
       return match ? 'https://player.vimeo.com/video/' + match[1] : '';
     }
   } catch {

@@ -1681,8 +1681,8 @@ class PostRevision(models.Model):
             models.UniqueConstraint(fields=("post", "revision_number"), name="unique_post_revision_number"),
         ]
         indexes = [
-            models.Index(fields=("post", "created_at")),
-            models.Index(fields=("created_by_auth_id", "created_at")),
+            models.Index(fields=("post", "created_at"), name="postrev_post_created_idx"),
+            models.Index(fields=("created_by_auth_id", "created_at"), name="postrev_actor_created_idx"),
         ]
 
     def __str__(self):

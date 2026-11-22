@@ -24,6 +24,7 @@ from .models import (
     PostResource,
     PostStatusHistory,
     PostRevision,
+    PostAssignment,
     PostView,
     PostVisitor,
     ResultDetails,
@@ -939,6 +940,16 @@ class PostRevisionAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(PostAssignment)
+class PostAssignmentAdmin(admin.ModelAdmin):
+    list_display = ("post", "assigned_to_auth_id", "assigned_by_auth_id", "status", "due_at", "updated_at")
+    list_filter = ("status", "due_at", "assigned_at")
+    search_fields = ("post__title_en", "assigned_to_auth_id", "assigned_by_auth_id")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    readonly_fields = ("assigned_at", "updated_at")
 
 
 @admin.register(PostStatusHistory)

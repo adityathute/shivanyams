@@ -835,11 +835,11 @@ class AdminComments(APIView):
                 reviewed_comment = report.comment
                 if reviewed_comment.status in (Comment.Status.HIDDEN, Comment.Status.PENDING):
                     reviewed_comment.status = Comment.Status.APPROVED
-                    reviewed_comment.reviewed_by_auth_id = str(request.user.id)
-                    reviewed_comment.reviewed_at = timezone.now()
-                    reviewed_comment.save(update_fields=[
-                        "status", "reviewed_by_auth_id", "reviewed_at", "updated_at"
-                    ])
+                reviewed_comment.reviewed_by_auth_id = str(request.user.id)
+                reviewed_comment.reviewed_at = timezone.now()
+                reviewed_comment.save(update_fields=[
+                    "status", "reviewed_by_auth_id", "reviewed_at", "updated_at"
+                ])
                 CommentReport.objects.filter(
                     comment=reviewed_comment,
                     status=CommentReport.Status.OPEN,

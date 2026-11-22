@@ -362,6 +362,7 @@ class JobPostInline(admin.StackedInline):
                     ("department_en", "department_mr", "department_hi"),
                     "vacancies",
                     "important_dates",
+                    "application_links",
                 )
             },
         ),

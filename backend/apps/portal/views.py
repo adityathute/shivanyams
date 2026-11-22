@@ -448,92 +448,114 @@ class AdminPostReview(APIView):
     permission_classes = [IsPortalAdmin]
 
     ALLOWED_TRANSITIONS = {
-        Post.Status.PENDING_REVIEW,
-        Post.Status.CHANGES_REQUESTED,
-        Post.Status.APPROVED,
-        Post.Status.PUBLISHED,
-        Post.Status.REJECTED,
-        Post.Status.ARCHIVED,
-        Post.Status.DRAFT,
+        Post.Status.DRAFT: {Post.Status.PENDING_REVIEW, Post.Status.ARCHIVED},
+        Post.Status.CHANGES_REQUESTED: {Post.Status.PENDING_REVIEW, Post.Status.ARCHIVED},
+        Post.Status.PENDING_REVIEW: {Post.Status.APPROVED, Post.Status.CHANGES_REQUESTED, Post.Status.REJECTED, Post.Status.DRAFT},
+        Post.Status.APPROVED: {Post.Status.PUBLISHED, Post.Status.PENDING_REVIEW, Post.Status.CHANGES_REQUESTED, Post.Status.ARCHIVED},
+        Post.Status.PUBLISHED: {Post.Status.ARCHIVED, Post.Status.DRAFT},
+        Post.Status.REJECTED: {Post.Status.DRAFT, Post.Status.ARCHIVED},
+        Post.Status.ARCHIVED: {Post.Status.DRAFT},
     }
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        history = post.status_history.all().values(
+            "id", "previous_status", "new_status", "changed_by_auth_id", "note", "created_at"
+        )
+        return Response({"post_id": post.id, "status": post.status, "history": list(history)})
 
     def post(self, request, post_id):
         new_status = request.data.get("status")
         note = str(request.data.get("note", "")).strip()
-
-        if new_status not in self.ALLOWED_TRANSITIONS:
+        if new_status not in {value for choices in self.ALLOWED_TRANSITIONS.values() for value in choices}:
             raise ValidationError({"status": "Unsupported review status."})
-
         with transaction.atomic():
-            post = get_object_or_404(
-                Post.objects.select_for_update(),
-                pk=post_id,
-            )
+            post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
             previous_status = post.status
+            if new_status not in self.ALLOWED_TRANSITIONS.get(previous_status, set()):
+                raise ValidationError({"status": f"Cannot move content from {previous_status} to {new_status}."})
             now = timezone.now()
             auth_id = str(request.user.id)
-
             update_fields = ["status", "updated_at"]
             post.status = new_status
-
             if new_status == Post.Status.PENDING_REVIEW:
                 post.submitted_at = now
-                update_fields.append("submitted_at")
-
-            if new_status in {
-                Post.Status.CHANGES_REQUESTED,
-                Post.Status.APPROVED,
-                Post.Status.REJECTED,
-            }:
+                post.review_note = ""
+                update_fields.extend(["submitted_at", "review_note"])
+            if new_status in {Post.Status.CHANGES_REQUESTED, Post.Status.APPROVED, Post.Status.REJECTED}:
+                if new_status in {Post.Status.CHANGES_REQUESTED, Post.Status.REJECTED} and not note:
+                    raise ValidationError({"note": "A review note is required for requested changes or rejection."})
                 post.reviewed_at = now
                 post.reviewed_by_auth_id = auth_id
                 post.review_note = note
-                update_fields.extend(
-                    ["reviewed_at", "reviewed_by_auth_id", "review_note"]
-                )
-
+                update_fields.extend(["reviewed_at", "reviewed_by_auth_id", "review_note"])
             if new_status == Post.Status.APPROVED:
                 post.approved_at = now
                 post.approved_by_auth_id = auth_id
                 update_fields.extend(["approved_at", "approved_by_auth_id"])
-
             if new_status == Post.Status.PUBLISHED:
                 if not post.title_en.strip():
-                    raise ValidationError(
-                        {"title_en": "An English title is required before publishing."}
-                    )
+                    raise ValidationError({"title_en": "An English title is required before publishing."})
+                if not post.approved_at:
+                    raise ValidationError({"status": "Content must be approved before publishing."})
                 post.published_at = now
                 post.published_by_auth_id = auth_id
-                update_fields.extend(["published_at", "published_by_auth_id"])
-
+                post.scheduled_at = None
+                update_fields.extend(["published_at", "published_by_auth_id", "scheduled_at"])
             if new_status != Post.Status.PUBLISHED and post.published_at:
                 post.published_at = None
                 post.published_by_auth_id = ""
                 update_fields.extend(["published_at", "published_by_auth_id"])
-
+            if new_status in {Post.Status.DRAFT, Post.Status.ARCHIVED, Post.Status.REJECTED}:
+                post.scheduled_at = None
+                update_fields.append("scheduled_at")
             post.save(update_fields=list(set(update_fields)))
-
-            if previous_status != new_status:
-                PostStatusHistory.objects.create(
-                    post=post,
-                    previous_status=previous_status,
-                    new_status=new_status,
-                    changed_by_auth_id=auth_id,
-                    note=note,
-                )
-
-            if new_status == Post.Status.PUBLISHED and previous_status != Post.Status.PUBLISHED:
-                newsletter_emails = list(
-                    NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True)
-                )
-                if newsletter_emails:
-                    subject = f"New update: {post.title_en}"
-                    message = f'A new post, "{post.title_en}", is now available on ShivanyaMS. Visit ShivanyaMS to read the latest information.'
-                    email_messages = tuple((subject, message, None, [email]) for email in newsletter_emails)
-                    transaction.on_commit(lambda: send_mass_mail(email_messages, fail_silently=True))
-
+            PostStatusHistory.objects.create(post=post, previous_status=previous_status, new_status=new_status, changed_by_auth_id=auth_id, note=note)
         return Response(PostSerializer(post, context={"request": request}).data)
 
+
+class AdminSchedulePost(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def post(self, request, post_id):
+        raw = request.data.get("scheduled_at")
+        scheduled_at = parse_datetime(str(raw)) if raw else None
+        if not scheduled_at:
+            raise ValidationError({"scheduled_at": "Provide a valid ISO-8601 date-time."})
+        if timezone.is_naive(scheduled_at):
+            raise ValidationError({"scheduled_at": "A timezone offset is required."})
+        if scheduled_at <= timezone.now():
+            raise ValidationError({"scheduled_at": "Choose a future publication time."})
+        with transaction.atomic():
+            post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
+            if post.status != Post.Status.APPROVED:
+                raise ValidationError({"status": "Only approved content can be scheduled."})
+            post.scheduled_at = scheduled_at
+            post.save(update_fields=["scheduled_at", "updated_at"])
+        return Response({"post_id": post.id, "status": post.status, "scheduled_at": post.scheduled_at})
+
+
+class AdminPublishScheduledPosts(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def post(self, request):
+        now = timezone.now()
+        published = []
+        with transaction.atomic():
+            due_posts = list(Post.objects.select_for_update(skip_locked=True).filter(
+                status=Post.Status.APPROVED, is_active=True, scheduled_at__lte=now
+            ).order_by("scheduled_at", "id")[:100])
+            for post in due_posts:
+                if not post.title_en.strip():
+                    continue
+                post.status = Post.Status.PUBLISHED
+                post.published_at = now
+                post.published_by_auth_id = str(request.user.id)
+                post.scheduled_at = None
+                post.save(update_fields=["status", "published_at", "published_by_auth_id", "scheduled_at", "updated_at"])
+                PostStatusHistory.objects.create(post=post, previous_status=Post.Status.APPROVED, new_status=Post.Status.PUBLISHED, changed_by_auth_id=str(request.user.id), note="Published by scheduled publication processor.")
+                published.append(post.id)
+        return Response({"published_count": len(published), "post_ids": published})
 
 class NewsletterSubscribe(APIView):
     permission_classes = [permissions.AllowAny]

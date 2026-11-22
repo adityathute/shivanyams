@@ -20,6 +20,7 @@ import {
 import { adminFetch } from "./admin-utils";
 import EditorialNotificationCenter from "./EditorialNotificationCenter";
 import EditorialDiscussion from "./EditorialDiscussion";
+import EditorialMediaPanel from "./EditorialMediaPanel";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
@@ -804,6 +805,7 @@ export default function AdminPage() {
           </div>
           <div className="admin-top-actions">
             <EditorialNotificationCenter />
+            <EditorialMediaPanel />
             <Link href="/admin/comments" className="admin-secondary-button">
               Comments & reports
             </Link>
@@ -1201,6 +1203,7 @@ export default function AdminPage() {
                               Versions
                             </button>
                             <EditorialDiscussion postId={post.id} />
+                            <EditorialMediaPanel postId={post.id} />
                             {post.status === "approved" && (
                               <button disabled={busyPost === post.id} onClick={() => void schedulePost(post)}>
                                 {post.scheduled_at ? "Reschedule" : "Schedule"}

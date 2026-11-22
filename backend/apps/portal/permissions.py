@@ -81,6 +81,8 @@ class IsPortalRevisionManager(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         roles = get_portal_roles(request.user)
-        if "admin" in roles or roles.intersection({"reviewer", "content_reviewer"}):
+        if "admin" in roles:
+            return True
+        if roles.intersection({"reviewer", "content_reviewer"}):
             return request.method in {"GET", "HEAD", "OPTIONS"}
         return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id)

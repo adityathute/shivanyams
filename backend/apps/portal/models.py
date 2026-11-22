@@ -419,6 +419,8 @@ class JobPost(TimestampedModel):
     application_links = models.JSONField(default=list, blank=True)
     # Ordered recruitment stages that apply specifically to this advertised post.
     selection_stages = models.JSONField(default=list, blank=True)
+    # Posting locations can differ for each advertised post.
+    work_locations = models.JSONField(default=list, blank=True)
     # Compensation can differ by advertised post within one notification.
     salary_currency = models.CharField(max_length=8, blank=True, default="INR")
     salary_period = models.CharField(max_length=20, blank=True, default="monthly")

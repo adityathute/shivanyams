@@ -662,7 +662,7 @@ class AdminEditorialMedia(APIView):
         asset = EditorialMediaAsset.objects.create(
             owner_auth_id=str(request.user.id), file=upload,
             original_name=original_name, kind=kind,
-            mime_type=(getattr(upload, "content_type", "") or "")[:120],
+            mime_type=(detected_mime_type if kind == EditorialMediaAsset.Kind.IMAGE else (getattr(upload, "content_type", "") or ""))[:120],
             file_size=upload.size,
             alt_text=str(request.data.get("alt_text", ""))[:500],
             caption=str(request.data.get("caption", ""))[:500],

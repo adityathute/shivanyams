@@ -52,6 +52,12 @@ export type JobPost = {
   department_hi: string;
   vacancies: number | null;
   work_locations?: Array<Record<string, unknown>>;
+  exam_pattern_en?: string;
+  exam_pattern_mr?: string;
+  exam_pattern_hi?: string;
+  syllabus_en?: string;
+  syllabus_mr?: string;
+  syllabus_hi?: string;
   salary_currency?: string;
 
   salary_min?: string | number | null;
@@ -67,6 +73,12 @@ export type JobPost = {
   service_bond?: string;
   retirement_benefits?: string;
   required_documents?: JobRequiredDocument[];
+  exam_pattern_en?: string;
+  exam_pattern_mr?: string;
+  exam_pattern_hi?: string;
+  syllabus_en?: string;
+  syllabus_mr?: string;
+  syllabus_hi?: string;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -686,6 +698,12 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
             department_hi: post.department_hi || "",
             vacancies: post.vacancies ?? null,
             work_locations: Array.isArray(post.work_locations) ? post.work_locations : [],
+            exam_pattern_en: post.exam_pattern_en || "",
+            exam_pattern_mr: post.exam_pattern_mr || "",
+            exam_pattern_hi: post.exam_pattern_hi || "",
+            syllabus_en: post.syllabus_en || "",
+            syllabus_mr: post.syllabus_mr || "",
+            syllabus_hi: post.syllabus_hi || "",
             salary_currency: post.salary_currency || "INR",
             salary_period: post.salary_period || "monthly",
             salary_min: post.salary_min ?? null,

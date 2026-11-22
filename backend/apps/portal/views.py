@@ -509,8 +509,10 @@ class AdminContent(viewsets.ModelViewSet):
 
 EDITORIAL_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 EDITORIAL_DOCUMENT_EXTENSIONS = {".pdf", ".txt", ".csv", ".doc", ".docx", ".xls", ".xlsx"}
+EDITORIAL_VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov"}
 EDITORIAL_IMAGE_MAX_BYTES = 10 * 1024 * 1024
 EDITORIAL_DOCUMENT_MAX_BYTES = 20 * 1024 * 1024
+EDITORIAL_VIDEO_MAX_BYTES = 500 * 1024 * 1024
 
 
 def _media_payload(asset, request):
@@ -648,8 +650,10 @@ class AdminEditorialMedia(APIView):
             kind, maximum = EditorialMediaAsset.Kind.IMAGE, EDITORIAL_IMAGE_MAX_BYTES
         elif extension in EDITORIAL_DOCUMENT_EXTENSIONS:
             kind, maximum = EditorialMediaAsset.Kind.DOCUMENT, EDITORIAL_DOCUMENT_MAX_BYTES
+        elif extension in EDITORIAL_VIDEO_EXTENSIONS:
+            kind, maximum = EditorialMediaAsset.Kind.VIDEO, EDITORIAL_VIDEO_MAX_BYTES
         else:
-            raise ValidationError({"file": "Unsupported file type. Allowed images: JPG, PNG, WEBP, GIF. Documents: PDF, TXT, CSV, DOC, DOCX, XLS, XLSX."})
+            raise ValidationError({"file": "Unsupported file type. Allowed images: JPG, PNG, WEBP, GIF; videos: MP4, WEBM, MOV; documents: PDF, TXT, CSV, DOC, DOCX, XLS, XLSX."})
         if upload.size > maximum:
             raise ValidationError({"file": f"File exceeds the {maximum // (1024 * 1024)} MB limit."})
         if kind == EditorialMediaAsset.Kind.IMAGE:
@@ -659,11 +663,18 @@ class AdminEditorialMedia(APIView):
             except ValueError as exc:
                 raise ValidationError({"file": str(exc)})
             detected_mime_type = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp", "GIF": "image/gif"}[detected_format]
+        if kind == EditorialMediaAsset.Kind.VIDEO:
+            header = upload.read(16)
+            upload.seek(0)
+            valid_video = (extension == ".webm" and header.startswith(bytes.fromhex("1A45DFA3"))) or (extension in {".mp4", ".mov"} and len(header) >= 8 and header[4:8] == bytes([102, 116, 121, 112]))
+            if not valid_video:
+                raise ValidationError({"file": "The uploaded file does not match a supported MP4, MOV or WebM container."})
+            detected_mime_type = {".mp4": "video/mp4", ".mov": "video/quicktime", ".webm": "video/webm"}[extension]
         original_name = os.path.basename(upload.name).replace("\\", "_")[:255]
         asset = EditorialMediaAsset.objects.create(
             owner_auth_id=str(request.user.id), file=upload,
             original_name=original_name, kind=kind,
-            mime_type=(detected_mime_type if kind == EditorialMediaAsset.Kind.IMAGE else (getattr(upload, "content_type", "") or ""))[:120],
+            mime_type=(detected_mime_type if kind in {EditorialMediaAsset.Kind.IMAGE, EditorialMediaAsset.Kind.VIDEO} else (getattr(upload, "content_type", "") or ""))[:120],
             file_size=upload.size,
             alt_text=str(request.data.get("alt_text", ""))[:500],
             caption=str(request.data.get("caption", ""))[:500],

@@ -1342,6 +1342,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showApplicationLinks = rows.some((row) => row.applicationLinks.length > 0);
                             const showSelectionStages = rows.some((row) => row.selectionStages.length > 0);
                             const showPostCompensation = rows.some((row) => row.compensation);
+                            const showPostEmploymentTerms = rows.some((row) => row.employmentTerms);
                             const showWorkLocations = rows.some((row) => row.workLocations.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),

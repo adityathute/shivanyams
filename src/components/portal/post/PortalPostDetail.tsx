@@ -1215,7 +1215,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 return category ? `${type} · ${category}: ${details.join(" · ")}` : "";
                               }).filter(Boolean);
                               const postImportantDates = (Array.isArray(entry.important_dates) ? entry.important_dates : []).map((item: Record<string, unknown>) => {
-                                const label = getLocalizedText(language, item.label_en, item.label_mr, item.label_hi);
+                                const label = getLocalizedText(language, String(item.label_en || ""), String(item.label_mr || ""), String(item.label_hi || ""));
                                 const dateFormat = String(item.date_format || "single");
                                 const dateValue = dateFormat === "range"
                                   ? [item.start_date ? formatDate(String(item.start_date), language) : "", item.end_date ? formatDate(String(item.end_date), language) : ""].filter(Boolean).join(" – ")
@@ -1224,7 +1224,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                     : dateFormat === "revised" || dateFormat === "revised_with_time"
                                       ? [item.old_date ? formatDate(String(item.old_date), language) : "", "→", item.new_date ? formatDate(String(item.new_date), language) : ""].filter(Boolean).join(" ")
                                       : item.date ? formatDate(String(item.date), language) : "";
-                                const description = getLocalizedText(language, item.description_en, item.description_mr, item.description_hi);
+                                const description = getLocalizedText(language, String(item.description_en || ""), String(item.description_mr || ""), String(item.description_hi || ""));
                                 return [label, dateValue, description].filter(Boolean).join(": ");
                               }).filter(Boolean);
                               const fees = (entry.fees || []).map((fee) => {

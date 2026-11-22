@@ -19,6 +19,7 @@ import {
 } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 import EditorialNotificationCenter from "./EditorialNotificationCenter";
+import EditorialDiscussion from "./EditorialDiscussion";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
@@ -1199,6 +1200,7 @@ export default function AdminPage() {
                             <button disabled={busyPost === post.id} onClick={() => void showRevisions(post)}>
                               Versions
                             </button>
+                            <EditorialDiscussion postId={post.id} />
                             {post.status === "approved" && (
                               <button disabled={busyPost === post.id} onClick={() => void schedulePost(post)}>
                                 {post.scheduled_at ? "Reschedule" : "Schedule"}

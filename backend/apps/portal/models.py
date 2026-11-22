@@ -417,6 +417,8 @@ class JobPost(TimestampedModel):
     important_dates = models.JSONField(default=list, blank=True)
     # Application and registration destinations can differ for each advertised post.
     application_links = models.JSONField(default=list, blank=True)
+    # Ordered recruitment stages that apply specifically to this advertised post.
+    selection_stages = models.JSONField(default=list, blank=True)
 
     # Educational qualification for this individual post
     educational_qualification_en = models.TextField(blank=True)

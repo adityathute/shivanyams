@@ -2255,6 +2255,7 @@ class EditorialMediaAsset(models.Model):
     class Kind(models.TextChoices):
         IMAGE = "image", "Image"
         DOCUMENT = "document", "Document"
+        VIDEO = "video", "Video"
 
     owner_auth_id = models.CharField(max_length=128, db_index=True)
     file = models.FileField(upload_to=editorial_media_upload_path)

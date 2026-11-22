@@ -22,3 +22,65 @@ class IsPortalAdmin(BasePermission):
             roles = [roles]
 
         return isinstance(roles, list) and "admin" in roles
+
+
+def get_portal_roles(user):
+    auth_data = getattr(user, "auth_data", {})
+    if not isinstance(auth_data, dict):
+        return set()
+    roles = auth_data.get("roles", [])
+    if isinstance(roles, str):
+        roles = [roles]
+    if not isinstance(roles, list):
+        return set()
+    return {str(role).strip().lower() for role in roles if str(role).strip()}
+
+
+class IsPortalContentManager(BasePermission):
+    """Admin has full access; editors manage owned content; reviewers are read-only."""
+
+    message = "Content editor or administrator access is required."
+
+    def has_permission(self, request, view):
+        if not getattr(request.user, "is_authenticated", False):
+            return False
+        roles = get_portal_roles(request.user)
+        if "admin" in roles:
+            return True
+        if "reviewer" in roles or "content_reviewer" in roles:
+            return getattr(view, "action", None) in {"list", "retrieve"}
+        if "editor" in roles or "content_editor" in roles:
+            return getattr(view, "action", None) in {"list", "retrieve", "create", "update", "partial_update"}
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        roles = get_portal_roles(request.user)
+        if "admin" in roles:
+            return True
+        if "reviewer" in roles or "content_reviewer" in roles:
+            return request.method in {"GET", "HEAD", "OPTIONS"}
+        if "editor" in roles or "content_editor" in roles:
+            return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id)
+        return False
+
+
+class IsPortalReviewer(BasePermission):
+    message = "Reviewer or administrator access is required."
+
+    def has_permission(self, request, view):
+        roles = get_portal_roles(request.user)
+        return bool(getattr(request.user, "is_authenticated", False) and roles.intersection({"admin", "reviewer", "content_reviewer"}))
+
+
+class IsPortalRevisionManager(BasePermission):
+    message = "Content editor or administrator access is required."
+
+    def has_permission(self, request, view):
+        roles = get_portal_roles(request.user)
+        return bool(getattr(request.user, "is_authenticated", False) and roles.intersection({"admin", "editor", "content_editor", "reviewer", "content_reviewer"}))
+
+    def has_object_permission(self, request, view, obj):
+        roles = get_portal_roles(request.user)
+        if "admin" in roles or roles.intersection({"reviewer", "content_reviewer"}):
+            return request.method in {"GET", "HEAD", "OPTIONS"}
+        return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id)

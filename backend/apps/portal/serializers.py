@@ -323,6 +323,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "education_requirements",
             "subject_requirements",
             "experience_requirements",
+            "required_documents",
             "sort_order",
             "fees",
             "educations",

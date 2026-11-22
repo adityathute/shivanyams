@@ -148,7 +148,7 @@ function CommentThread({
               />
             </div>
           </div>
-          <Textarea value={reportDetails} onChange={(event) => onReportDetailsChange(event.target.value)} rows={2} maxLength={500} placeholder="Additional details (optional)" fullWidth size="sm" />
+          <Textarea value={reportDetails} onChange={(event) => onReportDetailsChange(event.target.value)} rows={2} maxLength={500} placeholder="Additional details (optional)" fullWidth size="sm" autoFocus />
           <div className="portal-comment-report-footer">
             <span>{reportDetails.length}/500</span>
             <Button type="button" size="sm" variant="outline" disabled={reporting} onClick={onCancelReport}>Cancel</Button>
@@ -350,6 +350,7 @@ export function PostCommentsSection({ postId, language }: Props) {
   }
 
   const replyTargetItem = replyTarget ? findComment(comments, replyTarget) : null;
+  const reportTargetItem = reportTarget ? findComment(comments, reportTarget) : null;
 
   useEffect(() => {
     if (!replyTarget) return;
@@ -479,6 +480,58 @@ export function PostCommentsSection({ postId, language }: Props) {
               <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
                 {submitting ? "Sending..." : "Reply"}
               </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {reportTarget && reportTargetItem ? (
+        <div
+          className="portal-comment-report-modal"
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setReportTarget(null);
+              setReportDetails("");
+            }
+          }}
+        >
+          <div className="portal-comment-report-modal-panel" role="dialog" aria-modal="true" aria-labelledby="portal-comment-report-modal-title">
+            <div className="portal-comment-report-modal-header">
+              <div>
+                <strong id="portal-comment-report-modal-title">Report comment</strong>
+                <span>{reportTargetItem.content}</span>
+              </div>
+              <button
+                type="button"
+                className="portal-comment-reply-modal-close"
+                onClick={() => { setReportTarget(null); setReportDetails(""); }}
+                aria-label="Close report"
+              >
+                ×
+              </button>
+            </div>
+            <div className="portal-comment-report-modal-reason">
+              <label htmlFor="portal-comment-report-reason">Reason for reporting</label>
+              <Select
+                aria-label="Report reason"
+                size="sm"
+                fullWidth
+                options={[
+                  { label: "Spam", value: "spam" },
+                  { label: "Abusive", value: "abuse" },
+                  { label: "Misinformation", value: "misinformation" },
+                  { label: "Other", value: "other" },
+                ]}
+                value={reportReason}
+                onChange={(event) => setReportReason(event.target.value)}
+              />
+            </div>
+            <Textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} placeholder="Additional details (optional)" rows={4} maxLength={500} fullWidth size="sm" autoFocus />
+            <div className="portal-comment-reply-modal-footer">
+              <span>{reportDetails.length}/500</span>
+              <Button type="button" size="sm" variant="outline" disabled={reporting} onClick={() => { setReportTarget(null); setReportDetails(""); }}>Cancel</Button>
+              <Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button>
             </div>
           </div>
         </div>

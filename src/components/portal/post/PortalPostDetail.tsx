@@ -424,6 +424,7 @@ const detailLabels = {
   applicationOpen: { en: "Applications are open", mr: "अर्ज सुरू आहेत", hi: "आवेदन खुले हैं" },
   applicationClosed: { en: "Applications are closed", mr: "अर्ज बंद झाले आहेत", hi: "आवेदन बंद हैं" },
 
+  applicationLinks: { en: "Application links", mr: "अर्जाच्या लिंक्स", hi: "आवेदन लिंक" },
   importantDates: {
     en: "Important Dates",
     mr: "महत्त्वाच्या तारखा",
@@ -1214,6 +1215,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 ].filter(Boolean);
                                 return category ? `${type} · ${category}: ${details.join(" · ")}` : "";
                               }).filter(Boolean);
+                              const applicationLinks = (Array.isArray(entry.application_links) ? entry.application_links : []).map((item: Record<string, unknown>) => ({
+                                label: getLocalizedText(language, String(item.label_en || ""), String(item.label_mr || ""), String(item.label_hi || "")),
+                                url: String(item.url || ""),
+                                instructions: getLocalizedText(language, String(item.instructions_en || ""), String(item.instructions_mr || ""), String(item.instructions_hi || "")),
+                                linkType: String(item.link_type || "other"),
+                              })).filter((item) => item.label && /^https?:\\/\\//i.test(item.url));
                               const postImportantDates = (Array.isArray(entry.important_dates) ? entry.important_dates : []).map((item: Record<string, unknown>) => {
                                 const label = getLocalizedText(language, String(item.label_en || ""), String(item.label_mr || ""), String(item.label_hi || ""));
                                 const dateFormat = String(item.date_format || "single");
@@ -1284,6 +1291,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 experienceRequirements,
                                 reservationRules,
                                 postImportantDates,
+                                applicationLinks,
                                 fees,
                               };
                             });
@@ -1308,6 +1316,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             );
                             const showReservations = rows.some((row) => row.reservationRules.length > 0);
                             const showPostImportantDates = rows.some((row) => row.postImportantDates.length > 0);
+                            const showApplicationLinks = rows.some((row) => row.applicationLinks.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -1337,6 +1346,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showExperienceRequirements ? <th>{getDetailLabel("experienceRequirements", language)}</th> : null}
                                       {showReservations ? <th>{getDetailLabel("reservation", language)}</th> : null}
                                       {showPostImportantDates ? <th>{getDetailLabel("importantDates", language)}</th> : null}
+                                      {showApplicationLinks ? <th>{getDetailLabel("applicationLinks", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1355,6 +1365,20 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showExperienceRequirements ? <td>{row.experienceRequirements.length ? row.experienceRequirements.join("; ") : "—"}</td> : null}
                                         {showReservations ? <td>{row.reservationRules.length ? row.reservationRules.join("; ") : "—"}</td> : null}
                                         {showPostImportantDates ? <td>{row.postImportantDates.length ? row.postImportantDates.join("; ") : "—"}</td> : null}
+                                        {showApplicationLinks ? (
+                                          <td>
+                                            {row.applicationLinks.length ? (
+                                              <div className="portal-post-application-links">
+                                                {row.applicationLinks.map((link, linkIndex) => (
+                                                  <div key={link.url || linkIndex}>
+                                                    <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>
+                                                    {link.instructions ? <small>{link.instructions}</small> : null}
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            ) : "—"}
+                                          </td>
+                                        ) : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1373,6 +1397,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showExperienceRequirements ? <td></td> : null}
                                       {showReservations ? <td></td> : null}
                                       {showPostImportantDates ? <td></td> : null}
+                                      {showApplicationLinks ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

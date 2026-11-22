@@ -483,6 +483,33 @@ class JobPostSerializer(serializers.ModelSerializer):
                 if len(str(location.get(key, "") or "")) > maximum:
                     raise serializers.ValidationError({"work_locations": f"{label} field {key} is too long."})
 
+        # Validate the post-specific required-document checklist.
+        required_documents = attrs.get("required_documents", getattr(self.instance, "required_documents", []) if self.instance else []) or []
+        if not isinstance(required_documents, list):
+            raise serializers.ValidationError({"required_documents": "Provide required documents as a list."})
+        if len(required_documents) > 50:
+            raise serializers.ValidationError({"required_documents": "A maximum of 50 required documents is allowed per post."})
+        seen_documents = set()
+        for index, document in enumerate(required_documents):
+            label = f"Required document {index + 1}"
+            if not isinstance(document, dict):
+                raise serializers.ValidationError({"required_documents": f"{label} must be an object."})
+            titles = {key: str(document.get(key, "") or "").strip() for key in ("title_en", "title_mr", "title_hi")}
+            if not any(titles.values()):
+                raise serializers.ValidationError({"required_documents": f"{label} needs a title in at least one language."})
+            if "mandatory" in document and not isinstance(document["mandatory"], bool):
+                raise serializers.ValidationError({"required_documents": f"{label} mandatory must be true or false."})
+            identity = next(value.casefold() for value in titles.values() if value)
+            if identity in seen_documents:
+                raise serializers.ValidationError({"required_documents": f"{label} duplicates another document."})
+            seen_documents.add(identity)
+            for key in ("title_en", "title_mr", "title_hi"):
+                if len(titles[key]) > 180:
+                    raise serializers.ValidationError({"required_documents": f"{label} field {key} is too long."})
+            for key in ("note_en", "note_mr", "note_hi"):
+                if len(str(document.get(key, "") or "")) > 600:
+                    raise serializers.ValidationError({"required_documents": f"{label} field {key} is too long."})
+
         # Validate post-specific compensation values.
         salary_min = attrs.get("salary_min", getattr(self.instance, "salary_min", None) if self.instance else None)
         salary_max = attrs.get("salary_max", getattr(self.instance, "salary_max", None) if self.instance else None)

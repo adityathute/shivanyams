@@ -372,6 +372,7 @@ const detailLabels = {
     mr: "वयोमर्यादेबाबत टीप",
     hi: "आयु संबंधी टिप्पणी",
   },
+  ageRelaxation: { en: "Category-wise age relaxation", mr: "प्रवर्गनिहाय वयोमर्यादा सवलत", hi: "श्रेणीवार आयु छूट" },
   years: { en: "years", mr: "वर्षे", hi: "वर्ष" },
   fee: { en: "Application Fee", mr: "अर्ज शुल्क", hi: "आवेदन शुल्क" },
   applicationMode: {
@@ -1166,6 +1167,18 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 entry.age_limit_note_mr,
                                 entry.age_limit_note_hi,
                               );
+                              const ageRelaxations = (Array.isArray(entry.age_relaxations) ? entry.age_relaxations : []).map((rule) => {
+                                const category = getLocalizedText(language, rule.category_en, rule.category_mr, rule.category_hi);
+                                const note = getLocalizedText(language, rule.note_en, rule.note_mr, rule.note_hi);
+                                const eligibility = getLocalizedText(language, rule.eligibility_en, rule.eligibility_mr, rule.eligibility_hi);
+                                const parts = [
+                                  rule.relaxation_years != null ? `+${rule.relaxation_years} ${getDetailLabel("years", language)}` : "",
+                                  rule.maximum_age != null ? `${getDetailLabel("ageLimit", language)}: ${rule.maximum_age}` : "",
+                                  note,
+                                  eligibility,
+                                ].filter(Boolean);
+                                return category ? `${category}: ${parts.join(" · ")}` : "";
+                              }).filter(Boolean);
                               const fees = (entry.fees || []).map((fee) => {
                                 const categoryName = getLocalizedText(
                                   language,
@@ -1196,6 +1209,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   ? formatDate(entry.age_as_on_date, language)
                                   : "",
                                 ageNote,
+                                ageRelaxations,
                                 fees,
                               };
                             });
@@ -1207,6 +1221,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showAgeNote =
                               jobDetails.age_mode === "per_post" &&
                               rows.some((row) => row.ageNote);
+                            const showAgeRelaxation = rows.some((row) => row.ageRelaxations.length > 0);
                             const hasCommonFee = Boolean(
                               jobDetails.application_fee != null &&
                               String(jobDetails.application_fee).trim(),
@@ -1237,6 +1252,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showDepartment ? <th>{getDetailLabel("department", language)}</th> : null}
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
+                                      {showAgeRelaxation ? <th>{getDetailLabel("ageRelaxation", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1249,6 +1265,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showDepartment ? <td>{row.department || "—"}</td> : null}
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
+                                        {showAgeRelaxation ? <td>{row.ageRelaxations.length ? row.ageRelaxations.join("; ") : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1261,6 +1278,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showDepartment ? <td></td> : null}
                                       {showAge ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
+                                      {showAgeRelaxation ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

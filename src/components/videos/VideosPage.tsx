@@ -243,8 +243,9 @@ export function VideosPage() {
 
                     <div className="videos-card-content">
                       <div className="videos-card-tags">
-                        <span>{video.language}</span>
-                        <span>{t("guide")}</span>
+                        {video.language ? <span>{video.language}</span> : null}
+                        {("taxonomy_terms" in video ? video.taxonomy_terms : []).slice(0, 2).map((topic) => <span key={`topic-${topic.id}`}>{topic.name}</span>)}
+                        {("tags" in video ? video.tags : []).slice(0, 2).map((tag) => <span key={`tag-${tag.id}`}>#{tag.name}</span>)}
                       </div>
 
                       <h3>

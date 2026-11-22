@@ -734,6 +734,13 @@ class PostSerializer(serializers.ModelSerializer):
                 "caption": link.caption or link.asset.caption,
                 "kind": link.asset.kind,
                 "original_name": link.asset.original_name,
+                "mime_type": link.asset.mime_type,
+                "file_size": link.asset.file_size,
+                "video_url": (
+                    self.context["request"].build_absolute_uri(f"/api/v1/portal/content/media/{link.asset_id}/")
+                    if link.asset.kind == "video" and self.context.get("request")
+                    else (f"/api/v1/portal/content/media/{link.asset_id}/" if link.asset.kind == "video" else None)
+                ),
                 "url": (
                     self.context["request"].build_absolute_uri(f"/api/v1/portal/content/media/{link.asset_id}/")
                     if self.context.get("request") else f"/api/v1/portal/content/media/{link.asset_id}/"

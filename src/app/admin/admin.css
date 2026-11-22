@@ -1635,3 +1635,12 @@
 .editorial-media-file-icon { width:58px; height:48px; flex:0 0 58px; display:grid; place-items:center; border-radius:7px; background:#252c38; font-size:11px; font-weight:700; }
 .editorial-media-file-info { min-width:0; flex:1; }
 .editorial-media-file-info strong { max-width:100%; }
+
+.editorial-caption-manager { display: grid; gap: 10px; margin: 14px 0; padding: 12px; border: 1px solid var(--border-color, #dce2ea); border-radius: 10px; }
+.editorial-caption-fields { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.editorial-caption-fields select, .editorial-caption-fields > input { min-width: 100px; max-width: 170px; padding: 7px 9px; border: 1px solid var(--border-color, #dce2ea); border-radius: 7px; background: var(--panel-bg, #fff); color: inherit; }
+.editorial-caption-fields label { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
+.editorial-caption-upload input { max-width: 180px; font-size: 11px; }
+.editorial-caption-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--border-color, #dce2ea); }
+.editorial-caption-row span { display: grid; gap: 2px; }
+.editorial-caption-row small { color: var(--text-secondary, #718096); }

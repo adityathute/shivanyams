@@ -419,6 +419,13 @@ class JobPost(TimestampedModel):
     application_links = models.JSONField(default=list, blank=True)
     # Ordered recruitment stages that apply specifically to this advertised post.
     selection_stages = models.JSONField(default=list, blank=True)
+    # Compensation can differ by advertised post within one notification.
+    salary_currency = models.CharField(max_length=8, blank=True, default="INR")
+    salary_period = models.CharField(max_length=20, blank=True, default="monthly")
+    salary_min = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    salary_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    pay_scale = models.CharField(max_length=240, blank=True)
+    grade_pay = models.CharField(max_length=120, blank=True)
 
     # Educational qualification for this individual post
     educational_qualification_en = models.TextField(blank=True)
@@ -480,6 +487,7 @@ class JobPost(TimestampedModel):
                 ),
                 name="job_post_dob_range_valid",
             ),
+            models.CheckConstraint(condition=(Q(salary_min__isnull=True) | Q(salary_max__isnull=True) | Q(salary_max__gte=F("salary_min"))), name="job_post_salary_max_gte_min"),
         ]
 
     def clean(self):

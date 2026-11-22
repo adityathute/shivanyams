@@ -819,6 +819,26 @@ class PostWriteSerializer(serializers.ModelSerializer):
                 {"end_date": "End date cannot be earlier than start date."}
             )
 
+        for field_name in ("tag_ids", "taxonomy_term_ids"):
+            selected = attrs.get(field_name)
+            if selected is not None:
+                selected_ids = [item.pk for item in selected]
+                if len(selected_ids) != len(set(selected_ids)):
+                    raise serializers.ValidationError({
+                        field_name: "Duplicate selections are not allowed."
+                    })
+
+        source_rows = attrs.get("official_sources")
+        if source_rows is not None:
+            source_keys = [
+                (row["source"].pk, row["source_url"].strip())
+                for row in source_rows
+            ]
+            if len(source_keys) != len(set(source_keys)):
+                raise serializers.ValidationError({
+                    "official_sources": "The same publisher URL cannot be attached more than once."
+                })
+
         detail_keys = {
             "job_details",
             "scheme_details",

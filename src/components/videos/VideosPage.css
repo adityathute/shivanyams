@@ -608,3 +608,23 @@ a.videos-card {
 .videos-discovery-filters > button { min-height: 38px; padding: 7px 12px; border: 1px solid var(--border-color, #dce2ea); border-radius: 9px; background: transparent; color: inherit; cursor: pointer; font-size: 12px; }
 .videos-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 .videos-card-tags span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.videos-play-trigger {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+ .videos-play-trigger:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: -6px;
+}
+
+.videos-play-trigger .videos-watch-label {
+  pointer-events: none;
+}

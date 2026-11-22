@@ -140,6 +140,12 @@ type JobPostInput = {
   physical_standards_en: string;
   physical_standards_mr: string;
   physical_standards_hi: string;
+  exam_pattern_en: string;
+  exam_pattern_mr: string;
+  exam_pattern_hi: string;
+  syllabus_en: string;
+  syllabus_mr: string;
+  syllabus_hi: string;
   salary_currency: string;
   salary_period: string;
   salary_min: string;
@@ -248,6 +254,12 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   physical_standards_en: "",
   physical_standards_mr: "",
   physical_standards_hi: "",
+  exam_pattern_en: "",
+  exam_pattern_mr: "",
+  exam_pattern_hi: "",
+  syllabus_en: "",
+  syllabus_mr: "",
+  syllabus_hi: "",
   salary_currency: "INR",
   salary_period: "monthly",
   salary_min: "",
@@ -982,6 +994,12 @@ export default function PostEditor({
             physical_standards_en: String(post.physical_standards_en ?? ""),
             physical_standards_mr: String(post.physical_standards_mr ?? ""),
             physical_standards_hi: String(post.physical_standards_hi ?? ""),
+            exam_pattern_en: String(post.exam_pattern_en ?? ""),
+            exam_pattern_mr: String(post.exam_pattern_mr ?? ""),
+            exam_pattern_hi: String(post.exam_pattern_hi ?? ""),
+            syllabus_en: String(post.syllabus_en ?? ""),
+            syllabus_mr: String(post.syllabus_mr ?? ""),
+            syllabus_hi: String(post.syllabus_hi ?? ""),
             required_documents: Array.isArray(post.required_documents) ? (post.required_documents as Record<string, unknown>[]).map((document, documentIndex) => ({ ...createEmptyJobPostRequiredDocument(documentIndex), ...document, title_en: String(document.title_en ?? ""), title_mr: String(document.title_mr ?? ""), title_hi: String(document.title_hi ?? ""), mandatory: document.mandatory !== false, note_en: String(document.note_en ?? ""), note_mr: String(document.note_mr ?? ""), note_hi: String(document.note_hi ?? ""), sort_order: documentIndex })) : [],
             work_locations: Array.isArray(post.work_locations) ? (post.work_locations as Record<string, unknown>[]).map((location, locationIndex) => ({ ...createEmptyJobPostWorkLocation(locationIndex), ...location, location_type: String(location.location_type ?? "other"), name_en: String(location.name_en ?? ""), name_mr: String(location.name_mr ?? ""), name_hi: String(location.name_hi ?? ""), city: String(location.city ?? ""), district: String(location.district ?? ""), state: String(location.state ?? ""), country: String(location.country ?? ""), office: String(location.office ?? ""), vacancies: location.vacancies == null ? "" : String(location.vacancies), note_en: String(location.note_en ?? ""), note_mr: String(location.note_mr ?? ""), note_hi: String(location.note_hi ?? ""), sort_order: locationIndex })) : [],
             selection_stages: Array.isArray(post.selection_stages)
@@ -2252,6 +2270,24 @@ export default function PostEditor({
                         <Textarea label="Physical standards (English)" rows={3} value={post.physical_standards_en} onChange={(event) => updateJobPost(postIndex, "physical_standards_en", event.target.value)} fullWidth />
                         <Textarea label="Physical standards (Marathi)" rows={3} value={post.physical_standards_mr} onChange={(event) => updateJobPost(postIndex, "physical_standards_mr", event.target.value)} fullWidth />
                         <Textarea label="Physical standards (Hindi)" rows={3} value={post.physical_standards_hi} onChange={(event) => updateJobPost(postIndex, "physical_standards_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-exam-pattern">
+                      <div className="post-editor-subsection-heading"><div><h4>Post-specific exam pattern</h4><small>Describe the stages, paper structure, marks, duration and negative marking applicable to this advertised post.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Exam pattern (English)" rows={3} value={post.exam_pattern_en} onChange={(event) => updateJobPost(postIndex, "exam_pattern_en", event.target.value)} fullWidth />
+                        <Textarea label="Exam pattern (Marathi)" rows={3} value={post.exam_pattern_mr} onChange={(event) => updateJobPost(postIndex, "exam_pattern_mr", event.target.value)} fullWidth />
+                        <Textarea label="Exam pattern (Hindi)" rows={3} value={post.exam_pattern_hi} onChange={(event) => updateJobPost(postIndex, "exam_pattern_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-syllabus">
+                      <div className="post-editor-subsection-heading"><div><h4>Post-specific syllabus</h4><small>Enter the official subject-wise syllabus and topics for this post. Keep each translation aligned with the recruitment notification.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Syllabus (English)" rows={5} value={post.syllabus_en} onChange={(event) => updateJobPost(postIndex, "syllabus_en", event.target.value)} fullWidth />
+                        <Textarea label="Syllabus (Marathi)" rows={5} value={post.syllabus_mr} onChange={(event) => updateJobPost(postIndex, "syllabus_mr", event.target.value)} fullWidth />
+                        <Textarea label="Syllabus (Hindi)" rows={5} value={post.syllabus_hi} onChange={(event) => updateJobPost(postIndex, "syllabus_hi", event.target.value)} fullWidth />
                       </div>
                     </section>
 

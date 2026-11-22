@@ -1214,6 +1214,19 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 ].filter(Boolean);
                                 return category ? `${type} · ${category}: ${details.join(" · ")}` : "";
                               }).filter(Boolean);
+                              const postImportantDates = (Array.isArray(entry.important_dates) ? entry.important_dates : []).map((item: Record<string, unknown>) => {
+                                const label = getLocalizedText(language, item.label_en, item.label_mr, item.label_hi);
+                                const dateFormat = String(item.date_format || "single");
+                                const dateValue = dateFormat === "range"
+                                  ? [item.start_date ? formatDate(String(item.start_date), language) : "", item.end_date ? formatDate(String(item.end_date), language) : ""].filter(Boolean).join(" – ")
+                                  : dateFormat === "month_year"
+                                    ? [item.month, item.year].filter(Boolean).join("/")
+                                    : dateFormat === "revised" || dateFormat === "revised_with_time"
+                                      ? [item.old_date ? formatDate(String(item.old_date), language) : "", "→", item.new_date ? formatDate(String(item.new_date), language) : ""].filter(Boolean).join(" ")
+                                      : item.date ? formatDate(String(item.date), language) : "";
+                                const description = getLocalizedText(language, item.description_en, item.description_mr, item.description_hi);
+                                return [label, dateValue, description].filter(Boolean).join(": ");
+                              }).filter(Boolean);
                               const fees = (entry.fees || []).map((fee) => {
                                 const categoryName = getLocalizedText(
                                   language,
@@ -1270,6 +1283,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 subjectRequirements,
                                 experienceRequirements,
                                 reservationRules,
+                                postImportantDates,
                                 fees,
                               };
                             });
@@ -1293,6 +1307,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                               (row) => row.fees.length > 0,
                             );
                             const showReservations = rows.some((row) => row.reservationRules.length > 0);
+                            const showPostImportantDates = rows.some((row) => row.postImportantDates.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -1321,6 +1336,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showSubjectRequirements ? <th>{getDetailLabel("subjectRequirements", language)}</th> : null}
                                       {showExperienceRequirements ? <th>{getDetailLabel("experienceRequirements", language)}</th> : null}
                                       {showReservations ? <th>{getDetailLabel("reservation", language)}</th> : null}
+                                      {showPostImportantDates ? <th>{getDetailLabel("importantDates", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1338,6 +1354,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showSubjectRequirements ? <td>{row.subjectRequirements.length ? row.subjectRequirements.join("; ") : "—"}</td> : null}
                                         {showExperienceRequirements ? <td>{row.experienceRequirements.length ? row.experienceRequirements.join("; ") : "—"}</td> : null}
                                         {showReservations ? <td>{row.reservationRules.length ? row.reservationRules.join("; ") : "—"}</td> : null}
+                                        {showPostImportantDates ? <td>{row.postImportantDates.length ? row.postImportantDates.join("; ") : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1355,6 +1372,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showSubjectRequirements ? <td></td> : null}
                                       {showExperienceRequirements ? <td></td> : null}
                                       {showReservations ? <td></td> : null}
+                                      {showPostImportantDates ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

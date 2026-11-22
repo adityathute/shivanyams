@@ -1,3 +1,5 @@
+@import "../../styles/shared/character-animations.css";
+
 .admit-characters {
   position: relative;
   width: 445px;
@@ -40,46 +42,9 @@
   /* Hide the circle below the platform */
   clip-path: inset(0 0 13% 0);
 
-  animation: admit-circle-morph 12s ease-in-out infinite;
+  animation: shared-character-circle-morph 12s ease-in-out infinite;
   transform-origin: center;
   will-change: transform, border-radius, opacity;
-}
-
-@keyframes admit-circle-morph {
-  0%,
-  100% {
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-
-  20% {
-    border-radius: 45% 55% 60% 40% / 50% 40% 60% 50%;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-
-  40% {
-    border-radius: 35% 65% 45% 55% / 60% 35% 65% 40%;
-    transform: translate(-50%, -50%) scale(0.95);
-    opacity: 0.8;
-  }
-
-  60% {
-    border-radius: 60% 40% 30% 70% / 40% 60% 35% 65%;
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.5;
-  }
-
-  75% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-
-  90% {
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0.5;
-  }
 }
 
 /* Floating badges */
@@ -101,7 +66,7 @@
 
   z-index: 2;
 
-  animation: admit-badge-float 4s ease-in-out infinite;
+  animation: shared-character-badge-float 4s ease-in-out infinite;
 }
 
 /* Admit card badge */
@@ -149,34 +114,10 @@
 
   z-index: 2;
 
-  animation: admit-sparkle 3s ease-in-out infinite;
+  animation: shared-character-sparkle 3s ease-in-out infinite;
 }
 
 /* Animations */
-
-@keyframes admit-badge-float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-
-  50% {
-    translate: 0 -7px;
-  }
-}
-
-@keyframes admit-sparkle {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(0.9) rotate(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.15) rotate(15deg);
-  }
-}
 
 /* Responsive */
 

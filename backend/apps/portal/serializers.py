@@ -375,6 +375,13 @@ class JobDetailsSerializer(serializers.ModelSerializer):
             if key not in ("vacancy_breakdowns", "posts")
         })
 
+        salary_min = values.get("salary_min")
+        salary_max = values.get("salary_max")
+        if salary_min is not None and salary_max is not None and salary_max < salary_min:
+            raise serializers.ValidationError({
+                "salary_max": "Maximum salary must be greater than or equal to minimum salary."
+            })
+
         candidate = JobDetails(**values)
 
         try:

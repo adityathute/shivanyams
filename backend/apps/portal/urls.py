@@ -7,6 +7,7 @@ from .views import (
     PublicContent,
     PublicContentSearch,
     PublicJobDiscovery,
+    PublicJobDiscoveryFacets,
     AdminContent,
     SavedPosts,
     UnsavePost,
@@ -90,6 +91,7 @@ urlpatterns = [
     # results, articles, videos and tools.
     path("content/search/", PublicContentSearch.as_view(), name="content-search"),
     path("content/jobs/discovery/", PublicJobDiscovery.as_view(), name="public-job-discovery"),
+    path("content/jobs/facets/", PublicJobDiscoveryFacets.as_view(), name="public-job-discovery-facets"),
     path("content/videos/discovery/", PublicVideoDiscovery.as_view(), name="public-video-discovery"),
     path("content/video-collections/", PublicVideoCollections.as_view(), name="public-video-collections"),
     path("content/<str:kind>/", content_list, name="content-list"),

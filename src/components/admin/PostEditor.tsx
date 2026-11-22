@@ -140,6 +140,10 @@ type JobPostInput = {
   physical_standards_en: string;
   physical_standards_mr: string;
   physical_standards_hi: string;
+  exam_mode: string;
+  exam_medium_en: string;
+  exam_medium_mr: string;
+  exam_medium_hi: string;
   exam_pattern_en: string;
   exam_pattern_mr: string;
   exam_pattern_hi: string;
@@ -254,6 +258,10 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   physical_standards_en: "",
   physical_standards_mr: "",
   physical_standards_hi: "",
+  exam_mode: "",
+  exam_medium_en: "",
+  exam_medium_mr: "",
+  exam_medium_hi: "",
   exam_pattern_en: "",
   exam_pattern_mr: "",
   exam_pattern_hi: "",
@@ -994,6 +1002,10 @@ export default function PostEditor({
             physical_standards_en: String(post.physical_standards_en ?? ""),
             physical_standards_mr: String(post.physical_standards_mr ?? ""),
             physical_standards_hi: String(post.physical_standards_hi ?? ""),
+            exam_mode: String(post.exam_mode ?? ""),
+            exam_medium_en: String(post.exam_medium_en ?? ""),
+            exam_medium_mr: String(post.exam_medium_mr ?? ""),
+            exam_medium_hi: String(post.exam_medium_hi ?? ""),
             exam_pattern_en: String(post.exam_pattern_en ?? ""),
             exam_pattern_mr: String(post.exam_pattern_mr ?? ""),
             exam_pattern_hi: String(post.exam_pattern_hi ?? ""),
@@ -2270,6 +2282,16 @@ export default function PostEditor({
                         <Textarea label="Physical standards (English)" rows={3} value={post.physical_standards_en} onChange={(event) => updateJobPost(postIndex, "physical_standards_en", event.target.value)} fullWidth />
                         <Textarea label="Physical standards (Marathi)" rows={3} value={post.physical_standards_mr} onChange={(event) => updateJobPost(postIndex, "physical_standards_mr", event.target.value)} fullWidth />
                         <Textarea label="Physical standards (Hindi)" rows={3} value={post.physical_standards_hi} onChange={(event) => updateJobPost(postIndex, "physical_standards_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-exam-mode">
+                      <div className="post-editor-subsection-heading"><div><h4>Post-specific examination mode and medium</h4><small>Record how this post's examination is conducted and the permitted language or languages for the question paper and answers.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <label className="post-editor-field"><span>Examination mode</span><select value={post.exam_mode} onChange={(event) => updateJobPost(postIndex, "exam_mode", event.target.value)}><option value="">Not specified</option><option value="online">Online</option><option value="offline">Offline</option><option value="computer_based">Computer-based test</option><option value="omr">OMR-based</option><option value="descriptive">Descriptive</option><option value="mixed">Mixed</option><option value="as_notified">As notified</option></select></label>
+                        <Textarea label="Exam medium (English)" rows={2} value={post.exam_medium_en} onChange={(event) => updateJobPost(postIndex, "exam_medium_en", event.target.value)} fullWidth />
+                        <Textarea label="Exam medium (Marathi)" rows={2} value={post.exam_medium_mr} onChange={(event) => updateJobPost(postIndex, "exam_medium_mr", event.target.value)} fullWidth />
+                        <Textarea label="Exam medium (Hindi)" rows={2} value={post.exam_medium_hi} onChange={(event) => updateJobPost(postIndex, "exam_medium_hi", event.target.value)} fullWidth />
                       </div>
                     </section>
 

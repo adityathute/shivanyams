@@ -38,6 +38,8 @@ from .models import (
     WebsiteView,
     SavedPost,
     PostOrganizationType,
+    OfficialSource,
+    PostSource,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
 from .serializers import (
@@ -46,6 +48,8 @@ from .serializers import (
     ImportantLinkSerializer,
     PostSerializer,
     PostWriteSerializer,
+    OfficialSourceSerializer,
+    PostSourceSerializer,
 )
 
 
@@ -1317,3 +1321,102 @@ class AdminOrganizationTypes(APIView):
             }
             for value, label in choices
         ])
+
+
+class AdminOfficialSources(APIView):
+    """Admin registry for authoritative source publishers."""
+
+    permission_classes = [IsAuthenticated, IsPortalAdmin]
+
+    def get(self, request):
+        queryset = OfficialSource.objects.all()
+        status_filter = request.query_params.get("status")
+        source_type = request.query_params.get("source_type")
+        search = request.query_params.get("q", "").strip()
+        if status_filter:
+            queryset = queryset.filter(verification_status=status_filter)
+        if source_type:
+            queryset = queryset.filter(source_type=source_type)
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search)
+                | Q(name_mr__icontains=search)
+                | Q(name_hi__icontains=search)
+                | Q(domain__icontains=search)
+                | Q(jurisdiction__icontains=search)
+            )
+        return Response(OfficialSourceSerializer(queryset, many=True, context={"request": request}).data)
+
+    def post(self, request):
+        serializer = OfficialSourceSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        source = serializer.save()
+        return Response(
+            OfficialSourceSerializer(source, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class AdminOfficialSourceDetail(APIView):
+    permission_classes = [IsAuthenticated, IsPortalAdmin]
+
+    def get_object(self, source_id):
+        return get_object_or_404(OfficialSource, pk=source_id)
+
+    def get(self, request, source_id):
+        source = self.get_object(source_id)
+        return Response(OfficialSourceSerializer(source, context={"request": request}).data)
+
+    def patch(self, request, source_id):
+        source = self.get_object(source_id)
+        serializer = OfficialSourceSerializer(
+            source,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+        source = serializer.save()
+        return Response(OfficialSourceSerializer(source, context={"request": request}).data)
+
+    def delete(self, request, source_id):
+        source = self.get_object(source_id)
+        if source.post_references.exists():
+            source.is_active = False
+            source.save(update_fields=("is_active", "updated_at"))
+            return Response({"deactivated": True})
+        source.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminPostSources(APIView):
+    """List and attach verified official evidence to an individual post."""
+
+    permission_classes = [IsAuthenticated, IsPortalAdmin]
+
+    def get_post(self, post_id):
+        return get_object_or_404(Post, pk=post_id)
+
+    def get(self, request, post_id):
+        post = self.get_post(post_id)
+        queryset = PostSource.objects.filter(post=post).select_related("source")
+        return Response(PostSourceSerializer(queryset, many=True, context={"request": request}).data)
+
+    def post(self, request, post_id):
+        post = self.get_post(post_id)
+        serializer = PostSourceSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        item = serializer.save(post=post)
+        return Response(
+            PostSourceSerializer(item, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class AdminPostSourceDetail(APIView):
+    permission_classes = [IsAuthenticated, IsPortalAdmin]
+
+    def delete(self, request, post_id, source_link_id):
+        item = get_object_or_404(PostSource, pk=source_link_id, post_id=post_id)
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

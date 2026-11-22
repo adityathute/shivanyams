@@ -364,6 +364,7 @@ class JobPostInline(admin.StackedInline):
                     "important_dates",
                     "application_links",
                     "selection_stages",
+                    "work_locations",
                     ("salary_currency", "salary_period"),
                     ("salary_min", "salary_max"),
                     ("pay_scale", "grade_pay"),

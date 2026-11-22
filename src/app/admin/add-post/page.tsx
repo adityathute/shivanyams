@@ -8,12 +8,12 @@ import PostEditor from "../../../components/admin/PostEditor";
 export default function AddPostPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const isAdmin = user?.roles?.includes("admin") === true;
+  const canManageContent = user?.roles?.some((role) => ["admin", "editor", "content_editor", "reviewer", "content_reviewer"].includes(role)) === true;
 
   useEffect(() => {
-    if (!loading && !isAdmin) router.replace("/");
-  }, [loading, isAdmin, router]);
+    if (!loading && !canManageContent) router.replace("/");
+  }, [loading, canManageContent, router]);
 
-  if (loading || !isAdmin) return null;
+  if (loading || !canManageContent) return null;
   return <PostEditor />;
 }

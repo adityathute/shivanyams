@@ -364,6 +364,9 @@ class JobPostInline(admin.StackedInline):
                     "important_dates",
                     "application_links",
                     "selection_stages",
+                    ("salary_currency", "salary_period"),
+                    ("salary_min", "salary_max"),
+                    ("pay_scale", "grade_pay"),
                 )
             },
         ),
@@ -591,6 +594,8 @@ class JobPostAdmin(admin.ModelAdmin):
         "age_criteria_type",
         "age_min",
         "age_max",
+        "salary_min",
+        "salary_max",
         "sort_order",
     )
 

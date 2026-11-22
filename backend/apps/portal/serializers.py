@@ -273,6 +273,10 @@ class JobPostFeeSerializer(serializers.ModelSerializer):
 
 
 class JobPostSerializer(serializers.ModelSerializer):
+    exam_mode = serializers.ChoiceField(choices=JobPost.ExamMode.choices, required=False, allow_blank=True)
+    exam_medium_en = serializers.CharField(required=False, allow_blank=True, max_length=2000)
+    exam_medium_mr = serializers.CharField(required=False, allow_blank=True, max_length=2000)
+    exam_medium_hi = serializers.CharField(required=False, allow_blank=True, max_length=2000)
     exam_pattern_en = serializers.CharField(required=False, allow_blank=True, max_length=8000)
     exam_pattern_mr = serializers.CharField(required=False, allow_blank=True, max_length=8000)
     exam_pattern_hi = serializers.CharField(required=False, allow_blank=True, max_length=8000)

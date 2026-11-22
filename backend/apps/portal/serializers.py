@@ -244,10 +244,30 @@ class JobPostFeeSerializer(serializers.ModelSerializer):
             "fee_note_en",
             "fee_note_mr",
             "fee_note_hi",
+            "is_exempt",
+            "exemption_note_en",
+            "exemption_note_mr",
+            "exemption_note_hi",
+            "payment_mode",
+            "payment_instructions_en",
+            "payment_instructions_mr",
+            "payment_instructions_hi",
             "sort_order",
         )
         read_only_fields = ("id",)
         validators = []
+
+    def validate(self, attrs):
+        amount = attrs.get("fee_amount", getattr(self.instance, "fee_amount", None) if self.instance else None)
+        exempt = attrs.get("is_exempt", getattr(self.instance, "is_exempt", False) if self.instance else False)
+        payment_mode = attrs.get("payment_mode", getattr(self.instance, "payment_mode", "online") if self.instance else "online")
+        if amount is not None and amount < 0:
+            raise serializers.ValidationError({"fee_amount": "Application fee cannot be negative."})
+        if exempt and amount not in (None, 0):
+            raise serializers.ValidationError({"fee_amount": "An exempt category cannot have a payable fee amount."})
+        if exempt and payment_mode != "not_required":
+            raise serializers.ValidationError({"payment_mode": "Set payment mode to No Payment Required for an exempt category."})
+        return attrs
 
 
 class JobPostSerializer(serializers.ModelSerializer):

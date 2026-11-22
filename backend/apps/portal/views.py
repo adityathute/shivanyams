@@ -33,6 +33,7 @@ from .models import (
     PostFAQ,
     PostReaction,
     PostStatusHistory,
+    PostRevision,
     PostView,
     PostVisitor,
     WebsiteVisitor,
@@ -73,6 +74,45 @@ CONTENT_CATEGORY_SLUGS = {
     "admit-card": "admit-cards",
     "articles": "articles-guides",
 }
+
+
+POST_REVISION_EXCLUDED_FIELDS = {
+    "id", "owner_auth_id", "created_at", "updated_at", "status",
+    "submitted_at", "reviewed_at", "reviewed_by_auth_id", "approved_at",
+    "approved_by_auth_id", "review_note", "scheduled_at", "published_at",
+    "published_by_auth_id", "views_count", "unique_visitors_count",
+    "likes_count", "dislikes_count", "comments_count", "saves_count",
+    "shares_count", "subscribers_count",
+}
+
+
+def build_post_revision_snapshot(post):
+    fields = {}
+    for model_field in post._meta.concrete_fields:
+        if model_field.name in POST_REVISION_EXCLUDED_FIELDS:
+            continue
+        value = getattr(post, model_field.attname)
+        if hasattr(value, "isoformat"):
+            value = value.isoformat()
+        fields[model_field.name] = value
+    return {
+        "fields": fields,
+        "tag_ids": list(post.tag_assignments.order_by("tag_id").values_list("tag_id", flat=True)),
+        "taxonomy_term_ids": list(post.taxonomy_assignments.order_by("term_id").values_list("term_id", flat=True)),
+    }
+
+
+def create_post_revision(post, actor_auth_id, change_note=""):
+    revision_number = (PostRevision.objects.filter(post=post).aggregate(
+        latest=Max("revision_number")
+    )["latest"] or 0) + 1
+    return PostRevision.objects.create(
+        post=post,
+        revision_number=revision_number,
+        snapshot=build_post_revision_snapshot(post),
+        created_by_auth_id=str(actor_auth_id or ""),
+        change_note=str(change_note or "").strip()[:500],
+    )
 
 
 def get_content_category(kind):
@@ -409,16 +449,18 @@ class AdminContent(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         category = get_content_category(self.kwargs["kind"])
-        serializer.save(
+        post = serializer.save(
             category=category,
             owner_auth_id=str(self.request.user.id),
             status=Post.Status.DRAFT,
             published_at=None,
             published_by_auth_id="",
         )
+        create_post_revision(post, self.request.user.id, "Initial version")
 
     def perform_update(self, serializer):
         post = serializer.save()
+        create_post_revision(post, self.request.user.id, "Content updated from Admin Portal")
         if post.status != Post.Status.PUBLISHED or not post.is_active or not post.published_at:
             return
         subscriber_emails = set(
@@ -512,6 +554,62 @@ class AdminPostReview(APIView):
             post.save(update_fields=list(set(update_fields)))
             PostStatusHistory.objects.create(post=post, previous_status=previous_status, new_status=new_status, changed_by_auth_id=auth_id, note=note)
         return Response(PostSerializer(post, context={"request": request}).data)
+
+
+class AdminPostRevisions(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        revisions = post.revisions.all().values(
+            "id", "revision_number", "change_note", "created_by_auth_id", "created_at"
+        )
+        return Response({"post_id": post.id, "revisions": list(revisions)})
+
+    def post(self, request, post_id):
+        revision_id = request.data.get("revision_id")
+        if not str(revision_id or "").isdigit():
+            raise ValidationError({"revision_id": "A valid revision ID is required."})
+        with transaction.atomic():
+            post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
+            revision = get_object_or_404(PostRevision, pk=int(revision_id), post=post)
+            snapshot = revision.snapshot or {}
+            fields = snapshot.get("fields")
+            if not isinstance(fields, dict) or not fields:
+                raise ValidationError({"revision_id": "This revision does not contain a restorable snapshot."})
+            protected = POST_REVISION_EXCLUDED_FIELDS
+            for field_name, value in fields.items():
+                if field_name in protected:
+                    continue
+                try:
+                    model_field = Post._meta.get_field(field_name)
+                except Exception:
+                    continue
+                if not model_field.concrete or model_field.many_to_many or model_field.primary_key:
+                    continue
+                setattr(post, model_field.attname, model_field.to_python(value))
+            post.save()
+            tag_ids = snapshot.get("tag_ids", [])
+            valid_tag_ids = set(Tag.objects.filter(is_active=True, pk__in=tag_ids).values_list("pk", flat=True))
+            PostTag.objects.filter(post=post).exclude(tag_id__in=valid_tag_ids).delete()
+            existing_tags = set(PostTag.objects.filter(post=post).values_list("tag_id", flat=True))
+            PostTag.objects.bulk_create([
+                PostTag(post=post, tag_id=tag_id) for tag_id in valid_tag_ids - existing_tags
+            ])
+            term_ids = snapshot.get("taxonomy_term_ids", [])
+            valid_term_ids = set(TaxonomyTerm.objects.filter(is_active=True, taxonomy_type__is_active=True, pk__in=term_ids).values_list("pk", flat=True))
+            PostTaxonomyTerm.objects.filter(post=post).exclude(term_id__in=valid_term_ids).delete()
+            existing_terms = set(PostTaxonomyTerm.objects.filter(post=post).values_list("term_id", flat=True))
+            PostTaxonomyTerm.objects.bulk_create([
+                PostTaxonomyTerm(post=post, term_id=term_id) for term_id in valid_term_ids - existing_terms
+            ])
+            create_post_revision(post, request.user.id, f"Restored revision {revision.revision_number}")
+        return Response({
+            "post_id": post.id,
+            "restored_revision_id": revision.id,
+            "new_revision_number": post.revisions.order_by("-revision_number").values_list("revision_number", flat=True).first(),
+            "status": post.status,
+        })
 
 
 class AdminSchedulePost(APIView):

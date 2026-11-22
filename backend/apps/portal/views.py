@@ -97,6 +97,7 @@ def public_posts_for_kind(kind):
             "job_details",
         )
         .prefetch_related(
+            "official_sources__source",
             "important_links",
             Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
             Prefetch(

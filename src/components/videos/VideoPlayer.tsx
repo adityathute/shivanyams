@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import "./VideoPlayer.css";
 
 type CaptionTrack = { id: number; language: string; label: string; is_default?: boolean; url: string };
-type VideoAttachment = { kind?: string; video_url?: string | null; optimized_video_url?: string | null; video_poster_url?: string | null; caption?: string; role?: string };
+type VideoAttachment = { kind?: string; mime_type?: string; video_url?: string | null; optimized_video_mime_type?: string | null; optimized_video_url?: string | null; video_poster_url?: string | null; caption?: string; role?: string };
 type VideoDetails = { provider?: string; video_url?: string; embed_url?: string; thumbnail_url?: string; duration_seconds?: number | null; caption_tracks?: CaptionTrack[] };
 type RelatedVideo = { id: string | number; slug?: string; title: string; thumbnail?: string; language?: string };
 
@@ -31,7 +31,7 @@ export function VideoPlayer({ title, description, details, attachments = [], rel
       <div className="shiv-video-player-frame">
         {sourceUrl ? (
           <video ref={playerRef} className="shiv-video-player" controls playsInline preload="metadata" poster={poster || undefined} controlsList="nodownload" aria-label={title}>
-            <source src={sourceUrl} type="video/mp4" />
+            <source src={sourceUrl} type={source?.optimized_video_url ? source.optimized_video_mime_type || "video/mp4" : source?.mime_type || "video/mp4"} />
             {tracks.map((track) => <track key={track.id} kind="captions" src={track.url} srcLang={track.language} label={track.label} default={Boolean(track.is_default)} />)}
             Your browser does not support HTML video.
           </video>

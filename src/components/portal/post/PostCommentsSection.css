@@ -25,6 +25,13 @@
   margin-bottom: 15px;
 }
 
+.portal-comments-sort {
+  flex: 0 0 132px;
+  width: 132px;
+  max-width: 132px;
+  min-width: 0;
+}
+
 .portal-comments-heading > div {
   display: grid;
   gap: 3px;

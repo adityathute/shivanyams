@@ -100,6 +100,8 @@ def public_posts_for_kind(kind):
         )
         .prefetch_related(
             "official_sources__source",
+            "tag_assignments__tag",
+            "taxonomy_assignments__term__taxonomy_type",
             "important_links",
             Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
             Prefetch(
@@ -218,6 +220,9 @@ class AdminContent(viewsets.ModelViewSet):
                     queryset=PostDate.objects.order_by("sort_order", "id"),
                 ),
                 "resources",
+                "tag_assignments__tag",
+                "taxonomy_assignments__term__taxonomy_type",
+                "official_sources__source",
                 "outgoing_relations__target_post",
                 "job_details__vacancy_breakdowns",
                 Prefetch(

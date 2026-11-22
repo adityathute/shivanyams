@@ -1,3 +1,5 @@
+@import "../../styles/shared/character-animations.css";
+
 .jobs-characters {
   position: relative;
   width: 445px;
@@ -35,12 +37,12 @@
   /* Hide the circle below the platform */
   clip-path: inset(0 0 13% 0);
 
-  animation: jobs-circle-morph 12s ease-in-out infinite;
+  animation: shared-character-circle-morph 12s ease-in-out infinite;
   transform-origin: center;
   will-change: transform, border-radius, opacity;
 }
 
-@keyframes jobs-circle-morph {
+@keyframes shared-character-circle-morph {
   0%,
   100% {
     border-radius: 50%;
@@ -91,7 +93,7 @@
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.12);
   z-index: 2;
 
-  animation: jobs-badge-float 4s ease-in-out infinite;
+  animation: shared-character-badge-float 4s ease-in-out infinite;
 }
 
 .jobs-badge-job {
@@ -124,10 +126,10 @@
   position: absolute;
   top: 28%;
   right: 5%;
-  animation: jobs-sparkle 3s ease-in-out infinite;
+  animation: shared-character-sparkle 3s ease-in-out infinite;
 }
 
-@keyframes jobs-badge-float {
+@keyframes shared-character-badge-float {
   0%,
   100% {
     translate: 0 0;
@@ -138,7 +140,7 @@
   }
 }
 
-@keyframes jobs-sparkle {
+@keyframes shared-character-sparkle {
   0%,
   100% {
     opacity: 0.6;

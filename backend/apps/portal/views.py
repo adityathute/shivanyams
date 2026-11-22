@@ -588,6 +588,63 @@ class PublicEditorialImageVariant(APIView):
         return response
 
 
+def _editorial_video_stream_response(request, asset):
+    from django.http import FileResponse, HttpResponse, StreamingHttpResponse
+    try:
+        media_file = asset.file.open('rb')
+        total_size = asset.file.size
+    except (OSError, ValueError):
+        raise NotFound('The published video is unavailable.')
+    range_header = request.headers.get('Range', '')
+    if not range_header:
+        response = FileResponse(media_file, content_type=asset.mime_type or 'video/mp4')
+        response['Accept-Ranges'] = 'bytes'
+        response['Content-Length'] = str(total_size)
+        response['Content-Disposition'] = 'inline'
+        response['X-Content-Type-Options'] = 'nosniff'
+        response['Cache-Control'] = 'public, max-age=3600'
+        return response
+    import re
+    match = re.fullmatch(r'bytes=(\d*)-(\d*)', range_header.strip())
+    if not match or (not match.group(1) and not match.group(2)):
+        media_file.close()
+        response = HttpResponse(status=416)
+        response['Content-Range'] = 'bytes */{}'.format(total_size)
+        return response
+    if match.group(1):
+        start = int(match.group(1))
+        end = int(match.group(2)) if match.group(2) else total_size - 1
+    else:
+        suffix = int(match.group(2))
+        start, end = max(total_size - suffix, 0), total_size - 1
+    if start >= total_size or end < start:
+        media_file.close()
+        response = HttpResponse(status=416)
+        response['Content-Range'] = 'bytes */{}'.format(total_size)
+        return response
+    end = min(end, total_size - 1)
+    length = end - start + 1
+    media_file.seek(start)
+    def chunks():
+        remaining = length
+        try:
+            while remaining:
+                chunk = media_file.read(min(64 * 1024, remaining))
+                if not chunk:
+                    break
+                remaining -= len(chunk)
+                yield chunk
+        finally:
+            media_file.close()
+    response = StreamingHttpResponse(chunks(), status=206, content_type=asset.mime_type or 'video/mp4')
+    response['Content-Range'] = 'bytes {}-{}/{}'.format(start, end, total_size)
+    response['Content-Length'] = str(length)
+    response['Accept-Ranges'] = 'bytes'
+    response['Content-Disposition'] = 'inline'
+    response['X-Content-Type-Options'] = 'nosniff'
+    response['Cache-Control'] = 'public, max-age=3600'
+    return response
+
 class PublicEditorialMediaDownload(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -602,6 +659,8 @@ class PublicEditorialMediaDownload(APIView):
             ).distinct(),
             pk=asset_id,
         )
+        if asset.kind == EditorialMediaAsset.Kind.VIDEO:
+            return _editorial_video_stream_response(request, asset)
         try:
             response = FileResponse(
                 asset.file.open("rb"),

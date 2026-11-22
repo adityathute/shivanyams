@@ -1377,6 +1377,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showSelectionStages ? <th>{getDetailLabel("selectionProcess", language)}</th> : null}
                                       {showPostCompensation ? <th>{language === "mr" ? "वेतन / वेतनश्रेणी" : language === "hi" ? "वेतन / वेतनमान" : "Salary / Pay scale"}</th> : null}
                                       {showWorkLocations ? <th>{language === "mr" ? "नियुक्तीचे ठिकाण" : language === "hi" ? "कार्यस्थल" : "Work location"}</th> : null}
+                                      {showPostEmploymentTerms ? <th>{language === "mr" ? "सेवेच्या अटी व लाभ" : language === "hi" ? "सेवा शर्तें और लाभ" : "Employment terms & benefits"}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>

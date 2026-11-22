@@ -140,6 +140,14 @@ type JobPostInput = {
   salary_max: string;
   pay_scale: string;
   grade_pay: string;
+  allowances: string;
+  benefits: string;
+  employment_conditions: string;
+  probation_period: string;
+  contract_duration: string;
+  working_hours: string;
+  service_bond: string;
+  retirement_benefits: string;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;

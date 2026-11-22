@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { API_URL } from "../../components/portal/category/CategoryGrid";
 import { adminFetch } from "./admin-utils";
 
@@ -28,7 +28,7 @@ export default function VideoCollectionsPanel() {
 
   useEffect(() => { void refresh().catch((error) => setMessage(error instanceof Error ? error.message : "Unable to load collections.")); }, [refresh]);
 
-  async function createCollection(event: React.FormEvent<HTMLFormElement>) {
+  async function createCollection(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setMessage("");
     try {
       const ids = videoIds.split(",").map((value) => Number(value.trim())).filter((value) => Number.isInteger(value) && value > 0);
@@ -65,7 +65,7 @@ export default function VideoCollectionsPanel() {
       <label className="video-collection-publish"><input type="checkbox" checked={published} onChange={(event) => setPublished(event.target.checked)} /> Publish collection</label>
       <button type="submit" disabled={busy || !title.trim() || !slug.trim()}>{busy ? "Saving…" : "Create collection"}</button>
     </form>
-    {items.map((item) => <div className="video-collection-admin-row" key={item.id}><div><strong>{item.title_en}</strong><small>{item.collection_type} · /videos/collections/{item.slug} · {item.is_published ? "Published" : "Draft"}</small>{item.external_url ? <a href={item.external_url} target="_blank" rel="noreferrer">Open YouTube link</a> : null}</div><button type="button" disabled={busy} onClick={() => void removeCollection(item.id)}>Delete</button></div>)}
+    {items.map((item) => <div className="video-collection-admin-row" key={item.id}><div><strong>{item.title_en}</strong><small>{item.collection_type} · slug: {item.slug} · {item.is_published ? "Published" : "Draft"}</small>{item.external_url ? <a href={item.external_url} target="_blank" rel="noreferrer">Open YouTube link</a> : null}</div><button type="button" disabled={busy} onClick={() => void removeCollection(item.id)}>Delete</button></div>)}
     {message ? <p role="status">{message}</p> : null}
   </section>;
 }

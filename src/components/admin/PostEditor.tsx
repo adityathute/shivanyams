@@ -105,6 +105,19 @@ type JobPostApplicationLinkInput = {
   sort_order: number;
 };
 
+type JobPostSelectionStageInput = {
+  stage_type: "written_exam" | "skill_test" | "physical_test" | "interview" | "document_verification" | "medical_exam" | "trade_test" | "other";
+  title_en: string;
+  title_mr: string;
+  title_hi: string;
+  details_en: string;
+  details_mr: string;
+  details_hi: string;
+  mandatory: boolean;
+  duration_minutes: number | null;
+  sort_order: number;
+};
+
 type JobPostInput = {
   post_number: string;
   post_name_en: string;
@@ -117,6 +130,7 @@ type JobPostInput = {
   reservation_rules: Array<Record<string, unknown>>;
   important_dates: Array<Record<string, unknown>>;
   application_links: Array<Record<string, unknown>>;
+  selection_stages: JobPostSelectionStageInput[];
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -176,6 +190,19 @@ const createEmptyJobPostApplicationLink = (sort_order: number): JobPostApplicati
   sort_order,
 });
 
+const createEmptyJobPostSelectionStage = (sort_order: number): JobPostSelectionStageInput => ({
+  stage_type: "written_exam",
+  title_en: "",
+  title_mr: "",
+  title_hi: "",
+  details_en: "",
+  details_mr: "",
+  details_hi: "",
+  mandatory: true,
+  duration_minutes: null,
+  sort_order,
+});
+
 const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   post_number: "",
   post_name_en: "",
@@ -188,6 +215,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   reservation_rules: [],
   important_dates: [],
   application_links: [],
+  selection_stages: [],
   educational_qualification_en: "",
   educational_qualification_mr: "",
   educational_qualification_hi: "",
@@ -899,6 +927,22 @@ export default function PostEditor({
           template.posts = existingPosts.map((post, index) => ({
             ...createEmptyJobPost(index),
             ...post,
+            selection_stages: Array.isArray(post.selection_stages)
+              ? (post.selection_stages as Record<string, unknown>[]).map((stage, stageIndex) => ({
+                  ...createEmptyJobPostSelectionStage(stageIndex),
+                  ...stage,
+                  stage_type: (stage.stage_type as JobPostSelectionStageInput["stage_type"]) || "other",
+                  title_en: String(stage.title_en ?? ""),
+                  title_mr: String(stage.title_mr ?? ""),
+                  title_hi: String(stage.title_hi ?? ""),
+                  details_en: String(stage.details_en ?? ""),
+                  details_mr: String(stage.details_mr ?? ""),
+                  details_hi: String(stage.details_hi ?? ""),
+                  mandatory: stage.mandatory !== false,
+                  duration_minutes: stage.duration_minutes == null || stage.duration_minutes === "" ? null : Number(stage.duration_minutes),
+                  sort_order: stageIndex,
+                }))
+              : [],
             application_links: Array.isArray(post.application_links)
               ? (post.application_links as Record<string, unknown>[]).map((link, linkIndex) => ({
                   ...createEmptyJobPostApplicationLink(linkIndex),
@@ -1326,6 +1370,19 @@ export default function PostEditor({
       age_as_on_date: normalizeApiDate(post.age_as_on_date),
       eligible_dob_from: normalizeApiDate(post.eligible_dob_from),
       eligible_dob_to: normalizeApiDate(post.eligible_dob_to),
+      selection_stages: (post.selection_stages || [])
+        .filter((stage) => stage.title_en.trim() || stage.title_mr.trim() || stage.title_hi.trim())
+        .map((stage, index) => ({
+          ...stage,
+          title_en: stage.title_en.trim(),
+          title_mr: stage.title_mr.trim(),
+          title_hi: stage.title_hi.trim(),
+          details_en: stage.details_en.trim(),
+          details_mr: stage.details_mr.trim(),
+          details_hi: stage.details_hi.trim(),
+          duration_minutes: stage.duration_minutes == null ? null : Number(stage.duration_minutes),
+          sort_order: index,
+        })),
       application_links: (post.application_links || [])
         .filter((link) => String(link.label_en ?? "").trim() || String(link.label_mr ?? "").trim() || String(link.label_hi ?? "").trim() || String(link.url ?? "").trim())
         .map((link, index) => ({
@@ -2102,6 +2159,46 @@ export default function PostEditor({
                           fullWidth
                           size="sm"
                         />
+                      ))}
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-selection-stages">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Post-specific selection process</h4><small>Enter the stages in the official order for this post. Keep empty if the recruitment uses one common selection process.</small></div>
+                        <button className="post-editor-add-button" type="button" onClick={() => updateJobPost(postIndex, "selection_stages", [...(post.selection_stages || []), createEmptyJobPostSelectionStage((post.selection_stages || []).length)])}>
+                          <span aria-hidden="true">＋</span> Add selection stage
+                        </button>
+                      </div>
+                      {(post.selection_stages || []).map((stage, stageIndex) => (
+                        <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={stageIndex} open>
+                          <summary className="post-editor-card-summary">
+                            <span><strong>{stage.title_en || `Selection stage ${stageIndex + 1}`}</strong><small>{stage.stage_type.replaceAll("_", " ")}{stage.mandatory ? " · Mandatory" : " · Optional"}</small></span>
+                          </summary>
+                          <div className="post-editor-fee-fields">
+                            <label className="post-editor-field-label">Stage type</label>
+                            <select className="post-editor-select" value={stage.stage_type} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, stage_type: event.target.value as JobPostSelectionStageInput["stage_type"] } : item))}>
+                              <option value="written_exam">Written examination</option>
+                              <option value="skill_test">Skill / typing test</option>
+                              <option value="physical_test">Physical test</option>
+                              <option value="interview">Interview</option>
+                              <option value="document_verification">Document verification</option>
+                              <option value="medical_exam">Medical examination</option>
+                              <option value="trade_test">Trade test</option>
+                              <option value="other">Other</option>
+                            </select>
+                            <Input label="Stage title (English)" value={stage.title_en} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, title_en: event.target.value } : item))} fullWidth size="sm" />
+                            <Input label="Stage title (Marathi)" value={stage.title_mr} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, title_mr: event.target.value } : item))} fullWidth size="sm" />
+                            <Input label="Stage title (Hindi)" value={stage.title_hi} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, title_hi: event.target.value } : item))} fullWidth size="sm" />
+                            <Textarea label="Details (English)" rows={2} value={stage.details_en} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, details_en: event.target.value } : item))} fullWidth />
+                            <Textarea label="Details (Marathi)" rows={2} value={stage.details_mr} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, details_mr: event.target.value } : item))} fullWidth />
+                            <Textarea label="Details (Hindi)" rows={2} value={stage.details_hi} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, details_hi: event.target.value } : item))} fullWidth />
+                            <Input type="number" label="Duration (minutes, optional)" min={1} max={10080} value={stage.duration_minutes ?? ""} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, duration_minutes: event.target.value === "" ? null : Number(event.target.value) } : item))} fullWidth size="sm" />
+                            <label className="post-editor-checkbox-row"><input type="checkbox" checked={stage.mandatory} onChange={(event) => updateJobPost(postIndex, "selection_stages", post.selection_stages.map((item, index) => index === stageIndex ? { ...item, mandatory: event.target.checked } : item))} /><span>Mandatory stage</span></label>
+                          </div>
+                          <div className="post-editor-card-actions">
+                            <button type="button" className="post-editor-remove" onClick={() => updateJobPost(postIndex, "selection_stages", post.selection_stages.filter((_, index) => index !== stageIndex).map((item, index) => ({ ...item, sort_order: index })))}>Remove stage</button>
+                          </div>
+                        </details>
                       ))}
                     </section>
 

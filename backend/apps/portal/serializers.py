@@ -291,6 +291,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "reservation_rules",
             "important_dates",
             "application_links",
+            "selection_stages",
             "educational_qualification_en",
             "educational_qualification_mr",
             "educational_qualification_hi",
@@ -431,6 +432,49 @@ class JobPostSerializer(serializers.ModelSerializer):
             for key in ("instructions_en", "instructions_mr", "instructions_hi"):
                 if len(str(item.get(key, "") or "")) > 1000:
                     raise serializers.ValidationError({"application_links": f"{label} field {key} is too long."})
+
+        # Validate the ordered selection stages for this individual post.
+        selection_stages = attrs.get(
+            "selection_stages",
+            getattr(self.instance, "selection_stages", []) if self.instance else [],
+        ) or []
+        if not isinstance(selection_stages, list):
+            raise serializers.ValidationError({"selection_stages": "Provide selection stages as a list."})
+        if len(selection_stages) > 20:
+            raise serializers.ValidationError({"selection_stages": "A maximum of 20 selection stages is allowed per post."})
+        allowed_stage_types = {
+            "written_exam", "skill_test", "physical_test", "interview",
+            "document_verification", "medical_exam", "trade_test", "other",
+        }
+        seen_stage_keys = set()
+        for index, stage in enumerate(selection_stages):
+            label = f"Selection stage {index + 1}"
+            if not isinstance(stage, dict):
+                raise serializers.ValidationError({"selection_stages": f"{label} must be an object."})
+            stage_type = str(stage.get("stage_type", "other") or "other").strip().lower()
+            if stage_type not in allowed_stage_types:
+                raise serializers.ValidationError({"selection_stages": f"{label} has an unsupported stage type."})
+            titles = [str(stage.get(key, "") or "").strip() for key in ("title_en", "title_mr", "title_hi")]
+            if not any(titles):
+                raise serializers.ValidationError({"selection_stages": f"{label} needs a title in at least one language."})
+            normalized_title = next(title.casefold() for title in titles if title)
+            identity = (stage_type, normalized_title)
+            if identity in seen_stage_keys:
+                raise serializers.ValidationError({"selection_stages": f"{label} duplicates another stage."})
+            seen_stage_keys.add(identity)
+            if "mandatory" in stage and not isinstance(stage["mandatory"], bool):
+                raise serializers.ValidationError({"selection_stages": f"{label}: mandatory must be true or false."})
+            for key in ("title_en", "title_mr", "title_hi"):
+                if len(str(stage.get(key, "") or "")) > 180:
+                    raise serializers.ValidationError({"selection_stages": f"{label} field {key} is too long."})
+            for key in ("details_en", "details_mr", "details_hi"):
+                if len(str(stage.get(key, "") or "")) > 1500:
+                    raise serializers.ValidationError({"selection_stages": f"{label} field {key} is too long."})
+            duration = stage.get("duration_minutes")
+            if duration not in (None, "") and (
+                isinstance(duration, bool) or not str(duration).isdigit() or not 1 <= int(duration) <= 10080
+            ):
+                raise serializers.ValidationError({"selection_stages": f"{label}: duration_minutes must be a whole number from 1 to 10080."})
 
         # Validate category-wise age relaxation entries from the official notification.
         age_relaxations = attrs.get("age_relaxations", getattr(self.instance, "age_relaxations", [])) or []

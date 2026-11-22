@@ -351,6 +351,10 @@ class JobDetails(TimestampedModel):
         ]
         constraints = [
             models.CheckConstraint(
+                condition=(Q(salary_min__isnull=True) | Q(salary_max__isnull=True) | Q(salary_max__gte=F("salary_min"))),
+                name="job_salary_max_gte_min",
+            ),
+            models.CheckConstraint(
                 condition=(
                     Q(age_min__isnull=True)
                     | Q(age_max__isnull=True)

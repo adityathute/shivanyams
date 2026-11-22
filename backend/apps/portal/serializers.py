@@ -382,8 +382,6 @@ class JobPostSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({"important_dates": f"{label} requires a valid {date_field.replace('_', ' ')} in YYYY-MM-DD format."})
             if date_format == "range" and parse_date(str(item["end_date"])) < parse_date(str(item["start_date"])):
                 raise serializers.ValidationError({"important_dates": f"{label} end date cannot precede its start date."})
-            if date_format in ("revised", "revised_with_time") and parse_date(str(item["new_date"])) < parse_date(str(item["old_date"])):
-                raise serializers.ValidationError({"important_dates": f"{label} revised date cannot precede the original date."})
             if date_format == "revised_with_time" and (not item.get("old_time") or not item.get("new_time")):
                 raise serializers.ValidationError({"important_dates": f"{label} requires both original and revised times."})
             if date_format == "month_year":

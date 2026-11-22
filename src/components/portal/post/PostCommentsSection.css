@@ -579,11 +579,10 @@
   min-width: 0;
 }
 .portal-comment-report-heading > div:first-child {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
+  display: grid;
+  align-content: start;
   min-width: 0;
-  gap: 3px 8px;
+  gap: 2px;
 }
 .portal-comment-report-select {
   justify-self: end;
@@ -679,9 +678,6 @@
   .portal-comment-report-heading {
     grid-template-columns: minmax(0, 1fr) 112px;
     gap: 8px;
-  }
-  .portal-comment-report-heading > div:first-child {
-    column-gap: 6px;
   }
   .portal-comment-report-select {
     width: 112px;

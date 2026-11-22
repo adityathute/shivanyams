@@ -105,6 +105,8 @@ type JobPostApplicationLinkInput = {
   sort_order: number;
 };
 
+type JobPostRequiredDocumentInput = { title_en: string; title_mr: string; title_hi: string; mandatory: boolean; note_en: string; note_mr: string; note_hi: string; sort_order: number; };
+
 type JobPostWorkLocationInput = { location_type: string; name_en: string; name_mr: string; name_hi: string; city: string; district: string; state: string; country: string; office: string; vacancies: string; note_en: string; note_mr: string; note_hi: string; sort_order: number; };
 
 type JobPostSelectionStageInput = {
@@ -134,6 +136,7 @@ type JobPostInput = {
   application_links: Array<Record<string, unknown>>;
   selection_stages: JobPostSelectionStageInput[];
   work_locations: JobPostWorkLocationInput[];
+  required_documents: JobPostRequiredDocumentInput[];
   salary_currency: string;
   salary_period: string;
   salary_min: string;
@@ -207,6 +210,8 @@ const createEmptyJobPostApplicationLink = (sort_order: number): JobPostApplicati
   sort_order,
 });
 
+const createEmptyJobPostRequiredDocument = (sort_order: number): JobPostRequiredDocumentInput => ({ title_en: "", title_mr: "", title_hi: "", mandatory: true, note_en: "", note_mr: "", note_hi: "", sort_order });
+
 const createEmptyJobPostWorkLocation = (sort_order: number): JobPostWorkLocationInput => ({ location_type: "district", name_en: "", name_mr: "", name_hi: "", city: "", district: "", state: "", country: "India", office: "", vacancies: "", note_en: "", note_mr: "", note_hi: "", sort_order });
 
 const createEmptyJobPostSelectionStage = (sort_order: number): JobPostSelectionStageInput => ({
@@ -236,6 +241,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   application_links: [],
   selection_stages: [],
   work_locations: [],
+  required_documents: [],
   salary_currency: "INR",
   salary_period: "monthly",
   salary_min: "",
@@ -967,6 +973,7 @@ export default function PostEditor({
             salary_max: post.salary_max == null ? "" : String(post.salary_max),
             pay_scale: String(post.pay_scale ?? ""),
             grade_pay: String(post.grade_pay ?? ""),
+            required_documents: Array.isArray(post.required_documents) ? (post.required_documents as Record<string, unknown>[]).map((document, documentIndex) => ({ ...createEmptyJobPostRequiredDocument(documentIndex), ...document, title_en: String(document.title_en ?? ""), title_mr: String(document.title_mr ?? ""), title_hi: String(document.title_hi ?? ""), mandatory: document.mandatory !== false, note_en: String(document.note_en ?? ""), note_mr: String(document.note_mr ?? ""), note_hi: String(document.note_hi ?? ""), sort_order: documentIndex })) : [],
             work_locations: Array.isArray(post.work_locations) ? (post.work_locations as Record<string, unknown>[]).map((location, locationIndex) => ({ ...createEmptyJobPostWorkLocation(locationIndex), ...location, location_type: String(location.location_type ?? "other"), name_en: String(location.name_en ?? ""), name_mr: String(location.name_mr ?? ""), name_hi: String(location.name_hi ?? ""), city: String(location.city ?? ""), district: String(location.district ?? ""), state: String(location.state ?? ""), country: String(location.country ?? ""), office: String(location.office ?? ""), vacancies: location.vacancies == null ? "" : String(location.vacancies), note_en: String(location.note_en ?? ""), note_mr: String(location.note_mr ?? ""), note_hi: String(location.note_hi ?? ""), sort_order: locationIndex })) : [],
             selection_stages: Array.isArray(post.selection_stages)
               ? (post.selection_stages as Record<string, unknown>[]).map((stage, stageIndex) => ({
@@ -2228,6 +2235,22 @@ export default function PostEditor({
                         <Textarea label="Service bond" value={post.service_bond} onChange={(event) => updateJobPost(postIndex, "service_bond", event.target.value)} rows={2} />
                         <Textarea label="Retirement benefits" value={post.retirement_benefits} onChange={(event) => updateJobPost(postIndex, "retirement_benefits", event.target.value)} rows={2} />
                       </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-required-documents">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Post-specific required documents</h4><small>List documents required for this post; mark each as mandatory or optional.</small></div>
+                        <button className="post-editor-add-button" type="button" onClick={() => updateJobPost(postIndex, "required_documents", [...post.required_documents, createEmptyJobPostRequiredDocument(post.required_documents.length)])}><span aria-hidden="true">＋</span> Add document</button>
+                      </div>
+                      {post.required_documents.map((document, documentIndex) => (
+                        <div className="post-editor-repeat-card post-editor-nested-card" key={documentIndex}>
+                          <div className="post-editor-fee-fields">
+                            {(["title_en", "title_mr", "title_hi", "note_en", "note_mr", "note_hi"] as const).map((field) => <Input key={field} label={({title_en:"Document name (English)",title_mr:"Document name (Marathi)",title_hi:"Document name (Hindi)",note_en:"Notes (English)",note_mr:"Notes (Marathi)",note_hi:"Notes (Hindi)"} as Record<string,string>)[field]} value={document[field]} onChange={(event) => updateJobPost(postIndex, "required_documents", post.required_documents.map((item, index) => index === documentIndex ? { ...item, [field]: event.target.value } : item))} fullWidth size="sm" />)}
+                            <label className="post-editor-field-label"><input type="checkbox" checked={document.mandatory} onChange={(event) => updateJobPost(postIndex, "required_documents", post.required_documents.map((item, index) => index === documentIndex ? { ...item, mandatory: event.target.checked } : item))} /> Mandatory document</label>
+                            <button className="post-editor-remove-button" type="button" onClick={() => updateJobPost(postIndex, "required_documents", post.required_documents.filter((_, index) => index !== documentIndex))}>Remove document</button>
+                          </div>
+                        </div>
+                      ))}
                     </section>
 
                     <section className="post-editor-post-detail-section post-editor-post-work-locations">

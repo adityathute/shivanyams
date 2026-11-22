@@ -4,6 +4,7 @@ from django.core.mail import send_mass_mail
 import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 from django.utils.text import slugify
 from django.db.models import Count, F, Max, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets
@@ -84,6 +85,103 @@ def get_content_category(kind):
 
 
 
+
+def apply_content_discovery_filters(queryset, params, *, public=True):
+    """Apply validated, shared discovery filters to a content queryset."""
+    query = str(params.get("q", "")).strip()
+    if query:
+        queryset = queryset.filter(
+            Q(title_en__icontains=query)
+            | Q(title_mr__icontains=query)
+            | Q(title_hi__icontains=query)
+            | Q(summary_en__icontains=query)
+            | Q(summary_mr__icontains=query)
+            | Q(summary_hi__icontains=query)
+            | Q(body_en__icontains=query)
+            | Q(body_mr__icontains=query)
+            | Q(body_hi__icontains=query)
+            | Q(slug__icontains=query)
+            | Q(meta_keywords__icontains=query)
+        )
+
+    for parameter, field in (
+        ("location", "location__icontains"),
+        ("state", "state__icontains"),
+        ("organization_type", "organization_type"),
+    ):
+        value = str(params.get(parameter, "")).strip()
+        if value:
+            queryset = queryset.filter(**{field: value if field == "organization_type" else value})
+
+    featured = params.get("featured")
+    if featured not in (None, ""):
+        normalized = str(featured).strip().lower()
+        if normalized not in ("true", "false", "1", "0", "yes", "no"):
+            raise ValidationError({"featured": "Use true or false."})
+        queryset = queryset.filter(is_featured=normalized in ("true", "1", "yes"))
+
+    tag = str(params.get("tag", "")).strip()
+    if tag:
+        queryset = queryset.filter(tag_assignments__tag__slug=tag)
+
+    taxonomy = str(params.get("taxonomy", "")).strip()
+    if taxonomy:
+        queryset = queryset.filter(
+            taxonomy_assignments__term__slug=taxonomy,
+            taxonomy_assignments__term__is_active=True,
+            taxonomy_assignments__term__taxonomy_type__is_active=True,
+        )
+
+    source = str(params.get("source", "")).strip()
+    if source:
+        if not source.isdigit() or int(source) < 1:
+            raise ValidationError({"source": "Source must be a positive integer ID."})
+        queryset = queryset.filter(
+            official_sources__source_id=int(source),
+            official_sources__source__is_active=True,
+            official_sources__source__verification_status=OfficialSource.VerificationStatus.VERIFIED,
+        )
+
+    for parameter, lookup in (("published_from", "published_at__date__gte"), ("published_to", "published_at__date__lte")):
+        raw = str(params.get(parameter, "")).strip()
+        if raw:
+            parsed = parse_date(raw)
+            if not parsed:
+                raise ValidationError({parameter: "Use YYYY-MM-DD."})
+            queryset = queryset.filter(**{lookup: parsed})
+
+    ordering = str(params.get("sort", "recent")).strip().lower()
+    ordering_map = {
+        "recent": ("-published_at", "-created_at"),
+        "oldest": ("published_at", "created_at"),
+        "title": ("title_en",),
+        "popular": ("-views_count", "-published_at"),
+        "featured": ("-is_featured", "-published_at"),
+    }
+    if ordering not in ordering_map:
+        raise ValidationError({"sort": "Choose recent, oldest, title, popular or featured."})
+
+    if not public:
+        status_value = str(params.get("status", "")).strip()
+        allowed_statuses = {choice[0] for choice in Post.Status.choices}
+        if status_value:
+            statuses = [value.strip() for value in status_value.split(",") if value.strip()]
+            invalid = sorted(set(statuses) - allowed_statuses)
+            if invalid:
+                raise ValidationError({"status": "One or more status values are invalid."})
+            queryset = queryset.filter(status__in=statuses)
+        active = params.get("active")
+        if active not in (None, ""):
+            normalized = str(active).strip().lower()
+            if normalized not in ("true", "false", "1", "0", "yes", "no"):
+                raise ValidationError({"active": "Use true or false."})
+            queryset = queryset.filter(is_active=normalized in ("true", "1", "yes"))
+        owner = str(params.get("owner", "")).strip()
+        if owner:
+            queryset = queryset.filter(owner_auth_id=owner)
+
+    return queryset.distinct().order_by(*ordering_map[ordering])
+
 def public_posts_for_kind(kind):
     category = get_content_category(kind)
 
@@ -152,7 +250,41 @@ class PublicContent(viewsets.ReadOnlyModelViewSet):
     lookup_url_kwarg = "slug"
 
     def get_queryset(self):
-        return public_posts_for_kind(self.kwargs["kind"])
+        return apply_content_discovery_filters(
+            public_posts_for_kind(self.kwargs["kind"]),
+            self.request.query_params,
+            public=True,
+        )
+
+
+class PublicContentSearch(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        queryset = Post.objects.filter(
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        ).select_related("category", "job_details").prefetch_related(
+            "official_sources__source",
+            "tag_assignments__tag",
+            "taxonomy_assignments__term__taxonomy_type",
+            "important_links",
+            "faqs",
+            "important_dates",
+            "resources",
+            "outgoing_relations__target_post",
+            "job_details__vacancy_breakdowns",
+            "job_details__posts__fees",
+        )
+        kind = str(self.request.query_params.get("kind", "")).strip()
+        if kind:
+            category = get_content_category(kind)
+            queryset = queryset.filter(category=category)
+        return apply_content_discovery_filters(
+            queryset, self.request.query_params, public=True
+        )
 
 
 class AdminSlugAvailability(APIView):
@@ -200,7 +332,7 @@ class AdminContent(viewsets.ModelViewSet):
     def get_queryset(self):
         category = get_content_category(self.kwargs["kind"])
 
-        return (
+        queryset = (
             Post.objects.filter(category=category)
             .annotate(
                 users_count=Count(
@@ -235,6 +367,9 @@ class AdminContent(viewsets.ModelViewSet):
                     ),
                 ),
             )
+        )
+        return apply_content_discovery_filters(
+            queryset, self.request.query_params, public=False
         )
 
 

@@ -704,7 +704,24 @@ class PostSerializer(serializers.ModelSerializer):
                 "caption": link.caption or link.asset.caption,
                 "kind": link.asset.kind,
                 "original_name": link.asset.original_name,
-                "url": f"/api/v1/portal/content/media/{link.asset_id}/",
+                "url": (
+                    self.context["request"].build_absolute_uri(f"/api/v1/portal/content/media/{link.asset_id}/")
+                    if self.context.get("request") else f"/api/v1/portal/content/media/{link.asset_id}/"
+                ),
+                "image_url": (
+                    self.context["request"].build_absolute_uri(f"/api/v1/portal/content/media/{link.asset_id}/image/?size=large")
+                    if link.asset.kind == "image" and self.context.get("request")
+                    else (f"/api/v1/portal/content/media/{link.asset_id}/image/?size=large" if link.asset.kind == "image" else None)
+                ),
+                "thumbnail_url": (
+                    self.context["request"].build_absolute_uri(f"/api/v1/portal/content/media/{link.asset_id}/image/?size=thumbnail")
+                    if link.asset.kind == "image" and self.context.get("request")
+                    else (f"/api/v1/portal/content/media/{link.asset_id}/image/?size=thumbnail" if link.asset.kind == "image" else None)
+                ),
+                "image_width": link.asset.image_width,
+                "image_height": link.asset.image_height,
+                "processing_status": link.asset.processing_status,
+                "variants": link.asset.variants,
             }
             for link in obj.media_attachments.select_related("asset").filter(asset__is_active=True)
         ]

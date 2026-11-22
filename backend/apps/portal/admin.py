@@ -341,7 +341,7 @@ class PostAdmin(admin.ModelAdmin):
 class PostDetailAdmin(admin.ModelAdmin):
     list_display = ("post", "created_at", "updated_at")
     search_fields = ("post__title_en", "post__slug")
-    autocomplete_fields = ("post",)
+    raw_id_fields = ("post",)
     readonly_fields = ("created_at", "updated_at")
     list_select_related = ("post",)
 

@@ -286,6 +286,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "department_mr",
             "department_hi",
             "vacancies",
+            "reservation_rules",
             "educational_qualification_en",
             "educational_qualification_mr",
             "educational_qualification_hi",
@@ -408,6 +409,43 @@ class JobPostSerializer(serializers.ModelSerializer):
                             raise serializers.ValidationError({field: f"{label}: {key} must be between 0 and {maximum}."})
                 if field == "experience_requirements" and not (any(details) or rule.get("minimum_years") is not None):
                     raise serializers.ValidationError({field: f"{label} needs details or a minimum years value."})
+
+        # Validate official vertical and horizontal reservation distribution.
+        reservation_rules = attrs.get("reservation_rules", getattr(self.instance, "reservation_rules", []) if self.instance else []) or []
+        if not isinstance(reservation_rules, list):
+            raise serializers.ValidationError({"reservation_rules": "Provide reservation rules as a list."})
+        if len(reservation_rules) > 40:
+            raise serializers.ValidationError({"reservation_rules": "A maximum of 40 reservation rules is allowed."})
+        seen_reservations = set()
+        for index, rule in enumerate(reservation_rules):
+            label = f"Reservation rule {index + 1}"
+            if not isinstance(rule, dict):
+                raise serializers.ValidationError({"reservation_rules": f"{label} must be an object."})
+            reservation_type = str(rule.get("reservation_type", "vertical")).strip().lower()
+            if reservation_type not in ("vertical", "horizontal"):
+                raise serializers.ValidationError({"reservation_rules": f"{label}: reservation_type must be vertical or horizontal."})
+            names = [str(rule.get(key, "")).strip() for key in ("category_en", "category_mr", "category_hi")]
+            if not any(names):
+                raise serializers.ValidationError({"reservation_rules": f"{label} needs a category name in at least one language."})
+            category_key = next(name.casefold() for name in names if name)
+            unique_key = (reservation_type, category_key)
+            if unique_key in seen_reservations:
+                raise serializers.ValidationError({"reservation_rules": f"Duplicate {reservation_type} reservation category: {category_key}."})
+            seen_reservations.add(unique_key)
+            count = rule.get("vacancies")
+            if count not in (None, "") and (isinstance(count, bool) or not str(count).isdigit() or int(count) < 0):
+                raise serializers.ValidationError({"reservation_rules": f"{label}: vacancies must be a non-negative whole number."})
+            percentage = rule.get("percentage")
+            if percentage not in (None, ""):
+                try:
+                    percentage_value = float(percentage)
+                except (TypeError, ValueError):
+                    percentage_value = -1
+                if isinstance(percentage, bool) or percentage_value < 0 or percentage_value > 100:
+                    raise serializers.ValidationError({"reservation_rules": f"{label}: percentage must be between 0 and 100."})
+            for key in ("category_code", "applies_to", "note_en", "note_mr", "note_hi"):
+                if key in rule and not isinstance(rule[key], (str, int, float)):
+                    raise serializers.ValidationError({"reservation_rules": f"{label}: {key} must be text."})
 
         # Prevent duplicate fee categories within the same post.
         fees = attrs.get("fees")

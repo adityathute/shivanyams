@@ -102,6 +102,7 @@ type JobPostInput = {
   department_mr: string;
   department_hi: string;
   vacancies: number | null;
+  reservation_rules: Array<Record<string, unknown>>;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -158,6 +159,7 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   department_mr: "",
   department_hi: "",
   vacancies: null,
+  reservation_rules: [],
   educational_qualification_en: "",
   educational_qualification_mr: "",
   educational_qualification_hi: "",
@@ -2065,6 +2067,28 @@ export default function PostEditor({
                           }
                         }}
                         placeholder={'[{"category_en":"SC","category_mr":"अनुसूचित जाती","category_hi":"अनुसूचित जाति","relaxation_years":5,"maximum_age":40,"note_en":"As per notification"}]'}
+                        fullWidth
+                        size="sm"
+                      />
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-reservation-section">
+                      <div className="post-editor-subsection-heading">
+                        <div><h4>Vacancy distribution & reservation</h4><small>Enter only the official vacancy allocation. Use vertical for SC/ST/OBC/EWS and horizontal for PwBD, ex-servicemen, women or other horizontal reservations. Do not add horizontal counts to vertical totals.</small></div>
+                      </div>
+                      <Textarea
+                        label="Reservation rules (JSON)"
+                        rows={9}
+                        value={JSON.stringify(post.reservation_rules ?? [], null, 2)}
+                        onChange={(event) => {
+                          try {
+                            const parsed = JSON.parse(event.target.value);
+                            if (Array.isArray(parsed)) updateJobPost(postIndex, "reservation_rules", parsed);
+                          } catch {
+                            // Preserve the last valid value while the JSON is being edited.
+                          }
+                        }}
+                        placeholder={'[{"reservation_type":"vertical","category_code":"SC","category_en":"Scheduled Caste","category_mr":"अनुसूचित जाती","category_hi":"अनुसूचित जाति","vacancies":12,"percentage":15,"note_en":"As per notification"},{"reservation_type":"horizontal","category_code":"PwBD","category_en":"Persons with Benchmark Disabilities","vacancies":2,"applies_to":"Across vertical categories"}]'}
                         fullWidth
                         size="sm"
                       />

@@ -52,6 +52,10 @@ export type JobPost = {
   department_hi: string;
   vacancies: number | null;
   work_locations?: Array<Record<string, unknown>>;
+  exam_mode?: string;
+  exam_medium_en?: string;
+  exam_medium_mr?: string;
+  exam_medium_hi?: string;
   exam_pattern_en?: string;
   exam_pattern_mr?: string;
   exam_pattern_hi?: string;
@@ -301,6 +305,16 @@ type ApiJobPost = {
   department_hi?: string;
   vacancies?: number | null;
   work_locations?: Array<Record<string, unknown>>;
+  exam_mode?: string;
+  exam_medium_en?: string;
+  exam_medium_mr?: string;
+  exam_medium_hi?: string;
+  exam_pattern_en?: string;
+  exam_pattern_mr?: string;
+  exam_pattern_hi?: string;
+  syllabus_en?: string;
+  syllabus_mr?: string;
+  syllabus_hi?: string;
   salary_currency?: string;
   salary_period?: string;
   salary_min?: string | number | null;
@@ -698,6 +712,10 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
             department_hi: post.department_hi || "",
             vacancies: post.vacancies ?? null,
             work_locations: Array.isArray(post.work_locations) ? post.work_locations : [],
+            exam_mode: post.exam_mode || "",
+            exam_medium_en: post.exam_medium_en || "",
+            exam_medium_mr: post.exam_medium_mr || "",
+            exam_medium_hi: post.exam_medium_hi || "",
             exam_pattern_en: post.exam_pattern_en || "",
             exam_pattern_mr: post.exam_pattern_mr || "",
             exam_pattern_hi: post.exam_pattern_hi || "",

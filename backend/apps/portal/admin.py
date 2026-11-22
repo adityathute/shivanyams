@@ -1152,10 +1152,10 @@ class EditorialDiscussionCommentAdmin(admin.ModelAdmin):
 
 @admin.register(EditorialMediaAsset)
 class EditorialMediaAssetAdmin(admin.ModelAdmin):
-    list_display = ("original_name", "kind", "owner_auth_id", "file_size", "processing_status", "image_width", "image_height", "is_active", "created_at")
+    list_display = ("original_name", "kind", "owner_auth_id", "file_size", "processing_status", "image_width", "image_height", "video_duration_seconds", "video_width", "video_height", "is_active", "created_at")
     list_filter = ("kind", "is_active", "created_at")
     search_fields = ("original_name", "owner_auth_id", "alt_text", "caption")
-    readonly_fields = ("owner_auth_id", "file", "original_name", "kind", "mime_type", "file_size", "image_width", "image_height", "variants", "processing_status", "processing_error", "processed_at", "created_at", "updated_at")
+    readonly_fields = ("owner_auth_id", "file", "original_name", "kind", "mime_type", "file_size", "image_width", "image_height", "variants", "processing_status", "processing_error", "processed_at", "video_duration_seconds", "video_width", "video_height", "video_poster_path", "video_variants", "created_at", "updated_at")
 
 
 @admin.register(PostMediaAttachment)

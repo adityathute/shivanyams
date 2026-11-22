@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_date
+from urllib.parse import urlparse
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (
@@ -289,6 +290,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "vacancies",
             "reservation_rules",
             "important_dates",
+            "application_links",
             "educational_qualification_en",
             "educational_qualification_mr",
             "educational_qualification_hi",
@@ -392,6 +394,43 @@ class JobPostSerializer(serializers.ModelSerializer):
             for key in ("label_en", "label_mr", "label_hi", "description_en", "description_mr", "description_hi"):
                 if len(str(item.get(key, "") or "")) > (180 if key.startswith("label") else 500):
                     raise serializers.ValidationError({"important_dates": f"{label} field {key} is too long."})
+
+        # Validate post-specific application destinations. These links are public
+        # actions from the official recruitment notice, not candidate submissions.
+        application_links = attrs.get(
+            "application_links",
+            getattr(self.instance, "application_links", []) if self.instance else [],
+        ) or []
+        if not isinstance(application_links, list):
+            raise serializers.ValidationError({"application_links": "Provide application links as a list."})
+        if len(application_links) > 20:
+            raise serializers.ValidationError({"application_links": "A maximum of 20 application links is allowed per post."})
+        allowed_link_types = {"apply", "registration", "fee_payment", "instructions", "other"}
+        seen_application_urls = set()
+        for index, item in enumerate(application_links):
+            label = f"Application link {index + 1}"
+            if not isinstance(item, dict):
+                raise serializers.ValidationError({"application_links": f"{label} must be an object."})
+            titles = [str(item.get(key, "") or "").strip() for key in ("label_en", "label_mr", "label_hi")]
+            if not any(titles):
+                raise serializers.ValidationError({"application_links": f"{label} needs a label in at least one language."})
+            url = str(item.get("url", "") or "").strip()
+            parsed = urlparse(url)
+            if len(url) > 1000 or parsed.scheme not in ("http", "https") or not parsed.netloc:
+                raise serializers.ValidationError({"application_links": f"{label} must use a valid http or https URL."})
+            link_type = str(item.get("link_type", "other") or "other").strip().lower()
+            if link_type not in allowed_link_types:
+                raise serializers.ValidationError({"application_links": f"{label} has an unsupported link type."})
+            normalized_url = url.rstrip("/").casefold()
+            if normalized_url in seen_application_urls:
+                raise serializers.ValidationError({"application_links": f"{label} duplicates another application URL."})
+            seen_application_urls.add(normalized_url)
+            for key in ("label_en", "label_mr", "label_hi"):
+                if len(str(item.get(key, "") or "")) > 180:
+                    raise serializers.ValidationError({"application_links": f"{label} field {key} is too long."})
+            for key in ("instructions_en", "instructions_mr", "instructions_hi"):
+                if len(str(item.get(key, "") or "")) > 1000:
+                    raise serializers.ValidationError({"application_links": f"{label} field {key} is too long."})
 
         # Validate category-wise age relaxation entries from the official notification.
         age_relaxations = attrs.get("age_relaxations", getattr(self.instance, "age_relaxations", [])) or []

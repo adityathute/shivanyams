@@ -886,6 +886,21 @@ class VideoDetails(TimestampedModel):
         return self.post.title_en
 
 
+class VideoCaptionTrack(TimestampedModel):
+    video = models.ForeignKey(VideoDetails, on_delete=models.CASCADE, related_name="caption_tracks")
+    language = models.CharField(max_length=12)
+    label = models.CharField(max_length=80)
+    file = models.FileField(upload_to="editorial-video-captions/%Y/%m/")
+    is_default = models.BooleanField(default=False)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ("sort_order", "language", "id")
+        constraints = [models.UniqueConstraint(fields=("video", "language"), name="unique_video_caption_language")]
+
+    def __str__(self):
+        return f"{self.video.post.title_en} — {self.label}"
+
 class ToolDetails(TimestampedModel):
     """Configuration and metadata for tools built into ShivanyaMS."""
 

@@ -981,7 +981,7 @@ class VideoCollectionItem(TimestampedModel):
     class Meta:
         ordering = ("sort_order", "id")
         constraints = [models.UniqueConstraint(fields=("collection", "post"), name="unique_video_collection_post")]
-        indexes = [models.Index(fields=("collection", "sort_order"), name="video_collection_item_order_idx")]
+        indexes = [models.Index(fields=("collection", "sort_order"), name="vid_coll_item_order_idx")]
 
     def __str__(self):
         return f"{self.collection.title_en}: {self.post.title_en}"
@@ -1836,7 +1836,7 @@ class EditorialNotification(models.Model):
     class Meta:
         ordering = ("-created_at",)
         indexes = [
-            models.Index(fields=("recipient_auth_id", "created_at"), name="editorial_notif_user_created_idx"),
+            models.Index(fields=("recipient_auth_id", "created_at"), name="ed_notif_user_created_idx"),
             models.Index(fields=("recipient_auth_id", "read_at"), name="editorial_notif_user_read_idx"),
         ]
 
@@ -2336,8 +2336,8 @@ class EditorialDiscussionComment(models.Model):
     class Meta:
         ordering = ("created_at",)
         indexes = [
-            models.Index(fields=("post", "created_at"), name="editorial_disc_post_created_idx"),
-            models.Index(fields=("author_auth_id", "created_at"), name="editorial_disc_author_created_idx"),
+            models.Index(fields=("post", "created_at"), name="ed_disc_post_created_idx"),
+            models.Index(fields=("author_auth_id", "created_at"), name="ed_disc_author_created_idx"),
         ]
 
     def __str__(self):
@@ -2384,8 +2384,8 @@ class EditorialMediaAsset(models.Model):
     class Meta:
         ordering = ("-created_at",)
         indexes = [
-            models.Index(fields=("owner_auth_id", "created_at"), name="editorial_media_owner_created_idx"),
-            models.Index(fields=("kind", "is_active"), name="editorial_media_kind_active_idx"),
+            models.Index(fields=("owner_auth_id", "created_at"), name="ed_media_owner_created_idx"),
+            models.Index(fields=("kind", "is_active"), name="ed_media_kind_active_idx"),
         ]
 
     def __str__(self):

@@ -389,6 +389,9 @@ class JobPostInline(admin.StackedInline):
                     "subject_requirements",
                     "experience_requirements",
                     "required_documents",
+                    "physical_standards_en",
+                    "physical_standards_mr",
+                    "physical_standards_hi",
                 )
             },
         ),

@@ -1064,7 +1064,7 @@ class OfficialSourceAdmin(admin.ModelAdmin):
     list_filter = ("source_type", "verification_status", "is_active", "jurisdiction")
     search_fields = ("name", "name_mr", "name_hi", "domain", "jurisdiction")
     prepopulated_fields = {"slug": ("name",)}
-    readonly_fields = ("verified_at", "verified_by_auth_id", "created_at", "updated_at")
+    readonly_fields = ("created_at", "updated_at")
     fieldsets = (
         ("Publisher", {"fields": ("name", "name_mr", "name_hi", "slug", "domain", "website_url")}),
         ("Classification", {"fields": ("source_type", "jurisdiction", "is_active")}),
@@ -1080,3 +1080,14 @@ class PostSourceAdmin(admin.ModelAdmin):
     search_fields = ("post__title_en", "source__name", "source__domain", "title", "source_url")
     autocomplete_fields = ("post", "source")
     readonly_fields = ("created_at", "updated_at")
+
+    def save_model(self, request, obj, form, change):
+        if obj.verification_status == OfficialSource.VerificationStatus.VERIFIED:
+            from django.utils import timezone
+            if not obj.verified_at:
+                obj.verified_at = timezone.now()
+            obj.verified_by_auth_id = str(request.user.pk)
+        else:
+            obj.verified_at = None
+            obj.verified_by_auth_id = ""
+        super().save_model(request, obj, form, change)

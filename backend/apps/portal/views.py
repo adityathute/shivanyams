@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.text import slugify
-from django.db.models import Count, F, Max, Prefetch, Q
+from django.db.models import Count, Exists, F, Max, OuterRef, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -379,6 +379,108 @@ class PublicContentSearch(generics.ListAPIView):
         return apply_content_discovery_filters(
             queryset, self.request.query_params, public=True
         )
+
+
+class PublicJobDiscovery(generics.ListAPIView):
+    """Public recruitment discovery with job-specific structured filters."""
+
+    serializer_class = PostSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        queryset = Post.objects.filter(
+            category__slug="jobs",
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        ).select_related("category", "job_details").prefetch_related(
+            "official_sources__source",
+            "tag_assignments__tag",
+            "taxonomy_assignments__term__taxonomy_type",
+            "important_links",
+            "faqs",
+            "important_dates",
+            "resources",
+            "job_details__vacancy_breakdowns",
+            "job_details__posts__fees",
+        )
+        params = self.request.query_params
+        queryset = apply_content_discovery_filters(queryset, params, public=True)
+
+        recruitment_type = str(params.get("recruitment_type", "")).strip()
+        if recruitment_type:
+            allowed = {choice[0] for choice in JobDetails.RecruitmentType.choices}
+            if recruitment_type not in allowed:
+                raise ValidationError({"recruitment_type": "Choose a valid recruitment type."})
+            queryset = queryset.filter(job_details__recruitment_type=recruitment_type)
+
+        application_mode = str(params.get("application_mode", "")).strip()
+        if application_mode:
+            allowed = {choice[0] for choice in JobDetails.ApplicationMode.choices}
+            if application_mode not in allowed:
+                raise ValidationError({"application_mode": "Choose a valid application mode."})
+            queryset = queryset.filter(job_details__application_mode=application_mode)
+
+        minimum = params.get("min_vacancies")
+        maximum = params.get("max_vacancies")
+        for name, value in (("min_vacancies", minimum), ("max_vacancies", maximum)):
+            if value not in (None, ""):
+                try:
+                    parsed = int(value)
+                    if parsed < 0:
+                        raise ValueError
+                except (TypeError, ValueError):
+                    raise ValidationError({name: "Enter a non-negative whole number."})
+                if name == "min_vacancies":
+                    queryset = queryset.filter(job_details__total_vacancies__gte=parsed)
+                else:
+                    queryset = queryset.filter(job_details__total_vacancies__lte=parsed)
+        if minimum not in (None, "") and maximum not in (None, "") and int(minimum) > int(maximum):
+            raise ValidationError({"max_vacancies": "Maximum vacancies must be greater than or equal to minimum vacancies."})
+
+        application_status = str(params.get("application_status", "")).strip().lower()
+        if application_status not in ("", "open", "closed", "upcoming", "all"):
+            raise ValidationError({"application_status": "Choose open, closed, upcoming or all."})
+        today = timezone.localdate()
+        closing_dates = PostDate.objects.filter(
+            post_id=OuterRef("pk"),
+            date_type=PostDate.DateType.APPLICATION_END,
+        )
+        if application_status == "open":
+            queryset = queryset.filter(job_details__applications_open=True).exclude(
+                Exists(closing_dates.filter(
+                    Q(date__lt=today) | Q(end_date__lt=today) | Q(new_date__lt=today)
+                ))
+            )
+        elif application_status == "closed":
+            queryset = queryset.filter(
+                Q(job_details__applications_open=False)
+                | Exists(closing_dates.filter(
+                    Q(date__lt=today) | Q(end_date__lt=today) | Q(new_date__lt=today)
+                ))
+            )
+        elif application_status == "upcoming":
+            queryset = queryset.filter(job_details__applications_open=True).filter(
+                Exists(closing_dates.filter(
+                    Q(date__gte=today) | Q(start_date__gte=today) | Q(new_date__gte=today)
+                ))
+            )
+
+        for parameter, lookup in (
+            ("closing_from", "important_dates__date__gte"),
+            ("closing_to", "important_dates__date__lte"),
+        ):
+            raw = str(params.get(parameter, "")).strip()
+            if raw:
+                parsed = parse_date(raw)
+                if not parsed:
+                    raise ValidationError({parameter: "Use YYYY-MM-DD."})
+                queryset = queryset.filter(
+                    important_dates__date_type=PostDate.DateType.APPLICATION_END,
+                    **{lookup: parsed},
+                )
+
+        return queryset.distinct()
 
 
 class AdminSlugAvailability(APIView):

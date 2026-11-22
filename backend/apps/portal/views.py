@@ -42,6 +42,7 @@ from .models import (
     PostMediaAttachment,
     VideoDetails,
     VideoCaptionTrack,
+    VideoCollection,
     PostTag,
     PostTaxonomyTerm,
     PostView,
@@ -65,6 +66,8 @@ from .serializers import (
     PostWriteSerializer,
     OfficialSourceSerializer,
     PostSourceSerializer,
+    VideoCollectionSerializer,
+    VideoCollectionWriteSerializer,
 )
 
 
@@ -889,6 +892,50 @@ class AdminEditorialMediaDownload(APIView):
 
 
 
+
+
+
+class PublicVideoCollections(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        queryset = VideoCollection.objects.filter(is_published=True).prefetch_related(
+            "items__post__video_details", "items__post__category"
+        )
+        collection_type = str(request.query_params.get("type", "")).strip()
+        if collection_type in {"playlist", "series", "channel"}:
+            queryset = queryset.filter(collection_type=collection_type)
+        return Response({"results": VideoCollectionSerializer(queryset, many=True, context={"request": request}).data})
+
+
+class AdminVideoCollections(APIView):
+    permission_classes = [IsAuthenticated, IsPortalContentManager]
+
+    def get(self, request):
+        queryset = VideoCollection.objects.all().prefetch_related("items__post__video_details")
+        return Response({"results": VideoCollectionWriteSerializer(queryset, many=True).data})
+
+    def post(self, request):
+        serializer = VideoCollectionWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        collection = serializer.save()
+        return Response(VideoCollectionWriteSerializer(collection).data, status=status.HTTP_201_CREATED)
+
+
+class AdminVideoCollectionDetail(APIView):
+    permission_classes = [IsAuthenticated, IsPortalContentManager]
+
+    def patch(self, request, collection_id):
+        collection = get_object_or_404(VideoCollection, pk=collection_id)
+        serializer = VideoCollectionWriteSerializer(collection, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        collection = serializer.save()
+        return Response(VideoCollectionWriteSerializer(collection).data)
+
+    def delete(self, request, collection_id):
+        collection = get_object_or_404(VideoCollection, pk=collection_id)
+        collection.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class AdminVideoCaptionTracks(APIView):
     permission_classes = [IsAuthenticated, IsPortalRevisionManager]

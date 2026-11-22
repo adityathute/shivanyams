@@ -1220,7 +1220,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 url: String(item.url || ""),
                                 instructions: getLocalizedText(language, String(item.instructions_en || ""), String(item.instructions_mr || ""), String(item.instructions_hi || "")),
                                 linkType: String(item.link_type || "other"),
-                              })).filter((item) => item.label && /^https?:\\/\\//i.test(item.url));
+                              })).filter((item) => item.label && /^https?:\/\//i.test(item.url));
                               const postImportantDates = (Array.isArray(entry.important_dates) ? entry.important_dates : []).map((item: Record<string, unknown>) => {
                                 const label = getLocalizedText(language, String(item.label_en || ""), String(item.label_mr || ""), String(item.label_hi || ""));
                                 const dateFormat = String(item.date_format || "single");

@@ -658,6 +658,7 @@ class AdminEditorialMedia(APIView):
                 detected_format, image_width, image_height = inspect_uploaded_image(upload)
             except ValueError as exc:
                 raise ValidationError({"file": str(exc)})
+            detected_mime_type = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp", "GIF": "image/gif"}[detected_format]
         original_name = os.path.basename(upload.name).replace("\\", "_")[:255]
         asset = EditorialMediaAsset.objects.create(
             owner_auth_id=str(request.user.id), file=upload,

@@ -60,7 +60,7 @@ class IsPortalContentManager(BasePermission):
         if "reviewer" in roles or "content_reviewer" in roles:
             return request.method in {"GET", "HEAD", "OPTIONS"}
         if "editor" in roles or "content_editor" in roles:
-            return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id) or getattr(getattr(obj, "assignment", None), "assigned_to_auth_id", "") == str(request.user.id) or getattr(getattr(obj, "assignment", None), "assigned_to_auth_id", "") == str(request.user.id)
+            return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id) or getattr(getattr(obj, "assignment", None), "assigned_to_auth_id", "") == str(request.user.id)
         return False
 
 
@@ -85,4 +85,4 @@ class IsPortalRevisionManager(BasePermission):
             return True
         if roles.intersection({"reviewer", "content_reviewer"}):
             return request.method in {"GET", "HEAD", "OPTIONS"}
-        return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id)
+        return str(getattr(obj, "owner_auth_id", "")) == str(request.user.id) or getattr(getattr(obj, "assignment", None), "assigned_to_auth_id", "") == str(request.user.id)

@@ -953,3 +953,102 @@ class PostStatusHistoryAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+
+# Normalized taxonomy and tag management.
+from .models import (
+    PostTag,
+    PostTaxonomyTerm,
+    Tag,
+    TagAlias,
+    TaxonomyAlias,
+    TaxonomyTerm,
+    TaxonomyType,
+)
+
+
+class TaxonomyTermInline(admin.TabularInline):
+    model = TaxonomyTerm
+    extra = 0
+    fields = ("name_en", "name_mr", "name_hi", "slug", "parent", "sort_order", "is_active")
+    autocomplete_fields = ("parent",)
+
+
+class TaxonomyAliasInline(admin.TabularInline):
+    model = TaxonomyAlias
+    extra = 0
+    fields = ("language", "value", "normalized_value")
+    readonly_fields = ("normalized_value",)
+
+
+@admin.register(TaxonomyType)
+class TaxonomyTypeAdmin(admin.ModelAdmin):
+    list_display = ("name_en", "slug", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("name_en", "name_mr", "name_hi", "slug")
+    prepopulated_fields = {"slug": ("name_en",)}
+    inlines = (TaxonomyTermInline,)
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(TaxonomyTerm)
+class TaxonomyTermAdmin(admin.ModelAdmin):
+    list_display = ("name_en", "taxonomy_type", "parent", "sort_order", "is_active")
+    list_filter = ("taxonomy_type", "is_active")
+    search_fields = ("name_en", "name_mr", "name_hi", "slug")
+    autocomplete_fields = ("taxonomy_type", "parent")
+    inlines = (TaxonomyAliasInline,)
+    readonly_fields = ("created_at", "updated_at")
+
+
+class TagAliasInline(admin.TabularInline):
+    model = TagAlias
+    extra = 0
+    fields = ("language", "value", "normalized_value")
+    readonly_fields = ("normalized_value",)
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ("name_en", "slug", "is_active", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("name_en", "name_mr", "name_hi", "slug")
+    prepopulated_fields = {"slug": ("name_en",)}
+    inlines = (TagAliasInline,)
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(TagAlias)
+class TagAliasAdmin(admin.ModelAdmin):
+    list_display = ("value", "language", "tag", "normalized_value")
+    list_filter = ("language",)
+    search_fields = ("value", "normalized_value", "tag__name_en")
+    autocomplete_fields = ("tag",)
+    readonly_fields = ("normalized_value", "created_at", "updated_at")
+
+
+@admin.register(TaxonomyAlias)
+class TaxonomyAliasAdmin(admin.ModelAdmin):
+    list_display = ("value", "language", "term", "normalized_value")
+    list_filter = ("language",)
+    search_fields = ("value", "normalized_value", "term__name_en")
+    autocomplete_fields = ("term",)
+    readonly_fields = ("normalized_value", "created_at", "updated_at")
+
+
+@admin.register(PostTag)
+class PostTagAdmin(admin.ModelAdmin):
+    list_display = ("post", "tag", "created_at")
+    search_fields = ("post__title_en", "tag__name_en")
+    autocomplete_fields = ("post", "tag")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(PostTaxonomyTerm)
+class PostTaxonomyTermAdmin(admin.ModelAdmin):
+    list_display = ("post", "term", "relation_type", "created_at")
+    list_filter = ("relation_type", "term__taxonomy_type")
+    search_fields = ("post__title_en", "term__name_en")
+    autocomplete_fields = ("post", "term")
+    readonly_fields = ("created_at", "updated_at")

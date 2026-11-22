@@ -47,6 +47,14 @@ function CommentThread({
   onReply,
   onReact,
   onReport,
+  reportTarget,
+  reportReason,
+  reportDetails,
+  reporting,
+  onReportReasonChange,
+  onReportDetailsChange,
+  onCancelReport,
+  onSubmitReport,
   replyTarget,
   replyDraft,
   onReplyDraftChange,
@@ -59,6 +67,14 @@ function CommentThread({
   onReply: (id: number) => void;
   onReact: (id: number, reaction: "like" | "dislike") => void;
   onReport: (id: number) => void;
+  reportTarget: number | null;
+  reportReason: string;
+  reportDetails: string;
+  reporting: boolean;
+  onReportReasonChange: (value: string) => void;
+  onReportDetailsChange: (value: string) => void;
+  onCancelReport: () => void;
+  onSubmitReport: () => void;
   replyTarget: number | null;
   replyDraft: string;
   onReplyDraftChange: (value: string) => void;
@@ -112,6 +128,20 @@ function CommentThread({
           ) : null}
         </div>
       </div>
+      {reportTarget === item.id ? (
+        <div className="portal-comment-report-panel portal-comment-thread-report">
+          <div className="portal-comment-report-heading"><strong>Report comment</strong><span>Tell us why this comment should be reviewed.</span></div>
+          <select value={reportReason} onChange={(event) => onReportReasonChange(event.target.value)} aria-label="Report reason">
+            <option value="spam">Spam</option><option value="abuse">Abusive or harmful</option><option value="misinformation">Misinformation</option><option value="other">Other</option>
+          </select>
+          <Textarea value={reportDetails} onChange={(event) => onReportDetailsChange(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" fullWidth size="sm" />
+          <div className="portal-comment-report-footer">
+            <span />
+            <Button type="button" size="sm" variant="outline" disabled={reporting} onClick={onCancelReport}>Cancel</Button>
+            <Button type="button" size="sm" variant="primary" disabled={reporting} onClick={onSubmitReport}>{reporting ? "Sending..." : "Submit report"}</Button>
+          </div>
+        </div>
+      ) : null}
       {replyTarget === item.id ? (
         <div className="portal-comment-inline-reply">
           <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={250} fullWidth size="sm" autoFocus />
@@ -133,6 +163,14 @@ function CommentThread({
                 onReply={onReply}
                 onReact={onReact}
                 onReport={onReport}
+                reportTarget={reportTarget}
+                reportReason={reportReason}
+                reportDetails={reportDetails}
+                reporting={reporting}
+                onReportReasonChange={onReportReasonChange}
+                onReportDetailsChange={onReportDetailsChange}
+                onCancelReport={onCancelReport}
+                onSubmitReport={onSubmitReport}
                 replyTarget={replyTarget}
                 replyDraft={replyDraft}
                 onReplyDraftChange={onReplyDraftChange}
@@ -346,16 +384,6 @@ export function PostCommentsSection({ postId, language }: Props) {
       </div>
 
 
-      {reportTarget ? (
-        <div className="portal-comment-report-panel">
-          <div><strong>Report comment</strong><span>Tell us why this comment should be reviewed.</span></div>
-          <select value={reportReason} onChange={(event) => setReportReason(event.target.value)} aria-label="Report reason">
-            <option value="spam">Spam</option><option value="abuse">Abusive or harmful</option><option value="misinformation">Misinformation</option><option value="other">Other</option>
-          </select>
-          <Textarea value={reportDetails} onChange={(event) => setReportDetails(event.target.value)} rows={2} maxLength={2000} placeholder="Additional details (optional)" fullWidth size="sm" />
-          <div><Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => setReportTarget(null)}>Cancel</Button><Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void sendCommentReport()}>{reporting ? "Sending..." : "Submit report"}</Button></div>
-        </div>
-      ) : null}
       {error ? <p className="portal-comments-message" role="status">{error}</p> : null}
       {loading ? <p className="portal-comments-message">Loading comments...</p> : null}
       <div className="portal-comments-list">

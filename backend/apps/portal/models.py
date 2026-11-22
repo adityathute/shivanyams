@@ -1970,3 +1970,171 @@ class PostTag(TimestampedModel):
 
     def __str__(self):
         return f"{self.post_id}: {self.tag_id}"
+
+
+
+# ---------------------------------------------------------------------------
+# Official publisher/source registry and post evidence
+# ---------------------------------------------------------------------------
+
+class OfficialSource(TimestampedModel):
+    """Curated registry of government and other authoritative publishers."""
+
+    class SourceType(models.TextChoices):
+        GOVERNMENT = "government", "Government"
+        RECRUITMENT = "recruitment", "Recruitment Authority"
+        EDUCATION = "education", "Education Authority"
+        EXAMINATION = "examination", "Examination Authority"
+        PUBLIC_SECTOR = "public_sector", "Public Sector"
+        OTHER = "other", "Other Authoritative Source"
+
+    class VerificationStatus(models.TextChoices):
+        UNVERIFIED = "unverified", "Unverified"
+        VERIFIED = "verified", "Verified"
+        REJECTED = "rejected", "Rejected"
+
+    name = models.CharField(max_length=240)
+    name_mr = models.CharField(max_length=240, blank=True)
+    name_hi = models.CharField(max_length=240, blank=True)
+    slug = models.SlugField(max_length=260, unique=True)
+    domain = models.CharField(max_length=253, unique=True)
+    website_url = models.URLField(max_length=1000)
+    source_type = models.CharField(
+        max_length=20,
+        choices=SourceType.choices,
+        default=SourceType.GOVERNMENT,
+    )
+    jurisdiction = models.CharField(max_length=160, blank=True)
+    verification_status = models.CharField(
+        max_length=12,
+        choices=VerificationStatus.choices,
+        default=VerificationStatus.UNVERIFIED,
+        db_index=True,
+    )
+    verified_at = models.DateTimeField(null=True, blank=True)
+    verified_by_auth_id = models.CharField(max_length=128, blank=True)
+    verification_notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("name",)
+        indexes = [
+            models.Index(
+                fields=("verification_status", "is_active"),
+                name="portal_source_verified_idx",
+            ),
+            models.Index(fields=("source_type", "jurisdiction"), name="portal_source_type_juris_idx"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from urllib.parse import urlsplit
+        import ipaddress
+
+        domain = (self.domain or "").strip().lower().rstrip(".")
+        if not domain or "/" in domain or ":" in domain or "@" in domain:
+            raise ValidationError({"domain": "Enter a hostname only, without a scheme or path."})
+        try:
+            ipaddress.ip_address(domain)
+        except ValueError:
+            pass
+        else:
+            raise ValidationError({"domain": "IP addresses cannot be registered as official domains."})
+
+        parsed = urlsplit(self.website_url or "")
+        if parsed.scheme != "https" or not parsed.hostname:
+            raise ValidationError({"website_url": "Official source websites must use HTTPS."})
+        if parsed.username or parsed.password:
+            raise ValidationError({"website_url": "Credentials are not allowed in source URLs."})
+        host = parsed.hostname.lower().rstrip(".")
+        if host != domain and not host.endswith("." + domain):
+            raise ValidationError({"website_url": "Website hostname must match the registered domain."})
+
+        if self.verification_status == self.VerificationStatus.VERIFIED:
+            if not self.verified_at or not self.verified_by_auth_id:
+                raise ValidationError({
+                    "verified_at": "Verified sources require a verification timestamp and verifier ID."
+                })
+
+    def save(self, *args, **kwargs):
+        self.domain = (self.domain or "").strip().lower().rstrip(".")
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} ({self.domain})"
+
+
+class PostSource(TimestampedModel):
+    """An auditable official-source reference attached to a content post."""
+
+    class EvidenceType(models.TextChoices):
+        NOTIFICATION = "notification", "Official Notification"
+        APPLICATION = "application", "Application Portal"
+        RESULT = "result", "Result / Merit List"
+        ADMIT_CARD = "admit_card", "Admit Card"
+        SCHEME = "scheme", "Scheme Document"
+        GENERAL = "general", "General Reference"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="official_sources",
+    )
+    source = models.ForeignKey(
+        OfficialSource,
+        on_delete=models.PROTECT,
+        related_name="post_references",
+    )
+    evidence_type = models.CharField(
+        max_length=20,
+        choices=EvidenceType.choices,
+        default=EvidenceType.GENERAL,
+    )
+    title = models.CharField(max_length=240, blank=True)
+    source_url = models.URLField(max_length=1000)
+    published_on = models.DateField(null=True, blank=True)
+    checked_at = models.DateTimeField(null=True, blank=True)
+    is_primary = models.BooleanField(default=False)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("-is_primary", "-created_at")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "source", "source_url"),
+                name="unique_post_official_source_url",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("post", "evidence_type"), name="portal_post_source_type_idx"),
+            models.Index(fields=("source", "created_at"), name="portal_source_post_created_idx"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from urllib.parse import urlsplit
+
+        parsed = urlsplit(self.source_url or "")
+        if parsed.scheme != "https" or not parsed.hostname:
+            raise ValidationError({"source_url": "Evidence URLs must use HTTPS."})
+        if parsed.username or parsed.password:
+            raise ValidationError({"source_url": "Credentials are not allowed in evidence URLs."})
+        if self.source_id:
+            host = parsed.hostname.lower().rstrip(".")
+            domain = self.source.domain.lower().rstrip(".")
+            if host != domain and not host.endswith("." + domain):
+                raise ValidationError({
+                    "source_url": "Evidence URL must belong to the registered official domain."
+                })
+            if self.source.verification_status != OfficialSource.VerificationStatus.VERIFIED:
+                raise ValidationError({"source": "Only verified official sources can be cited."})
+            if not self.source.is_active:
+                raise ValidationError({"source": "Inactive official sources cannot be cited."})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title or f"{self.source.name}: {self.post.title_en}"

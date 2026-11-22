@@ -1314,7 +1314,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 selectionStages,
                                 workLocations: (Array.isArray(entry.work_locations) ? entry.work_locations : []).map((location) => { const name = getLocalizedText(language, location.name_en, location.name_mr, location.name_hi); const parts = [name, location.office, location.city, location.district, location.state, location.country, location.vacancies != null ? `${location.vacancies} ${getDetailLabel("vacancies", language)}` : "", getLocalizedText(language, location.note_en, location.note_mr, location.note_hi)].filter(Boolean); return parts.join(" · "); }).filter(Boolean),
                                 compensation: [entry.salary_min != null || entry.salary_max != null ? `${entry.salary_currency || "INR"} ${entry.salary_min ?? "—"} – ${entry.salary_max ?? "—"} / ${entry.salary_period || "monthly"}` : "", entry.pay_scale ? `Pay scale: ${entry.pay_scale}` : "", entry.grade_pay ? `Grade pay: ${entry.grade_pay}` : ""].filter(Boolean).join(" · "),
-                                employmentTerms: [entry.allowances, entry.benefits, entry.employment_conditions, entry.probation_period ? `Probation: ${entry.probation_period}` : "", entry.contract_duration ? `Contract: ${entry.contract_duration}` : "", entry.working_hours ? `Working hours: ${entry.working_hours}` : "", entry.service_bond, entry.retirement_benefits].filter(Boolean).join(" · "),
+                                 employmentTerms: [entry.allowances, entry.benefits, entry.employment_conditions, entry.probation_period ? `Probation: ${entry.probation_period}` : "", entry.contract_duration ? `Contract: ${entry.contract_duration}` : "", entry.working_hours ? `Working hours: ${entry.working_hours}` : "", entry.service_bond, entry.retirement_benefits].filter(Boolean).join(" · "),
+                                requiredDocuments: (Array.isArray(entry.required_documents) ? entry.required_documents : []).map((document) => ({ title: getLocalizedText(language, document.title_en, document.title_mr, document.title_hi), note: getLocalizedText(language, document.note_en, document.note_mr, document.note_hi), mandatory: document.mandatory !== false })).filter((document) => document.title),
                                 fees,
                               };
                             });
@@ -1343,6 +1344,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showSelectionStages = rows.some((row) => row.selectionStages.length > 0);
                             const showPostCompensation = rows.some((row) => row.compensation);
                             const showPostEmploymentTerms = rows.some((row) => row.employmentTerms);
+                            const showPostRequiredDocuments = rows.some((row) => row.requiredDocuments.length > 0);
                             const showWorkLocations = rows.some((row) => row.workLocations.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
@@ -1378,6 +1380,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showPostCompensation ? <th>{language === "mr" ? "वेतन / वेतनश्रेणी" : language === "hi" ? "वेतन / वेतनमान" : "Salary / Pay scale"}</th> : null}
                                       {showWorkLocations ? <th>{language === "mr" ? "नियुक्तीचे ठिकाण" : language === "hi" ? "कार्यस्थल" : "Work location"}</th> : null}
                                       {showPostEmploymentTerms ? <th>{language === "mr" ? "सेवेच्या अटी व लाभ" : language === "hi" ? "सेवा शर्तें और लाभ" : "Employment terms & benefits"}</th> : null}
+                                      {showPostRequiredDocuments ? <th>{language === "mr" ? "आवश्यक कागदपत्रे" : language === "hi" ? "आवश्यक दस्तावेज़" : "Required documents"}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1413,6 +1416,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showSelectionStages ? <td>{row.selectionStages.length ? <ol className="portal-post-selection-stages">{row.selectionStages.map((stage, stageIndex) => <li key={`${stageIndex}-${stage}`}>{stage}</li>)}</ol> : "—"}</td> : null}
                                         {showPostCompensation ? <td>{row.compensation || "—"}</td> : null}
                                         {showWorkLocations ? <td>{row.workLocations.length ? row.workLocations.join("; ") : "—"}</td> : null}
+                                        {showPostEmploymentTerms ? <td>{row.employmentTerms || "—"}</td> : null}
+                                        {showPostRequiredDocuments ? <td>{row.requiredDocuments.length ? <ul>{row.requiredDocuments.map((document, documentIndex) => <li key={documentIndex}>{document.title} — {document.mandatory ? (language === "mr" ? "अनिवार्य" : language === "hi" ? "अनिवार्य" : "Mandatory") : (language === "mr" ? "ऐच्छिक" : language === "hi" ? "वैकल्पिक" : "Optional")}{document.note ? ` · ${document.note}` : ""}</li>)}</ul> : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1435,6 +1440,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showSelectionStages ? <td></td> : null}
                                       {showWorkLocations ? <td></td> : null}
                                       {showPostEmploymentTerms ? <td></td> : null}
+                                      {showPostRequiredDocuments ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

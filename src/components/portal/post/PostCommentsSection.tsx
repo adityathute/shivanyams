@@ -131,7 +131,7 @@ function CommentThread({
       {reportTarget === item.id ? (
         <div className="portal-comment-report-panel portal-comment-thread-report">
           <div className="portal-comment-report-heading">
-            <div><strong>Report comment</strong><span>Tell us why this comment should be reviewed.</span></div>
+            <div><strong>Report comment</strong><span className="comment-subtitle">Tell us why this comment should be reviewed.</span></div>
             <div className="portal-comment-report-select">
               <Select
                 aria-label="Report reason"

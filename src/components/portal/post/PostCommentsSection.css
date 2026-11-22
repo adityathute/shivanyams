@@ -532,7 +532,7 @@
 .portal-comment-report-panel strong {
   font-size: 0.84rem;
 }
-.portal-comment-report-panel span {
+.comment-subtitle {
   color: var(--muted-foreground, #9298a2);
   font-size: 0.75rem;
 }

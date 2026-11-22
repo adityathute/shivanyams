@@ -547,6 +547,45 @@ def _can_access_media_post(request, post, write=False):
 
 
 
+class PublicEditorialImageVariant(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, asset_id):
+        from django.http import FileResponse
+        asset = get_object_or_404(
+            EditorialMediaAsset.objects.filter(
+                is_active=True,
+                kind=EditorialMediaAsset.Kind.IMAGE,
+                post_attachments__post__is_active=True,
+                post_attachments__post__status=Post.Status.PUBLISHED,
+                post_attachments__post__published_at__isnull=False,
+            ).distinct(),
+            pk=asset_id,
+        )
+        size = request.query_params.get("size", "medium")
+        if size not in {"thumbnail", "medium", "large"}:
+            raise ValidationError({"size": "Choose thumbnail, medium or large."})
+        variant = (asset.variants or {}).get(size)
+        if variant and variant.get("path"):
+            try:
+                stream = asset.file.storage.open(variant["path"], "rb")
+                response = FileResponse(stream, content_type="image/webp")
+                response["Content-Disposition"] = "inline"
+                response["Cache-Control"] = "public, max-age=31536000, immutable"
+                response["X-Content-Type-Options"] = "nosniff"
+                return response
+            except (OSError, ValueError):
+                pass
+        try:
+            response = FileResponse(asset.file.open("rb"), content_type=asset.mime_type or "application/octet-stream")
+        except (OSError, ValueError):
+            raise NotFound("The published image is unavailable.")
+        response["Content-Disposition"] = "inline"
+        response["Cache-Control"] = "public, max-age=3600"
+        response["X-Content-Type-Options"] = "nosniff"
+        return response
+
+
 class PublicEditorialMediaDownload(APIView):
     permission_classes = [permissions.AllowAny]
 

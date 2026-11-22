@@ -440,6 +440,11 @@ class JobPost(TimestampedModel):
     # Official category-wise age relaxations for this individual post.
     age_relaxations = models.JSONField(default=list, blank=True)
 
+    # Structured eligibility rules supplied by the recruitment notification.
+    education_requirements = models.JSONField(default=list, blank=True)
+    subject_requirements = models.JSONField(default=list, blank=True)
+    experience_requirements = models.JSONField(default=list, blank=True)
+
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:

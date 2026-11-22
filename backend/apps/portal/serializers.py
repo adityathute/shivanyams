@@ -277,6 +277,7 @@ class JobPostSerializer(serializers.ModelSerializer):
             "age_limit_note_en",
             "age_limit_note_mr",
             "age_limit_note_hi",
+            "age_relaxations",
             "sort_order",
             "fees",
             "educations",
@@ -310,6 +311,45 @@ class JobPostSerializer(serializers.ModelSerializer):
             if hasattr(exc, "message_dict"):
                 raise serializers.ValidationError(exc.message_dict)
             raise serializers.ValidationError(exc.messages)
+
+        # Validate category-wise age relaxation entries from the official notification.
+        age_relaxations = attrs.get("age_relaxations", getattr(self.instance, "age_relaxations", [])) or []
+        if not isinstance(age_relaxations, list):
+            raise serializers.ValidationError({
+                "age_relaxations": "Provide category-wise age relaxations as a list."
+            })
+        if len(age_relaxations) > 30:
+            raise serializers.ValidationError({
+                "age_relaxations": "A maximum of 30 category rules is allowed."
+            })
+        seen_categories = set()
+        for index, rule in enumerate(age_relaxations):
+            prefix = f"Category rule {index + 1}"
+            if not isinstance(rule, dict):
+                raise serializers.ValidationError({
+                    "age_relaxations": f"{prefix} must be an object."
+                })
+            category_names = [
+                str(rule.get(key, "")).strip()
+                for key in ("category_en", "category_mr", "category_hi")
+            ]
+            if not any(category_names):
+                raise serializers.ValidationError({
+                    "age_relaxations": f"{prefix} needs a category name in at least one language."
+                })
+            normalized_name = next(name.casefold() for name in category_names if name)
+            if normalized_name in seen_categories:
+                raise serializers.ValidationError({
+                    "age_relaxations": f"Duplicate category rule: {normalized_name}."
+                })
+            seen_categories.add(normalized_name)
+            for key, maximum in (("relaxation_years", 99), ("maximum_age", 120)):
+                value = rule.get(key)
+                if value is not None and value != "":
+                    if isinstance(value, bool) or not str(value).isdigit() or int(value) < 0 or int(value) > maximum:
+                        raise serializers.ValidationError({
+                            "age_relaxations": f"{prefix}: {key} must be a whole number from 0 to {maximum}."
+                        })
 
         # Prevent duplicate fee categories within the same post.
         fees = attrs.get("fees")

@@ -720,6 +720,44 @@ class PostSerializer(serializers.ModelSerializer):
         ]
 
 
+class PostSourceSerializer(serializers.ModelSerializer):
+    source_name = serializers.CharField(source="source.name", read_only=True)
+    source_domain = serializers.CharField(source="source.domain", read_only=True)
+    verification_status = serializers.CharField(source="source.verification_status", read_only=True)
+
+    class Meta:
+        model = PostSource
+        fields = (
+            "id", "post", "source", "source_name", "source_domain",
+            "verification_status", "evidence_type", "title", "source_url",
+            "published_on", "checked_at", "is_primary", "notes",
+            "created_at", "updated_at",
+        )
+        read_only_fields = ("id", "post", "source_name", "source_domain", "verification_status", "created_at", "updated_at")
+
+    def validate_source(self, value):
+        if not value.is_active or value.verification_status != OfficialSource.VerificationStatus.VERIFIED:
+            raise serializers.ValidationError("Select an active, verified official source.")
+        return value
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        source = attrs.get("source", getattr(self.instance, "source", None))
+        source_url = attrs.get("source_url", getattr(self.instance, "source_url", ""))
+        if source and source_url:
+            from urllib.parse import urlsplit
+            parsed = urlsplit(source_url)
+            if parsed.scheme != "https" or not parsed.hostname:
+                raise serializers.ValidationError({"source_url": "Evidence URLs must use HTTPS."})
+            if parsed.username or parsed.password:
+                raise serializers.ValidationError({"source_url": "Credentials are not allowed in evidence URLs."})
+            host = parsed.hostname.lower().rstrip(".")
+            domain = source.domain.lower().rstrip(".")
+            if host != domain and not host.endswith("." + domain):
+                raise serializers.ValidationError({"source_url": "Evidence URL must belong to the selected publisher domain."})
+        return attrs
+
+
 class PostWriteSerializer(serializers.ModelSerializer):
     """Admin-facing post writer with optional category-specific detail objects."""
 
@@ -1140,42 +1178,4 @@ class OfficialSourceSerializer(serializers.ModelSerializer):
         elif status_value != OfficialSource.VerificationStatus.VERIFIED and self.instance:
             attrs["verified_at"] = None
             attrs["verified_by_auth_id"] = ""
-        return attrs
-
-
-class PostSourceSerializer(serializers.ModelSerializer):
-    source_name = serializers.CharField(source="source.name", read_only=True)
-    source_domain = serializers.CharField(source="source.domain", read_only=True)
-    verification_status = serializers.CharField(source="source.verification_status", read_only=True)
-
-    class Meta:
-        model = PostSource
-        fields = (
-            "id", "post", "source", "source_name", "source_domain",
-            "verification_status", "evidence_type", "title", "source_url",
-            "published_on", "checked_at", "is_primary", "notes",
-            "created_at", "updated_at",
-        )
-        read_only_fields = ("id", "post", "source_name", "source_domain", "verification_status", "created_at", "updated_at")
-
-    def validate_source(self, value):
-        if not value.is_active or value.verification_status != OfficialSource.VerificationStatus.VERIFIED:
-            raise serializers.ValidationError("Select an active, verified official source.")
-        return value
-
-    def validate(self, attrs):
-        attrs = super().validate(attrs)
-        source = attrs.get("source", getattr(self.instance, "source", None))
-        source_url = attrs.get("source_url", getattr(self.instance, "source_url", ""))
-        if source and source_url:
-            from urllib.parse import urlsplit
-            parsed = urlsplit(source_url)
-            if parsed.scheme != "https" or not parsed.hostname:
-                raise serializers.ValidationError({"source_url": "Evidence URLs must use HTTPS."})
-            if parsed.username or parsed.password:
-                raise serializers.ValidationError({"source_url": "Credentials are not allowed in evidence URLs."})
-            host = parsed.hostname.lower().rstrip(".")
-            domain = source.domain.lower().rstrip(".")
-            if host != domain and not host.endswith("." + domain):
-                raise serializers.ValidationError({"source_url": "Evidence URL must belong to the selected publisher domain."})
         return attrs

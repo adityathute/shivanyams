@@ -4,7 +4,7 @@ from django.core.mail import send_mass_mail
 import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.utils.dateparse import parse_date
+from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.text import slugify
 from django.db.models import Count, F, Max, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets

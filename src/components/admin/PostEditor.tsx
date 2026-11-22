@@ -2208,6 +2208,7 @@ export default function PostEditor({
 
             <div className="post-editor-grid post-editor-detail-grid">
               {Object.entries(details).map(([key, value]) => {
+                if (kind.api === "videos" && key === "embed_url") return null;
                 if (kind.api === "jobs") {
                   const hiddenJobFields = [
                     "advertisement_no",

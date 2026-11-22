@@ -2034,6 +2034,8 @@ class OfficialSource(TimestampedModel):
         domain = (self.domain or "").strip().lower().rstrip(".")
         if not domain or "/" in domain or ":" in domain or "@" in domain:
             raise ValidationError({"domain": "Enter a hostname only, without a scheme or path."})
+        if domain == "localhost" or domain.endswith((".localhost", ".local", ".internal", ".test")):
+            raise ValidationError({"domain": "Local and internal hostnames cannot be registered as official sources."})
         try:
             ipaddress.ip_address(domain)
         except ValueError:

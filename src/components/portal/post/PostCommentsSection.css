@@ -551,16 +551,16 @@
 /* Keep the report form attached to the comment, matching the reply branch. */
 .portal-comment-thread-report {
   margin: 9px 0 3px 39px;
-  padding: 10px;
+  padding: 9px;
   border-radius: 9px;
   animation: comment-reply-in 0.18s ease-out;
 }
 .portal-comment-thread-report::before {
   content: "";
   position: absolute;
-  top: -30px;
+  top: -59px;
   left: -25px;
-  height: 39px;
+  height: 68px;
   border-left: 1.5px solid var(--border-color, #cbd5e1);
 }
 .portal-comment-thread-report::after {

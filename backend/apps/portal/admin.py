@@ -363,6 +363,7 @@ class JobPostInline(admin.StackedInline):
                     "vacancies",
                     "important_dates",
                     "application_links",
+                    "selection_stages",
                 )
             },
         ),

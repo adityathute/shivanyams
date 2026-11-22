@@ -41,5 +41,5 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(model_name="videocollectionitem", constraint=models.UniqueConstraint(fields=("collection", "post"), name="unique_video_collection_post")),
         migrations.AddIndex(model_name="videocollection", index=models.Index(fields=["collection_type", "is_published", "sort_order"], name="video_collection_public_idx")),
-        migrations.AddIndex(model_name="videocollectionitem", index=models.Index(fields=["collection", "sort_order"], name="video_collection_item_order_idx")),
+        migrations.AddIndex(model_name="videocollectionitem", index=models.Index(fields=["collection", "sort_order"], name="vid_coll_item_order_idx")),
     ]

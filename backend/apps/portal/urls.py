@@ -26,6 +26,10 @@ from .views import (
     AdminDashboardStats,
     TrackWebsiteView,
     AdminWebsiteAnalytics,
+    AdminOfficialSources,
+    AdminOfficialSourceDetail,
+    AdminPostSources,
+    AdminPostSourceDetail,
 )
 
 router = DefaultRouter()
@@ -115,6 +119,12 @@ urlpatterns = [
     ),
     path("admin/comments/", AdminComments.as_view(), name="admin-comments"),
     path("admin/content/<int:post_id>/engagement/", AdminPostEngagement.as_view(), name="admin-post-engagement"),
+
+    # Official source registry and per-post evidence
+    path("admin/official-sources/", AdminOfficialSources.as_view(), name="admin-official-sources"),
+    path("admin/official-sources/<int:source_id>/", AdminOfficialSourceDetail.as_view(), name="admin-official-source-detail"),
+    path("admin/content/<int:post_id>/official-sources/", AdminPostSources.as_view(), name="admin-post-sources"),
+    path("admin/content/<int:post_id>/official-sources/<int:source_link_id>/", AdminPostSourceDetail.as_view(), name="admin-post-source-detail"),
 
     # Saved posts
     path("saved-posts/", SavedPosts.as_view(), name="saved-posts"),

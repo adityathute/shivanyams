@@ -572,19 +572,22 @@
   border-top: 1.5px solid var(--border-color, #cbd5e1);
 }
 .portal-comment-report-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 126px;
+  align-items: start;
+  gap: 10px;
   min-width: 0;
 }
 .portal-comment-report-heading > div:first-child {
-  display: grid;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
   min-width: 0;
-  gap: 2px;
+  gap: 3px 8px;
 }
 .portal-comment-report-select {
-  flex: 0 0 126px;
+  justify-self: end;
+  align-self: start;
   width: 126px;
   max-width: 126px;
   min-width: 0;
@@ -674,10 +677,13 @@
     width: 10px;
   }
   .portal-comment-report-heading {
+    grid-template-columns: minmax(0, 1fr) 112px;
     gap: 8px;
   }
+  .portal-comment-report-heading > div:first-child {
+    column-gap: 6px;
+  }
   .portal-comment-report-select {
-    flex-basis: 112px;
     width: 112px;
     max-width: 112px;
   }

@@ -93,6 +93,18 @@ type JobPostEducationInput = {
   sort_order: number;
 };
 
+type JobPostApplicationLinkInput = {
+  link_type: "apply" | "registration" | "fee_payment" | "instructions" | "other";
+  label_en: string;
+  label_mr: string;
+  label_hi: string;
+  url: string;
+  instructions_en: string;
+  instructions_mr: string;
+  instructions_hi: string;
+  sort_order: number;
+};
+
 type JobPostInput = {
   post_number: string;
   post_name_en: string;
@@ -150,6 +162,18 @@ const createEmptyJobPostFee = (): JobPostFeeInput => ({
   payment_instructions_mr: "",
   payment_instructions_hi: "",
   sort_order: 0,
+});
+
+const createEmptyJobPostApplicationLink = (sort_order: number): JobPostApplicationLinkInput => ({
+  link_type: "apply",
+  label_en: "",
+  label_mr: "",
+  label_hi: "",
+  url: "",
+  instructions_en: "",
+  instructions_mr: "",
+  instructions_hi: "",
+  sort_order,
 });
 
 const createEmptyJobPost = (sort_order: number): JobPostInput => ({
@@ -875,6 +899,12 @@ export default function PostEditor({
           template.posts = existingPosts.map((post, index) => ({
             ...createEmptyJobPost(index),
             ...post,
+            application_links: Array.isArray(post.application_links)
+              ? (post.application_links as Record<string, unknown>[]).map((link, linkIndex) => ({
+                  ...createEmptyJobPostApplicationLink(linkIndex),
+                  ...link,
+                }))
+              : [],
             fees: Array.isArray(post.fees)
               ? (post.fees as Record<string, unknown>[]).map((fee) => ({
                   ...createEmptyJobPostFee(),
@@ -1288,6 +1318,9 @@ export default function PostEditor({
       age_as_on_date: normalizeApiDate(post.age_as_on_date),
       eligible_dob_from: normalizeApiDate(post.eligible_dob_from),
       eligible_dob_to: normalizeApiDate(post.eligible_dob_to),
+      application_links: (post.application_links || [])
+        .filter((link) => link.label_en.trim() || link.label_mr.trim() || link.label_hi.trim() || link.url.trim())
+        .map((link, index) => ({ ...link, sort_order: index })),
       fees: post.fees.map((fee) => ({
         ...fee,
         fee_amount:
@@ -2054,26 +2087,40 @@ export default function PostEditor({
                       ))}
                     </section>
 
-                    <section className="post-editor-post-detail-section post-editor-post-dates">
+                    <section className="post-editor-post-detail-section post-editor-post-application-links">
                       <div className="post-editor-subsection-heading">
-                        <div><h4>Post-specific important dates</h4><small>Use only when an individual post has dates different from the notification-wide timeline. Keep the values exactly as stated in the official notification.</small></div>
+                        <div><h4>Post-specific application links</h4><small>Add official application, registration, fee-payment or instruction links that apply only to this advertised post. Leave empty when all posts share the notification-level link.</small></div>
+                        <button className="post-editor-add-button" type="button" onClick={() => updateJobPost(postIndex, "application_links", [...(post.application_links || []), createEmptyJobPostApplicationLink((post.application_links || []).length)])}>
+                          <span aria-hidden="true">＋</span> Add application link
+                        </button>
                       </div>
-                      <Textarea
-                        label="Post-specific application links (JSON)"
-                        rows={7}
-                        value={JSON.stringify(post.application_links ?? [], null, 2)}
-                        onChange={(event) => {
-                          try {
-                            const parsed = JSON.parse(event.target.value);
-                            if (Array.isArray(parsed)) updateJobPost(postIndex, "application_links", parsed);
-                          } catch {
-                            // Keep the last valid list while the user edits JSON.
-                          }
-                        }}
-                        placeholder={'[{"link_type":"apply","label_en":"Apply for this post","label_mr":"या पदासाठी अर्ज करा","label_hi":"इस पद के लिए आवेदन करें","url":"https://official.gov.in/apply/post-1","instructions_en":"Select this post before submitting"}]'}
-                        fullWidth
-                        size="sm"
-                      />
+                      {(post.application_links || []).map((applicationLink, linkIndex) => (
+                        <details className="post-editor-repeat-card post-editor-nested-card post-editor-collapsible" key={linkIndex} open>
+                          <summary className="post-editor-card-summary">
+                            <span><strong>{applicationLink.label_en || `Application link ${linkIndex + 1}`}</strong><small>{applicationLink.link_type.replaceAll("_", " ")}</small></span>
+                          </summary>
+                          <div className="post-editor-fee-fields">
+                            <label className="post-editor-field-label">Link type</label>
+                            <select className="post-editor-select" value={applicationLink.link_type} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, link_type: event.target.value as JobPostApplicationLinkInput["link_type"] } : item))}>
+                              <option value="apply">Apply</option>
+                              <option value="registration">Registration</option>
+                              <option value="fee_payment">Fee payment</option>
+                              <option value="instructions">Instructions</option>
+                              <option value="other">Other</option>
+                            </select>
+                            <Input label="Label (English)" value={applicationLink.label_en} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, label_en: event.target.value } : item))} fullWidth size="sm" />
+                            <Input label="Label (Marathi)" value={applicationLink.label_mr} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, label_mr: event.target.value } : item))} fullWidth size="sm" />
+                            <Input label="Label (Hindi)" value={applicationLink.label_hi} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, label_hi: event.target.value } : item))} fullWidth size="sm" />
+                            <Input type="url" label="Official destination URL" placeholder="https://..." value={applicationLink.url} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, url: event.target.value } : item))} fullWidth size="sm" />
+                            <Textarea label="Instructions (English)" rows={2} value={applicationLink.instructions_en} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, instructions_en: event.target.value } : item))} fullWidth />
+                            <Textarea label="Instructions (Marathi)" rows={2} value={applicationLink.instructions_mr} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, instructions_mr: event.target.value } : item))} fullWidth />
+                            <Textarea label="Instructions (Hindi)" rows={2} value={applicationLink.instructions_hi} onChange={(event) => updateJobPost(postIndex, "application_links", post.application_links.map((item, index) => index === linkIndex ? { ...item, instructions_hi: event.target.value } : item))} fullWidth />
+                          </div>
+                          <div className="post-editor-card-actions">
+                            <button type="button" className="post-editor-remove" onClick={() => updateJobPost(postIndex, "application_links", post.application_links.filter((_, index) => index !== linkIndex).map((item, index) => ({ ...item, sort_order: index })))}>Remove application link</button>
+                          </div>
+                        </details>
+                      ))}
                     </section>
 
                     <section className="post-editor-post-detail-section post-editor-post-dates">

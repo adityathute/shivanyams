@@ -23,6 +23,10 @@ type JobDiscoveryPost = {
   summary_mr?: string;
   summary_hi?: string;
   published_at?: string | null;
+  organization_type?: string;
+  location?: string;
+  state?: string;
+  country?: string;
   job_details?: {
     total_vacancies?: number | null;
     recruitment_type?: string;
@@ -50,6 +54,13 @@ export function JobsPage() {
   const [maxVacancies, setMaxVacancies] = useState("");
   const [closingFrom, setClosingFrom] = useState("");
   const [closingTo, setClosingTo] = useState("");
+  const [organizationType, setOrganizationType] = useState("");
+  const [department, setDepartment] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [location, setLocation] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [facets, setFacets] = useState<{ organization_types: { value: string; label: string }[]; departments: string[]; designations: string[]; locations: string[]; states: string[]; countries: string[] }>({ organization_types: [], departments: [], designations: [], locations: [], states: [], countries: [] });
   const [results, setResults] = useState<JobDiscoveryPost[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState("");
@@ -67,6 +78,19 @@ export function JobsPage() {
   }, [data.items, query]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    fetch(getPortalApiUrl("content/jobs/facets/"), { signal: controller.signal })
+      .then((response) => { if (!response.ok) throw new Error("Unable to load job filter options."); return response.json(); })
+      .then((payload) => setFacets({
+        organization_types: payload.organization_types || [], departments: payload.departments || [],
+        designations: payload.designations || [], locations: payload.locations || [],
+        states: payload.states || [], countries: payload.countries || [],
+      }))
+      .catch((error) => { if (error.name !== "AbortError") console.error("Job filter options failed:", error); });
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
     if (!hasSearched) return;
     const controller = new AbortController();
     const params = new URLSearchParams();
@@ -78,6 +102,12 @@ export function JobsPage() {
     if (maxVacancies) params.set("max_vacancies", maxVacancies);
     if (closingFrom) params.set("closing_from", closingFrom);
     if (closingTo) params.set("closing_to", closingTo);
+    if (organizationType) params.set("organization_type", organizationType);
+    if (department) params.set("department", department);
+    if (designation) params.set("designation", designation);
+    if (location) params.set("location", location);
+    if (state) params.set("state", state);
+    if (country) params.set("country", country);
     params.set("sort", "recent");
 
     setSearchLoading(true);
@@ -98,7 +128,7 @@ export function JobsPage() {
         if (!controller.signal.aborted) setSearchLoading(false);
       });
     return () => controller.abort();
-  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo]);
+  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country]);
 
   const displayedJobs = hasSearched ? results : legacyJobs;
   const clearFilters = () => {
@@ -145,6 +175,12 @@ export function JobsPage() {
               <label>Maximum vacancies<input type="number" min="0" value={maxVacancies} onChange={(e) => { setMaxVacancies(e.target.value); setHasSearched(true); }} placeholder="e.g. 500" /></label>
               <label>Closing date from<input type="date" value={closingFrom} onChange={(e) => { setClosingFrom(e.target.value); setHasSearched(true); }} /></label>
               <label>Closing date to<input type="date" value={closingTo} onChange={(e) => { setClosingTo(e.target.value); setHasSearched(true); }} /></label>
+              <label>Organization type<select value={organizationType} onChange={(e) => { setOrganizationType(e.target.value); setHasSearched(true); }}><option value="">All organizations</option>{facets.organization_types.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+              <label>Department<select value={department} onChange={(e) => { setDepartment(e.target.value); setHasSearched(true); }}><option value="">All departments</option>{facets.departments.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+              <label>Designation<select value={designation} onChange={(e) => { setDesignation(e.target.value); setHasSearched(true); }}><option value="">All designations</option>{facets.designations.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+              <label>Location<select value={location} onChange={(e) => { setLocation(e.target.value); setHasSearched(true); }}><option value="">All locations</option>{facets.locations.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+              <label>State<select value={state} onChange={(e) => { setState(e.target.value); setHasSearched(true); }}><option value="">All states</option>{facets.states.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+              <label>Country<select value={country} onChange={(e) => { setCountry(e.target.value); setHasSearched(true); }}><option value="">All countries</option>{facets.countries.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
             </div>
           </section>
 

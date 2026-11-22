@@ -373,6 +373,7 @@ const detailLabels = {
     hi: "आयु संबंधी टिप्पणी",
   },
   ageRelaxation: { en: "Category-wise age relaxation", mr: "प्रवर्गनिहाय वयोमर्यादा सवलत", hi: "श्रेणीवार आयु छूट" },
+  reservation: { en: "Vacancy reservation", mr: "प्रवर्गनिहाय आरक्षण", hi: "श्रेणीवार आरक्षण" },
   educationRequirements: { en: "Education requirements", mr: "शैक्षणिक पात्रता", hi: "शैक्षणिक योग्यता" },
   subjectRequirements: { en: "Subject requirements", mr: "विषयाची अट", hi: "विषय संबंधी आवश्यकता" },
   experienceRequirements: { en: "Experience requirements", mr: "अनुभवाची अट", hi: "अनुभव संबंधी आवश्यकता" },
@@ -1200,6 +1201,19 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                               const educationRequirements = formatRequirements(entry.education_requirements, true);
                               const subjectRequirements = formatRequirements(entry.subject_requirements);
                               const experienceRequirements = formatRequirements(entry.experience_requirements, true);
+                              const reservationRules = (Array.isArray(entry.reservation_rules) ? entry.reservation_rules : []).map((rule) => {
+                                const category = getLocalizedText(language, rule.category_en, rule.category_mr, rule.category_hi);
+                                const type = rule.reservation_type === "horizontal"
+                                  ? (language === "mr" ? "आडवे" : language === "hi" ? "क्षैतिज" : "Horizontal")
+                                  : (language === "mr" ? "उभे" : language === "hi" ? "ऊर्ध्वाधर" : "Vertical");
+                                const details = [
+                                  rule.vacancies != null && rule.vacancies !== "" ? `${rule.vacancies} ${getDetailLabel("vacancies", language)}` : "",
+                                  rule.percentage != null && rule.percentage !== "" ? `${rule.percentage}%` : "",
+                                  rule.applies_to || "",
+                                  getLocalizedText(language, rule.note_en, rule.note_mr, rule.note_hi),
+                                ].filter(Boolean);
+                                return category ? `${type} · ${category}: ${details.join(" · ")}` : "";
+                              }).filter(Boolean);
                               const fees = (entry.fees || []).map((fee) => {
                                 const categoryName = getLocalizedText(
                                   language,
@@ -1255,6 +1269,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 educationRequirements,
                                 subjectRequirements,
                                 experienceRequirements,
+                                reservationRules,
                                 fees,
                               };
                             });
@@ -1277,6 +1292,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showPostFees = rows.some(
                               (row) => row.fees.length > 0,
                             );
+                            const showReservations = rows.some((row) => row.reservationRules.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
                               0,
@@ -1304,6 +1320,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showEducationRequirements ? <th>{getDetailLabel("educationRequirements", language)}</th> : null}
                                       {showSubjectRequirements ? <th>{getDetailLabel("subjectRequirements", language)}</th> : null}
                                       {showExperienceRequirements ? <th>{getDetailLabel("experienceRequirements", language)}</th> : null}
+                                      {showReservations ? <th>{getDetailLabel("reservation", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1320,6 +1337,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showEducationRequirements ? <td>{row.educationRequirements.length ? row.educationRequirements.join("; ") : "—"}</td> : null}
                                         {showSubjectRequirements ? <td>{row.subjectRequirements.length ? row.subjectRequirements.join("; ") : "—"}</td> : null}
                                         {showExperienceRequirements ? <td>{row.experienceRequirements.length ? row.experienceRequirements.join("; ") : "—"}</td> : null}
+                                        {showReservations ? <td>{row.reservationRules.length ? row.reservationRules.join("; ") : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1336,6 +1354,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showEducationRequirements ? <td></td> : null}
                                       {showSubjectRequirements ? <td></td> : null}
                                       {showExperienceRequirements ? <td></td> : null}
+                                      {showReservations ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

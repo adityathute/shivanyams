@@ -371,6 +371,9 @@ class JobPostInline(admin.StackedInline):
                     "educational_qualification_en",
                     "educational_qualification_mr",
                     "educational_qualification_hi",
+                    "education_requirements",
+                    "subject_requirements",
+                    "experience_requirements",
                 )
             },
         ),

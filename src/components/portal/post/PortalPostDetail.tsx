@@ -384,6 +384,20 @@ const detailLabels = {
     mr: "मुलाखतीचे ठिकाण",
     hi: "साक्षात्कार का स्थान",
   },
+  recruitmentType: { en: "Recruitment type", mr: "भरतीचा प्रकार", hi: "भर्ती का प्रकार" },
+  applicationStatus: { en: "Application status", mr: "अर्जाची स्थिती", hi: "आवेदन की स्थिति" },
+  departmentName: { en: "Department", mr: "विभाग", hi: "विभाग" },
+  designation: { en: "Designation", mr: "पदनाम", hi: "पदनाम" },
+  selectionProcess: { en: "Selection process", mr: "निवड प्रक्रिया", hi: "चयन प्रक्रिया" },
+  examPattern: { en: "Exam pattern", mr: "परीक्षा पद्धती", hi: "परीक्षा पैटर्न" },
+  syllabus: { en: "Syllabus", mr: "अभ्यासक्रम", hi: "पाठ्यक्रम" },
+  physicalTest: { en: "Physical test", mr: "शारीरिक चाचणी", hi: "शारीरिक परीक्षा" },
+  interviewDetails: { en: "Interview details", mr: "मुलाखतीचा तपशील", hi: "साक्षात्कार विवरण" },
+  applyNow: { en: "Apply online", mr: "ऑनलाइन अर्ज करा", hi: "ऑनलाइन आवेदन करें" },
+  officialNotification: { en: "Official notification", mr: "अधिकृत जाहिरात", hi: "आधिकारिक अधिसूचना" },
+  applicationOpen: { en: "Applications are open", mr: "अर्ज सुरू आहेत", hi: "आवेदन खुले हैं" },
+  applicationClosed: { en: "Applications are closed", mr: "अर्ज बंद झाले आहेत", hi: "आवेदन बंद हैं" },
+
   importantDates: {
     en: "Important Dates",
     mr: "महत्त्वाच्या तारखा",
@@ -1280,6 +1294,33 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       ) : null}
 
 
+                    <div className="portal-job-extra-details">
+                      <div className="portal-job-status-row">
+                        <span className={jobDetails?.applications_open ? "is-open" : "is-closed"}>
+                          {getDetailLabel(jobDetails?.applications_open ? "applicationOpen" : "applicationClosed", language)}
+                        </span>
+                        {jobDetails?.recruitment_type ? <span>{getDetailLabel("recruitmentType", language)}: {detailLabelFallback(jobDetails.recruitment_type)}</span> : null}
+                      </div>
+                      {[
+                        [getDetailLabel("departmentName", language), jobDetails?.department],
+                        [getDetailLabel("designation", language), jobDetails?.designation],
+                        [getDetailLabel("postDetails", language), jobDetails?.post_details],
+                        [getDetailLabel("selectionProcess", language), jobDetails?.selection_process],
+                        [getDetailLabel("examPattern", language), jobDetails?.exam_pattern],
+                        [getDetailLabel("syllabus", language), jobDetails?.syllabus],
+                        [getDetailLabel("physicalTest", language), jobDetails?.physical_test_details],
+                        [getDetailLabel("interviewDetails", language), jobDetails?.interview_details],
+                      ].filter(([, value]) => Boolean(value && String(value).trim())).map(([heading, value]) => (
+                        <section className="portal-job-extra-section" key={heading}>
+                          <h2>{heading}</h2><p>{value}</p>
+                        </section>
+                      ))}
+                      <div className="portal-job-official-actions">
+                        {jobDetails?.apply_url ? <a className="portal-job-action-primary" href={jobDetails.apply_url} target="_blank" rel="noopener noreferrer">{getDetailLabel("applyNow", language)}</a> : null}
+                        {jobDetails?.official_notification_url ? <a href={jobDetails.official_notification_url} target="_blank" rel="noopener noreferrer">{getDetailLabel("officialNotification", language)}</a> : null}
+                        {jobDetails?.official_website ? <a href={jobDetails.official_website} target="_blank" rel="noopener noreferrer">{getDetailLabel("visitWebsite", language)}</a> : null}
+                      </div>
+                    </div>
                     </section>
                   ) : null}
 

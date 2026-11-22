@@ -87,6 +87,7 @@ urlpatterns = [
     # Public content: jobs, schemes, examinations, admit cards,
     # results, articles, videos and tools.
     path("content/search/", PublicContentSearch.as_view(), name="content-search"),
+    path("content/videos/discovery/", PublicVideoDiscovery.as_view(), name="public-video-discovery"),
     path("content/video-collections/", PublicVideoCollections.as_view(), name="public-video-collections"),
     path("content/<str:kind>/", content_list, name="content-list"),
 

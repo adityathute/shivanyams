@@ -21,7 +21,7 @@ import {
 import type { ItemType } from "../data/portal-data";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../../../lib/portal-api";
-export { getPortalApiUrl } from "../../../lib/portal-api";
+export { API_URL, getPortalApiUrl } from "../../../lib/portal-api";
 
 export type Language = "en" | "mr" | "hi";
 

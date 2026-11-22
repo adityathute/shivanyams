@@ -1661,3 +1661,6 @@
 .video-collection-admin-row small { color: var(--text-secondary, #718096); }
 .video-collection-admin-row a { font-size: 12px; }
 @media (max-width: 640px) { .video-collection-form { grid-template-columns: 1fr; } .video-collection-form label { grid-column: 1 / -1; } .video-collections-admin > header { flex-direction: column; } }
+
+.video-collection-form-actions, .video-collection-row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.video-collection-row-actions button:last-child { background: #9b2c2c; }

@@ -131,6 +131,12 @@ type JobPostInput = {
   important_dates: Array<Record<string, unknown>>;
   application_links: Array<Record<string, unknown>>;
   selection_stages: JobPostSelectionStageInput[];
+  salary_currency: string;
+  salary_period: string;
+  salary_min: string;
+  salary_max: string;
+  pay_scale: string;
+  grade_pay: string;
   educational_qualification_en: string;
   educational_qualification_mr: string;
   educational_qualification_hi: string;
@@ -216,6 +222,12 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   important_dates: [],
   application_links: [],
   selection_stages: [],
+  salary_currency: "INR",
+  salary_period: "monthly",
+  salary_min: "",
+  salary_max: "",
+  pay_scale: "",
+  grade_pay: "",
   educational_qualification_en: "",
   educational_qualification_mr: "",
   educational_qualification_hi: "",
@@ -927,6 +939,12 @@ export default function PostEditor({
           template.posts = existingPosts.map((post, index) => ({
             ...createEmptyJobPost(index),
             ...post,
+            salary_currency: String(post.salary_currency ?? "INR"),
+            salary_period: String(post.salary_period ?? "monthly"),
+            salary_min: post.salary_min == null ? "" : String(post.salary_min),
+            salary_max: post.salary_max == null ? "" : String(post.salary_max),
+            pay_scale: String(post.pay_scale ?? ""),
+            grade_pay: String(post.grade_pay ?? ""),
             selection_stages: Array.isArray(post.selection_stages)
               ? (post.selection_stages as Record<string, unknown>[]).map((stage, stageIndex) => ({
                   ...createEmptyJobPostSelectionStage(stageIndex),
@@ -1370,6 +1388,12 @@ export default function PostEditor({
       age_as_on_date: normalizeApiDate(post.age_as_on_date),
       eligible_dob_from: normalizeApiDate(post.eligible_dob_from),
       eligible_dob_to: normalizeApiDate(post.eligible_dob_to),
+      salary_currency: post.salary_currency.trim() || "INR",
+      salary_period: post.salary_period.trim() || "monthly",
+      salary_min: post.salary_min.trim() === "" ? null : Number(post.salary_min),
+      salary_max: post.salary_max.trim() === "" ? null : Number(post.salary_max),
+      pay_scale: post.pay_scale.trim(),
+      grade_pay: post.grade_pay.trim(),
       selection_stages: (post.selection_stages || [])
         .filter((stage) => stage.title_en.trim() || stage.title_mr.trim() || stage.title_hi.trim())
         .map((stage, index) => ({
@@ -2160,6 +2184,18 @@ export default function PostEditor({
                           size="sm"
                         />
                       ))}
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-post-compensation">
+                      <div className="post-editor-subsection-heading"><div><h4>Post-specific salary and pay scale</h4><small>Enter compensation when it differs by advertised post. Leave blank when all posts share the notification-level salary.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Input label="Currency code" value={post.salary_currency} onChange={(event) => updateJobPost(postIndex, "salary_currency", event.target.value.toUpperCase())} placeholder="INR" fullWidth size="sm" />
+                        <label className="post-editor-field-label">Pay period</label><select className="post-editor-select" value={post.salary_period} onChange={(event) => updateJobPost(postIndex, "salary_period", event.target.value)}><option value="monthly">Monthly</option><option value="annual">Annual</option><option value="hourly">Hourly</option><option value="daily">Daily</option><option value="one_time">One-time</option></select>
+                        <Input type="number" label="Minimum salary" min={0} step="0.01" value={post.salary_min} onChange={(event) => updateJobPost(postIndex, "salary_min", event.target.value)} fullWidth size="sm" />
+                        <Input type="number" label="Maximum salary" min={0} step="0.01" value={post.salary_max} onChange={(event) => updateJobPost(postIndex, "salary_max", event.target.value)} fullWidth size="sm" />
+                        <Input label="Pay scale" value={post.pay_scale} onChange={(event) => updateJobPost(postIndex, "pay_scale", event.target.value)} fullWidth size="sm" />
+                        <Input label="Grade pay" value={post.grade_pay} onChange={(event) => updateJobPost(postIndex, "grade_pay", event.target.value)} fullWidth size="sm" />
+                      </div>
                     </section>
 
                     <section className="post-editor-post-detail-section post-editor-post-selection-stages">

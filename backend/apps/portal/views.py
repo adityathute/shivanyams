@@ -34,6 +34,8 @@ from .models import (
     PostReaction,
     PostStatusHistory,
     PostRevision,
+    PostTag,
+    PostTaxonomyTerm,
     PostView,
     PostVisitor,
     WebsiteVisitor,

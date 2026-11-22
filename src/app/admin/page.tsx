@@ -607,8 +607,16 @@ export default function AdminPage() {
   }
 
   async function bulkChangeStatus(status: "published" | "archived") {
-    const targets = posts.filter((post) => selectedIds.includes(post.id));
-    if (!targets.length) return;
+    const selectedPosts = posts.filter((post) => selectedIds.includes(post.id));
+    const targets = status === "published"
+      ? selectedPosts.filter((post) => post.status === "approved")
+      : selectedPosts;
+    if (!targets.length) {
+      setError(status === "published"
+        ? "Only approved content can be published. Submit drafts for review and approve them first."
+        : "Select at least one post.");
+      return;
+    }
     if (
       !window.confirm(
         `${status === "published" ? "Publish" : "Archive"} ${targets.length} selected posts?`,
@@ -1105,11 +1113,24 @@ export default function AdminPage() {
                             {post.status !== "published" && (
                               <button
                                 disabled={busyPost === post.id}
-                                onClick={() =>
-                                  void changeStatus(post, "published")
-                                }
+                                onClick={() => void changeStatus(
+                                  post,
+                                  post.status === "draft" || post.status === "changes_requested"
+                                    ? "pending_review"
+                                    : post.status === "pending_review"
+                                      ? "approved"
+                                      : post.status === "approved"
+                                        ? "published"
+                                        : "draft",
+                                )}
                               >
-                                Publish
+                                {post.status === "draft" || post.status === "changes_requested"
+                                  ? "Submit for review"
+                                  : post.status === "pending_review"
+                                    ? "Approve"
+                                    : post.status === "approved"
+                                      ? "Publish"
+                                      : "Return to draft"}
                               </button>
                             )}
                             <button

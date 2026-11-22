@@ -1726,3 +1726,247 @@ class PostReport(TimestampedModel):
 
     def __str__(self):
         return f"{self.post.title_en}: {self.reason}"
+
+
+
+# ---------------------------------------------------------------------------
+# Normalized taxonomy and tag relationships
+# ---------------------------------------------------------------------------
+
+class TaxonomyType(TimestampedModel):
+    """A controlled taxonomy namespace, such as department or qualification."""
+
+    name_en = models.CharField(max_length=120)
+    name_mr = models.CharField(max_length=120, blank=True)
+    name_hi = models.CharField(max_length=120, blank=True)
+    slug = models.SlugField(max_length=120, unique=True)
+    description_en = models.TextField(blank=True)
+    description_mr = models.TextField(blank=True)
+    description_hi = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("name_en",)
+        indexes = [
+            models.Index(fields=("is_active", "slug"), name="portal_tax_type_active_idx"),
+        ]
+
+    def __str__(self):
+        return self.name_en
+
+
+class TaxonomyTerm(TimestampedModel):
+    """A reusable multilingual term inside a taxonomy namespace."""
+
+    taxonomy_type = models.ForeignKey(
+        TaxonomyType,
+        on_delete=models.PROTECT,
+        related_name="terms",
+    )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="children",
+    )
+    name_en = models.CharField(max_length=160)
+    name_mr = models.CharField(max_length=160, blank=True)
+    name_hi = models.CharField(max_length=160, blank=True)
+    slug = models.SlugField(max_length=180)
+    description_en = models.TextField(blank=True)
+    description_mr = models.TextField(blank=True)
+    description_hi = models.TextField(blank=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("taxonomy_type_id", "sort_order", "name_en")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("taxonomy_type", "slug"),
+                name="unique_taxonomy_term_slug",
+            ),
+            models.CheckConstraint(
+                condition=~models.Q(parent=models.F("id")),
+                name="prevent_taxonomy_term_self_parent",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=("taxonomy_type", "is_active", "sort_order"),
+                name="portal_tax_term_active_idx",
+            ),
+            models.Index(fields=("parent", "is_active"), name="portal_tax_term_parent_idx"),
+        ]
+
+    def clean(self):
+        super().clean()
+        if self.parent_id and self.taxonomy_type_id:
+            if self.parent.taxonomy_type_id != self.taxonomy_type_id:
+                raise models.ValidationError(
+                    {"parent": "Parent term must belong to the same taxonomy type."}
+                )
+
+    def __str__(self):
+        return self.name_en
+
+
+class TaxonomyAlias(TimestampedModel):
+    """A language-specific alternate spelling for a taxonomy term."""
+
+    class Language(models.TextChoices):
+        ENGLISH = "en", "English"
+        MARATHI = "mr", "Marathi"
+        HINDI = "hi", "Hindi"
+
+    term = models.ForeignKey(
+        TaxonomyTerm,
+        on_delete=models.CASCADE,
+        related_name="aliases",
+    )
+    language = models.CharField(max_length=2, choices=Language.choices)
+    value = models.CharField(max_length=180)
+    normalized_value = models.CharField(max_length=180, editable=False)
+
+    class Meta:
+        ordering = ("language", "normalized_value")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("language", "normalized_value"),
+                name="unique_taxonomy_alias_language",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("term", "language"), name="portal_tax_alias_term_idx"),
+        ]
+
+    def save(self, *args, **kwargs):
+        self.normalized_value = " ".join(self.value.casefold().split())
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.value
+
+
+class PostTaxonomyTerm(TimestampedModel):
+    """Many-to-many assignment of controlled taxonomy terms to portal posts."""
+
+    class RelationType(models.TextChoices):
+        PRIMARY = "primary", "Primary"
+        SECONDARY = "secondary", "Secondary"
+
+    post = models.ForeignKey(
+        "Post",
+        on_delete=models.CASCADE,
+        related_name="taxonomy_assignments",
+    )
+    term = models.ForeignKey(
+        TaxonomyTerm,
+        on_delete=models.PROTECT,
+        related_name="post_assignments",
+    )
+    relation_type = models.CharField(
+        max_length=12,
+        choices=RelationType.choices,
+        default=RelationType.SECONDARY,
+    )
+
+    class Meta:
+        ordering = ("relation_type", "term__name_en")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "term"),
+                name="unique_post_taxonomy_term",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("term", "post"), name="portal_post_tax_term_idx"),
+            models.Index(fields=("post", "relation_type"), name="portal_tax_post_role_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.post_id}: {self.term_id}"
+
+
+class Tag(TimestampedModel):
+    """A normalized, reusable multilingual content tag."""
+
+    name_en = models.CharField(max_length=120)
+    name_mr = models.CharField(max_length=120, blank=True)
+    name_hi = models.CharField(max_length=120, blank=True)
+    slug = models.SlugField(max_length=140, unique=True)
+    description = models.CharField(max_length=500, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("name_en",)
+        indexes = [
+            models.Index(fields=("is_active", "name_en"), name="portal_tag_active_name_idx"),
+        ]
+
+    def __str__(self):
+        return self.name_en
+
+
+class TagAlias(TimestampedModel):
+    """Alternate names and spellings that resolve to one canonical tag."""
+
+    class Language(models.TextChoices):
+        ENGLISH = "en", "English"
+        MARATHI = "mr", "Marathi"
+        HINDI = "hi", "Hindi"
+
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="aliases")
+    language = models.CharField(max_length=2, choices=Language.choices)
+    value = models.CharField(max_length=160)
+    normalized_value = models.CharField(max_length=160, editable=False)
+
+    class Meta:
+        ordering = ("language", "normalized_value")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("language", "normalized_value"),
+                name="unique_tag_alias_language",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("tag", "language"), name="portal_tag_alias_tag_idx"),
+        ]
+
+    def save(self, *args, **kwargs):
+        self.normalized_value = " ".join(self.value.casefold().split())
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.value
+
+
+class PostTag(TimestampedModel):
+    """Many-to-many assignment of canonical tags to portal posts."""
+
+    post = models.ForeignKey(
+        "Post",
+        on_delete=models.CASCADE,
+        related_name="tag_assignments",
+    )
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.PROTECT,
+        related_name="post_assignments",
+    )
+
+    class Meta:
+        ordering = ("tag__name_en",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=("post", "tag"),
+                name="unique_post_tag",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("tag", "post"), name="portal_post_tag_lookup_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.post_id}: {self.tag_id}"

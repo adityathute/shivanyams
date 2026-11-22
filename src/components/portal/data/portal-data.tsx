@@ -51,8 +51,9 @@ export type JobPost = {
   department_mr: string;
   department_hi: string;
   vacancies: number | null;
+  work_locations?: Array<Record<string, unknown>>;
   salary_currency?: string;
-  salary_period?: string;
+
   salary_min?: string | number | null;
   salary_max?: string | number | null;
   pay_scale?: string;
@@ -674,6 +675,7 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
             department_mr: post.department_mr || "",
             department_hi: post.department_hi || "",
             vacancies: post.vacancies ?? null,
+            work_locations: Array.isArray(post.work_locations) ? post.work_locations : [],
             salary_currency: post.salary_currency || "INR",
             salary_period: post.salary_period || "monthly",
             salary_min: post.salary_min ?? null,

@@ -405,6 +405,14 @@ export function PostCommentsSection({ postId, language }: Props) {
             }}
             onReact={(id, reaction) => void reactToComment(id, reaction)}
             onReport={(id) => reportComment(id)}
+            reportTarget={reportTarget}
+            reportReason={reportReason}
+            reportDetails={reportDetails}
+            reporting={reporting}
+            onReportReasonChange={setReportReason}
+            onReportDetailsChange={setReportDetails}
+            onCancelReport={() => setReportTarget(null)}
+            onSubmitReport={() => void sendCommentReport()}
             replyTarget={replyTarget}
             replyDraft={replyDraft}
             onReplyDraftChange={setReplyDraft}

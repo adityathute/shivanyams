@@ -428,6 +428,15 @@ class JobPost(TimestampedModel):
     salary_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     pay_scale = models.CharField(max_length=240, blank=True)
     grade_pay = models.CharField(max_length=120, blank=True)
+    # Employment terms may differ between posts in the same notification.
+    allowances = models.TextField(blank=True)
+    benefits = models.TextField(blank=True)
+    employment_conditions = models.TextField(blank=True)
+    probation_period = models.CharField(max_length=160, blank=True)
+    contract_duration = models.CharField(max_length=160, blank=True)
+    working_hours = models.CharField(max_length=160, blank=True)
+    service_bond = models.TextField(blank=True)
+    retirement_benefits = models.TextField(blank=True)
 
     # Educational qualification for this individual post
     educational_qualification_en = models.TextField(blank=True)

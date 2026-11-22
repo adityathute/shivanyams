@@ -819,6 +819,8 @@ export default function AdminPage() {
           </div>
         </header>
 
+        <VideoCollectionsPanel />
+
         {(() => {
           const statItems: {
             label: string;

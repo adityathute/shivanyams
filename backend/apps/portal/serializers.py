@@ -517,7 +517,7 @@ class VideoDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VideoDetails
-        exclude = ("id", "post", "created_at", "updated_at")
+        fields = ("provider", "video_url", "embed_url", "thumbnail_url", "duration_seconds", "available_languages", "caption_tracks")
 
     def get_caption_tracks(self, obj):
         request = self.context.get("request")

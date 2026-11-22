@@ -501,6 +501,8 @@ export function PostCommentsSection({ postId, language }: Props) {
               const openReply = () => {
                 setReportTarget(null);
                 setReportDetails("");
+                setEditTarget(null);
+                setEditDraft("");
                 setReplyTarget(id);
               };
               if (!user) openLogin(openReply);
@@ -518,6 +520,8 @@ export function PostCommentsSection({ postId, language }: Props) {
             onReport={(id) => {
               setReplyTarget(null);
               setReplyDraft("");
+              setEditTarget(null);
+              setEditDraft("");
               reportComment(id);
             }}
             reportTarget={reportTarget}

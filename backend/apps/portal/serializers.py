@@ -27,6 +27,10 @@ from .models import (
     ImportantLink,
     OfficialSource,
     PostSource,
+    Tag,
+    PostTag,
+    TaxonomyTerm,
+    PostTaxonomyTerm,
 )
 
 
@@ -539,6 +543,8 @@ class PostSerializer(serializers.ModelSerializer):
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
     official_sources = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+    taxonomy_terms = serializers.SerializerMethodField()
     users_count = serializers.IntegerField(read_only=True, default=0)
 
     job_details = serializers.SerializerMethodField()
@@ -606,6 +612,8 @@ class PostSerializer(serializers.ModelSerializer):
             "resources",
             "related_posts",
             "official_sources",
+            "tags",
+            "taxonomy_terms",
             "job_details",
             "scheme_details",
             "examination_details",
@@ -664,6 +672,27 @@ class PostSerializer(serializers.ModelSerializer):
     def get_tool_details(self, obj):
         return self._get_detail(obj, "tool_details", ToolDetailsSerializer)
 
+    def get_tags(self, obj):
+        return [
+            {"id": assignment.tag_id, "name": assignment.tag.name_en, "slug": assignment.tag.slug}
+            for assignment in obj.tag_assignments.select_related("tag").filter(tag__is_active=True)
+        ]
+
+    def get_taxonomy_terms(self, obj):
+        return [
+            {
+                "id": assignment.term_id,
+                "name": assignment.term.name_en,
+                "slug": assignment.term.slug,
+                "taxonomy_type": assignment.term.taxonomy_type.slug,
+                "relation_type": assignment.relation_type,
+            }
+            for assignment in obj.taxonomy_assignments.select_related("term", "term__taxonomy_type").filter(
+                term__is_active=True,
+                term__taxonomy_type__is_active=True,
+            )
+        ]
+
     def get_official_sources(self, obj):
         references = obj.official_sources.filter(
             source__is_active=True,
@@ -701,6 +730,14 @@ class PostWriteSerializer(serializers.ModelSerializer):
     related_posts = PostRelationSerializer(
         source="outgoing_relations", many=True, required=False
     )
+    tag_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.filter(is_active=True), many=True, required=False, write_only=True
+    )
+    taxonomy_term_ids = serializers.PrimaryKeyRelatedField(
+        queryset=TaxonomyTerm.objects.filter(is_active=True, taxonomy_type__is_active=True),
+        many=True, required=False, write_only=True,
+    )
+    official_sources = PostSourceSerializer(many=True, required=False)
 
     job_details = JobDetailsSerializer(required=False)
     scheme_details = SchemeDetailsSerializer(required=False)
@@ -752,6 +789,9 @@ class PostWriteSerializer(serializers.ModelSerializer):
             "important_dates",
             "resources",
             "related_posts",
+            "tag_ids",
+            "taxonomy_term_ids",
+            "official_sources",
             "job_details",
             "scheme_details",
             "examination_details",
@@ -817,6 +857,9 @@ class PostWriteSerializer(serializers.ModelSerializer):
     @staticmethod
     def _pop_nested_data(validated_data):
         nested_names = (
+            "tag_ids",
+            "taxonomy_term_ids",
+            "official_sources",
             "important_links",
             "faqs",
             "important_dates",
@@ -841,6 +884,31 @@ class PostWriteSerializer(serializers.ModelSerializer):
 
     @classmethod
     def _save_nested_data(cls, post, nested_data):
+        if "tag_ids" in nested_data:
+            selected_ids = {tag.pk for tag in nested_data["tag_ids"]}
+            PostTag.objects.filter(post=post).exclude(tag_id__in=selected_ids).delete()
+            existing_ids = set(PostTag.objects.filter(post=post).values_list("tag_id", flat=True))
+            PostTag.objects.bulk_create([
+                PostTag(post=post, tag=tag)
+                for tag in nested_data["tag_ids"] if tag.pk not in existing_ids
+            ])
+
+        if "taxonomy_term_ids" in nested_data:
+            selected_ids = {term.pk for term in nested_data["taxonomy_term_ids"]}
+            PostTaxonomyTerm.objects.filter(post=post).exclude(term_id__in=selected_ids).delete()
+            existing_ids = set(PostTaxonomyTerm.objects.filter(post=post).values_list("term_id", flat=True))
+            PostTaxonomyTerm.objects.bulk_create([
+                PostTaxonomyTerm(post=post, term=term)
+                for term in nested_data["taxonomy_term_ids"] if term.pk not in existing_ids
+            ])
+
+        if "official_sources" in nested_data:
+            post.official_sources.all().delete()
+            for source_data in nested_data["official_sources"]:
+                source_data.pop("id", None)
+                source_data.pop("post", None)
+                PostSource.objects.create(post=post, **source_data)
+
         if "important_links" in nested_data:
             cls._replace_many(
                 post.important_links,

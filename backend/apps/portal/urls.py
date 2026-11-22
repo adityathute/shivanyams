@@ -26,6 +26,11 @@ from .views import (
     EditorialNotifications,
     EditorialDiscussion,
     EditorialDiscussionCommentDetail,
+    AdminEditorialMedia,
+    AdminEditorialMediaDetail,
+    AdminEditorialMediaDownload,
+    AdminPostMedia,
+    AdminPostMediaDetail,
     AdminSendEditorialReminders,
     AdminAssignmentWorkload,
     AdminPostRevisions,
@@ -117,6 +122,11 @@ urlpatterns = [
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management
+    path("admin/media/", AdminEditorialMedia.as_view(), name="admin-editorial-media"),
+    path("admin/media/<int:asset_id>/", AdminEditorialMediaDetail.as_view(), name="admin-editorial-media-detail"),
+    path("admin/media/<int:asset_id>/download/", AdminEditorialMediaDownload.as_view(), name="admin-editorial-media-download"),
+    path("admin/content/<int:post_id>/media/", AdminPostMedia.as_view(), name="admin-post-media"),
+    path("admin/content/<int:post_id>/media/<int:attachment_id>/", AdminPostMediaDetail.as_view(), name="admin-post-media-detail"),
     path("admin/content/<int:post_id>/discussion/", EditorialDiscussion.as_view(), name="admin-editorial-discussion"),
     path("admin/editorial/discussion/<int:comment_id>/", EditorialDiscussionCommentDetail.as_view(), name="admin-editorial-discussion-detail"),
     path("editorial/notifications/", EditorialNotifications.as_view(), name="editorial-notifications"),

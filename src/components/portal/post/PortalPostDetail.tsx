@@ -1433,6 +1433,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showPostImportantDates ? <td></td> : null}
                                       {showApplicationLinks ? <td></td> : null}
                                       {showSelectionStages ? <td></td> : null}
+                                      {showWorkLocations ? <td></td> : null}
+                                      {showPostEmploymentTerms ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

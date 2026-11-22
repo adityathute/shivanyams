@@ -582,6 +582,8 @@ export default function PostEditor({
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [selectedTaxonomyTermIds, setSelectedTaxonomyTermIds] = useState<number[]>([]);
   const [sourceEvidence, setSourceEvidence] = useState<SourceEvidenceInput[]>([]);
+  const [sourceDraftId, setSourceDraftId] = useState("");
+  const [sourceDraftUrl, setSourceDraftUrl] = useState("");
   const [details, setDetails] = useState<Record<string, unknown>>(
     detailTemplate(initialKind),
   );
@@ -2799,6 +2801,74 @@ export default function PostEditor({
                 />
               </div>
               <small>Press comma, Enter or Shift + Enter to add a tag. Each tag appears as a separate clickable chip on the post.</small>
+            </div>
+            <div className="post-editor-tags-field">
+              <label htmlFor="post-canonical-tags">Canonical tags</label>
+              <select
+                id="post-canonical-tags"
+                multiple
+                value={selectedTagIds.map(String)}
+                onChange={(event) => setSelectedTagIds(Array.from(event.target.selectedOptions, (option) => Number(option.value)))}
+              >
+                {contentMetadata.tags.map((tag) => (
+                  <option key={tag.id} value={tag.id}>{tag.name_en}</option>
+                ))}
+              </select>
+              <small>Choose normalized tags managed in the portal taxonomy workspace. Existing free-text SEO keywords remain supported separately.</small>
+            </div>
+            <div className="post-editor-tags-field">
+              <label htmlFor="post-taxonomy-terms">Taxonomy classification</label>
+              <select
+                id="post-taxonomy-terms"
+                multiple
+                value={selectedTaxonomyTermIds.map(String)}
+                onChange={(event) => setSelectedTaxonomyTermIds(Array.from(event.target.selectedOptions, (option) => Number(option.value)))}
+              >
+                {contentMetadata.taxonomy_terms.map((term) => (
+                  <option key={term.id} value={term.id}>{term.type_name} · {term.name}</option>
+                ))}
+              </select>
+              <small>Select all relevant departments, qualifications, locations or other configured classifications.</small>
+            </div>
+            <div className="post-editor-tags-field">
+              <label htmlFor="post-official-source">Verified official source</label>
+              <select id="post-official-source" value={sourceDraftId} onChange={(event) => setSourceDraftId(event.target.value)}>
+                <option value="">Select an official publisher</option>
+                {contentMetadata.official_sources.map((source) => (
+                  <option key={source.id} value={source.id}>{source.name} · {source.domain}</option>
+                ))}
+              </select>
+              <input
+                value={sourceDraftUrl}
+                onChange={(event) => setSourceDraftUrl(event.target.value)}
+                placeholder="Official notification or evidence URL (https://...)"
+                aria-label="Official evidence URL"
+              />
+              <button
+                type="button"
+                disabled={!sourceDraftId || !sourceDraftUrl.trim() || sourceEvidence.some((item) => item.source === Number(sourceDraftId) && item.source_url === sourceDraftUrl.trim())}
+                onClick={() => {
+                  setSourceEvidence((current) => [...current, {
+                    source: Number(sourceDraftId),
+                    source_url: sourceDraftUrl.trim(),
+                    title: "",
+                    evidence_type: "general",
+                    is_primary: current.length === 0,
+                  }]);
+                  setSourceDraftId("");
+                  setSourceDraftUrl("");
+                }}
+              >Add source</button>
+              {sourceEvidence.map((item, index) => {
+                const source = contentMetadata.official_sources.find((entry) => entry.id === item.source);
+                return (
+                  <div className="post-editor-tag-chip" key={item.source + "-" + item.source_url}>
+                    <span>{source?.name || "Official source"} · {item.source_url}</span>
+                    <button type="button" aria-label="Remove official source" onClick={() => setSourceEvidence((current) => current.filter((_, itemIndex) => itemIndex !== index))}>×</button>
+                  </div>
+                );
+              })}
+              <small>Only publishers verified by an administrator are available here. Evidence links are checked against the publisher domain by the API.</small>
             </div>
           </section>
           <div className="post-editor-actions post-editor-actions-draft">

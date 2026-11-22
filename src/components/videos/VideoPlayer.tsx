@@ -27,7 +27,7 @@ export function VideoPlayer({ title, description, details, attachments = [], rel
 
   return (
     <section className="shiv-video-player-section" aria-label="Video player">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="shiv-video-player-frame">
         {sourceUrl ? (
           <video ref={playerRef} className="shiv-video-player" controls playsInline preload="metadata" poster={poster || undefined} controlsList="nodownload" aria-label={title}>

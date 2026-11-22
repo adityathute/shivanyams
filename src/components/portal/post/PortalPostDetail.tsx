@@ -1317,6 +1317,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                  employmentTerms: [entry.allowances, entry.benefits, entry.employment_conditions, entry.probation_period ? `Probation: ${entry.probation_period}` : "", entry.contract_duration ? `Contract: ${entry.contract_duration}` : "", entry.working_hours ? `Working hours: ${entry.working_hours}` : "", entry.service_bond, entry.retirement_benefits].filter(Boolean).join(" · "),
                                 requiredDocuments: (Array.isArray(entry.required_documents) ? entry.required_documents : []).map((document) => ({ title: getLocalizedText(language, document.title_en, document.title_mr, document.title_hi), note: getLocalizedText(language, document.note_en, document.note_mr, document.note_hi), mandatory: document.mandatory !== false })).filter((document) => document.title),
                                 physicalStandards: getLocalizedText(language, entry.physical_standards_en, entry.physical_standards_mr, entry.physical_standards_hi),
+                                examMode: entry.exam_mode || "",
+                                examMedium: getLocalizedText(language, entry.exam_medium_en, entry.exam_medium_mr, entry.exam_medium_hi),
                                 examPattern: getLocalizedText(language, entry.exam_pattern_en, entry.exam_pattern_mr, entry.exam_pattern_hi),
                                 syllabus: getLocalizedText(language, entry.syllabus_en, entry.syllabus_mr, entry.syllabus_hi),
                                 fees,
@@ -1349,6 +1351,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showPostEmploymentTerms = rows.some((row) => row.employmentTerms);
                             const showPostRequiredDocuments = rows.some((row) => row.requiredDocuments.length > 0);
                             const showPhysicalStandards = rows.some((row) => row.physicalStandards);
+                            const showExamMode = rows.some((row) => row.examMode);
+                            const showExamMedium = rows.some((row) => row.examMedium);
                             const showExamPattern = rows.some((row) => row.examPattern);
                             const showSyllabus = rows.some((row) => row.syllabus);
                             const showWorkLocations = rows.some((row) => row.workLocations.length > 0);
@@ -1388,6 +1392,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showPostEmploymentTerms ? <th>{language === "mr" ? "सेवेच्या अटी व लाभ" : language === "hi" ? "सेवा शर्तें और लाभ" : "Employment terms & benefits"}</th> : null}
                                       {showPostRequiredDocuments ? <th>{language === "mr" ? "आवश्यक कागदपत्रे" : language === "hi" ? "आवश्यक दस्तावेज़" : "Required documents"}</th> : null}
                                       {showPhysicalStandards ? <th>{language === "mr" ? "शारीरिक पात्रता" : language === "hi" ? "शारीरिक मानदंड" : "Physical standards"}</th> : null}
+                                      {showExamMode ? <th>{language === "mr" ? "परीक्षेचे स्वरूप" : language === "hi" ? "परीक्षा का माध्यम" : "Exam mode"}</th> : null}
+                                      {showExamMedium ? <th>{language === "mr" ? "परीक्षेचे माध्यम" : language === "hi" ? "परीक्षा की भाषा" : "Exam medium"}</th> : null}
                                       {showExamPattern ? <th>{language === "mr" ? "परीक्षा पद्धती" : language === "hi" ? "परीक्षा पैटर्न" : "Exam pattern"}</th> : null}
                                       {showSyllabus ? <th>{language === "mr" ? "अभ्यासक्रम" : language === "hi" ? "पाठ्यक्रम" : "Syllabus"}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
@@ -1428,6 +1434,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showPostEmploymentTerms ? <td>{row.employmentTerms || "—"}</td> : null}
                                         {showPostRequiredDocuments ? <td>{row.requiredDocuments.length ? <ul>{row.requiredDocuments.map((document, documentIndex) => <li key={documentIndex}>{document.title} — {document.mandatory ? (language === "mr" ? "अनिवार्य" : language === "hi" ? "अनिवार्य" : "Mandatory") : (language === "mr" ? "ऐच्छिक" : language === "hi" ? "वैकल्पिक" : "Optional")}{document.note ? ` · ${document.note}` : ""}</li>)}</ul> : "—"}</td> : null}
                                         {showPhysicalStandards ? <td>{row.physicalStandards || "—"}</td> : null}
+                                        {showExamMode ? <td>{row.examMode === "online" ? (language === "mr" ? "ऑनलाइन" : language === "hi" ? "ऑनलाइन" : "Online") : row.examMode === "offline" ? (language === "mr" ? "ऑफलाइन" : language === "hi" ? "ऑफलाइन" : "Offline") : row.examMode === "computer_based" ? (language === "mr" ? "संगणक आधारित परीक्षा" : language === "hi" ? "कंप्यूटर आधारित परीक्षा" : "Computer-based test") : row.examMode === "omr" ? (language === "mr" ? "ओएमआर आधारित" : language === "hi" ? "ओएमआर आधारित" : "OMR-based") : row.examMode === "descriptive" ? (language === "mr" ? "वर्णनात्मक" : language === "hi" ? "वर्णनात्मक" : "Descriptive") : row.examMode === "mixed" ? (language === "mr" ? "मिश्र" : language === "hi" ? "मिश्रित" : "Mixed") : (language === "mr" ? "अधिसूचनेनुसार" : language === "hi" ? "अधिसूचना अनुसार" : "As notified")}</td> : null}
+                                        {showExamMedium ? <td>{row.examMedium || "—"}</td> : null}
                                         {showExamPattern ? <td>{row.examPattern || "—"}</td> : null}
                                         {showSyllabus ? <td>{row.syllabus || "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
@@ -1454,6 +1462,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showPostEmploymentTerms ? <td></td> : null}
                                       {showPostRequiredDocuments ? <td></td> : null}
                                       {showPhysicalStandards ? <td></td> : null}
+                                      {showExamMode ? <td></td> : null}
+                                      {showExamMedium ? <td></td> : null}
                                       {showExamPattern ? <td></td> : null}
                                       {showSyllabus ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}

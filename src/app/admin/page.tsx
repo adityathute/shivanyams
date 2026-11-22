@@ -21,6 +21,7 @@ import { adminFetch } from "./admin-utils";
 import EditorialNotificationCenter from "./EditorialNotificationCenter";
 import EditorialDiscussion from "./EditorialDiscussion";
 import EditorialMediaPanel from "./EditorialMediaPanel";
+import VideoCollectionsPanel from "./VideoCollectionsPanel";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";

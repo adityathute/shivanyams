@@ -1689,6 +1689,35 @@ class PostRevision(models.Model):
         return f"{self.post.title_en} · revision {self.revision_number}"
 
 
+class PostAssignment(models.Model):
+    """Current editorial owner and workload state for a content post."""
+
+    class Status(models.TextChoices):
+        ASSIGNED = "assigned", "Assigned"
+        IN_PROGRESS = "in_progress", "In progress"
+        COMPLETED = "completed", "Completed"
+        CANCELLED = "cancelled", "Cancelled"
+
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="assignment")
+    assigned_to_auth_id = models.CharField(max_length=128, db_index=True)
+    assigned_by_auth_id = models.CharField(max_length=128)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.ASSIGNED, db_index=True)
+    due_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    note = models.TextField(blank=True)
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("due_at", "-assigned_at")
+        indexes = [
+            models.Index(fields=("assigned_to_auth_id", "status"), name="postassign_user_status_idx"),
+            models.Index(fields=("status", "due_at"), name="postassign_status_due_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.post.title_en} → {self.assigned_to_auth_id}"
+
+
 class PostStatusHistory(models.Model):
     """Immutable audit trail for post review and publishing transitions."""
 

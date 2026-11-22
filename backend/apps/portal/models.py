@@ -273,6 +273,10 @@ class JobDetails(TimestampedModel):
     working_hours = models.CharField(max_length=160, blank=True)
     service_bond = models.TextField(blank=True)
     retirement_benefits = models.TextField(blank=True)
+    application_instructions_en = models.TextField(blank=True)
+    application_instructions_mr = models.TextField(blank=True)
+    application_instructions_hi = models.TextField(blank=True)
+    required_documents = models.JSONField(default=list, blank=True)
 
     # Choose whether these details are shared across all posts or entered per post.
     education_mode = models.CharField(

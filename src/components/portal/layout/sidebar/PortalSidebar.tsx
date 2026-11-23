@@ -10,7 +10,8 @@ import {
   MailIcon,
   ShieldCheckIcon,
   ToolsIcon,
-  BookmarkIcon,\n  TagIcon,
+  BookmarkIcon,
+  TagIcon,
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";

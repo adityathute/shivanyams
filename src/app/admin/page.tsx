@@ -12,7 +12,7 @@ import {
   CloseIcon,
   Select,
   DownloadIcon,
-  RefreshIcon,,
+  RefreshIcon,
   PlusIcon,
   GlobeIcon,
   MessagesIcon

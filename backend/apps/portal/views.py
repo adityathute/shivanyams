@@ -1750,6 +1750,10 @@ class AdminDashboardStats(APIView):
                 .order_by("-updated_at")
             )
             auth_ids = {item.user_auth_id for item in subscriptions if item.user_auth_id}
+            auth_ids.update(
+                NewsletterSubscriptionEvent.objects.exclude(user_auth_id="")
+                .values_list("user_auth_id", flat=True).distinct()
+            )
             user_names = {}
             visitor_ids = {}
             if auth_ids:

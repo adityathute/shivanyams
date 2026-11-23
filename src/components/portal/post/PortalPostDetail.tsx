@@ -920,7 +920,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           "@type": "Organization",
                           name: "ShivanyaMS",
                           url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com",
-                          logo: { "@type": "ImageObject", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\\/+$/, "")}/logo.png` },
+                          logo: { "@type": "ImageObject", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/logo.png` },
                         },
                       }).replace(/</g, "\\u003c"),
                     }}

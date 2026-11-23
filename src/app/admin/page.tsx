@@ -1312,12 +1312,23 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+              <AnalyticsPagination
+                total={analyticsEvents.length}
+                page={analyticsEventsPage}
+                pageSize={analyticsPageSize}
+                onPageChange={setAnalyticsEventsPage}
+                onPageSizeChange={(size) => {
+                  setAnalyticsPageSize(size);
+                  setAnalyticsEventsPage(1);
+                }}
+              />
             ) : analyticsType === "views" ? (
               analyticsPages.length === 0 ? (
                 <div className="admin-empty">
                   No website views recorded yet.
                 </div>
               ) : (
+                <>
                 <div className="admin-analytics-table-wrap">
                   <table className="admin-analytics-table">
                     <thead>
@@ -1364,6 +1375,7 @@ export default function AdminPage() {
                     setAnalyticsPagesPage(1);
                   }}
                 />
+                </>
               )
             ) : analyticsVisitors.length === 0 ? (
               <div className="admin-empty">No visitors recorded yet.</div>
@@ -1411,6 +1423,16 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+              <AnalyticsPagination
+                total={analyticsVisitors.length}
+                page={analyticsVisitorsPage}
+                pageSize={analyticsPageSize}
+                onPageChange={setAnalyticsVisitorsPage}
+                onPageSizeChange={(size) => {
+                  setAnalyticsPageSize(size);
+                  setAnalyticsVisitorsPage(1);
+                }}
+              />
             )}
             <footer>
               <span>

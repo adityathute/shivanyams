@@ -471,3 +471,64 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Responsive pagination for tag-related content results. */
+.related-content-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid #edf1f6;
+  color: #8492a4;
+  font-size: 11px;
+}
+.related-content-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.related-content-pagination-controls > span {
+  color: #718198;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.related-content-pagination-controls button {
+  min-height: 31px;
+  padding: 6px 10px;
+  border: 1px solid #dbe4f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #405571;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.related-content-pagination-controls button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+[data-theme="dark"] .related-content-pagination {
+  border-color: #293544;
+  color: #a9b7c8;
+}
+[data-theme="dark"] .related-content-pagination-controls > span {
+  color: #a9b7c8;
+}
+[data-theme="dark"] .related-content-pagination-controls button {
+  border-color: #344154;
+  background: #1c2633;
+  color: #d7e2ef;
+}
+@media (max-width: 620px) {
+  .related-content-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 12px;
+  }
+  .related-content-pagination-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

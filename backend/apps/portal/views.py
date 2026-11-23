@@ -1753,6 +1753,15 @@ class AdminDashboardStats(APIView):
 
     def get(self, request):
         reaction_filter = request.query_params.get("type")
+        if reaction_filter == "saved":
+            saved_rows = list(SavedPost.objects.values("post_id", "post__title_en", "post__slug").annotate(saves=Count("id"), users=Count("user_auth_id", distinct=True)).order_by("-saves", "post__title_en"))
+            return Response({
+                "total_posts": len(saved_rows),
+                "total_saved": SavedPost.objects.count(),
+                "total_users": SavedPost.objects.exclude(user_auth_id="").values("user_auth_id").distinct().count(),
+                "results": [{"post_id": row["post_id"], "post_title": row["post__title_en"], "post_slug": row["post__slug"], "saves": row["saves"], "users": row["users"]} for row in saved_rows],
+            })
+
         if reaction_filter == "reports":
             post_reports = list(PostReport.objects.select_related("post").order_by("-created_at"))
             comment_reports = list(CommentReport.objects.select_related("comment__post", "comment__parent").order_by("-created_at"))

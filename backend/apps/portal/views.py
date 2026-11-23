@@ -1761,7 +1761,7 @@ class AdminDashboardStats(APIView):
             )
             post_reactions = list(
                 PostReaction.objects.filter(
-                    reaction=PostReaction.ReactionType.LIKE
+                    reaction=reaction_value
                 ).select_related("post").order_by("-created_at")
             )
             comment_reactions = list(
@@ -1846,8 +1846,8 @@ class AdminDashboardStats(APIView):
                 })
             rows.sort(key=lambda row: row["created_at"], reverse=True)
             total = (
-                PostReaction.objects.filter(reaction=PostReaction.ReactionType.LIKE).count()
-                + CommentReaction.objects.filter(reaction=CommentReaction.ReactionType.LIKE).count()
+                PostReaction.objects.filter(reaction=reaction_value).count()
+                + CommentReaction.objects.filter(reaction=reaction_value).count()
             )
             return Response({"total": total, "results": rows, "reaction_type": reaction_filter})
 

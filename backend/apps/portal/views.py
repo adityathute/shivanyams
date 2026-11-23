@@ -447,22 +447,64 @@ class NewsletterSubscribe(APIView):
 
 class PostReports(APIView):
     permission_classes = [IsPortalIdentity]
+    USER_REPORT_LIMIT = 3
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True, published_at__isnull=False)
+        user_report_count = PostReport.objects.filter(
+            post=post,
+            reporter_auth_id=str(request.user.id),
+        ).count()
+        return Response({
+            "report_count": post.reports.count(),
+            "user_report_count": user_report_count,
+            "report_limit_reached": user_report_count >= self.USER_REPORT_LIMIT,
+        })
 
     def post(self, request, post_id):
-        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True, published_at__isnull=False)
         reason = str(request.data.get("reason", "")).strip()[:60]
         details = str(request.data.get("details", "")).strip()[:2000]
         if not reason:
             raise ValidationError({"reason": "Please select a report reason."})
-        report, created = PostReport.objects.get_or_create(
-            post=post,
-            reporter_auth_id=str(request.user.id),
-            defaults={"reason": reason, "details": details},
-        )
-        return Response(
-            {"reported": True, "already_reported": not created},
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
-        )
+
+        reporter_auth_id = str(request.user.id)
+        with transaction.atomic():
+            post = get_object_or_404(
+                Post.objects.select_for_update(),
+                pk=post_id,
+                status=Post.Status.PUBLISHED,
+                is_active=True,
+                published_at__isnull=False,
+            )
+            user_reports = PostReport.objects.filter(
+                post=post,
+                reporter_auth_id=reporter_auth_id,
+            )
+            user_report_count = user_reports.count()
+            if user_report_count >= self.USER_REPORT_LIMIT:
+                return Response({
+                    "reported": False,
+                    "detail": "You have reached the 3-report limit for this post.",
+                    "user_report_count": user_report_count,
+                    "report_limit_reached": True,
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            PostReport.objects.create(
+                post=post,
+                reporter_auth_id=reporter_auth_id,
+                reason=reason,
+                details=details,
+            )
+            user_report_count += 1
+            total_report_count = post.reports.count()
+
+        return Response({
+            "reported": True,
+            "already_reported": False,
+            "user_report_count": user_report_count,
+            "report_count": total_report_count,
+            "report_limit_reached": user_report_count >= self.USER_REPORT_LIMIT,
+        }, status=status.HTTP_201_CREATED)
 
 
 class SavedPosts(generics.ListAPIView):
@@ -714,7 +756,7 @@ class PostCommentReactions(APIView):
 
 class PostCommentReports(APIView):
     permission_classes = [IsPortalIdentity]
-    AUTO_HIDE_REPORT_THRESHOLD = 3
+    USER_REPORT_LIMIT = 3
 
     def post(self, request, comment_id):
         reason = str(request.data.get("reason", "")).strip()[:40]
@@ -731,26 +773,17 @@ class PostCommentReports(APIView):
                 post__status=Post.Status.PUBLISHED,
                 post__is_active=True,
             )
-            existing_report = CommentReport.objects.filter(
+            user_reports = CommentReport.objects.filter(
                 comment=comment,
                 reporter_auth_id=reporter_auth_id,
-            ).first()
-            if existing_report:
-                report_count = comment.reports.count()
-                return Response({
-                    "reported": True,
-                    "already_reported": True,
-                    "report_count": report_count,
-                    "report_limit_reached": report_count >= self.AUTO_HIDE_REPORT_THRESHOLD,
-                    "hidden": False,
-                }, status=status.HTTP_200_OK)
-
-            report_count = comment.reports.count()
-            if report_count >= self.AUTO_HIDE_REPORT_THRESHOLD:
+            )
+            user_report_count = user_reports.count()
+            if user_report_count >= self.USER_REPORT_LIMIT:
                 return Response({
                     "reported": False,
-                    "detail": "This comment has already received the maximum number of reports.",
-                    "report_count": report_count,
+                    "detail": "You have reached the 3-report limit for this comment.",
+                    "user_report_count": user_report_count,
+                    "report_count": comment.reports.count(),
                     "report_limit_reached": True,
                     "hidden": False,
                 }, status=status.HTTP_400_BAD_REQUEST)
@@ -761,20 +794,16 @@ class PostCommentReports(APIView):
                 reason=reason,
                 details=details,
             )
-            report_count += 1
-            hidden = report_count >= self.AUTO_HIDE_REPORT_THRESHOLD
-            if hidden:
-                Comment.objects.filter(
-                    pk=comment.pk,
-                    status=Comment.Status.APPROVED,
-                ).update(status=Comment.Status.HIDDEN)
+            user_report_count += 1
+            report_count = comment.reports.count()
 
         return Response({
             "reported": True,
             "already_reported": False,
+            "user_report_count": user_report_count,
             "report_count": report_count,
-            "report_limit_reached": report_count >= self.AUTO_HIDE_REPORT_THRESHOLD,
-            "hidden": hidden,
+            "report_limit_reached": user_report_count >= self.USER_REPORT_LIMIT,
+            "hidden": False,
         }, status=status.HTTP_201_CREATED)
 
 

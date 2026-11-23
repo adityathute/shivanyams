@@ -1752,6 +1752,72 @@ class AdminDashboardStats(APIView):
     permission_classes = [IsPortalAdmin]
 
     def get(self, request):
+        if request.query_params.get("type") == "likes":
+            post_reactions = list(
+                PostReaction.objects.filter(
+                    reaction=PostReaction.ReactionType.LIKE
+                ).select_related("post").order_by("-created_at")[:2000]
+            )
+            comment_reactions = list(
+                CommentReaction.objects.filter(
+                    reaction=CommentReaction.ReactionType.LIKE
+                ).select_related("comment__post", "comment__parent")
+                .order_by("-created_at")[:2000]
+            )
+            auth_ids = {
+                reaction.user_auth_id
+                for reaction in post_reactions + comment_reactions
+                if reaction.user_auth_id
+            }
+            user_names = {}
+            if auth_ids:
+                for visitor in WebsiteVisitor.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).exclude(full_name="").order_by("-last_seen_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                for visit in WebsiteView.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).exclude(full_name="").order_by("-viewed_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+
+            rows = []
+            for reaction in post_reactions:
+                rows.append({
+                    "id": f"post-{reaction.id}",
+                    "target_type": "post",
+                    "post_id": reaction.post_id,
+                    "post_title": reaction.post.title_en,
+                    "post_slug": reaction.post.slug,
+                    "content": reaction.post.title_en,
+                    "parent_content": "",
+                    "user_name": user_names.get(reaction.user_auth_id, ""),
+                    "created_at": reaction.created_at,
+                })
+            for reaction in comment_reactions:
+                comment = reaction.comment
+                is_reply = comment.parent_id is not None
+                rows.append({
+                    "id": f"comment-{reaction.id}",
+                    "target_type": "reply" if is_reply else "comment",
+                    "post_id": comment.post_id,
+                    "post_title": comment.post.title_en,
+                    "post_slug": comment.post.slug,
+                    "content": comment.content,
+                    "parent_content": comment.parent.content if is_reply else "",
+                    "user_name": user_names.get(reaction.user_auth_id, ""),
+                    "created_at": reaction.created_at,
+                })
+            rows.sort(key=lambda row: row["created_at"], reverse=True)
+            total = (
+                PostReaction.objects.filter(reaction=PostReaction.ReactionType.LIKE).count()
+                + CommentReaction.objects.filter(reaction=CommentReaction.ReactionType.LIKE).count()
+            )
+            return Response({"total": total, "results": rows})
+
         # Portal does not own the Auth user table; count distinct authenticated
         # identities recorded through Portal ownership or user activity.
         user_ids = set()

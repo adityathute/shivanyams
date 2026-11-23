@@ -1276,7 +1276,8 @@ export default function AdminPage() {
                   }}
                 />
               </div>
-            ) : selectedAnalyticsPath ? (
+             ) : selectedAnalyticsPath ? (
+              <>
               <div className="admin-analytics-table-wrap">
                 <table className="admin-analytics-table">
                   <thead>
@@ -1322,6 +1323,7 @@ export default function AdminPage() {
                   setAnalyticsEventsPage(1);
                 }}
               />
+              </>
             ) : analyticsType === "views" ? (
               analyticsPages.length === 0 ? (
                 <div className="admin-empty">
@@ -1380,6 +1382,7 @@ export default function AdminPage() {
             ) : analyticsVisitors.length === 0 ? (
               <div className="admin-empty">No visitors recorded yet.</div>
             ) : (
+              <>
               <div className="admin-analytics-table-wrap">
                 <table className="admin-analytics-table">
                   <thead>
@@ -1433,6 +1436,7 @@ export default function AdminPage() {
                   setAnalyticsVisitorsPage(1);
                 }}
               />
+              </>
             )}
             <footer>
               <span>

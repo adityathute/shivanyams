@@ -2925,16 +2925,16 @@ class AdminWebsiteAnalytics(APIView):
             rows = [{
                 "visitor_id": item.visitor_id,
                 "visitor_type": "user" if item.auth_user_id else "anonymous",
-                "full_name": item.full_name if item.auth_user_id else "",
-                "ip_address": item.ip_address,
+                "full_name": "",
+                "ip_address": None,
                 "browser": item.browser,
                 "first_seen": item.first_seen_at,
                 "last_seen": item.last_seen_at,
                 "last_viewed": item.last_viewed,
                 "total_views": item.total_views,
                 "total_pages": item.total_pages,
-                "device": item.views.order_by("-viewed_at").values_list("device", flat=True).first() or "unknown",
-                "language": item.views.order_by("-viewed_at").values_list("language", flat=True).first() or "",
+                "device": item.views.filter(pk__in=view_events).order_by("-viewed_at").values_list("device", flat=True).first() or "unknown",
+                "language": item.views.filter(pk__in=view_events).order_by("-viewed_at").values_list("language", flat=True).first() or "",
             } for item in visitors[:500]]
             if visitor_id:
                 page_rows = (
@@ -2958,8 +2958,8 @@ class AdminWebsiteAnalytics(APIView):
                 "events": [{
                     "viewed_at": event.viewed_at,
                     "visitor_type": "user" if event.auth_user_id else "anonymous",
-                    "full_name": event.full_name if event.auth_user_id else "",
-                    "ip_address": event.ip_address,
+                    "full_name": "",
+                    "ip_address": None,
                     "visitor_id": event.visitor.visitor_id,
                     "browser": event.browser,
                     "device": event.device,

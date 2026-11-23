@@ -1762,6 +1762,37 @@ class AdminDashboardStats(APIView):
                 "results": [{"post_id": row["post_id"], "post_title": row["post__title_en"], "post_slug": row["post__slug"], "saves": row["saves"], "users": row["users"]} for row in saved_rows],
             })
 
+        if reaction_filter == "subscribers":
+            subscriptions = list(
+                NewsletterSubscription.objects.filter(is_active=True).order_by("-created_at")
+            )
+            auth_ids = {item.user_auth_id for item in subscriptions if item.user_auth_id}
+            user_names = {}
+            if auth_ids:
+                for visitor in WebsiteVisitor.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).exclude(full_name="").order_by("-last_seen_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                for visit in WebsiteView.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).exclude(full_name="").order_by("-viewed_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+            rows = [{
+                "id": item.id,
+                "full_name": user_names.get(item.user_auth_id, ""),
+                "email": item.email,
+                "subscribed_at": item.created_at,
+            } for item in subscriptions]
+            return Response({
+                "total_subscribers": len(rows),
+                "registered_users": len({item.user_auth_id for item in subscriptions if item.user_auth_id}),
+                "results": rows,
+            })
+
         if reaction_filter == "reports":
             post_reports = list(PostReport.objects.select_related("post").order_by("-created_at"))
             comment_reports = list(CommentReport.objects.select_related("comment__post", "comment__parent").order_by("-created_at"))

@@ -1404,7 +1404,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 </article>
                 {!previewItem ? (
                   <>
-                    <PostCommentsSection postId={post.postId} language={language} />
+                    {post.comments_enabled !== false ? <PostCommentsSection postId={post.postId} language={language} /> : null}
                     <PostFAQSection faqs={post.faqs} language={language} />
                   </>
                 ) : null}

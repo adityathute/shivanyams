@@ -14,9 +14,9 @@ WORD_CONFIG_PATH = Path(__file__).resolve().parents[3] / "src" / "config" / "com
 
 def _normalize_word(value):
     value = unicodedata.normalize("NFKC", str(value or "")).casefold()
-    value = re.sub(r"[\\u200b-\\u200d\\ufeff]", "", value)
-    value = re.sub(r"[^\\w\\u0900-\\u097f]", "", value, flags=re.UNICODE)
-    return re.sub(r"(.)\\1+", r"\\1", value)
+    value = re.sub(r"[\u200b-\u200d\ufeff]", "", value)
+    value = re.sub(r"[^\w\u0900-\u097f]", "", value, flags=re.UNICODE)
+    return re.sub(r"(.)\1+", r"\1", value)
 
 
 def _load_blocked_terms():
@@ -24,8 +24,6 @@ def _load_blocked_terms():
         with WORD_CONFIG_PATH.open("r", encoding="utf-8") as config_file:
             config = json.load(config_file)
     except (OSError, json.JSONDecodeError):
-        # Fail closed for moderation configuration: a missing dictionary must
-        # never crash comment creation, but the deployment should restore it.
         return set()
 
     languages = config.get("languages", {})
@@ -39,26 +37,26 @@ def _load_blocked_terms():
 
 
 BLOCKED_TERMS = _load_blocked_terms()
-TOKEN_RE = re.compile(r"[\\w\\u0900-\\u097f]+", re.UNICODE)
+TOKEN_RE = re.compile(r"[\w\u0900-\u097f]+", re.UNICODE)
 URL_CANDIDATE_RE = re.compile(
-    r"(?<![\\w@])(?:https?://|ftp://|www\\.)[^\\s<>]+|"
-    r"(?<![\\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}"
-    r"(?:\\b[^\\s<>]*)?",
+    r"(?<![\w@])(?:https?://|ftp://|www\.)[^\s<>]+|"
+    r"(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}"
+    r"(?:\b[^\s<>]*)?",
     re.IGNORECASE,
 )
 
 
 def _normalize_text(value):
     text = html.unescape(unicodedata.normalize("NFKC", str(value or "")))
-    text = re.sub(r"[\\u200b-\\u200d\\ufeff]", "", text)
+    text = re.sub(r"[\u200b-\u200d\ufeff]", "", text)
     text = text.translate(str.maketrans({"。": ".", "．": ".", "｡": "."}))
     for _ in range(2):
         text = unquote(text)
     text = text.casefold()
-    text = re.sub(r"\\[\\s*(?:dot|\\.)\\s*\\]|\\(\\s*(?:dot|\\.)\\s*\\)|\\{\\s*(?:dot|\\.)\\s*\\}", ".", text)
-    text = re.sub(r"\\s+dot\\s+", ".", text)
-    text = re.sub(r"\\bhxxps?\\b", "https", text)
-    text = re.sub(r"\\s*\\.\\s*", ".", text)
+    text = re.sub(r"\[\s*(?:dot|\.)\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*(?:dot|\.)\s*\}", ".", text)
+    text = re.sub(r"\s+dot\s+", ".", text)
+    text = re.sub(r"\bhxxps?\b", "https", text)
+    text = re.sub(r"\s*\.\s*", ".", text)
     return text
 
 
@@ -69,7 +67,7 @@ def _is_allowed_host(host):
 
 def _find_external_link(text):
     for match in URL_CANDIDATE_RE.finditer(_normalize_text(text)):
-        candidate = match.group(0).rstrip(".,!?;:)]}\\\"'")
+        candidate = match.group(0).rstrip(".,!?;:)]}\"'")
         if not candidate:
             continue
         parse_value = candidate if "://" in candidate else "https://" + candidate

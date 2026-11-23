@@ -1595,6 +1595,97 @@ class AdminWebsiteAnalytics(APIView):
             })
 
         if analytics_type == "visitors":
+            post_visitor_id = request.query_params.get("post_visitor_id")
+            post_id_for_visitor = request.query_params.get("post_id")
+
+            if post_visitor_id and post_id_for_visitor:
+                post_visitor = (
+                    PostVisitor.objects.select_related("post")
+                    .filter(
+                        visitor_id=post_visitor_id,
+                        post_id=post_id_for_visitor,
+                    )
+                    .first()
+                )
+                if post_visitor:
+                    events = post_visitor.view_events.order_by("viewed_at")
+                    first_event = events.first()
+                    last_event = events.last()
+                    auth_user_id = post_visitor.auth_user_id
+                    website_visitor = (
+                        WebsiteVisitor.objects.filter(auth_user_id=auth_user_id)
+                        .order_by("-last_seen_at")
+                        .first()
+                        if auth_user_id else None
+                    )
+                    latest_website_view = (
+                        WebsiteView.objects.filter(auth_user_id=auth_user_id)
+                        .order_by("-viewed_at")
+                        .first()
+                        if auth_user_id else None
+                    )
+                    full_name = (
+                        (website_visitor.full_name if website_visitor else "")
+                        or (latest_website_view.full_name if latest_website_view else "")
+                    )
+                    browser = (
+                        (website_visitor.browser if website_visitor else "")
+                        or (latest_website_view.browser if latest_website_view else "")
+                        or "Unknown"
+                    )
+                    visitor_row = {
+                        "visitor_id": post_visitor.visitor_id,
+                        "visitor_type": "user" if auth_user_id else "anonymous",
+                        "full_name": full_name,
+                        "ip_address": website_visitor.ip_address if website_visitor else None,
+                        "browser": browser,
+                        "first_seen": first_event.viewed_at if first_event else post_visitor.first_seen_at,
+                        "last_seen": last_event.viewed_at if last_event else post_visitor.last_seen_at,
+                        "last_viewed": last_event.viewed_at if last_event else None,
+                        "total_views": events.count(),
+                        "total_pages": 1 if events.exists() else 0,
+                        "device": last_event.device if last_event else "unknown",
+                        "language": last_event.language if last_event else "",
+                    }
+                    return Response({
+                        "visitor": visitor_row,
+                        "pages": [{
+                            "path": f"/{post_visitor.post.category.slug}/{post_visitor.post.slug}",
+                            "views": events.count(),
+                            "last_viewed": last_event.viewed_at if last_event else None,
+                        }] if events.exists() else [],
+                    })
+
+            if visitor_id:
+                visitor = WebsiteVisitor.objects.annotate(
+                    total_views=Count("views"),
+                    total_pages=Count("views__path", distinct=True),
+                    last_viewed=Max("views__viewed_at"),
+                ).filter(visitor_id=visitor_id).first()
+                if visitor:
+                    visitor_row = {
+                        "visitor_id": visitor.visitor_id,
+                        "visitor_type": "user" if visitor.auth_user_id else "anonymous",
+                        "full_name": visitor.full_name if visitor.auth_user_id else "",
+                        "ip_address": visitor.ip_address,
+                        "browser": visitor.browser,
+                        "first_seen": visitor.first_seen_at,
+                        "last_seen": visitor.last_seen_at,
+                        "last_viewed": visitor.last_viewed,
+                        "total_views": visitor.total_views,
+                        "total_pages": visitor.total_pages,
+                        "device": visitor.views.order_by("-viewed_at").values_list("device", flat=True).first() or "unknown",
+                        "language": visitor.views.order_by("-viewed_at").values_list("language", flat=True).first() or "",
+                    }
+                    page_rows = (
+                        WebsiteView.objects.filter(visitor=visitor)
+                        .values("path")
+                        .annotate(views=Count("id"), last_viewed=Max("viewed_at"))
+                        .order_by("-views", "path")
+                    )
+                    return Response({"visitor": visitor_row, "pages": list(page_rows)})
+                return Response({"visitor": None, "pages": []})
+
             visitors = WebsiteVisitor.objects.annotate(
                 total_views=Count("views"),
                 total_pages=Count("views__path", distinct=True),
@@ -1618,14 +1709,6 @@ class AdminWebsiteAnalytics(APIView):
                 "device": item.views.order_by("-viewed_at").values_list("device", flat=True).first() or "unknown",
                 "language": item.views.order_by("-viewed_at").values_list("language", flat=True).first() or "",
             } for item in visitors[:500]]
-            if visitor_id:
-                page_rows = (
-                    WebsiteView.objects.filter(visitor__visitor_id=visitor_id)
-                    .values("path")
-                    .annotate(views=Count("id"), last_viewed=Max("viewed_at"))
-                    .order_by("-views", "path")
-                )
-                return Response({"visitor": next((row for row in rows if row["visitor_id"] == visitor_id), None), "pages": list(page_rows)})
             return Response({
                 "visitors_count": WebsiteVisitor.objects.count(),
                 "users_count": WebsiteVisitor.objects.exclude(auth_user_id="").values("auth_user_id").distinct().count(),

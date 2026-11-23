@@ -2676,6 +2676,8 @@ class PostReactions(APIView):
 
 class TrackPostView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "analytics"
 
     def post(self, request, post_id):
         post = get_object_or_404(
@@ -2778,6 +2780,8 @@ class TrackPostView(APIView):
 
 class TrackWebsiteView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "analytics"
 
     def post(self, request):
         event_id = request.data.get("event_id")

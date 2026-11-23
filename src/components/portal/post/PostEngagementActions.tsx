@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { BookmarkIcon, DislikeIcon, LikeIcon, ReportIcon, ShareIcon } from "shivanya-ui";
+import { BookmarkIcon, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, ShareIcon, TelegramIcon, ThreadsIcon, TwitterIcon, WhatsappIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
@@ -218,12 +218,24 @@ export function PostEngagementActions({ postId, title }: Props) {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
       telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
       x: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+      threads: `https://www.threads.net/intent/post?text=${encodedTitle}%20${encodedUrl}`,
       email: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
     };
     const destination = destinations[channel];
+    if (channel === "instagram") {
+      try {
+        await navigator.clipboard.writeText(url);
+        void recordShare("instagram");
+        showMessage("Post link copied. Paste it into Instagram to share.");
+        window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+      } catch {
+        showMessage("Unable to copy the post link for Instagram.");
+      }
+      return;
+    }
     if (!destination) return;
-    const labels: Record<string, string> = { whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X", linkedin: "LinkedIn", email: "Email" };
+    const labels: Record<string, string> = { whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X/Twitter", threads: "Threads", linkedin: "LinkedIn", email: "Email" };
     showMessage(`Opening ${labels[channel] || "share"}...`);
     void recordShare(channel);
     window.open(destination, "_blank", "noopener,noreferrer");
@@ -287,15 +299,17 @@ export function PostEngagementActions({ postId, title }: Props) {
       </div>
       {shareMenuOpen ? (
         <div className="portal-share-menu" role="menu" aria-label="Share this post">
-          <button type="button" role="menuitem" onClick={() => void shareTo("copy")}>Copy link</button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")}>WhatsApp</button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("facebook")}>Facebook</button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("telegram")}>Telegram</button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("x")}>X</button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")}>LinkedIn</button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("email")}>Email</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("copy")}><CopyIcon size={17} /><span>Copy link</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")}><WhatsappIcon size={17} /><span>WhatsApp</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("facebook")}><FacebookIcon size={17} /><span>Facebook</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("telegram")}><TelegramIcon size={17} /><span>Telegram</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("x")}><TwitterIcon size={17} /><span>X/Twitter</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("threads")}><ThreadsIcon size={17} /><span>Threads</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("instagram")}><InstagramIcon size={17} /><span>Instagram</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")}><InstagramIcon size={17} /><span>LinkedIn</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("email")}><MailIcon size={17} /><span>Email</span></button>
           {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
-            <button type="button" role="menuitem" onClick={() => void shareTo("native")}>More options</button>
+            <button type="button" role="menuitem" onClick={() => void shareTo("native")}><MoreVerticalIcon size={17} /><span>More options</span></button>
           ) : null}
         </div>
       ) : null}

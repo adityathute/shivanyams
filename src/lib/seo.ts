@@ -24,8 +24,8 @@ type ApiPost = {
   category?: { name_en?: string; slug?: string };
 };
 
-export async function getPublicPostMetadata(kind: string, slug: string): Promise<Metadata> {
-  const canonical = `${SITE_URL}/${kind}/${encodeURIComponent(slug)}`;
+export async function getPublicPostMetadata(kind: string, slug: string, route = kind): Promise<Metadata> {
+  const canonical = `${SITE_URL}/${route}/${encodeURIComponent(slug)}`;
   const fallback: Metadata = {
     title: "ShivanyaMS | Government Jobs, Schemes & Updates",
     description: "Official updates, government jobs, schemes, examinations and results.",

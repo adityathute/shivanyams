@@ -598,7 +598,7 @@ export default function AdminPage() {
     setAnalyticsLoading(true);
     try {
       const response = await adminFetch(
-        API_URL + "/admin/website-analytics/?type=visitors&authenticated=true",
+        API_URL + "/admin/website-analytics/?type=visitors",
         { cache: "no-store" },
       );
       if (!response.ok)
@@ -1389,11 +1389,15 @@ export default function AdminPage() {
                       {postAnalyticsEvents.slice((analyticsEventsPage - 1) * analyticsPageSize, analyticsEventsPage * analyticsPageSize).map((event, index) => (
                         <tr key={event.visitor_id + event.viewed_at + index}>
                           <td>
-                            {event.visitor_type === "user" ? (
-                              <button type="button" className="admin-analytics-link" onClick={() => void openPostEventVisitor(event.visitor_id)}>
-                                {formatPersonName(event.full_name) || "Registered user"}
-                              </button>
-                            ) : "Anonymous"}
+                            <button
+                              type="button"
+                              className="admin-analytics-link"
+                              onClick={() => void openPostEventVisitor(event.visitor_id)}
+                            >
+                              {event.visitor_type === "user"
+                                ? formatPersonName(event.full_name) || "Registered user"
+                                : "Anonymous"}
+                            </button>
                           </td>
                           <td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td>
                           <td className="admin-analytics-referrer"><span>{event.referrer_url || "Direct"}</span></td>
@@ -1424,17 +1428,15 @@ export default function AdminPage() {
                     {visibleAnalyticsEvents.map((event, index) => (
                       <tr key={event.visitor_id + event.viewed_at + index}>
                         <td>
-                          {event.visitor_type === "user" ? (
-                            <button
-                              type="button"
-                              className="admin-analytics-link"
-                              onClick={() => void openPostEventVisitor(event.visitor_id)}
-                            >
-                              {formatPersonName(event.full_name) || "Registered user"}
-                            </button>
-                          ) : (
-                            "Anonymous"
-                          )}
+                          <button
+                            type="button"
+                            className="admin-analytics-link"
+                            onClick={() => void openPostEventVisitor(event.visitor_id)}
+                          >
+                            {event.visitor_type === "user"
+                              ? formatPersonName(event.full_name) || "Registered user"
+                              : "Anonymous"}
+                          </button>
                         </td>
                         <td>{event.ip_address || "—"}</td>
                         <td>{event.browser || "Unknown"}</td>

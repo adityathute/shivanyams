@@ -2633,3 +2633,10 @@
 .admin-analytics-modal .admin-subscribers-table td:nth-child(3) {
   text-align: center;
 }
+
+
+/* Subscribers: keep the Full name heading and complete name column left-aligned. */
+.admin-analytics-modal .admin-subscribers-table th:nth-child(1),
+.admin-analytics-modal .admin-subscribers-table td:nth-child(1) {
+  text-align: left;
+}

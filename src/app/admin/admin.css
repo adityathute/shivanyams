@@ -2178,3 +2178,10 @@
   align-items: center;
   text-align: center;
 }
+
+/* Keep the Comment label and its actual text flowing together in reply rows. */
+.admin-analytics-modal .admin-likes-content-link.is-comment-context .admin-analytics-like-context strong {
+  display: inline;
+  font: inherit;
+  font-weight: 600;
+}

@@ -172,6 +172,7 @@ export default function AdminPostEngagementPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [statsAnimationKey, setStatsAnimationKey] = useState(0);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -190,7 +191,12 @@ export default function AdminPostEngagementPage() {
         }
         return response.json();
       })
-      .then((data: EngagementPayload) => { if (active) setPayload(data); })
+      .then((data: EngagementPayload) => {
+        if (active) {
+          setPayload(data);
+          setStatsAnimationKey((value) => value + 1);
+        }
+      })
       .catch((err) => { if (active) setError(err instanceof Error ? err.message : "Unable to load engagement."); })
       .finally(() => { if (active) setLoadingData(false); });
     return () => { active = false; };
@@ -316,7 +322,7 @@ export default function AdminPostEngagementPage() {
         </header>
 
         {error ? <div className="admin-error">{error}</div> : null}
-        {loadingData ? <div className="admin-empty">Loading engagement...</div> : payload ? (
+        {!payload && loadingData ? <div className="admin-empty">Loading engagement...</div> : payload ? (
           <>
             <section className="admin-engagement-stats" aria-label="Post statistics">
               {statLabels.map((item) => {
@@ -330,7 +336,7 @@ export default function AdminPostEngagementPage() {
                     onClick={() => { setSelected(item.key); setPage(1); }}
                   >
                     <span><i>{item.icon}</i>{item.label}</span>
-                    <strong><AnimatedNumber value={value} /></strong>
+                    <strong><AnimatedNumber key={`${item.key}-${statsAnimationKey}`} value={value} /></strong>
                   </button>
                 );
               })}

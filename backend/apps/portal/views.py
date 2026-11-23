@@ -1753,6 +1753,29 @@ class AdminDashboardStats(APIView):
 
     def get(self, request):
         reaction_filter = request.query_params.get("type")
+        if reaction_filter == "reports":
+            post_reports = list(PostReport.objects.select_related("post").order_by("-created_at"))
+            comment_reports = list(CommentReport.objects.select_related("comment__post", "comment__parent").order_by("-created_at"))
+            auth_ids = {report.reporter_auth_id for report in post_reports + comment_reports if report.reporter_auth_id}
+            user_visitors, user_emails = {}, {}
+            if auth_ids:
+                for visitor in WebsiteVisitor.objects.filter(auth_user_id__in=auth_ids).order_by("-last_seen_at").values("auth_user_id", "visitor_id", "full_name"):
+                    user_visitors.setdefault(visitor["auth_user_id"], {"visitor_id": visitor["visitor_id"], "full_name": visitor["full_name"]})
+                for subscription in PostSubscription.objects.filter(user_auth_id__in=auth_ids).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
+                for subscription in NewsletterSubscription.objects.filter(user_auth_id__in=auth_ids).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
+            rows = []
+            for report in post_reports:
+                identity = user_visitors.get(report.reporter_auth_id, {})
+                rows.append({"id": f"post-report-{report.id}", "report_id": report.id, "target_type": "post", "post_id": report.post_id, "post_title": report.post.title_en, "post_slug": report.post.slug, "content": report.post.title_en, "reason": report.reason, "details": report.details, "status": report.status, "reporter_name": identity.get("full_name", ""), "reporter_email": user_emails.get(report.reporter_auth_id, ""), "visitor_id": identity.get("visitor_id", ""), "created_at": report.created_at})
+            for report in comment_reports:
+                comment = report.comment
+                identity = user_visitors.get(report.reporter_auth_id, {})
+                rows.append({"id": f"comment-report-{report.id}", "report_id": report.id, "target_type": "reply" if comment.parent_id else "comment", "post_id": comment.post_id, "post_title": comment.post.title_en, "post_slug": comment.post.slug, "content": comment.content, "parent_content": comment.parent.content if comment.parent_id else "", "reason": report.reason, "details": report.details, "status": report.status, "reporter_name": identity.get("full_name", ""), "reporter_email": user_emails.get(report.reporter_auth_id, ""), "visitor_id": identity.get("visitor_id", ""), "created_at": report.created_at})
+            rows.sort(key=lambda row: row["created_at"], reverse=True)
+            return Response({"total": len(rows), "results": rows})
+
         if reaction_filter == "comments":
             comments = list(
                 Comment.objects.select_related("post", "parent")

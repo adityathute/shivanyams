@@ -1666,6 +1666,23 @@
 }
 
 
+/* Likes engagement stat: match the Post visitors label and number typography. */
+.admin-stats.admin-stats-secondary .admin-stat-clickable button > span {
+  color: #667991;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.admin-stats.admin-stats-secondary .admin-stat-clickable button > strong {
+  color: #718198;
+  font-size: clamp(25px, 2.2vw, 30px);
+  font-weight: 750;
+  line-height: 1.1;
+  letter-spacing: -.7px;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Dashboard stat number colors: highlight the three website metrics in blue. */
 .admin-stats:not(.admin-stats-secondary) .admin-stat-card > strong,
 .admin-stats:not(.admin-stats-secondary) .admin-stat-clickable button > strong,

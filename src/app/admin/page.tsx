@@ -594,21 +594,29 @@ export default function AdminPage() {
     }
   }
 
-  async function openPostEventVisitor(visitorId: string) {
+  async function openPostEventVisitor(visitorId: string, postId?: number) {
     setAnalyticsLoading(true);
+    setSelectedVisitor(null);
+    setVisitorPages([]);
+    setVisitorPagesPage(1);
     try {
+      const query = postId
+        ? `type=visitors&post_visitor_id=${encodeURIComponent(visitorId)}&post_id=${postId}`
+        : `type=visitors&visitor_id=${encodeURIComponent(visitorId)}`;
       const response = await adminFetch(
-        API_URL + "/admin/website-analytics/?type=visitors",
+        API_URL + "/admin/website-analytics/?" + query,
         { cache: "no-store" },
       );
       if (!response.ok)
         throw new Error(`Unable to load visitor details (${response.status}).`);
-      const payload: { visitors?: WebsiteVisitorRow[] } = await response.json();
-      const visitor = (payload.visitors ?? []).find((item) => item.visitor_id === visitorId);
-      if (!visitor) throw new Error("Visitor details are not available for this account.");
-      await openVisitorDetails(visitor);
+      const payload: { visitor?: WebsiteVisitorRow | null; pages?: WebsiteAnalyticsPage[] } = await response.json();
+      if (!payload.visitor) throw new Error("Visitor details are not available.");
+      setSelectedVisitor(payload.visitor);
+      setSelectedAnalyticsPath(null);
+      setVisitorPages(payload.pages ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to open visitor details.");
+    } finally {
       setAnalyticsLoading(false);
     }
   }
@@ -1392,7 +1400,7 @@ export default function AdminPage() {
                             <button
                               type="button"
                               className="admin-analytics-link"
-                              onClick={() => void openPostEventVisitor(event.visitor_id)}
+                              onClick={() => void openPostEventVisitor(event.visitor_id, selectedPost?.id)}
                             >
                               {event.visitor_type === "user"
                                 ? formatPersonName(event.full_name) || "Registered user"

@@ -446,10 +446,6 @@ export default function AdminPage() {
         (item) => item.slug === latestUpdatedPost.category.slug,
       )
     : undefined;
-  const analyticsPagesPageCount = Math.max(1, Math.ceil(analyticsPages.length / analyticsPageSize));
-  const analyticsVisitorsPageCount = Math.max(1, Math.ceil(analyticsVisitors.length / analyticsPageSize));
-  const visitorPagesPageCount = Math.max(1, Math.ceil(visitorPages.length / analyticsPageSize));
-  const analyticsEventsPageCount = Math.max(1, Math.ceil(analyticsEvents.length / analyticsPageSize));
   const visibleAnalyticsPages = [...analyticsPages]
     .sort((a, b) => b.views - a.views)
     .slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize);

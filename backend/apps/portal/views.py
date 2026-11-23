@@ -1723,6 +1723,49 @@ class AdminWebsiteAnalytics(APIView):
             "pages": list(page_rows),
         })
 
+class AdminSharesAnalytics(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        shares = PostShare.objects.select_related("post").order_by("-created_at")
+        rows = list(shares.values(
+            "post_id",
+            "post__title_en",
+            "post__slug",
+            "user_auth_id",
+            "visitor_id",
+            "channel",
+            "created_at",
+        ))
+        auth_ids = {str(row["user_auth_id"]) for row in rows if row.get("user_auth_id")}
+        user_names = {}
+        if auth_ids:
+            for visitor in WebsiteVisitor.objects.filter(
+                auth_user_id__in=auth_ids
+            ).exclude(full_name="").order_by("-last_seen_at").values(
+                "auth_user_id", "full_name"
+            ):
+                user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+        unique_visitors = set()
+        channels = {}
+        for row in rows:
+            auth_id = str(row.get("user_auth_id") or "")
+            visitor_id = str(row.get("visitor_id") or "")
+            row["user_name"] = user_names.get(auth_id, "")
+            row["visitor_type"] = "user" if auth_id else "anonymous"
+            row["visitor_label"] = row["user_name"] or (visitor_id[:12] if visitor_id else "Anonymous visitor")
+            unique_visitors.add(f"user:{auth_id}" if auth_id else (f"visitor:{visitor_id}" if visitor_id else f"share:{row['post_id']}:{row['created_at']}"))
+            channel = row.get("channel") or "other"
+            channels[channel] = channels.get(channel, 0) + 1
+        return Response({
+            "total": len(rows),
+            "unique_visitors": len(unique_visitors),
+            "posts_shared": len({row["post_id"] for row in rows}),
+            "channels": channels,
+            "events": rows,
+        })
+
+
 class AdminDashboardStats(APIView):
     permission_classes = [IsPortalAdmin]
 

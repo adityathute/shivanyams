@@ -1544,19 +1544,24 @@ class AdminWebsiteAnalytics(APIView):
                     event.auth_user_id for event in events if event.auth_user_id
                 }
                 user_names = {}
+                user_browsers = {}
                 if auth_ids:
                     for visitor in WebsiteVisitor.objects.filter(
                         auth_user_id__in=auth_ids
-                    ).exclude(full_name="").order_by("-last_seen_at").values(
-                        "auth_user_id", "full_name"
+                    ).order_by("-last_seen_at").values(
+                        "auth_user_id", "full_name", "browser"
                     ):
                         user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                        if visitor["browser"] and visitor["browser"] != "Unknown":
+                            user_browsers.setdefault(visitor["auth_user_id"], visitor["browser"])
                     for visit in WebsiteView.objects.filter(
                         auth_user_id__in=auth_ids
-                    ).exclude(full_name="").order_by("-viewed_at").values(
-                        "auth_user_id", "full_name"
+                    ).order_by("-viewed_at").values(
+                        "auth_user_id", "full_name", "browser"
                     ):
                         user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+                        if visit["browser"] and visit["browser"] != "Unknown":
+                            user_browsers.setdefault(visit["auth_user_id"], visit["browser"])
 
                 return Response({
                     "post": {"id": post.id, "title": post.title_en, "slug": post.slug},
@@ -1566,6 +1571,7 @@ class AdminWebsiteAnalytics(APIView):
                         "visitor_type": "user" if event.auth_user_id else "anonymous",
                         "full_name": user_names.get(event.auth_user_id, ""),
                         "visitor_id": event.visitor.visitor_id,
+                        "browser": user_browsers.get(event.auth_user_id, "Unknown"),
                         "device": event.device,
                         "language": event.language,
                         "referrer_url": event.referrer_url,

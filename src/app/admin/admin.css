@@ -2978,3 +2978,35 @@
     padding-left: 12px;
   }
 }
+
+
+/* Individual share-post activity table only: override the shared square-corner rule. */
+.admin-analytics-modal .admin-share-post-table-wrap {
+  border: 1px solid var(--admin-border, #e5e7eb) !important;
+  border-radius: 12px !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  clip-path: inset(0 round 12px);
+}
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table thead tr:first-child th:first-child {
+  border-top-left-radius: 11px !important;
+}
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table thead tr:first-child th:last-child {
+  border-top-right-radius: 11px !important;
+}
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 11px !important;
+}
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 11px !important;
+}
+.admin-analytics-modal .admin-share-post-pagination {
+  margin-top: 8px;
+  padding: 10px 2px 2px;
+}

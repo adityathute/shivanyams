@@ -2008,3 +2008,17 @@ padding-right: 24px;
 .post-editor-version-history li span { color: #64748b; }
 .post-editor-version-history li time { color: #94a3b8; font-size: 10px; }
 @media (max-width: 520px) { .post-editor-publication-status { justify-items: start; } }
+
+
+.post-editor-version-switch { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.post-editor-version-switch button { border: 1px solid #d6deea; border-radius: 7px; padding: 7px 10px; background: transparent; color: #64748b; font: inherit; font-size: 11px; cursor: pointer; }
+.post-editor-version-switch button.active { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 700; }
+.post-editor-live-preview { margin: 18px 0; padding: 22px; border: 1px solid #dbe3ed; border-radius: 12px; background: var(--surface, #fff); color: var(--text, #1e293b); }
+.post-editor-live-preview-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 18px; font-size: 12px; }
+.post-editor-live-preview-heading strong { color: #168052; }
+.post-editor-live-preview-heading span { color: #64748b; }
+.post-editor-live-preview h2 { margin: 0 0 10px; font-size: 22px; }
+.post-editor-live-preview p { color: #64748b; }
+.post-editor-live-preview img { display: block; max-width: min(100%, 620px); max-height: 320px; object-fit: contain; margin: 14px 0; border-radius: 8px; }
+.post-editor-live-preview article { white-space: pre-wrap; line-height: 1.7; }
+.post-editor-live-preview > button { margin-top: 18px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; background: transparent; color: inherit; cursor: pointer; }

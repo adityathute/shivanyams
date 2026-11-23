@@ -17,6 +17,8 @@ import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function ExaminationPage() {
   const [query, setQuery] = useState("");
+  const [examStatus, setExamStatus] = useState("");
+  const [examMode, setExamMode] = useState("");
 
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -29,15 +31,17 @@ export function ExaminationPage() {
 
     return data.items.filter((item) => {
       if (item.type !== "examination") return false;
-
+      const detail = item.examination_details || {};
+      if (examStatus && String(detail.exam_status || "") !== examStatus) return false;
+      if (examMode && String(detail.exam_mode || "") !== examMode) return false;
       return (
         !term ||
-        [item.title, item.category, item.description].some((value) =>
+        [item.title, item.category, item.description, String(detail.exam_name || ""), String(detail.conducting_authority || ""), String(detail.notification_number || "")].some((value) =>
           value.toLowerCase().includes(term),
         )
       );
     });
-  }, [data.items, query]);
+  }, [data.items, query, examStatus, examMode]);
 
   const dateLocale =
     language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
@@ -72,6 +76,10 @@ export function ExaminationPage() {
 
                 <button type="submit">{t("search")}</button>
               </form>
+              <div className="jobs-filter-grid" aria-label="Examination filters">
+                <label>Exam status<select value={examStatus} onChange={(event) => setExamStatus(event.target.value)}><option value="">All statuses</option><option value="announced">Announced</option><option value="applications_open">Applications open</option><option value="applications_closed">Applications closed</option><option value="scheduled">Scheduled</option><option value="postponed">Postponed</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
+                <label>Exam mode<select value={examMode} onChange={(event) => setExamMode(event.target.value)}><option value="">All modes</option><option value="online">Online</option><option value="offline">Offline</option><option value="both">Online and offline</option><option value="other">Other</option></select></label>
+              </div>
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">

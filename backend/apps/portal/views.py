@@ -1784,7 +1784,7 @@ class AdminDashboardStats(APIView):
                 "total_subscribers": len(rows),
                 "registered_users": len({item.user_auth_id for item in subscriptions if item.user_auth_id}),
                 "total_subscriptions": total_subscribe_events,
-                "total_resubscriptions": max(0, total_subscribe_events - NewsletterSubscription.objects.count()),
+                "total_resubscriptions": max(0, total_subscribe_events - NewsletterSubscriptionEvent.objects.filter(event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED).values("subscription_id").distinct().count()),
                 "total_unsubscriptions": total_unsubscribe_events,
                 "results": rows,
             })

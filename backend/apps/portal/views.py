@@ -677,10 +677,14 @@ class PublicJobDiscovery(generics.ListAPIView):
                     raise ValueError
             except (TypeError, ValueError):
                 raise ValidationError({"candidate_age": "Enter an age from 0 to 100."})
-            queryset = queryset.filter(
-                job_details__posts__age_min__lte=candidate_age,
-                job_details__posts__age_max__gte=candidate_age,
+            age_eligible_posts = JobPost.objects.filter(job_id=OuterRef("job_details__id")).filter(
+                Q(age_min__isnull=False) | Q(age_max__isnull=False)
+            ).filter(
+                Q(age_min__isnull=True) | Q(age_min__lte=candidate_age)
+            ).filter(
+                Q(age_max__isnull=True) | Q(age_max__gte=candidate_age)
             )
+            queryset = queryset.filter(Exists(age_eligible_posts))
 
         text_filters = {
             "exam_medium": ("exam_medium_en", "exam_medium_mr", "exam_medium_hi"),

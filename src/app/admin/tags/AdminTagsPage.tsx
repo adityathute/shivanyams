@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, ConfirmDialog, Modal, RefreshIcon, Select, TagIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
-import { adminFetch } from "../admin-utils";
+import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
 import "./tags.css";
 
@@ -173,7 +173,7 @@ export default function AdminTagsPage() {
               <p>Changes apply to every post using the tag.</p>
             </div>
             <div className="admin-tags-total" aria-label={`${tags.length} total tags`}>
-              <strong>{tags.length.toLocaleString("en-IN")}</strong>
+              <strong>{formatCompactNumber(tags.length)}</strong>
               <span>Total tags</span>
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function AdminTagsPage() {
                         <td>
                           <Link href={`/tags/${slug}`} target="_blank" className="admin-tag-name">{tag.name}</Link>
                         </td>
-                        <td>{tag.count.toLocaleString("en-IN")}</td>
+                        <td>{formatCompactNumber(tag.count)}</td>
                         <td>
                           <div className="admin-tag-actions">
                             <button type="button" disabled={busyTag !== null} onClick={() => openEdit(tag)}>Edit</button>
@@ -242,7 +242,7 @@ export default function AdminTagsPage() {
 
           {!loadingTags && filteredTags.length > 0 ? (
             <div className="admin-table-footer">
-              <span>Showing {firstTag}–{lastTag} of {filteredTags.length} tags</span>
+              <span>Showing {firstTag}–{lastTag} of {formatCompactNumber(filteredTags.length)} tags</span>
               <div className="admin-pagination">
                 <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
                 <span>Page {page} of {pageCount}</span>

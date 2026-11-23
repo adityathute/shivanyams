@@ -1085,15 +1085,46 @@ class AdminPostEngagement(APIView):
             "reports": CommentReport.objects.filter(comment__post=post, status=CommentReport.Status.OPEN).count(),
         }
         if request.query_params.get("details") == "1":
-            payload["details"] = {
+            details = {
                 "post_reactions": list(post.reactions.order_by("-created_at").values("user_auth_id", "reaction", "created_at")[:500]),
                 "comment_reactions": list(CommentReaction.objects.filter(comment_id__in=comment_ids).order_by("-created_at").values("comment_id", "user_auth_id", "reaction", "created_at")[:1000]),
-                "comments": list(Comment.objects.filter(post=post).order_by("-created_at").values("id", "parent_id", "user_auth_id", "content", "status", "is_admin_reply", "created_at")[:500]),
+                "comments": list(Comment.objects.filter(post=post).order_by("-created_at").values("id", "parent_id", "user_auth_id", "author_name", "content", "status", "is_admin_reply", "created_at")[:500]),
                 "shares": list(post.share_events.order_by("-created_at").values("user_auth_id", "visitor_id", "channel", "created_at")[:500]),
                 "saved": list(post.saved_posts.order_by("-created_at").values("user_auth_id", "created_at")[:500]),
                 "subscribers": list(PostSubscription.objects.filter(post=post, is_active=True).order_by("-created_at").values("user_auth_id", "email", "created_at")[:500]),
                 "reports": list(CommentReport.objects.filter(comment__post=post).select_related("comment").order_by("-created_at").values("comment_id", "comment__content", "reporter_auth_id", "reason", "details", "status", "created_at")[:500]),
             }
+
+            # Resolve activity identities from the names already captured by
+            # Portal Users when authenticated users visit the public website.
+            auth_ids = {
+                str(row.get(key) or "")
+                for rows in details.values()
+                for row in rows
+                for key in ("user_auth_id", "reporter_auth_id")
+                if row.get(key)
+            }
+            user_names = {}
+            if auth_ids:
+                for visitor in WebsiteVisitor.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).exclude(full_name="").order_by("-last_seen_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                for visit in WebsiteView.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).exclude(full_name="").order_by("-viewed_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+
+            for row in details["post_reactions"] + details["comment_reactions"] + details["shares"] + details["saved"] + details["subscribers"]:
+                row["user_name"] = user_names.get(str(row.get("user_auth_id") or ""), "")
+            for row in details["reports"]:
+                row["reporter_name"] = user_names.get(str(row.get("reporter_auth_id") or ""), "")
+
+            payload["details"] = details
         return Response(payload)
 
 

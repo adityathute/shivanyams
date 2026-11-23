@@ -235,6 +235,28 @@ export default function AdminPostEngagementPage() {
 
   const selectedStat = statLabels.find((item) => item.key === selected) || statLabels[0];
   const selectedLabel = selectedStat.label;
+  const detailDescription = (() => {
+    switch (selected) {
+      case "all":
+        return "A complete overview of every recorded interaction with this post, including likes, dislikes, comments, shares, saves, subscribers, and reports.";
+      case "likes":
+        return `People who liked this post or its comments and replies. ${formatCompactNumber(payload?.likes.post || 0)} post likes · ${formatCompactNumber(payload?.likes.comments_and_replies || 0)} comment and reply likes.`;
+      case "dislikes":
+        return `People who disliked this post or its comments and replies. ${formatCompactNumber(payload?.dislikes.post || 0)} post dislikes · ${formatCompactNumber(payload?.dislikes.comments_and_replies || 0)} comment and reply dislikes.`;
+      case "comments":
+        return `Comments submitted on this post. ${formatCompactNumber(payload?.comments.approved || 0)} approved · ${formatCompactNumber(payload?.comments.hidden || 0)} hidden.`;
+      case "shares":
+        return "People who shared this post, with the available sharing details and timestamps.";
+      case "saved":
+        return "People who saved this post to revisit it later.";
+      case "subscribers":
+        return "People who subscribed to updates from this post or its publisher.";
+      case "reports":
+        return "Reports submitted about this post, including the available reason and review details.";
+      default:
+        return "A record of activity associated with this post.";
+    }
+  })();
   const columns = tableRows.length
     ? Array.from(new Set(tableRows.flatMap((row) => Object.keys(row))))
       .filter((column) => column === "activity" || column === "user" || column === "content" ||
@@ -304,11 +326,7 @@ export default function AdminPostEngagementPage() {
               <div className="admin-panel-heading">
                 <div>
                   <h2 className={"admin-engagement-details-title stat-" + selectedStat.color}><i>{selectedStat.icon}</i><span>{selectedLabel} details</span></h2>
-                  {selected === "likes" || selected === "dislikes" ? (
-                    <p>Post: {formatCompactNumber(payload[selected].post)} · Comments and replies: {formatCompactNumber(payload[selected].comments_and_replies)} · Overall: {formatCompactNumber(payload[selected].total)}</p>
-                  ) : selected === "comments" ? (
-                    <p>{formatCompactNumber(payload.comments.approved)} approved · {formatCompactNumber(payload.comments.hidden)} hidden · {formatCompactNumber(payload.comments.total)} total</p>
-                  ) : <p>{formatCompactNumber(selectedRows.length)} records available in this detail list.</p>}
+                  <p>{detailDescription} {formatCompactNumber(selectedRows.length)} {selectedRows.length === 1 ? "record" : "records"} shown below.</p>
                 </div>
               </div>
               {!selectedRows.length ? (

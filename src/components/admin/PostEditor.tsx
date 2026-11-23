@@ -275,6 +275,10 @@ type PostRecord = {
   meta_title_en?: string;
   meta_description_en?: string;
   meta_keywords?: string[];
+  comments_enabled?: boolean;
+  reactions_enabled?: boolean;
+  is_featured?: boolean;
+  is_active?: boolean;
   category?: Category;
   important_links?: LinkInput[];
   faqs?: FAQInput[];
@@ -717,6 +721,10 @@ export default function PostEditor({
           meta_title_en: record.meta_title_en || "",
           meta_description_en: record.meta_description_en || "",
           meta_keywords: "",
+          comments_enabled: record.comments_enabled !== false,
+          reactions_enabled: record.reactions_enabled !== false,
+          is_featured: record.is_featured ?? false,
+          is_active: record.is_active ?? true,
         });
         setTags(Array.isArray(record.meta_keywords) ? record.meta_keywords.filter(Boolean) : []);
         setTagInput("");
@@ -1336,10 +1344,29 @@ export default function PostEditor({
     const url = creating
       ? `${API_URL}/admin/content/${kind.api}/`
       : `${API_URL}/admin/content/${kind.api}/${currentSlugRef.current || editSlug}/`;
+    // A comments/reactions setting change should not rewrite nested post data.
+    // Use a narrow PATCH so existing comments, replies and other related records
+    // remain untouched while the interaction setting is updated.
+    let settingsOnly: Record<string, unknown> | null = null;
+    if (editing && lastSavedSnapshotRef.current) {
+      try {
+        const previous = JSON.parse(lastSavedSnapshotRef.current) as Record<string, unknown>;
+        const changedKeys = Object.keys(payload).filter(
+          (key) => JSON.stringify((payload as Record<string, unknown>)[key]) !== JSON.stringify(previous[key]),
+        );
+        if (changedKeys.length === 1 && changedKeys[0] === "comments_enabled") {
+          settingsOnly = { comments_enabled: payload.comments_enabled };
+        } else if (changedKeys.length === 1 && changedKeys[0] === "reactions_enabled") {
+          settingsOnly = { reactions_enabled: payload.reactions_enabled };
+        }
+      } catch {
+        settingsOnly = null;
+      }
+    }
     const response = await adminFetch(url, {
-      method: creating ? "POST" : "PUT",
+      method: creating ? "POST" : settingsOnly ? "PATCH" : "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, slug }),
+      body: JSON.stringify(settingsOnly || { ...payload, slug }),
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {

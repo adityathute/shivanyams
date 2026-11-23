@@ -242,7 +242,7 @@ export default function AdminPostEngagementPage() {
 
   if (loading || !isAdmin) return null;
 
-  const tableRows = selectedRows.map((row) => {
+  const tableRows: DetailRow[] = selectedRows.map((row) => {
     const content = getRowContent(row);
     const normalized = Object.fromEntries(
       Object.entries(row).filter(([key]) => !isContentColumn(key))

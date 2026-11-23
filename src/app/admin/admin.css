@@ -2160,7 +2160,93 @@
   text-align: center;
 }
 
-.admin-like-comment-detail{display:flex;flex-direction:column;gap:16px;padding:4px 2px 8px}.admin-like-comment-section{border:1px solid var(--admin-border,#e5e7eb);border-radius:12px;padding:14px 16px;min-width:0}.admin-like-comment-section h3{margin:0 0 10px;font-size:13px;font-weight:700;color:var(--admin-muted,#718198)}.admin-like-comment-section>p,.admin-like-comment-replies article>p{margin:0;color:var(--admin-text,inherit);font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.admin-like-comment-meta,.admin-like-comment-stats{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;color:var(--admin-muted,#718198);font-size:12px}.admin-like-comment-replies{display:flex;flex-direction:column;gap:10px}.admin-like-comment-replies article{border-left:3px solid var(--admin-accent,#2563eb);padding:8px 0 8px 12px}
+/* Consistent all-side spacing, scoped only to Likes Comment details and Reply details. */
+.admin-analytics-modal .admin-like-comment-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 22px;
+}
+
+.admin-analytics-modal .admin-like-comment-section {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--admin-border, #e5e7eb);
+  border-radius: 12px;
+}
+
+.admin-analytics-modal .admin-like-comment-section h3 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--admin-muted, #718198);
+}
+
+.admin-analytics-modal .admin-like-comment-section > p,
+.admin-analytics-modal .admin-like-comment-replies article > p {
+  margin: 0;
+  color: var(--admin-text, inherit);
+  font-size: 14px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-analytics-modal .admin-like-comment-meta,
+.admin-analytics-modal .admin-like-comment-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 12px 0 0;
+  color: var(--admin-muted, #718198);
+  font-size: 12px;
+}
+
+.admin-analytics-modal .admin-like-comment-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-analytics-modal .admin-like-comment-replies article {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--admin-border, #e5e7eb);
+  border-left: 3px solid var(--admin-accent, #2563eb);
+  border-radius: 9px;
+}
+
+@media (max-width: 760px) {
+  .admin-analytics-modal .admin-like-comment-detail {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .admin-analytics-modal .admin-like-comment-section {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-analytics-modal .admin-like-comment-detail {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .admin-analytics-modal .admin-like-comment-section {
+    padding: 12px;
+  }
+
+  .admin-analytics-modal .admin-like-comment-replies article {
+    padding: 10px;
+  }
+}
 
 /* Likes modal: align Post left and Content center in both header and rows. */
 .admin-analytics-modal .admin-likes-analytics-table th:nth-child(2),

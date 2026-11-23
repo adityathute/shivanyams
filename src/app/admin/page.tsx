@@ -12,7 +12,8 @@ import {
   CloseIcon,
   Select,
   DownloadIcon,
-  RefreshIcon,
+  RefreshIcon,,
+  PlusIcon
 } from "shivanya-ui";
 import {
   API_URL,
@@ -668,7 +669,8 @@ export default function AdminPage() {
               View website ↗
             </Link>
             <Link href="/admin/add-post" className="admin-primary-button">
-              ＋ Add New Post
+              <PlusIcon size={16} />
+              <span>Add New Post</span>
             </Link>
           </div>
         </header>

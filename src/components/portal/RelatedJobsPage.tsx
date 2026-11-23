@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
-import "./RelatedJobsPage.css";
+import "./saved/SavedPostsPage.css";
 
 const organizationLabels: Record<string, Record<string, string>> = {
   central: { en: "Central Government", mr: "केंद्र सरकार", hi: "केंद्र सरकार" },
@@ -19,9 +19,9 @@ const organizationLabels: Record<string, Record<string, string>> = {
 };
 
 const copy = {
-  en: { eyebrow: "SHIVANYAMS • JOBS", title: "Related Jobs", count: "jobs found", loading: "Loading related jobs...", empty: "No published jobs were found for this selection.", view: "View details", back: "All Jobs" },
-  mr: { eyebrow: "SHIVANYAMS • नोकऱ्या", title: "संबंधित नोकऱ्या", count: "नोकऱ्या मिळाल्या", loading: "संबंधित नोकऱ्या लोड होत आहेत...", empty: "या निवडीसाठी प्रकाशित नोकऱ्या उपलब्ध नाहीत.", view: "तपशील पहा", back: "सर्व नोकऱ्या" },
-  hi: { eyebrow: "SHIVANYAMS • नौकरियां", title: "संबंधित नौकरियां", count: "नौकरियां मिलीं", loading: "संबंधित नौकरियां लोड हो रही हैं...", empty: "इस चयन के लिए कोई प्रकाशित नौकरी नहीं मिली।", view: "विवरण देखें", back: "सभी नौकरियां" },
+  en: { eyebrow: "SHIVANYAMS • JOBS", title: "Related Jobs", description: "Browse published jobs matching this tag or organization.", count: "jobs found", loading: "Loading related jobs...", empty: "No published jobs were found for this selection." },
+  mr: { eyebrow: "SHIVANYAMS • नोकऱ्या", title: "संबंधित नोकऱ्या", description: "या टॅग किंवा संस्थेशी संबंधित प्रकाशित नोकऱ्या पहा.", count: "नोकऱ्या मिळाल्या", loading: "संबंधित नोकऱ्या लोड होत आहेत...", empty: "या निवडीसाठी प्रकाशित नोकऱ्या उपलब्ध नाहीत." },
+  hi: { eyebrow: "SHIVANYAMS • नौकरियां", title: "संबंधित नौकरियां", description: "इस टैग या संगठन से जुड़ी प्रकाशित नौकरियां देखें।", count: "नौकरियां मिलीं", loading: "संबंधित नौकरियां लोड हो रही हैं...", empty: "इस चयन के लिए कोई प्रकाशित नौकरी नहीं मिली।" },
 };
 
 function slugify(value: string) {
@@ -64,48 +64,46 @@ export function RelatedJobsPage() {
   }, [filterType, jobs, language, slug]);
 
   return (
-    <main className="related-jobs-page">
-      <div className="related-jobs-shell">
-        <header className="related-jobs-header">
-          <span className="related-jobs-eyebrow">{labels.eyebrow}</span>
-          <h1>{labels.title}</h1>
-          <div className="related-jobs-filter">
-            <span className={filterType === "organization" ? "organization" : "tag"}>
-              {heading}
-            </span>
-          </div>
-          <p>{jobs.length} {labels.count}</p>
-        </header>
+    <div className="saved-page related-saved-page">
+      <header className="saved-page-heading">
+        <span className="saved-eyebrow">{labels.eyebrow}</span>
+        <h1>{labels.title}</h1>
+        <p>{labels.description}</p>
+      </header>
+
+      <section className="saved-panel">
+        <div className="saved-section-heading">
+          <h2>{heading}</h2>
+          <span>{jobs.length} {labels.count}</span>
+        </div>
 
         {data.loading ? (
-          <div className="related-jobs-state">{labels.loading}</div>
+          <div className="saved-empty-state saved-list-empty" role="status">
+            {labels.loading}
+          </div>
         ) : jobs.length ? (
-          <section className="related-jobs-list" aria-label={labels.title}>
+          <div className="saved-post-list">
             {jobs.map((job) => {
               const title = localized({ en: job.title_en || job.title, mr: job.title_mr, hi: job.title_hi }, language);
               const summary = localized({ en: job.summary_en || job.description, mr: job.summary_mr, hi: job.summary_hi }, language);
               return (
-                <a className="related-job-card" href={`/jobs/${job.slug || slugify(job.title)}`} key={job.id}>
-                  <div className="related-job-card-content">
-                    <span className="related-job-category">{job.category}</span>
-                    <h2>{title}</h2>
-                    {summary ? <p>{summary}</p> : null}
-                    <div className="related-job-meta">
-                      {job.location ? <span>{job.location}</span> : null}
-                      {job.date ? <time>{formatDate(job.date, language)}</time> : null}
-                    </div>
-                  </div>
-                  <span className="related-job-view">{labels.view} <span aria-hidden="true">↗</span></span>
-                </a>
+                <article className="saved-post-row related-job-row" key={job.id}>
+                  <a className="saved-post-link" href={`/jobs/${job.slug || slugify(job.title)}`}>
+                    <span className="update-badge job">{job.category}</span>
+                    <span className="saved-post-title">
+                      {title}
+                      {summary ? <small>{summary}</small> : null}
+                    </span>
+                    <time>{formatDate(job.date, language)}</time>
+                  </a>
+                </article>
               );
             })}
-          </section>
+          </div>
         ) : (
-          <div className="related-jobs-state">{labels.empty}</div>
+          <div className="saved-empty-state saved-list-empty">{labels.empty}</div>
         )}
-
-        <a className="related-jobs-back" href="/jobs">← {labels.back}</a>
-      </div>
-    </main>
+      </section>
+    </div>
   );
 }

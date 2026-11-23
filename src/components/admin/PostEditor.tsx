@@ -3046,10 +3046,10 @@ export default function PostEditor({
                     ));
                 const isDate =
                   /date$|_date$/.test(key) ||
-                  key === "eligible_dob_from" ||
-                  key === "eligible_dob_to";
+                  ["eligible_dob_from", "eligible_dob_to", "available_from", "available_until"].includes(key);
+                const isTime = key === "reporting_time";
                 const isLongText =
-                  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note|application_fee_note|allowances|employment_conditions|service_bond|retirement_benefits/i.test(
+                  /details|description|qualification|eligibility|benefits|documents|instructions|syllabus|pattern|process|credentials|relaxation|beneficiaries|configuration|age_limit_note|application_fee_note|allowances|employment_conditions|service_bond|retirement_benefits|address|requirements|summary|correction_contact/i.test(
                     key,
                   );
                 if (kind.api === 'videos' && key === 'video_url') {
@@ -3155,7 +3155,7 @@ export default function PostEditor({
                   <Input
                     key={key}
                     label={label}
-                    type={isDate ? "date" : isNumber ? "number" : /url/i.test(key) ? "url" : "text"}
+                    type={isDate ? "date" : isTime ? "time" : isNumber ? "number" : /url/i.test(key) ? "url" : "text"}
                     value={value === null ? "" : String(value)}
                     onChange={(event) => updateDetail(key, isNumber ? (event.target.value === "" ? null : Number(event.target.value)) : event.target.value)}
                     fullWidth

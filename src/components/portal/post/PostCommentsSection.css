@@ -54,7 +54,7 @@
 .portal-comment-report-panel select,
 .portal-comment-report-panel textarea {
   color: inherit;
-  background: var(--background, transparent);
+  /* background: var(--background, transparent); */
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 8px;
   outline: none;

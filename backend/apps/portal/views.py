@@ -1789,6 +1789,7 @@ class AdminDashboardStats(APIView):
                 event_type=NewsletterSubscriptionEvent.EventType.UNSUBSCRIBED
             ).count()
 
+            active_subscriber_count = len(rows)
             subscriber_view = request.query_params.get("view", "active")
             if subscriber_view == "registered":
                 rows = [row for row in rows if next((item.user_auth_id for item in subscriptions if item.id == row["id"]), "")]
@@ -1829,7 +1830,7 @@ class AdminDashboardStats(APIView):
                 response_rows = rows
 
             return Response({
-                "total_subscribers": len(rows),
+                "total_subscribers": active_subscriber_count,
                 "registered_users": len({item.user_auth_id for item in subscriptions if item.user_auth_id}),
                 "total_subscriptions": total_subscribe_events,
                 "total_resubscriptions": max(0, total_subscribe_events - NewsletterSubscriptionEvent.objects.filter(event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED).values("subscription_id").distinct().count()),

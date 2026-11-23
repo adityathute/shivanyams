@@ -1683,7 +1683,7 @@ class PostVersion(models.Model):
 
 
 class NewsletterSubscription(TimestampedModel):
-    """Email subscriber for general ShivanyaMS news, promotions and updates."""
+    """Global email subscriber for all newly published ShivanyaMS posts and updates."""
     email = models.EmailField(max_length=254, unique=True)
     user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
     language = models.CharField(max_length=2, choices=LanguageChoices.choices, default=LanguageChoices.ENGLISH)

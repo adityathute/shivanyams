@@ -1882,3 +1882,15 @@
     flex-wrap: wrap;
   }
 }
+
+/* Dashboard stat number colors: highlight the three website metrics in blue. */
+.admin-stats:not(.admin-stats-secondary) .admin-stat-card > strong,
+.admin-stats:not(.admin-stats-secondary) .admin-stat-clickable button > strong,
+.admin-stats.admin-stats-secondary .admin-stat-card > strong {
+  color: #718198;
+}
+
+.admin-stats:not(.admin-stats-secondary) > .admin-stat-card:nth-child(-n + 3) > strong,
+.admin-stats:not(.admin-stats-secondary) > .admin-stat-card:nth-child(-n + 3) button > strong {
+  color: #2563eb;
+}

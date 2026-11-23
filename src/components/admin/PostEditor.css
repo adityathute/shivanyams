@@ -2057,6 +2057,11 @@ padding-right: 24px;
   border-color: #36a66f !important;
   background-color: #e8f7ef !important;
 }
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--unpublished {
+  color: #946200 !important;
+  border-color: #e6a23c !important;
+  background-color: #fff5df !important;
+}
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--reviewed,
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--pending-review,
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--pending {
@@ -2072,15 +2077,6 @@ padding-right: 24px;
   border-color: #cbd5e1 !important;
   background-color: #eef2f7 !important;
 }
-.post-editor-status-indicator {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  flex: 0 0 7px;
-  border-radius: 50%;
-  background: #187447;
-}
-
 .post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }
 .post-editor-publication-status > strong { text-transform: capitalize; font-size: 13px; color: #16734e; }
 .post-editor-publication-status > span { color: #64748b; font-size: 11px; }

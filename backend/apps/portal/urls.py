@@ -26,6 +26,7 @@ from .views import (
     AdminSlugAvailability,
     AdminOrganizationTypes,
     AdminDashboardStats,
+    AdminSharesAnalytics,
     TrackWebsiteView,
     AdminWebsiteAnalytics,
 )
@@ -97,6 +98,7 @@ urlpatterns = [
     path("admin/website-analytics/", AdminWebsiteAnalytics.as_view(), name="admin-website-analytics"),
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
+    path("admin/shares/", AdminSharesAnalytics.as_view(), name="admin-shares-analytics"),
     # Admin content management
     path("admin/tags/", AdminTags.as_view(), name="admin-tags"),
     path("admin/content/slug-availability/", AdminSlugAvailability.as_view(), name="admin-slug-availability"),

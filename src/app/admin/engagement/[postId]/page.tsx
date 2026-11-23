@@ -192,8 +192,8 @@ export default function AdminPostEngagementPage() {
               {!selectedRows.length ? (
                 <div className="admin-empty admin-engagement-empty">No {selectedLabel.toLowerCase()} recorded yet.</div>
               ) : (
-                <div className="admin-table-wrap admin-engagement-table-wrap">
-                  <table className="admin-post-table admin-engagement-table">
+                <div className="admin-engagement-table-wrap">
+                  <table className="admin-engagement-data-table">
                     <thead><tr>{columns.map((column) => <th key={column}>{column.replaceAll("_", " ")}</th>)}</tr></thead>
                     <tbody>
                       {selectedRows.map((row, index) => (

@@ -2179,7 +2179,20 @@
   text-align: center;
 }
 
-/* Keep the Comment label and its actual text flowing together in reply rows. */
+/* Keep the Comment label and comment text in one continuous, two-line-clamped text block. */
+.admin-analytics-modal .admin-likes-content-link.is-comment-context .admin-analytics-like-context {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-align: center;
+}
+
 .admin-analytics-modal .admin-likes-content-link.is-comment-context .admin-analytics-like-context strong {
   display: inline;
   font: inherit;

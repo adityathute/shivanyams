@@ -641,7 +641,7 @@ export default function AdminPage() {
 
   async function openLikeComment(item: LikeAnalyticsEvent, target: "comment" | "reply") {
     const commentId = target === "comment" ? (item.parent_id || item.comment_id) : item.comment_id;
-    if (!commentId) { setError("Comment details are not available for this like."); return; }
+    if (!commentId) { setError("Comment details are not available for this reaction."); return; }
     setAnalyticsLoading(true);
     try {
       const response = await adminFetch(API_URL + "/admin/comments/?post=" + item.post_id, { cache: "no-store" });
@@ -1391,6 +1391,8 @@ export default function AdminPage() {
                         ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
                         : analyticsType === "likes"
                           ? `Likes (${formatCompactNumber(likeAnalyticsEvents.length)})`
+                          : analyticsType === "dislikes"
+                            ? `Dislikes (${formatCompactNumber(likeAnalyticsEvents.length)})`
                           : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
@@ -1414,6 +1416,8 @@ export default function AdminPage() {
                         ? "Individual visits recorded for this page."
                         : analyticsType === "likes"
                           ? "Individual likes across posts, comments, and replies."
+                          : analyticsType === "dislikes"
+                            ? "Individual dislikes across posts, comments, and replies."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1497,7 +1501,7 @@ export default function AdminPage() {
                             </td>
                             <td title={item.target_type === "reply" ? `Reply: ${item.content}` : item.content}>
                               {item.target_type === "post" ? (
-                                <span className="admin-analytics-like-content">Liked this post</span>
+                                <span className="admin-analytics-like-content">{analyticsType === "dislikes" ? "Disliked this post" : "Liked this post"}</span>
                               ) : item.target_type === "comment" ? (
                                 <button
                                   type="button"
@@ -1889,6 +1893,8 @@ export default function AdminPage() {
                       ? analyticsEvents.length + " recent view events"
                       : analyticsType === "likes"
                         ? formatCompactNumber(likeAnalyticsEvents.length) + " like events"
+                        : analyticsType === "dislikes"
+                          ? formatCompactNumber(likeAnalyticsEvents.length) + " dislike events"
                         : analyticsType === "drafts" || analyticsType === "review"
                           ? formatCompactNumber(statusAnalyticsPosts.length) + " posts"
                         : analyticsType === "posts"

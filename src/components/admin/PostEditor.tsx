@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Checkbox, Input, Select, Textarea } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
-import { adminFetch, slugify } from "../../app/admin/admin-utils";
+import { adminFetch, formatCompactNumber, slugify } from "../../app/admin/admin-utils";
 import "./PostEditor.css";
 
 type OrganizationType = {
@@ -1827,7 +1827,7 @@ export default function PostEditor({
                     </div>
                     <div className="post-editor-vacancy-total">
                       <span>Total vacancies</span>
-                      <strong>{((details.posts as JobPostInput[]) || []).reduce((total, post) => total + Number(post.vacancies || 0), 0).toLocaleString("en-IN")}</strong>
+                      <strong>{formatCompactNumber(((details.posts as JobPostInput[]) || []).reduce((total, post) => total + Number(post.vacancies || 0), 0))}</strong>
                       <small>Calculated from individual posts</small>
                     </div>
                   </div>

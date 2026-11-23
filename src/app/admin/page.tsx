@@ -2745,7 +2745,9 @@ export default function AdminPage() {
                           ? formatCompactNumber(postAnalyticsPages.length) + " posts tracked"
                           : analyticsType === "views"
                           ? formatCompactNumber(analyticsPages.length) + " pages tracked"
-                          : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
+                          : analyticsType === "shares"
+                            ? formatCompactNumber(shareAnalytics.total) + " shares"
+                            : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
               </span>
             </footer>
           </section>

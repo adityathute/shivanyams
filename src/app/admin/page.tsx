@@ -39,6 +39,7 @@ type PostAnalyticsPage = { id: number; title: string; slug: string; views: numbe
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
 type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; };
+type SubscriberAnalyticsTotals = { total: number; registered: number; subscriptions: number; resubscriptions: number; unsubscriptions: number };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -239,7 +240,7 @@ export default function AdminPage() {
   const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
   const [subscriberSearch, setSubscriberSearch] = useState("");
   const [subscribersPage, setSubscribersPage] = useState(1);
-  const [subscriberTotals, setSubscriberTotals] = useState({ total: 0, registered: 0 });
+  const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -767,10 +768,13 @@ export default function AdminPage() {
         if (!response.ok) throw new Error(`Unable to load subscribers (${response.status}).`);
         return response.json();
       })
-      .then((payload: { total_subscribers?: number; registered_users?: number; results?: SubscriberAnalyticsRow[] }) => {
+      .then((payload: { total_subscribers?: number; registered_users?: number; total_subscriptions?: number; total_resubscriptions?: number; total_unsubscriptions?: number; results?: SubscriberAnalyticsRow[] }) => {
         setSubscriberTotals({
           total: Number(payload.total_subscribers) || 0,
           registered: Number(payload.registered_users) || 0,
+          subscriptions: Number(payload.total_subscriptions) || 0,
+          resubscriptions: Number(payload.total_resubscriptions) || 0,
+          unsubscriptions: Number(payload.total_unsubscriptions) || 0,
         });
         setSubscriberRows(payload.results ?? []);
       })
@@ -1759,8 +1763,11 @@ export default function AdminPage() {
                 subscriberRows.length === 0 ? <div className="admin-empty">No subscribers recorded yet.</div> : (
                   <>
                     <div className="admin-subscribers-summary">
-                      <article><span>Total subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></article>
+                      <article><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></article>
                       <article><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></article>
+                      <article><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></article>
+                      <article><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></article>
+                      <article><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></article>
                     </div>
                     <div className="admin-subscribers-toolbar">
                       <input

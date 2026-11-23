@@ -60,6 +60,16 @@ export function JobsPage() {
   const [location, setLocation] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [examMode, setExamMode] = useState("");
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
+  const [workCity, setWorkCity] = useState("");
+  const [workDistrict, setWorkDistrict] = useState("");
+  const [remoteOnly, setRemoteOnly] = useState(false);
+  const [hasNotification, setHasNotification] = useState("");
+  const [hasApplyLink, setHasApplyLink] = useState("");
+  const [minPostVacancies, setMinPostVacancies] = useState("");
   const [facets, setFacets] = useState<{ organization_types: { value: string; label: string }[]; departments: string[]; designations: string[]; locations: string[]; states: string[]; countries: string[] }>({ organization_types: [], departments: [], designations: [], locations: [], states: [], countries: [] });
   const [results, setResults] = useState<JobDiscoveryPost[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -108,6 +118,16 @@ export function JobsPage() {
     if (location) params.set("location", location);
     if (state) params.set("state", state);
     if (country) params.set("country", country);
+    if (qualification.trim()) params.set("qualification", qualification.trim());
+    if (examMode) params.set("exam_mode", examMode);
+    if (salaryMin) params.set("salary_min", salaryMin);
+    if (salaryMax) params.set("salary_max", salaryMax);
+    if (workCity.trim()) params.set("work_city", workCity.trim());
+    if (workDistrict.trim()) params.set("work_district", workDistrict.trim());
+    if (remoteOnly) params.set("remote_only", "true");
+    if (hasNotification) params.set("has_notification", hasNotification);
+    if (hasApplyLink) params.set("has_apply_link", hasApplyLink);
+    if (minPostVacancies) params.set("min_post_vacancies", minPostVacancies);
     params.set("sort", "recent");
 
     setSearchLoading(true);
@@ -128,12 +148,15 @@ export function JobsPage() {
         if (!controller.signal.aborted) setSearchLoading(false);
       });
     return () => controller.abort();
-  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country]);
+  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies]);
 
   const displayedJobs = hasSearched ? results : legacyJobs;
   const clearFilters = () => {
     setQuery(""); setRecruitmentType(""); setApplicationMode(""); setApplicationStatus("");
     setMinVacancies(""); setMaxVacancies(""); setClosingFrom(""); setClosingTo("");
+    setQualification(""); setExamMode(""); setSalaryMin(""); setSalaryMax("");
+    setWorkCity(""); setWorkDistrict(""); setRemoteOnly(false);
+    setHasNotification(""); setHasApplyLink(""); setMinPostVacancies("");
     setHasSearched(false); setResults([]); setSearchError("");
   };
 
@@ -181,6 +204,16 @@ export function JobsPage() {
               <label>Location<select value={location} onChange={(e) => { setLocation(e.target.value); setHasSearched(true); }}><option value="">All locations</option>{facets.locations.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
               <label>State<select value={state} onChange={(e) => { setState(e.target.value); setHasSearched(true); }}><option value="">All states</option>{facets.states.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
               <label>Country<select value={country} onChange={(e) => { setCountry(e.target.value); setHasSearched(true); }}><option value="">All countries</option>{facets.countries.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+              <label>Qualification<input value={qualification} onChange={(e) => { setQualification(e.target.value); setHasSearched(true); }} placeholder="e.g. Graduate, 12th pass" /></label>
+              <label>Examination mode<select value={examMode} onChange={(e) => { setExamMode(e.target.value); setHasSearched(true); }}><option value="">Any exam mode</option><option value="online">Online</option><option value="offline">Offline</option><option value="computer_based">Computer-based</option><option value="omr">OMR</option><option value="descriptive">Descriptive</option><option value="mixed">Mixed</option><option value="as_notified">As notified</option></select></label>
+              <label>Minimum salary<input type="number" min="0" step="0.01" value={salaryMin} onChange={(e) => { setSalaryMin(e.target.value); setHasSearched(true); }} placeholder="Minimum" /></label>
+              <label>Maximum salary<input type="number" min="0" step="0.01" value={salaryMax} onChange={(e) => { setSalaryMax(e.target.value); setHasSearched(true); }} placeholder="Maximum" /></label>
+              <label>Work city<input value={workCity} onChange={(e) => { setWorkCity(e.target.value); setHasSearched(true); }} placeholder="City" /></label>
+              <label>Work district<input value={workDistrict} onChange={(e) => { setWorkDistrict(e.target.value); setHasSearched(true); }} placeholder="District" /></label>
+              <label>Remote opportunities<select value={remoteOnly ? "true" : ""} onChange={(e) => { setRemoteOnly(e.target.value === "true"); setHasSearched(true); }}><option value="">Any location type</option><option value="true">Remote only</option></select></label>
+              <label>Official notification<select value={hasNotification} onChange={(e) => { setHasNotification(e.target.value); setHasSearched(true); }}><option value="">Any notification status</option><option value="true">Has official notification</option><option value="false">No notification link</option></select></label>
+              <label>Direct apply link<select value={hasApplyLink} onChange={(e) => { setHasApplyLink(e.target.value); setHasSearched(true); }}><option value="">Any application link</option><option value="true">Has direct apply link</option><option value="false">No direct apply link</option></select></label>
+              <label>Minimum vacancies in a post<input type="number" min="0" value={minPostVacancies} onChange={(e) => { setMinPostVacancies(e.target.value); setHasSearched(true); }} placeholder="e.g. 5" /></label>
             </div>
           </section>
 

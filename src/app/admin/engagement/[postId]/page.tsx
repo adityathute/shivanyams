@@ -297,7 +297,7 @@ export default function AdminPostEngagementPage() {
     <main className="admin-page">
       <div className="admin-shell">
         <header className="admin-topbar">
-          <div>
+          <div className="admin-engagement-header-copy">
             <span className="admin-eyebrow">POST ENGAGEMENT</span>
             <h1>{payload?.post.title || "Post statistics"}</h1>
             <p>Overall post and discussion engagement, with individual activity records.</p>

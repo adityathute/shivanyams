@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
 import { BookmarkIcon, DislikeIcon, LikeIcon, ReportIcon, ShareIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -26,6 +26,7 @@ export function PostEngagementActions({ postId, title }: Props) {
   const [userReportCount, setUserReportCount] = useState(0);
   const [message, setMessage] = useState("");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const shareMenuRef = useRef<HTMLElement | null>(null);
 
   const loadPostReaction = useCallback(async () => {
     const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reactions/`), { cache: "no-store" });
@@ -210,8 +211,30 @@ export function PostEngagementActions({ postId, title }: Props) {
     void recordShare(channel);
     window.open(destination, "_blank", "noopener,noreferrer");
   }
+  useEffect(() => {
+    if (!shareMenuOpen) return;
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target as Node)) {
+        setShareMenuOpen(false);
+        void recordShare("dismissed");
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShareMenuOpen(false);
+        void recordShare("dismissed");
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [shareMenuOpen, postId]);
+
   return (
-    <section className="portal-post-engagement-actions" aria-label="Post actions">
+    <section ref={shareMenuRef} className="portal-post-engagement-actions" aria-label="Post actions">
       <div className="portal-post-reaction-actions">
         <button
           type="button"

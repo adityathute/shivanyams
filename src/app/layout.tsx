@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: "ShivanyaMS",
     title: "ShivanyaMS | Govt Jobs, Schemes & Updates",
     description: "Government jobs, schemes, examinations, admit cards and results.",
-    images: [{ url: "/logo.png", width: 1200, height: 630, alt: "ShivanyaMS" }],
+    images: [{ url: "/logo.png", alt: "ShivanyaMS" }],
   },
   twitter: {
     card: "summary_large_image",

@@ -46,6 +46,7 @@ type LikeAnalyticsEvent = {
   content: string;
   parent_content: string;
   user_name: string;
+  user_email: string;
   visitor_id: string;
   created_at: string;
 };
@@ -1420,17 +1421,22 @@ export default function AdminPage() {
                                 ? <small className="admin-analytics-like-context">Reply to: {item.parent_content}</small>
                                 : null}
                             </td>
-                            <td>
+                            <td className="admin-likes-user-cell">
                               {item.visitor_id ? (
                                 <button
                                   type="button"
                                   className="admin-analytics-link admin-likes-user-link"
                                   onClick={() => void openPostEventVisitor(item.visitor_id)}
+                                  title={item.user_name || item.user_email || "Registered user"}
                                 >
-                                  {item.user_name || "Registered user"}
+                                  {item.user_name
+                                    ? formatPersonName(item.user_name)
+                                    : item.user_email || "Registered user"}
                                 </button>
                               ) : (
-                                item.user_name || "Registered user"
+                                item.user_name
+                                  ? formatPersonName(item.user_name)
+                                  : item.user_email || "Registered user"
                               )}
                             </td>
                             <td>{new Date(item.created_at).toLocaleString()}</td>

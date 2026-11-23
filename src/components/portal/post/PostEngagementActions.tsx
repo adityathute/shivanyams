@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "shivanya-auth";
 import { BookmarkIcon, DislikeIcon, LikeIcon, ReportIcon, ShareIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import "./PostEngagementActions.css";
@@ -181,20 +182,20 @@ export function PostEngagementActions({ postId, title }: Props) {
           className={`portal-action-like${reaction === "like" ? " is-active" : ""}`}
           onClick={() => void changeReaction("like")}
           title="Like"
-          aria-label={`Like, ${likes} likes`}
+          aria-label={`Like, ${formatCompactNumber(likes)} likes`}
         >
           <LikeIcon size={19} />
-          <strong>{likes.toLocaleString()}</strong>
+          <strong>{formatCompactNumber(likes)}</strong>
         </button>
         <button
           type="button"
           className={`portal-action-dislike${reaction === "dislike" ? " is-active" : ""}`}
           onClick={() => void changeReaction("dislike")}
           title="Dislike"
-          aria-label={`Dislike, ${dislikes} dislikes`}
+          aria-label={`Dislike, ${formatCompactNumber(dislikes)} dislikes`}
         >
           <DislikeIcon size={19} />
-          <strong>{dislikes.toLocaleString()}</strong>
+          <strong>{formatCompactNumber(dislikes)}</strong>
         </button>
         <button type="button" className="portal-action-share" onClick={() => void sharePost()} title="Share" aria-label="Share post">
           <ShareIcon size={19} />

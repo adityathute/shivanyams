@@ -1812,6 +1812,7 @@ class AdminDashboardStats(APIView):
                     "content": comment.content,
                     "parent_content": comment.parent.content if is_reply else "",
                     "user_name": user_names.get(reaction.user_auth_id, ""),
+                    "visitor_id": user_visitors.get(reaction.user_auth_id, ""),
                     "created_at": reaction.created_at,
                 })
             rows.sort(key=lambda row: row["created_at"], reverse=True)

@@ -74,6 +74,24 @@ function displayValue(value: unknown) {
   return String(value);
 }
 
+function isContentColumn(column: string) {
+  return /(^|_)(content|body|message|text|description|comment)(_|$)/i.test(column) ||
+    /comment.*(content|text|body)|^(content|body|message|text|description)$/i.test(column);
+}
+
+function getColumnWidth(column: string, rows: DetailRow[]) {
+  const key = column.toLowerCase();
+  if (isContentColumn(column)) return 440;
+  const values = rows.map((row) => String(row[column] ?? ""));
+  const longest = Math.min(36, Math.max(column.length, ...values.map((value) => value.length)));
+  if (/email/.test(key)) return Math.min(260, Math.max(190, longest * 7 + 36));
+  if (/name|user|author|reporter/.test(key)) return Math.min(220, Math.max(150, longest * 7 + 36));
+  if (/date|time|created|updated|at$/.test(key)) return 190;
+  if (/status|type|activity|target|reaction/.test(key)) return Math.min(160, Math.max(110, longest * 7 + 36));
+  if (/url|link/.test(key)) return 240;
+  return Math.min(220, Math.max(110, longest * 7 + 36));
+}
+
 export default function AdminPostEngagementPage() {
   const params = useParams<{ postId: string }>();
   const router = useRouter();
@@ -200,13 +218,14 @@ export default function AdminPostEngagementPage() {
               ) : (
                 <div className="admin-engagement-table-wrap">
                   <table className="admin-engagement-data-table">
-                    <thead><tr>{columns.map((column) => <th key={column}>{column.replaceAll("_", " ")}</th>)}</tr></thead>
+                    <colgroup>{columns.map((column) => <col key={column} style={{ width: getColumnWidth(column, selectedRows) }} />)}</colgroup>
+                    <thead><tr>{columns.map((column) => <th key={column}>{isContentColumn(column) ? "Comment content" : column.replaceAll("_", " ")}</th>)}</tr></thead>
                     <tbody>
                       {visibleRows.map((row, index) => (
                         <tr key={String(row.id ?? row.user_auth_id ?? row.reporter_auth_id ?? index) + "-" + index}>
                           {columns.map((column) => {
                             const value = displayValue(row[column]);
-                            return <td key={column}><span className="admin-engagement-cell-value" title={value}>{value}</span></td>;
+                            return <td key={column} className={isContentColumn(column) ? "admin-engagement-content-cell" : undefined}><span className={"admin-engagement-cell-value" + (isContentColumn(column) ? " is-content" : "")} title={value}>{value}</span></td>;
                           })}
                         </tr>
                       ))}

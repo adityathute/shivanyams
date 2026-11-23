@@ -15,6 +15,7 @@ import {
   ShareIcon,
   UsersIcon,
   RefreshIcon,
+  ArrowLeftIcon,
 } from "shivanya-ui";
 import { API_URL } from "../../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../../admin-utils";
@@ -297,8 +298,8 @@ export default function AdminPostEngagementPage() {
             <h1>{payload?.post.title || "Post statistics"}</h1>
             <p>Overall post and discussion engagement, with individual activity records.</p>
           </div>
-          <div className="admin-top-actions">
-            <Link href="/admin" className="admin-secondary-button">← Back to dashboard</Link>
+          <div className="admin-top-actions admin-engagement-header-actions">
+            <Link href="/admin" className="admin-secondary-button"><ArrowLeftIcon size={16} /><span>Back to dashboard</span></Link>
             <button
               type="button"
               className="admin-refresh-button"

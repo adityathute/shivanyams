@@ -220,12 +220,13 @@ export default function AdminPostEngagementPage() {
         ...reactionRows("like"),
         ...reactionRows("dislike"),
         ...details.comments.map((row) => ({ ...row, activity: "Comment" })),
-        ...details.shares.map((row) => ({ ...row, activity: "Share" })),
+        ...details.shares.map((row) => ({ ...row, channel: shareChannelLabel(row.channel), activity: "Share" })),
         ...details.saved.map((row) => ({ ...row, activity: "Saved" })),
         ...details.reports.map((row) => ({ ...row, activity: "Report" })),
       ];
     }
     if (selected === "users") return [];
+    if (selected === "shares") return details.shares.map((row) => ({ ...row, channel: shareChannelLabel(row.channel) }));
     return details[selected] || [];
   }, [payload, selected]);
 

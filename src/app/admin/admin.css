@@ -1662,3 +1662,31 @@
 .admin-analytics-modal .admin-analytics-table td {
   border-radius: 0 !important;
 }
+
+/* Keep analytics pagination aligned with the shared Admin table controls. */
+.admin-analytics-pagination {
+  padding: 12px 0;
+  border-top: 0;
+}
+
+.admin-analytics-pagination .admin-pagination label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #8492a4;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .admin-analytics-pagination {
+    width: 100%;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-analytics-pagination .admin-pagination {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+}

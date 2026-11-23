@@ -50,6 +50,10 @@ export default function AdminCommentsPage() {
   const [busyId, setBusyId] = useState<number | null>(null);
   const [replyTarget, setReplyTarget] = useState<CommentRow | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
+  const pageCount = Math.max(1, Math.ceil(comments.length / pageSize));
+  const visibleComments = comments.slice((page - 1) * pageSize, page * pageSize);
 
   const loadComments = useCallback(async () => {
     setLoadingRows(true);
@@ -80,6 +84,10 @@ export default function AdminCommentsPage() {
   useEffect(() => {
     if (isAdmin) void loadComments();
   }, [isAdmin, loadComments]);
+
+  useEffect(() => {
+    if (page > pageCount) setPage(pageCount);
+  }, [page, pageCount]);
 
   async function updateStatus(comment: CommentRow, status: string) {
     setBusyId(comment.id);
@@ -174,8 +182,8 @@ export default function AdminCommentsPage() {
             <div><h2>Discussion activity</h2><p>{comments.length} comments in this result</p></div>
           </div>
           <div className="admin-filters admin-comments-filters">
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search comment, user ID or post..." aria-label="Search comments" />
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Filter comment status">
+            <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search comment, user ID or post..." aria-label="Search comments" />
+            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter comment status">
               <option value="all">All statuses</option>
               <option value="approved">Approved</option>
               <option value="pending">Pending</option>
@@ -183,7 +191,7 @@ export default function AdminCommentsPage() {
               <option value="rejected">Rejected</option>
             </select>
             <label className="admin-comments-reported-filter">
-              <input type="checkbox" checked={reportedOnly} onChange={(event) => setReportedOnly(event.target.checked)} />
+              <input type="checkbox" checked={reportedOnly} onChange={(event) => { setReportedOnly(event.target.checked); setPage(1); }} />
               Reported only
             </label>
           </div>
@@ -191,7 +199,7 @@ export default function AdminCommentsPage() {
           {error ? <div className="admin-error">{error}</div> : null}
           {loadingRows ? <div className="admin-empty">Loading comments...</div> : comments.length === 0 ? <div className="admin-empty">No comments match these filters.</div> : (
             <div className="admin-comments-list">
-              {comments.map((comment) => (
+              {visibleComments.map((comment) => (
                 <article className="admin-comment-card" key={comment.id}>
                   <div className="admin-comment-card-head">
                     <div className="admin-comment-author">
@@ -244,6 +252,34 @@ export default function AdminCommentsPage() {
               ))}
             </div>
           )}
+          <div className="admin-table-footer">
+            <span>
+              Showing {comments.length ? (page - 1) * pageSize + 1 : 0}–
+              {Math.min(page * pageSize, comments.length)} of {comments.length} comments
+            </span>
+            <div className="admin-pagination">
+              <select
+                value={pageSize}
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setPage(1);
+                }}
+                aria-label="Comments per page"
+              >
+                <option value={10}>10 rows</option>
+                <option value={15}>15 rows</option>
+                <option value={25}>25 rows</option>
+                <option value={50}>50 rows</option>
+              </select>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>
+                Previous
+              </button>
+              <span>Page {page} of {pageCount}</span>
+              <button type="button" disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>
+                Next
+              </button>
+            </div>
+          </div>
         </section>
       </div>
       <footer className="admin-footer">ShivanyaMS · Community Management</footer>

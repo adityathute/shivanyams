@@ -57,7 +57,7 @@ export function RelatedJobsPage() {
   const slug = decodeURIComponent(params.slug || "");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(10);
   const resultsPanelRef = useRef<HTMLElement | null>(null);
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -92,7 +92,7 @@ export function RelatedJobsPage() {
       const top = panel.getBoundingClientRect().top;
       const availableHeight = Math.max(160, window.innerHeight - top - 155);
       const rowHeight = window.innerWidth <= 760 ? 94 : 78;
-      setPageSize(Math.max(1, Math.floor(availableHeight / rowHeight)));
+      setPageSize(Math.max(10, Math.floor(availableHeight / rowHeight)));
     };
 
     updatePageSize();

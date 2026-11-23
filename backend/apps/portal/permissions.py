@@ -36,6 +36,29 @@ def get_portal_roles(user):
     return {str(role).strip().lower() for role in roles if str(role).strip()}
 
 
+def get_portal_permissions(user):
+    auth_data = getattr(user, "auth_data", {})
+    if not isinstance(auth_data, dict):
+        return set()
+    permissions = auth_data.get("permissions", [])
+    if isinstance(permissions, str):
+        permissions = [permissions]
+    if not isinstance(permissions, list):
+        return set()
+    return {str(code).strip().lower() for code in permissions if str(code).strip()}
+
+
+class IsPortalAnalyticsManager(BasePermission):
+    """Allow admins and identities explicitly granted portal.analytics.read."""
+
+    message = "Portal analytics permission is required."
+
+    def has_permission(self, request, view):
+        if not getattr(request.user, "is_authenticated", False):
+            return False
+        return "admin" in get_portal_roles(request.user) or "portal.analytics.read" in get_portal_permissions(request.user)
+
+
 class IsPortalContentManager(BasePermission):
     """Admin has full access; editors manage owned content; reviewers are read-only."""
 

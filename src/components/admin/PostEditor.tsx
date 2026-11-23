@@ -1474,10 +1474,10 @@ export default function PostEditor({
       if (editing && postStatus === "published") {
         if (status === "draft") { router.push("/admin"); return; }
         const savedVersionId = typeof savedResult.id === "number" ? savedResult.id : null;
-        const pendingVersion = postVersions.find((item) => item.id === savedVersionId && !item.is_published)
-          || postVersions.find((item) => !item.is_published);
-        if (!pendingVersion) throw new Error("There are no unpublished changes to publish.");
-        const publishResponse = await adminFetch(`${API_URL}/admin/content/${postId}/versions/${pendingVersion.id}/publish/`, {
+        const pendingVersionId = savedVersionId
+          || postVersions.find((item) => !item.is_published)?.id;
+        if (!pendingVersionId) throw new Error("There are no unpublished changes to publish.");
+        const publishResponse = await adminFetch(`${API_URL}/admin/content/${postId}/versions/${pendingVersionId}/publish/`, {
           method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}),
         });
         const publishResult = await publishResponse.json().catch(() => ({}));

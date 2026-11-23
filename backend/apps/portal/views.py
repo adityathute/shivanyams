@@ -40,6 +40,7 @@ from .models import (
     PostOrganizationType,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
+from .comment_moderation import validate_comment_content
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -725,6 +726,9 @@ class PostCommentDetail(APIView):
             raise ValidationError({
                 "content": f"This {'reply' if comment.parent_id else 'comment'} can contain a maximum of {max_length} characters."
             })
+        moderation_issue = validate_comment_content(content)
+        if moderation_issue:
+            raise ValidationError({"content": moderation_issue})
         if content == comment.content:
             return Response(CommentSerializer(comment, context={"request": request}).data)
         comment.content = content

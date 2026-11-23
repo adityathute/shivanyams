@@ -62,6 +62,36 @@ export type JobPost = {
   syllabus_en?: string;
   syllabus_mr?: string;
   syllabus_hi?: string;
+  selection_criteria_en?: string;
+  selection_criteria_mr?: string;
+  selection_criteria_hi?: string;
+  skill_test_details_en?: string;
+  skill_test_details_mr?: string;
+  skill_test_details_hi?: string;
+  interview_details_en?: string;
+  interview_details_mr?: string;
+  interview_details_hi?: string;
+  medical_standards_en?: string;
+  medical_standards_mr?: string;
+  medical_standards_hi?: string;
+  training_details_en?: string;
+  training_details_mr?: string;
+  training_details_hi?: string;
+  posting_preferences_en?: string;
+  posting_preferences_mr?: string;
+  posting_preferences_hi?: string;
+  document_verification_en?: string;
+  document_verification_mr?: string;
+  document_verification_hi?: string;
+  application_guidelines_en?: string;
+  application_guidelines_mr?: string;
+  application_guidelines_hi?: string;
+  reservation_policy_en?: string;
+  reservation_policy_mr?: string;
+  reservation_policy_hi?: string;
+  additional_post_notes_en?: string;
+  additional_post_notes_mr?: string;
+  additional_post_notes_hi?: string;
   salary_currency?: string;
 
   salary_min?: string | number | null;
@@ -722,6 +752,36 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
             syllabus_en: post.syllabus_en || "",
             syllabus_mr: post.syllabus_mr || "",
             syllabus_hi: post.syllabus_hi || "",
+            selection_criteria_en: post.selection_criteria_en || "",
+            selection_criteria_mr: post.selection_criteria_mr || "",
+            selection_criteria_hi: post.selection_criteria_hi || "",
+            skill_test_details_en: post.skill_test_details_en || "",
+            skill_test_details_mr: post.skill_test_details_mr || "",
+            skill_test_details_hi: post.skill_test_details_hi || "",
+            interview_details_en: post.interview_details_en || "",
+            interview_details_mr: post.interview_details_mr || "",
+            interview_details_hi: post.interview_details_hi || "",
+            medical_standards_en: post.medical_standards_en || "",
+            medical_standards_mr: post.medical_standards_mr || "",
+            medical_standards_hi: post.medical_standards_hi || "",
+            training_details_en: post.training_details_en || "",
+            training_details_mr: post.training_details_mr || "",
+            training_details_hi: post.training_details_hi || "",
+            posting_preferences_en: post.posting_preferences_en || "",
+            posting_preferences_mr: post.posting_preferences_mr || "",
+            posting_preferences_hi: post.posting_preferences_hi || "",
+            document_verification_en: post.document_verification_en || "",
+            document_verification_mr: post.document_verification_mr || "",
+            document_verification_hi: post.document_verification_hi || "",
+            application_guidelines_en: post.application_guidelines_en || "",
+            application_guidelines_mr: post.application_guidelines_mr || "",
+            application_guidelines_hi: post.application_guidelines_hi || "",
+            reservation_policy_en: post.reservation_policy_en || "",
+            reservation_policy_mr: post.reservation_policy_mr || "",
+            reservation_policy_hi: post.reservation_policy_hi || "",
+            additional_post_notes_en: post.additional_post_notes_en || "",
+            additional_post_notes_mr: post.additional_post_notes_mr || "",
+            additional_post_notes_hi: post.additional_post_notes_hi || "",
             salary_currency: post.salary_currency || "INR",
             salary_period: post.salary_period || "monthly",
             salary_min: post.salary_min ?? null,

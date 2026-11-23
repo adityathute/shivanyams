@@ -1770,14 +1770,21 @@ class AdminDashboardStats(APIView):
                 if reaction.user_auth_id
             }
             user_names = {}
+            user_emails = {}
             user_visitors = {}
+            post_ids = {
+                reaction.post_id if isinstance(reaction, PostReaction)
+                else reaction.comment.post_id
+                for reaction in post_reactions + comment_reactions
+            }
             if auth_ids:
                 for visitor in WebsiteVisitor.objects.filter(
                     auth_user_id__in=auth_ids
                 ).order_by("-last_seen_at").values(
                     "auth_user_id", "full_name", "visitor_id"
                 ):
-                    user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                    if visitor["full_name"]:
+                        user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
                     user_visitors.setdefault(visitor["auth_user_id"], visitor["visitor_id"])
                 for visit in WebsiteView.objects.filter(
                     auth_user_id__in=auth_ids
@@ -1785,6 +1792,18 @@ class AdminDashboardStats(APIView):
                     "auth_user_id", "full_name"
                 ):
                     user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+                for subscription in PostSubscription.objects.filter(
+                    post_id__in=post_ids, user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values(
+                    "user_auth_id", "email"
+                ):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
+                for subscription in NewsletterSubscription.objects.filter(
+                    user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values(
+                    "user_auth_id", "email"
+                ):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
 
             rows = []
             for reaction in post_reactions:
@@ -1797,6 +1816,7 @@ class AdminDashboardStats(APIView):
                     "content": reaction.post.title_en,
                     "parent_content": "",
                     "user_name": user_names.get(reaction.user_auth_id, ""),
+                    "user_email": user_emails.get(reaction.user_auth_id, ""),
                     "visitor_id": user_visitors.get(reaction.user_auth_id, ""),
                     "created_at": reaction.created_at,
                 })
@@ -1812,6 +1832,7 @@ class AdminDashboardStats(APIView):
                     "content": comment.content,
                     "parent_content": comment.parent.content if is_reply else "",
                     "user_name": user_names.get(reaction.user_auth_id, ""),
+                    "user_email": user_emails.get(reaction.user_auth_id, ""),
                     "visitor_id": user_visitors.get(reaction.user_auth_id, ""),
                     "created_at": reaction.created_at,
                 })

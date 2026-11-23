@@ -161,7 +161,7 @@ export default function AdminCommentsPage() {
           <div className="admin-top-actions admin-comments-header-actions">
             <Link href="/admin" className="admin-secondary-button">
               <ArrowLeftIcon size={16} />
-              <span>Back to posts</span>
+              <span>Back to dashboard</span>
             </Link>
             <button
               type="button"

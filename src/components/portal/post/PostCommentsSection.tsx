@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportsIcon, Select, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -251,7 +251,7 @@ function CommentThread({
             {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <><button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button><button type="button" className="portal-comment-edit-action portal-comment-delete-action" onClick={() => onDelete(item.id)}><DeleteIcon size={14} /> Delete</button></> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}><MessagesIcon size={14} /> Reply</button> : null}
             {!item.report_limit_reached ? (
-              <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}><ReportsIcon size={14} /> Report</button>
+              <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}><ReportIcon size={14} /> Report</button>
             ) : null}
           </div>
           {replyCount > 0 && !repliesExpanded ? (

@@ -142,7 +142,7 @@ function getUserLabel(row: DetailRow) {
     const email = readText(identity, ["email", "email_address", "user_email", "author_email", "reporter_email"]);
     if (email) return email;
   }
-  return readText(row, ["user__email", "author__email", "reporter__email"]) || "—";
+  return readText(row, ["user__email", "author__email", "reporter__email"]) || (readText(row, ["visitor_id"]) ? "Anonymous visitor" : "—");
 }
 
 function isUserIdentityColumn(column: string) {

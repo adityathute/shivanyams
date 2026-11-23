@@ -1685,7 +1685,7 @@ export default function AdminPage() {
                     <>
                       <div className="admin-analytics-table-wrap">
                         <table className="admin-analytics-table admin-reaction-posts-table admin-report-posts-summary-table">
-                          <thead><tr><th>Post</th><th>Views</th><th>Post reports</th><th>Comment reports</th><th>Reply reports</th></tr></thead>
+                          <thead><tr><th>Post</th><th>Views</th><th>Post reports</th><th>Comment reports</th><th>Reply reports</th><th>Total reports</th></tr></thead>
                           <tbody>{visibleReportPostRows.map((post) => (
                             <tr key={post.id}>
                               <td><button type="button" className="admin-analytics-link" title={post.title} onClick={() => void openPostEvents({ id: post.id, title: post.title, slug: post.slug, views: post.views, unique_visitors: 0, last_viewed: null })}>{post.title}</button></td>
@@ -1693,6 +1693,7 @@ export default function AdminPage() {
                               <td>{formatCompactNumber(post.postReports)}</td>
                               <td>{formatCompactNumber(post.commentReports)}</td>
                               <td>{formatCompactNumber(post.replyReports)}</td>
+                              <td>{formatCompactNumber(post.postReports + post.commentReports + post.replyReports)}</td>
                             </tr>
                           ))}</tbody>
                         </table>

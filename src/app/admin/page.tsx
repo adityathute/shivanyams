@@ -1677,13 +1677,14 @@ export default function AdminPage() {
             aria-labelledby="admin-analytics-title"
           >
             <header className="admin-analytics-header">
-              {(selectedVisitor || selectedAnalyticsPath || selectedPost || selectedLikeComment || selectedReport) && (
+              {(selectedVisitor || selectedAnalyticsPath || selectedPost || selectedLikeComment || selectedReport || selectedSharePost) && (
                 <IconButton
                   size="lg"
                   variant="ghost"
                   className="admin-analytics-back-icon"
                   onClick={() => {
                     if (selectedReport) { setSelectedReport(null); return; }
+                    if (selectedSharePost) { setSelectedSharePost(null); setShareAnalyticsPage(1); return; }
                     if (selectedLikeComment) { setSelectedLikeComment(null); return; }
                     if (visitorReturnState) {
                       setSelectedAnalyticsPath(null);
@@ -1743,7 +1744,7 @@ export default function AdminPage() {
                            : analyticsType === "tags"
                              ? `Tags (${formatCompactNumber(tagTotals.total)})`
                            : selectedSharePost
-                            ? `Shares for ${selectedSharePost.title}`
+                            ? `${selectedSharePost.title} (${formatCompactNumber(selectedSharePostStats.total)} shares)`
                           : analyticsType === "shares"
                              ? shareAnalyticsView === "posts"
                                ? `Posts shared (${formatCompactNumber(sharePostRows.length)})`
@@ -1764,7 +1765,7 @@ export default function AdminPage() {
                   {selectedLikeComment
                     ? `Comment on ${selectedLikeComment.post_title}`
                     : selectedSharePost
-                    ? `Share activity and channel breakdown for ${selectedSharePost.title}.`
+                    ? "Individual share actions recorded for this post."
                     : selectedReport
                     ? `Report submitted for ${selectedReport.post_title}.`
                     : selectedVisitor
@@ -1852,7 +1853,6 @@ export default function AdminPage() {
               <div className="admin-empty">Loading analytics...</div>
             ) : selectedSharePost ? (
               <div className="admin-share-post-detail">
-                <button type="button" className="admin-reaction-view-button admin-share-post-back" onClick={() => setSelectedSharePost(null)}>Back to shares</button>
                 <div className="admin-shares-summary admin-share-post-metrics">
                   <article><span>Total shares</span><strong>{formatCompactNumber(selectedSharePostStats.total)}</strong><small>All recorded actions</small></article>
                   <article><span>Unique visitors</span><strong>{formatCompactNumber(selectedSharePostStats.uniqueVisitors)}</strong><small>Distinct browsers and users</small></article>

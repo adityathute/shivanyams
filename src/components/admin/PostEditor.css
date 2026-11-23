@@ -1997,7 +1997,11 @@ padding-right: 24px;
 }
 
 
-.post-editor-published-badge { display: inline-flex; align-items: center; justify-content: center; align-self: flex-end; padding: 5px 10px; border: 1px solid #a7f3d0; border-radius: 999px; background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 700; line-height: 1.2; }
+.post-editor-status-badge { display: inline-flex; align-items: center; justify-content: center; align-self: flex-end; padding: 5px 11px; border: 1px solid transparent; border-radius: 7px; font-size: 11px; font-weight: 700; line-height: 1.25; text-transform: capitalize; white-space: nowrap; }
+.post-editor-status-badge--published { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
+.post-editor-status-badge--reviewed { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+.post-editor-status-badge--draft { border-color: #fed7aa; background: #fff7ed; color: #c2410c; }
+.post-editor-status-badge--pending-review, .post-editor-status-badge--pending { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
 
 .post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }
 .post-editor-publication-status > strong { text-transform: capitalize; font-size: 13px; color: #16734e; }

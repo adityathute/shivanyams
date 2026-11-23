@@ -1539,7 +1539,7 @@ export default function PostEditor({
               <strong>{postStatus === "published" ? "Published" : postStatus.replaceAll("_", " ")}</strong>
               {postStatus === "published" && <span>{postVersions.filter((item) => item.is_published).map((item) => `Live version v${item.version_number}`).join("") || "Live version"}</span>}
               {postStatus === "published" && postVersions.some((item) => !item.is_published) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published).map((item) => item.version_number))}</span>}
-              {postStatus === "published" && <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></li>)}</ol></details>}
+              {postStatus === "published" && <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></li>)}</ol></details>}
             </div>}
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />

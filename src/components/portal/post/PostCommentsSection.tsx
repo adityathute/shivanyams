@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
 import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import "./PostCommentsSection.css";
@@ -243,11 +244,11 @@ function CommentThread({
             </>
           )}
           <div className="portal-comment-actions">
-            <button type="button" className={`portal-comment-reaction portal-comment-like${item.user_reaction === "like" ? " is-active" : ""}`} onClick={() => onReact(item.id, "like")} aria-label={`Like comment, ${item.likes_count} likes`}>
-              <LikeIcon size={14} /> {item.likes_count}
+            <button type="button" className={`portal-comment-reaction portal-comment-like${item.user_reaction === "like" ? " is-active" : ""}`} onClick={() => onReact(item.id, "like")} aria-label={`Like comment, ${formatCompactNumber(item.likes_count)} likes`}>
+              <LikeIcon size={14} /> {formatCompactNumber(item.likes_count)}
             </button>
-            <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${item.dislikes_count} dislikes`}>
-              <DislikeIcon size={14} /> {item.dislikes_count}
+            <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${formatCompactNumber(item.dislikes_count)} dislikes`}>
+              <DislikeIcon size={14} /> {formatCompactNumber(item.dislikes_count)}
             </button>
             {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <><button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button><button type="button" className="portal-comment-edit-action portal-comment-delete-action" onClick={() => onDelete(item.id)}><DeleteIcon size={14} /> Delete</button></> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}><MessagesIcon size={14} /> Reply</button> : null}
@@ -256,8 +257,8 @@ function CommentThread({
             ) : null}
           </div>
           {replyCount > 0 && !repliesExpanded ? (
-            <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={false} aria-label={`Show ${replyCount} replies`}>
-              <span>{replyCount} {replyCount === 1 ? "reply" : "replies"}</span>
+            <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={false} aria-label={`Show ${formatCompactNumber(replyCount)} replies`}>
+              <span>{formatCompactNumber(replyCount)} {replyCount === 1 ? "reply" : "replies"}</span>
               <span className="portal-comment-toggle-arrow" aria-hidden="true"><ArrowDownIcon size={15} /></span>
             </button>
           ) : null}
@@ -597,9 +598,9 @@ export function PostCommentsSection({ postId, language }: Props) {
         <div>
           <h2 id="portal-comments-heading">Comments</h2>
           <span>
-            {comments.length.toLocaleString()} {comments.length === 1 ? "comment" : "comments"}
+            {formatCompactNumber(comments.length)} {comments.length === 1 ? "comment" : "comments"}
             {" · "}
-            {(countComments(comments) - comments.length).toLocaleString()} {(countComments(comments) - comments.length) === 1 ? "reply" : "replies"}
+            {formatCompactNumber(countComments(comments) - comments.length)} {(countComments(comments) - comments.length) === 1 ? "reply" : "replies"}
           </span>
         </div>
         {!loading && comments.length > 0 ? (

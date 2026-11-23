@@ -585,6 +585,7 @@ export default function PostEditor({
   const [autosaveRevision, setAutosaveRevision] = useState(0);
   const [postStatus, setPostStatus] = useState("draft");
   const [postVersions, setPostVersions] = useState<PostVersionInfo[]>([]);
+  const [versionMode, setVersionMode] = useState<"working" | "published">("working");
   const postIdRef = useRef<number | null>(null);
   const currentSlugRef = useRef(editSlug || "");
   const lastSavedSnapshotRef = useRef("");
@@ -1543,6 +1544,10 @@ export default function PostEditor({
             </p>
           </div>
           <div className="post-editor-header-actions">
+            {editing && postStatus === "published" && postVersions.some((item) => item.is_published) && <div className="post-editor-version-switch">
+              <button type="button" className={versionMode === "working" ? "active" : ""} onClick={() => setVersionMode("working")}>Unpublished version</button>
+              <button type="button" className={versionMode === "published" ? "active" : ""} onClick={() => setVersionMode("published")}>Published version</button>
+            </div>}
             {editing && <div className="post-editor-publication-status">
               <strong>{postStatus === "published" ? "Published" : postStatus.replaceAll("_", " ")}</strong>
               {postStatus === "published" && <span>{postVersions.filter((item) => item.is_published).map((item) => `Live version v${item.version_number}`).join("") || "Live version"}</span>}
@@ -1556,7 +1561,18 @@ export default function PostEditor({
           </div>
         </header>
         {notice && <div className="post-editor-notice">{notice}</div>}
-        <form className="post-editor-form" onSubmit={submit}>
+        {versionMode === "published" && editing && postVersions.find((item) => item.is_published)?.payload && (() => {
+          const live = postVersions.find((item) => item.is_published)!.payload!;
+          return <section className="post-editor-live-preview">
+            <div className="post-editor-live-preview-heading"><strong>Published version · v{postVersions.find((item) => item.is_published)!.version_number}</strong><span>Read-only preview. Visitors currently see this version.</span></div>
+            <h2>{live.title_en || "Untitled post"}</h2>
+            {live.summary_en && <p>{live.summary_en}</p>}
+            {live.featured_image_url && <img src={live.featured_image_url} alt="" />}
+            {live.body_en && <article>{live.body_en}</article>}
+            <button type="button" onClick={() => setVersionMode("working")}>Back to unpublished changes</button>
+          </section>;
+        })()}
+        <form className="post-editor-form" hidden={versionMode === "published"} onSubmit={submit}>
           <section>
             <div className="post-editor-section-title-row">
               <h2>Post Information</h2>

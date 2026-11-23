@@ -1756,13 +1756,13 @@ class AdminDashboardStats(APIView):
             post_reactions = list(
                 PostReaction.objects.filter(
                     reaction=PostReaction.ReactionType.LIKE
-                ).select_related("post").order_by("-created_at")[:2000]
+                ).select_related("post").order_by("-created_at")
             )
             comment_reactions = list(
                 CommentReaction.objects.filter(
                     reaction=CommentReaction.ReactionType.LIKE
                 ).select_related("comment__post", "comment__parent")
-                .order_by("-created_at")[:2000]
+                .order_by("-created_at")
             )
             auth_ids = {
                 reaction.user_auth_id

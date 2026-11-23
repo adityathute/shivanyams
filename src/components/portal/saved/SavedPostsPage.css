@@ -387,3 +387,18 @@
 [data-theme="dark"] .related-tag-chip small {
   color: inherit;
 }
+
+.related-tag-view-all {
+  color: #075be8;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.related-tag-view-all:hover {
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .related-tag-view-all {
+  color: #7eabff;
+}

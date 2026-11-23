@@ -2148,7 +2148,7 @@
   -webkit-line-clamp: 3;
 }
 .admin-analytics-modal .admin-likes-content-link.is-comment-context .admin-analytics-like-context {
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   margin: 0;
 }
 .admin-analytics-modal .admin-likes-content-link.is-reply-content .admin-analytics-like-content {

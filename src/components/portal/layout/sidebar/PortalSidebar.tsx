@@ -83,13 +83,13 @@ export function getPortalNavigation(
           },
         ]
       : []),
+    {
+      label: "Tags",
+      href: "/tags",
+      icon: <TagIcon />,
+    },
     ...(isAdmin
       ? [
-          {
-            label: "Tags",
-            href: "/admin/tags",
-            icon: <TagIcon />,
-          },
           {
             label: "Admin",
             href: "/admin",

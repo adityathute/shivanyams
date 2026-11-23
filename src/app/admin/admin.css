@@ -1929,3 +1929,36 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+
+/* Post Views analytics mirrors Website Views with compact, truncated post titles. */
+.admin-analytics-modal .admin-post-views-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.admin-analytics-modal .admin-post-views-table th:first-child,
+.admin-analytics-modal .admin-post-views-table td:first-child {
+  width: 42%;
+}
+
+.admin-analytics-modal .admin-post-views-table th:nth-child(2),
+.admin-analytics-modal .admin-post-views-table td:nth-child(2),
+.admin-analytics-modal .admin-post-views-table th:nth-child(3),
+.admin-analytics-modal .admin-post-views-table td:nth-child(3) {
+  width: 17%;
+}
+
+.admin-analytics-modal .admin-post-views-table th:last-child,
+.admin-analytics-modal .admin-post-views-table td:last-child {
+  width: 24%;
+}
+
+.admin-analytics-modal .admin-post-views-table .admin-analytics-link {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

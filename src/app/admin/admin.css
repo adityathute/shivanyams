@@ -2123,8 +2123,9 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: inherit;
+  color: #2563eb;
   font: inherit;
+  font-weight: 650;
   text-align: left;
   cursor: pointer;
 }

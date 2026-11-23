@@ -2718,3 +2718,21 @@
 .admin-analytics-modal .admin-subscribers-table td:first-child .admin-likes-user-link {
   text-align: left;
 }
+
+/* Subscribers modal: reduce table row height and compact the metric cards vertically. */
+.admin-analytics-modal .admin-subscribers-table th,
+.admin-analytics-modal .admin-subscribers-table td {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.admin-analytics-modal .admin-subscribers-summary {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  row-gap: 7px;
+}
+.admin-analytics-modal .admin-subscribers-summary > button {
+  min-height: 64px;
+  gap: 4px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}

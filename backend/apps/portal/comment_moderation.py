@@ -27,8 +27,7 @@ BLOCKED_TERMS = {
 
 URL_CANDIDATE_RE = re.compile(
     r"(?<![\w@])(?:https?://|ftp://|www\.)[^\s<>]+|"
-    r"(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+"
-    r"(?:com|in|org|net|edu|gov|co|io|info|biz|app|dev|me|ai|uk|us|xyz|online|site|store)"
+    r"(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}"
     r"(?:\b[^\s<>]*)?",
     re.IGNORECASE,
 )

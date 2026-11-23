@@ -31,7 +31,7 @@ type EngagementPayload = {
   comments: { total: number; approved: number; hidden: number };
   shares: number;
   saved: number;
-  subscribers: number;
+  users: number;
   reports: number;
   details: {
     post_reactions: DetailRow[];
@@ -39,12 +39,11 @@ type EngagementPayload = {
     comments: DetailRow[];
     shares: DetailRow[];
     saved: DetailRow[];
-    subscribers: DetailRow[];
     reports: DetailRow[];
   };
 };
 
-type StatKey = "all" | "likes" | "dislikes" | "comments" | "shares" | "saved" | "subscribers" | "reports";
+type StatKey = "all" | "likes" | "dislikes" | "comments" | "shares" | "saved" | "reports" | "users";
 
 const statLabels: { key: StatKey; label: string; color: string; icon: ReactNode }[] = [
   { key: "all", label: "All Statistics", color: "all", icon: <StocksIcon size={18} /> },
@@ -53,7 +52,7 @@ const statLabels: { key: StatKey; label: string; color: string; icon: ReactNode 
   { key: "comments", label: "Comments", color: "comments", icon: <MessagesIcon size={18} /> },
   { key: "shares", label: "Shares", color: "shares", icon: <ShareIcon size={18} /> },
   { key: "saved", label: "Saved", color: "saved", icon: <BookmarkIcon size={18} /> },
-  { key: "subscribers", label: "Subscribers", color: "subscribers", icon: <UsersIcon size={18} /> },
+  { key: "users", label: "Users", color: "users", icon: <UsersIcon size={18} /> },
   { key: "reports", label: "Reports", color: "reports", icon: <ReportIcon size={18} /> },
 ];
 
@@ -219,7 +218,6 @@ export default function AdminPostEngagementPage() {
         ...details.comments.map((row) => ({ ...row, activity: "Comment" })),
         ...details.shares.map((row) => ({ ...row, activity: "Share" })),
         ...details.saved.map((row) => ({ ...row, activity: "Saved" })),
-        ...details.subscribers.map((row) => ({ ...row, activity: "Subscriber" })),
         ...details.reports.map((row) => ({ ...row, activity: "Report" })),
       ];
     }
@@ -259,8 +257,6 @@ export default function AdminPostEngagementPage() {
         return "Post shares.";
       case "saved":
         return "Post saves.";
-      case "subscribers":
-        return "Post subscriptions.";
       case "reports":
         return `${formatCompactNumber(payload?.reports || 0)} user reports and ${formatCompactNumber(Math.max(0, selectedRows.length - (payload?.reports || 0)))} admin review records.`;
       default:
@@ -293,7 +289,7 @@ export default function AdminPostEngagementPage() {
       })
     : [];
   const allStatsTotal = payload
-    ? payload.likes.total + payload.dislikes.total + payload.comments.total + payload.shares + payload.saved + payload.subscribers + payload.reports
+    ? payload.likes.total + payload.dislikes.total + payload.comments.total + payload.shares + payload.saved + payload.reports
     : 0;
 
   return (
@@ -328,15 +324,24 @@ export default function AdminPostEngagementPage() {
               {statLabels.map((item) => {
                 const raw = item.key === "all" ? allStatsTotal : payload[item.key];
                 const value = typeof raw === "number" ? raw : raw.total;
-                return (
+                const content = (
+                  <>
+                    <span><i>{item.icon}</i>{item.label}</span>
+                    <strong><AnimatedNumber key={`${item.key}-${statsAnimationKey}`} value={value} /></strong>
+                  </>
+                );
+                return item.key === "users" ? (
+                  <div key={item.key} className="admin-engagement-stat stat-users" aria-label={`Total users: ${value}`}>
+                    {content}
+                  </div>
+                ) : (
                   <button
                     type="button"
                     key={item.key}
                     className={"admin-engagement-stat stat-" + item.color + (selected === item.key ? " is-selected" : "")}
                     onClick={() => { setSelected(item.key); setPage(1); }}
                   >
-                    <span><i>{item.icon}</i>{item.label}</span>
-                    <strong><AnimatedNumber key={`${item.key}-${statsAnimationKey}`} value={value} /></strong>
+                    {content}
                   </button>
                 );
               })}

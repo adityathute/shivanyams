@@ -25,6 +25,7 @@ export function PostEngagementActions({ postId, title }: Props) {
   const [saved, setSaved] = useState(false);
   const [userReportCount, setUserReportCount] = useState(0);
   const [message, setMessage] = useState("");
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
 
   const loadPostReaction = useCallback(async () => {
     const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reactions/`), { cache: "no-store" });
@@ -144,23 +145,7 @@ export function PostEngagementActions({ postId, title }: Props) {
     void reportPost();
   }
 
-  async function sharePost() {
-    const url = window.location.href;
-    let channel = "copy";
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, url });
-        channel = "native";
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        setMessage("Post link copied.");
-      } else {
-        setMessage("Sharing is not available in this browser.");
-        return;
-      }
-    } catch {
-      return;
-    }
+  async function recordShare(channel: string) {
     let visitorId = "";
     try {
       visitorId = window.localStorage.getItem("shivanyams-visitor-id") || "";
@@ -174,6 +159,57 @@ export function PostEngagementActions({ postId, title }: Props) {
     }).catch(() => undefined);
   }
 
+  async function shareTo(channel: string) {
+    const url = window.location.href;
+    setShareMenuOpen(false);
+
+    if (channel === "native") {
+      // Count the user's share intent immediately, including when the native
+      // share sheet is dismissed without choosing a destination.
+      void recordShare("native");
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+        } catch {
+          // A dismissed share sheet is still a recorded share action.
+        }
+      } else if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(url);
+          setMessage("Post link copied.");
+        } catch {
+          setMessage("Unable to copy the post link.");
+        }
+      }
+      return;
+    }
+
+    if (channel === "copy") {
+      try {
+        await navigator.clipboard.writeText(url);
+        void recordShare("copy");
+        setMessage("Post link copied.");
+      } catch {
+        setMessage("Unable to copy the post link.");
+      }
+      return;
+    }
+
+    const encodedUrl = encodeURIComponent(url);
+    const encodedTitle = encodeURIComponent(title);
+    const destinations: Record<string, string> = {
+      whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
+      x: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+      email: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    };
+    const destination = destinations[channel];
+    if (!destination) return;
+    void recordShare(channel);
+    window.open(destination, "_blank", "noopener,noreferrer");
+  }
   return (
     <section className="portal-post-engagement-actions" aria-label="Post actions">
       <div className="portal-post-reaction-actions">
@@ -197,7 +233,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           <DislikeIcon size={19} />
           <strong>{formatCompactNumber(dislikes)}</strong>
         </button>
-        <button type="button" className="portal-action-share" onClick={() => void sharePost()} title="Share" aria-label="Share post">
+        <button type="button" className="portal-action-share" onClick={() => setShareMenuOpen((open) => !open)} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
           <ShareIcon size={19} />
         </button>
         <button type="button" className={`portal-action-bookmark${saved ? " is-active" : ""}`} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
@@ -209,6 +245,20 @@ export function PostEngagementActions({ postId, title }: Props) {
           </button>
         ) : null}
       </div>
+      {shareMenuOpen ? (
+        <div className="portal-share-menu" role="menu" aria-label="Share this post">
+          <button type="button" role="menuitem" onClick={() => void shareTo("copy")}>Copy link</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")}>WhatsApp</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("facebook")}>Facebook</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("telegram")}>Telegram</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("x")}>X</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")}>LinkedIn</button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("email")}>Email</button>
+          {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
+            <button type="button" role="menuitem" onClick={() => void shareTo("native")}>More…</button>
+          ) : null}
+        </div>
+      ) : null}
       {message ? <p role="status">{message}</p> : null}
     </section>
   );

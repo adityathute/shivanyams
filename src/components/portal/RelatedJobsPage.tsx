@@ -79,19 +79,33 @@ export function RelatedJobsPage() {
 
   const suggestedTags = useMemo(() => {
     if (filterType !== "tag") return [];
-    const tagCounts = new Map<string, { label: string; count: number }>();
-    data.items.forEach((item) => {
-      (item.tags || []).forEach((tag) => {
-        const key = slugify(tag);
-        if (!key || key === slug) return;
-        const current = tagCounts.get(key);
-        tagCounts.set(key, { label: current?.label || tag.trim(), count: (current?.count || 0) + 1 });
+
+    const counts = new Map<string, { label: string; count: number; relatedCount: number }>();
+    const addTags = (items: typeof data.items, related: boolean) => {
+      items.forEach((item) => {
+        (item.tags || []).forEach((tag) => {
+          const key = slugify(tag);
+          if (!key || key === slug) return;
+          const current = counts.get(key) || { label: tag.trim(), count: 0, relatedCount: 0 };
+          current.count += 1;
+          if (related) current.relatedCount += 1;
+          counts.set(key, current);
+        });
       });
-    });
-    return [...tagCounts.entries()]
-      .sort((a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label))
-      .slice(0, 12);
-  }, [data.items, filterType, slug]);
+    };
+
+    // Tags appearing alongside this tag are shown first, followed by popular global tags.
+    addTags(relatedItems, true);
+    addTags(data.items, false);
+
+    return [...counts.entries()]
+      .sort((a, b) =>
+        b[1].relatedCount - a[1].relatedCount ||
+        b[1].count - a[1].count ||
+        a[1].label.localeCompare(b[1].label),
+      )
+      .slice(0, 10);
+  }, [data.items, relatedItems, filterType, slug]);
 
   const heading = useMemo(() => {
     if (filterType === "organization") {
@@ -109,6 +123,23 @@ export function RelatedJobsPage() {
         <h1>{labels.title}</h1>
         <p>{labels.description}</p>
       </header>
+
+      {filterType === "tag" && suggestedTags.length > 0 && (
+        <section className="saved-panel related-tag-suggestions">
+          <div className="saved-section-heading">
+            <h2>{labels.more}</h2>
+            <span>{suggestedTags.length}</span>
+          </div>
+          <div className="related-tag-list">
+            {suggestedTags.map(([tagSlug, tag]) => (
+              <Link className="related-tag-chip" href={`/tags/${tagSlug}`} key={tagSlug}>
+                <span>{tag.label}</span>
+                <small>{tag.count}</small>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="saved-panel">
         <div className="saved-section-heading">
@@ -175,22 +206,7 @@ export function RelatedJobsPage() {
         )}
       </section>
 
-      {filterType === "tag" && suggestedTags.length > 0 && (
-        <section className="saved-panel related-tag-suggestions">
-          <div className="saved-section-heading">
-            <h2>{labels.more}</h2>
-            <span>{suggestedTags.length}</span>
-          </div>
-          <div className="related-tag-list">
-            {suggestedTags.map(([tagSlug, tag]) => (
-              <Link className="related-tag-chip" href={`/tags/${tagSlug}`} key={tagSlug}>
-                <span>{tag.label}</span>
-                <small>{tag.count}</small>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+
     </div>
   );
 }

@@ -916,19 +916,31 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     dangerouslySetInnerHTML={{
                       __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Article",
-                        headline: post.title,
-                        description: post.description || undefined,
-                        image: post.image || undefined,
-                        datePublished: post.date || undefined,
-                        dateModified: post.updated_date || post.date || undefined,
-                        mainEntityOfPage: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}/${slug}`,
-                        publisher: {
-                          "@type": "Organization",
-                          name: "ShivanyaMS",
-                          url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com",
-                          logo: { "@type": "ImageObject", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/logo.png` },
-                        },
+                        "@graph": [
+                          {
+                            "@type": "WebPage",
+                            "@id": `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}/${slug}#webpage`,
+                            name: post.title,
+                            description: post.description || undefined,
+                            url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}/${slug}`,
+                            dateModified: post.updated_date || post.date || undefined,
+                            primaryImageOfPage: post.image ? { "@type": "ImageObject", url: post.image } : undefined,
+                            publisher: {
+                              "@type": "Organization",
+                              name: "ShivanyaMS",
+                              url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com",
+                              logo: { "@type": "ImageObject", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/logo.png` },
+                            },
+                          },
+                          {
+                            "@type": "BreadcrumbList",
+                            itemListElement: [
+                              { "@type": "ListItem", position: 1, name: "Home", item: process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com" },
+                              { "@type": "ListItem", position: 2, name: category, item: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}` },
+                              { "@type": "ListItem", position: 3, name: post.title, item: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}/${slug}` },
+                            ],
+                          },
+                        ],
                       }).replace(/</g, "\\u003c"),
                     }}
                   />

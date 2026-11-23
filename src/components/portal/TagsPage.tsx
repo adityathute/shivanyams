@@ -50,6 +50,8 @@ export function TagsPage() {
   const [adminTags, setAdminTags] = useState<{ name: string; count: number }[]>([]);
   const [tagActionError, setTagActionError] = useState("");
   const [busyTag, setBusyTag] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
 
   const loadAdminTags = useCallback(async () => {
     if (!isAdmin) return;
@@ -125,6 +127,18 @@ export function TagsPage() {
     );
   }, [data.items]);
 
+  const tagRows = isAdmin
+    ? adminTags.map((tag) => ({ name: tag.name, slug: slugify(tag.name), count: tag.count }))
+    : tags.map(([slug, tag]) => ({ name: tag.label, slug, count: tag.count }));
+  const pageCount = Math.max(1, Math.ceil(tagRows.length / pageSize));
+  const visibleTags = tagRows.slice((page - 1) * pageSize, page * pageSize);
+  const firstTag = tagRows.length ? (page - 1) * pageSize + 1 : 0;
+  const lastTag = Math.min(page * pageSize, tagRows.length);
+
+  useEffect(() => {
+    if (page > pageCount) setPage(pageCount);
+  }, [page, pageCount]);
+
   return (
     <div className="saved-page related-saved-page">
       <header className="saved-page-heading">
@@ -142,11 +156,13 @@ export function TagsPage() {
         {isAdmin && tagActionError ? <div className="saved-empty-state" role="alert">{tagActionError}</div> : null}
 
         {isAdmin ? (
-          adminTags.length ? (
+          visibleTags.length ? (
             <div className="admin-managed-tags-list">
-              {adminTags.map((tag) => (
-                <div className="admin-managed-tag-row" key={tag.name}>
-                  <Link className="related-tag-chip" href={`/tags/${slugify(tag.name)}`}><span>{tag.name}</span><small>{tag.count}</small></Link>
+              {visibleTags.map((tag) => (
+                <div className="admin-managed-tag-row" key={tag.slug}>
+                  <Link className="related-tag-chip" href={`/tags/${tag.slug}`}>
+                    <span>{tag.name}</span><small>{tag.count}</small>
+                  </Link>
                   <div className="admin-managed-tag-actions">
                     <button type="button" disabled={busyTag === tag.name} onClick={() => void renameTag(tag.name)}>Edit</button>
                     <button type="button" className="danger" disabled={busyTag === tag.name} onClick={() => void deleteTag(tag.name)}>Delete</button>
@@ -157,17 +173,31 @@ export function TagsPage() {
           ) : <div className="saved-empty-state saved-list-empty">No tags are available yet.</div>
         ) : data.loading ? (
           <div className="saved-empty-state saved-list-empty" role="status">{text.loading}</div>
-        ) : tags.length ? (
+        ) : visibleTags.length ? (
           <div className="related-tag-list">
-            {tags.map(([slug, tag]) => (
-              <Link className="related-tag-chip" href={`/tags/${slug}`} key={slug}>
-                <span>{tag.label}</span>
-                <small>{tag.count}</small>
+            {visibleTags.map((tag) => (
+              <Link className="related-tag-chip" href={`/tags/${tag.slug}`} key={tag.slug}>
+                <span>{tag.name}</span><small>{tag.count}</small>
               </Link>
             ))}
           </div>
         ) : (
           <div className="saved-empty-state saved-list-empty">{text.empty}</div>
+        )}
+
+        {tagRows.length > 0 && (
+          <div className="tags-pagination admin-table-footer">
+            <span>Showing {firstTag}–{lastTag} of {tagRows.length} tags</span>
+            <div className="admin-pagination">
+              <label htmlFor="tags-page-size">Rows per page</label>
+              <select id="tags-page-size" value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}>
+                {[10, 15, 25, 50].map((size) => <option key={size} value={size}>{size}</option>)}
+              </select>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
+              <span>Page {page} of {pageCount}</span>
+              <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>
+            </div>
+          </div>
         )}
       </section>
     </div>

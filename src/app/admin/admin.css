@@ -2570,3 +2570,11 @@
   -webkit-line-clamp: 3;
 }
 
+/* Reports analytics: give the first column consistent breathing room from the table's left edge in both views. */
+.admin-analytics-modal .admin-reports-analytics-table th:first-child,
+.admin-analytics-modal .admin-reports-analytics-table td:first-child,
+.admin-analytics-modal .admin-report-posts-summary-table th:first-child,
+.admin-analytics-modal .admin-report-posts-summary-table td:first-child {
+  padding-left: 16px;
+}
+

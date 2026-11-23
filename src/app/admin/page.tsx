@@ -205,6 +205,8 @@ export default function AdminPage() {
   >([]);
   const [selectedVisitor, setSelectedVisitor] =
     useState<WebsiteVisitorRow | null>(null);
+  const [visitorReturnState, setVisitorReturnState] =
+    useState<WebsiteVisitorRow | null>(null);
   const [visitorPages, setVisitorPages] = useState<WebsiteAnalyticsPage[]>([]);
   const [selectedAnalyticsPath, setSelectedAnalyticsPath] = useState<
     string | null
@@ -634,39 +636,11 @@ export default function AdminPage() {
   }
 
   async function openVisitorPageEvents(path: string) {
-    const pageSlug = decodeURIComponent(
-      path.split("?")[0].split("/").filter(Boolean).pop() || "",
-    );
-
-    setAnalyticsLoading(true);
-    setSelectedAnalyticsPath(null);
-    setAnalyticsEvents([]);
-    setAnalyticsEventsPage(1);
-    try {
-      const response = await adminFetch(
-        API_URL + "/admin/website-analytics/?type=posts",
-        { cache: "no-store" },
-      );
-      if (!response.ok)
-        throw new Error(`Unable to load post analytics (${response.status}).`);
-      const payload: { posts?: PostAnalyticsPage[] } = await response.json();
-      const trackedPosts = payload.posts ?? [];
-      setPostAnalyticsPages(trackedPosts);
-
-      const matchingPost = trackedPosts.find((post) => post.slug === pageSlug);
-      if (matchingPost) {
-        await openPostEvents(matchingPost);
-        return;
-      }
-
+    if (selectedVisitor) {
+      setVisitorReturnState(selectedVisitor);
       setSelectedVisitor(null);
-      await openPageEvents(path);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to open page analytics.",
-      );
-      setAnalyticsLoading(false);
     }
+    await openPageEvents(path);
   }
 
   function deletePost(post: AdminPost) {
@@ -1250,6 +1224,14 @@ export default function AdminPage() {
                   variant="ghost"
                   className="admin-analytics-back-icon"
                   onClick={() => {
+                    if (visitorReturnState) {
+                      setSelectedAnalyticsPath(null);
+                      setAnalyticsEvents([]);
+                      setAnalyticsEventsPage(1);
+                      setSelectedVisitor(visitorReturnState);
+                      setVisitorReturnState(null);
+                      return;
+                    }
                     if (selectedVisitor) {
                       setSelectedVisitor(null);
                       setVisitorPages([]);

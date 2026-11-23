@@ -16,6 +16,7 @@ import {
   GlobeIcon,
   MessagesIcon,
   TagIcon,
+  AnalyticsIcon,
   BarChart
 } from "shivanya-ui";
 import {
@@ -257,6 +258,7 @@ export default function AdminPage() {
   const [shareAnalytics, setShareAnalytics] = useState<ShareAnalyticsPayload>({ total: 0, unique_visitors: 0, posts_shared: 0, channels: {}, events: [] });
   const [shareAnalyticsPage, setShareAnalyticsPage] = useState(1);
   const [shareAnalyticsView, setShareAnalyticsView] = useState<"events" | "posts">("events");
+  const [showAllShareAnalytics, setShowAllShareAnalytics] = useState(false);
   const [selectedSharePost, setSelectedSharePost] = useState<SharePostSelection | null>(null);
   const [selectedSharePostPage, setSelectedSharePostPage] = useState(1);
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
@@ -886,6 +888,7 @@ export default function AdminPage() {
     setSelectedAnalyticsPath(null);
     setShareAnalyticsPage(1);
     setShareAnalyticsView("events");
+    setShowAllShareAnalytics(false);
     setAnalyticsLoading(true);
     adminFetch(API_URL + "/admin/shares/", { cache: "no-store" })
       .then(async (response) => {
@@ -1813,6 +1816,23 @@ export default function AdminPage() {
                   </Link>
                 </div>
               ) : null}
+              {analyticsType === "shares" && !selectedSharePost && !selectedVisitor ? (
+                <div className="admin-reaction-view-toggle">
+                  <button
+                    type="button"
+                    className={"admin-reaction-view-button" + (showAllShareAnalytics ? " is-active" : "")}
+                    aria-pressed={showAllShareAnalytics}
+                    onClick={() => {
+                      setShareAnalyticsView("events");
+                      setShareAnalyticsPage(1);
+                      setShowAllShareAnalytics(true);
+                    }}
+                  >
+                    <AnalyticsIcon size="sm" />
+                    <span>Analytics</span>
+                  </button>
+                </div>
+              ) : null}
               {(analyticsType === "likes" || analyticsType === "dislikes" || analyticsType === "comments" || analyticsType === "replies" || analyticsType === "reports") && !selectedVisitor && !selectedAnalyticsPath && !selectedPost && !selectedLikeComment && !selectedReport ? (
                 <div className="admin-reaction-view-toggle">
                   <button
@@ -1941,6 +1961,24 @@ export default function AdminPage() {
                         <span>Posts shared</span><strong>{formatCompactNumber(shareAnalytics.posts_shared)}</strong><small>Posts with at least one share</small>
                       </button>
                     </div>
+                    {showAllShareAnalytics ? (
+                      <section className="admin-share-all-chart-section">
+                        <h3>Sharing methods across all posts</h3>
+                        <BarChart
+                          data={Object.entries(shareAnalytics.channels).map(([channel, value]) => ({
+                            id: channel,
+                            label: SHARE_CHANNEL_LABELS[channel] || statusLabel(channel || "other"),
+                            value: Number(value) || 0,
+                          }))}
+                          direction="horizontal"
+                          size="lg"
+                          showGrid
+                          showLabels
+                          showValues
+                          animate
+                        />
+                      </section>
+                    ) : null}
                     {shareAnalyticsView === "posts" ? (
                       sharePostRows.length === 0 ? <div className="admin-empty">No shared posts recorded yet.</div> : <>
                         <div className="admin-analytics-table-wrap">

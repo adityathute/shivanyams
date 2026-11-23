@@ -301,7 +301,7 @@ export default function AdminPostEngagementPage() {
                         <tr key={String(row.id ?? row.user_auth_id ?? row.reporter_auth_id ?? index) + "-" + index}>
                           {columns.map((column) => {
                             const value = displayValue(row[column]);
-                            return <td key={column} className={isContentColumn(column) ? "admin-engagement-content-cell" : undefined}><span className={"admin-engagement-cell-value" + (isContentColumn(column) ? " is-content" : "")} title={value}>{value}</span></td>;
+                            return <td key={column} className={column === "user" ? "admin-engagement-user-cell" : isContentColumn(column) ? "admin-engagement-content-cell" : undefined}><span className={"admin-engagement-cell-value" + (isContentColumn(column) ? " is-content" : "")} title={value}>{value}</span></td>;
                           })}
                         </tr>
                       ))}

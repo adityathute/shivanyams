@@ -189,7 +189,7 @@ function CommentThread({
               <div className="portal-comment-edit-footer">
                 <span>{editDraft.length}/{item.parent ? 250 : 500}</span>
                 <Button type="button" size="sm" variant="outline" disabled={editing} onClick={onCancelEdit}>Cancel</Button>
-                <Button type="button" size="sm" variant="primary" disabled={!editDraft.trim() || editing} onClick={onSaveEdit}>{editing ? "Saving..." : "Save"}</Button>
+                <Button type="button" size="sm" variant="primary" disabled={!editDraft.trim() || editDraft.trim() === item.content.trim() || editing} onClick={onSaveEdit}>{editing ? "Saving..." : "Save"}</Button>
               </div>
             </div>
           ) : <p>{item.content}</p>}

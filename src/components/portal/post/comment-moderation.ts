@@ -1,6 +1,8 @@
 const ALLOWED_HOST = "shivanyams.com";
 
-const BLOCKED_TERMS = new Set([
+import moderationWords from "../../../config/comment-moderation-words.json";
+
+const BLOCKED_TERMS = new Set(Object.values(moderationWords.languages).flat().map((word) => normalizeWord(word)));\n\n/*
   // English
   "fuck", "fucking", "fucker", "motherfucker", "shit", "bullshit",
   "bitch", "bitches", "asshole", "bastard", "cunt", "dickhead",
@@ -13,12 +15,12 @@ const BLOCKED_TERMS = new Set([
   "मादरचोद", "बहनचोद", "भेनचोद", "चूतिया", "चुतिया", "भोसडी",
   "भोसडीचा", "भोसडीचे", "गांडू", "हरामी", "हरामखोर", "रंडी",
   "भडवा", "भडवे", "लवड्या", "झवाड्या", "झवणे",
-]);
+]); */
 
 const URL_PATTERN =
   /(?<![\w@])(?:https?:\/\/|ftp:\/\/|www\.)[^\s<>]+|(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}(?:\b[^\s<>]*)?/gi;
 
-function normalize(value: string) {
+function normalizeWord(value: string) {\n  return value.normalize("NFKC").replace(/[\\u200B-\\u200D\\uFEFF]/g, "").toLocaleLowerCase().replace(/[^\\p{L}\\p{M}\\p{N}]+/gu, " ").trim().replace(/(.)\\1+/gu, "$1");\n}\n\nfunction normalize(value: string) {
   let normalized = value
     .normalize("NFKC")
     .replace(/[\u200B-\u200D\uFEFF]/g, "")

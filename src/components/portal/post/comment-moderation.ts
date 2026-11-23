@@ -12,7 +12,10 @@ function normalizeWord(value: string) {
 }
 
 const BLOCKED_TERMS = new Set(
-  Object.values(moderationWords.languages).flat().map(normalizeWord),
+  [...Object.values(moderationWords.languages), ...Object.values(moderationWords.categories || {})]
+    .flat()
+    .map(normalizeWord)
+    .filter(Boolean),
 );
 
 const URL_PATTERN =

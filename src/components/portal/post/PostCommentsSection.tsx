@@ -177,6 +177,8 @@ function CommentThread({
     if (!textElement || editTarget === item.id) return;
 
     const measureContent = () => {
+      // Keep the toggle visible while expanded so the user can collapse the text.
+      if (contentExpanded) return;
       setContentCanExpand(textElement.scrollHeight > textElement.clientHeight + 1);
     };
 
@@ -185,7 +187,7 @@ function CommentThread({
     const observer = new ResizeObserver(measureContent);
     observer.observe(textElement);
     return () => observer.disconnect();
-  }, [item.content, editTarget, item.id]);
+  }, [item.content, editTarget, item.id, contentExpanded]);
 
   function toggleReplies() {
     setVisibleReplies((current) => current > 0 ? 0 : replyCount);

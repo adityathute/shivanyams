@@ -2993,7 +2993,6 @@
   cursor: pointer;
 }
 .admin-analytics-modal .admin-share-chart-close:hover {
-  background: #ffe4e6 !important;
   color: #e11d48 !important;
 }
 .admin-analytics-modal .admin-share-chart-close svg {

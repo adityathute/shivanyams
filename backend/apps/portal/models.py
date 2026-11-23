@@ -1701,7 +1701,6 @@ class PostVersion(models.Model):
     class Meta:
         ordering = ("-version_number",)
         constraints = [models.UniqueConstraint(fields=("post", "version_number"), name="portal_post_version_unique")]
-        indexes = [models.Index(fields=("post", "is_published"))]
 
     def __str__(self):
         return f"{self.post.title_en} - v{self.version_number}"

@@ -11,6 +11,8 @@ import {
   ArrowLeftIcon,
   CloseIcon,
   Select,
+  DownloadIcon,
+  RefreshIcon,
 } from "shivanya-ui";
 import {
   API_URL,
@@ -806,17 +808,24 @@ export default function AdminPage() {
             <div className="admin-toolbar-actions">
               <button
                 type="button"
-                className="admin-refresh-button"
+                className="admin-refresh-button admin-toolbar-action"
                 onClick={exportCsv}
+                aria-label="Export posts as CSV"
+                title="Export CSV"
               >
-                ↓ Export CSV
+                <DownloadIcon size={16} />
+                <span>Export CSV</span>
               </button>
               <button
                 type="button"
-                className="admin-refresh-button"
+                className="admin-refresh-button admin-toolbar-action"
                 onClick={() => setRefreshKey((value) => value + 1)}
+                disabled={postsLoading}
+                aria-label="Refresh admin posts"
+                title="Refresh"
               >
-                ↻ Refresh
+                <RefreshIcon size={16} />
+                <span>Refresh</span>
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
+from .comment_moderation import validate_comment_content
 from .models import (
     AdmitCardDetails,
     ArticleGuideDetails,
@@ -1023,6 +1024,10 @@ class CommentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f"A {label} can contain a maximum of {max_length} characters."
             )
+
+        moderation_issue = validate_comment_content(value)
+        if moderation_issue:
+            raise serializers.ValidationError(moderation_issue)
         return value
 
 

@@ -133,7 +133,8 @@ export default function AdminPostEngagementPage() {
 
   if (loading || !isAdmin) return null;
 
-  const selectedLabel = statLabels.find((item) => item.key === selected)?.label || "Details";
+  const selectedStat = statLabels.find((item) => item.key === selected) || statLabels[0];
+  const selectedLabel = selectedStat.label;
   const columns = selectedRows.length
     ? Array.from(new Set(selectedRows.flatMap((row) => Object.keys(row)))).filter((column) => column.toLowerCase() !== "id" && !column.toLowerCase().endsWith("_id"))
     : [];
@@ -180,7 +181,7 @@ export default function AdminPostEngagementPage() {
             <section className="admin-post-panel admin-engagement-details">
               <div className="admin-panel-heading">
                 <div>
-                  <h2>{selectedLabel} details</h2>
+                  <h2 className={"admin-engagement-details-title stat-" + selectedStat.color}><i>{selectedStat.icon}</i><span>{selectedLabel} details</span></h2>
                   {selected === "likes" || selected === "dislikes" ? (
                     <p>Post: {formatCompactNumber(payload[selected].post)} · Comments and replies: {formatCompactNumber(payload[selected].comments_and_replies)} · Overall: {formatCompactNumber(payload[selected].total)}</p>
                   ) : selected === "comments" ? (

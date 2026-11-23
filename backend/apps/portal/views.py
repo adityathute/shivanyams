@@ -273,7 +273,8 @@ class AdminPostVersions(APIView):
         post = get_object_or_404(Post, pk=post_id)
         return Response([{"id": x.id, "version_number": x.version_number, "is_published": x.is_published,
             "created_at": x.created_at, "created_by_auth_id": x.created_by_auth_id,
-            "published_at": x.published_at, "published_by_auth_id": x.published_by_auth_id}
+            "published_at": x.published_at, "published_by_auth_id": x.published_by_auth_id,
+            "payload": x.payload}
             for x in post.versions.all()])
 
     def post(self, request, post_id):
@@ -292,7 +293,13 @@ class AdminPostVersions(APIView):
                     created_by_auth_id=post.published_by_auth_id or str(request.user.id),
                     published_at=post.published_at, published_by_auth_id=post.published_by_auth_id)
             latest = post.versions.order_by("-version_number").first()
-            if latest and latest.payload == dict(payload):
+            pending = post.versions.filter(is_published=False).order_by("-version_number").first()
+            if pending:
+                pending.payload = dict(payload)
+                pending.created_by_auth_id = str(request.user.id)
+                pending.save(update_fields=["payload", "created_by_auth_id"])
+                version = pending
+            elif latest and latest.payload == dict(payload):
                 version = latest
             else:
                 version = PostVersion.objects.create(post=post,

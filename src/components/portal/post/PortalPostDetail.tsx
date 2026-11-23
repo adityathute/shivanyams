@@ -771,6 +771,25 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     }
   }, [category, post?.slug, previewItem, router, slug]);
 
+  useEffect(() => {
+    if (post || data.loading || previewItem) return;
+    const controller = new AbortController();
+    const apiKind = category === "admit-cards" ? "admit-card" : category === "guides" ? "articles" : category;
+    authenticatedFetch(getPortalApiUrl(`content/${apiKind}/${encodeURIComponent(slug)}/`), {
+      signal: controller.signal,
+      headers: { Accept: "application/json" },
+    })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => {
+        const record = payload?.data ?? payload;
+        if (!controller.signal.aborted && record?.slug && record.slug !== slug) {
+          router.replace(`/${category}/${encodeURIComponent(record.slug)}`);
+        }
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [category, data.loading, post, previewItem, router, slug]);
+
   const jobAgeDetails = post?.jobDetails;
   const jobDetails = post?.jobDetails;
 

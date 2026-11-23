@@ -1551,7 +1551,7 @@ export default function PostEditor({
             </div>}
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />
-              {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? "" : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
+              {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? "No changes to save" : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}
             </div>
           </div>
         </header>

@@ -1172,14 +1172,14 @@ export default function AdminPage() {
               <div>
                 <h2 id="admin-analytics-title">
                   {selectedVisitor
-                    ? "Visitor details"
+                    ? `Visitor details (${formatCompactNumber(visitorPages.length)})`
                     : selectedAnalyticsPath
-                      ? "Page view details"
+                      ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
                       : analyticsType === "views"
-                        ? "Website Views"
+                        ? `Website Views (${formatCompactNumber(websiteViewsCount)})`
                         : analyticsType === "users"
-                          ? "Portal Users"
-                          : "Website Visitors"}
+                          ? `Portal Users (${formatCompactNumber(usersCount)})`
+                          : `Website Visitors (${formatCompactNumber(websiteVisitorsCount)})`}
                 </h2>
                 <p>
                   {selectedVisitor

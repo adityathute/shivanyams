@@ -1,16 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "shivanya-auth";
-import { API_URL } from "./category/CategoryGrid";
-import { adminFetch } from "../../app/admin/admin-utils";
 import { usePortalData } from "./data/portal-data";
 import { usePortalLanguage } from "./context/PortalLanguageContext";
 import "./saved/SavedPostsPage.css";
 
 function slugify(value: string) {
-  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\\p{L}\\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 }
 
 const copy = {
@@ -45,69 +42,14 @@ const copy = {
 
 export function TagsPage() {
   const { data } = usePortalData();
-  const { user } = useAuth();
-  const isAdmin = user?.roles?.includes("admin") === true;
-  const [adminTags, setAdminTags] = useState<{ name: string; count: number }[]>([]);
-  const [tagActionError, setTagActionError] = useState("");
-  const [busyTag, setBusyTag] = useState<string | null>(null);
+  const { language } = usePortalLanguage();
+  const text = copy[language];
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const panelRef = useRef<HTMLElement | null>(null);
 
-  const loadAdminTags = useCallback(async () => {
-    if (!isAdmin) return;
-    try {
-      const response = await adminFetch(`${API_URL}/admin/tags/`, { cache: "no-store" });
-      if (!response.ok) throw new Error(`Unable to load tags (${response.status}).`);
-      setAdminTags(await response.json());
-      setTagActionError("");
-    } catch (error) {
-      setTagActionError(error instanceof Error ? error.message : "Unable to load tags.");
-    }
-  }, [isAdmin]);
-
-  useEffect(() => { void loadAdminTags(); }, [loadAdminTags]);
-
-  async function renameTag(name: string) {
-    const nextName = window.prompt("Enter the new tag name:", name)?.trim();
-    if (!nextName || nextName === name) return;
-    setBusyTag(name);
-    try {
-      const response = await adminFetch(`${API_URL}/admin/tags/`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ old_name: name, new_name: nextName }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.detail || `Rename failed (${response.status}).`);
-      setAdminTags(payload.tags || []);
-      setTagActionError("");
-    } catch (error) {
-      setTagActionError(error instanceof Error ? error.message : "Unable to rename tag.");
-    } finally { setBusyTag(null); }
-  }
-
-  async function deleteTag(name: string) {
-    if (!window.confirm(`Delete the tag “${name}” from all posts? This cannot be undone.`)) return;
-    setBusyTag(name);
-    try {
-      const response = await adminFetch(`${API_URL}/admin/tags/`, {
-        method: "DELETE", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.detail || `Delete failed (${response.status}).`);
-      setAdminTags(payload.tags || []);
-      setTagActionError("");
-    } catch (error) {
-      setTagActionError(error instanceof Error ? error.message : "Unable to delete tag.");
-    } finally { setBusyTag(null); }
-  }
-  const { language } = usePortalLanguage();
-  const text = copy[language];
-
   const tags = useMemo(() => {
     const counts = new Map<string, { label: string; count: number }>();
-
     data.items.forEach((item) => {
       const seen = new Set<string>();
       (item.tags || []).forEach((rawTag) => {
@@ -122,19 +64,15 @@ export function TagsPage() {
         });
       });
     });
-
     return [...counts.entries()].sort(
       (a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label),
     );
   }, [data.items]);
 
-  const tagRows = isAdmin
-    ? adminTags.map((tag) => ({ name: tag.name, slug: slugify(tag.name), count: tag.count }))
-    : tags.map(([slug, tag]) => ({ name: tag.label, slug, count: tag.count }));
-  const pageCount = Math.max(1, Math.ceil(tagRows.length / pageSize));
-  const visibleTags = tagRows.slice((page - 1) * pageSize, page * pageSize);
-  const firstTag = tagRows.length ? (page - 1) * pageSize + 1 : 0;
-  const lastTag = Math.min(page * pageSize, tagRows.length);
+  const pageCount = Math.max(1, Math.ceil(tags.length / pageSize));
+  const visibleTags = tags.slice((page - 1) * pageSize, page * pageSize);
+  const firstTag = tags.length ? (page - 1) * pageSize + 1 : 0;
+  const lastTag = Math.min(page * pageSize, tags.length);
 
   useEffect(() => {
     const updatePageSize = () => {
@@ -143,12 +81,10 @@ export function TagsPage() {
       const width = panel.clientWidth;
       const top = panel.getBoundingClientRect().top;
       const availableHeight = Math.max(150, window.innerHeight - top - 150);
-      const columns = Math.max(1, Math.floor((width - 36) / (isAdmin ? 270 : 155)));
-      const rowHeight = isAdmin ? 58 : 54;
-      const rows = Math.max(1, Math.floor(availableHeight / rowHeight));
+      const columns = Math.max(1, Math.floor((width - 36) / 155));
+      const rows = Math.max(1, Math.floor(availableHeight / 54));
       setPageSize(Math.max(1, columns * rows));
     };
-
     updatePageSize();
     window.addEventListener("resize", updatePageSize);
     const observer = typeof ResizeObserver !== "undefined" && panelRef.current
@@ -159,7 +95,7 @@ export function TagsPage() {
       window.removeEventListener("resize", updatePageSize);
       observer?.disconnect();
     };
-  }, [isAdmin]);
+  }, []);
 
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
@@ -176,32 +112,16 @@ export function TagsPage() {
       <section ref={panelRef} className="saved-panel related-tag-suggestions">
         <div className="saved-section-heading">
           <h2>{text.tags}</h2>
-          <span>{isAdmin ? adminTags.length : tags.length} {text.count}</span>
+          <span>{tags.length} {text.count}</span>
         </div>
 
-        {isAdmin && tagActionError ? <div className="saved-empty-state" role="alert">{tagActionError}</div> : null}
-
-        {isAdmin ? (
-          visibleTags.length ? (
-            <div className="admin-managed-tags-list">
-              {visibleTags.map((tag) => (
-                <div className="admin-managed-tag-row" key={tag.slug}>
-                  <Link className="related-tag-chip" href={`/tags/${tag.slug}`}><span>{tag.name}</span><small>{tag.count}</small></Link>
-                  <div className="admin-managed-tag-actions">
-                    <button type="button" disabled={busyTag === tag.name} onClick={() => void renameTag(tag.name)}>Edit</button>
-                    <button type="button" className="danger" disabled={busyTag === tag.name} onClick={() => void deleteTag(tag.name)}>Delete</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : <div className="saved-empty-state saved-list-empty">No tags are available yet.</div>
-        ) : data.loading ? (
+        {data.loading ? (
           <div className="saved-empty-state saved-list-empty" role="status">{text.loading}</div>
         ) : visibleTags.length ? (
           <div className="related-tag-list">
-            {visibleTags.map((tag) => (
-              <Link className="related-tag-chip" href={`/tags/${tag.slug}`} key={tag.slug}>
-                <span>{tag.name}</span>
+            {visibleTags.map(([slug, tag]) => (
+              <Link className="related-tag-chip" href={`/tags/${slug}`} key={slug}>
+                <span>{tag.label}</span>
                 <small>{tag.count}</small>
               </Link>
             ))}
@@ -210,9 +130,9 @@ export function TagsPage() {
           <div className="saved-empty-state saved-list-empty">{text.empty}</div>
         )}
 
-        {tagRows.length > pageSize && (
+        {tags.length > pageSize && (
           <div className="admin-table-footer tags-auto-pagination">
-            <span>Showing {firstTag}–{lastTag} of {tagRows.length} tags</span>
+            <span>Showing {firstTag}–{lastTag} of {tags.length} tags</span>
             <div className="admin-pagination">
               <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
               <span>Page {page} of {pageCount}</span>

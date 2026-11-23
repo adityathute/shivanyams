@@ -2626,3 +2626,10 @@
 .admin-analytics-modal .admin-subscribers-table td:nth-child(3) { display:table-cell; }
 .admin-analytics-modal .admin-subscribers-table td:nth-child(3) small { display:block; color:var(--admin-muted,#6b7280); font-size:11px; margin-top:2px; }
 @media (max-width:640px) { .admin-analytics-modal .admin-subscribers-summary { grid-template-columns:1fr; } .admin-analytics-modal .admin-subscribers-table { min-width:620px; } }
+
+
+/* Subscribers: center the complete Subscribed at column, including its heading and date/time. */
+.admin-analytics-modal .admin-subscribers-table th:nth-child(3),
+.admin-analytics-modal .admin-subscribers-table td:nth-child(3) {
+  text-align: center;
+}

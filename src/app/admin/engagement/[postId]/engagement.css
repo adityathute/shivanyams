@@ -30,7 +30,7 @@
 
 .admin-engagement-stat.is-selected {
   border-color: var(--stat-color, var(--primary, #8b5cf6));
-  background: color-mix(in srgb, var(--stat-color, var(--primary, #8b5cf6)) 9%, transparent);
+  background: #fff;
 }
 
 .admin-engagement-stat > span {

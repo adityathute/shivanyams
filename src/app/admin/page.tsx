@@ -40,6 +40,7 @@ type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; fu
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
 type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; event_type?: "subscribed" | "unsubscribed"; };
 type SubscriberAnalyticsTotals = { total: number; registered: number; subscriptions: number; resubscriptions: number; unsubscriptions: number };
+type TagAnalyticsTotals = { total: number; used: number; unused: number };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -230,7 +231,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -247,6 +248,7 @@ export default function AdminPage() {
   const [subscriberView, setSubscriberView] = useState<"active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions">("active");
   const [subscribersPage, setSubscribersPage] = useState(1);
   const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
+  const [tagTotals, setTagTotals] = useState<TagAnalyticsTotals>({ total: 0, used: 0, unused: 0 });
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -792,6 +794,26 @@ export default function AdminPage() {
     loadSubscriberView("subscriptions");
   }
 
+  function openTagsAnalytics() {
+    setAnalyticsType("tags");
+    setSelectedPost(null);
+    setSelectedVisitor(null);
+    setSelectedAnalyticsPath(null);
+    setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/tags/", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Unable to load tag statistics (${response.status}).`);
+        return response.json();
+      })
+      .then((payload: { name: string; count: number }[]) => {
+        const tags = Array.isArray(payload) ? payload : [];
+        const used = tags.filter((tag) => Number(tag.count) > 0).length;
+        setTagTotals({ total: tags.length, used, unused: tags.length - used });
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load tag statistics."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
     setSelectedLikeComment(null);
     setAnalyticsType(type);
@@ -1178,7 +1200,7 @@ export default function AdminPage() {
             { label: "Dislikes", value: engagementStats.dislikes, analytics: "dislikes" as const },
             { label: "Comments", value: engagementStats.comments, analytics: "comments" as const },
             { label: "Replies", value: engagementStats.replies, analytics: "replies" as const },
-            { label: "Tags", value: engagementStats.tags },
+            { label: "Tags", value: engagementStats.tags, analytics: "tags" as const },
             { label: "Shares", value: engagementStats.shares },
             { label: "Saved posts", value: engagementStats.saved, analytics: "saved" as const },
             { label: "Reports", value: engagementStats.reports, analytics: "reports" as const },
@@ -1232,10 +1254,10 @@ export default function AdminPage() {
                     key={item.label}
                     className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" || item.analytics === "subscribers" ? (
+                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" || item.analytics === "subscribers" || item.analytics === "tags" ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
+                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : item.analytics === "tags" ? openTagsAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1636,6 +1658,8 @@ export default function AdminPage() {
                              ? `Saved posts (${formatCompactNumber(savedPostTotals.saves)})`
                            : analyticsType === "subscribers"
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
+                           : analyticsType === "tags"
+                             ? `Tags (${formatCompactNumber(tagTotals.total)})`
                            : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
@@ -1673,6 +1697,8 @@ export default function AdminPage() {
                             ? "Saved post totals, total saves, and unique users who saved posts."
                           : analyticsType === "subscribers"
                             ? "Users who subscribed to ShivanyaMS updates, with their email and subscription date."
+                          : analyticsType === "tags"
+                            ? "Overview of all tags and how many are assigned to posts."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1747,6 +1773,16 @@ export default function AdminPage() {
                 </section>
                 {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{formatAdminDateTime(reply.created_at)}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
+             ) : analyticsType === "tags" && !selectedPost && !selectedVisitor ? (
+                analyticsLoading ? (
+                  <div className="admin-empty">Loading tag statistics...</div>
+                ) : (
+                  <div className="admin-tags-summary">
+                    <article><span>Total tags</span><strong>{formatCompactNumber(tagTotals.total)}</strong><small>All created tags</small></article>
+                    <article><span>Used tags</span><strong>{formatCompactNumber(tagTotals.used)}</strong><small>Used in at least one post</small></article>
+                    <article><span>Unused tags</span><strong>{formatCompactNumber(tagTotals.unused)}</strong><small>Not assigned to any post</small></article>
+                  </div>
+                )
              ) : analyticsType === "saved" && !selectedPost && !selectedVisitor ? (
                 savedPostRows.length === 0 ? <div className="admin-empty">No saved posts recorded yet.</div> : (
                   <>

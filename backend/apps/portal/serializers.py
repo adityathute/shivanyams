@@ -1076,10 +1076,56 @@ class SchemeDetailsSerializer(serializers.ModelSerializer):
         exclude = ("id", "post", "created_at", "updated_at")
 
 
+def _validate_https_detail_urls(attrs, fields):
+    from urllib.parse import urlparse
+    errors = {}
+    for field in fields:
+        value = attrs.get(field)
+        if value in (None, ""):
+            continue
+        parsed = urlparse(str(value))
+        if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+            errors[field] = "Use a valid HTTPS URL without embedded credentials."
+    if errors:
+        raise serializers.ValidationError(errors)
+
+
+def _validate_detail_lists(attrs, limits):
+    errors = {}
+    for field, maximum in limits.items():
+        value = attrs.get(field)
+        if value is None:
+            continue
+        if not isinstance(value, list) or len(value) > maximum:
+            errors[field] = f"Provide a list containing no more than {maximum} entries."
+            continue
+        for index, entry in enumerate(value):
+            if not isinstance(entry, (str, dict)):
+                errors[field] = f"Entry {index + 1} must be text or an object."
+                break
+            if isinstance(entry, str) and len(entry) > 500:
+                errors[field] = f"Entry {index + 1} exceeds 500 characters."
+                break
+            if isinstance(entry, dict) and (len(entry) > 20 or any(not isinstance(k, str) or len(k) > 80 for k in entry)):
+                errors[field] = f"Entry {index + 1} has an invalid structure."
+                break
+    if errors:
+        raise serializers.ValidationError(errors)
+
+
 class ExaminationDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExaminationDetails
         exclude = ("id", "post", "created_at", "updated_at")
+
+    def validate(self, attrs):
+        _validate_detail_lists(attrs, {"paper_sections": 40})
+        _validate_https_detail_urls(attrs, ("notification_url", "admit_card_url", "official_website"))
+        start = attrs.get("application_start_date", getattr(self.instance, "application_start_date", None))
+        end = attrs.get("application_end_date", getattr(self.instance, "application_end_date", None))
+        if start and end and end < start:
+            raise serializers.ValidationError({"application_end_date": "Application end date cannot be before its start date."})
+        return attrs
 
 
 class AdmitCardDetailsSerializer(serializers.ModelSerializer):
@@ -1087,11 +1133,35 @@ class AdmitCardDetailsSerializer(serializers.ModelSerializer):
         model = AdmitCardDetails
         exclude = ("id", "post", "created_at", "updated_at")
 
+    def validate(self, attrs):
+        _validate_detail_lists(attrs, {
+            "documents_to_carry": 40, "prohibited_items": 40,
+            "download_steps": 30, "language_options": 20,
+        })
+        _validate_https_detail_urls(attrs, ("download_url", "login_url", "official_website", "forgot_credentials_url"))
+        start = attrs.get("available_from", getattr(self.instance, "available_from", None))
+        end = attrs.get("available_until", getattr(self.instance, "available_until", None))
+        if start and end and end < start:
+            raise serializers.ValidationError({"available_until": "The download end date cannot be before the start date."})
+        return attrs
+
 
 class ResultDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResultDetails
         exclude = ("id", "post", "created_at", "updated_at")
+
+    def validate(self, attrs):
+        _validate_detail_lists(attrs, {"cutoff_details": 100})
+        _validate_https_detail_urls(attrs, (
+            "result_url", "merit_list_url", "cut_off_url", "scorecard_url",
+            "login_url", "official_website",
+        ))
+        start = attrs.get("scorecard_start_date", getattr(self.instance, "scorecard_start_date", None))
+        end = attrs.get("scorecard_end_date", getattr(self.instance, "scorecard_end_date", None))
+        if start and end and end < start:
+            raise serializers.ValidationError({"scorecard_end_date": "Scorecard end date cannot be before its start date."})
+        return attrs
 
 
 class ArticleGuideDetailsSerializer(serializers.ModelSerializer):

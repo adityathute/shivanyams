@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";\nimport type { ReactNode } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
@@ -33,7 +33,7 @@ type EngagementPayload = {
 
 type StatKey = "all" | "likes" | "dislikes" | "comments" | "shares" | "saved" | "subscribers" | "reports";
 
-const statLabels: { key: StatKey; label: string; color: string; icon: React.ReactNode }[] = [
+const statLabels: { key: StatKey; label: string; color: string; icon: ReactNode }[] = [
   { key: "all", label: "All Statistics", color: "all", icon: <AllStatisticsIcon size={18} /> },
   { key: "likes", label: "Likes", color: "likes", icon: <LikeIcon size={18} /> },
   { key: "dislikes", label: "Dislikes", color: "dislikes", icon: <DislikeIcon size={18} /> },

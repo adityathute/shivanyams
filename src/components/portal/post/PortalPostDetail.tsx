@@ -1321,6 +1321,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 examMedium: getLocalizedText(language, entry.exam_medium_en, entry.exam_medium_mr, entry.exam_medium_hi),
                                 examPattern: getLocalizedText(language, entry.exam_pattern_en, entry.exam_pattern_mr, entry.exam_pattern_hi),
                                 syllabus: getLocalizedText(language, entry.syllabus_en, entry.syllabus_mr, entry.syllabus_hi),
+                                additionalRecruitmentDetails: [{ label: language === "mr" ? "निवड निकष व गुणवत्ता गणना" : language === "hi" ? "चयन मानदंड और मेरिट गणना" : "Selection criteria and merit calculation", value: getLocalizedText(language, entry.selection_criteria_en, entry.selection_criteria_mr, entry.selection_criteria_hi) },{ label: language === "mr" ? "कौशल्य / टंकलेखन चाचणी" : language === "hi" ? "कौशल / टाइपिंग परीक्षा" : "Skill/typing test details", value: getLocalizedText(language, entry.skill_test_details_en, entry.skill_test_details_mr, entry.skill_test_details_hi) },{ label: language === "mr" ? "मुलाखतीचा तपशील" : language === "hi" ? "साक्षात्कार विवरण" : "Interview details", value: getLocalizedText(language, entry.interview_details_en, entry.interview_details_mr, entry.interview_details_hi) },{ label: language === "mr" ? "वैद्यकीय पात्रता निकष" : language === "hi" ? "चिकित्सा मानक" : "Medical fitness standards", value: getLocalizedText(language, entry.medical_standards_en, entry.medical_standards_mr, entry.medical_standards_hi) },{ label: language === "mr" ? "प्रशिक्षण व परिचय कार्यक्रम" : language === "hi" ? "प्रशिक्षण और परिचय" : "Training and induction details", value: getLocalizedText(language, entry.training_details_en, entry.training_details_mr, entry.training_details_hi) },{ label: language === "mr" ? "नियुक्ती पसंती व वाटप" : language === "hi" ? "तैनाती प्राथमिकता और आवंटन" : "Posting preferences and allocation", value: getLocalizedText(language, entry.posting_preferences_en, entry.posting_preferences_mr, entry.posting_preferences_hi) },{ label: language === "mr" ? "कागदपत्र पडताळणी प्रक्रिया" : language === "hi" ? "दस्तावेज़ सत्यापन प्रक्रिया" : "Document verification process", value: getLocalizedText(language, entry.document_verification_en, entry.document_verification_mr, entry.document_verification_hi) },{ label: language === "mr" ? "अर्ज सादर करण्याच्या सूचना" : language === "hi" ? "आवेदन जमा करने के निर्देश" : "Application submission guidelines", value: getLocalizedText(language, entry.application_guidelines_en, entry.application_guidelines_mr, entry.application_guidelines_hi) },{ label: language === "mr" ? "पदनिहाय आरक्षण धोरण" : language === "hi" ? "पद-विशिष्ट आरक्षण नीति" : "Post-specific reservation policy notes", value: getLocalizedText(language, entry.reservation_policy_en, entry.reservation_policy_mr, entry.reservation_policy_hi) },{ label: language === "mr" ? "पदासंबंधी अतिरिक्त सूचना" : language === "hi" ? "पद-विशिष्ट अतिरिक्त टिप्पणियाँ" : "Additional post-specific notes", value: getLocalizedText(language, entry.additional_post_notes_en, entry.additional_post_notes_mr, entry.additional_post_notes_hi) }].filter((item) => Boolean(item.value)),
                                 fees,
                               };
                             });
@@ -1355,6 +1356,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showExamMedium = rows.some((row) => row.examMedium);
                             const showExamPattern = rows.some((row) => row.examPattern);
                             const showSyllabus = rows.some((row) => row.syllabus);
+                            const showAdditionalRecruitmentDetails = rows.some((row) => row.additionalRecruitmentDetails.length > 0);
                             const showWorkLocations = rows.some((row) => row.workLocations.length > 0);
                             const totalVacancies = rows.reduce(
                               (total, row) => total + (Number(row.entry.vacancies) || 0),
@@ -1396,6 +1398,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showExamMedium ? <th>{language === "mr" ? "परीक्षेचे माध्यम" : language === "hi" ? "परीक्षा की भाषा" : "Exam medium"}</th> : null}
                                       {showExamPattern ? <th>{language === "mr" ? "परीक्षा पद्धती" : language === "hi" ? "परीक्षा पैटर्न" : "Exam pattern"}</th> : null}
                                       {showSyllabus ? <th>{language === "mr" ? "अभ्यासक्रम" : language === "hi" ? "पाठ्यक्रम" : "Syllabus"}</th> : null}
+                                      {showAdditionalRecruitmentDetails ? <th>{language === "mr" ? "अतिरिक्त भरती तपशील" : language === "hi" ? "अतिरिक्त भर्ती विवरण" : "Additional recruitment details"}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
                                     </tr>
                                   </thead>
@@ -1438,6 +1441,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                         {showExamMedium ? <td>{row.examMedium || "—"}</td> : null}
                                         {showExamPattern ? <td>{row.examPattern || "—"}</td> : null}
                                         {showSyllabus ? <td>{row.syllabus || "—"}</td> : null}
+                                        {showAdditionalRecruitmentDetails ? <td>{row.additionalRecruitmentDetails.length ? <ul>{row.additionalRecruitmentDetails.map((item, itemIndex) => <li key={itemIndex}><strong>{item.label}:</strong> {item.value}</li>)}</ul> : "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
                                       </tr>
                                     ))}
@@ -1466,6 +1470,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {showExamMedium ? <td></td> : null}
                                       {showExamPattern ? <td></td> : null}
                                       {showSyllabus ? <td></td> : null}
+                                      {showAdditionalRecruitmentDetails ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}
                                     </tr>
                                   </tfoot>

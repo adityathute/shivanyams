@@ -179,6 +179,7 @@ export function PostEngagementActions({ postId, title }: Props) {
     setShareMenuOpen(false);
 
     if (channel === "native") {
+      showMessage("Opening share options...");
       // Count the user's share intent immediately, including when the native
       // share sheet is dismissed without choosing a destination.
       void recordShare("native");
@@ -203,9 +204,9 @@ export function PostEngagementActions({ postId, title }: Props) {
       try {
         await navigator.clipboard.writeText(url);
         void recordShare("copy");
-        setMessage("Post link copied.");
+        showMessage("Post link copied.");
       } catch {
-        setMessage("Unable to copy the post link.");
+        showMessage("Unable to copy the post link.");
       }
       return;
     }
@@ -222,6 +223,8 @@ export function PostEngagementActions({ postId, title }: Props) {
     };
     const destination = destinations[channel];
     if (!destination) return;
+    const labels: Record<string, string> = { whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X", linkedin: "LinkedIn", email: "Email" };
+    showMessage(`Opening ${labels[channel] || "share"}...`);
     void recordShare(channel);
     window.open(destination, "_blank", "noopener,noreferrer");
   }

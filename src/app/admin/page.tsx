@@ -49,6 +49,8 @@ type LikeAnalyticsEvent = {
   user_email: string;
   visitor_id: string;
   created_at: string;
+  comment_id?: number | null;
+  parent_id?: number | null;
 };
 type WebsiteVisitorRow = {
   visitor_id: string;
@@ -213,6 +215,7 @@ export default function AdminPage() {
   const [selectedPost, setSelectedPost] = useState<PostAnalyticsPage | null>(null);
   const [postAnalyticsEvents, setPostAnalyticsEvents] = useState<PostViewEvent[]>([]);
   const [likeAnalyticsEvents, setLikeAnalyticsEvents] = useState<LikeAnalyticsEvent[]>([]);
+  const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
   const [likeAnalyticsPage, setLikeAnalyticsPage] = useState(1);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsVisitors, setAnalyticsVisitors] = useState<
@@ -600,6 +603,29 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  async function openLikeComment(item: LikeAnalyticsEvent, target: "comment" | "reply") {
+    const commentId = target === "comment" ? (item.parent_id || item.comment_id) : item.comment_id;
+    if (!commentId) { setError("Comment details are not available for this like."); return; }
+    setAnalyticsLoading(true);
+    try {
+      const response = await adminFetch(API_URL + "/admin/comments/?post=" + item.post_id, { cache: "no-store" });
+      if (!response.ok) throw new Error("Unable to load comment details (" + response.status + ").");
+      const comments = await response.json();
+      const findComment = (rows: any[], id: number): any => {
+        for (const row of rows) {
+          if (Number(row.id) === Number(id)) return row;
+          const nested = findComment(row.replies || [], id);
+          if (nested) return nested;
+        }
+        return null;
+      };
+      const selected = findComment(comments, Number(commentId));
+      if (!selected) throw new Error("This comment is no longer available.");
+      const parent = selected.parent ? findComment(comments, Number(selected.parent)) : null;
+      setSelectedLikeComment({ ...selected, parent_comment: parent, post_title: item.post_title, liked_target: target });
+    } catch (err) { setError(err instanceof Error ? err.message : "Unable to load comment details."); }
+    finally { setAnalyticsLoading(false); }
+  }
   async function openPostEvents(post: PostAnalyticsPage) {
     setSelectedPost(post); setSelectedAnalyticsPath(null); setAnalyticsEventsPage(1); setAnalyticsLoading(true);
     try {
@@ -1281,12 +1307,13 @@ export default function AdminPage() {
             aria-labelledby="admin-analytics-title"
           >
             <header className="admin-analytics-header">
-              {(selectedVisitor || selectedAnalyticsPath || selectedPost) && (
+              {(selectedVisitor || selectedAnalyticsPath || selectedPost || selectedLikeComment) && (
                 <IconButton
                   size="lg"
                   variant="ghost"
                   className="admin-analytics-back-icon"
                   onClick={() => {
+                    if (selectedLikeComment) { setSelectedLikeComment(null); return; }
                     if (visitorReturnState) {
                       setSelectedAnalyticsPath(null);
                       setAnalyticsEvents([]);
@@ -1318,7 +1345,9 @@ export default function AdminPage() {
               )}
               <div>
                 <h2 id="admin-analytics-title">
-                  {selectedVisitor
+                  {selectedLikeComment
+                    ? `${selectedLikeComment.liked_target === "reply" ? "Reply" : "Comment"} details`
+                    : selectedVisitor
                     ? `Visitor details (${formatCompactNumber(visitorPages.length)})`
                     : selectedPost
                       ? selectedPost.title + " (" + formatCompactNumber(postAnalyticsEvents.length) + " views)"
@@ -1339,7 +1368,9 @@ export default function AdminPage() {
                           : `Website Visitors (${formatCompactNumber(websiteVisitorsCount)})`}
                 </h2>
                 <p>
-                  {selectedVisitor
+                  {selectedLikeComment
+                    ? `Comment on ${selectedLikeComment.post_title}`
+                    : selectedVisitor
                     ? "Pages visited by this browser or device."
                     : selectedPost
                       ? "Individual visits recorded for this post."
@@ -1363,7 +1394,7 @@ export default function AdminPage() {
                 variant="ghost"
                 iconRotateOnHover
                 className="admin-analytics-close"
-                onClick={() => { setAnalyticsType(null); setSelectedPost(null); setPostAnalyticsEvents([]); }}
+                onClick={() => { setAnalyticsType(null); setSelectedPost(null); setPostAnalyticsEvents([]); setSelectedLikeComment(null); }}
                 aria-label="Close"
                 title="Close analytics"
               >
@@ -1372,6 +1403,17 @@ export default function AdminPage() {
             </header>
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
+            ) : selectedLikeComment ? (
+              <div className="admin-analytics-detail admin-like-comment-detail">
+                {selectedLikeComment.parent_comment ? <section className="admin-like-comment-section"><h3>Parent comment</h3><p>{selectedLikeComment.parent_comment.content}</p><div className="admin-like-comment-meta"><span>{selectedLikeComment.parent_comment.author_name || "User"}</span><span>{new Date(selectedLikeComment.parent_comment.created_at).toLocaleString()}</span></div></section> : null}
+                <section className="admin-like-comment-section">
+                  <h3>{selectedLikeComment.parent ? "Reply" : "Comment"}</h3>
+                  <p>{selectedLikeComment.content}</p>
+                  <div className="admin-like-comment-meta"><span>{selectedLikeComment.author_name || "User"}</span><span>{new Date(selectedLikeComment.created_at).toLocaleString()}</span><span>Status: {statusLabel(selectedLikeComment.status || "unknown")}</span>{selectedLikeComment.edited ? <span>Edited</span> : null}{selectedLikeComment.is_admin_reply ? <span>Admin reply</span> : null}</div>
+                  <div className="admin-like-comment-stats"><span>{formatCompactNumber(selectedLikeComment.likes_count || 0)} likes</span><span>{formatCompactNumber(selectedLikeComment.dislikes_count || 0)} dislikes</span><span>{formatCompactNumber(selectedLikeComment.report_count || 0)} reports</span></div>
+                </section>
+                {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{new Date(reply.created_at).toLocaleString()}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
+              </div>
             ) : analyticsType === "likes" && !selectedPost && !selectedVisitor ? (
               likeAnalyticsEvents.length === 0 ? (
                 <div className="admin-empty">No likes recorded yet.</div>
@@ -1420,14 +1462,7 @@ export default function AdminPage() {
                                 <button
                                   type="button"
                                   className="admin-likes-content-link is-comment"
-                                  onClick={() => void openPostEvents({
-                                    id: item.post_id,
-                                    title: item.post_title,
-                                    slug: item.post_slug,
-                                    views: 0,
-                                    unique_visitors: 0,
-                                    last_viewed: null,
-                                  })}
+                                  onClick={() => void openLikeComment(item, "comment")}
                                   aria-label="Open comment details"
                                 >
                                   <span className="admin-analytics-like-content">{item.content}</span>
@@ -1438,14 +1473,7 @@ export default function AdminPage() {
                                     <button
                                       type="button"
                                       className="admin-likes-content-link is-comment-context"
-                                      onClick={() => void openPostEvents({
-                                        id: item.post_id,
-                                        title: item.post_title,
-                                        slug: item.post_slug,
-                                        views: 0,
-                                        unique_visitors: 0,
-                                        last_viewed: null,
-                                      })}
+                                      onClick={() => void openLikeComment(item, "comment")}
                                       aria-label="Open parent comment details"
                                     >
                                       <small className="admin-analytics-like-context">Comment: {item.parent_content}</small>
@@ -1454,14 +1482,7 @@ export default function AdminPage() {
                                   <button
                                     type="button"
                                     className="admin-likes-content-link is-reply-content"
-                                    onClick={() => void openPostEvents({
-                                      id: item.post_id,
-                                      title: item.post_title,
-                                      slug: item.post_slug,
-                                      views: 0,
-                                      unique_visitors: 0,
-                                      last_viewed: null,
-                                    })}
+                                    onClick={() => void openLikeComment(item, "reply")}
                                     aria-label="Open reply details"
                                   >
                                     <span className="admin-analytics-like-content">Reply: {item.content}</span>

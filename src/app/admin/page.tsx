@@ -621,7 +621,7 @@ export default function AdminPage() {
             <p>Manage posts, publishing status and website content.</p>
           </div>
           <div className="admin-top-actions admin-dashboard-header-actions">
-            <Link href="/tags" className="admin-secondary-button">
+            <Link href="/admin/tags" className="admin-secondary-button">
               <TagIcon size={16} />
               <span>Tags</span>
             </Link>

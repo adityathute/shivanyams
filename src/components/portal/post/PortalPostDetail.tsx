@@ -672,6 +672,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const updatedPostDate = hasPostBeenUpdated ? post?.updatedAt || "" : "";
 
   const trackedPostIdRef = useRef<number | null>(null);
+  const trackedPostEventRef = useRef<{ postId: number; eventId: string } | null>(null);
 
   useEffect(() => {
     if (previewItem) return;
@@ -682,6 +683,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     trackedPostIdRef.current = postId;
 
     const visitorId = getAnalyticsVisitorId();
+    const eventId = trackedPostEventRef.current?.postId === postId
+      ? trackedPostEventRef.current.eventId
+      : (typeof window.crypto?.randomUUID === "function"
+        ? window.crypto.randomUUID()
+        : `pv-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    trackedPostEventRef.current = { postId, eventId };
     const userAgent = navigator.userAgent;
     const device = /ipad|tablet/i.test(userAgent)
       ? "tablet"
@@ -701,7 +708,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       headers,
       body: JSON.stringify({
         visitor_id: visitorId,
-        event_id: typeof window.crypto?.randomUUID === "function" ? window.crypto.randomUUID() : `pv-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        event_id: eventId,
         language,
         device,
         referrer_url: document.referrer,

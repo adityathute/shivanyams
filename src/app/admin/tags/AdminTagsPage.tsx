@@ -125,7 +125,7 @@ export default function AdminTagsPage() {
             <h1>Manage Tags</h1>
             <p>Rename or delete tags used across jobs, schemes, articles and other content.</p>
           </div>
-          <div className="admin-top-actions">
+          <div className="admin-top-actions admin-tags-header-actions">
             <Link href="/admin" className="admin-secondary-button">
               <ArrowLeftIcon size={16} />
               <span>Back to dashboard</span>
@@ -160,22 +160,35 @@ export default function AdminTagsPage() {
           {loadingTags ? (
             <div className="admin-empty">Loading tags...</div>
           ) : visibleTags.length ? (
-            <div className="admin-tags-list">
-              {visibleTags.map((tag) => {
-                const slug = slugify(tag.name);
-                return (
-                  <article className="admin-tag-row" key={tag.name}>
-                    <div className="admin-tag-info">
-                      <Link href={`/tags/${slug}`} target="_blank" className="admin-tag-name">{tag.name}</Link>
-                      <span>{tag.count} {tag.count === 1 ? "post" : "posts"}</span>
-                    </div>
-                    <div className="admin-tag-actions">
-                      <button type="button" disabled={busyTag !== null} onClick={() => void renameTag(tag.name)}>Edit</button>
-                      <button type="button" className="danger" disabled={busyTag !== null} onClick={() => void deleteTag(tag.name)}>Delete</button>
-                    </div>
-                  </article>
-                );
-              })}
+            <div className="admin-table-wrap admin-tags-table-wrap">
+              <table className="admin-post-table admin-tags-table">
+                <thead>
+                  <tr>
+                    <th>Tag</th>
+                    <th>Posts</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleTags.map((tag) => {
+                    const slug = slugify(tag.name);
+                    return (
+                      <tr key={tag.name}>
+                        <td>
+                          <Link href={`/tags/${slug}`} target="_blank" className="admin-tag-name">{tag.name}</Link>
+                        </td>
+                        <td>{tag.count.toLocaleString("en-IN")}</td>
+                        <td>
+                          <div className="admin-tag-actions">
+                            <button type="button" disabled={busyTag !== null} onClick={() => void renameTag(tag.name)}>Edit</button>
+                            <button type="button" className="danger" disabled={busyTag !== null} onClick={() => void deleteTag(tag.name)}>Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           ) : (
             <div className="admin-empty">{search.trim() ? "No tags match your search." : "No tags are available yet."}</div>

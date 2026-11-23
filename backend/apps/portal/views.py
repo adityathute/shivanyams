@@ -707,6 +707,48 @@ class PostComments(APIView):
 class PostCommentDetail(APIView):
     permission_classes = [IsPortalIdentity]
 
+    def delete(self, request, comment_id):
+        with transaction.atomic():
+            comment = get_object_or_404(
+                Comment.objects.select_for_update(),
+                pk=comment_id,
+                user_auth_id=str(request.user.id),
+                is_admin_reply=False,
+                post__status=Post.Status.PUBLISHED,
+                post__is_active=True,
+                post__comments_enabled=True,
+                status=Comment.Status.APPROVED,
+            )
+            post_id = comment.post_id
+
+            # Deleting a parent also permanently deletes its nested replies.
+            # Count the complete comment subtree first so the post counter
+            # remains accurate after the database cascade.
+            comment_ids = {comment.pk}
+            frontier = {comment.pk}
+            while frontier:
+                child_ids = set(
+                    Comment.objects.filter(
+                        parent_id__in=frontier,
+                        post_id=post_id,
+                    ).values_list("id", flat=True)
+                )
+                child_ids -= comment_ids
+                if not child_ids:
+                    break
+                comment_ids.update(child_ids)
+                frontier = child_ids
+
+            comment.delete()
+            Post.objects.filter(pk=post_id).update(
+                comments_count=Greatest(
+                    F("comments_count") - len(comment_ids),
+                    Value(0),
+                )
+            )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def patch(self, request, comment_id):
         comment = get_object_or_404(
             Comment,

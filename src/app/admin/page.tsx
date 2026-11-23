@@ -624,7 +624,7 @@ export default function AdminPage() {
         setLikeAnalyticsEvents(payload.results ?? []);
       })
       .catch((err) =>
-        setError(err instanceof Error ? err.message : "Unable to load ${type} analytics."),
+        setError(err instanceof Error ? err.message : "Unable to load reaction analytics."),
       )
       .finally(() => setAnalyticsLoading(false));
   }

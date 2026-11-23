@@ -61,7 +61,7 @@ const compactNumberFormat = new Intl.NumberFormat("en", {
 });
 
 function formatCompactNumber(value: number) {
-  return compactNumberFormat.format(Number(value) || 0);
+  return compactNumberFormat.format(Number(value) || 0).replace("K", "k").replace("M", "m").replace("B", "b");
 }
 
 function displayValue(value: unknown) {

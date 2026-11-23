@@ -238,7 +238,6 @@ export default function AdminPage() {
   const [savedPostTotals, setSavedPostTotals] = useState({ posts: 0, saves: 0, users: 0 });
   const [savedPostsPage, setSavedPostsPage] = useState(1);
   const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
-  const [subscriberSearch, setSubscriberSearch] = useState("");
   const [subscriberView, setSubscriberView] = useState<"active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions">("active");
   const [subscribersPage, setSubscribersPage] = useState(1);
   const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
@@ -758,7 +757,6 @@ export default function AdminPage() {
 
   function loadSubscriberView(view: "active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions") {
     setSubscriberView(view);
-    setSubscriberSearch("");
     setSubscribersPage(1);
     setAnalyticsLoading(true);
     adminFetch(API_URL + "/admin/stats/?type=subscribers&view=" + view, { cache: "no-store" })
@@ -785,7 +783,7 @@ export default function AdminPage() {
     setSelectedPost(null);
     setSelectedVisitor(null);
     setSelectedAnalyticsPath(null);
-    loadSubscriberView("active");
+    loadSubscriberView("subscriptions");
   }
 
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
@@ -1777,23 +1775,10 @@ export default function AdminPage() {
                       <button type="button" className={subscriberView === "resubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "resubscriptions"} onClick={() => loadSubscriberView("resubscriptions")}><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></button>
                       <button type="button" className={subscriberView === "unsubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "unsubscriptions"} onClick={() => loadSubscriberView("unsubscriptions")}><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></button>
                     </div>
-                    {subscriberRows.length > 0 && (
-                      <div className="admin-subscribers-toolbar">
-                        <input
-                          type="search"
-                          value={subscriberSearch}
-                          onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
-                          placeholder="Search by name or email"
-                          aria-label="Search subscribers by name or email"
-                        />
-                      </div>
-                    )}
                     {subscriberRows.length === 0 ? (
                       <div className="admin-empty">No {subscriberView === "active" ? "active subscribers" : subscriberView === "registered" ? "registered subscribers" : subscriberView} found.</div>
                     ) : (() => {
-                      const filteredSubscribers = subscriberRows.filter((item) =>
-                        [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
-                      );
+                      const filteredSubscribers = subscriberRows;
                       const isHistory = subscriberView === "subscriptions" || subscriberView === "resubscriptions" || subscriberView === "unsubscriptions";
                       return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
                         <>

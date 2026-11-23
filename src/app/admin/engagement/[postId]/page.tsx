@@ -79,6 +79,17 @@ function isContentColumn(column: string) {
     /comment.*(content|text|body)|^(content|body|message|text|description)$/i.test(column);
 }
 
+function getRowContent(row: DetailRow) {
+  const contentEntries = Object.entries(row)
+    .filter(([key, value]) => isContentColumn(key) && typeof value === "string" && value.trim())
+    .sort(([a], [b]) => {
+      const priority = (key: string) => /comment.*(content|text|body)|^(comment|comment_content)$/i.test(key) ? 0
+        : /^(content|body|message|text|description)$/i.test(key) ? 1 : 2;
+      return priority(a) - priority(b);
+    });
+  return contentEntries.length ? String(contentEntries[0][1]) : "";
+}
+
 function titleCaseName(value: string) {
   return value.trim().toLocaleLowerCase().replace(/(^|[\s'-])([\p{L}])/gu, (_, separator, letter) => separator + letter.toLocaleUpperCase());
 }
@@ -207,7 +218,17 @@ export default function AdminPostEngagementPage() {
 
   if (loading || !isAdmin) return null;
 
-  const tableRows = selectedRows.map((row) => ({ ...row, user: getUserLabel(row) }));
+  const tableRows = selectedRows.map((row) => {
+    const content = getRowContent(row);
+    const normalized = Object.fromEntries(
+      Object.entries(row).filter(([key]) => !isContentColumn(key))
+    );
+    return {
+      ...normalized,
+      user: getUserLabel(row),
+      ...(content ? { content } : {}),
+    };
+  });
   const pageCount = Math.max(1, Math.ceil(tableRows.length / pageSize));
   const safePage = Math.min(page, pageCount);
   const visibleRows = tableRows.slice((safePage - 1) * pageSize, safePage * pageSize);
@@ -220,6 +241,7 @@ export default function AdminPostEngagementPage() {
         (column.toLowerCase() !== "id" &&
           !column.toLowerCase().endsWith("_id") &&
           column.toLowerCase() !== "reaction" &&
+          !isContentColumn(column) &&
           !isUserIdentityColumn(column)))
       .sort((a, b) => {
         const order = ["activity", "user", "target", "status", "details"];
@@ -295,7 +317,7 @@ export default function AdminPostEngagementPage() {
                 <div className="admin-engagement-table-wrap">
                   <table className="admin-engagement-data-table">
                     <colgroup>{columns.map((column) => <col key={column} style={{ width: getColumnWidth(column, selectedRows) }} />)}</colgroup>
-                    <thead><tr>{columns.map((column) => <th key={column}>{isContentColumn(column) ? "Comment content" : column === "user" ? "User" : column.replaceAll("_", " ")}</th>)}</tr></thead>
+                    <thead><tr>{columns.map((column) => <th key={column}>{column === "content" ? "Content" : column === "user" ? "User" : column.replaceAll("_", " ")}</th>)}</tr></thead>
                     <tbody>
                       {visibleRows.map((row, index) => (
                         <tr key={String(row.id ?? row.user_auth_id ?? row.reporter_auth_id ?? index) + "-" + index}>

@@ -1074,6 +1074,17 @@ class AdminPostEngagement(APIView):
         comment_ids = Comment.objects.filter(post=post).values_list("id", flat=True)
         comment_likes = CommentReaction.objects.filter(comment_id__in=comment_ids, reaction="like").count()
         comment_dislikes = CommentReaction.objects.filter(comment_id__in=comment_ids, reaction="dislike").count()
+        unique_users = set()
+        for user_ids in (
+            post.reactions.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            CommentReaction.objects.filter(comment_id__in=comment_ids).exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            Comment.objects.filter(post=post).exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            post.share_events.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            post.saved_posts.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
+            CommentReport.objects.filter(comment__post=post).exclude(reporter_auth_id="").values_list("reporter_auth_id", flat=True),
+        ):
+            unique_users.update(user_ids)
+
         payload = {
             "post": {"id": post.id, "title": post.title_en},
             "likes": {"total": post.likes_count + comment_likes, "post": post.likes_count, "comments_and_replies": comment_likes},
@@ -1081,7 +1092,7 @@ class AdminPostEngagement(APIView):
             "comments": {"total": Comment.objects.filter(post=post).count(), "approved": Comment.objects.filter(post=post, status=Comment.Status.APPROVED).count(), "hidden": Comment.objects.filter(post=post, status=Comment.Status.HIDDEN).count()},
             "shares": post.share_events.count(),
             "saved": post.saved_posts.count(),
-            "subscribers": PostSubscription.objects.filter(post=post, is_active=True).count(),
+            "users": len(unique_users),
             "reports": CommentReport.objects.filter(comment__post=post, status=CommentReport.Status.OPEN).count(),
         }
         if request.query_params.get("details") == "1":
@@ -1091,12 +1102,11 @@ class AdminPostEngagement(APIView):
                 "comments": list(Comment.objects.filter(post=post).order_by("-created_at").values("id", "parent_id", "user_auth_id", "author_name", "content", "status", "is_admin_reply", "created_at")[:500]),
                 "shares": list(post.share_events.order_by("-created_at").values("user_auth_id", "visitor_id", "channel", "created_at")[:500]),
                 "saved": list(post.saved_posts.order_by("-created_at").values("user_auth_id", "created_at")[:500]),
-                "subscribers": list(PostSubscription.objects.filter(post=post, is_active=True).order_by("-created_at").values("user_auth_id", "email", "created_at")[:500]),
                 "reports": list(CommentReport.objects.filter(comment__post=post).select_related("comment").order_by("-created_at").values("comment_id", "comment__content", "reporter_auth_id", "reason", "details", "status", "created_at")[:500]),
             }
 
-            # Resolve activity identities from the names already captured by
-            # Portal Users when authenticated users visit the public website.
+            # Use the same names captured by Portal Users; expose a known email
+            # as the fallback when a name has not been captured.
             auth_ids = {
                 str(row.get(key) or "")
                 for rows in details.values()
@@ -1105,6 +1115,7 @@ class AdminPostEngagement(APIView):
                 if row.get(key)
             }
             user_names = {}
+            user_emails = {}
             if auth_ids:
                 for visitor in WebsiteVisitor.objects.filter(
                     auth_user_id__in=auth_ids
@@ -1118,11 +1129,23 @@ class AdminPostEngagement(APIView):
                     "auth_user_id", "full_name"
                 ):
                     user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+                for subscription in PostSubscription.objects.filter(
+                    post=post, user_auth_id__in=auth_ids
+                ).exclude(email="").values("user_auth_id", "email"):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
 
-            for row in details["post_reactions"] + details["comment_reactions"] + details["shares"] + details["saved"] + details["subscribers"]:
-                row["user_name"] = user_names.get(str(row.get("user_auth_id") or ""), "")
+            for row in details["post_reactions"] + details["comment_reactions"] + details["shares"] + details["saved"]:
+                auth_id = str(row.get("user_auth_id") or "")
+                row["user_name"] = user_names.get(auth_id, "")
+                row["user_email"] = user_emails.get(auth_id, "")
+            for row in details["comments"]:
+                auth_id = str(row.get("user_auth_id") or "")
+                row["user_name"] = user_names.get(auth_id, "")
+                row["user_email"] = user_emails.get(auth_id, "")
             for row in details["reports"]:
-                row["reporter_name"] = user_names.get(str(row.get("reporter_auth_id") or ""), "")
+                auth_id = str(row.get("reporter_auth_id") or "")
+                row["reporter_name"] = user_names.get(auth_id, "")
+                row["reporter_email"] = user_emails.get(auth_id, "")
 
             payload["details"] = details
         return Response(payload)

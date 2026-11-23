@@ -22,6 +22,7 @@ export function PostEngagementActions({ postId, title }: Props) {
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [userReportCount, setUserReportCount] = useState(0);
   const [message, setMessage] = useState("");
 
   const loadPostReaction = useCallback(async () => {
@@ -47,6 +48,19 @@ export function PostEngagementActions({ postId, title }: Props) {
 
   useEffect(() => { void loadPostReaction(); }, [loadPostReaction]);
   useEffect(() => { void loadSavedState(); }, [loadSavedState]);
+
+  const loadPostReportState = useCallback(async () => {
+    if (!user) {
+      setUserReportCount(0);
+      return;
+    }
+    const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reports/`), { cache: "no-store" });
+    if (!response.ok) return;
+    const payload = await response.json();
+    setUserReportCount(Number(payload.user_report_count) || 0);
+  }, [user, postId]);
+
+  useEffect(() => { void loadPostReportState(); }, [loadPostReportState]);
 
   async function sendPostReaction(next: "like" | "dislike") {
     const method = reaction === next ? "DELETE" : "POST";
@@ -115,7 +129,10 @@ export function PostEngagementActions({ postId, title }: Props) {
       setMessage(payload.detail || "Unable to submit your report.");
       return;
     }
-    setMessage(payload.already_reported ? "You have already reported this post." : "Thank you. Your report has been submitted.");
+    setUserReportCount(Number(payload.user_report_count) || 0);
+    setMessage(payload.report_limit_reached
+      ? "You have used all 3 reports for this post."
+      : "Thank you. Your report has been submitted.");
   }
 
   function requestReport() {
@@ -185,9 +202,11 @@ export function PostEngagementActions({ postId, title }: Props) {
         <button type="button" className={`portal-action-bookmark${saved ? " is-active" : ""}`} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
           <BookmarkIcon size={19} />
         </button>
-        <button type="button" className="portal-action-report" onClick={requestReport} title="Report" aria-label="Report post">
-          <ReportIcon size={19} />
-        </button>
+        {userReportCount < 3 ? (
+          <button type="button" className="portal-action-report" onClick={requestReport} title="Report" aria-label="Report post">
+            <ReportIcon size={19} />
+          </button>
+        ) : null}
       </div>
       {message ? <p role="status">{message}</p> : null}
     </section>

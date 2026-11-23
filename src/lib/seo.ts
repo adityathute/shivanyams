@@ -26,13 +26,13 @@ type ApiPost = {
 };
 
 export async function getPublicPostMetadata(kind: string, slug: string, route = kind): Promise<Metadata> {
-  const canonical = `${SITE_URL}/${route}/${encodeURIComponent(slug)}`;
+  const requestedCanonical = `${SITE_URL}/${route}/${encodeURIComponent(slug)}`;
   const languageValue = (await cookies()).get("shivanya-language")?.value;
   const language = languageValue === "mr" || languageValue === "hi" ? languageValue : "en";
   const fallback: Metadata = {
     title: "ShivanyaMS | Government Jobs, Schemes & Updates",
     description: "Official updates, government jobs, schemes, examinations and results.",
-    alternates: { canonical },
+    alternates: { canonical: requestedCanonical },
     robots: { index: true, follow: true },
   };
   try {
@@ -43,6 +43,7 @@ export async function getPublicPostMetadata(kind: string, slug: string, route = 
     if (!response.ok) return { ...fallback, robots: { index: false, follow: false } };
     const payload = await response.json();
     const post = (payload?.data ?? payload) as ApiPost;
+    const canonical = `${SITE_URL}/${route}/${encodeURIComponent(post.slug || slug)}`;
     const title = (language === "mr" ? post.meta_title_mr : language === "hi" ? post.meta_title_hi : post.meta_title_en)?.trim()
       || (language === "mr" ? post.title_mr : language === "hi" ? post.title_hi : post.title_en)?.trim()
       || post.meta_title_en?.trim() || post.title_en?.trim() || fallback.title as string;

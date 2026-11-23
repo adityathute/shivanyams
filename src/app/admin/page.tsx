@@ -1442,10 +1442,17 @@ export default function AdminPage() {
                     {visibleAnalyticsEvents.map((event, index) => (
                       <tr key={event.visitor_id + event.viewed_at + index}>
                         <td>
-                          {event.visitor_type === "user"
-                            ? formatPersonName(event.full_name) ||
-                              "Registered user"
-                            : "Anonymous"}
+                          {event.visitor_type === "user" ? (
+                            <button
+                              type="button"
+                              className="admin-analytics-link"
+                              onClick={() => void openPostEventVisitor(event.visitor_id)}
+                            >
+                              {formatPersonName(event.full_name) || "Registered user"}
+                            </button>
+                          ) : (
+                            "Anonymous"
+                          )}
                         </td>
                         <td>{event.ip_address || "—"}</td>
                         <td>{event.browser || "Unknown"}</td>

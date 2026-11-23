@@ -722,12 +722,48 @@ class PostCommentReports(APIView):
         details = str(request.data.get("details", "")).strip()[:2000]
         if not reason:
             raise ValidationError({"reason": "Please select a report reason."})
-        report, created = CommentReport.objects.get_or_create(comment=comment, reporter_auth_id=str(request.user.id), defaults={"reason": reason, "details": details})
-        report_count = comment.reports.filter(status=CommentReport.Status.OPEN).values("reporter_auth_id").distinct().count()
+        reporter_auth_id = str(request.user.id)
+        existing_report = CommentReport.objects.filter(
+            comment=comment,
+            reporter_auth_id=reporter_auth_id,
+        ).first()
+        if existing_report:
+            report_count = comment.reports.count()
+            return Response({
+                "reported": True,
+                "already_reported": True,
+                "report_count": report_count,
+                "report_limit_reached": report_count >= self.AUTO_HIDE_REPORT_THRESHOLD,
+                "hidden": comment.status == Comment.Status.HIDDEN,
+            }, status=status.HTTP_200_OK)
+
+        report_count = comment.reports.count()
+        if report_count >= self.AUTO_HIDE_REPORT_THRESHOLD:
+            return Response({
+                "reported": False,
+                "detail": "This comment has already received the maximum number of reports.",
+                "report_count": report_count,
+                "report_limit_reached": True,
+                "hidden": False,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        CommentReport.objects.create(
+            comment=comment,
+            reporter_auth_id=reporter_auth_id,
+            reason=reason,
+            details=details,
+        )
+        report_count += 1
         hidden = report_count >= self.AUTO_HIDE_REPORT_THRESHOLD
         if hidden:
             Comment.objects.filter(pk=comment.pk, status=Comment.Status.APPROVED).update(status=Comment.Status.HIDDEN)
-        return Response({"reported": True, "already_reported": not created, "report_count": report_count, "hidden": hidden}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        return Response({
+            "reported": True,
+            "already_reported": False,
+            "report_count": report_count,
+            "report_limit_reached": report_count >= self.AUTO_HIDE_REPORT_THRESHOLD,
+            "hidden": hidden,
+        }, status=status.HTTP_201_CREATED)
 
 
 class PostSubscriptions(APIView):

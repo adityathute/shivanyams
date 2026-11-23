@@ -46,7 +46,6 @@ def _normalize_text(value):
     text = re.sub(r"\s+dot\s+", ".", text)
     text = re.sub(r"\bhxxps?\b", "https", text)
     text = re.sub(r"\s*\.\s*", ".", text)
-    text = re.sub(r"[^\s]+", lambda match: match.group(0), text)
     return text
 
 

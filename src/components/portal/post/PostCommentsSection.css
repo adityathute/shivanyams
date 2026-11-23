@@ -225,7 +225,7 @@
   padding: 2px 0;
   border: 0;
   background: transparent;
-  color: var(--primary, #64748b);
+  color: var(--muted-foreground, #9298a2);
   font: inherit;
   font-size: 0.75rem;
   font-weight: 650;
@@ -235,12 +235,12 @@
 
 .portal-comment-show-more:hover,
 .portal-comment-show-more:focus-visible {
-  color: var(--text-primary, #334155);
+  color: var(--text-secondary, #64748b);
   text-decoration: underline;
 }
 
 .portal-comment-show-more:focus-visible {
-  outline: 2px solid var(--primary, #8b5cf6);
+  outline: 2px solid var(--muted-foreground, #9298a2);
   outline-offset: 3px;
   border-radius: 3px;
 }

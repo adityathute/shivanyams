@@ -1608,9 +1608,17 @@ export default function AdminPage() {
                                <button type="button" className="admin-analytics-link admin-likes-post-link" title={item.post_title} onClick={() => void openPostEvents({ id: item.post_id, title: item.post_title, slug: item.post_slug, views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title}</button>
                              </td>
                              <td title={item.target_type === "reply" ? `Reply: ${item.content}` : item.content}>
-                               <button type="button" className={item.target_type === "reply" ? "admin-likes-content-link is-reply-content" : "admin-likes-content-link is-comment"} onClick={() => void openLikeComment(item, item.target_type === "reply" ? "reply" : "comment")} aria-label={item.target_type === "reply" ? "Open reply details" : "Open comment details"}>
-                                 <span className="admin-analytics-like-content">{item.content}</span>
-                               </button>
+                               {item.target_type === "reply" ? (
+                                 <div className="admin-likes-reply-content">
+                                   <button type="button" className="admin-likes-content-link is-reply-content" onClick={() => void openLikeComment(item, "reply")} aria-label="Open reply details">
+                                     <span className="admin-analytics-like-content">{item.content}</span>
+                                   </button>
+                                 </div>
+                               ) : (
+                                 <button type="button" className="admin-likes-content-link is-comment" onClick={() => void openLikeComment(item, "comment")} aria-label="Open comment details">
+                                   <span className="admin-analytics-like-content">{item.content}</span>
+                                 </button>
+                               )}
                              </td>
                              <td className="admin-likes-user-cell">
                                {item.visitor_id ? (

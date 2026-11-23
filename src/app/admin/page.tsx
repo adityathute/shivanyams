@@ -1054,9 +1054,11 @@ export default function AdminPage() {
                             >
                               Edit
                             </Link>
-                            <Link href={`/admin/engagement/${post.id}`}>
-                              Stats
-                            </Link>
+                            {post.status === "published" && (
+                              <Link href={`/admin/engagement/${post.id}`}>
+                                Stats
+                              </Link>
+                            )}
                             {post.status !== "published" && (
                               <button
                                 disabled={busyPost === post.id}

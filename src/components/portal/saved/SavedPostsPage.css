@@ -417,23 +417,29 @@
 @media (max-width: 520px) { .admin-managed-tag-row { align-items: flex-start; flex-direction: column; } .admin-managed-tag-actions { width: 100%; } }
 
 
-/* Fit the tag directory to the available page height and paginate the remaining tags. */
+/* Let each tag chip take only the width its label needs. */
 .related-tag-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-  align-content: start;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
   gap: 8px;
 }
 .related-tag-chip {
+  width: fit-content;
+  max-width: 100%;
   min-width: 0;
-  justify-content: space-between;
-  overflow: hidden;
+  flex: 0 1 auto;
+  justify-content: flex-start;
+  overflow: visible;
 }
 .related-tag-chip > span {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 100%;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 .admin-managed-tags-list {
   display: grid;

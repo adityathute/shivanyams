@@ -1321,7 +1321,7 @@ export default function AdminPage() {
               ) : (
                 <>
                 <div className="admin-analytics-table-wrap">
-                  <table className="admin-analytics-table">
+                  <table className="admin-analytics-table admin-website-views-table">
                     <thead>
                       <tr>
                         <th>Page link</th>
@@ -1337,6 +1337,8 @@ export default function AdminPage() {
                               <button
                                 type="button"
                                 className="admin-analytics-link"
+                                title={item.path}
+                                aria-label={`View details for ${item.path}`}
                                 onClick={() => void openPageEvents(item.path)}
                               >
                                 {item.path}

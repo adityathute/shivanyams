@@ -212,6 +212,39 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+.portal-comment-content > p.is-expanded {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
+.portal-comment-show-more {
+  display: inline-flex;
+  align-items: center;
+  margin: -2px 0 5px;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary, #64748b);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.portal-comment-show-more:hover,
+.portal-comment-show-more:focus-visible {
+  color: var(--text-primary, #334155);
+  text-decoration: underline;
+}
+
+.portal-comment-show-more:focus-visible {
+  outline: 2px solid var(--primary, #8b5cf6);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
 .portal-comment-actions {
   display: flex;
   align-items: center;

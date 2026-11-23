@@ -2,6 +2,7 @@
 from django.db import models
 from django.db.models import F, Q
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class TimestampedModel(models.Model):
@@ -183,7 +184,6 @@ class Post(TimestampedModel):
     comments_count = models.PositiveIntegerField(default=0)
     saves_count = models.PositiveIntegerField(default=0)
     shares_count = models.PositiveIntegerField(default=0)
-    subscribers_count = models.PositiveIntegerField(default=0)
 
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -1482,31 +1482,6 @@ class CommentReport(TimestampedModel):
         ]
 
 
-class PostSubscription(TimestampedModel):
-    """Authenticated user subscribed to email updates for one post."""
-
-    post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-        related_name="subscriptions",
-    )
-    user_auth_id = models.CharField(max_length=128, db_index=True)
-    email = models.EmailField(max_length=254)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=("post", "user_auth_id"),
-                name="unique_user_post_subscription",
-            ),
-        ]
-        indexes = [
-            models.Index(fields=("post", "is_active"), name="portal_pos_post_id_a1bc3d_idx"),
-            models.Index(fields=("user_auth_id", "is_active"), name="portal_pos_user_id_9d2c4e_idx"),
-        ]
-
-
 class PostShare(TimestampedModel):
     """A recorded share action for a post."""
 
@@ -1719,6 +1694,32 @@ class NewsletterSubscription(TimestampedModel):
 
     def __str__(self):
         return self.email
+
+
+class NewsletterSubscriptionEvent(models.Model):
+    """Immutable audit event for a global newsletter subscription."""
+
+    class EventType(models.TextChoices):
+        SUBSCRIBED = "subscribed", "Subscribed"
+        UNSUBSCRIBED = "unsubscribed", "Unsubscribed"
+
+    subscription = models.ForeignKey(
+        NewsletterSubscription,
+        on_delete=models.CASCADE,
+        related_name="events",
+    )
+    event_type = models.CharField(max_length=16, choices=EventType.choices, db_index=True)
+    user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
+    created_at = models.DateTimeField(default=timezone.now, db_index=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        indexes = [
+            models.Index(fields=("event_type", "created_at"), name="portal_news_event_type_date_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.subscription.email}: {self.event_type}"
 
 
 class PostReport(TimestampedModel):

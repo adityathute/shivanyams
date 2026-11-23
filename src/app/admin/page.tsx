@@ -1413,13 +1413,13 @@ export default function AdminPage() {
                                 {item.post_title}
                               </button>
                             </td>
-                            <td title={item.target_type === "reply" && item.parent_content ? `Reply: ${item.content}\nComment: ${item.parent_content}` : item.content}>
+                            <td title={item.target_type === "reply" && item.parent_content ? `Comment: ${item.parent_content}\nReply: ${item.content}` : item.content}>
                               {item.target_type === "post" ? (
                                 <span className="admin-analytics-like-content">Liked this post</span>
-                              ) : (
+                              ) : item.target_type === "comment" ? (
                                 <button
                                   type="button"
-                                  className={`admin-likes-content-link ${item.target_type === "reply" ? "is-reply" : "is-comment"}`}
+                                  className="admin-likes-content-link is-comment"
                                   onClick={() => void openPostEvents({
                                     id: item.post_id,
                                     title: item.post_title,
@@ -1428,13 +1428,45 @@ export default function AdminPage() {
                                     unique_visitors: 0,
                                     last_viewed: null,
                                   })}
-                                  aria-label={`Open post details for ${item.target_type}`}
+                                  aria-label="Open comment details"
                                 >
                                   <span className="admin-analytics-like-content">{item.content}</span>
-                                  {item.target_type === "reply" && item.parent_content
-                                    ? <small className="admin-analytics-like-context">Comment: {item.parent_content}</small>
-                                    : null}
                                 </button>
+                              ) : (
+                                <div className="admin-likes-reply-content">
+                                  {item.parent_content ? (
+                                    <button
+                                      type="button"
+                                      className="admin-likes-content-link is-comment-context"
+                                      onClick={() => void openPostEvents({
+                                        id: item.post_id,
+                                        title: item.post_title,
+                                        slug: item.post_slug,
+                                        views: 0,
+                                        unique_visitors: 0,
+                                        last_viewed: null,
+                                      })}
+                                      aria-label="Open parent comment details"
+                                    >
+                                      <small className="admin-analytics-like-context">Comment: {item.parent_content}</small>
+                                    </button>
+                                  ) : null}
+                                  <button
+                                    type="button"
+                                    className="admin-likes-content-link is-reply-content"
+                                    onClick={() => void openPostEvents({
+                                      id: item.post_id,
+                                      title: item.post_title,
+                                      slug: item.post_slug,
+                                      views: 0,
+                                      unique_visitors: 0,
+                                      last_viewed: null,
+                                    })}
+                                    aria-label="Open reply details"
+                                  >
+                                    <span className="admin-analytics-like-content">Reply: {item.content}</span>
+                                  </button>
+                                </div>
                               )}
                             </td>
                             <td className="admin-likes-user-cell">

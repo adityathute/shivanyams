@@ -237,7 +237,7 @@ export default function AdminPostEngagementPage() {
   const selectedLabel = selectedStat.label;
   const columns = tableRows.length
     ? Array.from(new Set(tableRows.flatMap((row) => Object.keys(row))))
-      .filter((column) => column === "activity" || column === "user" ||
+      .filter((column) => column === "activity" || column === "user" || column === "content" ||
         (column.toLowerCase() !== "id" &&
           !column.toLowerCase().endsWith("_id") &&
           column.toLowerCase() !== "reaction" &&

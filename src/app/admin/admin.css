@@ -2185,3 +2185,31 @@
 }
 
 /* Comment: and Reply: stay inline with their text and clamp together to two lines. */
+
+
+/* Likes modal: keep Comment:/Reply: labels inline with their text while clamping the whole item. */
+.admin-analytics-modal .admin-likes-analytics-table td:nth-child(3) .admin-likes-content-link.is-comment-context .admin-analytics-like-context,
+.admin-analytics-modal .admin-likes-analytics-table td:nth-child(3) .admin-likes-content-link.is-reply-content .admin-analytics-like-content {
+  display: -webkit-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  text-align: center !important;
+}
+
+.admin-analytics-modal .admin-likes-analytics-table td:nth-child(3) .admin-likes-inline-label,
+.admin-analytics-modal .admin-likes-analytics-table td:nth-child(3) .admin-likes-inline-text {
+  display: inline !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  -webkit-line-clamp: unset !important;
+}

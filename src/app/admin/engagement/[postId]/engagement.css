@@ -1,77 +1,164 @@
 .admin-engagement-stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
   margin: 22px 0;
 }
 
 .admin-engagement-stat {
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
   min-width: 0;
-  padding: 16px;
+  min-height: 104px;
+  padding: 13px 8px;
   border: 1px solid var(--border, #30343b);
   border-radius: 11px;
   background: transparent;
   color: inherit;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
-  transition: border-color .16s ease, background .16s ease;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
 }
 
-.admin-engagement-stat:hover,
+.admin-engagement-stat:hover {
+  transform: translateY(-2px);
+}
+
 .admin-engagement-stat.is-selected {
-  border-color: var(--primary, #8b5cf6);
-  background: color-mix(in srgb, var(--primary, #8b5cf6) 6%, transparent);
+  border-color: var(--stat-color, var(--primary, #8b5cf6));
+  background: color-mix(in srgb, var(--stat-color, var(--primary, #8b5cf6)) 9%, transparent);
 }
 
 .admin-engagement-stat > span {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
   color: var(--muted-foreground, #9298a2);
-  font-size: .82rem;
+  font-size: .76rem;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .admin-engagement-stat > span i {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
+  color: var(--stat-color, var(--primary, #a78bfa));
   font-style: normal;
-  font-size: 1.1rem;
-  color: var(--primary, #a78bfa);
-}
-.admin-engagement-stat > span i.is-like { color: #2563eb; }
-.admin-engagement-stat > span i.is-dislike { color: #ef4444; }
-
-.admin-engagement-stat > span small {
-  margin-left: auto;
-  opacity: .6;
 }
 
 .admin-engagement-stat > strong {
-  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+  display: block;
+  max-width: 100%;
+  color: var(--stat-color, inherit);
+  font-size: clamp(1.2rem, 1.7vw, 1.65rem);
   font-weight: 750;
   letter-spacing: -.035em;
+  line-height: 1.1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
+
+.admin-engagement-stat.stat-all { --stat-color: var(--primary, #8b5cf6); }
+.admin-engagement-stat.stat-likes { --stat-color: #2563eb; }
+.admin-engagement-stat.stat-dislikes { --stat-color: #ef4444; }
+.admin-engagement-stat.stat-comments { --stat-color: #0d9488; }
+.admin-engagement-stat.stat-shares { --stat-color: #0ea5e9; }
+.admin-engagement-stat.stat-saved { --stat-color: #d97706; }
+.admin-engagement-stat.stat-subscribers { --stat-color: #8b5cf6; }
+.admin-engagement-stat.stat-reports { --stat-color: #e11d48; }
 
 .admin-engagement-details {
   margin-top: 0;
+  min-width: 0;
 }
 
-@media (max-width: 900px) {
+.admin-engagement-details .admin-panel-heading,
+.admin-engagement-details .admin-panel-heading > div {
+  min-width: 0;
+  text-align: center;
+}
+
+.admin-engagement-details .admin-panel-heading p {
+  text-align: center;
+}
+
+.admin-engagement-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  text-align: center;
+}
+
+.admin-engagement-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+
+.admin-engagement-table {
+  width: 100%;
+  min-width: 760px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.admin-engagement-table th,
+.admin-engagement-table td {
+  max-width: 260px;
+  padding: 11px 12px;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+}
+
+.admin-engagement-table th {
+  white-space: normal;
+  text-transform: capitalize;
+}
+
+.admin-engagement-table td {
+  white-space: normal;
+  display: table-cell;
+}
+
+.admin-engagement-table td:nth-child(1) {
+  min-width: 0;
+}
+
+@media (max-width: 1200px) {
   .admin-engagement-stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 700px) {
   .admin-engagement-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
   .admin-engagement-stat {
-    padding: 12px;
+    min-height: 88px;
+    padding: 11px 7px;
+  }
+
+  .admin-engagement-stat > span {
+    font-size: .74rem;
+  }
+
+  .admin-engagement-table {
+    min-width: 680px;
   }
 }

@@ -1362,46 +1362,28 @@ class TrackPostView(APIView):
         if not isinstance(referrer_url, str):
             referrer_url = ""
 
-        # Identity and display name are read only from the authenticated
-        # server-side session; never trust a name supplied by the browser.
+        # Identity is read only from the authenticated server-side session.
         auth_user_id = (
             str(request.user.id)
             if request.user.is_authenticated
             else ""
         )
-        user_data = getattr(request.user, "auth_data", {}) if auth_user_id else {}
-        full_name = ""
-        if isinstance(user_data, dict):
-            full_name = str(
-                user_data.get("full_name") or user_data.get("name") or ""
-            ).strip()
-            if not full_name:
-                full_name = " ".join(
-                    part for part in (
-                        str(user_data.get("first_name") or "").strip(),
-                        str(user_data.get("last_name") or "").strip(),
-                    ) if part
-                )
-        full_name = full_name[:240]
 
         with transaction.atomic():
             visitor, created = PostVisitor.objects.get_or_create(
                 post=post,
                 visitor_id=visitor_id,
-                defaults={"auth_user_id": auth_user_id, "full_name": full_name},
+                defaults={"auth_user_id": auth_user_id},
             )
 
             if not created:
                 visitor.visit_count = F("visit_count") + 1
                 visitor.auth_user_id = auth_user_id or visitor.auth_user_id
-                if full_name:
-                    visitor.full_name = full_name
                 visitor.last_seen_at = timezone.now()
                 visitor.save(
                     update_fields=[
                         "visit_count",
                         "auth_user_id",
-                        "full_name",
                         "last_seen_at",
                         "updated_at",
                     ]
@@ -1549,14 +1531,40 @@ class AdminWebsiteAnalytics(APIView):
         if analytics_type == "posts":
             if post_id:
                 post = get_object_or_404(Post, pk=post_id)
-                events = PostView.objects.filter(post=post).select_related("visitor").order_by("-viewed_at")[:500]
+                events = list(
+                    PostView.objects.filter(post=post)
+                    .select_related("visitor")
+                    .order_by("-viewed_at")[:500]
+                )
+                # Post records store only the Auth identity ID. Resolve display
+                # names from the same Portal visitor records used by the
+                # Website Visitors / Portal Users analytics, not a local copy
+                # of the Auth user profile.
+                auth_ids = {
+                    event.auth_user_id for event in events if event.auth_user_id
+                }
+                user_names = {}
+                if auth_ids:
+                    for visitor in WebsiteVisitor.objects.filter(
+                        auth_user_id__in=auth_ids
+                    ).exclude(full_name="").order_by("-last_seen_at").values(
+                        "auth_user_id", "full_name"
+                    ):
+                        user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                    for visit in WebsiteView.objects.filter(
+                        auth_user_id__in=auth_ids
+                    ).exclude(full_name="").order_by("-viewed_at").values(
+                        "auth_user_id", "full_name"
+                    ):
+                        user_names.setdefault(visit["auth_user_id"], visit["full_name"])
+
                 return Response({
                     "post": {"id": post.id, "title": post.title_en, "slug": post.slug},
                     "views": post.view_events.count(),
                     "events": [{
                         "viewed_at": event.viewed_at,
                         "visitor_type": "user" if event.auth_user_id else "anonymous",
-                        "full_name": event.visitor.full_name if event.auth_user_id else "",
+                        "full_name": user_names.get(event.auth_user_id, ""),
                         "visitor_id": event.visitor.visitor_id,
                         "device": event.device,
                         "language": event.language,

@@ -2035,8 +2035,50 @@ padding-right: 24px;
 }
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--draft,
 .post-editor-header-actions > .post-editor-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 7px;
+  background-image: none !important;
+  box-shadow: none !important;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--published {
+  color: #187447 !important;
+  border-color: #36a66f !important;
+  background-color: #e8f7ef !important;
+}
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--reviewed,
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--pending-review,
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--pending {
+  color: #946200 !important;
+  border-color: #e6a23c !important;
+  background-color: #fff5df !important;
+}
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--draft,
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--rejected,
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--approved,
+.post-editor-header-actions > .post-editor-status-badge {
   color: #596a80 !important;
+  border-color: #cbd5e1 !important;
   background-color: #eef2f7 !important;
+}
+.post-editor-status-indicator {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #187447;
 }
 
 .post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }

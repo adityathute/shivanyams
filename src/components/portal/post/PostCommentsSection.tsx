@@ -124,6 +124,7 @@ function CommentThread({
   onCancelReply,
   onSubmitReply,
   submitting,
+  expandRepliesForId,
 }: {
   item: CommentItem;
   depth: number;
@@ -152,18 +153,21 @@ function CommentThread({
   onCancelReply: () => void;
   onSubmitReply: () => void;
   submitting: boolean;
+  expandRepliesForId: number | null;
 }) {
   const [visibleReplies, setVisibleReplies] = useState(0);
   const replyCount = item.replies?.length || 0;
   const repliesExpanded = visibleReplies > 0;
   const visibleReplyItems = item.replies?.slice(0, visibleReplies) || [];
 
-  function toggleReplies() {
-    setVisibleReplies((current) => current > 0 ? 0 : Math.min(5, replyCount));
-  }
+  useEffect(() => {
+    if (expandRepliesForId === item.id && replyCount > 0) {
+      setVisibleReplies(replyCount);
+    }
+  }, [expandRepliesForId, item.id, replyCount]);
 
-  function showMoreReplies() {
-    setVisibleReplies((current) => Math.min(replyCount, current + 5));
+  function toggleReplies() {
+    setVisibleReplies((current) => current > 0 ? 0 : replyCount);
   }
   const dateLabel = formatCommentRelativeDate(item.created_at);
 
@@ -279,15 +283,11 @@ function CommentThread({
                 onCancelReply={onCancelReply}
                 onSubmitReply={onSubmitReply}
                 submitting={submitting}
+                expandRepliesForId={expandRepliesForId}
               />
             ))}
           </div>
           <div className="portal-comment-replies-footer">
-            {visibleReplies < replyCount ? (
-              <button type="button" className="portal-comment-load-more" onClick={showMoreReplies}>
-                Show {Math.min(5, replyCount - visibleReplies)} more {replyCount - visibleReplies === 1 ? "reply" : "replies"}
-              </button>
-            ) : null}
             <button type="button" className="portal-comment-hide-replies" onClick={toggleReplies} aria-label="Hide replies">
               Hide replies <ArrowUpIcon size={15} />
             </button>
@@ -308,6 +308,7 @@ export function PostCommentsSection({ postId, language }: Props) {
   const [replyTarget, setReplyTarget] = useState<number | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [expandRepliesForId, setExpandRepliesForId] = useState<number | null>(null);
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [reportTarget, setReportTarget] = useState<number | null>(null);
   const [reportReason, setReportReason] = useState("spam");
@@ -359,8 +360,10 @@ export function PostCommentsSection({ postId, language }: Props) {
         const body = await response.json().catch(() => ({}));
         throw new Error(body.detail || body.content?.[0] || "Unable to submit your comment.");
       }
-      if (parentId) setReplyDraft("");
-      else setDraft("");
+      if (parentId) {
+        setReplyDraft("");
+        setExpandRepliesForId(parentId);
+      } else setDraft("");
       setReplyTarget(null);
       await loadComments();
     } catch (err) {
@@ -587,6 +590,7 @@ export function PostCommentsSection({ postId, language }: Props) {
             onCancelReply={() => { setReplyTarget(null); setReplyDraft(""); }}
             onSubmitReply={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}
             submitting={submitting}
+            expandRepliesForId={expandRepliesForId}
           />
         ))}
       </div>

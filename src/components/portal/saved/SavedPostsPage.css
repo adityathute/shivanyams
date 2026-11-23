@@ -322,3 +322,68 @@
     max-width: 100%;
   }
 }
+
+
+.related-saved-page {
+  display: grid;
+  gap: 14px;
+}
+
+.related-saved-page .saved-page-heading {
+  padding-bottom: 4px;
+}
+
+.related-tag-suggestions {
+  margin-top: 0;
+}
+
+.related-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 13px 16px 15px;
+}
+
+.related-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 6px 11px;
+  border: 1px solid #e5ebf4;
+  border-radius: 18px;
+  background: #fff;
+  color: #52647b;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+.related-tag-chip:hover {
+  border-color: #bfd4ff;
+  background: #eaf2ff;
+  color: #075be8;
+}
+
+.related-tag-chip small {
+  color: #8491a3;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .related-tag-chip {
+  border-color: #344154;
+  background: #1c2633;
+  color: #d7e2ef;
+}
+
+[data-theme="dark"] .related-tag-chip:hover {
+  border-color: #075be8;
+  background: #075be8;
+  color: #fff;
+}
+
+[data-theme="dark"] .related-tag-chip small {
+  color: inherit;
+}

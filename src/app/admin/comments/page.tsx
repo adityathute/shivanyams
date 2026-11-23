@@ -54,6 +54,7 @@ export default function AdminCommentsPage() {
   const [pageSize, setPageSize] = useState(15);
   const pageCount = Math.max(1, Math.ceil(comments.length / pageSize));
   const visibleComments = comments.slice((page - 1) * pageSize, page * pageSize);
+  const totalReports = comments.reduce((total, comment) => total + (comment.report_count || comment.reports?.length || 0), 0);
 
   const loadComments = useCallback(async () => {
     setLoadingRows(true);
@@ -178,8 +179,20 @@ export default function AdminCommentsPage() {
         </header>
 
         <section className="admin-post-panel admin-comments-panel">
-          <div className="admin-panel-heading">
-            <div><h2>Discussion activity</h2><p>{comments.length} comments in this result</p></div>
+          <div className="admin-panel-heading admin-comments-panel-heading">
+            <div>
+              <h2>Discussion activity</h2>
+            </div>
+            <div className="admin-comments-totals" aria-label={`${comments.length} total comments and ${totalReports} total reports`}>
+              <div className="admin-comments-total">
+                <strong>{comments.length.toLocaleString("en-IN")}</strong>
+                <span>Total comments</span>
+              </div>
+              <div className="admin-comments-total">
+                <strong>{totalReports.toLocaleString("en-IN")}</strong>
+                <span>Total reports</span>
+              </div>
+            </div>
           </div>
           <div className="admin-filters admin-comments-filters">
             <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search comment, user ID or post..." aria-label="Search comments" />

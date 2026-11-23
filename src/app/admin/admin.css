@@ -1493,7 +1493,8 @@
     padding: 10px;
   }
 
-  .admin-stats.admin-stats-secondary .admin-stat-card > strong {
+  .admin-stats.admin-stats-secondary .admin-stat-card > strong,
+  .admin-stats.admin-stats-secondary .admin-stat-clickable button > strong {
     font-size: 20px;
   }
 }
@@ -2094,4 +2095,14 @@
 .admin-analytics-modal .admin-likes-analytics-table .admin-likes-post-link:hover,
 .admin-analytics-modal .admin-likes-analytics-table .admin-likes-user-link:hover {
   text-decoration: underline;
+}
+
+
+/* Keep the Liked by column centered and visually consistent. */
+.admin-analytics-modal .admin-likes-analytics-table th:nth-child(4),
+.admin-analytics-modal .admin-likes-analytics-table td.admin-likes-user-cell {
+  text-align: center;
+}
+.admin-analytics-modal .admin-likes-analytics-table .admin-likes-user-link {
+  text-align: center;
 }

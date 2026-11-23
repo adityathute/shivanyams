@@ -611,15 +611,32 @@ export default function AdminPage() {
     commentReplyPage * analyticsPageSize,
   );
   const reportPostRows = useMemo(() => {
-    const grouped = new Map<number, { id: number; title: string; slug: string; reports: number }>();
+    const grouped = new Map<number, {
+      id: number; title: string; slug: string;
+      postReports: number; commentReports: number; replyReports: number;
+    }>();
     reportAnalyticsEvents.forEach((event) => {
-      const current = grouped.get(event.post_id);
-      if (current) current.reports += 1;
-      else grouped.set(event.post_id, { id: event.post_id, title: event.post_title, slug: event.post_slug, reports: 1 });
+      const current = grouped.get(event.post_id) || {
+        id: event.post_id,
+        title: event.post_title,
+        slug: event.post_slug,
+        postReports: 0,
+        commentReports: 0,
+        replyReports: 0,
+      };
+      if (event.target_type === "post") current.postReports += 1;
+      else if (event.target_type === "reply") current.replyReports += 1;
+      else current.commentReports += 1;
+      grouped.set(event.post_id, current);
     });
     const viewsByPost = new Map(postAnalyticsPages.map((post) => [post.id, post.views]));
-    return Array.from(grouped.values()).map((post) => ({ ...post, views: viewsByPost.get(post.id) || 0 }))
-      .sort((a, b) => b.reports - a.reports || a.title.localeCompare(b.title));
+    return Array.from(grouped.values())
+      .map((post) => ({ ...post, views: viewsByPost.get(post.id) || 0 }))
+      .sort((a, b) =>
+        (b.postReports + b.commentReports + b.replyReports) -
+        (a.postReports + a.commentReports + a.replyReports) ||
+        a.title.localeCompare(b.title)
+      );
   }, [reportAnalyticsEvents, postAnalyticsPages]);
   const visibleReportPostRows = reportPostRows.slice((reportsAnalyticsPage - 1) * analyticsPageSize, reportsAnalyticsPage * analyticsPageSize);
   const visibleReportEvents = reportAnalyticsEvents.slice((reportsAnalyticsPage - 1) * analyticsPageSize, reportsAnalyticsPage * analyticsPageSize);
@@ -1667,12 +1684,15 @@ export default function AdminPage() {
                   reportPostRows.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (
                     <>
                       <div className="admin-analytics-table-wrap">
-                        <table className="admin-analytics-table admin-reaction-posts-table">
-                          <thead><tr><th>Post</th><th>Views</th><th>Reports</th></tr></thead>
+                        <table className="admin-analytics-table admin-reaction-posts-table admin-report-posts-summary-table">
+                          <thead><tr><th>Post</th><th>Views</th><th>Post reports</th><th>Comment reports</th><th>Reply reports</th></tr></thead>
                           <tbody>{visibleReportPostRows.map((post) => (
                             <tr key={post.id}>
                               <td><button type="button" className="admin-analytics-link" title={post.title} onClick={() => void openPostEvents({ id: post.id, title: post.title, slug: post.slug, views: post.views, unique_visitors: 0, last_viewed: null })}>{post.title}</button></td>
-                              <td>{formatCompactNumber(post.views)}</td><td>{formatCompactNumber(post.reports)}</td>
+                              <td>{formatCompactNumber(post.views)}</td>
+                              <td>{formatCompactNumber(post.postReports)}</td>
+                              <td>{formatCompactNumber(post.commentReports)}</td>
+                              <td>{formatCompactNumber(post.replyReports)}</td>
                             </tr>
                           ))}</tbody>
                         </table>

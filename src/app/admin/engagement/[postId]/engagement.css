@@ -75,7 +75,8 @@
 .admin-engagement-stat.stat-comments { --stat-color: #0d9488; }
 .admin-engagement-stat.stat-shares { --stat-color: #64748b; }
 .admin-engagement-stat.stat-saved { --stat-color: #f97316; }
-.admin-engagement-stat.stat-subscribers { --stat-color: #8b5cf6; }
+.admin-engagement-stat.stat-users { --stat-color: #8b5cf6; cursor: default; }
+.admin-engagement-stat.stat-users:hover { transform: none; }
 .admin-engagement-stat.stat-reports { --stat-color: #eab308; }
 
 .admin-engagement-details {

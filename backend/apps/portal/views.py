@@ -1825,6 +1825,8 @@ class AdminDashboardStats(APIView):
                 is_reply = comment.parent_id is not None
                 rows.append({
                     "id": f"comment-{reaction.id}",
+                    "comment_id": comment.id,
+                    "parent_id": comment.parent_id,
                     "target_type": "reply" if is_reply else "comment",
                     "post_id": comment.post_id,
                     "post_title": comment.post.title_en,

@@ -2108,7 +2108,14 @@
 }
 
 
-/* Likes modal content: make comment/reply text open its related post details. */
+/* Likes modal: comments and reply context are separate clickable, clamped items. */
+.admin-analytics-modal .admin-likes-reply-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  min-width: 0;
+}
 .admin-analytics-modal .admin-likes-content-link {
   display: block;
   width: 100%;
@@ -2122,24 +2129,28 @@
   text-align: left;
   cursor: pointer;
 }
-.admin-analytics-modal .admin-likes-content-link:hover .admin-analytics-like-content {
+.admin-analytics-modal .admin-likes-content-link:hover .admin-analytics-like-content,
+.admin-analytics-modal .admin-likes-content-link:hover .admin-analytics-like-context {
   color: #2563eb;
   text-decoration: underline;
 }
-.admin-analytics-modal .admin-likes-content-link .admin-analytics-like-content {
-  -webkit-line-clamp: 3;
-}
-.admin-analytics-modal .admin-likes-content-link.is-reply .admin-analytics-like-content {
-  -webkit-line-clamp: 2;
-}
-.admin-analytics-modal .admin-likes-content-link.is-reply .admin-analytics-like-context {
-  -webkit-line-clamp: 1;
-  margin-top: 2px;
-}
-.admin-analytics-modal .admin-likes-content-link.is-reply .admin-analytics-like-context {
+.admin-analytics-modal .admin-likes-content-link .admin-analytics-like-content,
+.admin-analytics-modal .admin-likes-content-link .admin-analytics-like-context {
   display: -webkit-box;
+  width: 100%;
+  min-width: 0;
   overflow: hidden;
   white-space: normal;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
+}
+.admin-analytics-modal .admin-likes-content-link.is-comment .admin-analytics-like-content {
+  -webkit-line-clamp: 3;
+}
+.admin-analytics-modal .admin-likes-content-link.is-comment-context .admin-analytics-like-context {
+  -webkit-line-clamp: 1;
+  margin: 0;
+}
+.admin-analytics-modal .admin-likes-content-link.is-reply-content .admin-analytics-like-content {
+  -webkit-line-clamp: 2;
 }

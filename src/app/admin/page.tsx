@@ -253,6 +253,7 @@ export default function AdminPage() {
   const [tagTotals, setTagTotals] = useState<TagAnalyticsTotals>({ total: 0, used: 0, unused: 0 });
   const [shareAnalytics, setShareAnalytics] = useState<ShareAnalyticsPayload>({ total: 0, unique_visitors: 0, posts_shared: 0, channels: {}, events: [] });
   const [shareAnalyticsPage, setShareAnalyticsPage] = useState(1);
+  const [shareAnalyticsView, setShareAnalyticsView] = useState<"events" | "posts">("events");
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -466,6 +467,36 @@ export default function AdminPage() {
   useEffect(() => {
     if (isAdmin) void loadPosts();
   }, [isAdmin, loadPosts, refreshKey]);
+
+  const sharePostRows = useMemo(() => {
+    const grouped = new Map<number, {
+      post_id: number;
+      title: string;
+      slug: string;
+      closed: number;
+      useful: number;
+      total: number;
+    }>();
+
+    shareAnalytics.events.forEach((event) => {
+      const row = grouped.get(event.post_id) || {
+        post_id: event.post_id,
+        title: event.post__title_en || "Untitled post",
+        slug: event.post__slug || "",
+        closed: 0,
+        useful: 0,
+        total: 0,
+      };
+      row.total += 1;
+      if (event.channel === "dismissed") row.closed += 1;
+      else row.useful += 1;
+      grouped.set(event.post_id, row);
+    });
+
+    return Array.from(grouped.values()).sort(
+      (first, second) => second.total - first.total || first.title.localeCompare(second.title),
+    );
+  }, [shareAnalytics.events]);
 
   const filteredPosts = useMemo(
     () =>
@@ -824,6 +855,7 @@ export default function AdminPage() {
     setSelectedVisitor(null);
     setSelectedAnalyticsPath(null);
     setShareAnalyticsPage(1);
+    setShareAnalyticsView("events");
     setAnalyticsLoading(true);
     adminFetch(API_URL + "/admin/shares/", { cache: "no-store" })
       .then(async (response) => {
@@ -1682,7 +1714,9 @@ export default function AdminPage() {
                            : analyticsType === "tags"
                              ? `Tags (${formatCompactNumber(tagTotals.total)})`
                            : analyticsType === "shares"
-                             ? `Shares (${formatCompactNumber(shareAnalytics.total)})`
+                             ? shareAnalyticsView === "posts"
+                               ? `Posts shared (${formatCompactNumber(sharePostRows.length)})`
+                               : `Shares (${formatCompactNumber(shareAnalytics.total)})`
                            : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
@@ -1723,7 +1757,9 @@ export default function AdminPage() {
                           : analyticsType === "tags"
                             ? "Overview of all tags and how many are assigned to posts."
                           : analyticsType === "shares"
-                            ? "Share activity across all posts, including the sharing method and visitor details."
+                            ? shareAnalyticsView === "posts"
+                              ? "One row per post, with closed share menus, useful share actions, and total shares."
+                              : "Share activity across all posts, including the sharing method and visitor details."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1821,10 +1857,32 @@ export default function AdminPage() {
                 ) : (
                   <>
                     <div className="admin-shares-summary">
-                      <article><span>Total shares</span><strong>{formatCompactNumber(shareAnalytics.total)}</strong><small>All recorded share actions</small></article>
+                      <button type="button" className={`admin-shares-summary-card${shareAnalyticsView === "events" ? " is-active" : ""}`} onClick={() => { setShareAnalyticsView("events"); setShareAnalyticsPage(1); }} aria-pressed={shareAnalyticsView === "events"}>
+                        <span>Total shares</span><strong>{formatCompactNumber(shareAnalytics.total)}</strong><small>All recorded share actions</small>
+                      </button>
                       <article><span>Unique visitors</span><strong>{formatCompactNumber(shareAnalytics.unique_visitors)}</strong><small>Users and anonymous visitors</small></article>
-                      <article><span>Posts shared</span><strong>{formatCompactNumber(shareAnalytics.posts_shared)}</strong><small>Posts with at least one share</small></article>
+                      <button type="button" className={`admin-shares-summary-card${shareAnalyticsView === "posts" ? " is-active" : ""}`} onClick={() => { setShareAnalyticsView("posts"); setShareAnalyticsPage(1); }} aria-pressed={shareAnalyticsView === "posts"}>
+                        <span>Posts shared</span><strong>{formatCompactNumber(shareAnalytics.posts_shared)}</strong><small>Posts with at least one share</small>
+                      </button>
                     </div>
+                    {shareAnalyticsView === "posts" ? (
+                      sharePostRows.length === 0 ? <div className="admin-empty">No shared posts recorded yet.</div> : <>
+                        <div className="admin-analytics-table-wrap">
+                          <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table admin-shares-posts-table">
+                            <thead><tr><th>Post</th><th>Closed</th><th>Useful</th><th>Total shares</th></tr></thead>
+                            <tbody>{sharePostRows.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((item) => (
+                              <tr key={item.post_id}>
+                                <td><span className="admin-likes-post-link" title={item.title}>{item.title}</span></td>
+                                <td>{formatCompactNumber(item.closed)}</td>
+                                <td>{formatCompactNumber(item.useful)}</td>
+                                <td><strong>{formatCompactNumber(item.total)}</strong></td>
+                              </tr>
+                            ))}</tbody>
+                          </table>
+                        </div>
+                        <AnalyticsPagination total={sharePostRows.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
+                      </>
+                    ) : (
                     {shareAnalytics.events.length === 0 ? <div className="admin-empty">No shares recorded yet.</div> : <>
                     <div className="admin-analytics-table-wrap">
                       <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
@@ -1853,6 +1911,7 @@ export default function AdminPage() {
                     </div>
                     <AnalyticsPagination total={shareAnalytics.events.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
                     </>}
+                    )}
                   </>
                 )
              ) : analyticsType === "saved" && !selectedPost && !selectedVisitor ? (

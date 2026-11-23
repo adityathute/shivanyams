@@ -248,7 +248,7 @@ export default function AdminPostEngagementPage() {
   const detailDescription = (() => {
     switch (selected) {
       case "all":
-        return "A complete overview of every recorded interaction with this post, including likes, dislikes, comments, shares, saves, subscribers, and reports.";
+        return "All recorded activity for this post, including reactions, comments, shares, saves, subscriptions, and reports.";
       case "likes":
         return `People who liked this post or its comments and replies. ${formatCompactNumber(payload?.likes.post || 0)} post likes · ${formatCompactNumber(payload?.likes.comments_and_replies || 0)} comment and reply likes.`;
       case "dislikes":

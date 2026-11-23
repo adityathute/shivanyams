@@ -253,6 +253,8 @@ function normalizeDateInput(item: Partial<DateInput>): DateInput {
     new_time: item.new_time ? item.new_time.slice(0, 5) : "",
   };
 }
+type PostVersionInfo = { id: number; version_number: number; is_published: boolean; created_at: string; published_at?: string | null; };
+
 type PostRecord = {
   id: number;
   status?: string;
@@ -582,6 +584,7 @@ export default function PostEditor({
   const [autosaveBusy, setAutosaveBusy] = useState(false);
   const [autosaveRevision, setAutosaveRevision] = useState(0);
   const [postStatus, setPostStatus] = useState("draft");
+  const [postVersions, setPostVersions] = useState<PostVersionInfo[]>([]);
   const postIdRef = useRef<number | null>(null);
   const currentSlugRef = useRef(editSlug || "");
   const lastSavedSnapshotRef = useRef("");
@@ -696,6 +699,10 @@ export default function PostEditor({
         const record = payload as PostRecord;
         postIdRef.current = record.id;
         currentSlugRef.current = record.slug;
+        if (record.status === "published") {
+          const versionsResponse = await adminFetch(`${API_URL}/admin/content/${record.id}/versions/`, { signal: controller.signal });
+          if (versionsResponse.ok) setPostVersions(await versionsResponse.json());
+        }
         setPostStatus(record.status || "draft");
         setOrganizationType(record.organization_type || "");
         setSlugManuallyEdited(false);
@@ -1356,6 +1363,17 @@ export default function PostEditor({
 
   async function persistPost() {
     if (!activeCategory) throw new Error("The selected category is not active in the backend.");
+    if (editing && postStatus === "published" && postIdRef.current) {
+      const response = await adminFetch(`${API_URL}/admin/content/${postIdRef.current}/versions/`, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.detail || "Unable to save unpublished version.");
+      if (Array.isArray(result.versions)) setPostVersions(result.versions);
+      lastSavedSnapshotRef.current = JSON.stringify(payload);
+      setAutosaveState("saved");
+      return result as Record<string, unknown>;
+    }
     const creating = !postIdRef.current && !editing;
     const slug = String(payload.slug || form.slug || slugify(form.title_en));
     const url = creating
@@ -1450,9 +1468,23 @@ export default function PostEditor({
     setSaving(true);
     setNotice("");
     try {
-      await persistPost();
+      const savedResult = await persistPost();
       const postId = postIdRef.current;
       if (!postId) throw new Error("The post has not been saved yet.");
+      if (editing && postStatus === "published") {
+        if (status === "draft") { router.push("/admin"); return; }
+        const savedVersionId = typeof savedResult.id === "number" ? savedResult.id : null;
+        const pendingVersion = postVersions.find((item) => item.id === savedVersionId && !item.is_published)
+          || postVersions.find((item) => !item.is_published);
+        if (!pendingVersion) throw new Error("There are no unpublished changes to publish.");
+        const publishResponse = await adminFetch(`${API_URL}/admin/content/${postId}/versions/${pendingVersion.id}/publish/`, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}),
+        });
+        const publishResult = await publishResponse.json().catch(() => ({}));
+        if (!publishResponse.ok) throw new Error(publishResult.detail || "Unable to publish this version.");
+        router.push("/admin");
+        return;
+      }
       const response = await adminFetch(`${API_URL}/admin/content/${postId}/review/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1503,6 +1535,12 @@ export default function PostEditor({
             </p>
           </div>
           <div className="post-editor-header-actions">
+            {editing && <div className="post-editor-publication-status">
+              <strong>{postStatus === "published" ? "Published" : postStatus.replaceAll("_", " ")}</strong>
+              {postStatus === "published" && <span>{postVersions.filter((item) => item.is_published).map((item) => `Live version v${item.version_number}`).join("") || "Live version"}</span>}
+              {postStatus === "published" && postVersions.some((item) => !item.is_published) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published).map((item) => item.version_number))}</span>}
+              {postStatus === "published" && <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></li>)}</ol></details>}
+            </div>}
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />
               {autosaveBusy || autosaveState === "saving" ? "Saving changes..." : autosaveState === "saved" ? "All changes saved" : autosaveState === "error" ? "Autosave failed — edit to retry" : autosaveState === "unsaved" ? "Unsaved changes" : editing ? `Status: ${postStatus.replaceAll("_", " ")}` : form.title_en.trim() ? "Draft will be saved automatically" : "Add an English title to start autosaving"}

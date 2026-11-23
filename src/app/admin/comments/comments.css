@@ -7,15 +7,6 @@
   align-items: center;
 }
 
-.admin-comments-filters select {
-  min-height: 38px;
-  padding: 8px 11px;
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 8px;
-  background: var(--surface, #fff);
-  color: inherit;
-}
-
 .admin-comments-reported-filter {
   display: inline-flex;
   align-items: center;

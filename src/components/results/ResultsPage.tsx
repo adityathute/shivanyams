@@ -17,6 +17,8 @@ import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function ResultsPage() {
   const [query, setQuery] = useState("");
+  const [resultStatus, setResultStatus] = useState("");
+  const [resultType, setResultType] = useState("");
 
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -29,15 +31,17 @@ export function ResultsPage() {
 
     return data.items.filter((item) => {
       if (item.type !== "result") return false;
-
+      const detail = item.result_details || {};
+      if (resultStatus && String(detail.result_status || "") !== resultStatus) return false;
+      if (resultType && String(detail.result_type || "") !== resultType) return false;
       return (
         !term ||
-        [item.title, item.category, item.description].some((value) =>
+        [item.title, item.category, item.description, String(detail.examination_name || "")].some((value) =>
           value.toLowerCase().includes(term),
         )
       );
     });
-  }, [data.items, query]);
+  }, [data.items, query, resultStatus, resultType]);
 
   const dateLocale =
     language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
@@ -72,6 +76,10 @@ export function ResultsPage() {
 
                 <button type="submit">{t("search")}</button>
               </form>
+              <div className="jobs-filter-grid" aria-label="Result filters">
+                <label>Result status<select value={resultStatus} onChange={(event) => setResultStatus(event.target.value)}><option value="">All statuses</option><option value="pending">Pending</option><option value="declared">Declared</option><option value="revised">Revised</option><option value="withheld">Withheld</option><option value="cancelled">Cancelled</option></select></label>
+                <label>Result type<select value={resultType} onChange={(event) => setResultType(event.target.value)}><option value="">All result types</option><option value="written">Written exam</option><option value="final">Final result</option><option value="merit_list">Merit list</option><option value="cut_off">Cut-off</option><option value="answer_key">Answer key</option><option value="scorecard">Scorecard</option><option value="other">Other</option></select></label>
+              </div>
             </div>
 
             <div className="results-hero-visual" aria-hidden="true">

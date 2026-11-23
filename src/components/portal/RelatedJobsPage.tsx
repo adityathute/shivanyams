@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
@@ -17,6 +18,17 @@ const organizationLabels: Record<string, Record<string, string>> = {
   court: { en: "Court", mr: "न्यायालय", hi: "न्यायालय" },
   other: { en: "Other Government Organization", mr: "इतर शासकीय संस्था", hi: "अन्य सरकारी संगठन" },
 };
+
+const TAG_CATEGORIES = [
+  { label: "Jobs", types: ["job"] },
+  { label: "Schemes", types: ["scheme"] },
+  { label: "Articles & Guides", types: ["guide"] },
+  { label: "Admit Cards", types: ["admit"] },
+  { label: "Examination", types: ["examination", "exam"] },
+  { label: "Results", types: ["result"] },
+  { label: "Videos", types: ["video"] },
+  { label: "Tools", types: ["tool"] },
+] as const;
 
 const copy = {
   en: { eyebrow: "SHIVANYAMS • DISCOVER", title: "Related Content", description: "Explore jobs, schemes and updates matching this tag.", count: "posts found", loading: "Loading related content...", empty: "No published content was found for this selection.", more: "Explore more tags" },
@@ -41,8 +53,9 @@ function formatDate(value: string, language: string) {
 
 export function RelatedJobsPage() {
   const params = useParams<{ filterType: string; slug: string }>();
-  const filterType = params.filterType;
+  const filterType = params.filterType || "tag";
   const slug = decodeURIComponent(params.slug || "");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
   const labels = copy[language];
@@ -56,6 +69,13 @@ export function RelatedJobsPage() {
     }
     return false;
   }), [data.items, filterType, slug]);
+
+  const visibleItems = useMemo(() => {
+    if (filterType !== "tag" || selectedCategory === "all") return relatedItems;
+    const category = TAG_CATEGORIES.find((item) => item.label === selectedCategory);
+    if (!category) return relatedItems;
+    return relatedItems.filter((item) => (category.types as readonly string[]).includes(item.type));
+  }, [relatedItems, filterType, selectedCategory]);
 
   const suggestedTags = useMemo(() => {
     if (filterType !== "tag") return [];
@@ -93,16 +113,41 @@ export function RelatedJobsPage() {
       <section className="saved-panel">
         <div className="saved-section-heading">
           <h2>{heading}</h2>
-          <span>{relatedItems.length} {labels.count}</span>
+          <span>{visibleItems.length} {labels.count}</span>
         </div>
+
+        {filterType === "tag" && (
+          <div className="saved-category-tabs" aria-label="Filter related content by category">
+            <button
+              type="button"
+              className={selectedCategory === "all" ? "selected" : ""}
+              onClick={() => setSelectedCategory("all")}
+            >
+              All <span>{relatedItems.length}</span>
+            </button>
+            {TAG_CATEGORIES.map((category) => {
+              const count = relatedItems.filter((item) => (category.types as readonly string[]).includes(item.type)).length;
+              return (
+                <button
+                  type="button"
+                  key={category.label}
+                  className={selectedCategory === category.label ? "selected" : ""}
+                  onClick={() => setSelectedCategory(category.label)}
+                >
+                  {category.label} <span>{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {data.loading ? (
           <div className="saved-empty-state saved-list-empty" role="status">
             {labels.loading}
           </div>
-        ) : relatedItems.length ? (
+        ) : visibleItems.length ? (
           <div className="saved-post-list">
-            {relatedItems.map((item) => {
+            {visibleItems.map((item) => {
               const title = localized({ en: item.title_en || item.title, mr: item.title_mr, hi: item.title_hi }, language);
               const summary = localized({ en: item.summary_en || item.description, mr: item.summary_mr, hi: item.summary_hi }, language);
               const category = localized({ en: item.category_en || item.category, mr: item.category_mr, hi: item.category_hi }, language);
@@ -113,14 +158,14 @@ export function RelatedJobsPage() {
               const href = `${hrefByType[item.type] || "/"}/${item.slug || slugify(item.title)}`;
               return (
                 <article className="saved-post-row related-job-row" key={`${item.type}-${item.id}`}>
-                  <a className="saved-post-link" href={href}>
+                  <Link className="saved-post-link" href={href}>
                     <span className={`update-badge ${item.type}`}>{category}</span>
                     <span className="saved-post-title">
                       {title}
                       {summary ? <small>{summary}</small> : null}
                     </span>
                     <time>{formatDate(item.date, language)}</time>
-                  </a>
+                  </Link>
                 </article>
               );
             })}
@@ -138,10 +183,10 @@ export function RelatedJobsPage() {
           </div>
           <div className="related-tag-list">
             {suggestedTags.map(([tagSlug, tag]) => (
-              <a className="related-tag-chip" href={`/jobs/related/tag/${tagSlug}`} key={tagSlug}>
+              <Link className="related-tag-chip" href={`/tags/${tagSlug}`} key={tagSlug}>
                 <span>{tag.label}</span>
                 <small>{tag.count}</small>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

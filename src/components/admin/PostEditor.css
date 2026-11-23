@@ -1997,7 +1997,7 @@ padding-right: 24px;
 }
 
 
-.post-editor-publication-status { display: grid; justify-items: end; gap: 4px; color: #334155; font-size: 12px; }
+.post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }
 .post-editor-publication-status > strong { text-transform: capitalize; font-size: 13px; color: #16734e; }
 .post-editor-publication-status > span { color: #64748b; font-size: 11px; }
 .post-editor-publication-status .post-editor-unpublished-version { color: #b45309; font-weight: 700; }

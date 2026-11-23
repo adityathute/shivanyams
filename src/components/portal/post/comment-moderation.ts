@@ -24,7 +24,7 @@ function normalize(value: string) {
     .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/[。．｡]/g, ".")
     .toLowerCase()
-    .replace(/\[\s*dot\s*\]|\(\s*dot\s*\)|\{\s*dot\s*\}/g, ".")
+    .replace(/\[\s*(?:dot|\.)\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*(?:dot|\.)\s*\}/g, ".")
     .replace(/\s+dot\s+/g, ".")
     .replace(/\bhxxps?\b/g, "https")
     .replace(/\s*\.\s*/g, ".");
@@ -56,7 +56,7 @@ export function getCommentModerationIssue(value: string): string | null {
     }
   }
 
-  const tokens = normalized.match(/[\p{L}\p{N}_]+/gu) || [];
+  const tokens = normalized.match(/[\p{L}\p{M}\p{N}_]+/gu) || [];
   if (tokens.some((token) => BLOCKED_TERMS.has(token))) {
     return "Please remove abusive or insulting language.";
   }

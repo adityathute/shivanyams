@@ -2866,7 +2866,7 @@
   display: -webkit-box;
   width: 100%;
   overflow: hidden;
-  color: var(--admin-text, #111827);
+  color: #2563eb;
   font: inherit;
   font-weight: 650;
   line-height: 1.4;

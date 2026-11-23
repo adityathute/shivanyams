@@ -249,7 +249,8 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 13px;
+  column-gap: 12px;
+  row-gap: 6px;
 }
 .portal-comment-actions button {
   padding: 1px 0;
@@ -263,35 +264,21 @@
 }
 .portal-comment-actions button.portal-comment-reply-action,
 .portal-comment-actions button.portal-comment-report {
-  position: relative;
-  z-index: 0;
-  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 52px;
-  min-height: 28px;
-  padding: 5px 9px;
-  border-radius: 8px;
-  line-height: 1;
-  transition: color 0.16s ease, background-color 0.16s ease;
+  min-width: 0;
+  min-height: 22px;
+  padding: 1px 0;
+  border-radius: 0;
+  line-height: 1.2;
+  transition: color 0.16s ease;
 }
-.portal-comment-actions button.portal-comment-reply-action::before,
-.portal-comment-actions button.portal-comment-report::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  border-radius: inherit;
-  background: transparent;
-  transition: background-color 0.16s ease;
-}
-
-.portal-comment-actions button.portal-comment-reply-action:hover::before,
-.portal-comment-actions button.portal-comment-reply-action:focus-visible::before,
-.portal-comment-actions button.portal-comment-report:hover::before,
-.portal-comment-actions button.portal-comment-report:focus-visible::before {
-  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+.portal-comment-actions button.portal-comment-reply-action:hover,
+.portal-comment-actions button.portal-comment-reply-action:focus-visible,
+.portal-comment-actions button.portal-comment-report:hover,
+.portal-comment-actions button.portal-comment-report:focus-visible {
+  color: var(--text-primary, #334155);
 }
 .portal-comment-actions button:hover {
   color: var(--muted-foreground, #64748b);
@@ -318,10 +305,6 @@
 .portal-comment-actions .portal-comment-report {
   margin-left: 0;
   opacity: 1;
-}
-/* Keep Reply and Report closer without changing spacing between other actions. */
-.portal-comment-actions button.portal-comment-reply-action + button.portal-comment-report {
-  margin-left: -7px;
 }
 .portal-comment-actions button.portal-comment-report:hover {
   color: var(--text-primary, #334155);
@@ -1111,10 +1094,20 @@
 }
 
 
-.portal-comment-actions button.portal-comment-delete-action {
-  color: #dc6b5f;
+.portal-comment-actions button.portal-comment-edit-action.portal-comment-delete-action {
+  color: var(--muted-foreground, #9298a2);
 }
 
-.portal-comment-actions button.portal-comment-delete-action:hover {
-  color: #b91c1c;
+.portal-comment-actions button.portal-comment-edit-action.portal-comment-delete-action:hover,
+.portal-comment-actions button.portal-comment-edit-action.portal-comment-delete-action:focus-visible {
+  color: #dc2626;
+}
+
+
+/* Keep the shared Shivanya UI confirmation overlay above the site chrome. */
+.shivanya-dialog-overlay {
+  z-index: 99999;
+  background: rgb(15 23 42 / 78%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }

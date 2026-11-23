@@ -194,13 +194,19 @@ function statusLabel(status: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function formatAnalyticsDateTime(value: string) {
+function formatAdminDateTime(value: string | null | undefined) {
+  if (!value) return "—";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return { date: "—", time: "—" };
-  return {
-    date: date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" }),
-    time: date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
-  };
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
 }
 
 export default function AdminPage() {
@@ -1256,7 +1262,7 @@ export default function AdminPage() {
             <div className="admin-latest-updated-copy">
               <span className="admin-latest-updated-label">LATEST UPDATED POST</span>
               <strong>{latestUpdatedPost.title_en || latestUpdatedPost.slug}</strong>
-              <small>{latestUpdatedKind?.label || latestUpdatedPost.category.name_en} · Updated {latestUpdatedPost.updated_at ? new Date(latestUpdatedPost.updated_at).toLocaleString() : "date unavailable"}</small>
+              <small>{latestUpdatedKind?.label || latestUpdatedPost.category.name_en} · Updated {latestUpdatedPost.updated_at ? formatAdminDateTime(latestUpdatedPost.updated_at) : "date unavailable"}</small>
             </div>
             <Link href={`/admin/edit-post/${latestUpdatedKind?.api || "jobs"}/${latestUpdatedPost.slug}`}>Open post ↗</Link>
           </section>
@@ -1448,12 +1454,12 @@ export default function AdminPage() {
                         <td>{formatCompactNumber(post.users_count)}</td>
                         <td>
                           {post.created_at
-                            ? new Date(post.created_at).toLocaleDateString()
+                            ? formatAdminDateTime(post.created_at)
                             : "—"}
                         </td>
                         <td>
                           {post.updated_at
-                            ? new Date(post.updated_at).toLocaleDateString()
+                            ? formatAdminDateTime(post.updated_at)
                             : "—"}
                         </td>
                         <td>
@@ -1721,7 +1727,7 @@ export default function AdminPage() {
                 <section className="admin-like-comment-section">
                   <h3>{selectedReport.target_type === "post" ? "Reported post" : selectedReport.target_type === "reply" ? "Reported reply" : "Reported comment"}</h3>
                   <p>{selectedReport.content}</p>
-                  <div className="admin-like-comment-meta"><span>{selectedReport.post_title}</span><span>{new Date(selectedReport.created_at).toLocaleString()}</span><span>Status: {statusLabel(selectedReport.status)}</span></div>
+                  <div className="admin-like-comment-meta"><span>{selectedReport.post_title}</span><span>{formatAdminDateTime(selectedReport.created_at)}</span><span>Status: {statusLabel(selectedReport.status)}</span></div>
                 </section>
                 <section className="admin-like-comment-section">
                   <h3>Report details</h3>
@@ -1732,14 +1738,14 @@ export default function AdminPage() {
               </div>
             ) : selectedLikeComment ? (
               <div className="admin-analytics-detail admin-like-comment-detail">
-                {selectedLikeComment.parent_comment ? <section className="admin-like-comment-section"><h3>Parent comment</h3><p>{selectedLikeComment.parent_comment.content}</p><div className="admin-like-comment-meta"><span>{selectedLikeComment.parent_comment.author_name || "User"}</span><span>{new Date(selectedLikeComment.parent_comment.created_at).toLocaleString()}</span></div></section> : null}
+                {selectedLikeComment.parent_comment ? <section className="admin-like-comment-section"><h3>Parent comment</h3><p>{selectedLikeComment.parent_comment.content}</p><div className="admin-like-comment-meta"><span>{selectedLikeComment.parent_comment.author_name || "User"}</span><span>{formatAdminDateTime(selectedLikeComment.parent_comment.created_at)}</span></div></section> : null}
                 <section className="admin-like-comment-section">
                   <h3>{selectedLikeComment.parent ? "Reply" : "Comment"}</h3>
                   <p>{selectedLikeComment.content}</p>
-                  <div className="admin-like-comment-meta"><span>{selectedLikeComment.author_name || "User"}</span><span>{new Date(selectedLikeComment.created_at).toLocaleString()}</span><span>Status: {statusLabel(selectedLikeComment.status || "unknown")}</span>{selectedLikeComment.edited ? <span>Edited</span> : null}{selectedLikeComment.is_admin_reply ? <span>Admin reply</span> : null}</div>
+                  <div className="admin-like-comment-meta"><span>{selectedLikeComment.author_name || "User"}</span><span>{formatAdminDateTime(selectedLikeComment.created_at)}</span><span>Status: {statusLabel(selectedLikeComment.status || "unknown")}</span>{selectedLikeComment.edited ? <span>Edited</span> : null}{selectedLikeComment.is_admin_reply ? <span>Admin reply</span> : null}</div>
                   <div className="admin-like-comment-stats"><span>{formatCompactNumber(selectedLikeComment.likes_count || 0)} likes</span><span>{formatCompactNumber(selectedLikeComment.dislikes_count || 0)} dislikes</span><span>{formatCompactNumber(selectedLikeComment.report_count || 0)} reports</span></div>
                 </section>
-                {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{new Date(reply.created_at).toLocaleString()}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
+                {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{formatAdminDateTime(reply.created_at)}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
              ) : analyticsType === "saved" && !selectedPost && !selectedVisitor ? (
                 savedPostRows.length === 0 ? <div className="admin-empty">No saved posts recorded yet.</div> : (
@@ -1786,7 +1792,7 @@ export default function AdminPage() {
                             <table className={`admin-analytics-table admin-likes-analytics-table admin-subscribers-table${isHistory ? " is-history" : ""}`}>
                               <thead><tr><th>Full name</th><th>Email</th>{isHistory ? <><th>Activity</th><th>Date</th></> : <th>Subscribed at</th>}</tr></thead>
                               <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
-                                const dateTime = formatAnalyticsDateTime(item.subscribed_at);
+                                const dateTime = formatAdminDateTime(item.subscribed_at);
                                 return <tr key={item.id}>
                                   <td>
                                     {item.full_name ? (
@@ -1797,7 +1803,7 @@ export default function AdminPage() {
                                     ) : "—"}
                                   </td>
                                   <td>{item.email}</td>
-                                  {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td><span>{dateTime.date}</span><small>{dateTime.time}</small></td></> : <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>}
+                                  {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td>{dateTime}</td></> : <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>}
                                 </tr>;
                               })}</tbody>
                             </table>
@@ -1856,8 +1862,7 @@ export default function AdminPage() {
                               )}
                             </td>
                             <td className="admin-reports-date-cell">
-                              <span>{formatAnalyticsDateTime(item.created_at).date}</span>
-                              <small>{formatAnalyticsDateTime(item.created_at).time}</small>
+                              {formatAdminDateTime(item.created_at)}
                             </td>
                           </tr>
                         ))}</tbody>
@@ -1924,7 +1929,7 @@ export default function AdminPage() {
                                  </button>
                                ) : item.user_name ? formatPersonName(item.user_name) : item.user_email || "Registered user"}
                              </td>
-                             <td>{new Date(item.created_at).toLocaleString()}</td>
+                             <td>{formatAdminDateTime(item.created_at)}</td>
                            </tr>
                          ))}
                        </tbody>
@@ -2074,7 +2079,7 @@ export default function AdminPage() {
                                   : item.user_email || "Registered user"
                               )}
                             </td>
-                            <td>{new Date(item.created_at).toLocaleString()}</td>
+                            <td>{formatAdminDateTime(item.created_at)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2110,11 +2115,11 @@ export default function AdminPage() {
                   </span>
                   <span>
                     First visit:{" "}
-                    {new Date(selectedVisitor.first_seen).toLocaleString()}
+                    {formatAdminDateTime(selectedVisitor.first_seen)}
                   </span>
                   <span>
                     Last visit:{" "}
-                    {new Date(selectedVisitor.last_seen).toLocaleString()}
+                    {formatAdminDateTime(selectedVisitor.last_seen)}
                   </span>
                   <span>Browser: {selectedVisitor.browser || "Unknown"}</span>
                   <span>
@@ -2148,7 +2153,7 @@ export default function AdminPage() {
                           <td>{formatCompactNumber(item.views)}</td>
                           <td>
                             {item.last_viewed
-                              ? new Date(item.last_viewed).toLocaleString()
+                              ? formatAdminDateTime(item.last_viewed)
                               : "—"}
                           </td>
                         </tr>
@@ -2188,7 +2193,7 @@ export default function AdminPage() {
                           </td>
                           <td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td>
                           <td className="admin-analytics-referrer"><span>{event.referrer_url || "Direct"}</span></td>
-                          <td>{new Date(event.viewed_at).toLocaleString()}</td>
+                          <td>{formatAdminDateTime(event.viewed_at)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -2232,7 +2237,7 @@ export default function AdminPage() {
                         <td className="admin-analytics-referrer">
                           <span>{event.referrer_url || "Direct"}</span>
                         </td>
-                        <td>{new Date(event.viewed_at).toLocaleString()}</td>
+                        <td>{formatAdminDateTime(event.viewed_at)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -2266,7 +2271,7 @@ export default function AdminPage() {
                             <tr key={post.id}>
                               <td><Link className="admin-analytics-link" href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`} title={post.title_en}>{post.title_en}</Link></td>
                               <td>{kind?.label || post.category?.name_en || "—"}</td>
-                              <td>{post.updated_at ? new Date(post.updated_at).toLocaleString() : "—"}</td>
+                              <td>{post.updated_at ? formatAdminDateTime(post.updated_at) : "—"}</td>
                               <td>{statusLabel(post.status)}</td>
                             </tr>
                           );
@@ -2290,7 +2295,7 @@ export default function AdminPage() {
                           <tr key={item.id}>
                             <td><button type="button" className="admin-analytics-link" title={item.title} aria-label={"View details for " + item.title} onClick={() => void openPostEvents(item)}>{item.title}</button></td>
                             <td>{formatCompactNumber(item.views)}</td><td>{formatCompactNumber(item.unique_visitors)}</td>
-                            <td>{item.last_viewed ? new Date(item.last_viewed).toLocaleString() : "—"}</td>
+                            <td>{item.last_viewed ? formatAdminDateTime(item.last_viewed) : "—"}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2336,7 +2341,7 @@ export default function AdminPage() {
                             </td>
                             <td>
                               {item.last_viewed
-                                ? new Date(item.last_viewed).toLocaleString()
+                                ? formatAdminDateTime(item.last_viewed)
                                 : "—"}
                             </td>
                           </tr>
@@ -2396,8 +2401,8 @@ export default function AdminPage() {
                         <td>{formatCompactNumber(visitor.total_pages)}</td>
                         <td>{formatCompactNumber(visitor.total_views)}</td>
                         <td>{visitor.language || "—"}</td>
-                        <td>{new Date(visitor.first_seen).toLocaleString()}</td>
-                        <td>{new Date(visitor.last_seen).toLocaleString()}</td>
+                        <td>{formatAdminDateTime(visitor.first_seen)}</td>
+                        <td>{formatAdminDateTime(visitor.last_seen)}</td>
                       </tr>
                     ))}
                   </tbody>

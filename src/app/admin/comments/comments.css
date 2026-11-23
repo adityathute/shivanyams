@@ -265,3 +265,35 @@
   .admin-comment-actions { gap: 6px; }
   .admin-comment-actions button { padding: 6px 8px; }
 }
+
+.admin-comments-header-actions {
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-comments-header-actions .admin-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.admin-comments-header-actions .admin-secondary-button svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.admin-comments-header-actions .admin-secondary-button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .admin-comments-header-actions {
+    flex-wrap: wrap;
+  }
+}

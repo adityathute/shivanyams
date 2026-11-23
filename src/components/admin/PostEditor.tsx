@@ -584,6 +584,7 @@ export default function PostEditor({
   const [autosaveBusy, setAutosaveBusy] = useState(false);
   const [autosaveRevision, setAutosaveRevision] = useState(0);
   const [postStatus, setPostStatus] = useState("draft");
+  const [postCreated, setPostCreated] = useState(false);
   const [postVersions, setPostVersions] = useState<PostVersionInfo[]>([]);
   const postIdRef = useRef<number | null>(null);
   const currentSlugRef = useRef(editSlug || "");
@@ -1418,7 +1419,10 @@ export default function PostEditor({
         .join(" · ");
       throw new Error(message || `Save failed (${response.status}).`);
     }
-    if (typeof result.id === "number") postIdRef.current = result.id;
+    if (typeof result.id === "number") {
+      postIdRef.current = result.id;
+      setPostCreated(true);
+    }
     if (typeof result.slug === "string") currentSlugRef.current = result.slug;
     if (typeof result.status === "string") setPostStatus(result.status);
     lastSavedSnapshotRef.current = JSON.stringify(payload);
@@ -1543,8 +1547,8 @@ export default function PostEditor({
             </p>
           </div>
           <div className="post-editor-header-actions">
-            {editing && (postStatus === "draft" || postStatus === "reviewed") && <span className="post-editor-status-badge post-editor-status-badge--unpublished">Unpublished</span>}
-            {editing && <span className={`post-editor-status-badge post-editor-status-badge--${postStatus.toLowerCase().replaceAll("_", "-")}`}>{postStatus === "published" ? <>Published{postVersions.some((item) => item.is_published) && <> · v{Math.max(...postVersions.filter((item) => item.is_published).map((item) => item.version_number))}</>}</> : postStatus.replaceAll("_", " ")}</span>}
+            {(editing || postCreated) && (postStatus === "draft" || postStatus === "reviewed") && <span className="post-editor-status-badge post-editor-status-badge--unpublished">Unpublished</span>}
+            {(editing || postCreated) && <span className={`post-editor-status-badge post-editor-status-badge--${postStatus.toLowerCase().replaceAll("_", "-")}`}>{postStatus === "published" ? <>Published{postVersions.some((item) => item.is_published) && <> · v{Math.max(...postVersions.filter((item) => item.is_published).map((item) => item.version_number))}</>}</> : postStatus.replaceAll("_", " ")}</span>}
             {editing && postStatus === "published" && <div className="post-editor-publication-status">
               {postVersions.some((item) => !item.is_published) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published).map((item) => item.version_number))}</span>}
               <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>

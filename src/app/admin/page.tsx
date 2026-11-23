@@ -1828,7 +1828,7 @@ export default function AdminPage() {
                       setShowAllShareAnalytics(true);
                     }}
                   >
-                    <AnalyticsIcon size="sm" />
+                    <AnalyticsIcon />
                     <span>Analytics</span>
                   </button>
                 </div>
@@ -1962,7 +1962,7 @@ export default function AdminPage() {
                       </button>
                     </div>
                     {showAllShareAnalytics ? (
-                      <section className="admin-share-all-chart-section">
+                      <section className="admin-share-post-chart-section">
                         <h3>Sharing methods across all posts</h3>
                         <BarChart
                           data={Object.entries(shareAnalytics.channels).map(([channel, value]) => ({

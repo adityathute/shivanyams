@@ -2640,3 +2640,64 @@
 .admin-analytics-modal .admin-subscribers-table td:nth-child(1) {
   text-align: left;
 }
+
+
+/* Subscriber metric selector: keep all five centered cards on one horizontal row. */
+.admin-analytics-modal .admin-subscribers-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(132px, 1fr));
+  gap: 10px;
+  margin: 16px;
+  overflow-x: auto;
+}
+.admin-analytics-modal .admin-subscribers-summary > button {
+  display: flex;
+  min-width: 0;
+  min-height: 86px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 9px;
+  border: 1px solid var(--admin-border, #e5e7eb);
+  border-radius: 10px;
+  background: var(--admin-card, #fff);
+  color: var(--admin-text, #111827);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.admin-analytics-modal .admin-subscribers-summary > button > span {
+  width: 100%;
+  color: var(--admin-muted, #6b7280);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: center;
+}
+.admin-analytics-modal .admin-subscribers-summary > button > strong {
+  color: var(--admin-text, #111827);
+  font-size: 22px;
+  font-weight: 750;
+  line-height: 1.15;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.admin-analytics-modal .admin-subscribers-summary > button:hover,
+.admin-analytics-modal .admin-subscribers-summary > button.is-active {
+  border-color: var(--admin-accent, #6366f1);
+  background: color-mix(in srgb, var(--admin-accent, #6366f1) 6%, var(--admin-card, #fff));
+}
+.admin-analytics-modal .admin-subscribers-summary > button.is-active {
+  box-shadow: inset 0 0 0 1px var(--admin-accent, #6366f1);
+}
+.admin-analytics-modal .admin-subscribers-table th,
+.admin-analytics-modal .admin-subscribers-table td {
+  vertical-align: middle;
+}
+@media (max-width: 620px) {
+  .admin-analytics-modal .admin-subscribers-summary {
+    grid-template-columns: repeat(5, minmax(124px, 1fr));
+    margin: 12px;
+  }
+}

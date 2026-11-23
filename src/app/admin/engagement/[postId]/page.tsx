@@ -6,14 +6,14 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import {
-  AllStatisticsIcon,
+  StocksIcon,
   BookmarkIcon,
-  CommentIcon,
+  MessagesIcon,
   DislikeIcon,
   LikeIcon,
   ReportIcon,
   ShareIcon,
-  SubscribeIcon,
+  UsersIcon,
 } from "shivanya-ui";
 import { API_URL } from "../../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../../admin-utils";
@@ -44,13 +44,13 @@ type EngagementPayload = {
 type StatKey = "all" | "likes" | "dislikes" | "comments" | "shares" | "saved" | "subscribers" | "reports";
 
 const statLabels: { key: StatKey; label: string; color: string; icon: ReactNode }[] = [
-  { key: "all", label: "All Statistics", color: "all", icon: <AllStatisticsIcon size={18} /> },
+  { key: "all", label: "All Statistics", color: "all", icon: <StocksIcon size={18} /> },
   { key: "likes", label: "Likes", color: "likes", icon: <LikeIcon size={18} /> },
   { key: "dislikes", label: "Dislikes", color: "dislikes", icon: <DislikeIcon size={18} /> },
-  { key: "comments", label: "Comments", color: "comments", icon: <CommentIcon size={18} /> },
+  { key: "comments", label: "Comments", color: "comments", icon: <MessagesIcon size={18} /> },
   { key: "shares", label: "Shares", color: "shares", icon: <ShareIcon size={18} /> },
   { key: "saved", label: "Saved", color: "saved", icon: <BookmarkIcon size={18} /> },
-  { key: "subscribers", label: "Subscribers", color: "subscribers", icon: <SubscribeIcon size={18} /> },
+  { key: "subscribers", label: "Subscribers", color: "subscribers", icon: <UsersIcon size={18} /> },
   { key: "reports", label: "Reports", color: "reports", icon: <ReportIcon size={18} /> },
 ];
 

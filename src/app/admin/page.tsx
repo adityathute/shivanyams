@@ -202,7 +202,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -936,7 +936,7 @@ export default function AdminPage() {
                 {engagementItems.map((item) => (
                   <article
                     key={item.label}
-                    className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
+                    className={`admin-stat-card admin-stat-posts${item.label === "Likes" ? " admin-stat-clickable" : ""}`}
                   >
                     {item.analytics === "likes" ? (
                       <button

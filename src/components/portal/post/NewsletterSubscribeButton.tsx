@@ -163,7 +163,7 @@ export function NewsletterSubscribeButton({ language = "en" }: { language?: Lang
       setSubscribed(false);
       setUnsubscribeToken("");
       setSuccess(false);
-      setMessage(t.unsubscribeSuccess);
+      if (!user) setMessage(t.unsubscribeSuccess);
     } catch (error) {
       setSuccess(false);
       setMessage(error instanceof Error ? error.message : t.unsubscribeError);

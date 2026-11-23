@@ -214,7 +214,6 @@ export default function AdminPage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [updatedWithin, setUpdatedWithin] = useState("all");
   const [refreshKey, setRefreshKey] = useState(0);
-  const [statsAnimationKey, setStatsAnimationKey] = useState(0);
   const [busyPost, setBusyPost] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminPost | null>(null);
   const [page, setPage] = useState(1);
@@ -278,7 +277,6 @@ export default function AdminPage() {
               new Date(a.created_at || a.published_at || 0).getTime(),
           ),
       );
-      setStatsAnimationKey((value) => value + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load posts.");
     } finally {
@@ -339,7 +337,6 @@ export default function AdminPage() {
               reports: Number(payload.reports_count) || 0,
               subscribers: Number(payload.newsletter_subscribers_count) || 0,
             });
-            setStatsAnimationKey((value) => value + 1);
           }
         },
       )

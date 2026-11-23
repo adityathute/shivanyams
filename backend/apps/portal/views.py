@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.text import slugify
-from django.db.models import Count, Exists, F, Max, OuterRef, Prefetch, Q
+from django.db.models import Count, Exists, F, Max, Min, OuterRef, Prefetch, Q
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -667,6 +667,14 @@ class PublicJobDiscovery(generics.ListAPIView):
                     important_dates__date_type=PostDate.DateType.APPLICATION_END,
                     **{lookup: parsed},
                 )
+
+        if str(params.get("sort", "")).strip().lower() == "closing_soon":
+            queryset = queryset.annotate(
+                _job_closing_date=Min(
+                    "important_dates__date",
+                    filter=Q(important_dates__date_type=PostDate.DateType.APPLICATION_END),
+                )
+            ).order_by(F("_job_closing_date").asc(nulls_last=True), "-published_at")
 
         return queryset.distinct()
 

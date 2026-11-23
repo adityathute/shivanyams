@@ -292,3 +292,37 @@
   line-height: 1.5;
 }
 
+.admin-tags-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.admin-tags-panel-heading > div:first-child {
+  min-width: 0;
+}
+
+.admin-tags-panel-heading .admin-tags-total {
+  flex: 0 0 auto;
+  border-right: 0;
+  border-left: 1px solid #e1e8f2;
+  padding: 5px 0 5px 16px;
+}
+
+[data-theme="dark"] .admin-tags-panel-heading .admin-tags-total {
+  border-left-color: #344154;
+}
+
+@media (max-width: 620px) {
+  .admin-tags-panel-heading {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .admin-tags-panel-heading .admin-tags-total {
+    min-width: 70px;
+    padding-left: 10px;
+  }
+}
+

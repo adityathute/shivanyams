@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { BookmarkIcon, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, ShareIcon, TelegramIcon, ThreadsIcon, TwitterIcon, WhatsappIcon } from "shivanya-ui";
+import { BookmarkIcon, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, ShareIcon, TelegramIcon, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkedInIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
@@ -306,7 +306,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           <button type="button" role="menuitem" onClick={() => void shareTo("x")} className="portal-share-x"><TwitterIcon size={17} /><span>X/Twitter</span></button>
           <button type="button" role="menuitem" onClick={() => void shareTo("threads")} className="portal-share-threads"><ThreadsIcon size={17} /><span>Threads</span></button>
           <button type="button" role="menuitem" onClick={() => void shareTo("instagram")} className="portal-share-instagram"><InstagramIcon size={17} /><span>Instagram</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")} className="portal-share-linkedin"><InstagramIcon size={17} /><span>LinkedIn</span></button>
+          <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")} className="portal-share-linkedin"><LinkedInIcon size={17} /><span>LinkedIn</span></button>
           <button type="button" role="menuitem" onClick={() => void shareTo("email")} className="portal-share-email"><MailIcon size={17} /><span>Email</span></button>
           {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
             <button type="button" role="menuitem" onClick={() => void shareTo("native")} className="portal-share-more"><MoreVerticalIcon size={17} /><span>More options</span></button>

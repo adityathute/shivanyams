@@ -1343,7 +1343,7 @@ export default function AdminPage() {
                         <tr key={event.visitor_id + event.viewed_at + index}>
                           <td>{event.visitor_type === "user" ? formatPersonName(event.full_name) || "Registered user" : "Anonymous"}</td>
                           <td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td>
-                          <td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td>
+                          <td className="admin-analytics-referrer"><span>{event.referrer_url || "Direct"}</span></td>
                           <td>{new Date(event.viewed_at).toLocaleString()}</td>
                         </tr>
                       ))}
@@ -1381,7 +1381,7 @@ export default function AdminPage() {
                         <td>{event.device}</td>
                         <td>{event.language || "—"}</td>
                         <td className="admin-analytics-referrer">
-                          {event.referrer_url || "Direct"}
+                          <span>{event.referrer_url || "Direct"}</span>
                         </td>
                         <td>{new Date(event.viewed_at).toLocaleString()}</td>
                       </tr>

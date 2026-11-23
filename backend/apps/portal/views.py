@@ -668,6 +668,92 @@ class PublicJobDiscovery(generics.ListAPIView):
                     **{lookup: parsed},
                 )
 
+        # Candidate-facing eligibility and post-detail filters.
+        candidate_age = params.get("candidate_age")
+        if candidate_age not in (None, ""):
+            try:
+                candidate_age = int(candidate_age)
+                if not 0 <= candidate_age <= 100:
+                    raise ValueError
+            except (TypeError, ValueError):
+                raise ValidationError({"candidate_age": "Enter an age from 0 to 100."})
+            queryset = queryset.filter(
+                job_details__posts__age_min__lte=candidate_age,
+                job_details__posts__age_max__gte=candidate_age,
+            )
+
+        text_filters = {
+            "exam_medium": ("exam_medium_en", "exam_medium_mr", "exam_medium_hi"),
+            "physical_standard": ("physical_standards_en", "physical_standards_mr", "physical_standards_hi"),
+            "exam_pattern": ("exam_pattern_en", "exam_pattern_mr", "exam_pattern_hi"),
+            "syllabus": ("syllabus_en", "syllabus_mr", "syllabus_hi"),
+            "selection_criteria": ("selection_criteria_en", "selection_criteria_mr", "selection_criteria_hi"),
+            "skill_test": ("skill_test_details_en", "skill_test_details_mr", "skill_test_details_hi"),
+            "interview": ("interview_details_en", "interview_details_mr", "interview_details_hi"),
+            "medical_standard": ("medical_standards_en", "medical_standards_mr", "medical_standards_hi"),
+        }
+        for parameter, fields in text_filters.items():
+            term = str(params.get(parameter, "")).strip()
+            if term:
+                condition = Q()
+                for field in fields:
+                    condition |= Q(**{f"job_details__posts__{field}__icontains": term})
+                queryset = queryset.filter(condition)
+
+        salary_period = str(params.get("salary_period", "")).strip().lower()
+        if salary_period:
+            if salary_period not in {"hourly", "daily", "weekly", "monthly", "yearly", "annual", "as_notified"}:
+                raise ValidationError({"salary_period": "Choose a supported salary period."})
+            queryset = queryset.filter(
+                Q(job_details__salary_period=salary_period)
+                | Q(job_details__posts__salary_period=salary_period)
+            )
+
+        presence_filters = {
+            "has_allowances": ("allowances",),
+            "has_benefits": ("benefits",),
+            "has_employment_conditions": ("employment_conditions",),
+            "has_probation": ("probation_period",),
+            "has_contract_duration": ("contract_duration",),
+            "has_working_hours": ("working_hours",),
+            "has_service_bond": ("service_bond",),
+            "has_retirement_benefits": ("retirement_benefits",),
+        }
+        for parameter, fields in presence_filters.items():
+            value = str(params.get(parameter, "")).strip().lower()
+            if value not in ("", "true", "false", "1", "0"):
+                raise ValidationError({parameter: "Use true or false."})
+            if value in ("true", "1"):
+                condition = Q()
+                for field in fields:
+                    condition |= Q(**{f"job_details__posts__{field}__gt": ""})
+                    condition |= Q(**{f"job_details__{field}__gt": ""})
+                queryset = queryset.filter(condition)
+            elif value in ("false", "0"):
+                condition = Q()
+                for field in fields:
+                    condition |= Q(**{f"job_details__posts__{field}__gt": ""})
+                    condition |= Q(**{f"job_details__{field}__gt": ""})
+                queryset = queryset.exclude(condition)
+
+        has_required_documents = str(params.get("has_required_documents", "")).strip().lower()
+        if has_required_documents not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"has_required_documents": "Use true or false."})
+        documents_exist = JobPost.objects.filter(job_id=OuterRef("job_details__id")).exclude(required_documents=[])
+        if has_required_documents in ("true", "1"):
+            queryset = queryset.filter(Exists(documents_exist))
+        elif has_required_documents in ("false", "0"):
+            queryset = queryset.exclude(Exists(documents_exist))
+
+        has_selection_stages = str(params.get("has_selection_stages", "")).strip().lower()
+        if has_selection_stages not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"has_selection_stages": "Use true or false."})
+        stages_exist = JobPost.objects.filter(job_id=OuterRef("job_details__id")).exclude(selection_stages=[])
+        if has_selection_stages in ("true", "1"):
+            queryset = queryset.filter(Exists(stages_exist))
+        elif has_selection_stages in ("false", "0"):
+            queryset = queryset.exclude(Exists(stages_exist))
+
         if str(params.get("sort", "")).strip().lower() == "closing_soon":
             queryset = queryset.annotate(
                 _job_closing_date=Min(

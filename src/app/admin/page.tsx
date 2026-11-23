@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
@@ -217,6 +217,8 @@ export default function AdminPage() {
   const [likeAnalyticsEvents, setLikeAnalyticsEvents] = useState<LikeAnalyticsEvent[]>([]);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
   const [likeAnalyticsPage, setLikeAnalyticsPage] = useState(1);
+  const likeContentRefs = useRef<Map<number, HTMLSpanElement>>(new Map());
+  const likePostRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsVisitors, setAnalyticsVisitors] = useState<
     WebsiteVisitorRow[]
@@ -250,6 +252,39 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [sortOrder, setSortOrder] = useState("newest");
+
+  useEffect(() => {
+    if (analyticsType !== "likes" || selectedPost || selectedVisitor || selectedLikeComment) return;
+
+    const measureLikeRows = () => {
+      const visibleLikes = likeAnalyticsEvents.slice(
+        (likeAnalyticsPage - 1) * analyticsPageSize,
+        likeAnalyticsPage * analyticsPageSize,
+      );
+
+      visibleLikes.forEach((item) => {
+        if (item.target_type === "post") return;
+        const content = likeContentRefs.current.get(item.id);
+        const post = likePostRefs.current.get(item.id);
+        if (!content || !post) return;
+
+        const styles = window.getComputedStyle(content);
+        const lineHeight = Number.parseFloat(styles.lineHeight);
+        const measuredHeight = content.getBoundingClientRect().height;
+        const lines = Number.isFinite(lineHeight) && lineHeight > 0
+          ? Math.max(1, Math.min(3, Math.round(measuredHeight / lineHeight)))
+          : 3;
+
+        post.style.setProperty("--like-title-lines", String(lines));
+      });
+    };
+
+    measureLikeRows();
+    const observer = new ResizeObserver(measureLikeRows);
+    likeContentRefs.current.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [analyticsType, likeAnalyticsEvents, likeAnalyticsPage, analyticsPageSize, selectedPost, selectedVisitor, selectedLikeComment]);
+
 
   const loadPosts = useCallback(async () => {
     setPostsLoading(true);
@@ -1443,6 +1478,10 @@ export default function AdminPage() {
                               <button
                                 type="button"
                                 className="admin-analytics-link admin-likes-post-link"
+                                ref={(element) => {
+                                  if (element) likePostRefs.current.set(item.id, element);
+                                  else likePostRefs.current.delete(item.id);
+                                }}
                                 title={item.post_title}
                                 onClick={() => void openPostEvents({
                                   id: item.post_id,
@@ -1466,7 +1505,7 @@ export default function AdminPage() {
                                   onClick={() => void openLikeComment(item, "comment")}
                                   aria-label="Open comment details"
                                 >
-                                  <span className="admin-analytics-like-content">{item.content}</span>
+                                  <span className="admin-analytics-like-content" ref={(element) => { if (element) likeContentRefs.current.set(item.id, element); else likeContentRefs.current.delete(item.id); }}>{item.content}</span>
                                 </button>
                               ) : (
                                 <div className="admin-likes-reply-content">

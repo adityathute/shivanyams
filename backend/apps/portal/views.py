@@ -1751,6 +1751,10 @@ class AdminDashboardStats(APIView):
             )
             auth_ids = {item.user_auth_id for item in subscriptions if item.user_auth_id}
             auth_ids.update(
+                NewsletterSubscription.objects.exclude(user_auth_id="")
+                .values_list("user_auth_id", flat=True).distinct()
+            )
+            auth_ids.update(
                 NewsletterSubscriptionEvent.objects.exclude(user_auth_id="")
                 .values_list("user_auth_id", flat=True).distinct()
             )

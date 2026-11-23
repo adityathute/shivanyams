@@ -4,16 +4,17 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, RefreshIcon, TagIcon } from "shivanya-ui";
+import { ArrowLeftIcon, ConfirmDialog, Modal, RefreshIcon, Select, TagIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../admin-utils";
 import "../admin.css";
 import "./tags.css";
 
 type TagRow = { name: string; count: number };
+type TagSort = "popular" | "least" | "az" | "za";
 
 function slugify(value: string) {
-  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\\p{L}\\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 }
 
 export default function AdminTagsPage() {
@@ -22,9 +23,13 @@ export default function AdminTagsPage() {
   const isAdmin = user?.roles?.includes("admin") === true;
   const [tags, setTags] = useState<TagRow[]>([]);
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<TagSort>("popular");
   const [loadingTags, setLoadingTags] = useState(true);
   const [error, setError] = useState("");
   const [busyTag, setBusyTag] = useState<string | null>(null);
+  const [editingTag, setEditingTag] = useState<TagRow | null>(null);
+  const [editName, setEditName] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 15;
 
@@ -53,8 +58,14 @@ export default function AdminTagsPage() {
 
   const filteredTags = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
-    return tags.filter((tag) => !query || tag.name.toLocaleLowerCase().includes(query));
-  }, [tags, search]);
+    const rows = tags.filter((tag) => !query || tag.name.toLocaleLowerCase().includes(query));
+    return [...rows].sort((a, b) => {
+      if (sort === "least") return a.count - b.count || a.name.localeCompare(b.name);
+      if (sort === "az") return a.name.localeCompare(b.name);
+      if (sort === "za") return b.name.localeCompare(a.name);
+      return b.count - a.count || a.name.localeCompare(b.name);
+    });
+  }, [tags, search, sort]);
 
   const pageCount = Math.max(1, Math.ceil(filteredTags.length / pageSize));
   const visibleTags = filteredTags.slice((page - 1) * pageSize, page * pageSize);
@@ -63,30 +74,46 @@ export default function AdminTagsPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [search, sort]);
 
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
   }, [page, pageCount]);
 
-  async function renameTag(name: string) {
-    const nextName = window.prompt("Enter the new tag name:", name)?.trim();
-    if (!nextName || nextName === name) return;
+  function openEdit(tag: TagRow) {
+    setEditingTag(tag);
+    setEditName(tag.name);
+    setError("");
+  }
+
+  async function renameTag() {
+    if (!editingTag) return;
+    const nextName = editName.trim();
+    if (!nextName) {
+      setError("Please enter a tag name.");
+      return;
+    }
     if (nextName.length > 100) {
       setError("Tag names must be 100 characters or fewer.");
       return;
     }
-    setBusyTag(name);
+    if (nextName === editingTag.name) {
+      setEditingTag(null);
+      return;
+    }
+
+    setBusyTag(editingTag.name);
     setError("");
     try {
       const response = await adminFetch(`${API_URL}/admin/tags/`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ old_name: name, new_name: nextName }),
+        body: JSON.stringify({ old_name: editingTag.name, new_name: nextName }),
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || payload.new_name || `Rename failed (${response.status}).`);
       if (Array.isArray(payload.tags)) setTags(payload.tags);
+      setEditingTag(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to rename tag.");
     } finally {
@@ -94,8 +121,9 @@ export default function AdminTagsPage() {
     }
   }
 
-  async function deleteTag(name: string) {
-    if (!window.confirm(`Delete “${name}” from every post that uses it? This cannot be undone.`)) return;
+  async function deleteTag() {
+    if (!deleteTarget) return;
+    const name = deleteTarget;
     setBusyTag(name);
     setError("");
     try {
@@ -107,6 +135,7 @@ export default function AdminTagsPage() {
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || `Delete failed (${response.status}).`);
       if (Array.isArray(payload.tags)) setTags(payload.tags);
+      setDeleteTarget(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to delete tag.");
     } finally {
@@ -126,6 +155,10 @@ export default function AdminTagsPage() {
             <p>Rename or delete tags used across jobs, schemes, articles and other content.</p>
           </div>
           <div className="admin-top-actions admin-tags-header-actions">
+            <div className="admin-tags-total" aria-label={`${tags.length} total tags`}>
+              <strong>{tags.length.toLocaleString("en-IN")}</strong>
+              <span>Total tags</span>
+            </div>
             <Link href="/admin" className="admin-secondary-button">
               <ArrowLeftIcon size={16} />
               <span>Back to dashboard</span>
@@ -141,7 +174,7 @@ export default function AdminTagsPage() {
           <div className="admin-panel-heading">
             <div>
               <h2><TagIcon size={18} /> All tags</h2>
-              <p>{filteredTags.length} tags found · Changes apply to every post using the tag.</p>
+              <p>{filteredTags.length} tags shown · Changes apply to every post using the tag.</p>
             </div>
           </div>
 
@@ -152,6 +185,19 @@ export default function AdminTagsPage() {
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search tags..."
               aria-label="Search tags"
+            />
+            <Select
+              size="sm"
+              fullWidth
+              value={sort}
+              onChange={(event) => setSort(event.target.value as TagSort)}
+              aria-label="Sort tags"
+              options={[
+                { value: "popular", label: "Most used" },
+                { value: "least", label: "Least used" },
+                { value: "az", label: "Name: A to Z" },
+                { value: "za", label: "Name: Z to A" },
+              ]}
             />
           </div>
 
@@ -180,8 +226,8 @@ export default function AdminTagsPage() {
                         <td>{tag.count.toLocaleString("en-IN")}</td>
                         <td>
                           <div className="admin-tag-actions">
-                            <button type="button" disabled={busyTag !== null} onClick={() => void renameTag(tag.name)}>Edit</button>
-                            <button type="button" className="danger" disabled={busyTag !== null} onClick={() => void deleteTag(tag.name)}>Delete</button>
+                            <button type="button" disabled={busyTag !== null} onClick={() => openEdit(tag)}>Edit</button>
+                            <button type="button" className="danger" disabled={busyTag !== null} onClick={() => setDeleteTarget(tag.name)}>Delete</button>
                           </div>
                         </td>
                       </tr>
@@ -207,6 +253,57 @@ export default function AdminTagsPage() {
         </section>
       </div>
       <footer className="admin-footer">ShivanyaMS · Content Administration</footer>
+
+      <Modal
+        open={editingTag !== null}
+        title="Edit tag"
+        size="sm"
+        onClose={() => {
+          if (busyTag === null) setEditingTag(null);
+        }}
+        closeOnOverlayClick={busyTag === null}
+        closeOnEscape={busyTag === null}
+        footer={
+          <div className="admin-tags-modal-actions">
+            <button type="button" className="admin-secondary-button" disabled={busyTag !== null} onClick={() => setEditingTag(null)}>Cancel</button>
+            <button type="button" className="admin-primary-button" disabled={busyTag !== null || !editName.trim()} onClick={() => void renameTag()}>
+              {busyTag !== null ? "Saving..." : "Save changes"}
+            </button>
+          </div>
+        }
+      >
+        <div className="admin-tags-edit-field">
+          <label htmlFor="admin-edit-tag-name">Tag name</label>
+          <input
+            id="admin-edit-tag-name"
+            autoFocus
+            maxLength={100}
+            value={editName}
+            onChange={(event) => setEditName(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") void renameTag();
+            }}
+            placeholder="Enter tag name"
+          />
+          <small>Changing this name updates the tag on all posts that use it.</small>
+        </div>
+      </Modal>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete tag?"
+        message={deleteTarget ? `Delete “${deleteTarget}” from every post that uses it? This action cannot be undone.` : ""}
+        confirmText="Delete tag"
+        cancelText="Cancel"
+        variant="danger"
+        loading={deleteTarget !== null && busyTag === deleteTarget}
+        closeOnOverlayClick={busyTag === null}
+        closeOnEscape={busyTag === null}
+        onCancel={() => {
+          if (busyTag === null) setDeleteTarget(null);
+        }}
+        onConfirm={() => void deleteTag()}
+      />
     </main>
   );
 }

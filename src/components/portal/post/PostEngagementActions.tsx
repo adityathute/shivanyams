@@ -295,7 +295,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")}>LinkedIn</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("email")}>Email</button>
           {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
-            <button type="button" role="menuitem" onClick={() => void shareTo("native")>More options</button>
+            <button type="button" role="menuitem" onClick={() => void shareTo("native")}>More options</button>
           ) : null}
         </div>
       ) : null}

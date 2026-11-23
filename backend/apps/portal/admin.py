@@ -872,6 +872,9 @@ class NewsletterSubscriptionAdmin(admin.ModelAdmin):
     search_fields = ("email", "user_auth_id")
     readonly_fields = ("created_at", "updated_at")
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(NewsletterSubscriptionEvent)
 class NewsletterSubscriptionEventAdmin(admin.ModelAdmin):

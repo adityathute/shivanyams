@@ -6,6 +6,10 @@ import django.utils.timezone
 def seed_existing_subscriptions(apps, schema_editor):
     NewsletterSubscription = apps.get_model("portal", "NewsletterSubscription")
     NewsletterSubscriptionEvent = apps.get_model("portal", "NewsletterSubscriptionEvent")
+    PostSubscription = apps.get_model("portal", "PostSubscription")
+
+    # Record the existing global newsletter subscription rows as their
+    # initial subscription event so future resubscriptions can be counted.
     events = [
         NewsletterSubscriptionEvent(
             subscription_id=subscription.pk,
@@ -16,6 +20,25 @@ def seed_existing_subscriptions(apps, schema_editor):
         for subscription in NewsletterSubscription.objects.all().iterator()
     ]
     NewsletterSubscriptionEvent.objects.bulk_create(events, batch_size=1000)
+
+    # Keep old post-only email addresses as inactive global records. A
+    # post-specific opt-in is not silently expanded into site-wide consent.
+    for old_subscription in PostSubscription.objects.exclude(email="").iterator():
+        email = old_subscription.email.strip().lower()
+        if not email:
+            continue
+        existing = NewsletterSubscription.objects.filter(email__iexact=email).first()
+        if existing:
+            if not existing.user_auth_id and old_subscription.user_auth_id:
+                existing.user_auth_id = old_subscription.user_auth_id
+                existing.save(update_fields=["user_auth_id", "updated_at"])
+            continue
+        NewsletterSubscription.objects.create(
+            email=email,
+            user_auth_id=old_subscription.user_auth_id,
+            language="en",
+            is_active=False,
+        )
 
 
 class Migration(migrations.Migration):

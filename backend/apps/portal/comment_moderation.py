@@ -38,6 +38,7 @@ TOKEN_RE = re.compile(r"[\w\u0900-\u097F]+", re.UNICODE)
 def _normalize_text(value):
     text = html.unescape(unicodedata.normalize("NFKC", str(value or "")))
     text = text.replace("\u200b", "").replace("\u200c", "").replace("\u200d", "")
+    text = text.translate(str.maketrans({"。": ".", "．": ".", "｡": "."}))
     for _ in range(2):
         text = unquote(text)
     text = text.casefold()
@@ -45,6 +46,7 @@ def _normalize_text(value):
     text = re.sub(r"\s+dot\s+", ".", text)
     text = re.sub(r"\bhxxps?\b", "https", text)
     text = re.sub(r"\s*\.\s*", ".", text)
+    text = re.sub(r"[^\s]+", lambda match: match.group(0), text)
     return text
 
 
@@ -75,11 +77,17 @@ def _contains_blocked_language(value):
     if any(token in BLOCKED_TERMS for token in tokens):
         return True
 
-    # Catch spaced or punctuation-separated transliterations without matching
-    # arbitrary substrings inside normal words.
-    compact = re.sub(r"[^\w\u0900-\u097F]", "", normalized)
-    compact_terms = {re.sub(r"[^\w\u0900-\u097F]", "", term) for term in BLOCKED_TERMS}
-    return any(term and term in compact for term in compact_terms if len(term) >= 5)
+    # Catch a blocked word split across spaces or punctuation, but require
+    # the joined token sequence to equal a term (not merely contain a substring).
+    for start in range(len(tokens)):
+        combined = ""
+        for token in tokens[start:start + 8]:
+            combined += token
+            if combined in BLOCKED_TERMS:
+                return True
+            if not any(term.startswith(combined) for term in BLOCKED_TERMS):
+                break
+    return False
 
 
 def validate_comment_content(value):

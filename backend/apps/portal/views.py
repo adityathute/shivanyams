@@ -59,7 +59,7 @@ from .models import (
     Tag,
     TaxonomyTerm,
 )
-from .permissions import (IsPortalAdmin, IsPortalIdentity, IsPortalContentManager, IsPortalReviewer, IsPortalRevisionManager, get_portal_roles)
+from .permissions import (IsPortalAdmin, IsPortalAnalyticsManager, IsPortalIdentity, IsPortalContentManager, IsPortalReviewer, IsPortalRevisionManager, get_portal_roles)
 from .editorial_notifications import notify_editorial_user, notify_assignment_deadlines
 from .serializers import (
     CategorySerializer,
@@ -2701,6 +2701,7 @@ class TrackPostView(APIView):
         visitor_id = visitor_id.strip()
         if len(visitor_id) > 128:
             raise ValidationError({"visitor_id": "Maximum length is 128 characters."})
+        visitor_id = hashlib.sha256(visitor_id.encode("utf-8")).hexdigest()
 
         language = request.data.get("language", LanguageChoices.ENGLISH)
         allowed_languages = {choice[0] for choice in LanguageChoices.choices}
@@ -2715,10 +2716,14 @@ class TrackPostView(APIView):
         referrer_url = request.data.get("referrer_url", "")
         if not isinstance(referrer_url, str):
             referrer_url = ""
+        if referrer_url:
+            from urllib.parse import urlsplit
+            parsed_referrer = urlsplit(referrer_url)
+            referrer_url = f"{parsed_referrer.scheme}://{parsed_referrer.netloc}" if parsed_referrer.scheme in {"http", "https"} and parsed_referrer.netloc else ""
 
         # Identity is read only from the authenticated server-side session.
         auth_user_id = (
-            str(request.user.id)
+            hashlib.sha256(str(request.user.id).encode("utf-8")).hexdigest()
             if request.user.is_authenticated
             else ""
         )
@@ -2804,21 +2809,15 @@ class TrackWebsiteView(APIView):
         referrer_url = request.data.get("referrer_url", "")
         if not isinstance(referrer_url, str):
             referrer_url = ""
-        auth_user_id = str(request.user.id) if request.user.is_authenticated else ""
-        user_data = getattr(request.user, "auth_data", {}) if auth_user_id else {}
+        # Store a stable pseudonymous account key, not a raw account ID or name.
+        auth_user_id = hashlib.sha256(str(request.user.id).encode("utf-8")).hexdigest() if request.user.is_authenticated else ""
         full_name = ""
-        if isinstance(user_data, dict):
-            full_name = str(user_data.get("full_name") or user_data.get("name") or "").strip()
-            if not full_name:
-                full_name = " ".join(
-                    part for part in (
-                        str(user_data.get("first_name") or "").strip(),
-                        str(user_data.get("last_name") or "").strip(),
-                    ) if part
-                )
-        # Use the direct peer address. Do not trust arbitrary X-Forwarded-For
-        # headers because they can be supplied by visitors.
-        ip_address = request.META.get("REMOTE_ADDR") or None
+        # Do not collect or retain IP addresses from public page-view requests.
+        ip_address = None
+        if referrer_url:
+            from urllib.parse import urlsplit
+            parsed_referrer = urlsplit(referrer_url)
+            referrer_url = f"{parsed_referrer.scheme}://{parsed_referrer.netloc}" if parsed_referrer.scheme in {"http", "https"} and parsed_referrer.netloc else ""
         user_agent = request.META.get("HTTP_USER_AGENT", "").lower()
         if "edg/" in user_agent:
             browser = "Edge"
@@ -2835,15 +2834,11 @@ class TrackWebsiteView(APIView):
         else:
             browser = "Other"
 
-        # Authenticated visitors are grouped by account. Anonymous visitors
-        # are grouped by the requested IP + browser + device combination.
+        # Use only first-party random visitor IDs and pseudonymous account IDs.
         if auth_user_id:
-            identity_key = "user:" + hashlib.sha256(auth_user_id.encode("utf-8")).hexdigest()
-        elif ip_address:
-            fingerprint = "|".join((ip_address, browser.lower(), device.lower()))
-            identity_key = "anon:" + hashlib.sha256(fingerprint.encode("utf-8")).hexdigest()
+            identity_key = "user:" + auth_user_id
         else:
-            identity_key = "anon-client:" + visitor_id
+            identity_key = "anon-client:" + hashlib.sha256(visitor_id.encode("utf-8")).hexdigest()
 
         with transaction.atomic():
             visitor, _ = WebsiteVisitor.objects.get_or_create(
@@ -2886,7 +2881,7 @@ class TrackWebsiteView(APIView):
 
 
 class AdminWebsiteAnalytics(APIView):
-    permission_classes = [IsPortalAdmin]
+    permission_classes = [IsPortalAnalyticsManager]
 
     def get(self, request):
         analytics_type = request.query_params.get("type", "views")

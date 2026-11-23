@@ -2022,3 +2022,5 @@ padding-right: 24px;
 .post-editor-live-preview img { display: block; max-width: min(100%, 620px); max-height: 320px; object-fit: contain; margin: 14px 0; border-radius: 8px; }
 .post-editor-live-preview article { white-space: pre-wrap; line-height: 1.7; }
 .post-editor-live-preview > button { margin-top: 18px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; background: transparent; color: inherit; cursor: pointer; }
+
+.post-editor-form[hidden] { display: none !important; }

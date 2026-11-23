@@ -70,6 +70,13 @@ export function JobsPage() {
   const [hasNotification, setHasNotification] = useState("");
   const [hasApplyLink, setHasApplyLink] = useState("");
   const [minPostVacancies, setMinPostVacancies] = useState("");
+  const [sortOrder, setSortOrder] = useState("recent");
+  const [salaryCurrency, setSalaryCurrency] = useState("INR");
+  const [postedAfter, setPostedAfter] = useState("");
+  const [postedBefore, setPostedBefore] = useState("");
+  const [closingWithinDays, setClosingWithinDays] = useState("");
+  const [hasPosts, setHasPosts] = useState("");
+  const [hasPostApplicationLinks, setHasPostApplicationLinks] = useState("");
   const [facets, setFacets] = useState<{ organization_types: { value: string; label: string }[]; departments: string[]; designations: string[]; locations: string[]; states: string[]; countries: string[] }>({ organization_types: [], departments: [], designations: [], locations: [], states: [], countries: [] });
   const [results, setResults] = useState<JobDiscoveryPost[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -128,7 +135,13 @@ export function JobsPage() {
     if (hasNotification) params.set("has_notification", hasNotification);
     if (hasApplyLink) params.set("has_apply_link", hasApplyLink);
     if (minPostVacancies) params.set("min_post_vacancies", minPostVacancies);
-    params.set("sort", "recent");
+    if (salaryCurrency) params.set("salary_currency", salaryCurrency);
+    if (postedAfter) params.set("posted_after", postedAfter);
+    if (postedBefore) params.set("posted_before", postedBefore);
+    if (closingWithinDays) params.set("closing_within_days", closingWithinDays);
+    if (hasPosts) params.set("has_posts", hasPosts);
+    if (hasPostApplicationLinks) params.set("has_post_application_links", hasPostApplicationLinks);
+    params.set("sort", sortOrder);
 
     setSearchLoading(true);
     setSearchError("");
@@ -148,7 +161,7 @@ export function JobsPage() {
         if (!controller.signal.aborted) setSearchLoading(false);
       });
     return () => controller.abort();
-  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies]);
+  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies, sortOrder, salaryCurrency, postedAfter, postedBefore, closingWithinDays, hasPosts, hasPostApplicationLinks]);
 
   const displayedJobs = hasSearched ? results : legacyJobs;
   const clearFilters = () => {
@@ -158,6 +171,8 @@ export function JobsPage() {
     setQualification(""); setExamMode(""); setSalaryMin(""); setSalaryMax("");
     setWorkCity(""); setWorkDistrict(""); setRemoteOnly(false);
     setHasNotification(""); setHasApplyLink(""); setMinPostVacancies("");
+    setSortOrder("recent"); setSalaryCurrency("INR"); setPostedAfter(""); setPostedBefore("");
+    setClosingWithinDays(""); setHasPosts(""); setHasPostApplicationLinks("");
     setHasSearched(false); setResults([]); setSearchError("");
   };
 
@@ -215,6 +230,13 @@ export function JobsPage() {
               <label>Official notification<select value={hasNotification} onChange={(e) => { setHasNotification(e.target.value); setHasSearched(true); }}><option value="">Any notification status</option><option value="true">Has official notification</option><option value="false">No notification link</option></select></label>
               <label>Direct apply link<select value={hasApplyLink} onChange={(e) => { setHasApplyLink(e.target.value); setHasSearched(true); }}><option value="">Any application link</option><option value="true">Has direct apply link</option><option value="false">No direct apply link</option></select></label>
               <label>Minimum vacancies in a post<input type="number" min="0" value={minPostVacancies} onChange={(e) => { setMinPostVacancies(e.target.value); setHasSearched(true); }} placeholder="e.g. 5" /></label>
+              <label>Sort results<select value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); setHasSearched(true); }}><option value="recent">Newest first</option><option value="oldest">Oldest first</option><option value="title">Title A–Z</option><option value="title_desc">Title Z–A</option><option value="popular">Most viewed</option><option value="featured">Featured first</option><option value="vacancies_desc">Most vacancies</option><option value="vacancies_asc">Fewest vacancies</option><option value="closing_soon">Closing date soonest</option></select></label>
+              <label>Salary currency<select value={salaryCurrency} onChange={(e) => { setSalaryCurrency(e.target.value); setHasSearched(true); }}><option value="INR">INR — Indian Rupee</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — Pound Sterling</option></select></label>
+              <label>Posted after<input type="date" value={postedAfter} onChange={(e) => { setPostedAfter(e.target.value); setHasSearched(true); }} /></label>
+              <label>Posted before<input type="date" value={postedBefore} onChange={(e) => { setPostedBefore(e.target.value); setHasSearched(true); }} /></label>
+              <label>Closing within<select value={closingWithinDays} onChange={(e) => { setClosingWithinDays(e.target.value); setHasSearched(true); }}><option value="">Any deadline</option><option value="3">3 days</option><option value="7">7 days</option><option value="15">15 days</option><option value="30">30 days</option><option value="60">60 days</option></select></label>
+              <label>Individual advertised posts<select value={hasPosts} onChange={(e) => { setHasPosts(e.target.value); setHasSearched(true); }}><option value="">Any post detail</option><option value="true">Has individual posts</option><option value="false">No individual posts</option></select></label>
+              <label>Post-specific apply links<select value={hasPostApplicationLinks} onChange={(e) => { setHasPostApplicationLinks(e.target.value); setHasSearched(true); }}><option value="">Any link availability</option><option value="true">Has post-specific links</option><option value="false">No post-specific links</option></select></label>
             </div>
           </section>
 

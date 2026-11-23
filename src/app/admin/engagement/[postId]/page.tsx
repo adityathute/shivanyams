@@ -79,15 +79,42 @@ function isContentColumn(column: string) {
     /comment.*(content|text|body)|^(content|body|message|text|description)$/i.test(column);
 }
 
+function titleCaseName(value: string) {
+  return value.trim().toLocaleLowerCase().replace(/(^|[\\s'-])([\\p{L}])/gu, (_, separator, letter) => separator + letter.toLocaleUpperCase());
+}
+
+function getUserLabel(row: DetailRow) {
+  const entries = Object.entries(row);
+  const firstName = entries.find(([key]) => /^(user_)?first_name$/i.test(key))?.[1]
+    ?? entries.find(([key]) => /^(author|reporter)_first_name$/i.test(key))?.[1];
+  const lastName = entries.find(([key]) => /^(user_)?last_name$/i.test(key))?.[1]
+    ?? entries.find(([key]) => /^(author|reporter)_last_name$/i.test(key))?.[1];
+  const fullName = [firstName, lastName].filter((part) => typeof part === "string" && part.trim()).join(" ");
+  if (fullName) return titleCaseName(fullName);
+
+  const existingName = entries.find(([key, value]) => /^(user_)?name$|^(author|reporter)_name$/i.test(key) && typeof value === "string" && value.trim())?.[1];
+  if (typeof existingName === "string") return titleCaseName(existingName);
+
+  const email = entries.find(([key, value]) => /(^|_)(email|email_address)$/i.test(key) && typeof value === "string" && value.trim())?.[1];
+  return typeof email === "string" ? email : "—";
+}
+
+function isUserIdentityColumn(column: string) {
+  return /(^|_)(first_name|last_name|name|email|email_address)$/i.test(column) ||
+    /^(author|reporter)_(first_name|last_name|name)$/i.test(column);
+}
+
 function getColumnWidth(column: string, rows: DetailRow[]) {
   const key = column.toLowerCase();
   if (isContentColumn(column)) return 520;
+  if (key === "activity") return 190;
+  if (key === "user") return 240;
+  if (key === "target") return 240;
+  if (key === "status") return 190;
+  if (key === "details" || key === "detail") return 480;
   const values = rows.map((row) => String(row[column] ?? ""));
   const longest = Math.min(36, Math.max(column.length, ...values.map((value) => value.length)));
-  if (/email/.test(key)) return Math.min(260, Math.max(190, longest * 7 + 36));
-  if (/name|user|author|reporter/.test(key)) return Math.min(220, Math.max(150, longest * 7 + 36));
   if (/date|time|created|updated|at$/.test(key)) return 190;
-  if (/status|type|activity|target|reaction/.test(key)) return Math.min(160, Math.max(110, longest * 7 + 36));
   if (/url|link/.test(key)) return 240;
   return Math.min(220, Math.max(110, longest * 7 + 36));
 }
@@ -153,14 +180,36 @@ export default function AdminPostEngagementPage() {
 
   if (loading || !isAdmin) return null;
 
-  const pageCount = Math.max(1, Math.ceil(selectedRows.length / pageSize));
+  const tableRows = selectedRows.map((row) => ({ ...row, user: getUserLabel(row) }));
+  const pageCount = Math.max(1, Math.ceil(tableRows.length / pageSize));
   const safePage = Math.min(page, pageCount);
-  const visibleRows = selectedRows.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const visibleRows = tableRows.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   const selectedStat = statLabels.find((item) => item.key === selected) || statLabels[0];
   const selectedLabel = selectedStat.label;
-  const columns = selectedRows.length
-    ? Array.from(new Set(selectedRows.flatMap((row) => Object.keys(row)))).filter((column) => column.toLowerCase() !== "id" && !column.toLowerCase().endsWith("_id"))
+  const columns = tableRows.length
+    ? Array.from(new Set(tableRows.flatMap((row) => Object.keys(row))))
+      .filter((column) => column === "activity" || column === "user" ||
+        (column.toLowerCase() !== "id" &&
+          !column.toLowerCase().endsWith("_id") &&
+          column.toLowerCase() !== "reaction" &&
+          !isUserIdentityColumn(column)))
+      .sort((a, b) => {
+        const order = ["activity", "user", "target", "status", "details"];
+        const aKey = a.toLowerCase();
+        const bKey = b.toLowerCase();
+        const aIndex = order.indexOf(aKey);
+        const bIndex = order.indexOf(bKey);
+        if (aIndex !== -1 || bIndex !== -1) {
+          if (aIndex === -1) return 1;
+          if (bIndex === -1) return -1;
+          return aIndex - bIndex;
+        }
+        const aCreated = /^(created_at|created|date_created)$/i.test(a);
+        const bCreated = /^(created_at|created|date_created)$/i.test(b);
+        if (aCreated !== bCreated) return aCreated ? 1 : -1;
+        return 0;
+      })
     : [];
   const allStatsTotal = payload
     ? payload.likes.total + payload.dislikes.total + payload.comments.total + payload.shares + payload.saved + payload.subscribers + payload.reports
@@ -219,7 +268,7 @@ export default function AdminPostEngagementPage() {
                 <div className="admin-engagement-table-wrap">
                   <table className="admin-engagement-data-table">
                     <colgroup>{columns.map((column) => <col key={column} style={{ width: getColumnWidth(column, selectedRows) }} />)}</colgroup>
-                    <thead><tr>{columns.map((column) => <th key={column}>{isContentColumn(column) ? "Comment content" : column.replaceAll("_", " ")}</th>)}</tr></thead>
+                    <thead><tr>{columns.map((column) => <th key={column}>{isContentColumn(column) ? "Comment content" : column === "user" ? "User" : column.replaceAll("_", " ")}</th>)}</tr></thead>
                     <tbody>
                       {visibleRows.map((row, index) => (
                         <tr key={String(row.id ?? row.user_auth_id ?? row.reporter_auth_id ?? index) + "-" + index}>

@@ -1452,7 +1452,7 @@ class CommentReaction(TimestampedModel):
 
 
 class CommentReport(TimestampedModel):
-    """One report per authenticated user and comment."""
+    """Up to three reports per authenticated user and comment."""
 
     class Status(models.TextChoices):
         OPEN = "open", "Open"
@@ -1475,13 +1475,8 @@ class CommentReport(TimestampedModel):
     )
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=("comment", "reporter_auth_id"),
-                name="unique_user_comment_report",
-            ),
-        ]
         indexes = [
+            models.Index(fields=("comment", "reporter_auth_id", "created_at"), name="portal_comment_reporter_idx"),
             models.Index(fields=("status", "created_at"), name="portal_report_status_idx"),
             models.Index(fields=("comment", "status"), name="portal_com_comment_2c3b8a_idx"),
         ]
@@ -1721,8 +1716,10 @@ class PostReport(TimestampedModel):
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.OPEN, db_index=True)
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=("post", "reporter_auth_id"), name="unique_user_post_report")]
-        indexes = [models.Index(fields=("post", "status"), name="portal_post_report_status_idx")]
+        indexes = [
+            models.Index(fields=("post", "reporter_auth_id", "created_at"), name="portal_post_reporter_idx"),
+            models.Index(fields=("post", "status"), name="portal_post_report_status_idx"),
+        ]
 
     def __str__(self):
         return f"{self.post.title_en}: {self.reason}"

@@ -1823,11 +1823,9 @@ export default function AdminPage() {
                     className={"admin-reaction-view-button" + (showAllShareAnalytics ? " is-active" : "")}
                     aria-pressed={showAllShareAnalytics}
                     onClick={() => {
-                      if (!showAllShareAnalytics) {
-                        setShareAnalyticsView("events");
-                        setShareAnalyticsPage(1);
-                      }
-                      setShowAllShareAnalytics((current) => !current);
+                      setShareAnalyticsView("events");
+                      setShareAnalyticsPage(1);
+                      setShowAllShareAnalytics(true);
                     }}
                   >
                     <AnalyticsIcon />

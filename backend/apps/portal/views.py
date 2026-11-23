@@ -1747,7 +1747,7 @@ class AdminDashboardStats(APIView):
                     ).order_by("-created_at"),
                     to_attr="subscribe_events",
                 ))
-                .order_by("-created_at")
+                .order_by("-updated_at")
             )
             auth_ids = {item.user_auth_id for item in subscriptions if item.user_auth_id}
             user_names = {}

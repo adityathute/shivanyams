@@ -585,6 +585,8 @@ export default function PostEditor({
   const postIdRef = useRef<number | null>(null);
   const currentSlugRef = useRef(editSlug || "");
   const lastSavedSnapshotRef = useRef("");
+  const actionSnapshotRef = useRef<string | null>(null);
+  const [actionBaselineReady, setActionBaselineReady] = useState(false);
   const autosaveInitializedRef = useRef(false);
   const saveInFlightRef = useRef(false);
   const pendingSaveRef = useRef(false);
@@ -1306,7 +1308,22 @@ export default function PostEditor({
       }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
 
   const currentTitle = String(form.title_en || "").trim();
-  const hasUnsavedChanges = !loading && (editing || Boolean(currentTitle)) && JSON.stringify(payload) !== lastSavedSnapshotRef.current;
+  const currentSnapshot = JSON.stringify(payload);
+  const hasUnsavedChanges = !loading && (editing || Boolean(currentTitle)) && currentSnapshot !== lastSavedSnapshotRef.current;
+  const hasPendingActionChanges =
+    !loading &&
+    actionBaselineReady &&
+    actionSnapshotRef.current !== null &&
+    currentSnapshot !== actionSnapshotRef.current;
+
+  // New posts use their initial empty form as the action baseline. Autosave
+  // must not clear this baseline: the status buttons stay available until the
+  // administrator explicitly chooses Draft, Save & Exit, or Publish.
+  useEffect(() => {
+    if (editing || loading || actionSnapshotRef.current !== null) return;
+    actionSnapshotRef.current = currentSnapshot;
+    setActionBaselineReady(true);
+  }, [editing, loading, currentSnapshot]);
 
   async function leaveEditor() {
     setNotice("");
@@ -1387,7 +1404,9 @@ export default function PostEditor({
     if (loading || saving || !activeCategory) return;
     if (editing && !autosaveInitializedRef.current) {
       autosaveInitializedRef.current = true;
-      lastSavedSnapshotRef.current = JSON.stringify(payload);
+      lastSavedSnapshotRef.current = currentSnapshot;
+      actionSnapshotRef.current = currentSnapshot;
+      setActionBaselineReady(true);
       currentSlugRef.current = editSlug || currentSlugRef.current;
       return;
     }
@@ -2780,7 +2799,7 @@ export default function PostEditor({
           <div className="post-editor-actions post-editor-actions-draft">
             <div className="post-editor-action-buttons">
               <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving"} onClick={() => void leaveEditor()}>Cancel</button>
-              <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory || !hasUnsavedChanges} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
+              <button type="button" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory || !hasPendingActionChanges} onClick={() => void changePostStatus("draft")}>Save as Draft</button>
               <button type="submit" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory || !hasUnsavedChanges}>{saving ? "Saving..." : "Save & Exit"}</button>
               <button type="button" className="post-editor-publish-button" disabled={saving || autosaveBusy || autosaveState === "saving" || !activeCategory || !hasUnsavedChanges} onClick={() => void changePostStatus("published")}>Publish</button>
             </div>

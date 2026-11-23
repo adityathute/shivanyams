@@ -915,7 +915,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         image: post.image || undefined,
                         datePublished: post.date || undefined,
                         dateModified: post.updated_date || post.date || undefined,
-                        mainEntityOfPage: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\\/+$/, "")}/${category}/${slug}`,
+                        mainEntityOfPage: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}/${slug}`,
                         publisher: {
                           "@type": "Organization",
                           name: "ShivanyaMS",

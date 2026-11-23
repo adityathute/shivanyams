@@ -2329,3 +2329,60 @@
   line-height: inherit;
   text-overflow: clip !important;
 }
+
+
+/* Likes and dislikes modal: switch between all reactions and post-only summaries. */
+.admin-reaction-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  gap: 7px;
+  margin-left: auto;
+}
+
+.admin-reaction-view-button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid #dbe3ee;
+  border-radius: 9px;
+  background: #fff;
+  color: #526176;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.admin-reaction-view-button:hover {
+  border-color: #b8c5d6;
+  background: #f8fafc;
+  color: #26364b;
+}
+
+.admin-reaction-view-button.is-active {
+  border-color: #c7d2fe;
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.admin-reaction-posts-table th:nth-child(2),
+.admin-reaction-posts-table th:nth-child(3),
+.admin-reaction-posts-table td:nth-child(2),
+.admin-reaction-posts-table td:nth-child(3) {
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .admin-analytics-header .admin-reaction-view-toggle {
+    gap: 5px;
+  }
+
+  .admin-reaction-view-button {
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+}

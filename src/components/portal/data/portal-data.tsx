@@ -238,6 +238,9 @@ export type Item = {
   faqs?: PostFAQ[];
   extra?: Record<string, unknown>;
   job_details?: JobDetails;
+  examination_details?: Record<string, unknown> | null;
+  admit_card_details?: Record<string, unknown> | null;
+  result_details?: Record<string, unknown> | null;
 };
 
 export type Video = {
@@ -455,17 +458,9 @@ export type ApiPost = {
     application_url?: string;
     official_website?: string;
   } | null;
-  examination_details?: { official_website?: string } | null;
-  admit_card_details?: {
-    download_url?: string;
-    login_url?: string;
-    official_website?: string;
-  } | null;
-  result_details?: {
-    result_url?: string;
-    merit_list_url?: string;
-    official_website?: string;
-  } | null;
+  examination_details?: Record<string, unknown> | null;
+  admit_card_details?: Record<string, unknown> | null;
+  result_details?: Record<string, unknown> | null;
   article_guide_details?: { source_url?: string } | null;
   video_details?: {
     video_url?: string;
@@ -642,6 +637,9 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
     })),
     important_links: (post.important_links || []).filter((link) => link.is_active !== false && Boolean(link.url)),
     faqs: (post.faqs || []).filter((faq) => faq.is_active !== false && Boolean(faq.question_en?.trim() && faq.answer_en?.trim())),
+    examination_details: post.examination_details || null,
+    admit_card_details: post.admit_card_details || null,
+    result_details: post.result_details || null,
 
     job_details: job
       ? {

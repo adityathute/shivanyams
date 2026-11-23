@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DislikeIcon, EditIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -248,7 +248,7 @@ function CommentThread({
             <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${item.dislikes_count} dislikes`}>
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
-            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <><button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button><button type="button" className="portal-comment-delete-action" onClick={() => onDelete(item.id)}>Delete</button></> : null}
+            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <><button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button><button type="button" className="portal-comment-edit-action portal-comment-delete-action" onClick={() => onDelete(item.id)}><DeleteIcon size={14} /> Delete</button></> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button> : null}
             {!item.report_limit_reached ? (
               <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>

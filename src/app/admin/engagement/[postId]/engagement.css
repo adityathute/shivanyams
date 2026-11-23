@@ -1,9 +1,11 @@
 .admin-engagement-stats {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(105px, 1fr));
-  min-width: 900px;
+  display: flex;
+  width: 100%;
+  min-width: 0;
   gap: 10px;
   margin: 22px 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
 }
 
 .admin-engagement-stat {

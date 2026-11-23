@@ -1619,3 +1619,27 @@
   opacity: .55;
   cursor: not-allowed;
 }
+
+/* Keep dashboard header icon buttons evenly spaced and aligned. */
+.admin-dashboard-header-actions {
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-dashboard-header-actions .admin-secondary-button,
+.admin-dashboard-header-actions .admin-primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.admin-dashboard-header-actions .admin-secondary-button svg,
+.admin-dashboard-header-actions .admin-primary-button svg {
+  display: block;
+  flex: 0 0 auto;
+}

@@ -694,32 +694,22 @@ class SchemeDetailsAdmin(PostDetailAdmin):
 
 @admin.register(ExaminationDetails)
 class ExaminationDetailsAdmin(PostDetailAdmin):
-    list_display = ("post", "exam_type", "exam_mode", "exam_name", "updated_at")
-    list_filter = ("exam_type", "exam_mode")
-    search_fields = (
-        "post__title_en",
-        "post__slug",
-        "exam_name",
-        "conducting_authority",
-    )
+    list_display = ("post", "exam_type", "exam_mode", "exam_status", "exam_name", "exam_date", "updated_at")
+    list_filter = ("exam_type", "exam_mode", "exam_status")
+    search_fields = ("post__title_en", "post__slug", "exam_name", "conducting_authority", "notification_number")
 
 
 @admin.register(AdmitCardDetails)
 class AdmitCardDetailsAdmin(PostDetailAdmin):
-    list_display = ("post", "issuing_authority", "exam_name", "release_date")
-    search_fields = (
-        "post__title_en",
-        "post__slug",
-        "issuing_authority",
-        "exam_name",
-    )
-    list_filter = ("release_date", "examination_date")
+    list_display = ("post", "issuing_authority", "exam_name", "card_status", "release_date", "available_until")
+    search_fields = ("post__title_en", "post__slug", "issuing_authority", "exam_name", "exam_center_name")
+    list_filter = ("card_status", "release_date", "examination_date", "available_from", "available_until")
 
 
 @admin.register(ResultDetails)
 class ResultDetailsAdmin(PostDetailAdmin):
-    list_display = ("post", "result_type", "examination_name", "result_date")
-    list_filter = ("result_type", "result_date")
+    list_display = ("post", "result_type", "result_status", "examination_name", "result_date")
+    list_filter = ("result_type", "result_status", "result_date")
     search_fields = ("post__title_en", "post__slug", "examination_name")
 
 

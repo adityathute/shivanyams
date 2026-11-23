@@ -7,6 +7,7 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import "./PostCommentsSection.css";
+import { getCommentModerationIssue } from "./comment-moderation";
 
 type Reaction = "like" | "dislike" | null;
 
@@ -163,6 +164,8 @@ function CommentThread({
   const [contentCanExpand, setContentCanExpand] = useState(false);
   const commentTextRef = useRef<HTMLParagraphElement>(null);
   const replyCount = item.replies?.length || 0;
+  const replyModerationIssue = getCommentModerationIssue(replyDraft);
+  const editModerationIssue = getCommentModerationIssue(editDraft);
   const repliesExpanded = visibleReplies > 0;
   const visibleReplyItems = item.replies?.slice(0, visibleReplies) || [];
 
@@ -209,10 +212,11 @@ function CommentThread({
           {editTarget === item.id ? (
             <div className="portal-comment-edit-form">
               <Textarea value={editDraft} onChange={(event) => onEditDraftChange(event.target.value)} rows={3} maxLength={item.parent ? 250 : 500} fullWidth size="sm" autoFocus />
+              {editModerationIssue ? <p className="portal-comment-moderation-warning" role="alert">{editModerationIssue}</p> : null}
               <div className="portal-comment-edit-footer">
                 <span>{editDraft.length}/{item.parent ? 250 : 500}</span>
                 <Button type="button" size="sm" variant="outline" disabled={editing} onClick={onCancelEdit}>Cancel</Button>
-                <Button type="button" size="sm" variant="primary" disabled={!editDraft.trim() || editDraft.trim() === item.content.trim() || editing} onClick={onSaveEdit}>{editing ? "Saving..." : "Save"}</Button>
+                <Button type="button" size="sm" variant="primary" disabled={!editDraft.trim() || editDraft.trim() === item.content.trim() || Boolean(editModerationIssue) || editing} onClick={onSaveEdit}>{editing ? "Saving..." : "Save"}</Button>
               </div>
             </div>
           ) : (
@@ -287,10 +291,11 @@ function CommentThread({
       {replyTarget === item.id ? (
         <div className="portal-comment-inline-reply">
           <Textarea value={replyDraft} onChange={(event) => onReplyDraftChange(event.target.value)} placeholder={`Reply to ${formatAuthorName(item.author_name || "this comment")}...`} rows={2} maxLength={250} fullWidth size="sm" autoFocus />
+          {replyModerationIssue ? <p className="portal-comment-moderation-warning" role="alert">{replyModerationIssue}</p> : null}
           <div className="portal-comment-inline-reply-footer">
             <span>{replyDraft.length}/250</span>
             <Button type="button" size="sm" variant="outline" disabled={submitting} onClick={onCancelReply}>Cancel</Button>
-            <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={onSubmitReply}>Reply</Button>
+            <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || Boolean(replyModerationIssue) || submitting} onClick={onSubmitReply}>Reply</Button>
           </div>
         </div>
       ) : null}
@@ -363,6 +368,9 @@ export function PostCommentsSection({ postId, language }: Props) {
   const [editDraft, setEditDraft] = useState("");
   const [editing, setEditing] = useState(false);
   const currentUserId = String(user?.id ?? "");
+  const draftModerationIssue = getCommentModerationIssue(draft);
+  const replyModerationIssue = getCommentModerationIssue(replyDraft);
+  const editModerationIssue = getCommentModerationIssue(editDraft);
 
   const loadComments = useCallback(async () => {
     setLoading(true);
@@ -392,7 +400,7 @@ export function PostCommentsSection({ postId, language }: Props) {
 
   async function postComment(content: string, parentId: number | null) {
     const trimmed = content.trim();
-    if (!trimmed || submitting || replySubmitting) return;
+    if (!trimmed || getCommentModerationIssue(trimmed) || submitting || replySubmitting) return;
     const setRequestSubmitting = parentId ? setReplySubmitting : setSubmitting;
     setRequestSubmitting(true);
     setError("");
@@ -420,7 +428,7 @@ export function PostCommentsSection({ postId, language }: Props) {
   }
 
   function submitComment(content: string, parentId: number | null) {
-    if (!content.trim() || submitting || replySubmitting) return;
+    if (!content.trim() || getCommentModerationIssue(content) || submitting || replySubmitting) return;
     if (!user) {
       openLogin(() => { void postComment(content, parentId); });
       return;
@@ -458,7 +466,7 @@ export function PostCommentsSection({ postId, language }: Props) {
   }
 
   async function saveCommentEdit() {
-    if (!editTarget || !editDraft.trim() || editing) return;
+    if (!editTarget || !editDraft.trim() || getCommentModerationIssue(editDraft) || editing) return;
     setEditing(true);
     try {
       const response = await authenticatedFetch(getPortalApiUrl(`comments/${editTarget}/`), {
@@ -572,9 +580,10 @@ export function PostCommentsSection({ postId, language }: Props) {
 
       <div className="portal-comment-composer">
         <Textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a comment..." rows={3} maxLength={500} fullWidth size="md" />
+        {draftModerationIssue ? <p className="portal-comment-moderation-warning" role="alert">{draftModerationIssue}</p> : null}
         <div className="portal-comment-composer-footer">
           <span>{draft.length}/500</span>
-          <Button size="sm" variant="primary" disabled={!draft.trim() || submitting || replySubmitting} onClick={() => void submitComment(draft, null)}>
+          <Button size="sm" variant="primary" disabled={!draft.trim() || Boolean(draftModerationIssue) || submitting || replySubmitting} onClick={() => void submitComment(draft, null)}>
             {submitting ? "Posting..." : "Post comment"}
           </Button>
         </div>
@@ -669,10 +678,11 @@ export function PostCommentsSection({ postId, language }: Props) {
               </button>
             </div>
             <Textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} placeholder="Write your reply..." rows={4} maxLength={250} fullWidth size="sm" autoFocus />
+            {replyModerationIssue ? <p className="portal-comment-moderation-warning" role="alert">{replyModerationIssue}</p> : null}
             <div className="portal-comment-reply-modal-footer">
               <span>{replyDraft.length}/250</span>
               <Button type="button" size="sm" variant="outline" disabled={replySubmitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
-              <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || replySubmitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
+              <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || Boolean(replyModerationIssue) || replySubmitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
                 {replySubmitting ? "Sending..." : "Reply"}
               </Button>
             </div>
@@ -716,6 +726,7 @@ export function PostCommentsSection({ postId, language }: Props) {
               size="sm"
               autoFocus
             />
+            {editModerationIssue ? <p className="portal-comment-moderation-warning" role="alert">{editModerationIssue}</p> : null}
             <div className="portal-comment-reply-modal-footer">
               <span>{editDraft.length}/{editTargetItem.parent ? 250 : 500}</span>
               <Button type="button" size="sm" variant="outline" disabled={editing} onClick={() => { setEditTarget(null); setEditDraft(""); }}>Cancel</Button>
@@ -723,7 +734,7 @@ export function PostCommentsSection({ postId, language }: Props) {
                 type="button"
                 size="sm"
                 variant="primary"
-                disabled={!editDraft.trim() || editDraft.trim() === editTargetItem.content.trim() || editing}
+                disabled={!editDraft.trim() || editDraft.trim() === editTargetItem.content.trim() || Boolean(editModerationIssue) || editing}
                 onClick={() => void saveCommentEdit()}
               >
                 {editing ? "Saving..." : "Save"}

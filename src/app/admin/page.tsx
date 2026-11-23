@@ -688,6 +688,7 @@ export default function AdminPage() {
     setLikeAnalyticsPage(1);
     setCommentsAnalyticsPage(1);
     setRepliesAnalyticsPage(1);
+    setReportsAnalyticsPage(1);
     setReactionPostsOnly(show);
     if (!show) return;
 
@@ -1476,7 +1477,7 @@ export default function AdminPage() {
           className="admin-analytics-overlay"
           role="presentation"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) { setAnalyticsType(null); setSelectedLikeComment(null); }
+            if (event.target === event.currentTarget) { setAnalyticsType(null); setSelectedLikeComment(null); setSelectedReport(null); }
           }}
         >
           <section
@@ -1617,6 +1618,7 @@ export default function AdminPage() {
                   setSelectedAnalyticsPath(null);
                   setAnalyticsEvents([]);
                   setSelectedLikeComment(null);
+                  setSelectedReport(null);
                 }}
                 aria-label="Close"
                 title="Close analytics"
@@ -2246,6 +2248,8 @@ export default function AdminPage() {
                       ? analyticsEvents.length + " recent view events"
                       : analyticsType === "likes"
                         ? formatCompactNumber(likeAnalyticsEvents.length) + " like events"
+                        : analyticsType === "reports"
+                          ? formatCompactNumber(reportAnalyticsEvents.length) + " reports"
                         : analyticsType === "dislikes"
                           ? formatCompactNumber(likeAnalyticsEvents.length) + " dislike events"
                           : analyticsType === "comments"

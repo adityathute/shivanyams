@@ -2135,9 +2135,9 @@
   width: 100%;
 }
 .admin-report-posts-summary-table th:first-child,
-.admin-report-posts-summary-table td:first-child { width: 38%; }
+.admin-report-posts-summary-table td:first-child { width: 32%; }
 .admin-report-posts-summary-table th:not(:first-child),
-.admin-report-posts-summary-table td:not(:first-child) { width: 15.5%; }
+.admin-report-posts-summary-table td:not(:first-child) { width: 13.6%; }
 .admin-report-posts-summary-table th,
 .admin-report-posts-summary-table td {
   padding: 9px 8px;

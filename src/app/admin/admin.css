@@ -326,6 +326,17 @@
   font-size: 10px;
   margin-top: 3px;
 }
+.admin-post-status-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+.admin-status-unpublished {
+  border: 1px solid #e6a23c;
+  background: #fff5df;
+  color: #946200;
+}
 .admin-status {
   display: inline-flex;
   border-radius: 30px;

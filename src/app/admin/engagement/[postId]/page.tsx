@@ -81,7 +81,7 @@ function isContentColumn(column: string) {
 
 function getColumnWidth(column: string, rows: DetailRow[]) {
   const key = column.toLowerCase();
-  if (isContentColumn(column)) return 440;
+  if (isContentColumn(column)) return 520;
   const values = rows.map((row) => String(row[column] ?? ""));
   const longest = Math.min(36, Math.max(column.length, ...values.map((value) => value.length)));
   if (/email/.test(key)) return Math.min(260, Math.max(190, longest * 7 + 36));

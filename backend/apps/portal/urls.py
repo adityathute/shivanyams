@@ -21,6 +21,8 @@ from .views import (
     AdminPostEngagement,
     TrackPostView,
     AdminPostReview,
+    AdminPostVersions,
+    AdminPostVersionPublish,
     AdminSlugAvailability,
     AdminOrganizationTypes,
     AdminDashboardStats,
@@ -103,6 +105,8 @@ urlpatterns = [
     # Admin content management
     path("admin/content/slug-availability/", AdminSlugAvailability.as_view(), name="admin-slug-availability"),
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
+    path("admin/content/<int:post_id>/versions/", AdminPostVersions.as_view(), name="admin-post-versions"),
+    path("admin/content/<int:post_id>/versions/<int:version_id>/publish/", AdminPostVersionPublish.as_view(), name="admin-post-version-publish"),
     path(
         "admin/content/<int:post_id>/review/",
         AdminPostReview.as_view(),

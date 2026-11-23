@@ -26,14 +26,20 @@ def _load_blocked_terms():
     except (OSError, json.JSONDecodeError):
         return set()
 
-    languages = config.get("languages", {})
-    return {
-        _normalize_word(word)
-        for words in languages.values()
-        if isinstance(words, list)
-        for word in words
-        if isinstance(word, str) and word.strip()
-    }
+    dictionaries = [config.get("languages", {}), config.get("categories", {})]
+    blocked = set()
+    for dictionary in dictionaries:
+        if not isinstance(dictionary, dict):
+            continue
+        for words in dictionary.values():
+            if not isinstance(words, list):
+                continue
+            for word in words:
+                if isinstance(word, str) and word.strip():
+                    normalized = _normalize_word(word)
+                    if normalized:
+                        blocked.add(normalized)
+    return blocked
 
 
 BLOCKED_TERMS = _load_blocked_terms()

@@ -2923,7 +2923,8 @@
 
 /* Rounded table frame is scoped only to the individual share-post activity table. */
 .admin-analytics-modal .admin-share-post-table-wrap {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--admin-border, #e5e7eb);
   border-radius: 12px;
   background: var(--admin-card, #fff);

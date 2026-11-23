@@ -701,6 +701,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       headers,
       body: JSON.stringify({
         visitor_id: visitorId,
+        event_id: typeof window.crypto?.randomUUID === "function" ? window.crypto.randomUUID() : `pv-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         language,
         device,
         referrer_url: document.referrer,
@@ -903,6 +904,27 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               ) : post ? (
                 <>
                 <article className="portal-post-card">
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                      __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Article",
+                        headline: post.title,
+                        description: post.description || undefined,
+                        image: post.image || undefined,
+                        datePublished: post.date || undefined,
+                        dateModified: post.updated_date || post.date || undefined,
+                        mainEntityOfPage: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\\/+$/, "")}/${category}/${slug}`,
+                        publisher: {
+                          "@type": "Organization",
+                          name: "ShivanyaMS",
+                          url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com",
+                          logo: { "@type": "ImageObject", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\\/+$/, "")}/logo.png` },
+                        },
+                      }).replace(/</g, "\\u003c"),
+                    }}
+                  />
                   <div className="portal-post-compact-header">
                     <div className="portal-post-meta portal-post-meta-compact">
                       <span>{post.category || label}</span>

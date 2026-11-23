@@ -1,4 +1,4 @@
- .admin-engagement-stats {
+.admin-engagement-stats {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   width: 100%;
@@ -266,4 +266,25 @@
   .admin-engagement-data-table { min-width: 680px; }
   .admin-engagement-table-footer { align-items: flex-start; }
   .admin-engagement-pagination { flex-wrap: wrap; }
+}
+
+
+.admin-engagement-header-actions {
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-engagement-header-actions .admin-secondary-button,
+.admin-engagement-header-actions .admin-refresh-button {
+  min-height: 40px;
+  gap: 8px;
+  padding: 10px 14px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.admin-engagement-header-actions .admin-secondary-button svg,
+.admin-engagement-header-actions .admin-refresh-button svg {
+  display: block;
+  flex: 0 0 auto;
 }

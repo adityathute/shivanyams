@@ -253,12 +253,20 @@
   row-gap: 6px;
 }
 .portal-comment-actions button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 22px;
   padding: 1px 0;
   border: 0;
   background: transparent;
   color: var(--muted-foreground, #9298a2);
   font: inherit;
   font-size: 0.74rem;
+  line-height: 1.2;
+  vertical-align: middle;
   cursor: pointer;
   transition: color 0.16s ease;
 }
@@ -1053,6 +1061,14 @@
 }
 
 .portal-comment-actions button.portal-comment-edit-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 22px;
+  padding: 1px 0;
+  line-height: 1.2;
+  vertical-align: middle;
   color: var(--muted-foreground, #9298a2);
 }
 

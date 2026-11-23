@@ -112,7 +112,7 @@ export default function AdminPostEngagementPage() {
     const details = payload.details;
     const reactionRows = (reaction: "like" | "dislike") => [
       ...details.post_reactions.filter((row) => row.reaction === reaction).map((row) => ({ ...row, target: "Post", activity: reaction === "like" ? "Like" : "Dislike" })),
-      ...details.comment_reactions.filter((row) => row.reaction === reaction).map((row) => ({ ...row, target: "Comment #" + row.comment_id, activity: reaction === "like" ? "Like" : "Dislike" })),
+      ...details.comment_reactions.filter((row) => row.reaction === reaction).map((row) => ({ ...row, target: "Comment", activity: reaction === "like" ? "Like" : "Dislike" })),
     ];
 
     if (selected === "likes") return reactionRows("like");
@@ -134,7 +134,9 @@ export default function AdminPostEngagementPage() {
   if (loading || !isAdmin) return null;
 
   const selectedLabel = statLabels.find((item) => item.key === selected)?.label || "Details";
-  const columns = selectedRows.length ? Array.from(new Set(selectedRows.flatMap((row) => Object.keys(row)))) : [];
+  const columns = selectedRows.length
+    ? Array.from(new Set(selectedRows.flatMap((row) => Object.keys(row)))).filter((column) => column.toLowerCase() !== "id" && !column.toLowerCase().endsWith("_id"))
+    : [];
   const allStatsTotal = payload
     ? payload.likes.total + payload.dislikes.total + payload.comments.total + payload.shares + payload.saved + payload.subscribers + payload.reports
     : 0;

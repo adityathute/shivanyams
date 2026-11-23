@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import {
-  AnimatedNumber,
   ConfirmDialog,
   IconButton,
   ArrowLeftIcon,
@@ -23,7 +22,7 @@ import {
   categoryConfig,
   normalizeCategorySlug,
 } from "../../components/portal/category/CategoryGrid";
-import { adminFetch } from "./admin-utils";
+import { adminFetch, formatCompactNumber } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
 import "./admin.css";
@@ -86,7 +85,7 @@ function AnalyticsPagination({
   return (
     <div className={`admin-table-footer admin-analytics-pagination ${className || ""}`.trim()}>
       <span>
-        Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {total.toLocaleString("en-IN")}
+        Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {formatCompactNumber(total)}
       </span>
       <div className="admin-pagination">
         <label>
@@ -161,16 +160,6 @@ function statusLabel(status: string) {
   return status
     .replaceAll("_", " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-const compactNumberFormat = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-  maximumFractionDigits: 1,
-});
-
-function formatCompactNumber(value: number | undefined) {
-  return compactNumberFormat.format(Number(value) || 0);
 }
 
 export default function AdminPage() {
@@ -796,17 +785,14 @@ export default function AdminPage() {
                           </small>
                         </span>
                         <strong>
-                          <AnimatedNumber
-                            key={`${item.label}-${statsAnimationKey}`}
-                            value={item.value}
-                          />
+                          {formatCompactNumber(item.value)}
                         </strong>
                       </button>
                     ) : (
                       <>
                         <span>{item.label}</span>
                         <strong>
-                          <AnimatedNumber value={item.value} />
+                          {formatCompactNumber(item.value)}
                         </strong>
                       </>
                     )}
@@ -824,10 +810,7 @@ export default function AdminPage() {
                   >
                     <span>{item.label}</span>
                     <strong>
-                      <AnimatedNumber
-                        key={`engagement-${item.label}-${statsAnimationKey}`}
-                        value={item.value}
-                      />
+                      {formatCompactNumber(item.value)}
                     </strong>
                   </article>
                 ))}
@@ -1099,10 +1082,10 @@ export default function AdminPage() {
             <span>
               Showing {sortedPosts.length ? (page - 1) * pageSize + 1 : 0}–
               {Math.min(page * pageSize, sortedPosts.length)} of{" "}
-              {sortedPosts.length} filtered posts ·{" "}
-              {posts.filter((post) => post.is_active !== false).length} active ·{" "}
-              {posts.filter((post) => post.is_active === false).length} inactive
-              · {posts.length} total
+              {formatCompactNumber(sortedPosts.length)} filtered posts ·{" "}
+              {formatCompactNumber(posts.filter((post) => post.is_active !== false).length)} active ·{" "}
+              {formatCompactNumber(posts.filter((post) => post.is_active === false).length)} inactive
+              · {formatCompactNumber(posts.length)} total
             </span>
             <div className="admin-pagination">
               <select
@@ -1218,8 +1201,8 @@ export default function AdminPage() {
                     IP: {selectedVisitor.ip_address || "Not available"}
                   </span>
                   <span>
-                    {selectedVisitor.total_pages} pages ·{" "}
-                    {selectedVisitor.total_views} total views
+                    {formatCompactNumber(selectedVisitor.total_pages)} pages ·{" "}
+                    {formatCompactNumber(selectedVisitor.total_views)} total views
                   </span>
                   <span>
                     First visit:{" "}
@@ -1256,7 +1239,7 @@ export default function AdminPage() {
                               {item.path}
                             </a>
                           </td>
-                          <td>{item.views.toLocaleString("en-IN")}</td>
+                          <td>{formatCompactNumber(item.views)}</td>
                           <td>
                             {item.last_viewed
                               ? new Date(item.last_viewed).toLocaleString()
@@ -1356,9 +1339,9 @@ export default function AdminPage() {
                                 {item.path}
                               </button>
                             </td>
-                            <td>{item.views.toLocaleString("en-IN")}</td>
+                            <td>{formatCompactNumber(item.views)}</td>
                             <td>
-                              {item.unique_visitors.toLocaleString("en-IN")}
+                              {formatCompactNumber(item.unique_visitors)}
                             </td>
                             <td>
                               {item.last_viewed
@@ -1419,8 +1402,8 @@ export default function AdminPage() {
                         <td>{visitor.ip_address || "—"}</td>
                         <td>{visitor.browser || "Unknown"}</td>
                         <td>{visitor.device}</td>
-                        <td>{visitor.total_pages}</td>
-                        <td>{visitor.total_views}</td>
+                        <td>{formatCompactNumber(visitor.total_pages)}</td>
+                        <td>{formatCompactNumber(visitor.total_views)}</td>
                         <td>{visitor.language || "—"}</td>
                         <td>{new Date(visitor.first_seen).toLocaleString()}</td>
                         <td>{new Date(visitor.last_seen).toLocaleString()}</td>
@@ -1444,12 +1427,12 @@ export default function AdminPage() {
             <footer>
               <span>
                 {selectedVisitor
-                  ? visitorPages.length + " pages visited"
+                  ? formatCompactNumber(visitorPages.length) + " pages visited"
                   : selectedAnalyticsPath
                     ? analyticsEvents.length + " recent view events"
                     : analyticsType === "views"
-                      ? analyticsPages.length + " pages tracked"
-                      : analyticsVisitors.length + " unique browsers/devices"}
+                      ? formatCompactNumber(analyticsPages.length) + " pages tracked"
+                      : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
               </span>
             </footer>
           </section>

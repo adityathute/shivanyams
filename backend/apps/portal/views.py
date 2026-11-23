@@ -553,7 +553,8 @@ class NewsletterSubscribe(APIView):
                 subscription = NewsletterSubscription.objects.select_for_update().get(pk=subscription.pk)
                 was_active = subscription.is_active
                 if not was_active:
-                    subscription.user_auth_id = user_auth_id
+                    if user_auth_id:
+                        subscription.user_auth_id = user_auth_id
                     subscription.language = language
                     subscription.is_active = True
                     subscription.save(update_fields=["user_auth_id", "language", "is_active", "updated_at"])
@@ -1180,10 +1181,6 @@ class AdminPostEngagement(APIView):
                     "auth_user_id", "full_name"
                 ):
                     user_names.setdefault(visit["auth_user_id"], visit["full_name"])
-                for subscription in NewsletterSubscription.objects.filter(
-                    user_auth_id__in=auth_ids
-                ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
-                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
 
             for row in details["post_reactions"] + details["comment_reactions"] + details["shares"] + details["saved"]:
                 auth_id = str(row.get("user_auth_id") or "")
@@ -1742,7 +1739,15 @@ class AdminDashboardStats(APIView):
 
         if reaction_filter == "subscribers":
             subscriptions = list(
-                NewsletterSubscription.objects.filter(is_active=True).order_by("-created_at")
+                NewsletterSubscription.objects.filter(is_active=True)
+                .prefetch_related(Prefetch(
+                    "events",
+                    queryset=NewsletterSubscriptionEvent.objects.filter(
+                        event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED
+                    ).order_by("-created_at"),
+                    to_attr="subscribe_events",
+                ))
+                .order_by("-created_at")
             )
             auth_ids = {item.user_auth_id for item in subscriptions if item.user_auth_id}
             user_names = {}
@@ -1766,7 +1771,7 @@ class AdminDashboardStats(APIView):
                 "id": item.id,
                 "full_name": user_names.get(item.user_auth_id, ""),
                 "email": item.email,
-                "subscribed_at": item.created_at,
+                "subscribed_at": item.subscribe_events[0].created_at if item.subscribe_events else item.created_at,
                 "visitor_id": visitor_ids.get(item.user_auth_id, ""),
             } for item in subscriptions]
             total_subscribe_events = NewsletterSubscriptionEvent.objects.filter(
@@ -1795,8 +1800,6 @@ class AdminDashboardStats(APIView):
                 for subscription in NewsletterSubscription.objects.filter(
                     user_auth_id__in=auth_ids
                 ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
-                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
-                for subscription in NewsletterSubscription.objects.filter(user_auth_id__in=auth_ids).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
             rows = []
             for report in post_reports:
@@ -1902,12 +1905,6 @@ class AdminDashboardStats(APIView):
                 for subscription in NewsletterSubscription.objects.filter(
                     user_auth_id__in=auth_ids
                 ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
-                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
-                for subscription in NewsletterSubscription.objects.filter(
-                    user_auth_id__in=auth_ids
-                ).exclude(email="").order_by("-updated_at").values(
-                    "user_auth_id", "email"
-                ):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
 
             rows = []

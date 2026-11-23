@@ -2964,6 +2964,43 @@
   font-size: 14px;
   font-weight: 750;
 }
+
+/* All-post sharing chart heading and its compact modal-style close control. */
+.admin-analytics-modal .admin-share-chart-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.admin-analytics-modal .admin-share-chart-heading h3 {
+  min-width: 0;
+  margin: 0;
+}
+.admin-analytics-modal .admin-share-chart-close {
+  display: inline-flex;
+  flex: 0 0 32px;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+}
+.admin-analytics-modal .admin-share-chart-close:hover {
+  background: #ffe4e6 !important;
+  color: #e11d48 !important;
+}
+.admin-analytics-modal .admin-share-chart-close svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.8;
+}
 .admin-analytics-modal .admin-share-post-chart-section .shivanya-bar-chart {
   width: 100%;
   min-width: 0;

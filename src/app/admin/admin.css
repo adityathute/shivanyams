@@ -1651,3 +1651,14 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Analytics tables use square corners in Website Visitors, Website Views and Portal Users. */
+.admin-analytics-modal .admin-analytics-table-wrap,
+.admin-analytics-modal .admin-analytics-table,
+.admin-analytics-modal .admin-analytics-table thead,
+.admin-analytics-modal .admin-analytics-table tbody,
+.admin-analytics-modal .admin-analytics-table tr,
+.admin-analytics-modal .admin-analytics-table th,
+.admin-analytics-modal .admin-analytics-table td {
+  border-radius: 0 !important;
+}

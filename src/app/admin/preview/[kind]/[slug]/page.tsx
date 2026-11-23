@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { API_URL } from "../../../../../components/portal/category/CategoryGrid";
 import {
@@ -38,8 +38,16 @@ const ITEM_TYPES: Record<string, ItemType> = {
   tools: "tool",
 };
 
+type VersionPreview = {
+  id: number;
+  version_number: number;
+  payload?: Partial<ApiPost>;
+};
+
 export default function AdminPostPreviewPage() {
   const params = useParams<{ kind: string; slug: string }>();
+  const searchParams = useSearchParams();
+  const versionId = searchParams.get("version");
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
@@ -65,34 +73,63 @@ export default function AdminPostPreviewPage() {
     const controller = new AbortController();
     setLoading(true);
     setError("");
+    setPreviewItem(null);
 
-    adminFetch(
-      `${API_URL}/admin/content/${apiKind}/${encodeURIComponent(params.slug)}/`,
-      { cache: "no-store", signal: controller.signal },
-    )
-      .then(async (response) => {
-        const payload = await response.json().catch(() => ({}));
+    async function loadPreview() {
+      try {
+        const response = await adminFetch(
+          `${API_URL}/admin/content/${apiKind}/${encodeURIComponent(params.slug)}/`,
+          { cache: "no-store", signal: controller.signal },
+        );
+        const basePost = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(payload.detail || "Unable to load this post preview.");
+          throw new Error(basePost.detail || "Unable to load this post preview.");
         }
-        return payload as ApiPost;
-      })
-      .then((payload) => {
+
+        let post = basePost as ApiPost;
+        if (versionId) {
+          const postId = (basePost as { id?: number }).id;
+          if (!postId) throw new Error("Unable to identify this post's version history.");
+
+          const versionsResponse = await adminFetch(
+            `${API_URL}/admin/content/${postId}/versions/`,
+            { cache: "no-store", signal: controller.signal },
+          );
+          const versions = await versionsResponse.json().catch(() => []);
+          if (!versionsResponse.ok || !Array.isArray(versions)) {
+            throw new Error("Unable to load version history for this post.");
+          }
+
+          const selectedVersion = (versions as VersionPreview[]).find(
+            (version) => String(version.id) === versionId,
+          );
+          if (!selectedVersion?.payload) {
+            throw new Error("The selected version preview is unavailable.");
+          }
+
+          post = {
+            ...post,
+            ...selectedVersion.payload,
+            id: post.id,
+            slug: post.slug,
+          } as ApiPost;
+        }
+
         if (!controller.signal.aborted) {
-          setPreviewItem(mapPost(payload, itemType));
+          setPreviewItem(mapPost(post, itemType));
         }
-      })
-      .catch((cause) => {
+      } catch (cause) {
         if (!controller.signal.aborted) {
           setError(cause instanceof Error ? cause.message : "Unable to load this post preview.");
         }
-      })
-      .finally(() => {
+      } finally {
         if (!controller.signal.aborted) setLoading(false);
-      });
+      }
+    }
 
+    void loadPreview();
     return () => controller.abort();
-  }, [authLoading, isAdmin, params.kind, params.slug, router]);
+  }, [authLoading, isAdmin, params.kind, params.slug, router, versionId]);
 
   if (authLoading || !isAdmin) return null;
 
@@ -111,9 +148,17 @@ export default function AdminPostPreviewPage() {
   }
 
   return (
-    <PortalPostDetail
-      category={params.kind as CategorySlug}
-      previewItem={previewItem}
-    />
+    <>
+      {versionId && (
+        <div className="admin-version-preview-banner">
+          <span>Previewing saved version</span>
+          <button type="button" onClick={() => router.back()}>Back to editor</button>
+        </div>
+      )}
+      <PortalPostDetail
+        category={params.kind as CategorySlug}
+        previewItem={previewItem}
+      />
+    </>
   );
 }

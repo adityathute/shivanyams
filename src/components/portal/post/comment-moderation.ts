@@ -19,14 +19,20 @@ const URL_PATTERN =
   /(?<![\w@])(?:https?:\/\/|ftp:\/\/|www\.)[^\s<>]+|(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:com|in|org|net|edu|gov|co|io|info|biz|app|dev|me|ai|uk|us|xyz|online|site|store)(?:\b[^\s<>]*)?/gi;
 
 function normalize(value: string) {
-  return value
+  let normalized = value
     .normalize("NFKC")
     .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[。．｡]/g, ".")
     .toLowerCase()
     .replace(/\[\s*dot\s*\]|\(\s*dot\s*\)|\{\s*dot\s*\}/g, ".")
     .replace(/\s+dot\s+/g, ".")
     .replace(/\bhxxps?\b/g, "https")
     .replace(/\s*\.\s*/g, ".");
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try { normalized = decodeURIComponent(normalized); } catch { break; }
+  }
+  return normalized
+    .replace(/&period;|&#0*46;|&#x0*2e;/gi, ".");
 }
 
 function isAllowedHost(hostname: string) {
@@ -55,11 +61,14 @@ export function getCommentModerationIssue(value: string): string | null {
     return "Please remove abusive or insulting language.";
   }
 
-  const compact = normalized.replace(/[^\p{L}\p{N}]/gu, "");
-  for (const term of BLOCKED_TERMS) {
-    const compactTerm = term.replace(/[^\p{L}\p{N}]/gu, "");
-    if (compactTerm.length >= 5 && compact.includes(compactTerm)) {
-      return "Please remove abusive or insulting language.";
+  for (let start = 0; start < tokens.length; start += 1) {
+    let combined = "";
+    for (const token of tokens.slice(start, start + 8)) {
+      combined += token;
+      if (BLOCKED_TERMS.has(combined)) {
+        return "Please remove abusive or insulting language.";
+      }
+      if (![...BLOCKED_TERMS].some((term) => term.startsWith(combined))) break;
     }
   }
 

@@ -1425,7 +1425,15 @@ export default function PostEditor({
     }
     if (typeof result.slug === "string") currentSlugRef.current = result.slug;
     if (typeof result.status === "string") setPostStatus(result.status);
-    lastSavedSnapshotRef.current = JSON.stringify(payload);
+    const savedSnapshot = JSON.stringify(payload);
+    lastSavedSnapshotRef.current = savedSnapshot;
+    // For a new post, successful autosave becomes the action baseline too.
+    // This keeps Draft / Save & Exit / Publish disabled until the next edit,
+    // matching the edit-post workflow.
+    if (!editing) {
+      actionSnapshotRef.current = savedSnapshot;
+      setActionBaselineReady(true);
+    }
     setAutosaveState("saved");
     return result as Record<string, unknown>;
   }

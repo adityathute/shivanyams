@@ -484,6 +484,11 @@ class PublicJobDiscovery(generics.ListAPIView):
                     raise ValidationError({parameter: "Use YYYY-MM-DD."})
                 queryset = queryset.filter(**{lookup: parsed})
 
+        posted_after = parse_date(str(params.get("posted_after", "")).strip()) if str(params.get("posted_after", "")).strip() else None
+        posted_before = parse_date(str(params.get("posted_before", "")).strip()) if str(params.get("posted_before", "")).strip() else None
+        if posted_after and posted_before and posted_after > posted_before:
+            raise ValidationError({"posted_before": "Posted-before date must be on or after posted-after date."})
+
         closing_within_days = params.get("closing_within_days")
         if closing_within_days not in (None, ""):
             try:

@@ -568,6 +568,7 @@ export default function AdminPage() {
   }
 
   function openLikesAnalytics() {
+    setSelectedLikeComment(null);
     setAnalyticsType("likes");
     setSelectedPost(null);
     setPostAnalyticsEvents([]);
@@ -1297,7 +1298,7 @@ export default function AdminPage() {
           className="admin-analytics-overlay"
           role="presentation"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setAnalyticsType(null);
+            if (event.target === event.currentTarget) { setAnalyticsType(null); setSelectedLikeComment(null); }
           }}
         >
           <section

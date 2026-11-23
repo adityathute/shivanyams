@@ -1476,7 +1476,7 @@ export default function AdminPage() {
                                     onClick={() => void openLikeComment(item, "reply")}
                                     aria-label="Open reply details"
                                   >
-                                    <span className="admin-analytics-like-content"><span className="admin-likes-inline-label">Reply: </span><span className="admin-likes-inline-text">{item.content}</span></span>
+                                    <span className="admin-analytics-like-content">{item.content}</span>
                                   </button>
                                 </div>
                               )}

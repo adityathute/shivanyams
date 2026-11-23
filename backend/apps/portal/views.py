@@ -191,6 +191,7 @@ class AdminTags(APIView):
         for keywords in Post.objects.values_list("meta_keywords", flat=True):
             if not isinstance(keywords, list):
                 continue
+            seen = set()
             for raw_tag in keywords:
                 if not isinstance(raw_tag, str):
                     continue
@@ -198,6 +199,9 @@ class AdminTags(APIView):
                 if not label:
                     continue
                 key = label.casefold()
+                if key in seen:
+                    continue
+                seen.add(key)
                 if key not in rows:
                     rows[key] = {"name": label, "count": 0}
                 rows[key]["count"] += 1

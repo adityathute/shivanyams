@@ -15,7 +15,8 @@ import {
   RefreshIcon,
   PlusIcon,
   GlobeIcon,
-  MessagesIcon
+  MessagesIcon,
+  TagIcon
 } from "shivanya-ui";
 import {
   API_URL,
@@ -620,6 +621,10 @@ export default function AdminPage() {
             <p>Manage posts, publishing status and website content.</p>
           </div>
           <div className="admin-top-actions admin-dashboard-header-actions">
+            <Link href="/tags" className="admin-secondary-button">
+              <TagIcon size={16} />
+              <span>Tags</span>
+            </Link>
             <Link href="/admin/comments" className="admin-secondary-button">
               <MessagesIcon size={16} />
               <span>Comments & reports</span>

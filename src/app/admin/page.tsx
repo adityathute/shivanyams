@@ -1803,7 +1803,7 @@ export default function AdminPage() {
                                     ) : "—"}
                                   </td>
                                   <td>{item.email}</td>
-                                  {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td>{dateTime}</td></> : <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>}
+                                  {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td>{dateTime}</td></> : <td>{dateTime}</td>}
                                 </tr>;
                               })}</tbody>
                             </table>

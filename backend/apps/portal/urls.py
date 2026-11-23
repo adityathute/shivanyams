@@ -6,6 +6,7 @@ from .views import (
     ImportantLinks,
     PublicContent,
     AdminContent,
+    AdminTags,
     SavedPosts,
     UnsavePost,
     NewsletterSubscribe,
@@ -103,6 +104,7 @@ urlpatterns = [
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management
+    path("admin/tags/", AdminTags.as_view(), name="admin-tags"),
     path("admin/content/slug-availability/", AdminSlugAvailability.as_view(), name="admin-slug-availability"),
     path("admin/content/<str:kind>/", admin_content_list, name="admin-content-list"),
     path("admin/content/<int:post_id>/versions/", AdminPostVersions.as_view(), name="admin-post-versions"),

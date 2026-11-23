@@ -1544,11 +1544,9 @@ export default function PostEditor({
           </div>
           <div className="post-editor-header-actions">
             {editing && <span className={`post-editor-status-badge post-editor-status-badge--${postStatus.toLowerCase().replaceAll("_", "-")}`}>{postStatus.replaceAll("_", " ")}</span>}
-            {editing && <div className="post-editor-publication-status">
-              {postStatus === "published" ? <>
-                {postVersions.some((item) => !item.is_published) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published).map((item) => item.version_number))}</span>}
-                <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></li>)}</ol></details>
-              </> : <strong>{postStatus.replaceAll("_", " ")}</strong>}
+            {editing && postStatus === "published" && <div className="post-editor-publication-status">
+              {postVersions.some((item) => !item.is_published) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published).map((item) => item.version_number))}</span>}
+              <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></li>)}</ol></details>
             </div>}
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />

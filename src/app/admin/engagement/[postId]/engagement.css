@@ -85,10 +85,10 @@
 .admin-engagement-details .admin-panel-heading,
 .admin-engagement-details .admin-panel-heading > div {
   min-width: 0;
-  text-align: center;
+  text-align: left;
 }
 
-.admin-engagement-details .admin-panel-heading p { text-align: center; }
+.admin-engagement-details .admin-panel-heading p { text-align: left; }
 
 .admin-engagement-empty {
   display: flex;
@@ -109,7 +109,7 @@
 .admin-engagement-table {
   width: 100%;
   min-width: 760px;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
 }
 
@@ -127,6 +127,13 @@
 .admin-engagement-table th {
   white-space: normal;
   text-transform: capitalize;
+}
+
+.admin-engagement-table th:first-child,
+.admin-engagement-table td:first-child {
+  width: 1%;
+  max-width: none;
+  white-space: nowrap;
 }
 
 .admin-engagement-table td { white-space: normal; }

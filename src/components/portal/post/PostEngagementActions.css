@@ -163,11 +163,28 @@
 }
 
 .portal-share-menu button:hover {
-  border-color: var(--border-color, #e2e8f0);
-  background: var(--surface-hover, #f1f5f9);
-  color: var(--accent, #2563eb);
-  transform: translateY(-1px);
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-primary, #26364b);
+  transform: none;
 }
+
+.portal-share-menu button svg {
+  flex: 0 0 auto;
+  color: var(--text-secondary, #64748b);
+  transition: color 150ms ease;
+}
+
+.portal-share-menu .portal-share-copy:hover svg { color: #64748b; }
+.portal-share-menu .portal-share-whatsapp:hover svg { color: #25D366; }
+.portal-share-menu .portal-share-facebook:hover svg { color: #1877F2; }
+.portal-share-menu .portal-share-telegram:hover svg { color: #229ED9; }
+.portal-share-menu .portal-share-x:hover svg { color: #111111; }
+.portal-share-menu .portal-share-threads:hover svg { color: #000000; }
+.portal-share-menu .portal-share-instagram:hover svg { color: #E4405F; }
+.portal-share-menu .portal-share-linkedin:hover svg { color: #0A66C2; }
+.portal-share-menu .portal-share-email:hover svg { color: #F97316; }
+.portal-share-menu .portal-share-more:hover svg { color: #64748b; }
 
 .portal-share-menu button:focus-visible {
   outline: 2px solid var(--accent, #2563eb);

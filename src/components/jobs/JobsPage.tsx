@@ -154,6 +154,7 @@ export function JobsPage() {
   const clearFilters = () => {
     setQuery(""); setRecruitmentType(""); setApplicationMode(""); setApplicationStatus("");
     setMinVacancies(""); setMaxVacancies(""); setClosingFrom(""); setClosingTo("");
+    setOrganizationType(""); setDepartment(""); setDesignation(""); setLocation(""); setState(""); setCountry("");
     setQualification(""); setExamMode(""); setSalaryMin(""); setSalaryMax("");
     setWorkCity(""); setWorkDistrict(""); setRemoteOnly(false);
     setHasNotification(""); setHasApplyLink(""); setMinPostVacancies("");

@@ -19,9 +19,9 @@ const organizationLabels: Record<string, Record<string, string>> = {
 };
 
 const copy = {
-  en: { eyebrow: "SHIVANYAMS • JOBS", title: "Related Jobs", description: "Browse published jobs matching this tag or organization.", count: "jobs found", loading: "Loading related jobs...", empty: "No published jobs were found for this selection." },
-  mr: { eyebrow: "SHIVANYAMS • नोकऱ्या", title: "संबंधित नोकऱ्या", description: "या टॅग किंवा संस्थेशी संबंधित प्रकाशित नोकऱ्या पहा.", count: "नोकऱ्या मिळाल्या", loading: "संबंधित नोकऱ्या लोड होत आहेत...", empty: "या निवडीसाठी प्रकाशित नोकऱ्या उपलब्ध नाहीत." },
-  hi: { eyebrow: "SHIVANYAMS • नौकरियां", title: "संबंधित नौकरियां", description: "इस टैग या संगठन से जुड़ी प्रकाशित नौकरियां देखें।", count: "नौकरियां मिलीं", loading: "संबंधित नौकरियां लोड हो रही हैं...", empty: "इस चयन के लिए कोई प्रकाशित नौकरी नहीं मिली।" },
+  en: { eyebrow: "SHIVANYAMS • DISCOVER", title: "Related Content", description: "Explore jobs, schemes and updates matching this tag.", count: "posts found", loading: "Loading related content...", empty: "No published content was found for this selection.", more: "Explore more tags" },
+  mr: { eyebrow: "SHIVANYAMS • शोधा", title: "संबंधित माहिती", description: "या टॅगशी संबंधित नोकऱ्या, योजना आणि अपडेट्स पहा.", count: "पोस्ट मिळाल्या", loading: "संबंधित माहिती लोड होत आहे...", empty: "या टॅगसाठी प्रकाशित माहिती उपलब्ध नाही.", more: "आणखी टॅग शोधा" },
+  hi: { eyebrow: "SHIVANYAMS • खोजें", title: "संबंधित सामग्री", description: "इस टैग से जुड़ी नौकरियाँ, योजनाएँ और अपडेट देखें।", count: "पोस्ट मिलीं", loading: "संबंधित सामग्री लोड हो रही है...", empty: "इस टैग के लिए कोई प्रकाशित सामग्री नहीं मिली।", more: "और टैग खोजें" },
 };
 
 function slugify(value: string) {
@@ -47,21 +47,40 @@ export function RelatedJobsPage() {
   const { language } = usePortalLanguage();
   const labels = copy[language];
 
-  const jobs = useMemo(() => data.items.filter((item) => {
-    if (item.type !== "job") return false;
-    if (filterType === "organization") return slugify(item.organization_type || "") === slug;
-    if (filterType === "tag") return (item.tags || []).some((tag) => slugify(tag) === slug);
+  const relatedItems = useMemo(() => data.items.filter((item) => {
+    if (filterType === "organization") {
+      return item.type === "job" && slugify(item.organization_type || "") === slug;
+    }
+    if (filterType === "tag") {
+      return (item.tags || []).some((tag) => slugify(tag) === slug);
+    }
     return false;
   }), [data.items, filterType, slug]);
 
+  const suggestedTags = useMemo(() => {
+    if (filterType !== "tag") return [];
+    const tagCounts = new Map<string, { label: string; count: number }>();
+    data.items.forEach((item) => {
+      (item.tags || []).forEach((tag) => {
+        const key = slugify(tag);
+        if (!key || key === slug) return;
+        const current = tagCounts.get(key);
+        tagCounts.set(key, { label: current?.label || tag.trim(), count: (current?.count || 0) + 1 });
+      });
+    });
+    return [...tagCounts.entries()]
+      .sort((a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label))
+      .slice(0, 12);
+  }, [data.items, filterType, slug]);
+
   const heading = useMemo(() => {
     if (filterType === "organization") {
-      const value = jobs[0]?.organization_type || "";
+      const value = relatedItems[0]?.organization_type || "";
       return localized(organizationLabels[value] || { en: value }, language) || slug.replaceAll("-", " ");
     }
-    const tag = jobs.flatMap((job) => job.tags || []).find((value) => slugify(value) === slug);
+    const tag = relatedItems.flatMap((item) => item.tags || []).find((value) => slugify(value) === slug);
     return tag || slug.replaceAll("-", " ");
-  }, [filterType, jobs, language, slug]);
+  }, [filterType, relatedItems, language, slug]);
 
   return (
     <div className="saved-page related-saved-page">
@@ -74,27 +93,33 @@ export function RelatedJobsPage() {
       <section className="saved-panel">
         <div className="saved-section-heading">
           <h2>{heading}</h2>
-          <span>{jobs.length} {labels.count}</span>
+          <span>{relatedItems.length} {labels.count}</span>
         </div>
 
         {data.loading ? (
           <div className="saved-empty-state saved-list-empty" role="status">
             {labels.loading}
           </div>
-        ) : jobs.length ? (
+        ) : relatedItems.length ? (
           <div className="saved-post-list">
-            {jobs.map((job) => {
-              const title = localized({ en: job.title_en || job.title, mr: job.title_mr, hi: job.title_hi }, language);
-              const summary = localized({ en: job.summary_en || job.description, mr: job.summary_mr, hi: job.summary_hi }, language);
+            {relatedItems.map((item) => {
+              const title = localized({ en: item.title_en || item.title, mr: item.title_mr, hi: item.title_hi }, language);
+              const summary = localized({ en: item.summary_en || item.description, mr: item.summary_mr, hi: item.summary_hi }, language);
+              const category = localized({ en: item.category_en || item.category, mr: item.category_mr, hi: item.category_hi }, language);
+              const hrefByType: Record<string, string> = {
+                job: "/jobs", scheme: "/schemes", examination: "/examination", exam: "/examination",
+                admit: "/admit-cards", result: "/results", guide: "/guides", video: "/videos", tool: "/tools",
+              };
+              const href = `${hrefByType[item.type] || "/"}/${item.slug || slugify(item.title)}`;
               return (
-                <article className="saved-post-row related-job-row" key={job.id}>
-                  <a className="saved-post-link" href={`/jobs/${job.slug || slugify(job.title)}`}>
-                    <span className="update-badge job">{job.category}</span>
+                <article className="saved-post-row related-job-row" key={`${item.type}-${item.id}`}>
+                  <a className="saved-post-link" href={href}>
+                    <span className={`update-badge ${item.type}`}>{category}</span>
                     <span className="saved-post-title">
                       {title}
                       {summary ? <small>{summary}</small> : null}
                     </span>
-                    <time>{formatDate(job.date, language)}</time>
+                    <time>{formatDate(item.date, language)}</time>
                   </a>
                 </article>
               );
@@ -104,6 +129,23 @@ export function RelatedJobsPage() {
           <div className="saved-empty-state saved-list-empty">{labels.empty}</div>
         )}
       </section>
+
+      {filterType === "tag" && suggestedTags.length > 0 && (
+        <section className="saved-panel related-tag-suggestions">
+          <div className="saved-section-heading">
+            <h2>{labels.more}</h2>
+            <span>{suggestedTags.length}</span>
+          </div>
+          <div className="related-tag-list">
+            {suggestedTags.map(([tagSlug, tag]) => (
+              <a className="related-tag-chip" href={`/jobs/related/tag/${tagSlug}`} key={tagSlug}>
+                <span>{tag.label}</span>
+                <small>{tag.count}</small>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

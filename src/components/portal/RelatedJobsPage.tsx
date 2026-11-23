@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
@@ -56,6 +56,9 @@ export function RelatedJobsPage() {
   const filterType = params.filterType || "tag";
   const slug = decodeURIComponent(params.slug || "");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+  const resultsPanelRef = useRef<HTMLElement | null>(null);
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
   const labels = copy[language];
@@ -76,6 +79,41 @@ export function RelatedJobsPage() {
     if (!category) return relatedItems;
     return relatedItems.filter((item) => (category.types as readonly string[]).includes(item.type));
   }, [relatedItems, filterType, selectedCategory]);
+
+  const pageCount = Math.max(1, Math.ceil(visibleItems.length / pageSize));
+  const paginatedItems = visibleItems.slice((page - 1) * pageSize, page * pageSize);
+  const firstItem = visibleItems.length ? (page - 1) * pageSize + 1 : 0;
+  const lastItem = Math.min(page * pageSize, visibleItems.length);
+
+  useEffect(() => {
+    const updatePageSize = () => {
+      const panel = resultsPanelRef.current;
+      if (!panel) return;
+      const top = panel.getBoundingClientRect().top;
+      const availableHeight = Math.max(160, window.innerHeight - top - 155);
+      const rowHeight = window.innerWidth <= 760 ? 94 : 78;
+      setPageSize(Math.max(1, Math.floor(availableHeight / rowHeight)));
+    };
+
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    const observer = typeof ResizeObserver !== "undefined" && resultsPanelRef.current
+      ? new ResizeObserver(updatePageSize)
+      : null;
+    if (observer && resultsPanelRef.current) observer.observe(resultsPanelRef.current);
+    return () => {
+      window.removeEventListener("resize", updatePageSize);
+      observer?.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedCategory, slug]);
+
+  useEffect(() => {
+    if (page > pageCount) setPage(pageCount);
+  }, [page, pageCount]);
 
   const suggestedTags = useMemo(() => {
     if (filterType !== "tag") return [];
@@ -155,7 +193,7 @@ export function RelatedJobsPage() {
             <button
               type="button"
               className={selectedCategory === "all" ? "selected" : ""}
-              onClick={() => setSelectedCategory("all")}
+              onClick={() => { setSelectedCategory("all"); setPage(1); }}
             >
               All <span>{relatedItems.length}</span>
             </button>
@@ -166,7 +204,7 @@ export function RelatedJobsPage() {
                   type="button"
                   key={category.label}
                   className={selectedCategory === category.label ? "selected" : ""}
-                  onClick={() => setSelectedCategory(category.label)}
+                  onClick={() => { setSelectedCategory(category.label); setPage(1); }}
                 >
                   {category.label} <span>{count}</span>
                 </button>
@@ -181,7 +219,7 @@ export function RelatedJobsPage() {
           </div>
         ) : visibleItems.length ? (
           <div className="saved-post-list">
-            {visibleItems.map((item) => {
+            {paginatedItems.map((item) => {
               const title = localized({ en: item.title_en || item.title, mr: item.title_mr, hi: item.title_hi }, language);
               const summary = localized({ en: item.summary_en || item.description, mr: item.summary_mr, hi: item.summary_hi }, language);
               const category = localized({ en: item.category_en || item.category, mr: item.category_mr, hi: item.category_hi }, language);
@@ -206,6 +244,17 @@ export function RelatedJobsPage() {
           </div>
         ) : (
           <div className="saved-empty-state saved-list-empty">{labels.empty}</div>
+        )}
+
+        {visibleItems.length > pageSize && (
+          <div className="related-content-pagination">
+            <span>Showing {firstItem}–{lastItem} of {visibleItems.length} posts</span>
+            <div className="related-content-pagination-controls">
+              <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
+              <span>Page {page} of {pageCount}</span>
+              <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>
+            </div>
+          </div>
         )}
       </section>
 

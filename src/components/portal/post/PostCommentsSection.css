@@ -1109,3 +1109,12 @@
 .portal-comment-moderation-warning[role="alert"] {
   display: block;
 }
+
+
+.portal-comment-actions button.portal-comment-delete-action {
+  color: #dc6b5f;
+}
+
+.portal-comment-actions button.portal-comment-delete-action:hover {
+  color: #b91c1c;
+}

@@ -37,6 +37,17 @@ type WebsiteAnalyticsPage = {
 };
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
+type LikeAnalyticsEvent = {
+  id: string;
+  target_type: "post" | "comment" | "reply";
+  post_id: number;
+  post_title: string;
+  post_slug: string;
+  content: string;
+  parent_content: string;
+  user_name: string;
+  created_at: string;
+};
 type WebsiteVisitorRow = {
   visitor_id: string;
   visitor_type: "user" | "anonymous";
@@ -199,6 +210,8 @@ export default function AdminPage() {
   const [postAnalyticsPages, setPostAnalyticsPages] = useState<PostAnalyticsPage[]>([]);
   const [selectedPost, setSelectedPost] = useState<PostAnalyticsPage | null>(null);
   const [postAnalyticsEvents, setPostAnalyticsEvents] = useState<PostViewEvent[]>([]);
+  const [likeAnalyticsEvents, setLikeAnalyticsEvents] = useState<LikeAnalyticsEvent[]>([]);
+  const [likeAnalyticsPage, setLikeAnalyticsPage] = useState(1);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsVisitors, setAnalyticsVisitors] = useState<
     WebsiteVisitorRow[]
@@ -549,6 +562,32 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  function openLikesAnalytics() {
+    setAnalyticsType("likes");
+    setSelectedPost(null);
+    setPostAnalyticsEvents([]);
+    setSelectedVisitor(null);
+    setVisitorPages([]);
+    setSelectedAnalyticsPath(null);
+    setAnalyticsEvents([]);
+    setLikeAnalyticsEvents([]);
+    setLikeAnalyticsPage(1);
+    setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/stats/?type=likes", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok)
+          throw new Error(`Unable to load likes analytics (${response.status}).`);
+        return response.json();
+      })
+      .then((payload: { results?: LikeAnalyticsEvent[] }) => {
+        setLikeAnalyticsEvents(payload.results ?? []);
+      })
+      .catch((err) =>
+        setError(err instanceof Error ? err.message : "Unable to load likes analytics."),
+      )
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openPostAnalytics() {
     setAnalyticsType("posts"); setSelectedPost(null); setSelectedVisitor(null); setSelectedAnalyticsPath(null);
     setAnalyticsPagesPage(1); setAnalyticsLoading(true);
@@ -841,7 +880,7 @@ export default function AdminPage() {
           ];
 
           const engagementItems = [
-            { label: "Likes", value: engagementStats.likes },
+            { label: "Likes", value: engagementStats.likes, analytics: "likes" as const },
             { label: "Dislikes", value: engagementStats.dislikes },
             { label: "Comments", value: engagementStats.comments },
             { label: "Replies", value: engagementStats.replies },
@@ -897,12 +936,26 @@ export default function AdminPage() {
                 {engagementItems.map((item) => (
                   <article
                     key={item.label}
-                    className="admin-stat-card admin-stat-posts"
+                    className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    <span>{item.label}</span>
-                    <strong>
-                      {formatCompactNumber(item.value)}
-                    </strong>
+                    {item.analytics === "likes" ? (
+                      <button
+                        type="button"
+                        onClick={openLikesAnalytics}
+                        aria-label="View likes details"
+                      >
+                        <span>
+                          {item.label}
+                          <small className="admin-stat-open-indicator" aria-hidden="true">↗</small>
+                        </span>
+                        <strong>{formatCompactNumber(item.value)}</strong>
+                      </button>
+                    ) : (
+                      <>
+                        <span>{item.label}</span>
+                        <strong>{formatCompactNumber(item.value)}</strong>
+                      </>
+                    )}
                   </article>
                 ))}
               </section>
@@ -1269,9 +1322,11 @@ export default function AdminPage() {
                       ? selectedPost.title + " (" + formatCompactNumber(postAnalyticsEvents.length) + " views)"
                       : selectedAnalyticsPath
                         ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
-                        : analyticsType === "posts"
-                          ? `Post Views (${formatCompactNumber(counts.views)})`
-                          : analyticsType === "drafts"
+                        : analyticsType === "likes"
+                          ? `Likes (${formatCompactNumber(likeAnalyticsEvents.length)})`
+                          : analyticsType === "posts"
+                            ? `Post Views (${formatCompactNumber(counts.views)})`
+                            : analyticsType === "drafts"
                             ? `Drafts (${formatCompactNumber(counts.drafts)})`
                             : analyticsType === "review"
                               ? `Pending review (${formatCompactNumber(counts.review)})`
@@ -1288,9 +1343,11 @@ export default function AdminPage() {
                       ? "Individual visits recorded for this post."
                       : selectedAnalyticsPath
                         ? "Individual visits recorded for this page."
-                        : analyticsType === "posts"
-                          ? "Select a post to inspect its individual views."
-                          : analyticsType === "drafts"
+                        : analyticsType === "likes"
+                          ? "Individual likes across posts, comments, and replies."
+                          : analyticsType === "posts"
+                            ? "Select a post to inspect its individual views."
+                            : analyticsType === "drafts"
                             ? "Draft posts saved but not yet submitted for review."
                             : analyticsType === "review"
                               ? "Posts waiting for an administrator to review."
@@ -1313,6 +1370,60 @@ export default function AdminPage() {
             </header>
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
+            ) : analyticsType === "likes" ? (
+              likeAnalyticsEvents.length === 0 ? (
+                <div className="admin-empty">No likes recorded yet.</div>
+              ) : (
+                <>
+                  <div className="admin-analytics-table-wrap">
+                    <table className="admin-analytics-table">
+                      <thead>
+                        <tr>
+                          <th>Liked item</th>
+                          <th>Post</th>
+                          <th>Content</th>
+                          <th>Liked by</th>
+                          <th>Liked at</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {likeAnalyticsEvents.slice((likeAnalyticsPage - 1) * analyticsPageSize, likeAnalyticsPage * analyticsPageSize).map((item) => (
+                          <tr key={item.id}>
+                            <td>
+                              <span className="admin-analytics-type-label">
+                                {item.target_type === "post" ? "Post" : item.target_type === "comment" ? "Comment" : "Reply"}
+                              </span>
+                            </td>
+                            <td title={item.post_title}>{item.post_title}</td>
+                            <td title={item.content}>
+                              {item.target_type === "post"
+                                ? "Liked this post"
+                                : item.content.length > 180
+                                  ? item.content.slice(0, 180) + "…"
+                                  : item.content}
+                              {item.target_type === "reply" && item.parent_content
+                                ? <small className="admin-analytics-like-context">Reply to: {item.parent_content.length > 100 ? item.parent_content.slice(0, 100) + "…" : item.parent_content}</small>
+                                : null}
+                            </td>
+                            <td>{item.user_name || "Registered user"}</td>
+                            <td>{new Date(item.created_at).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <AnalyticsPagination
+                    total={likeAnalyticsEvents.length}
+                    page={likeAnalyticsPage}
+                    pageSize={analyticsPageSize}
+                    onPageChange={setLikeAnalyticsPage}
+                    onPageSizeChange={(size) => {
+                      setAnalyticsPageSize(size);
+                      setLikeAnalyticsPage(1);
+                    }}
+                  />
+                </>
+              )
             ) : selectedVisitor ? (
               <div className="admin-analytics-detail">
                 <div className="admin-visitor-summary">
@@ -1644,8 +1755,10 @@ export default function AdminPage() {
                     ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"
                     : selectedAnalyticsPath
                       ? analyticsEvents.length + " recent view events"
-                      : analyticsType === "drafts" || analyticsType === "review"
-                        ? formatCompactNumber(statusAnalyticsPosts.length) + " posts"
+                      : analyticsType === "likes"
+                        ? formatCompactNumber(likeAnalyticsEvents.length) + " like events"
+                        : analyticsType === "drafts" || analyticsType === "review"
+                          ? formatCompactNumber(statusAnalyticsPosts.length) + " posts"
                         : analyticsType === "posts"
                           ? formatCompactNumber(postAnalyticsPages.length) + " posts tracked"
                           : analyticsType === "views"

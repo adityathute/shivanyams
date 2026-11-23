@@ -173,7 +173,6 @@ export default function AdminPage() {
   const [statsAnimationKey, setStatsAnimationKey] = useState(0);
   const [busyPost, setBusyPost] = useState<number | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminPost | null>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [sortOrder, setSortOrder] = useState("newest");
@@ -395,9 +394,6 @@ export default function AdminPage() {
     (page - 1) * pageSize,
     page * pageSize,
   );
-  const visibleIds = visiblePosts.map((post) => post.id);
-  const allVisibleSelected =
-    visibleIds.length > 0 && visibleIds.every((id) => selectedIds.includes(id));
 
   const counts = useMemo(
     () => ({
@@ -556,46 +552,6 @@ export default function AdminPage() {
       setError(
         err instanceof Error ? err.message : "Unable to update post status.",
       );
-    } finally {
-      setBusyPost(null);
-    }
-  }
-
-  async function bulkChangeStatus(status: "published" | "archived") {
-    const targets = posts.filter((post) => selectedIds.includes(post.id));
-    if (!targets.length) return;
-    if (
-      !window.confirm(
-        `${status === "published" ? "Publish" : "Archive"} ${targets.length} selected posts?`,
-      )
-    )
-      return;
-    setBusyPost(-1);
-    try {
-      const results = await Promise.all(
-        targets.map(async (post) => {
-          const response = await adminFetch(
-            `${API_URL}/admin/content/${post.id}/review/`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ status }),
-            },
-          );
-          if (!response.ok)
-            throw new Error(`Could not update "${post.title_en}".`);
-          return post.id;
-        }),
-      );
-      setPosts((current) =>
-        current.map((post) =>
-          results.includes(post.id) ? { ...post, status } : post,
-        ),
-      );
-      setSelectedIds([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Bulk update failed.");
-      void loadPosts();
     } finally {
       setBusyPost(null);
     }
@@ -942,24 +898,6 @@ export default function AdminPage() {
               <table className="admin-post-table">
                 <thead>
                   <tr>
-                    <th>
-                      <input
-                        type="checkbox"
-                        aria-label="Select visible posts"
-                        checked={allVisibleSelected}
-                        onChange={(event) =>
-                          setSelectedIds(
-                            event.target.checked
-                              ? Array.from(
-                                  new Set([...selectedIds, ...visibleIds]),
-                                )
-                              : selectedIds.filter(
-                                  (id) => !visibleIds.includes(id),
-                                ),
-                          )
-                        }
-                      />
-                    </th>
                     <th>Post</th>
                     <th>Category</th>
                     <th>Status</th>
@@ -979,20 +917,6 @@ export default function AdminPage() {
                     );
                     return (
                       <tr key={post.id}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            aria-label={`Select ${post.title_en}`}
-                            checked={selectedIds.includes(post.id)}
-                            onChange={(event) =>
-                              setSelectedIds((current) =>
-                                event.target.checked
-                                  ? [...current, post.id]
-                                  : current.filter((id) => id !== post.id),
-                              )
-                            }
-                          />
-                        </td>
                         <td>
                           <strong>{post.title_en || post.slug}</strong>
                           <small>/{post.slug}</small>
@@ -1125,26 +1049,6 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
-          {selectedIds.length > 0 && (
-            <div className="admin-bulk-bar">
-              <strong>{selectedIds.length} selected</strong>
-              <button
-                disabled={busyPost === -1}
-                onClick={() => void bulkChangeStatus("published")}
-              >
-                Publish selected
-              </button>
-              <button
-                disabled={busyPost === -1}
-                onClick={() => void bulkChangeStatus("archived")}
-              >
-                Archive selected
-              </button>
-              <button onClick={() => setSelectedIds([])}>
-                Clear selection
-              </button>
-            </div>
-          )}
         </section>
       </div>
       {analyticsType && (

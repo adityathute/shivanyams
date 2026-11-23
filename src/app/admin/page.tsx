@@ -258,6 +258,7 @@ export default function AdminPage() {
   const [shareAnalyticsPage, setShareAnalyticsPage] = useState(1);
   const [shareAnalyticsView, setShareAnalyticsView] = useState<"events" | "posts">("events");
   const [selectedSharePost, setSelectedSharePost] = useState<SharePostSelection | null>(null);
+  const [selectedSharePostPage, setSelectedSharePostPage] = useState(1);
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -1878,7 +1879,7 @@ export default function AdminPage() {
                     <div className="admin-analytics-table-wrap admin-share-post-table-wrap">
                       <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
                         <thead><tr><th>Visitor</th><th>Sharing method</th><th>Date</th></tr></thead>
-                        <tbody>{selectedSharePostEvents.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((event, index) => (
+                        <tbody>{selectedSharePostEvents.slice((selectedSharePostPage - 1) * analyticsPageSize, selectedSharePostPage * analyticsPageSize).map((event, index) => (
                           <tr key={`${event.post_id}-${event.created_at}-${index}`}>
                             <td>{event.user_name ? formatPersonName(event.user_name) : event.user_auth_id ? "Registered user" : event.visitor_id ? `Anonymous (${event.visitor_id.slice(0, 8)})` : "Anonymous visitor"}</td>
                             <td>{SHARE_CHANNEL_LABELS[event.channel] || statusLabel(event.channel || "other")}</td>
@@ -1888,7 +1889,7 @@ export default function AdminPage() {
                       </table>
                     </div>
                   )}
-                  <AnalyticsPagination total={selectedSharePostEvents.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
+                  <AnalyticsPagination total={selectedSharePostEvents.length} page={selectedSharePostPage} pageSize={analyticsPageSize} onPageChange={setSelectedSharePostPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSelectedSharePostPage(1); }} alwaysShow className="admin-share-post-pagination" />
                 </section>
               </div>
             ) : selectedReport ? (
@@ -1947,7 +1948,7 @@ export default function AdminPage() {
                             <thead><tr><th>Post</th><th>Closed</th><th>Useful</th><th>Total shares</th></tr></thead>
                             <tbody>{sharePostRows.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((item) => (
                               <tr key={item.post_id}>
-                                <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.title} onClick={() => { setSelectedSharePost({ post_id: item.post_id, title: item.title, slug: item.slug }); setShareAnalyticsPage(1); }}>{item.title}</button></td>
+                                <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.title} onClick={() => { setSelectedSharePost({ post_id: item.post_id, title: item.title, slug: item.slug }); setSelectedSharePostPage(1); }}>{item.title}</button></td>
                                 <td>{formatCompactNumber(item.closed)}</td>
                                 <td>{formatCompactNumber(item.useful)}</td>
                                 <td><strong>{formatCompactNumber(item.total)}</strong></td>

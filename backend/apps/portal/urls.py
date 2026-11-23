@@ -78,11 +78,6 @@ urlpatterns = [
         name="post-reactions",
     ),
     path(
-        "content/<int:post_id>/subscribe/",
-        PostSubscriptions.as_view(),
-        name="post-subscribe",
-    ),
-    path(
         "content/<int:post_id>/shares/",
         PostShares.as_view(),
         name="post-shares",

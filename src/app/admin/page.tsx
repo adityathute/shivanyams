@@ -1477,7 +1477,7 @@ export default function AdminPage() {
                                       onClick={() => void openLikeComment(item, "comment")}
                                       aria-label="Open parent comment details"
                                     >
-                                      <span className="admin-analytics-like-context">Comment: {item.parent_content}</span>
+                                      <span className="admin-analytics-like-context"><span className="admin-likes-inline-label">Comment: </span><span className="admin-likes-inline-text">{item.parent_content}</span></span>
                                     </button>
                                   ) : null}
                                   <button
@@ -1486,7 +1486,7 @@ export default function AdminPage() {
                                     onClick={() => void openLikeComment(item, "reply")}
                                     aria-label="Open reply details"
                                   >
-                                    <span className="admin-analytics-like-content">Reply: {item.content}</span>
+                                    <span className="admin-analytics-like-content"><span className="admin-likes-inline-label">Reply: </span><span className="admin-likes-inline-text">{item.content}</span></span>
                                   </button>
                                 </div>
                               )}

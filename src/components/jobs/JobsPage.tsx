@@ -49,6 +49,8 @@ export function JobsPage() {
   const [query, setQuery] = useState("");
   const [recruitmentType, setRecruitmentType] = useState("");
   const [applicationMode, setApplicationMode] = useState("");
+  const [recruitmentTypes, setRecruitmentTypes] = useState<string[]>([]);
+  const [applicationModes, setApplicationModes] = useState<string[]>([]);
   const [applicationStatus, setApplicationStatus] = useState("");
   const [minVacancies, setMinVacancies] = useState("");
   const [maxVacancies, setMaxVacancies] = useState("");
@@ -114,6 +116,8 @@ export function JobsPage() {
     if (query.trim()) params.set("q", query.trim());
     if (recruitmentType) params.set("recruitment_type", recruitmentType);
     if (applicationMode) params.set("application_mode", applicationMode);
+    if (recruitmentTypes.length) params.set("recruitment_types", recruitmentTypes.join(","));
+    if (applicationModes.length) params.set("application_modes", applicationModes.join(","));
     if (applicationStatus) params.set("application_status", applicationStatus);
     if (minVacancies) params.set("min_vacancies", minVacancies);
     if (maxVacancies) params.set("max_vacancies", maxVacancies);
@@ -161,11 +165,11 @@ export function JobsPage() {
         if (!controller.signal.aborted) setSearchLoading(false);
       });
     return () => controller.abort();
-  }, [hasSearched, query, recruitmentType, applicationMode, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies, sortOrder, salaryCurrency, postedAfter, postedBefore, closingWithinDays, hasPosts, hasPostApplicationLinks]);
+  }, [hasSearched, query, recruitmentType, applicationMode, recruitmentTypes, applicationModes, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies, sortOrder, salaryCurrency, postedAfter, postedBefore, closingWithinDays, hasPosts, hasPostApplicationLinks]);
 
   const displayedJobs = hasSearched ? results : legacyJobs;
   const clearFilters = () => {
-    setQuery(""); setRecruitmentType(""); setApplicationMode(""); setApplicationStatus("");
+    setQuery(""); setRecruitmentType(""); setApplicationMode(""); setRecruitmentTypes([]); setApplicationModes([]); setApplicationStatus("");
     setMinVacancies(""); setMaxVacancies(""); setClosingFrom(""); setClosingTo("");
     setOrganizationType(""); setDepartment(""); setDesignation(""); setLocation(""); setState(""); setCountry("");
     setQualification(""); setExamMode(""); setSalaryMin(""); setSalaryMax("");
@@ -209,6 +213,8 @@ export function JobsPage() {
             <div className="jobs-filter-grid">
               <label>Recruitment type<select value={recruitmentType} onChange={(e) => { setRecruitmentType(e.target.value); setHasSearched(true); }}>{filterOptions.recruitment.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
               <label>Application mode<select value={applicationMode} onChange={(e) => { setApplicationMode(e.target.value); setHasSearched(true); }}>{filterOptions.mode.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+              <label>Multiple recruitment types<select multiple value={recruitmentTypes} onChange={(e) => { setRecruitmentTypes(Array.from(e.target.selectedOptions, (option) => option.value)); setHasSearched(true); }}><option value="regular">Regular</option><option value="contract">Contract</option><option value="apprenticeship">Apprenticeship</option><option value="temporary">Temporary</option><option value="deputation">Deputation</option><option value="other">Other</option></select></label>
+              <label>Multiple application modes<select multiple value={applicationModes} onChange={(e) => { setApplicationModes(Array.from(e.target.selectedOptions, (option) => option.value)); setHasSearched(true); }}><option value="online">Online</option><option value="offline">Offline</option><option value="both">Online / Offline</option><option value="not_applicable">Not applicable</option></select></label>
               <label>Application status<select value={applicationStatus} onChange={(e) => { setApplicationStatus(e.target.value); setHasSearched(true); }}>{filterOptions.status.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
               <label>Minimum vacancies<input type="number" min="0" value={minVacancies} onChange={(e) => { setMinVacancies(e.target.value); setHasSearched(true); }} placeholder="e.g. 10" /></label>
               <label>Maximum vacancies<input type="number" min="0" value={maxVacancies} onChange={(e) => { setMaxVacancies(e.target.value); setHasSearched(true); }} placeholder="e.g. 500" /></label>

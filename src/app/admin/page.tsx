@@ -206,7 +206,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -254,7 +254,7 @@ export default function AdminPage() {
   const [sortOrder, setSortOrder] = useState("newest");
 
   useEffect(() => {
-    if (analyticsType !== "likes" || selectedPost || selectedVisitor || selectedLikeComment) return;
+    if ((analyticsType !== "likes" && analyticsType !== "dislikes") || selectedPost || selectedVisitor || selectedLikeComment) return;
 
     const measureLikeRows = () => {
       const visibleLikes = likeAnalyticsEvents.slice(
@@ -602,9 +602,9 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
-  function openLikesAnalytics() {
+  function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
     setSelectedLikeComment(null);
-    setAnalyticsType("likes");
+    setAnalyticsType(type);
     setSelectedPost(null);
     setPostAnalyticsEvents([]);
     setSelectedVisitor(null);
@@ -614,17 +614,17 @@ export default function AdminPage() {
     setLikeAnalyticsEvents([]);
     setLikeAnalyticsPage(1);
     setAnalyticsLoading(true);
-    adminFetch(API_URL + "/admin/stats/?type=likes", { cache: "no-store" })
+    adminFetch(API_URL + "/admin/stats/?type=" + type, { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok)
-          throw new Error(`Unable to load likes analytics (${response.status}).`);
+          throw new Error(`Unable to load ${type} analytics (${response.status}).`);
         return response.json();
       })
       .then((payload: { results?: LikeAnalyticsEvent[] }) => {
         setLikeAnalyticsEvents(payload.results ?? []);
       })
       .catch((err) =>
-        setError(err instanceof Error ? err.message : "Unable to load likes analytics."),
+        setError(err instanceof Error ? err.message : "Unable to load ${type} analytics."),
       )
       .finally(() => setAnalyticsLoading(false));
   }
@@ -945,7 +945,7 @@ export default function AdminPage() {
 
           const engagementItems = [
             { label: "Likes", value: engagementStats.likes, analytics: "likes" as const },
-            { label: "Dislikes", value: engagementStats.dislikes },
+            { label: "Dislikes", value: engagementStats.dislikes, analytics: "dislikes" as const },
             { label: "Comments", value: engagementStats.comments },
             { label: "Replies", value: engagementStats.replies },
             { label: "Tags", value: engagementStats.tags },
@@ -1000,13 +1000,13 @@ export default function AdminPage() {
                 {engagementItems.map((item) => (
                   <article
                     key={item.label}
-                    className={`admin-stat-card admin-stat-posts${item.label === "Likes" ? " admin-stat-clickable" : ""}`}
+                    className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    {item.analytics === "likes" ? (
+                    {item.analytics === "likes" || item.analytics === "dislikes" ? (
                       <button
                         type="button"
-                        onClick={openLikesAnalytics}
-                        aria-label="View likes details"
+                        onClick={() => openLikesAnalytics(item.analytics!)}
+                        aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
                           {item.label}
@@ -1450,20 +1450,20 @@ export default function AdminPage() {
                 </section>
                 {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{new Date(reply.created_at).toLocaleString()}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
-            ) : analyticsType === "likes" && !selectedPost && !selectedVisitor ? (
+             ) : (analyticsType === "likes" || analyticsType === "dislikes") && !selectedPost && !selectedVisitor ? (
               likeAnalyticsEvents.length === 0 ? (
-                <div className="admin-empty">No likes recorded yet.</div>
+                <div className="admin-empty">No {analyticsType === "dislikes" ? "dislikes" : "likes"} recorded yet.</div>
               ) : (
                 <>
                   <div className="admin-analytics-table-wrap">
                     <table className="admin-analytics-table admin-likes-analytics-table">
                       <thead>
                         <tr>
-                          <th>Liked item</th>
+                          <th>{analyticsType === "dislikes" ? "Disliked item" : "Liked item"}</th>
                           <th>Post</th>
                           <th>Content</th>
-                          <th>Liked by</th>
-                          <th>Liked at</th>
+                          <th>{analyticsType === "dislikes" ? "Disliked by" : "Liked by"}</th>
+                          <th>{analyticsType === "dislikes" ? "Disliked at" : "Liked at"}</th>
                         </tr>
                       </thead>
                       <tbody>

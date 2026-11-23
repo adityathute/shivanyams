@@ -5,10 +5,10 @@ const ALLOWED_HOST = "shivanyams.com";
 function normalizeWord(value: string) {
   return value
     .normalize("NFKC")
-    .replace(/[\\u200B-\\u200D\\uFEFF]/g, "")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .toLowerCase()
-    .replace(/[^\\p{L}\\p{M}\\p{N}]/gu, "")
-    .replace(/(.)\\1+/gu, "$1");
+    .replace(/[^\p{L}\p{M}\p{N}]/gu, "")
+    .replace(/(.)\1+/gu, "$1");
 }
 
 const BLOCKED_TERMS = new Set(
@@ -16,18 +16,18 @@ const BLOCKED_TERMS = new Set(
 );
 
 const URL_PATTERN =
-  /(?<![\\w@])(?:https?:\\/\\/|ftp:\\/\\/|www\\.)[^\\s<>]+|(?<![\\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}(?:\\b[^\\s<>]*)?/gi;
+  /(?<![\w@])(?:https?:\/\/|ftp:\/\/|www\.)[^\s<>]+|(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}(?:\b[^\s<>]*)?/gi;
 
 function normalize(value: string) {
   let normalized = value
     .normalize("NFKC")
-    .replace(/[\\u200B-\\u200D\\uFEFF]/g, "")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/[。．｡]/g, ".")
     .toLowerCase()
-    .replace(/\\[\\s*(?:dot|\\.)\\s*\\]|\\(\\s*(?:dot|\\.)\\s*\\)|\\{\\s*(?:dot|\\.)\\s*\\}/g, ".")
-    .replace(/\\s+dot\\s+/g, ".")
-    .replace(/\\bhxxps?\\b/g, "https")
-    .replace(/\\s*\\.\\s*/g, ".");
+    .replace(/\[\s*(?:dot|\.)\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*(?:dot|\.)\s*\}/g, ".")
+    .replace(/\s+dot\s+/g, ".")
+    .replace(/\bhxxps?\b/g, "https")
+    .replace(/\s*\.\s*/g, ".");
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try { normalized = decodeURIComponent(normalized); } catch { break; }
   }
@@ -35,12 +35,12 @@ function normalize(value: string) {
 }
 
 function isAllowedHost(hostname: string) {
-  const host = hostname.toLowerCase().replace(/\\.$/, "");
+  const host = hostname.toLowerCase().replace(/\.$/, "");
   return host === ALLOWED_HOST || host.endsWith("." + ALLOWED_HOST);
 }
 
 function containsBlockedLanguage(value: string) {
-  const tokens = value.match(/[\\p{L}\\p{M}\\p{N}]+/gu) || [];
+  const tokens = value.match(/[\p{L}\p{M}\p{N}]+/gu) || [];
   for (let start = 0; start < tokens.length; start += 1) {
     let combined = "";
     for (const token of tokens.slice(start, start + 8)) {
@@ -57,7 +57,7 @@ export function getCommentModerationIssue(value: string): string | null {
   const candidates = normalized.match(URL_PATTERN) || [];
 
   for (const candidate of candidates) {
-    const cleaned = candidate.replace(/[.,!?;:)}\\]"']+$/, "");
+    const cleaned = candidate.replace(/[.,!?;:)}\]"']+$/, "");
     try {
       const url = new URL(cleaned.includes("://") ? cleaned : "https://" + cleaned);
       if (!url.hostname || !isAllowedHost(url.hostname)) {

@@ -1095,3 +1095,17 @@
   color: var(--muted-foreground, #9298a2);
   font-size: 0.73rem;
 }
+
+
+/* Inline feedback for blocked comment and reply content. */
+.portal-comment-moderation-warning {
+  margin: 2px 0 5px;
+  color: #dc6b5f;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  font-weight: 550;
+}
+
+.portal-comment-moderation-warning[role="alert"] {
+  display: block;
+}

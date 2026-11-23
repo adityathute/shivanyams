@@ -1766,61 +1766,61 @@ export default function AdminPage() {
                   </>
                 )
              ) : analyticsType === "subscribers" && !selectedPost && !selectedVisitor ? (
-                <>
-                  <div className="admin-subscribers-summary">
-                    <button type="button" className={subscriberView === "active" ? "is-active" : ""} aria-pressed={subscriberView === "active"} onClick={() => loadSubscriberView("active")}><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></button>
-                    <button type="button" className={subscriberView === "registered" ? "is-active" : ""} aria-pressed={subscriberView === "registered"} onClick={() => loadSubscriberView("registered")}><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></button>
-                    <button type="button" className={subscriberView === "subscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "subscriptions"} onClick={() => loadSubscriberView("subscriptions")}><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></button>
-                    <button type="button" className={subscriberView === "resubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "resubscriptions"} onClick={() => loadSubscriberView("resubscriptions")}><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></button>
-                    <button type="button" className={subscriberView === "unsubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "unsubscriptions"} onClick={() => loadSubscriberView("unsubscriptions")}><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></button>
-                  </div>
-                  {analyticsLoading ? <div className="admin-empty">Loading subscriber details...</div> : subscriberRows.length === 0 ? (
-                    <div className="admin-empty">No {subscriberView === "active" ? "active subscribers" : subscriberView === "registered" ? "registered subscribers" : subscriberView} found.</div>
-                  ) : (
-                    <>
-                      <div className="admin-subscribers-toolbar">
-                        <input
-                          type="search"
-                          value={subscriberSearch}
-                          onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
-                          placeholder="Search by name or email"
-                          aria-label="Search subscribers by name or email"
-                        />
-                      </div>
-                      {(() => {
-                        const filteredSubscribers = subscriberRows.filter((item) =>
-                          [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
-                        );
-                        const isHistory = subscriberView === "subscriptions" || subscriberView === "resubscriptions" || subscriberView === "unsubscriptions";
-                        return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
-                          <>
-                            <div className="admin-analytics-table-wrap">
-                              <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
-                                <thead><tr><th>Full name</th><th>Email</th>{isHistory ? <><th>Activity</th><th>Date</th></> : <th>Subscribed at</th>}</tr></thead>
-                                <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
-                                  const dateTime = formatAnalyticsDateTime(item.subscribed_at);
-                                  return <tr key={item.id}>
-                                    <td>
-                                      {item.full_name ? (
-                                        <button type="button" className="admin-analytics-link admin-likes-user-link" title={formatPersonName(item.full_name)}
-                                          onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}>
-                                          {formatPersonName(item.full_name)}
-                                        </button>
-                                      ) : "—"}
-                                    </td>
-                                    <td>{item.email}</td>
-                                    {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td><span>{dateTime.date}</span><small>{dateTime.time}</small></td></> : <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>}
-                                  </tr>;
-                                })}</tbody>
-                              </table>
-                            </div>
-                            <AnalyticsPagination total={filteredSubscribers.length} page={subscribersPage} pageSize={analyticsPageSize} onPageChange={setSubscribersPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSubscribersPage(1); }} />
-                          </>
-                        );
-                      })()}
-                    </>
-                  )}
-                </>
+                analyticsLoading ? (
+                  <div className="admin-empty admin-subscribers-loading">Refreshing subscriber analytics...</div>
+                ) : (
+                  <>
+                    <div className="admin-subscribers-summary">
+                      <button type="button" className={subscriberView === "active" ? "is-active" : ""} aria-pressed={subscriberView === "active"} onClick={() => loadSubscriberView("active")}><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></button>
+                      <button type="button" className={subscriberView === "registered" ? "is-active" : ""} aria-pressed={subscriberView === "registered"} onClick={() => loadSubscriberView("registered")}><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></button>
+                      <button type="button" className={subscriberView === "subscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "subscriptions"} onClick={() => loadSubscriberView("subscriptions")}><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></button>
+                      <button type="button" className={subscriberView === "resubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "resubscriptions"} onClick={() => loadSubscriberView("resubscriptions")}><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></button>
+                      <button type="button" className={subscriberView === "unsubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "unsubscriptions"} onClick={() => loadSubscriberView("unsubscriptions")}><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></button>
+                    </div>
+                    <div className="admin-subscribers-toolbar">
+                      <input
+                        type="search"
+                        value={subscriberSearch}
+                        onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
+                        placeholder="Search by name or email"
+                        aria-label="Search subscribers by name or email"
+                      />
+                    </div>
+                    {subscriberRows.length === 0 ? (
+                      <div className="admin-empty">No {subscriberView === "active" ? "active subscribers" : subscriberView === "registered" ? "registered subscribers" : subscriberView} found.</div>
+                    ) : (() => {
+                      const filteredSubscribers = subscriberRows.filter((item) =>
+                        [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
+                      );
+                      const isHistory = subscriberView === "subscriptions" || subscriberView === "resubscriptions" || subscriberView === "unsubscriptions";
+                      return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
+                        <>
+                          <div className="admin-analytics-table-wrap">
+                            <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
+                              <thead><tr><th>Full name</th><th>Email</th>{isHistory ? <><th>Activity</th><th>Date</th></> : <th>Subscribed at</th>}</tr></thead>
+                              <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
+                                const dateTime = formatAnalyticsDateTime(item.subscribed_at);
+                                return <tr key={item.id}>
+                                  <td>
+                                    {item.full_name ? (
+                                      <button type="button" className="admin-analytics-link admin-likes-user-link" title={formatPersonName(item.full_name)}
+                                        onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}>
+                                        {formatPersonName(item.full_name)}
+                                      </button>
+                                    ) : "—"}
+                                  </td>
+                                  <td>{item.email}</td>
+                                  {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td><span>{dateTime.date}</span><small>{dateTime.time}</small></td></> : <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>}
+                                </tr>;
+                              })}</tbody>
+                            </table>
+                          </div>
+                          <AnalyticsPagination total={filteredSubscribers.length} page={subscribersPage} pageSize={analyticsPageSize} onPageChange={setSubscribersPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSubscribersPage(1); }} />
+                        </>
+                      );
+                    })()}
+                  </>
+                )
              ) : analyticsType === "reports" && !selectedPost && !selectedVisitor ? (
                 reactionPostsOnly ? (
                   reportPostRows.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (

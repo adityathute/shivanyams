@@ -1319,8 +1319,8 @@
 
 .admin-analytics-modal-visitor .admin-analytics-table-wrap {
   flex: 0 1 auto;
-  min-height: 150px;
-  max-height: clamp(351px, 34vh, 380px);
+  min-height: 301px;
+  max-height: clamp(360px, 35vh, 400px);
   overflow: auto;
 }
 

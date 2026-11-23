@@ -2106,3 +2106,40 @@
 .admin-analytics-modal .admin-likes-analytics-table .admin-likes-user-link {
   text-align: center;
 }
+
+
+/* Likes modal content: make comment/reply text open its related post details. */
+.admin-analytics-modal .admin-likes-content-link {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.admin-analytics-modal .admin-likes-content-link:hover .admin-analytics-like-content {
+  color: #2563eb;
+  text-decoration: underline;
+}
+.admin-analytics-modal .admin-likes-content-link .admin-analytics-like-content {
+  -webkit-line-clamp: 3;
+}
+.admin-analytics-modal .admin-likes-content-link.is-reply .admin-analytics-like-content {
+  -webkit-line-clamp: 2;
+}
+.admin-analytics-modal .admin-likes-content-link.is-reply .admin-analytics-like-context {
+  -webkit-line-clamp: 1;
+  margin-top: 2px;
+}
+.admin-analytics-modal .admin-likes-content-link.is-reply .admin-analytics-like-context {
+  display: -webkit-box;
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+}

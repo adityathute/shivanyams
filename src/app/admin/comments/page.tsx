@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { Avatar, DislikeIcon, LikeIcon } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, DislikeIcon, LikeIcon, RefreshIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../admin-utils";
 import "../admin.css";
@@ -150,9 +150,22 @@ export default function AdminCommentsPage() {
             <h1>Comments & reports</h1>
             <p>Review discussions, handle reports and reply as ShivanyaMS.</p>
           </div>
-          <div className="admin-top-actions">
-            <Link href="/admin" className="admin-secondary-button">← Back to posts</Link>
-            <button type="button" className="admin-secondary-button" onClick={() => void loadComments()}>↻ Refresh</button>
+          <div className="admin-top-actions admin-comments-header-actions">
+            <Link href="/admin" className="admin-secondary-button">
+              <ArrowLeftIcon size={16} />
+              <span>Back to posts</span>
+            </Link>
+            <button
+              type="button"
+              className="admin-secondary-button"
+              onClick={() => void loadComments()}
+              disabled={loadingRows}
+              aria-label="Refresh comments and reports"
+              title="Refresh"
+            >
+              <RefreshIcon size={16} />
+              <span>Refresh</span>
+            </button>
           </div>
         </header>
 

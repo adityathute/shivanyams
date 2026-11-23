@@ -2609,3 +2609,20 @@
 .admin-analytics-modal .admin-saved-posts-table td:nth-child(3) { width:16%; text-align:center; }
 .admin-analytics-modal .admin-saved-posts-table th,
 .admin-analytics-modal .admin-saved-posts-table td { box-sizing:border-box; }
+
+
+/* Subscribers analytics: match the existing Likes/Dislikes summary and table typography. */
+.admin-analytics-modal .admin-subscribers-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:16px; }
+.admin-analytics-modal .admin-subscribers-summary article { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:6px; min-width:0; min-height:88px; padding:16px; border:1px solid var(--admin-border,#e5e7eb); border-radius:12px; background:var(--admin-card,#fff); }
+.admin-analytics-modal .admin-subscribers-summary span { color:var(--admin-muted,#6b7280); font-size:12px; font-weight:600; }
+.admin-analytics-modal .admin-subscribers-summary strong { color:var(--admin-text,#111827); font-size:22px; font-weight:750; line-height:1.2; font-variant-numeric:tabular-nums; }
+.admin-analytics-modal .admin-subscribers-toolbar { display:flex; justify-content:flex-end; margin:0 16px 12px; }
+.admin-analytics-modal .admin-subscribers-toolbar input { width:min(100%,360px); min-height:38px; padding:8px 12px; border:1px solid var(--admin-border,#e5e7eb); border-radius:8px; background:var(--admin-card,#fff); color:var(--admin-text,#111827); font:inherit; font-size:13px; outline:none; }
+.admin-analytics-modal .admin-subscribers-toolbar input:focus { border-color:var(--admin-accent,#6366f1); box-shadow:0 0 0 3px color-mix(in srgb,var(--admin-accent,#6366f1) 14%,transparent); }
+.admin-analytics-modal .admin-subscribers-table { width:100%; table-layout:fixed; }
+.admin-analytics-modal .admin-subscribers-table th:nth-child(1), .admin-analytics-modal .admin-subscribers-table td:nth-child(1) { width:25%; text-align:left; }
+.admin-analytics-modal .admin-subscribers-table th:nth-child(2), .admin-analytics-modal .admin-subscribers-table td:nth-child(2) { width:43%; text-align:left; overflow-wrap:anywhere; }
+.admin-analytics-modal .admin-subscribers-table th:nth-child(3), .admin-analytics-modal .admin-subscribers-table td:nth-child(3) { width:32%; text-align:right; white-space:nowrap; }
+.admin-analytics-modal .admin-subscribers-table td:nth-child(3) { display:table-cell; }
+.admin-analytics-modal .admin-subscribers-table td:nth-child(3) small { display:block; color:var(--admin-muted,#6b7280); font-size:11px; margin-top:2px; }
+@media (max-width:640px) { .admin-analytics-modal .admin-subscribers-summary { grid-template-columns:1fr; } .admin-analytics-modal .admin-subscribers-table { min-width:620px; } }

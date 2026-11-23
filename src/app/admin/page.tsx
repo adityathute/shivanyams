@@ -1195,7 +1195,11 @@ export default function AdminPage() {
                         ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
                         : analyticsType === "posts"
                           ? `Post Views (${formatCompactNumber(counts.views)})`
-                          : analyticsType === "views"
+                          : analyticsType === "drafts"
+                            ? `Drafts (${formatCompactNumber(counts.drafts)})`
+                            : analyticsType === "review"
+                              ? `Pending review (${formatCompactNumber(counts.review)})`
+                              : analyticsType === "views"
                         ? `Website Views (${formatCompactNumber(websiteViewsCount)})`
                         : analyticsType === "users"
                           ? `Portal Users (${formatCompactNumber(usersCount)})`
@@ -1210,7 +1214,11 @@ export default function AdminPage() {
                         ? "Individual visits recorded for this page."
                         : analyticsType === "posts"
                           ? "Select a post to inspect its individual views."
-                          : analyticsType === "views"
+                          : analyticsType === "drafts"
+                            ? "Draft posts saved but not yet submitted for review."
+                            : analyticsType === "review"
+                              ? "Posts waiting for an administrator to review."
+                              : analyticsType === "views"
                             ? "Select a page to inspect its individual page views."
                             : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
                 </p>
@@ -1369,6 +1377,34 @@ export default function AdminPage() {
                 }}
               />
               </>
+            ) : analyticsType === "drafts" || analyticsType === "review" ? (
+              statusAnalyticsPosts.length === 0 ? (
+                <div className="admin-empty">
+                  {analyticsType === "drafts" ? "No draft posts found." : "No posts are waiting for review."}
+                </div>
+              ) : (
+                <>
+                  <div className="admin-analytics-table-wrap">
+                    <table className="admin-analytics-table admin-post-views-table admin-content-status-table">
+                      <thead><tr><th>Post</th><th>Category</th><th>Last updated</th><th>Status</th></tr></thead>
+                      <tbody>
+                        {statusAnalyticsPosts.slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize).map((post) => {
+                          const kind = CONTENT_KINDS.find((item) => item.slug === post.category?.slug);
+                          return (
+                            <tr key={post.id}>
+                              <td><Link className="admin-analytics-link" href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`} title={post.title_en}>{post.title_en}</Link></td>
+                              <td>{kind?.label || post.category?.name_en || "—"}</td>
+                              <td>{post.updated_at ? new Date(post.updated_at).toLocaleString() : "—"}</td>
+                              <td>{statusLabel(post.status)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <AnalyticsPagination total={statusAnalyticsPosts.length} page={analyticsPagesPage} pageSize={analyticsPageSize} onPageChange={setAnalyticsPagesPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setAnalyticsPagesPage(1); }} />
+                </>
+              )
             ) : analyticsType === "posts" ? (
               postAnalyticsPages.length === 0 ? (
                 <div className="admin-empty">No post views recorded yet.</div>
@@ -1515,9 +1551,11 @@ export default function AdminPage() {
                     ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"
                     : selectedAnalyticsPath
                       ? analyticsEvents.length + " recent view events"
-                      : analyticsType === "posts"
-                        ? formatCompactNumber(postAnalyticsPages.length) + " posts tracked"
-                        : analyticsType === "views"
+                      : analyticsType === "drafts" || analyticsType === "review"
+                        ? formatCompactNumber(statusAnalyticsPosts.length) + " posts"
+                        : analyticsType === "posts"
+                          ? formatCompactNumber(postAnalyticsPages.length) + " posts tracked"
+                          : analyticsType === "views"
                           ? formatCompactNumber(analyticsPages.length) + " pages tracked"
                           : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
               </span>

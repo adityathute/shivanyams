@@ -79,6 +79,26 @@ export function JobsPage() {
   const [closingWithinDays, setClosingWithinDays] = useState("");
   const [hasPosts, setHasPosts] = useState("");
   const [hasPostApplicationLinks, setHasPostApplicationLinks] = useState("");
+  const [candidateAge, setCandidateAge] = useState("");
+  const [examMedium, setExamMedium] = useState("");
+  const [physicalStandard, setPhysicalStandard] = useState("");
+  const [examPattern, setExamPattern] = useState("");
+  const [syllabus, setSyllabus] = useState("");
+  const [selectionCriteria, setSelectionCriteria] = useState("");
+  const [skillTest, setSkillTest] = useState("");
+  const [interview, setInterview] = useState("");
+  const [medicalStandard, setMedicalStandard] = useState("");
+  const [salaryPeriod, setSalaryPeriod] = useState("");
+  const [hasAllowances, setHasAllowances] = useState("");
+  const [hasBenefits, setHasBenefits] = useState("");
+  const [hasEmploymentConditions, setHasEmploymentConditions] = useState("");
+  const [hasProbation, setHasProbation] = useState("");
+  const [hasContractDuration, setHasContractDuration] = useState("");
+  const [hasWorkingHours, setHasWorkingHours] = useState("");
+  const [hasServiceBond, setHasServiceBond] = useState("");
+  const [hasRetirementBenefits, setHasRetirementBenefits] = useState("");
+  const [hasRequiredDocuments, setHasRequiredDocuments] = useState("");
+  const [hasSelectionStages, setHasSelectionStages] = useState("");
   const [facets, setFacets] = useState<{ organization_types: { value: string; label: string }[]; departments: string[]; designations: string[]; locations: string[]; states: string[]; countries: string[] }>({ organization_types: [], departments: [], designations: [], locations: [], states: [], countries: [] });
   const [results, setResults] = useState<JobDiscoveryPost[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -145,6 +165,26 @@ export function JobsPage() {
     if (closingWithinDays) params.set("closing_within_days", closingWithinDays);
     if (hasPosts) params.set("has_posts", hasPosts);
     if (hasPostApplicationLinks) params.set("has_post_application_links", hasPostApplicationLinks);
+    if (candidateAge) params.set("candidate_age", candidateAge);
+    if (examMedium.trim()) params.set("exam_medium", examMedium.trim());
+    if (physicalStandard.trim()) params.set("physical_standard", physicalStandard.trim());
+    if (examPattern.trim()) params.set("exam_pattern", examPattern.trim());
+    if (syllabus.trim()) params.set("syllabus", syllabus.trim());
+    if (selectionCriteria.trim()) params.set("selection_criteria", selectionCriteria.trim());
+    if (skillTest.trim()) params.set("skill_test", skillTest.trim());
+    if (interview.trim()) params.set("interview", interview.trim());
+    if (medicalStandard.trim()) params.set("medical_standard", medicalStandard.trim());
+    if (salaryPeriod) params.set("salary_period", salaryPeriod);
+    if (hasAllowances) params.set("has_allowances", hasAllowances);
+    if (hasBenefits) params.set("has_benefits", hasBenefits);
+    if (hasEmploymentConditions) params.set("has_employment_conditions", hasEmploymentConditions);
+    if (hasProbation) params.set("has_probation", hasProbation);
+    if (hasContractDuration) params.set("has_contract_duration", hasContractDuration);
+    if (hasWorkingHours) params.set("has_working_hours", hasWorkingHours);
+    if (hasServiceBond) params.set("has_service_bond", hasServiceBond);
+    if (hasRetirementBenefits) params.set("has_retirement_benefits", hasRetirementBenefits);
+    if (hasRequiredDocuments) params.set("has_required_documents", hasRequiredDocuments);
+    if (hasSelectionStages) params.set("has_selection_stages", hasSelectionStages);
     params.set("sort", sortOrder);
 
     setSearchLoading(true);
@@ -165,7 +205,7 @@ export function JobsPage() {
         if (!controller.signal.aborted) setSearchLoading(false);
       });
     return () => controller.abort();
-  }, [hasSearched, query, recruitmentType, applicationMode, recruitmentTypes, applicationModes, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies, sortOrder, salaryCurrency, postedAfter, postedBefore, closingWithinDays, hasPosts, hasPostApplicationLinks]);
+  }, [hasSearched, query, recruitmentType, applicationMode, recruitmentTypes, applicationModes, applicationStatus, minVacancies, maxVacancies, closingFrom, closingTo, organizationType, department, designation, location, state, country, qualification, examMode, salaryMin, salaryMax, workCity, workDistrict, remoteOnly, hasNotification, hasApplyLink, minPostVacancies, sortOrder, salaryCurrency, postedAfter, postedBefore, closingWithinDays, hasPosts, hasPostApplicationLinks, candidateAge, examMedium, physicalStandard, examPattern, syllabus, selectionCriteria, skillTest, interview, medicalStandard, salaryPeriod, hasAllowances, hasBenefits, hasEmploymentConditions, hasProbation, hasContractDuration, hasWorkingHours, hasServiceBond, hasRetirementBenefits, hasRequiredDocuments, hasSelectionStages]);
 
   const displayedJobs = hasSearched ? results : legacyJobs;
   const clearFilters = () => {
@@ -177,6 +217,11 @@ export function JobsPage() {
     setHasNotification(""); setHasApplyLink(""); setMinPostVacancies("");
     setSortOrder("recent"); setSalaryCurrency(""); setPostedAfter(""); setPostedBefore("");
     setClosingWithinDays(""); setHasPosts(""); setHasPostApplicationLinks("");
+    setCandidateAge(""); setExamMedium(""); setPhysicalStandard(""); setExamPattern(""); setSyllabus("");
+    setSelectionCriteria(""); setSkillTest(""); setInterview(""); setMedicalStandard(""); setSalaryPeriod("");
+    setHasAllowances(""); setHasBenefits(""); setHasEmploymentConditions(""); setHasProbation("");
+    setHasContractDuration(""); setHasWorkingHours(""); setHasServiceBond(""); setHasRetirementBenefits("");
+    setHasRequiredDocuments(""); setHasSelectionStages("");
     setHasSearched(false); setResults([]); setSearchError("");
   };
 
@@ -243,6 +288,26 @@ export function JobsPage() {
               <label>Closing within<select value={closingWithinDays} onChange={(e) => { setClosingWithinDays(e.target.value); setHasSearched(true); }}><option value="">Any deadline</option><option value="3">3 days</option><option value="7">7 days</option><option value="15">15 days</option><option value="30">30 days</option><option value="60">60 days</option></select></label>
               <label>Individual advertised posts<select value={hasPosts} onChange={(e) => { setHasPosts(e.target.value); setHasSearched(true); }}><option value="">Any post detail</option><option value="true">Has individual posts</option><option value="false">No individual posts</option></select></label>
               <label>Post-specific apply links<select value={hasPostApplicationLinks} onChange={(e) => { setHasPostApplicationLinks(e.target.value); setHasSearched(true); }}><option value="">Any link availability</option><option value="true">Has post-specific links</option><option value="false">No post-specific links</option></select></label>
+              <label>Candidate age<input type="number" min="0" max="100" value={candidateAge} onChange={(e) => { setCandidateAge(e.target.value); setHasSearched(true); }} placeholder="Age in years" /></label>
+              <label>Exam medium<input value={examMedium} onChange={(e) => { setExamMedium(e.target.value); setHasSearched(true); }} placeholder="e.g. Marathi, English" /></label>
+              <label>Physical standards<input value={physicalStandard} onChange={(e) => { setPhysicalStandard(e.target.value); setHasSearched(true); }} placeholder="e.g. height, chest" /></label>
+              <label>Exam pattern<input value={examPattern} onChange={(e) => { setExamPattern(e.target.value); setHasSearched(true); }} placeholder="Search exam pattern" /></label>
+              <label>Syllabus<input value={syllabus} onChange={(e) => { setSyllabus(e.target.value); setHasSearched(true); }} placeholder="Search syllabus" /></label>
+              <label>Selection criteria<input value={selectionCriteria} onChange={(e) => { setSelectionCriteria(e.target.value); setHasSearched(true); }} placeholder="Search criteria" /></label>
+              <label>Skill test<input value={skillTest} onChange={(e) => { setSkillTest(e.target.value); setHasSearched(true); }} placeholder="e.g. typing, driving" /></label>
+              <label>Interview details<input value={interview} onChange={(e) => { setInterview(e.target.value); setHasSearched(true); }} placeholder="Search interview details" /></label>
+              <label>Medical standards<input value={medicalStandard} onChange={(e) => { setMedicalStandard(e.target.value); setHasSearched(true); }} placeholder="Search medical criteria" /></label>
+              <label>Salary period<select value={salaryPeriod} onChange={(e) => { setSalaryPeriod(e.target.value); setHasSearched(true); }}><option value="">Any salary period</option><option value="hourly">Hourly</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="annual">Annual</option><option value="as_notified">As notified</option></select></label>
+              <label>Allowances<select value={hasAllowances} onChange={(e) => { setHasAllowances(e.target.value); setHasSearched(true); }}><option value="">Any allowance details</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Benefits<select value={hasBenefits} onChange={(e) => { setHasBenefits(e.target.value); setHasSearched(true); }}><option value="">Any benefit details</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Employment conditions<select value={hasEmploymentConditions} onChange={(e) => { setHasEmploymentConditions(e.target.value); setHasSearched(true); }}><option value="">Any conditions</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Probation period<select value={hasProbation} onChange={(e) => { setHasProbation(e.target.value); setHasSearched(true); }}><option value="">Any probation details</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Contract duration<select value={hasContractDuration} onChange={(e) => { setHasContractDuration(e.target.value); setHasSearched(true); }}><option value="">Any contract details</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Working hours<select value={hasWorkingHours} onChange={(e) => { setHasWorkingHours(e.target.value); setHasSearched(true); }}><option value="">Any working hours</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Service bond<select value={hasServiceBond} onChange={(e) => { setHasServiceBond(e.target.value); setHasSearched(true); }}><option value="">Any service bond details</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Retirement benefits<select value={hasRetirementBenefits} onChange={(e) => { setHasRetirementBenefits(e.target.value); setHasSearched(true); }}><option value="">Any retirement benefits</option><option value="true">Details available</option><option value="false">No details</option></select></label>
+              <label>Required documents<select value={hasRequiredDocuments} onChange={(e) => { setHasRequiredDocuments(e.target.value); setHasSearched(true); }}><option value="">Any document details</option><option value="true">Checklist available</option><option value="false">No checklist</option></select></label>
+              <label>Selection stages<select value={hasSelectionStages} onChange={(e) => { setHasSelectionStages(e.target.value); setHasSearched(true); }}><option value="">Any selection details</option><option value="true">Stages available</option><option value="false">No stages listed</option></select></label>
             </div>
           </section>
 

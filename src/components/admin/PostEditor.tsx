@@ -595,6 +595,9 @@ const DETAIL_OPTIONS: Record<string, string[]> = {
     "other",
   ],
   exam_mode: ["online", "offline", "both", "other"],
+  exam_status: ["announced", "applications_open", "applications_closed", "scheduled", "postponed", "completed", "cancelled"],
+  card_status: ["scheduled", "available", "expired", "withdrawn"],
+  result_status: ["pending", "declared", "revised", "withheld", "cancelled"],
   result_type: [
     "written",
     "final",
@@ -725,12 +728,24 @@ function detailTemplate(api: string): Record<string, unknown> {
     return {
       exam_type: "recruitment",
       exam_mode: "other",
+      exam_status: "announced",
       exam_name: "",
       conducting_authority: "",
       exam_duration_minutes: null,
       total_marks: null,
       passing_marks: "",
       negative_marking: "",
+      application_start_date: null,
+      application_end_date: null,
+      exam_date: null,
+      eligibility_en: "",
+      eligibility_mr: "",
+      eligibility_hi: "",
+      paper_sections: [],
+      result_expected_date: null,
+      notification_number: "",
+      notification_url: "",
+      admit_card_url: "",
       exam_pattern: "",
       syllabus: "",
       instructions: "",
@@ -742,6 +757,24 @@ function detailTemplate(api: string): Record<string, unknown> {
       exam_name: "",
       release_date: null,
       examination_date: null,
+      card_status: "scheduled",
+      available_from: null,
+      available_until: null,
+      exam_shift: "",
+      reporting_time: null,
+      exam_center_name: "",
+      exam_center_address: "",
+      documents_to_carry: [],
+      prohibited_items: [],
+      photo_signature_requirements: "",
+      download_steps: [],
+      forgot_credentials_url: "",
+      helpdesk_email: "",
+      helpdesk_phone: "",
+      helpdesk_hours: "",
+      language_options: [],
+      correction_window_end: null,
+      correction_contact: "",
       download_url: "",
       login_url: "",
       official_website: "",
@@ -754,6 +787,15 @@ function detailTemplate(api: string): Record<string, unknown> {
       result_type: "other",
       examination_name: "",
       result_date: null,
+      result_status: "pending",
+      scorecard_start_date: null,
+      scorecard_end_date: null,
+      login_url: "",
+      required_credentials: "",
+      cutoff_details: [],
+      result_summary_en: "",
+      result_summary_mr: "",
+      result_summary_hi: "",
       result_url: "",
       merit_list_url: "",
       cut_off_url: "",
@@ -3045,22 +3087,25 @@ export default function PostEditor({
                       size="sm"
                     />
                   );
-                if (kind.api === "jobs" && key === "required_documents") {
+                if (
+                  (kind.api === "jobs" && key === "required_documents") ||
+                  ["paper_sections", "documents_to_carry", "prohibited_items", "download_steps", "language_options", "cutoff_details"].includes(key)
+                ) {
                   return (
                     <Textarea
                       key={key}
-                      label="Required Documents Checklist (JSON)"
-                      rows={8}
+                      label={`${label} (JSON list)`}
+                      rows={7}
                       value={JSON.stringify(value ?? [], null, 2)}
                       onChange={(event) => {
                         try {
                           const parsed = JSON.parse(event.target.value);
                           if (Array.isArray(parsed)) updateDetail(key, parsed);
                         } catch {
-                          // Keep the last valid checklist while JSON is being edited.
+                          // Keep the last valid list while the JSON is being edited.
                         }
                       }}
-                      placeholder={'[{"title_en":"Aadhaar card","title_mr":"आधार कार्ड","title_hi":"आधार कार्ड","mandatory":true}]'}
+                      placeholder='[{"title":"Example","description":"Details"}]'
                       fullWidth
                       size="sm"
                     />

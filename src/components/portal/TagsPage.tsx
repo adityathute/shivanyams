@@ -7,7 +7,7 @@ import { usePortalLanguage } from "./context/PortalLanguageContext";
 import "./saved/SavedPostsPage.css";
 
 function slugify(value: string) {
-  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\\p{L}\\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 }
 
 const copy = {

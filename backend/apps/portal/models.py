@@ -1541,7 +1541,6 @@ class PostVisitor(TimestampedModel):
     )
     visitor_id = models.CharField(max_length=128)
     auth_user_id = models.CharField(max_length=128, blank=True, db_index=True)
-    full_name = models.CharField(max_length=240, blank=True)
 
     first_seen_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(auto_now=True)

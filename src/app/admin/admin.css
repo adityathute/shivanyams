@@ -2898,3 +2898,9 @@
   margin: 0 auto;
   text-align: center;
 }
+
+/* Shares by post: center the complete Closed column, including its heading and every value. */
+.admin-analytics-modal .admin-shares-posts-table th:nth-child(2),
+.admin-analytics-modal .admin-shares-posts-table td:nth-child(2) {
+  text-align: center;
+}

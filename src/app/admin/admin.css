@@ -1597,3 +1597,25 @@
     font-size: 20px;
   }
 }
+
+/* Align shared iconography in the admin export and refresh actions. */
+.admin-toolbar-actions .admin-toolbar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 10px 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.admin-toolbar-actions .admin-toolbar-action svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.admin-toolbar-actions .admin-toolbar-action:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}

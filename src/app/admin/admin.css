@@ -449,7 +449,6 @@
 .admin-filters {
   grid-template-columns: minmax(220px, 1fr) 190px 180px 170px;
 }
-/* The selection checkbox column has been removed; keep the post column at its normal width. */
 .admin-table-footer {
   display: flex;
   align-items: center;

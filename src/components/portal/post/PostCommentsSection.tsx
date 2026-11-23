@@ -486,6 +486,7 @@ export function PostCommentsSection({ postId, language }: Props) {
 
   const replyTargetItem = replyTarget ? findComment(comments, replyTarget) : null;
   const reportTargetItem = reportTarget ? findComment(comments, reportTarget) : null;
+  const editTargetItem = editTarget ? findComment(comments, editTarget) : null;
 
   useEffect(() => {
     if (!replyTarget) return;
@@ -627,6 +628,59 @@ export function PostCommentsSection({ postId, language }: Props) {
               <Button type="button" size="sm" variant="outline" disabled={submitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
               <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
                 {submitting ? "Sending..." : "Reply"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {editTarget && editTargetItem ? (
+        <div
+          className="portal-comment-edit-modal"
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget && !editing) {
+              setEditTarget(null);
+              setEditDraft("");
+            }
+          }}
+        >
+          <div className="portal-comment-edit-modal-panel" role="dialog" aria-modal="true" aria-labelledby="portal-comment-edit-modal-title">
+            <div className="portal-comment-edit-modal-header">
+              <div>
+                <strong id="portal-comment-edit-modal-title">Edit comment</strong>
+                <span>{editTargetItem.content}</span>
+              </div>
+              <button
+                type="button"
+                className="portal-comment-reply-modal-close"
+                onClick={() => { if (!editing) { setEditTarget(null); setEditDraft(""); } }}
+                aria-label="Close edit"
+                disabled={editing}
+              >
+                ×
+              </button>
+            </div>
+            <Textarea
+              value={editDraft}
+              onChange={(event) => setEditDraft(event.target.value)}
+              rows={4}
+              maxLength={editTargetItem.parent ? 250 : 500}
+              fullWidth
+              size="sm"
+              autoFocus
+            />
+            <div className="portal-comment-reply-modal-footer">
+              <span>{editDraft.length}/{editTargetItem.parent ? 250 : 500}</span>
+              <Button type="button" size="sm" variant="outline" disabled={editing} onClick={() => { setEditTarget(null); setEditDraft(""); }}>Cancel</Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="primary"
+                disabled={!editDraft.trim() || editDraft.trim() === editTargetItem.content.trim() || editing}
+                onClick={() => void saveCommentEdit()}
+              >
+                {editing ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>

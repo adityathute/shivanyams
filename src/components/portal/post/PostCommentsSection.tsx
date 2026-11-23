@@ -75,6 +75,9 @@ type CommentItem = {
   likes_count: number;
   dislikes_count: number;
   user_reaction: Reaction;
+  report_count: number;
+  user_has_reported: boolean;
+  report_limit_reached: boolean;
   created_at: string;
   updated_at: string;
   replies: CommentItem[];
@@ -202,7 +205,9 @@ function CommentThread({
             </button>
             {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button> : null}
-            <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
+            {!item.user_has_reported && !item.report_limit_reached ? (
+              <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
+            ) : null}
           </div>
           {replyCount > 0 && !repliesExpanded ? (
             <button type="button" className="portal-comment-toggle-replies" onClick={toggleReplies} aria-expanded={false} aria-label={`Show ${replyCount} replies`}>
@@ -469,7 +474,7 @@ export function PostCommentsSection({ postId, language }: Props) {
       const payload = await response.json();
       setReportTarget(null);
       setReportDetails("");
-      if (payload.hidden) await loadComments();
+      await loadComments();
       setError(payload.hidden ? "This comment was hidden after multiple reports." : "Thank you. Your report was submitted.");
     } finally {
       setReporting(false);

@@ -2624,6 +2624,16 @@
 .admin-analytics-modal .admin-subscribers-table th:nth-child(2), .admin-analytics-modal .admin-subscribers-table td:nth-child(2) { width:43%; text-align:left; overflow-wrap:anywhere; }
 .admin-analytics-modal .admin-subscribers-table th:nth-child(3), .admin-analytics-modal .admin-subscribers-table td:nth-child(3) { width:32%; text-align:right; white-space:nowrap; }
 .admin-analytics-modal .admin-subscribers-table td:nth-child(3) { display:table-cell; }
+
+/* Give the Date column more room in subscription history tables. */
+.admin-analytics-modal .admin-subscribers-table.is-history th:nth-child(1),
+.admin-analytics-modal .admin-subscribers-table.is-history td:nth-child(1) { width:22%; }
+.admin-analytics-modal .admin-subscribers-table.is-history th:nth-child(2),
+.admin-analytics-modal .admin-subscribers-table.is-history td:nth-child(2) { width:36%; }
+.admin-analytics-modal .admin-subscribers-table.is-history th:nth-child(3),
+.admin-analytics-modal .admin-subscribers-table.is-history td:nth-child(3) { width:16%; }
+.admin-analytics-modal .admin-subscribers-table.is-history th:nth-child(4),
+.admin-analytics-modal .admin-subscribers-table.is-history td:nth-child(4) { width:26%; white-space:nowrap; }
 .admin-analytics-modal .admin-subscribers-table td:nth-child(3) small { display:block; color:var(--admin-muted,#6b7280); font-size:11px; margin-top:2px; }
 @media (max-width:640px) { .admin-analytics-modal .admin-subscribers-summary { grid-template-columns:1fr; } .admin-analytics-modal .admin-subscribers-table { min-width:620px; } }
 

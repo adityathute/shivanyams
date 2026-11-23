@@ -717,46 +717,58 @@ class PostCommentReports(APIView):
     AUTO_HIDE_REPORT_THRESHOLD = 3
 
     def post(self, request, comment_id):
-        comment = get_object_or_404(Comment, pk=comment_id, status=Comment.Status.APPROVED, post__status=Post.Status.PUBLISHED, post__is_active=True)
         reason = str(request.data.get("reason", "")).strip()[:40]
         details = str(request.data.get("details", "")).strip()[:2000]
         if not reason:
             raise ValidationError({"reason": "Please select a report reason."})
+
         reporter_auth_id = str(request.user.id)
-        existing_report = CommentReport.objects.filter(
-            comment=comment,
-            reporter_auth_id=reporter_auth_id,
-        ).first()
-        if existing_report:
+        with transaction.atomic():
+            comment = get_object_or_404(
+                Comment.objects.select_for_update(),
+                pk=comment_id,
+                status=Comment.Status.APPROVED,
+                post__status=Post.Status.PUBLISHED,
+                post__is_active=True,
+            )
+            existing_report = CommentReport.objects.filter(
+                comment=comment,
+                reporter_auth_id=reporter_auth_id,
+            ).first()
+            if existing_report:
+                report_count = comment.reports.count()
+                return Response({
+                    "reported": True,
+                    "already_reported": True,
+                    "report_count": report_count,
+                    "report_limit_reached": report_count >= self.AUTO_HIDE_REPORT_THRESHOLD,
+                    "hidden": False,
+                }, status=status.HTTP_200_OK)
+
             report_count = comment.reports.count()
-            return Response({
-                "reported": True,
-                "already_reported": True,
-                "report_count": report_count,
-                "report_limit_reached": report_count >= self.AUTO_HIDE_REPORT_THRESHOLD,
-                "hidden": comment.status == Comment.Status.HIDDEN,
-            }, status=status.HTTP_200_OK)
+            if report_count >= self.AUTO_HIDE_REPORT_THRESHOLD:
+                return Response({
+                    "reported": False,
+                    "detail": "This comment has already received the maximum number of reports.",
+                    "report_count": report_count,
+                    "report_limit_reached": True,
+                    "hidden": False,
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        report_count = comment.reports.count()
-        if report_count >= self.AUTO_HIDE_REPORT_THRESHOLD:
-            return Response({
-                "reported": False,
-                "detail": "This comment has already received the maximum number of reports.",
-                "report_count": report_count,
-                "report_limit_reached": True,
-                "hidden": False,
-            }, status=status.HTTP_400_BAD_REQUEST)
+            CommentReport.objects.create(
+                comment=comment,
+                reporter_auth_id=reporter_auth_id,
+                reason=reason,
+                details=details,
+            )
+            report_count += 1
+            hidden = report_count >= self.AUTO_HIDE_REPORT_THRESHOLD
+            if hidden:
+                Comment.objects.filter(
+                    pk=comment.pk,
+                    status=Comment.Status.APPROVED,
+                ).update(status=Comment.Status.HIDDEN)
 
-        CommentReport.objects.create(
-            comment=comment,
-            reporter_auth_id=reporter_auth_id,
-            reason=reason,
-            details=details,
-        )
-        report_count += 1
-        hidden = report_count >= self.AUTO_HIDE_REPORT_THRESHOLD
-        if hidden:
-            Comment.objects.filter(pk=comment.pk, status=Comment.Status.APPROVED).update(status=Comment.Status.HIDDEN)
         return Response({
             "reported": True,
             "already_reported": False,

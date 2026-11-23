@@ -6,6 +6,7 @@ from .models import (
     ArticleGuideDetails,
     Category,
     Comment,
+    CommentReport,
     ExaminationDetails,
     JobDetails,
     JobPost,

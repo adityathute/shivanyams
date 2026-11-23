@@ -477,6 +477,29 @@ export default function AdminPage() {
     }),
     [posts],
   );
+  const statusAnalyticsPosts = useMemo(
+    () => analyticsType === "drafts"
+      ? posts.filter((post) => post.status === "draft")
+      : analyticsType === "review"
+        ? posts.filter((post) => post.status === "pending_review")
+        : [],
+    [analyticsType, posts],
+  );
+
+  function openContentStatusAnalytics(type: "drafts" | "review") {
+    setAnalyticsType(type);
+    setSelectedPost(null);
+    setPostAnalyticsEvents([]);
+    setSelectedVisitor(null);
+    setVisitorPages([]);
+    setSelectedAnalyticsPath(null);
+    setAnalyticsEvents([]);
+    setAnalyticsPagesPage(1);
+    setAnalyticsVisitorsPage(1);
+    setVisitorPagesPage(1);
+    setAnalyticsEventsPage(1);
+    setAnalyticsLoading(false);
+  }
 
   function openWebsiteAnalytics(type: "views" | "visitors" | "users") {
     setAnalyticsType(type);

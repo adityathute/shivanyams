@@ -55,16 +55,6 @@ const statLabels: { key: StatKey; label: string; color: string; icon: ReactNode 
   { key: "users", label: "Users", color: "users", icon: <UsersIcon size={18} /> },
 ];
 
-const compactNumberFormat = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-  maximumFractionDigits: 1,
-});
-
-function formatCompactNumber(value: number) {
-  return compactNumberFormat.format(Number(value) || 0).replace("K", "k").replace("M", "m").replace("B", "b");
-}
-
 function displayValue(value: unknown) {
   if (value === null || value === undefined || value === "") return "—";
   if (typeof value === "number") return formatCompactNumber(value);
@@ -170,7 +160,6 @@ export default function AdminPostEngagementPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [statsAnimationKey, setStatsAnimationKey] = useState(0);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -192,8 +181,7 @@ export default function AdminPostEngagementPage() {
       .then((data: EngagementPayload) => {
         if (active) {
           setPayload(data);
-          setStatsAnimationKey((value) => value + 1);
-        }
+            }
       })
       .catch((err) => { if (active) setError(err instanceof Error ? err.message : "Unable to load engagement."); })
       .finally(() => { if (active) setLoadingData(false); });

@@ -2858,3 +2858,18 @@
     margin: 12px;
   }
 }
+
+
+/* Center the complete Visitor column in Shares analytics. */
+.admin-analytics-modal .admin-shares-table th:nth-child(2),
+.admin-analytics-modal .admin-shares-table td.admin-shares-visitor-cell {
+  text-align: center;
+}
+.admin-analytics-modal .admin-shares-table td.admin-shares-visitor-cell .admin-likes-user-link {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+}

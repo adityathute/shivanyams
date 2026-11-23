@@ -155,6 +155,13 @@
   text-transform: capitalize;
 }
 
+/* Keep the first column readable in every engagement table. */
+.admin-engagement-table th:first-child,
+.admin-engagement-table td:first-child {
+  width: 160px;
+  min-width: 160px;
+}
+
 .admin-engagement-table th,
 .admin-engagement-table td {
   white-space: normal;

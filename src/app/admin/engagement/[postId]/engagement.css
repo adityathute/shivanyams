@@ -141,7 +141,7 @@
 .admin-engagement-data-table {
   width: 100%;
   min-width: 760px;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
   text-align: left;
   white-space: normal;
@@ -192,6 +192,23 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-height: 1.5;
+}
+
+.admin-engagement-cell-value.is-content {
+  display: block;
+  overflow: visible;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  -webkit-line-clamp: unset;
+  line-height: 1.65;
+  min-width: 280px;
+  max-width: 440px;
+}
+
+.admin-engagement-content-cell {
+  min-width: 320px;
+  vertical-align: top !important;
 }
 
 .admin-engagement-table-footer {

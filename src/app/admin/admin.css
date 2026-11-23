@@ -2065,7 +2065,7 @@
 .admin-reports-analytics-table th,
 .admin-reports-analytics-table td {
   box-sizing: border-box;
-  padding: 7px 6px;
+  padding: 9px 9px;
   overflow-wrap: anywhere;
   white-space: normal;
 }
@@ -2115,8 +2115,38 @@
   color: #748299;
   font-size: 10px;
 }
+.admin-reports-analytics-table th:nth-child(5),
 .admin-reports-analytics-table .admin-reports-reporter-cell {
   min-width: 0;
+  text-align: center;
+}
+.admin-reports-analytics-table .admin-reports-reporter-cell .admin-likes-user-link {
+  text-align: center;
+}
+.admin-reports-analytics-table .admin-reports-date-cell {
+  font-size: 12px;
+  line-height: 1.45;
+}
+.admin-reports-analytics-table .admin-reports-date-cell small {
+  font-size: 11px;
+}
+.admin-report-posts-summary-table {
+  table-layout: fixed;
+  width: 100%;
+}
+.admin-report-posts-summary-table th:first-child,
+.admin-report-posts-summary-table td:first-child { width: 38%; }
+.admin-report-posts-summary-table th:not(:first-child),
+.admin-report-posts-summary-table td:not(:first-child) { width: 15.5%; }
+.admin-report-posts-summary-table th,
+.admin-report-posts-summary-table td {
+  padding: 9px 8px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.admin-report-posts-summary-table th:first-child,
+.admin-report-posts-summary-table td:first-child {
+  text-align: left;
 }
 .admin-analytics-modal .admin-likes-analytics-table th:nth-child(1),
 .admin-analytics-modal .admin-likes-analytics-table td:nth-child(1) { width: 11%; }

@@ -62,6 +62,51 @@ type WebsiteViewEvent = {
   referrer_url: string;
 };
 
+type AnalyticsPaginationProps = {
+  total: number;
+  page: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+};
+
+function AnalyticsPagination({
+  total,
+  page,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+}: AnalyticsPaginationProps) {
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  if (total <= pageSize) return null;
+  const firstItem = (page - 1) * pageSize + 1;
+  const lastItem = Math.min(page * pageSize, total);
+  return (
+    <div className="admin-table-footer admin-analytics-pagination">
+      <span>
+        Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {total.toLocaleString("en-IN")}
+      </span>
+      <div className="admin-pagination">
+        <label>
+          Rows
+          <select
+            value={pageSize}
+            onChange={(event) => onPageSizeChange(Number(event.target.value))}
+            aria-label="Rows per page"
+          >
+            {[10, 15, 25, 50].map((size) => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </label>
+        <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>Previous</button>
+        <span>Page {page} of {pageCount}</span>
+        <button type="button" disabled={page >= pageCount} onClick={() => onPageChange(page + 1)}>Next</button>
+      </div>
+    </div>
+  );
+}
+
 type AdminPost = {
   id: number;
   slug: string;
@@ -165,6 +210,11 @@ export default function AdminPage() {
   const [analyticsEvents, setAnalyticsEvents] = useState<WebsiteViewEvent[]>(
     [],
   );
+  const [analyticsPagesPage, setAnalyticsPagesPage] = useState(1);
+  const [analyticsVisitorsPage, setAnalyticsVisitorsPage] = useState(1);
+  const [visitorPagesPage, setVisitorPagesPage] = useState(1);
+  const [analyticsEventsPage, setAnalyticsEventsPage] = useState(1);
+  const [analyticsPageSize, setAnalyticsPageSize] = useState(10);
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -396,6 +446,25 @@ export default function AdminPage() {
         (item) => item.slug === latestUpdatedPost.category.slug,
       )
     : undefined;
+  const analyticsPagesPageCount = Math.max(1, Math.ceil(analyticsPages.length / analyticsPageSize));
+  const analyticsVisitorsPageCount = Math.max(1, Math.ceil(analyticsVisitors.length / analyticsPageSize));
+  const visitorPagesPageCount = Math.max(1, Math.ceil(visitorPages.length / analyticsPageSize));
+  const analyticsEventsPageCount = Math.max(1, Math.ceil(analyticsEvents.length / analyticsPageSize));
+  const visibleAnalyticsPages = [...analyticsPages]
+    .sort((a, b) => b.views - a.views)
+    .slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize);
+  const visibleAnalyticsVisitors = analyticsVisitors.slice(
+    (analyticsVisitorsPage - 1) * analyticsPageSize,
+    analyticsVisitorsPage * analyticsPageSize,
+  );
+  const visibleVisitorPages = visitorPages.slice(
+    (visitorPagesPage - 1) * analyticsPageSize,
+    visitorPagesPage * analyticsPageSize,
+  );
+  const visibleAnalyticsEvents = analyticsEvents.slice(
+    (analyticsEventsPage - 1) * analyticsPageSize,
+    analyticsEventsPage * analyticsPageSize,
+  );
   const pageCount = Math.max(1, Math.ceil(sortedPosts.length / pageSize));
   const visiblePosts = sortedPosts.slice(
     (page - 1) * pageSize,
@@ -419,6 +488,10 @@ export default function AdminPage() {
     setVisitorPages([]);
     setSelectedAnalyticsPath(null);
     setAnalyticsEvents([]);
+    setAnalyticsPagesPage(1);
+    setAnalyticsVisitorsPage(1);
+    setVisitorPagesPage(1);
+    setAnalyticsEventsPage(1);
     setAnalyticsLoading(true);
     const query =
       type === "views"
@@ -456,6 +529,7 @@ export default function AdminPage() {
   async function openVisitorDetails(visitor: WebsiteVisitorRow) {
     setSelectedVisitor(visitor);
     setSelectedAnalyticsPath(null);
+    setVisitorPagesPage(1);
     setAnalyticsLoading(true);
     try {
       const response = await adminFetch(
@@ -479,6 +553,7 @@ export default function AdminPage() {
 
   async function openPageEvents(path: string) {
     setSelectedAnalyticsPath(path);
+    setAnalyticsEventsPage(1);
     setAnalyticsLoading(true);
     try {
       const response = await adminFetch(
@@ -1172,7 +1247,7 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {visitorPages.map((item) => (
+                      {visibleVisitorPages.map((item) => (
                         <tr key={item.path}>
                           <td>
                             <a
@@ -1194,6 +1269,16 @@ export default function AdminPage() {
                     </tbody>
                   </table>
                 </div>
+                <AnalyticsPagination
+                  total={visitorPages.length}
+                  page={visitorPagesPage}
+                  pageSize={analyticsPageSize}
+                  onPageChange={setVisitorPagesPage}
+                  onPageSizeChange={(size) => {
+                    setAnalyticsPageSize(size);
+                    setVisitorPagesPage(1);
+                  }}
+                />
               </div>
             ) : selectedAnalyticsPath ? (
               <div className="admin-analytics-table-wrap">
@@ -1210,7 +1295,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {analyticsEvents.map((event, index) => (
+                    {visibleAnalyticsEvents.map((event, index) => (
                       <tr key={event.visitor_id + event.viewed_at + index}>
                         <td>
                           {event.visitor_type === "user"
@@ -1248,9 +1333,7 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {[...analyticsPages]
-                        .sort((a, b) => b.views - a.views)
-                        .map((item) => (
+                      {visibleAnalyticsPages.map((item) => (
                           <tr key={item.path}>
                             <td>
                               <button
@@ -1275,6 +1358,16 @@ export default function AdminPage() {
                     </tbody>
                   </table>
                 </div>
+                <AnalyticsPagination
+                  total={analyticsPages.length}
+                  page={analyticsPagesPage}
+                  pageSize={analyticsPageSize}
+                  onPageChange={setAnalyticsPagesPage}
+                  onPageSizeChange={(size) => {
+                    setAnalyticsPageSize(size);
+                    setAnalyticsPagesPage(1);
+                  }}
+                />
               )
             ) : analyticsVisitors.length === 0 ? (
               <div className="admin-empty">No visitors recorded yet.</div>
@@ -1295,7 +1388,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {analyticsVisitors.map((visitor) => (
+                    {visibleAnalyticsVisitors.map((visitor) => (
                       <tr key={visitor.visitor_id}>
                         <td>
                           <button

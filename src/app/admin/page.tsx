@@ -1483,7 +1483,7 @@ export default function AdminPage() {
                     aria-pressed={reactionPostsOnly}
                     onClick={() => void showReactionPostsOnly(!reactionPostsOnly)}
                   >
-                    {reactionPostsOnly ? "Show All" : `Show Post ${analyticsType === "dislikes" ? "Dislikes" : "Likes"} Only`}
+                    {reactionPostsOnly ? "Show all" : "Posts only"}
                   </button>
                 </div>
               ) : null}
@@ -1492,7 +1492,18 @@ export default function AdminPage() {
                 variant="ghost"
                 iconRotateOnHover
                 className="admin-analytics-close"
-                onClick={() => { setAnalyticsType(null); setSelectedPost(null); setPostAnalyticsEvents([]); setSelectedLikeComment(null); }}
+                onClick={() => {
+                  setAnalyticsType(null);
+                  setAnalyticsLoading(false);
+                  setReactionPostsOnly(false);
+                  setSelectedPost(null);
+                  setPostAnalyticsEvents([]);
+                  setSelectedVisitor(null);
+                  setVisitorPages([]);
+                  setSelectedAnalyticsPath(null);
+                  setAnalyticsEvents([]);
+                  setSelectedLikeComment(null);
+                }}
                 aria-label="Close"
                 title="Close analytics"
               >

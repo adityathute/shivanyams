@@ -28,13 +28,15 @@
 .admin-comments-list {
   display: grid;
   gap: 12px;
+  margin: 16px;
 }
 
 .admin-comment-card {
   padding: 16px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 11px;
-  background: var(--surface, #fff);
+  background: #f8fafc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .admin-comment-card-head,
@@ -194,7 +196,7 @@
 
 /* Refined discussion moderation layout */
 .admin-comments-panel { overflow: hidden; }
-.admin-comments-filters { gap: 10px; margin-bottom: 16px; }
+.admin-comments-filters { gap: 10px; }
 .admin-comments-list { gap: 10px; }
 .admin-comment-card {
   padding: 14px;

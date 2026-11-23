@@ -1290,7 +1290,26 @@ export default function AdminPage() {
                   showPageSize={false}
                 />
               </div>
-             ) : selectedAnalyticsPath ? (
+             ) : selectedPost ? (
+              <>
+                <div className="admin-analytics-table-wrap">
+                  <table className="admin-analytics-table">
+                    <thead><tr><th>Visitor</th><th>Visitor ID</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
+                    <tbody>
+                      {postAnalyticsEvents.slice((analyticsEventsPage - 1) * analyticsPageSize, analyticsEventsPage * analyticsPageSize).map((event, index) => (
+                        <tr key={event.visitor_id + event.viewed_at + index}>
+                          <td>{event.visitor_type === "user" ? "Registered user" : "Anonymous"}</td>
+                          <td>{event.visitor_id}</td><td>{event.device}</td><td>{event.language || "—"}</td>
+                          <td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td>
+                          <td>{new Date(event.viewed_at).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <AnalyticsPagination total={postAnalyticsEvents.length} page={analyticsEventsPage} pageSize={analyticsPageSize} onPageChange={setAnalyticsEventsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setAnalyticsEventsPage(1); }} />
+              </>
+            ) : selectedAnalyticsPath ? (
               <>
               <div className="admin-analytics-table-wrap">
                 <table className="admin-analytics-table">
@@ -1338,6 +1357,28 @@ export default function AdminPage() {
                 }}
               />
               </>
+            ) : analyticsType === "posts" ? (
+              postAnalyticsPages.length === 0 ? (
+                <div className="admin-empty">No post views recorded yet.</div>
+              ) : (
+                <>
+                  <div className="admin-analytics-table-wrap">
+                    <table className="admin-analytics-table admin-post-views-table">
+                      <thead><tr><th>Post</th><th>Total views</th><th>Unique visitors</th><th>Last viewed</th></tr></thead>
+                      <tbody>
+                        {postAnalyticsPages.slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize).map((item) => (
+                          <tr key={item.id}>
+                            <td><button type="button" className="admin-analytics-link" title={item.title} aria-label={"View details for " + item.title} onClick={() => void openPostEvents(item)}>{item.title}</button></td>
+                            <td>{formatCompactNumber(item.views)}</td><td>{formatCompactNumber(item.unique_visitors)}</td>
+                            <td>{item.last_viewed ? new Date(item.last_viewed).toLocaleString() : "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <AnalyticsPagination total={postAnalyticsPages.length} page={analyticsPagesPage} pageSize={analyticsPageSize} onPageChange={setAnalyticsPagesPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setAnalyticsPagesPage(1); }} />
+                </>
+              )
             ) : analyticsType === "views" ? (
               analyticsPages.length === 0 ? (
                 <div className="admin-empty">

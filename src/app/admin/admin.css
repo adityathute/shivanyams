@@ -2593,7 +2593,7 @@
 
 /* Saved posts analytics: match the Likes/Dislikes typography and table treatment. */
 .admin-analytics-modal .admin-saved-posts-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0 0 18px; }
-.admin-analytics-modal .admin-saved-posts-summary article { display:flex; flex-direction:column; gap:6px; min-width:0; padding:14px 16px; border:1px solid var(--admin-border,#e5e7eb); border-radius:12px; background:var(--admin-card,#fff); }
+.admin-analytics-modal .admin-saved-posts-summary article { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:6px; min-width:0; min-height:88px; padding:16px; border:1px solid var(--admin-border,#e5e7eb); border-radius:12px; background:var(--admin-card,#fff); }
 .admin-analytics-modal .admin-saved-posts-summary span { color:var(--admin-muted,#6b7280); font-size:12px; font-weight:600; }
 .admin-analytics-modal .admin-saved-posts-summary strong { color:var(--admin-text,#111827); font-size:22px; font-weight:750; line-height:1.2; font-variant-numeric:tabular-nums; }
 .admin-analytics-modal .admin-saved-posts-table th:first-child,.admin-analytics-modal .admin-saved-posts-table td:first-child { text-align:left; }

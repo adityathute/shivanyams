@@ -46,6 +46,7 @@ type LikeAnalyticsEvent = {
   content: string;
   parent_content: string;
   user_name: string;
+  visitor_id: string;
   created_at: string;
 };
 type WebsiteVisitorRow = {
@@ -1376,7 +1377,7 @@ export default function AdminPage() {
               ) : (
                 <>
                   <div className="admin-analytics-table-wrap">
-                    <table className="admin-analytics-table">
+                    <table className="admin-analytics-table admin-likes-analytics-table">
                       <thead>
                         <tr>
                           <th>Liked item</th>
@@ -1394,18 +1395,44 @@ export default function AdminPage() {
                                 {item.target_type === "post" ? "Post" : item.target_type === "comment" ? "Comment" : "Reply"}
                               </span>
                             </td>
-                            <td title={item.post_title}>{item.post_title}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="admin-analytics-link admin-likes-post-link"
+                                title={item.post_title}
+                                onClick={() => void openPostEvents({
+                                  id: item.post_id,
+                                  title: item.post_title,
+                                  slug: item.post_slug,
+                                  views: 0,
+                                  unique_visitors: 0,
+                                  last_viewed: null,
+                                })}
+                              >
+                                {item.post_title}
+                              </button>
+                            </td>
                             <td title={item.content}>
-                              {item.target_type === "post"
-                                ? "Liked this post"
-                                : item.content.length > 180
-                                  ? item.content.slice(0, 180) + "…"
-                                  : item.content}
+                              <span className="admin-analytics-like-content">
+                                {item.target_type === "post" ? "Liked this post" : item.content}
+                              </span>
                               {item.target_type === "reply" && item.parent_content
-                                ? <small className="admin-analytics-like-context">Reply to: {item.parent_content.length > 100 ? item.parent_content.slice(0, 100) + "…" : item.parent_content}</small>
+                                ? <small className="admin-analytics-like-context">Reply to: {item.parent_content}</small>
                                 : null}
                             </td>
-                            <td>{item.user_name || "Registered user"}</td>
+                            <td>
+                              {item.visitor_id ? (
+                                <button
+                                  type="button"
+                                  className="admin-analytics-link admin-likes-user-link"
+                                  onClick={() => void openPostEventVisitor(item.visitor_id)}
+                                >
+                                  {item.user_name || "Registered user"}
+                                </button>
+                              ) : (
+                                item.user_name || "Registered user"
+                              )}
+                            </td>
                             <td>{new Date(item.created_at).toLocaleString()}</td>
                           </tr>
                         ))}

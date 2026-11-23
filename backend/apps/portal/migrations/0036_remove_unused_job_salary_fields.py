@@ -7,16 +7,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name="jobdetails",
-            name="salary_min",
-        ),
-        migrations.RemoveField(
-            model_name="jobdetails",
-            name="salary_max",
-        ),
-        migrations.RemoveField(
-            model_name="jobdetails",
-            name="salary_currency",
+        migrations.RunSQL(
+            sql="""
+                ALTER TABLE portal_jobdetails
+                    DROP COLUMN IF EXISTS salary_min,
+                    DROP COLUMN IF EXISTS salary_max,
+                    DROP COLUMN IF EXISTS salary_currency;
+            """,
+            reverse_sql=migrations.RunSQL.noop,
         ),
     ]

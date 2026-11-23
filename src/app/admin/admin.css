@@ -1962,3 +1962,28 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+
+/* Drafts and Pending Review tables use the same compact modal layout. */
+.admin-analytics-modal .admin-content-status-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.admin-analytics-modal .admin-content-status-table th:first-child,
+.admin-analytics-modal .admin-content-status-table td:first-child { width: 42%; }
+.admin-analytics-modal .admin-content-status-table th:nth-child(2),
+.admin-analytics-modal .admin-content-status-table td:nth-child(2) { width: 18%; }
+.admin-analytics-modal .admin-content-status-table th:nth-child(3),
+.admin-analytics-modal .admin-content-status-table td:nth-child(3) { width: 25%; }
+.admin-analytics-modal .admin-content-status-table th:last-child,
+.admin-analytics-modal .admin-content-status-table td:last-child { width: 15%; }
+.admin-analytics-modal .admin-content-status-table .admin-analytics-link {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

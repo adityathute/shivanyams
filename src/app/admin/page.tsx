@@ -191,6 +191,15 @@ function statusLabel(status: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function formatAnalyticsDateTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return { date: "—", time: "—" };
+  return {
+    date: date.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" }),
+    time: date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
+  };
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -1674,14 +1683,32 @@ export default function AdminPage() {
                 ) : reportAnalyticsEvents.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (
                   <>
                     <div className="admin-analytics-table-wrap">
-                      <table className="admin-analytics-table admin-likes-analytics-table">
+                      <table className="admin-analytics-table admin-reports-analytics-table">
                         <thead><tr><th>Type</th><th>Post</th><th>Reported content</th><th>Reason</th><th>Reported by</th><th>Reported at</th></tr></thead>
                         <tbody>{visibleReportEvents.map((item) => (
                           <tr key={item.id}>
                             <td><span className="admin-analytics-type-label">{item.target_type === "post" ? "Post" : item.target_type === "reply" ? "Reply" : "Comment"}</span></td>
                             <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.post_title} onClick={() => void openPostEvents({ id: item.post_id, title: item.post_title, slug: item.post_slug, views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title}</button></td>
                             <td><button type="button" className="admin-likes-content-link is-comment" onClick={() => setSelectedReport(item)}><span className="admin-analytics-like-content">{item.content}</span></button></td>
-                            <td>{statusLabel(item.reason)}</td><td>{item.reporter_name ? formatPersonName(item.reporter_name) : item.reporter_email || "Registered user"}</td><td>{new Date(item.created_at).toLocaleString()}</td>
+                            <td>{statusLabel(item.reason)}</td>
+                            <td className="admin-reports-reporter-cell">
+                              {item.visitor_id ? (
+                                <button
+                                  type="button"
+                                  className="admin-analytics-link admin-likes-user-link"
+                                  title={item.reporter_name || item.reporter_email || "Registered user"}
+                                  onClick={() => { setSelectedReport(null); void openPostEventVisitor(item.visitor_id); }}
+                                >
+                                  {item.reporter_name ? formatPersonName(item.reporter_name) : item.reporter_email || "Registered user"}
+                                </button>
+                              ) : (
+                                item.reporter_name ? formatPersonName(item.reporter_name) : item.reporter_email || "Registered user"
+                              )}
+                            </td>
+                            <td className="admin-reports-date-cell">
+                              <span>{formatAnalyticsDateTime(item.created_at).date}</span>
+                              <small>{formatAnalyticsDateTime(item.created_at).time}</small>
+                            </td>
                           </tr>
                         ))}</tbody>
                       </table>

@@ -62,7 +62,7 @@ export async function getPublicPostMetadata(kind: string, slug: string, route = 
         title,
         description,
         siteName: "ShivanyaMS",
-        images: [{ url: image, width: 1200, height: 630, alt: title }],
+        images: [{ url: image, alt: title }],
         ...(post.published_at ? { publishedTime: post.published_at } : {}),
       },
       twitter: { card: "summary_large_image", title, description, images: [image] },

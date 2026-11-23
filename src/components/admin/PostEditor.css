@@ -1995,3 +1995,16 @@ padding-right: 24px;
   .post-editor-header-actions { align-items: flex-start; }
   .post-editor-header-actions .post-editor-save-status { text-align: left; }
 }
+
+
+.post-editor-publication-status { display: grid; justify-items: end; gap: 4px; color: #334155; font-size: 12px; }
+.post-editor-publication-status > strong { text-transform: capitalize; font-size: 13px; color: #16734e; }
+.post-editor-publication-status > span { color: #64748b; font-size: 11px; }
+.post-editor-publication-status .post-editor-unpublished-version { color: #b45309; font-weight: 700; }
+.post-editor-version-history { position: relative; font-size: 11px; }
+.post-editor-version-history summary { cursor: pointer; color: #315d8a; font-weight: 700; }
+.post-editor-version-history ol { position: absolute; z-index: 20; right: 0; top: 100%; width: min(290px, 80vw); max-height: 260px; overflow: auto; margin: 6px 0 0; padding: 10px 12px 10px 28px; border: 1px solid #dbe3ed; border-radius: 9px; background: #fff; box-shadow: 0 8px 24px #0f172a1a; }
+.post-editor-version-history li { display: grid; gap: 3px; padding: 7px 0; }
+.post-editor-version-history li span { color: #64748b; }
+.post-editor-version-history li time { color: #94a3b8; font-size: 10px; }
+@media (max-width: 520px) { .post-editor-publication-status { justify-items: start; } }

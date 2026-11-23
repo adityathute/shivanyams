@@ -233,7 +233,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           <DislikeIcon size={19} />
           <strong>{formatCompactNumber(dislikes)}</strong>
         </button>
-        <button type="button" className="portal-action-share" onClick={() => setShareMenuOpen((open) => !open)} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
+        <button type="button" className="portal-action-share" onClick={() => { if (shareMenuOpen) { setShareMenuOpen(false); void recordShare("dismissed"); } else { setShareMenuOpen(true); } }} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
           <ShareIcon size={19} />
         </button>
         <button type="button" className={`portal-action-bookmark${saved ? " is-active" : ""}`} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
@@ -247,6 +247,7 @@ export function PostEngagementActions({ postId, title }: Props) {
       </div>
       {shareMenuOpen ? (
         <div className="portal-share-menu" role="menu" aria-label="Share this post">
+          <button type="button" role="menuitem" className="portal-share-menu-close" onClick={() => { setShareMenuOpen(false); void recordShare("dismissed"); }}>Close</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("copy")}>Copy link</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")}>WhatsApp</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("facebook")}>Facebook</button>

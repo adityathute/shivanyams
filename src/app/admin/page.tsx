@@ -68,6 +68,8 @@ type AnalyticsPaginationProps = {
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
   className?: string;
+  alwaysShow?: boolean;
+  showPageSize?: boolean;
 };
 
 function AnalyticsPagination({
@@ -77,9 +79,11 @@ function AnalyticsPagination({
   onPageChange,
   onPageSizeChange,
   className,
+  alwaysShow = false,
+  showPageSize = true,
 }: AnalyticsPaginationProps) {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
-  if (total <= pageSize) return null;
+  if (!alwaysShow && total <= pageSize) return null;
   const firstItem = (page - 1) * pageSize + 1;
   const lastItem = Math.min(page * pageSize, total);
   return (
@@ -88,18 +92,20 @@ function AnalyticsPagination({
         Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {formatCompactNumber(total)}
       </span>
       <div className="admin-pagination">
-        <label>
-          Rows
-          <select
-            value={pageSize}
-            onChange={(event) => onPageSizeChange(Number(event.target.value))}
-            aria-label="Rows per page"
-          >
-            {[10, 15, 25, 50].map((size) => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </label>
+        {showPageSize && (
+          <label>
+            Rows
+            <select
+              value={pageSize}
+              onChange={(event) => onPageSizeChange(Number(event.target.value))}
+              aria-label="Rows per page"
+            >
+              {[10, 15, 25, 50].map((size) => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+          </label>
+        )}
         <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>Previous</button>
         <span>Page {page} of {pageCount}</span>
         <button type="button" disabled={page >= pageCount} onClick={() => onPageChange(page + 1)}>Next</button>
@@ -441,9 +447,10 @@ export default function AdminPage() {
     (analyticsVisitorsPage - 1) * analyticsPageSize,
     analyticsVisitorsPage * analyticsPageSize,
   );
+  const visitorPageSize = 10;
   const visibleVisitorPages = visitorPages.slice(
-    (visitorPagesPage - 1) * analyticsPageSize,
-    visitorPagesPage * analyticsPageSize,
+    (visitorPagesPage - 1) * visitorPageSize,
+    visitorPagesPage * visitorPageSize,
   );
   const visibleAnalyticsEvents = analyticsEvents.slice(
     (analyticsEventsPage - 1) * analyticsPageSize,
@@ -1251,12 +1258,11 @@ export default function AdminPage() {
                   className="admin-visitor-details-pagination"
                   total={visitorPages.length}
                   page={visitorPagesPage}
-                  pageSize={analyticsPageSize}
+                  pageSize={visitorPageSize}
                   onPageChange={setVisitorPagesPage}
-                  onPageSizeChange={(size) => {
-                    setAnalyticsPageSize(size);
-                    setVisitorPagesPage(1);
-                  }}
+                  onPageSizeChange={() => setVisitorPagesPage(1)}
+                  alwaysShow
+                  showPageSize={false}
                 />
               </div>
              ) : selectedAnalyticsPath ? (

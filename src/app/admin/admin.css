@@ -2816,6 +2816,7 @@
   transition: border-color 150ms ease, background 150ms ease;
 }
 .admin-analytics-modal .admin-shares-summary .admin-shares-summary-card:hover,
+.admin-analytics-modal .admin-shares-summary .admin-shares-summary-card.is-active,
 .admin-analytics-modal .admin-shares-summary .admin-shares-summary-card:focus-visible {
   border-color: var(--admin-accent, #2563eb);
   background: var(--admin-card-hover, rgba(37, 99, 235, 0.045));

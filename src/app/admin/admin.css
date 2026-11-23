@@ -2711,3 +2711,10 @@
     margin: 12px;
   }
 }
+
+/* Subscribers: force the Full name header, cells, and clickable names to align left. */
+.admin-analytics-modal .admin-subscribers-table th:first-child,
+.admin-analytics-modal .admin-subscribers-table td:first-child,
+.admin-analytics-modal .admin-subscribers-table td:first-child .admin-likes-user-link {
+  text-align: left;
+}

@@ -71,7 +71,7 @@ export function JobsPage() {
   const [hasApplyLink, setHasApplyLink] = useState("");
   const [minPostVacancies, setMinPostVacancies] = useState("");
   const [sortOrder, setSortOrder] = useState("recent");
-  const [salaryCurrency, setSalaryCurrency] = useState("INR");
+  const [salaryCurrency, setSalaryCurrency] = useState("");
   const [postedAfter, setPostedAfter] = useState("");
   const [postedBefore, setPostedBefore] = useState("");
   const [closingWithinDays, setClosingWithinDays] = useState("");
@@ -171,7 +171,7 @@ export function JobsPage() {
     setQualification(""); setExamMode(""); setSalaryMin(""); setSalaryMax("");
     setWorkCity(""); setWorkDistrict(""); setRemoteOnly(false);
     setHasNotification(""); setHasApplyLink(""); setMinPostVacancies("");
-    setSortOrder("recent"); setSalaryCurrency("INR"); setPostedAfter(""); setPostedBefore("");
+    setSortOrder("recent"); setSalaryCurrency(""); setPostedAfter(""); setPostedBefore("");
     setClosingWithinDays(""); setHasPosts(""); setHasPostApplicationLinks("");
     setHasSearched(false); setResults([]); setSearchError("");
   };
@@ -231,7 +231,7 @@ export function JobsPage() {
               <label>Direct apply link<select value={hasApplyLink} onChange={(e) => { setHasApplyLink(e.target.value); setHasSearched(true); }}><option value="">Any application link</option><option value="true">Has direct apply link</option><option value="false">No direct apply link</option></select></label>
               <label>Minimum vacancies in a post<input type="number" min="0" value={minPostVacancies} onChange={(e) => { setMinPostVacancies(e.target.value); setHasSearched(true); }} placeholder="e.g. 5" /></label>
               <label>Sort results<select value={sortOrder} onChange={(e) => { setSortOrder(e.target.value); setHasSearched(true); }}><option value="recent">Newest first</option><option value="oldest">Oldest first</option><option value="title">Title A–Z</option><option value="title_desc">Title Z–A</option><option value="popular">Most viewed</option><option value="featured">Featured first</option><option value="vacancies_desc">Most vacancies</option><option value="vacancies_asc">Fewest vacancies</option><option value="closing_soon">Closing date soonest</option></select></label>
-              <label>Salary currency<select value={salaryCurrency} onChange={(e) => { setSalaryCurrency(e.target.value); setHasSearched(true); }}><option value="INR">INR — Indian Rupee</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — Pound Sterling</option></select></label>
+              <label>Salary currency<select value={salaryCurrency} onChange={(e) => { setSalaryCurrency(e.target.value); setHasSearched(true); }}><option value="">Any currency</option><option value="INR">INR — Indian Rupee</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — Pound Sterling</option></select></label>
               <label>Posted after<input type="date" value={postedAfter} onChange={(e) => { setPostedAfter(e.target.value); setHasSearched(true); }} /></label>
               <label>Posted before<input type="date" value={postedBefore} onChange={(e) => { setPostedBefore(e.target.value); setHasSearched(true); }} /></label>
               <label>Closing within<select value={closingWithinDays} onChange={(e) => { setClosingWithinDays(e.target.value); setHasSearched(true); }}><option value="">Any deadline</option><option value="3">3 days</option><option value="7">7 days</option><option value="15">15 days</option><option value="30">30 days</option><option value="60">60 days</option></select></label>

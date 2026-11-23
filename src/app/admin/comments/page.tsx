@@ -182,7 +182,7 @@ export default function AdminCommentsPage() {
           <div className="admin-panel-heading admin-comments-panel-heading">
             <div>
               <h2>Discussion activity</h2>
-              <p>{comments.length.toLocaleString("en-IN")} comments in this result.</p>
+              <p>Monitor community conversations, review reported content, and manage member discussions.</p>
             </div>
             <div className="admin-comments-totals" aria-label={`${comments.length} total comments and ${totalReports} total reports`}>
               <div className="admin-comments-total">

@@ -266,7 +266,7 @@ export default function AdminTagsPage() {
         footer={
           <div className="admin-tags-modal-actions">
             <button type="button" className="admin-secondary-button" disabled={busyTag !== null} onClick={() => setEditingTag(null)}>Cancel</button>
-            <button type="button" className="admin-primary-button" disabled={busyTag !== null || !editName.trim()} onClick={() => void renameTag()}>
+            <button type="button" className="admin-primary-button" disabled={busyTag !== null || !editName.trim() || editName.trim() === editingTag?.name} onClick={() => void renameTag()}>
               {busyTag !== null ? "Saving..." : "Save changes"}
             </button>
           </div>

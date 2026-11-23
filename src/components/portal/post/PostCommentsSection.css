@@ -314,8 +314,9 @@
   margin-left: 0;
   opacity: 1;
 }
-.portal-comment-actions button.portal-comment-report:hover {
-  color: var(--text-primary, #334155);
+.portal-comment-actions button.portal-comment-report:hover,
+.portal-comment-actions button.portal-comment-report:focus-visible {
+  color: #eab308;
 }
 .portal-comment-toggle-replies,
 .portal-comment-load-more {

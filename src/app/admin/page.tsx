@@ -592,6 +592,25 @@ export default function AdminPage() {
     }
   }
 
+  async function openPostEventVisitor(visitorId: string) {
+    setAnalyticsLoading(true);
+    try {
+      const response = await adminFetch(
+        API_URL + "/admin/website-analytics/?type=visitors&authenticated=true",
+        { cache: "no-store" },
+      );
+      if (!response.ok)
+        throw new Error(`Unable to load visitor details (${response.status}).`);
+      const payload: { visitors?: WebsiteVisitorRow[] } = await response.json();
+      const visitor = (payload.visitors ?? []).find((item) => item.visitor_id === visitorId);
+      if (!visitor) throw new Error("Visitor details are not available for this account.");
+      await openVisitorDetails(visitor);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to open visitor details.");
+      setAnalyticsLoading(false);
+    }
+  }
+
   async function openPageEvents(path: string) {
     setSelectedAnalyticsPath(path);
     setAnalyticsEventsPage(1);
@@ -1231,14 +1250,18 @@ export default function AdminPage() {
                   variant="ghost"
                   className="admin-analytics-back-icon"
                   onClick={() => {
+                    if (selectedVisitor) {
+                      setSelectedVisitor(null);
+                      setVisitorPages([]);
+                      setVisitorPagesPage(1);
+                      return;
+                    }
                     if (selectedPost) {
                       setSelectedPost(null);
                       setPostAnalyticsEvents([]);
                       setAnalyticsEventsPage(1);
                       return;
                     }
-                    setSelectedVisitor(null);
-                    setVisitorPages([]);
                     setSelectedAnalyticsPath(null);
                     setAnalyticsEvents([]);
                   }}
@@ -1250,10 +1273,10 @@ export default function AdminPage() {
               )}
               <div>
                 <h2 id="admin-analytics-title">
-                  {selectedPost
-                    ? selectedPost.title + " (" + formatCompactNumber(postAnalyticsEvents.length) + " views)"
-                    : selectedVisitor
-                      ? `Visitor details (${formatCompactNumber(visitorPages.length)})`
+                  {selectedVisitor
+                    ? `Visitor details (${formatCompactNumber(visitorPages.length)})`
+                    : selectedPost
+                      ? selectedPost.title + " (" + formatCompactNumber(postAnalyticsEvents.length) + " views)"
                       : selectedAnalyticsPath
                         ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
                         : analyticsType === "posts"
@@ -1269,10 +1292,10 @@ export default function AdminPage() {
                           : `Website Visitors (${formatCompactNumber(websiteVisitorsCount)})`}
                 </h2>
                 <p>
-                  {selectedPost
-                    ? "Individual visits recorded for this post."
-                    : selectedVisitor
-                      ? "Pages visited by this browser or device."
+                  {selectedVisitor
+                    ? "Pages visited by this browser or device."
+                    : selectedPost
+                      ? "Individual visits recorded for this post."
                       : selectedAnalyticsPath
                         ? "Individual visits recorded for this page."
                         : analyticsType === "posts"
@@ -1300,25 +1323,6 @@ export default function AdminPage() {
             </header>
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
-            ) : selectedPost ? (
-              <>
-                <div className="admin-analytics-table-wrap">
-                  <table className="admin-analytics-table">
-                    <thead><tr><th>Visitor</th><th>Browser</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
-                    <tbody>
-                      {postAnalyticsEvents.slice((analyticsEventsPage - 1) * analyticsPageSize, analyticsEventsPage * analyticsPageSize).map((event, index) => (
-                        <tr key={event.visitor_id + event.viewed_at + index}>
-                          <td>{event.visitor_type === "user" ? formatPersonName(event.full_name) || "Registered user" : "Anonymous"}</td>
-                          <td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td>
-                          <td className="admin-analytics-referrer"><span>{event.referrer_url || "Direct"}</span></td>
-                          <td>{new Date(event.viewed_at).toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <AnalyticsPagination total={postAnalyticsEvents.length} page={analyticsEventsPage} pageSize={analyticsPageSize} onPageChange={setAnalyticsEventsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setAnalyticsEventsPage(1); }} />
-              </>
             ) : selectedVisitor ? (
               <div className="admin-analytics-detail">
                 <div className="admin-visitor-summary">
@@ -1394,6 +1398,31 @@ export default function AdminPage() {
                   showPageSize={false}
                 />
               </div>
+            ) : selectedPost ? (
+              <>
+                <div className="admin-analytics-table-wrap">
+                  <table className="admin-analytics-table">
+                    <thead><tr><th>Visitor</th><th>Browser</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
+                    <tbody>
+                      {postAnalyticsEvents.slice((analyticsEventsPage - 1) * analyticsPageSize, analyticsEventsPage * analyticsPageSize).map((event, index) => (
+                        <tr key={event.visitor_id + event.viewed_at + index}>
+                          <td>
+                            {event.visitor_type === "user" ? (
+                              <button type="button" className="admin-analytics-link" onClick={() => void openPostEventVisitor(event.visitor_id)}>
+                                {formatPersonName(event.full_name) || "Registered user"}
+                              </button>
+                            ) : "Anonymous"}
+                          </td>
+                          <td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td>
+                          <td className="admin-analytics-referrer"><span>{event.referrer_url || "Direct"}</span></td>
+                          <td>{new Date(event.viewed_at).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <AnalyticsPagination total={postAnalyticsEvents.length} page={analyticsEventsPage} pageSize={analyticsPageSize} onPageChange={setAnalyticsEventsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setAnalyticsEventsPage(1); }} />
+              </>
             ) : selectedAnalyticsPath ? (
               <>
               <div className="admin-analytics-table-wrap">
@@ -1610,10 +1639,10 @@ export default function AdminPage() {
             )}
             <footer>
               <span>
-                {selectedPost
-                  ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"
-                  : selectedVisitor
-                    ? formatCompactNumber(visitorPages.length) + " pages visited"
+                {selectedVisitor
+                  ? formatCompactNumber(visitorPages.length) + " pages visited"
+                  : selectedPost
+                    ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"
                     : selectedAnalyticsPath
                       ? analyticsEvents.length + " recent view events"
                       : analyticsType === "drafts" || analyticsType === "review"

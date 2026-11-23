@@ -1,0 +1,1097 @@
+.portal-comments-section {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 16px 0 8px;
+  padding: 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 20px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, inherit);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
+}
+
+.portal-comments-heading,
+.portal-comment-author-row,
+.portal-comment-composer-footer,
+.portal-comment-inline-reply-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portal-comments-heading {
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.portal-comments-sort {
+  flex: 0 0 132px;
+  width: 132px;
+  max-width: 132px;
+  min-width: 0;
+}
+
+.portal-comments-heading > div {
+  display: grid;
+  gap: 3px;
+}
+.portal-comments-heading h2 {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.portal-comments-heading span,
+.portal-comment-author-row time,
+.portal-comment-composer-footer > span,
+.portal-comment-inline-reply-footer > span {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.74rem;
+}
+.portal-comments-heading select,
+.portal-comment-inline-reply textarea,
+.portal-comment-report-panel select,
+.portal-comment-report-panel textarea {
+  color: inherit;
+  background: var(--background, transparent);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  outline: none;
+}
+.portal-comments-heading select {
+  padding: 6px 9px;
+  font-size: 0.77rem;
+}
+.portal-comment-composer {
+  display: grid;
+  gap: 7px;
+  padding: 11px 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+}
+.portal-comment-composer textarea {
+  font-size: 0.86rem;
+}
+.portal-comment-composer textarea:focus,
+.portal-comment-inline-reply textarea:focus,
+.portal-comment-report-panel select:focus,
+.portal-comment-report-panel textarea:focus,
+.portal-comments-heading select:focus {
+  border-color: var(--primary, #8b5cf6);
+}
+.portal-comment-composer-footer {
+  justify-content: flex-end;
+  margin-top: 7px;
+}
+.portal-comment-composer-footer > span {
+  margin-right: auto;
+}
+.portal-comment-composer-footer button:not([class]) {
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  cursor: pointer;
+}
+.portal-comments-message,
+.portal-comments-empty {
+  margin: 13px 0;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.83rem;
+}
+.portal-comments-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 17px 0 2px;
+  padding: 26px 16px;
+  border: 1px dashed var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.portal-comments-empty-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  margin-bottom: 2px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary, #8b5cf6) 10%, transparent);
+  color: var(--primary, #8b5cf6);
+  font-size: 1rem;
+}
+
+.portal-comments-empty strong {
+  color: var(--text-primary, inherit);
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.portal-comments-empty p {
+  margin: 0;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.77rem;
+}
+.portal-comments-list {
+  margin-top: 17px;
+}
+.portal-comment-item {
+  position: relative;
+  margin-top: 15px;
+}
+.portal-comment-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+.portal-comment-item.has-replies::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 30px;
+  bottom: 27px;
+  left: 15px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  pointer-events: none;
+}
+
+/* A reply uses ::before for the elbow arriving from its parent branch.
+   Keep its own outgoing vertical branch on ::after so nested threads connect. */
+.portal-comment-replies-list > .portal-comment-item.has-replies::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 30px;
+  bottom: 27px;
+  left: 15px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  pointer-events: none;
+}
+.portal-comment-main > .shivanya-avatar {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  font-size: 0.7rem;
+}
+.portal-comment-content {
+  min-width: 0;
+  flex: 1;
+}
+.portal-comment-author-row {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.portal-comment-author-row strong {
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+.portal-comment-admin-badge {
+  padding: 1px 5px;
+  border: 1px solid color-mix(in srgb, #8b5cf6 50%, transparent);
+  border-radius: 4px;
+  color: #a78bfa;
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+.portal-comment-author-row time {
+  margin-left: 0;
+}
+.portal-comment-content > p {
+  display: -webkit-box;
+  margin: 4px 0 6px;
+  overflow: hidden;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.portal-comment-content > p.is-expanded {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
+.portal-comment-show-more {
+  display: inline-flex;
+  align-items: center;
+  margin: -2px 0 5px;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary, #64748b);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.portal-comment-show-more:hover,
+.portal-comment-show-more:focus-visible {
+  color: var(--text-primary, #334155);
+  text-decoration: underline;
+}
+
+.portal-comment-show-more:focus-visible {
+  outline: 2px solid var(--primary, #8b5cf6);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.portal-comment-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+.portal-comment-actions button {
+  padding: 1px 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  font: inherit;
+  font-size: 0.74rem;
+  cursor: pointer;
+  transition: color 0.16s ease;
+}
+.portal-comment-actions button.portal-comment-reply-action,
+.portal-comment-actions button.portal-comment-report {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  min-height: 28px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  line-height: 1;
+  transition: color 0.16s ease, background-color 0.16s ease;
+}
+.portal-comment-actions button.portal-comment-reply-action::before,
+.portal-comment-actions button.portal-comment-report::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  transition: background-color 0.16s ease;
+}
+
+.portal-comment-actions button.portal-comment-reply-action:hover::before,
+.portal-comment-actions button.portal-comment-reply-action:focus-visible::before,
+.portal-comment-actions button.portal-comment-report:hover::before,
+.portal-comment-actions button.portal-comment-report:focus-visible::before {
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-actions button:hover {
+  color: var(--muted-foreground, #64748b);
+}
+.portal-comment-actions button.portal-comment-reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+.portal-comment-actions button.portal-comment-reaction:hover {
+  transform: translateY(-1px);
+}
+.portal-comment-actions button.portal-comment-like:hover,
+.portal-comment-actions button.portal-comment-like.is-active {
+  color: #2563eb;
+}
+.portal-comment-actions button.portal-comment-dislike:hover,
+.portal-comment-actions button.portal-comment-dislike.is-active {
+  color: #ef4444;
+}
+.portal-comment-actions .portal-comment-report {
+  margin-left: 0;
+  opacity: 1;
+}
+/* Keep Reply and Report closer without changing spacing between other actions. */
+.portal-comment-actions button.portal-comment-reply-action + button.portal-comment-report {
+  margin-left: -7px;
+}
+.portal-comment-actions button.portal-comment-report:hover {
+  color: var(--text-primary, #334155);
+}
+.portal-comment-toggle-replies,
+.portal-comment-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--primary, #64748b);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
+}
+.portal-comment-toggle-replies {
+  position: relative;
+  justify-content: flex-start;
+  width: fit-content;
+  margin-top: 5px;
+  text-align: left;
+}
+/* Horizontal branch from the comment's vertical rail to its collapsed reply count. */
+.portal-comment-toggle-replies::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 14px);
+  left: -24px;
+  width: 24px;
+  height: 14px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom-left-radius: 10px;
+  pointer-events: none;
+}
+.portal-comment-toggle-replies:hover,
+.portal-comment-load-more:hover {
+  color: var(--text-primary, #334155);
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-toggle-replies:focus-visible,
+.portal-comment-load-more:focus-visible {
+  outline: 2px solid var(--primary, #8b5cf6);
+  outline-offset: 2px;
+}
+.portal-comment-toggle-arrow {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+.portal-comment-replies {
+  position: relative;
+  margin: 8px 0 0 14px;
+  padding: 0 0 0 42px;
+}
+.portal-comment-replies-list {
+  position: relative;
+}
+.portal-comment-replies-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+}
+/* Each reply elbow turns from its parent's vertical rail toward its avatar.
+   Nested replies get a separate ::after rail, so the elbow cannot overwrite it. */
+.portal-comment-replies-list > .portal-comment-item {
+  position: relative;
+  margin-top: 12px;
+}
+.portal-comment-replies-list > .portal-comment-item::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: -41px;
+  width: 41px;
+  height: 15px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom-left-radius: 12px;
+  pointer-events: none;
+}
+.portal-comment-replies-list > .portal-comment-item:first-child {
+  margin-top: 0;
+}
+.portal-comment-replies-footer .portal-comment-load-more,
+.portal-comment-replies-footer .portal-comment-hide-replies {
+  position: relative;
+  margin: 0;
+  padding: 4px 7px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--primary, #64748b);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease;
+}
+.portal-comment-replies-footer .portal-comment-load-more:hover {
+  color: var(--text-primary, #334155);
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-replies-footer .portal-comment-hide-replies {
+  z-index: 0;
+  margin-left: 0;
+  padding: 5px 10px 5px 7px;
+  border-radius: 999px;
+  isolation: isolate;
+}
+.portal-comment-replies-footer .portal-comment-hide-replies::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  transition: background-color 0.16s ease;
+}
+
+/* Continue the parent thread rail with a curved elbow into "Hide replies". */
+.portal-comment-replies-footer .portal-comment-hide-replies::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -41px;
+  width: 41px;
+  height: 15px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom: 1.5px solid var(--border-color, #cbd5e1);
+  border-bottom-left-radius: 10px;
+  pointer-events: none;
+}
+.portal-comment-replies-footer .portal-comment-hide-replies:hover::before,
+.portal-comment-replies-footer
+  .portal-comment-hide-replies:focus-visible::before {
+  background: color-mix(in srgb, var(--text-primary, #334155) 7%, transparent);
+}
+.portal-comment-hide-replies {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.portal-comment-item.is-deep > .portal-comment-replies {
+  margin-left: 14px;
+}
+.portal-comment-inline-reply {
+  position: relative;
+  display: grid;
+  gap: 7px;
+  margin: 9px 0 3px 39px;
+  padding: 9px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  animation: comment-reply-in 0.18s ease-out;
+}
+.portal-comment-inline-reply::before {
+  content: "";
+  position: absolute;
+  top: -59px;
+  left: -25px;
+  height: 68px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+}
+.portal-comment-inline-reply::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: -25px;
+  width: 25px;
+  border-top: 1.5px solid var(--border-color, #cbd5e1);
+}
+.portal-comment-inline-reply::after,
+.portal-comment-thread-report:after {
+  top: 9px;
+}
+
+.portal-comment-item.has-replies > .portal-comment-inline-reply::after {
+  top: 90px;
+}
+
+.portal-comment-item.has-replies > .portal-comment-thread-report:after {
+  top: 140px;
+}
+
+.portal-comment-inline-reply textarea,
+.portal-comment-report-panel textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 9px;
+  resize: vertical;
+  font: inherit;
+  font-size: 0.82rem;
+}
+.portal-comment-inline-reply-footer {
+  justify-content: flex-end;
+  margin-top: 3px;
+}
+.portal-comment-inline-reply-footer > span {
+  margin-right: auto;
+}
+/* .portal-comment-inline-reply-footer button,
+.portal-comment-report-panel > div:last-child button:first-child {
+  padding: 5px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.75rem;
+  cursor: pointer;
+} */
+.portal-comment-inline-reply-footer button.is-primary {
+  padding: 6px 11px;
+  border: 1px solid var(--primary, #8b5cf6);
+  border-radius: 7px;
+  background: var(--primary, #8b5cf6);
+  color: white;
+}
+.portal-comment-inline-reply-footer button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.portal-comment-report-panel {
+  position: relative;
+  display: grid;
+  gap: 9px;
+  margin: 13px 0;
+  padding: 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+}
+.portal-comment-report-panel > div:first-child {
+  display: grid;
+  gap: 2px;
+}
+.portal-comment-report-panel strong {
+  font-size: 0.84rem;
+}
+.comment-subtitle {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.75rem;
+}
+.portal-comment-report-panel select {
+  width: 100%;
+  padding: 7px 9px;
+  font-size: 0.8rem;
+}
+.portal-comment-report-panel > div:last-child {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Keep the report form attached to the comment, matching the reply branch. */
+.portal-comment-thread-report {
+  margin: 9px 0 3px 39px;
+  padding: 9px;
+  border-radius: 9px;
+  animation: comment-reply-in 0.18s ease-out;
+}
+.portal-comment-thread-report::before {
+  content: "";
+  position: absolute;
+  top: -59px;
+  left: -25px;
+  height: 68px;
+  border-left: 1.5px solid var(--border-color, #cbd5e1);
+}
+.portal-comment-thread-report::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: -25px;
+  width: 25px;
+  border-top: 1.5px solid var(--border-color, #cbd5e1);
+}
+.portal-comment-report-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 126px;
+  align-items: start;
+  gap: 10px;
+  min-width: 0;
+}
+.portal-comment-report-heading > div:first-child {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  gap: 2px;
+}
+.portal-comment-report-select {
+  justify-self: end;
+  align-self: start;
+  width: 126px;
+  max-width: 126px;
+  min-width: 0;
+}
+.portal-comment-report-select .shivanya-select,
+.portal-comment-report-select > * {
+  min-width: 0;
+}
+.portal-comment-report-select .shivanya-select-sm + .shivanya-select-arrow {
+  right: 12px;
+}
+.portal-comment-report-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.portal-comment-report-footer > span {
+  margin-right: auto;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.74rem;
+}
+
+@keyframes comment-reply-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .portal-comments-section {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 15px;
+  }
+  .portal-comments-heading {
+    align-items: flex-start;
+  }
+  .portal-comments-heading select {
+    max-width: 125px;
+  }
+  .portal-comment-composer {
+    display: grid;
+    padding: 9px;
+  }
+  .portal-comment-composer textarea {
+    width: 100%;
+  }
+  .portal-comment-composer-footer {
+    margin-top: 8px;
+  }
+  .portal-comment-replies {
+    margin-left: 14px;
+    padding-left: 36px;
+  }
+  .portal-comment-replies-list > .portal-comment-item::before {
+    left: -35px;
+    width: 35px;
+    height: 15px;
+  }
+  .portal-comment-replies-footer .portal-comment-hide-replies::after {
+    left: -35px;
+    width: 35px;
+    height: 15px;
+    top: -1px;
+  }
+  /* .portal-comment-item.has-replies::before {
+    left: 15px;
+  } */
+  .portal-comment-replies-footer {
+    margin-top: 7px;
+  }
+  .portal-comment-inline-reply,
+  .portal-comment-thread-report {
+    margin-left: 25px;
+  }
+  .portal-comment-thread-report::before {
+    left: -11px;
+  }
+  .portal-comment-thread-report::after {
+    left: -11px;
+    width: 10px;
+  }
+  .portal-comment-report-heading {
+    grid-template-columns: minmax(0, 1fr) 112px;
+    gap: 8px;
+  }
+  .portal-comment-report-select {
+    width: 112px;
+    max-width: 112px;
+  }
+  .portal-comment-inline-reply::before {
+    left: -11px;
+  }
+  .portal-comment-inline-reply::after {
+    left: -11px;
+    width: 10px;
+  }
+  .portal-comment-item.is-deep > .portal-comment-replies {
+    margin-left: 14px;
+  }
+}
+
+/* Mobile edit composer: mirror the focused reply and report modals. */
+.portal-comment-edit-modal {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .portal-comment-item .portal-comment-edit-form {
+    display: none;
+  }
+
+  .portal-comment-edit-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1202;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgb(15 23 42 / 58%);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: comment-reply-modal-fade 0.16s ease-out;
+  }
+
+  .portal-comment-edit-modal-panel {
+    display: grid;
+    gap: 14px;
+    width: min(100%, 440px);
+    max-height: min(80vh, 560px);
+    overflow-y: auto;
+    padding: 17px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 14px;
+    background: var(--surface, #fff);
+    box-shadow: 0 18px 55px rgb(0 0 0 / 24%);
+    animation: comment-reply-modal-pop 0.18s ease-out;
+  }
+
+  .portal-comment-edit-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .portal-comment-edit-modal-header > div {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .portal-comment-edit-modal-header strong {
+    color: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .portal-comment-edit-modal-header span {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--muted-foreground, #9298a2);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .portal-comment-edit-modal-panel textarea {
+    width: 100%;
+    min-height: 104px;
+    padding: 10px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 9px;
+    background: var(--background, transparent);
+    color: inherit;
+    font: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    resize: vertical;
+  }
+
+  .portal-comment-edit-modal-panel textarea:focus {
+    border-color: var(--primary, #8b5cf6);
+  }
+}
+
+/* Mobile report composer: match the focused reply modal. */
+.portal-comment-report-modal {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .portal-comment-item > .portal-comment-thread-report {
+    display: none;
+  }
+
+  .portal-comment-report-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1201;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgb(15 23 42 / 58%);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: comment-reply-modal-fade 0.16s ease-out;
+  }
+
+  .portal-comment-report-modal-panel {
+    display: grid;
+    gap: 14px;
+    width: min(100%, 440px);
+    max-height: min(80vh, 560px);
+    overflow-y: auto;
+    padding: 17px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 14px;
+    background: var(--surface, #fff);
+    box-shadow: 0 18px 55px rgb(0 0 0 / 24%);
+    animation: comment-reply-modal-pop 0.18s ease-out;
+  }
+
+  .portal-comment-report-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .portal-comment-report-modal-header > div {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .portal-comment-report-modal-header strong {
+    color: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .portal-comment-report-modal-header span {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--muted-foreground, #9298a2);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .portal-comment-report-modal-reason {
+    display: grid;
+    gap: 6px;
+  }
+
+  .portal-comment-report-modal-reason label {
+    color: var(--muted-foreground, #9298a2);
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+
+  .portal-comment-report-modal-panel textarea {
+    width: 100%;
+    min-height: 104px;
+  }
+}
+
+/* Mobile reply composer: use a focused modal instead of the inline thread form. */
+.portal-comment-reply-modal {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .portal-comment-item > .portal-comment-inline-reply {
+    display: none;
+  }
+
+  .portal-comment-reply-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgb(15 23 42 / 58%);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: comment-reply-modal-fade 0.16s ease-out;
+  }
+
+  .portal-comment-reply-modal-panel {
+    display: grid;
+    gap: 14px;
+    width: min(100%, 440px);
+    max-height: min(80vh, 560px);
+    overflow-y: auto;
+    padding: 17px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 14px;
+    background: var(--surface, #fff);
+    box-shadow: 0 18px 55px rgb(0 0 0 / 24%);
+    animation: comment-reply-modal-pop 0.18s ease-out;
+  }
+
+  .portal-comment-reply-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .portal-comment-reply-modal-header > div {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .portal-comment-reply-modal-header strong {
+    color: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .portal-comment-reply-modal-header span {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--muted-foreground, #9298a2);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .portal-comment-reply-modal-close {
+    display: grid;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .portal-comment-reply-modal-panel textarea {
+    width: 100%;
+    min-height: 104px;
+    padding: 10px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 9px;
+    background: var(--background, transparent);
+    color: inherit;
+    font: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    resize: vertical;
+  }
+
+  .portal-comment-reply-modal-panel textarea:focus {
+    border-color: var(--primary, #8b5cf6);
+  }
+
+  .portal-comment-reply-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .portal-comment-reply-modal-footer > span {
+    margin-right: auto;
+    color: var(--muted-foreground, #9298a2);
+    font-size: 0.74rem;
+  }
+  .shivanya-select-sm + .shivanya-select-arrow{  right: 16px;
+}
+}
+
+@keyframes comment-reply-modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes comment-reply-modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Comment moderation and edit metadata. */
+.portal-comment-reviewed-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border: 1px solid color-mix(in srgb, #d99a24 38%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, #eab308 13%, transparent);
+  color: #b7791f;
+  font-size: 0.64rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.portal-comment-edited-label {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.66rem;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.portal-comment-actions button.portal-comment-edit-action {
+  color: var(--muted-foreground, #9298a2);
+}
+
+.portal-comment-actions button.portal-comment-edit-action:hover {
+  color: var(--primary, #8b5cf6);
+}
+
+.portal-comment-edit-form {
+  display: grid;
+  gap: 7px;
+  margin: 7px 0 8px;
+}
+
+.portal-comment-edit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.portal-comment-edit-footer > span {
+  margin-right: auto;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.73rem;
+}

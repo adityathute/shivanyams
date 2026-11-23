@@ -1371,7 +1371,7 @@ export default function AdminPage() {
             </header>
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
-            ) : analyticsType === "likes" ? (
+            ) : analyticsType === "likes" && !selectedPost && !selectedVisitor ? (
               likeAnalyticsEvents.length === 0 ? (
                 <div className="admin-empty">No likes recorded yet.</div>
               ) : (

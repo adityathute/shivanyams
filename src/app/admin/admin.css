@@ -2905,3 +2905,46 @@
 .admin-analytics-modal .admin-shares-posts-table td:nth-child(2) {
   text-align: center;
 }
+
+
+/* Share post detail: compact metrics, chart, and activity list inside the existing analytics modal. */
+.admin-analytics-modal .admin-share-post-detail {
+  min-width: 0;
+  padding: 0 16px 18px;
+}
+.admin-analytics-modal .admin-share-post-back {
+  margin: 0 0 12px;
+}
+.admin-analytics-modal .admin-share-post-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 18px;
+}
+.admin-analytics-modal .admin-share-post-chart-section,
+.admin-analytics-modal .admin-share-post-events-section {
+  min-width: 0;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--admin-border, #e5e7eb);
+  border-radius: 12px;
+  background: var(--admin-card, #fff);
+}
+.admin-analytics-modal .admin-share-post-chart-section h3,
+.admin-analytics-modal .admin-share-post-events-section h3 {
+  margin: 0 0 12px;
+  color: var(--admin-text, #111827);
+  font-size: 14px;
+  font-weight: 750;
+}
+.admin-analytics-modal .admin-share-post-chart-section .shivanya-bar-chart {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 680px) {
+  .admin-analytics-modal .admin-share-post-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-analytics-modal .admin-share-post-detail {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+}

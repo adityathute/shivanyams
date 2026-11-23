@@ -1841,7 +1841,18 @@ export default function AdminPage() {
                           const channelLabels: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X", twitter: "X", linkedin: "LinkedIn", email: "Email" };
                           return <tr key={`${item.post_id}-${item.created_at}-${index}`}>
                             <td><span className="admin-likes-post-link" title={item.post__title_en}>{item.post__title_en}</span></td>
-                            <td>{item.user_name ? formatPersonName(item.user_name) : item.user_auth_id ? "Registered user" : item.visitor_id ? <span title={item.visitor_id}>Anonymous ({item.visitor_id.slice(0, 8)})</span> : "Anonymous visitor"}</td>
+                            <td className="admin-shares-visitor-cell">
+                              {item.visitor_id ? (
+                                <button
+                                  type="button"
+                                  className="admin-analytics-link admin-likes-user-link"
+                                  title={item.user_name ? formatPersonName(item.user_name) : item.visitor_id}
+                                  onClick={() => void openPostEventVisitor(item.visitor_id)}
+                                >
+                                  {item.user_name ? formatPersonName(item.user_name) : item.user_auth_id ? "Registered user" : `Anonymous (${item.visitor_id.slice(0, 8)})`}
+                                </button>
+                              ) : item.user_name ? formatPersonName(item.user_name) : item.user_auth_id ? "Registered user" : "Anonymous visitor"}
+                            </td>
                             <td>{channelLabels[item.channel] || statusLabel(item.channel || "other")}</td>
                             <td>{formatAdminDateTime(item.created_at)}</td>
                           </tr>;

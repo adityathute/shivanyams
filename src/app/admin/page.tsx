@@ -1849,6 +1849,7 @@ export default function AdminPage() {
                 <CloseIcon />
               </IconButton>
             </header>
+            <div className="admin-analytics-scroll-area">
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
             ) : selectedSharePost ? (
@@ -1874,7 +1875,7 @@ export default function AdminPage() {
                 <section className="admin-share-post-events-section">
                   <h3>Share activity</h3>
                   {selectedSharePostEvents.length === 0 ? <div className="admin-empty">No share activity recorded for this post.</div> : (
-                    <div className="admin-analytics-table-wrap">
+                    <div className="admin-analytics-table-wrap admin-share-post-table-wrap">
                       <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
                         <thead><tr><th>Visitor</th><th>Sharing method</th><th>Date</th></tr></thead>
                         <tbody>{selectedSharePostEvents.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((event, index) => (
@@ -2663,6 +2664,7 @@ export default function AdminPage() {
               />
               </>
             )}
+            </div>
             <footer>
               <span>
                 {selectedSharePost

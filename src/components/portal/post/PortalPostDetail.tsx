@@ -568,6 +568,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[];
             }[],
             jobDetails: undefined,
+            examinationDetails: null,
+            admitCardDetails: null,
+            resultDetails: null,
             videoDetails: (video as unknown as { video_details?: Record<string, unknown> }).video_details || null,
             videoAttachments: (video as unknown as { media_attachments?: Array<Record<string, unknown>> }).media_attachments || [],
             relatedVideos: data.videos.filter((entry) => String(entry.id) !== String(video.id)).slice(0, 4),
@@ -650,6 +653,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
           jobDetails: item.job_details
             ? { ...item.job_details, location: item.job_details.location || "" }
             : undefined,
+          examinationDetails: item.examination_details || null,
+          admitCardDetails: item.admit_card_details || null,
+          resultDetails: item.result_details || null,
           videoDetails: (item as unknown as { video_details?: Record<string, unknown> }).video_details || null,
           videoAttachments: (item as unknown as { media_attachments?: Array<Record<string, unknown>> }).media_attachments || [],
           relatedVideos: data.videos.filter((entry) => String(entry.id) !== String(item.id)).slice(0, 4),
@@ -960,6 +966,59 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   {post.body ? (
                     <div className="portal-post-summary">{post.body}</div>
                   ) : null}
+
+                  {post.examinationDetails ? (() => {
+                    const d = post.examinationDetails as Record<string, unknown>;
+                    const rows: Array<[string, unknown]> = [
+                      ["Exam status", d.exam_status], ["Examination", d.exam_name],
+                      ["Exam type", d.exam_type], ["Mode", d.exam_mode],
+                      ["Conducting authority", d.conducting_authority],
+                      ["Duration (minutes)", d.exam_duration_minutes], ["Total marks", d.total_marks],
+                      ["Passing marks", d.passing_marks], ["Negative marking", d.negative_marking],
+                      ["Application starts", d.application_start_date], ["Application ends", d.application_end_date],
+                      ["Examination date", d.exam_date], ["Expected result date", d.result_expected_date],
+                      ["Notification number", d.notification_number],
+                      ["Eligibility", getLocalizedText(language, String(d.eligibility_en || ""), String(d.eligibility_mr || ""), String(d.eligibility_hi || ""))],
+                      ["Exam pattern", d.exam_pattern], ["Syllabus", d.syllabus], ["Instructions", d.instructions],
+                    ];
+                    const sections = Array.isArray(d.paper_sections) ? d.paper_sections : [];
+                    const links = [["Notification", d.notification_url], ["Admit card", d.admit_card_url], ["Official website", d.official_website]] as Array<[string, unknown]>;
+                    return <section className="portal-job-details portal-category-detail-panel"><h2>Examination information</h2><div className="portal-job-info-grid">{rows.filter(([,value]) => value !== null && value !== undefined && String(value).trim() !== "").map(([label,value]) => <div className="portal-job-info-item" key={label}><strong>{label}</strong><span>{String(value)}</span></div>)}</div>{sections.length ? <div className="portal-job-extra-section"><h3>Paper sections</h3><ul>{sections.map((entry,index) => <li key={index}>{typeof entry === "string" ? entry : String((entry as Record<string, unknown>).title || (entry as Record<string, unknown>).name || JSON.stringify(entry))}</li>)}</ul></div> : null}<div className="portal-job-official-actions">{links.filter(([,url]) => typeof url === "string" && url).map(([label,url]) => <a key={label} href={String(url)} target="_blank" rel="noopener noreferrer">{label}</a>)}</div></section>;
+                  })() : null}
+
+                  {post.admitCardDetails ? (() => {
+                    const d = post.admitCardDetails as Record<string, unknown>;
+                    const rows: Array<[string, unknown]> = [
+                      ["Card status", d.card_status], ["Issuing authority", d.issuing_authority],
+                      ["Examination", d.exam_name], ["Release date", d.release_date],
+                      ["Examination date", d.examination_date], ["Available from", d.available_from],
+                      ["Available until", d.available_until], ["Exam shift", d.exam_shift],
+                      ["Reporting time", d.reporting_time], ["Exam centre", d.exam_center_name],
+                      ["Centre address", d.exam_center_address], ["Credentials required", d.required_credentials],
+                      ["Photo/signature requirements", d.photo_signature_requirements],
+                      ["Helpdesk email", d.helpdesk_email], ["Helpdesk phone", d.helpdesk_phone],
+                      ["Helpdesk hours", d.helpdesk_hours], ["Languages", Array.isArray(d.language_options) ? d.language_options.join(", ") : ""],
+                      ["Correction window ends", d.correction_window_end], ["Correction contact", d.correction_contact],
+                      ["Download instructions", d.download_instructions], ["Important instructions", d.important_instructions],
+                    ];
+                    const list = (value: unknown) => Array.isArray(value) ? value : [];
+                    const links = [["Download admit card", d.download_url], ["Candidate login", d.login_url], ["Forgot credentials", d.forgot_credentials_url], ["Official website", d.official_website]] as Array<[string, unknown]>;
+                    return <section className="portal-job-details portal-category-detail-panel"><h2>Admit card information</h2><div className="portal-job-info-grid">{rows.filter(([,value]) => value !== null && value !== undefined && String(value).trim() !== "").map(([label,value]) => <div className="portal-job-info-item" key={label}><strong>{label}</strong><span>{String(value)}</span></div>)}</div>{[["Documents to carry",list(d.documents_to_carry)],["Prohibited items",list(d.prohibited_items)],["Download steps",list(d.download_steps)]].map(([label,items]) => Array.isArray(items) && items.length ? <div className="portal-job-extra-section" key={String(label)}><h3>{String(label)}</h3><ol>{items.map((entry,index) => <li key={index}>{typeof entry === "string" ? entry : String((entry as Record<string, unknown>).title || (entry as Record<string, unknown>).description || JSON.stringify(entry))}</li>)}</ol></div> : null)}<div className="portal-job-official-actions">{links.filter(([,url]) => typeof url === "string" && url).map(([label,url]) => <a key={label} href={String(url)} target="_blank" rel="noopener noreferrer">{label}</a>)}</div></section>;
+                  })() : null}
+
+                  {post.resultDetails ? (() => {
+                    const d = post.resultDetails as Record<string, unknown>;
+                    const summary = getLocalizedText(language, String(d.result_summary_en || ""), String(d.result_summary_mr || ""), String(d.result_summary_hi || ""));
+                    const rows: Array<[string, unknown]> = [
+                      ["Result type", d.result_type], ["Result status", d.result_status],
+                      ["Examination", d.examination_name], ["Result date", d.result_date],
+                      ["Scorecard available from", d.scorecard_start_date], ["Scorecard available until", d.scorecard_end_date],
+                      ["Login credentials", d.required_credentials], ["Instructions", d.instructions],
+                    ];
+                    const cutoffs = Array.isArray(d.cutoff_details) ? d.cutoff_details : [];
+                    const links = [["View result", d.result_url], ["Merit list", d.merit_list_url], ["Cut-off", d.cut_off_url], ["Scorecard", d.scorecard_url], ["Candidate login", d.login_url], ["Official website", d.official_website]] as Array<[string, unknown]>;
+                    return <section className="portal-job-details portal-category-detail-panel"><h2>Result information</h2>{summary ? <p>{summary}</p> : null}<div className="portal-job-info-grid">{rows.filter(([,value]) => value !== null && value !== undefined && String(value).trim() !== "").map(([label,value]) => <div className="portal-job-info-item" key={label}><strong>{label}</strong><span>{String(value)}</span></div>)}</div>{cutoffs.length ? <div className="portal-job-extra-section"><h3>Category-wise cut-off</h3><div className="portal-post-wise-table-wrap"><table className="portal-post-wise-table"><thead><tr><th>Category</th><th>Cut-off</th><th>Notes</th></tr></thead><tbody>{cutoffs.map((entry,index) => {const row=typeof entry==="object"&&entry!==null?entry as Record<string,unknown>:{category:entry};return <tr key={index}><td>{String(row.category || row.name || "")}</td><td>{String(row.marks ?? row.cutoff ?? "")}</td><td>{String(row.note || "")}</td></tr>;})}</tbody></table></div></div> : null}<div className="portal-job-official-actions">{links.filter(([,url]) => typeof url === "string" && url).map(([label,url]) => <a key={label} href={String(url)} target="_blank" rel="noopener noreferrer">{label}</a>)}</div></section>;
+                  })() : null}
 
                   {post.jobDetails ? (
                     <section className="portal-job-details">

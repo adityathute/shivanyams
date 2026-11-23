@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePortalData, type ImportantDate, type Item, type PostFAQ } from "../data/portal-data";
@@ -495,6 +495,7 @@ function getOrganizationTypeLabel(value: string | undefined, language: string) {
 export function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
   const params = useParams<{ slug: string }>();
   const slug = decodeURIComponent(params.slug ?? "");
+  const router = useRouter();
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
   const { links, getLinkTitle } = useImportantLinks();
@@ -763,6 +764,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     });
     return sorted.slice(0, NOT_FOUND_RECOMMENDATIONS_LIMIT);
   }, [categoryPosts, hasViewedCategoryPosts]);
+
+  useEffect(() => {
+    if (!previewItem && post?.slug && post.slug !== slug) {
+      router.replace(`/${category}/${encodeURIComponent(post.slug)}`);
+    }
+  }, [category, post?.slug, previewItem, router, slug]);
 
   const jobAgeDetails = post?.jobDetails;
   const jobDetails = post?.jobDetails;

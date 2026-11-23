@@ -98,7 +98,7 @@ function titleCaseName(value: string) {
 
 function getUserLabel(row: DetailRow) {
   const identityObjects: Record<string, unknown>[] = [row];
-  for (const key of ["user", "author", "reporter", "profile", "created_by", "subscriber"]) {
+  for (const key of ["user", "author", "reporter", "profile", "created_by"]) {
     const value = row[key];
     if (value && typeof value === "object" && !Array.isArray(value)) {
       identityObjects.push(value as Record<string, unknown>);

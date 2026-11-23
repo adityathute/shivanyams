@@ -217,6 +217,7 @@ export default function AdminPage() {
   const [likeAnalyticsEvents, setLikeAnalyticsEvents] = useState<LikeAnalyticsEvent[]>([]);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
   const [likeAnalyticsPage, setLikeAnalyticsPage] = useState(1);
+  const [reactionPostsOnly, setReactionPostsOnly] = useState(false);
   const likeContentRefs = useRef<Map<number, HTMLSpanElement>>(new Map());
   const likePostRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
@@ -532,6 +533,31 @@ export default function AdminPage() {
     }),
     [posts],
   );
+  const reactionPostRows = useMemo(() => {
+    const grouped = new Map<number, { id: number; title: string; slug: string; reactions: number }>();
+    likeAnalyticsEvents.forEach((event) => {
+      if (event.target_type !== "post") return;
+      const current = grouped.get(event.post_id);
+      if (current) {
+        current.reactions += 1;
+      } else {
+        grouped.set(event.post_id, {
+          id: event.post_id,
+          title: event.post_title,
+          slug: event.post_slug,
+          reactions: 1,
+        });
+      }
+    });
+    const viewsByPost = new Map(postAnalyticsPages.map((post) => [post.id, post.views]));
+    return Array.from(grouped.values())
+      .map((post) => ({ ...post, views: viewsByPost.get(post.id) || 0 }))
+      .sort((a, b) => b.reactions - a.reactions || a.title.localeCompare(b.title));
+  }, [likeAnalyticsEvents, postAnalyticsPages]);
+  const visibleReactionPostRows = reactionPostRows.slice(
+    (likeAnalyticsPage - 1) * analyticsPageSize,
+    likeAnalyticsPage * analyticsPageSize,
+  );
   const statusAnalyticsPosts = useMemo(
     () => analyticsType === "drafts"
       ? posts.filter((post) => post.status === "draft")
@@ -602,6 +628,25 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  async function showReactionPostsOnly(show: boolean) {
+    setLikeAnalyticsPage(1);
+    setReactionPostsOnly(show);
+    if (!show) return;
+
+    setAnalyticsLoading(true);
+    try {
+      const response = await adminFetch(API_URL + "/admin/website-analytics/?type=posts", { cache: "no-store" });
+      if (!response.ok) throw new Error("Unable to load post views (" + response.status + ").");
+      const payload = await response.json();
+      setPostAnalyticsPages(payload.posts ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load post views.");
+      setReactionPostsOnly(false);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }
+
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
     setSelectedLikeComment(null);
     setAnalyticsType(type);
@@ -613,6 +658,7 @@ export default function AdminPage() {
     setAnalyticsEvents([]);
     setLikeAnalyticsEvents([]);
     setLikeAnalyticsPage(1);
+    setReactionPostsOnly(false);
     setAnalyticsLoading(true);
     adminFetch(API_URL + "/admin/stats/?type=" + type, { cache: "no-store" })
       .then(async (response) => {
@@ -1415,9 +1461,9 @@ export default function AdminPage() {
                       : selectedAnalyticsPath
                         ? "Individual visits recorded for this page."
                         : analyticsType === "likes"
-                          ? "Individual likes across posts, comments, and replies."
+                          ? reactionPostsOnly ? "Posts with likes and their total views." : "Individual likes across posts, comments, and replies."
                           : analyticsType === "dislikes"
-                            ? "Individual dislikes across posts, comments, and replies."
+                            ? reactionPostsOnly ? "Posts with dislikes and their total views." : "Individual dislikes across posts, comments, and replies."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1429,6 +1475,26 @@ export default function AdminPage() {
                             : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
                 </p>
               </div>
+              {(analyticsType === "likes" || analyticsType === "dislikes") && !selectedVisitor && !selectedAnalyticsPath && !selectedPost && !selectedLikeComment ? (
+                <div className="admin-reaction-view-toggle" role="group" aria-label="Reaction analytics view">
+                  <button
+                    type="button"
+                    className={`admin-reaction-view-button${!reactionPostsOnly ? " is-active" : ""}`}
+                    aria-pressed={!reactionPostsOnly}
+                    onClick={() => void showReactionPostsOnly(false)}
+                  >
+                    Show All
+                  </button>
+                  <button
+                    type="button"
+                    className={`admin-reaction-view-button${reactionPostsOnly ? " is-active" : ""}`}
+                    aria-pressed={reactionPostsOnly}
+                    onClick={() => void showReactionPostsOnly(true)}
+                  >
+                    Show Posts Only
+                  </button>
+                </div>
+              ) : null}
               <IconButton
                 size="lg"
                 variant="ghost"
@@ -1455,7 +1521,60 @@ export default function AdminPage() {
                 {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{new Date(reply.created_at).toLocaleString()}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
              ) : (analyticsType === "likes" || analyticsType === "dislikes") && !selectedPost && !selectedVisitor ? (
-              likeAnalyticsEvents.length === 0 ? (
+              reactionPostsOnly ? (
+                reactionPostRows.length === 0 ? (
+                  <div className="admin-empty">No posts with {analyticsType === "dislikes" ? "dislikes" : "likes"} recorded yet.</div>
+                ) : (
+                  <>
+                    <div className="admin-analytics-table-wrap">
+                      <table className="admin-analytics-table admin-reaction-posts-table">
+                        <thead>
+                          <tr>
+                            <th>Post</th>
+                            <th>Views</th>
+                            <th>{analyticsType === "dislikes" ? "Dislikes" : "Likes"}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {visibleReactionPostRows.map((post) => (
+                            <tr key={post.id}>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="admin-analytics-link"
+                                  title={post.title}
+                                  onClick={() => void openPostEvents({
+                                    id: post.id,
+                                    title: post.title,
+                                    slug: post.slug,
+                                    views: post.views,
+                                    unique_visitors: 0,
+                                    last_viewed: null,
+                                  })}
+                                >
+                                  {post.title}
+                                </button>
+                              </td>
+                              <td>{formatCompactNumber(post.views)}</td>
+                              <td>{formatCompactNumber(post.reactions)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <AnalyticsPagination
+                      total={reactionPostRows.length}
+                      page={likeAnalyticsPage}
+                      pageSize={analyticsPageSize}
+                      onPageChange={setLikeAnalyticsPage}
+                      onPageSizeChange={(size) => {
+                        setAnalyticsPageSize(size);
+                        setLikeAnalyticsPage(1);
+                      }}
+                    />
+                  </>
+                )
+              ) : likeAnalyticsEvents.length === 0 ? (
                 <div className="admin-empty">No {analyticsType === "dislikes" ? "dislikes" : "likes"} recorded yet.</div>
               ) : (
                 <>

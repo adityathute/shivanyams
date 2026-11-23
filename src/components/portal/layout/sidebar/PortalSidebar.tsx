@@ -85,14 +85,14 @@ export function getPortalNavigation(
     ...(isAdmin
       ? [
           {
-            label: "Admin",
-            href: "/admin",
-            icon: <ShieldCheckIcon />,
-          },
-          {
             label: "Tags",
             href: "/admin/tags",
             icon: <TagIcon />,
+          },
+          {
+            label: "Admin",
+            href: "/admin",
+            icon: <ShieldCheckIcon />,
           },
         ]
       : []),

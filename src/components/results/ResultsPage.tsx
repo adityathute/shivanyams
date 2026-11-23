@@ -1,6 +1,7 @@
 "use client";
 
 import "../portal/home/UpdatesSection.css";
+import "../jobs/JobsPage.css";
 import "./ResultsPage.css";
 
 import { useMemo, useState } from "react";

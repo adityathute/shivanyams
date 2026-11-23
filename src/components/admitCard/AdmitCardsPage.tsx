@@ -17,6 +17,7 @@ import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function AdmitCardsPage() {
   const [query, setQuery] = useState("");
+  const [cardStatus, setCardStatus] = useState("");
 
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -29,15 +30,16 @@ export function AdmitCardsPage() {
 
     return data.items.filter((item) => {
       if (item.type !== "admit") return false;
-
+      const detail = item.admit_card_details || {};
+      if (cardStatus && String(detail.card_status || "") !== cardStatus) return false;
       return (
         !term ||
-        [item.title, item.category, item.description].some((value) =>
+        [item.title, item.category, item.description, String(detail.issuing_authority || ""), String(detail.exam_name || ""), String(detail.exam_center_name || "")].some((value) =>
           value.toLowerCase().includes(term),
         )
       );
     });
-  }, [data.items, query]);
+  }, [data.items, query, cardStatus]);
 
   const dateLocale =
     language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
@@ -72,6 +74,9 @@ export function AdmitCardsPage() {
 
                 <button type="submit">{t("search")}</button>
               </form>
+              <div className="jobs-filter-grid" aria-label="Admit card filters">
+                <label>Download status<select value={cardStatus} onChange={(event) => setCardStatus(event.target.value)}><option value="">All statuses</option><option value="scheduled">Scheduled</option><option value="available">Available now</option><option value="expired">Download window closed</option><option value="withdrawn">Withdrawn</option></select></label>
+              </div>
             </div>
 
             <div className="admit-hero-visual" aria-hidden="true">

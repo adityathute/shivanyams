@@ -1953,11 +1953,11 @@ export default function AdminPage() {
                 ) : (
                   <>
                     <div className="admin-shares-summary">
-                      <button type="button" className={`admin-shares-summary-card${shareAnalyticsView === "events" ? " is-active" : ""}`} onClick={() => { setShareAnalyticsView("events"); setShareAnalyticsPage(1); }} aria-pressed={shareAnalyticsView === "events"}>
+                      <button type="button" className={`admin-shares-summary-card${shareAnalyticsView === "events" ? " is-active" : ""}`} onClick={() => { setShareAnalyticsView("events"); setShareAnalyticsPage(1); setShowAllShareAnalytics(false); }} aria-pressed={shareAnalyticsView === "events"}>
                         <span>Total shares</span><strong>{formatCompactNumber(shareAnalytics.total)}</strong><small>All recorded share actions</small>
                       </button>
                       <article><span>Unique visitors</span><strong>{formatCompactNumber(shareAnalytics.unique_visitors)}</strong><small>Users and anonymous visitors</small></article>
-                      <button type="button" className={`admin-shares-summary-card${shareAnalyticsView === "posts" ? " is-active" : ""}`} onClick={() => { setShareAnalyticsView("posts"); setShareAnalyticsPage(1); }} aria-pressed={shareAnalyticsView === "posts"}>
+                      <button type="button" className={`admin-shares-summary-card${shareAnalyticsView === "posts" ? " is-active" : ""}`} onClick={() => { setShareAnalyticsView("posts"); setShareAnalyticsPage(1); setShowAllShareAnalytics(false); }} aria-pressed={shareAnalyticsView === "posts"}>
                         <span>Posts shared</span><strong>{formatCompactNumber(shareAnalytics.posts_shared)}</strong><small>Posts with at least one share</small>
                       </button>
                     </div>

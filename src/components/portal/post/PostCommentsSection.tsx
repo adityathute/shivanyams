@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
 import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -688,17 +689,20 @@ export function PostCommentsSection({ postId, language }: Props) {
         ))}
       </div>
 
-      <ConfirmDialog
-        open={deleteTarget !== null}
-        title="Delete permanently?"
-        message="This comment or reply will be permanently deleted. Any replies under it will also be deleted. This action cannot be undone."
-        confirmText={deleting ? "Deleting..." : "Delete permanently"}
-        cancelText="Cancel"
-        variant="danger"
-        loading={deleting}
-        onCancel={() => { if (!deleting) setDeleteTarget(null); }}
-        onConfirm={() => void deleteComment()}
-      />
+      {deleteTarget !== null && typeof document !== "undefined" ? createPortal(
+        <ConfirmDialog
+          open
+          title="Delete permanently?"
+          message="This comment or reply will be permanently deleted. Any replies under it will also be deleted. This action cannot be undone."
+          confirmText={deleting ? "Deleting..." : "Delete permanently"}
+          cancelText="Cancel"
+          variant="danger"
+          loading={deleting}
+          onCancel={() => { if (!deleting) setDeleteTarget(null); }}
+          onConfirm={() => void deleteComment()}
+        />,
+        document.body,
+      ) : null}
 
       {replyTarget && replyTargetItem ? (
         <div

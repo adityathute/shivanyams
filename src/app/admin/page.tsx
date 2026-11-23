@@ -743,7 +743,7 @@ export default function AdminPage() {
           const statItems: {
             label: string;
             value: number;
-            analytics?: "views" | "visitors" | "users" | "posts";
+            analytics?: "views" | "visitors" | "users" | "posts" | "drafts" | "review";
             group: "users" | "website" | "posts" | "content";
           }[] = [
             {

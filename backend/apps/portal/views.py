@@ -1526,6 +1526,40 @@ class AdminWebsiteAnalytics(APIView):
         analytics_type = request.query_params.get("type", "views")
         visitor_id = request.query_params.get("visitor_id")
         path = request.query_params.get("path")
+        post_id = request.query_params.get("post_id")
+
+        if analytics_type == "posts":
+            if post_id:
+                post = get_object_or_404(Post, pk=post_id)
+                events = PostView.objects.filter(post=post).select_related("visitor").order_by("-viewed_at")[:500]
+                return Response({
+                    "post": {"id": post.id, "title": post.title_en, "slug": post.slug},
+                    "views": post.view_events.count(),
+                    "events": [{
+                        "viewed_at": event.viewed_at,
+                        "visitor_type": "user" if event.auth_user_id else "anonymous",
+                        "visitor_id": event.visitor.visitor_id,
+                        "device": event.device,
+                        "language": event.language,
+                        "referrer_url": event.referrer_url,
+                    } for event in events],
+                })
+
+            posts = (
+                Post.objects.annotate(
+                    total_views=Count("view_events"),
+                    unique_visitors=Count("view_events__visitor", distinct=True),
+                    last_viewed=Max("view_events__viewed_at"),
+                ).filter(total_views__gt=0).order_by("-total_views", "title_en")
+            )
+            return Response({
+                "views_count": PostView.objects.count(),
+                "posts": [{
+                    "id": post.id, "title": post.title_en, "slug": post.slug,
+                    "views": post.total_views, "unique_visitors": post.unique_visitors,
+                    "last_viewed": post.last_viewed,
+                } for post in posts],
+            })
 
         if analytics_type == "visitors":
             visitors = WebsiteVisitor.objects.annotate(

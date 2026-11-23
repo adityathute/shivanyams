@@ -35,6 +35,8 @@ type WebsiteAnalyticsPage = {
   unique_visitors: number;
   last_viewed: string | null;
 };
+type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
+type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; visitor_id: string; device: string; language: string; referrer_url: string; };
 type WebsiteVisitorRow = {
   visitor_id: string;
   visitor_type: "user" | "anonymous";
@@ -189,11 +191,14 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | null
+    "views" | "visitors" | "users" | "posts" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
   );
+  const [postAnalyticsPages, setPostAnalyticsPages] = useState<PostAnalyticsPage[]>([]);
+  const [selectedPost, setSelectedPost] = useState<PostAnalyticsPage | null>(null);
+  const [postAnalyticsEvents, setPostAnalyticsEvents] = useState<PostViewEvent[]>([]);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsVisitors, setAnalyticsVisitors] = useState<
     WebsiteVisitorRow[]
@@ -517,6 +522,26 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  function openPostAnalytics() {
+    setAnalyticsType("posts"); setSelectedPost(null); setSelectedVisitor(null); setSelectedAnalyticsPath(null);
+    setAnalyticsPagesPage(1); setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/website-analytics/?type=posts", { cache: "no-store" })
+      .then(async (r) => { if (!r.ok) throw new Error("Unable to load post analytics (" + r.status + ")."); return r.json(); })
+      .then((data: { posts?: PostAnalyticsPage[] }) => setPostAnalyticsPages(data.posts ?? []))
+      .catch((e) => setError(e instanceof Error ? e.message : "Unable to load post analytics."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
+  async function openPostEvents(post: PostAnalyticsPage) {
+    setSelectedPost(post); setSelectedAnalyticsPath(null); setAnalyticsEventsPage(1); setAnalyticsLoading(true);
+    try {
+      const r = await adminFetch(API_URL + "/admin/website-analytics/?type=posts&post_id=" + post.id, { cache: "no-store" });
+      if (!r.ok) throw new Error("Unable to load post views (" + r.status + ").");
+      const data = await r.json(); setPostAnalyticsEvents(data.events ?? []);
+    } catch (e) { setError(e instanceof Error ? e.message : "Unable to load post views."); }
+    finally { setAnalyticsLoading(false); }
+  }
+
   async function openVisitorDetails(visitor: WebsiteVisitorRow) {
     setSelectedVisitor(visitor);
     setSelectedAnalyticsPath(null);
@@ -716,7 +741,7 @@ export default function AdminPage() {
           const statItems: {
             label: string;
             value: number;
-            analytics?: "views" | "visitors" | "users";
+            analytics?: "views" | "visitors" | "users" | "posts";
             group: "users" | "website" | "posts" | "content";
           }[] = [
             {
@@ -737,7 +762,7 @@ export default function AdminPage() {
               analytics: "visitors",
               group: "website",
             },
-            { label: "Post views", value: counts.views, group: "posts" },
+            { label: "Post views", value: counts.views, analytics: "posts", group: "posts" },
             {
               label: "Post visitors",
               value: postVisitorsCount,

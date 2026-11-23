@@ -1883,6 +1883,7 @@ export default function AdminPage() {
                         <AnalyticsPagination total={sharePostRows.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
                       </>
                     ) : (
+                      <>
                     {shareAnalytics.events.length === 0 ? <div className="admin-empty">No shares recorded yet.</div> : <>
                     <div className="admin-analytics-table-wrap">
                       <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
@@ -1911,6 +1912,7 @@ export default function AdminPage() {
                     </div>
                     <AnalyticsPagination total={shareAnalytics.events.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
                     </>}
+                      </>
                     )}
                   </>
                 )

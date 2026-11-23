@@ -20,7 +20,7 @@ import { adminFetch } from "../../admin-utils";
 import "../../admin.css";
 import "./engagement.css";
 
-type DetailRow = Record<string, string | number | boolean | null | undefined>;
+type DetailRow = Record<string, unknown>;
 type EngagementPayload = {
   post: { id: number; title: string };
   likes: { total: number; post: number; comments_and_replies: number };
@@ -84,19 +84,46 @@ function titleCaseName(value: string) {
 }
 
 function getUserLabel(row: DetailRow) {
-  const entries = Object.entries(row);
-  const firstName = entries.find(([key]) => /^(user_)?first_name$/i.test(key))?.[1]
-    ?? entries.find(([key]) => /^(author|reporter)_first_name$/i.test(key))?.[1];
-  const lastName = entries.find(([key]) => /^(user_)?last_name$/i.test(key))?.[1]
-    ?? entries.find(([key]) => /^(author|reporter)_last_name$/i.test(key))?.[1];
-  const fullName = [firstName, lastName].filter((part) => typeof part === "string" && part.trim()).join(" ");
-  if (fullName) return titleCaseName(fullName);
+  const identityObjects: Record<string, unknown>[] = [row];
+  for (const key of ["user", "author", "reporter", "profile", "created_by", "subscriber"]) {
+    const value = row[key];
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      identityObjects.push(value as Record<string, unknown>);
+    }
+  }
 
-  const existingName = entries.find(([key, value]) => /^(user_)?name$|^(author|reporter)_name$/i.test(key) && typeof value === "string" && value.trim())?.[1];
-  if (typeof existingName === "string") return titleCaseName(existingName);
+  const readText = (source: Record<string, unknown>, keys: string[]) => {
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
+    return "";
+  };
 
-  const email = entries.find(([key, value]) => /(^|_)(email|email_address)$/i.test(key) && typeof value === "string" && value.trim())?.[1];
-  return typeof email === "string" ? email : "—";
+  const firstNameKeys = ["first_name", "firstName", "user_first_name", "author_first_name", "reporter_first_name"];
+  const lastNameKeys = ["last_name", "lastName", "user_last_name", "author_last_name", "reporter_last_name"];
+  const fullNameKeys = ["full_name", "fullname", "display_name", "displayName", "name", "user_name", "author_name", "reporter_name"];
+
+  for (const identity of identityObjects) {
+    const firstName = readText(identity, firstNameKeys);
+    const lastName = readText(identity, lastNameKeys);
+    const fullName = [firstName, lastName].filter(Boolean).join(" ") ||
+      readText(identity, fullNameKeys);
+    if (fullName) return titleCaseName(fullName);
+  }
+
+  // Some API responses flatten related fields with prefixes or double underscores.
+  const flatFirstName = readText(row, ["user__first_name", "author__first_name", "reporter__first_name"]);
+  const flatLastName = readText(row, ["user__last_name", "author__last_name", "reporter__last_name"]);
+  const flatFullName = [flatFirstName, flatLastName].filter(Boolean).join(" ") ||
+    readText(row, ["user__full_name", "user__name", "author__name", "reporter__name"]);
+  if (flatFullName) return titleCaseName(flatFullName);
+
+  for (const identity of identityObjects) {
+    const email = readText(identity, ["email", "email_address", "user_email", "author_email", "reporter_email"]);
+    if (email) return email;
+  }
+  return readText(row, ["user__email", "author__email", "reporter__email"]) || "—";
 }
 
 function isUserIdentityColumn(column: string) {
@@ -108,7 +135,7 @@ function getColumnWidth(column: string, rows: DetailRow[]) {
   const key = column.toLowerCase();
   if (isContentColumn(column)) return 520;
   if (key === "activity") return 190;
-  if (key === "user") return 240;
+  if (key === "user") return 360;
   if (key === "target") return 240;
   if (key === "status") return 190;
   if (key === "details" || key === "detail") return 480;

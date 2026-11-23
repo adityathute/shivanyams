@@ -1998,27 +1998,36 @@ padding-right: 24px;
 
 
 .post-editor-status-badge {
-  --status-accent: #64748b;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   align-self: flex-end;
   padding: 5px 11px;
-  border: 1px solid color-mix(in srgb, var(--status-accent) 28%, var(--surface, transparent));
+  border: 0;
   border-radius: 7px;
-  background: color-mix(in srgb, var(--status-accent) 12%, var(--surface, transparent));
-  color: var(--status-accent);
   font-size: 11px;
   font-weight: 700;
   line-height: 1.25;
   text-transform: capitalize;
   white-space: nowrap;
 }
-.post-editor-status-badge--published { --status-accent: #16845b; }
-.post-editor-status-badge--reviewed { --status-accent: #3976c6; }
-.post-editor-status-badge--draft { --status-accent: #c47a22; }
+.post-editor-status-badge--published {
+  color: #166534;
+  background: #dcfce7;
+}
+.post-editor-status-badge--reviewed {
+  color: #9a3412;
+  background: #ffedd5;
+}
+.post-editor-status-badge--draft {
+  color: #475569;
+  background: #e2e8f0;
+}
 .post-editor-status-badge--pending-review,
-.post-editor-status-badge--pending { --status-accent: #8056b3; }
+.post-editor-status-badge--pending {
+  color: #9a3412;
+  background: #ffedd5;
+}
 
 .post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }
 .post-editor-publication-status > strong { text-transform: capitalize; font-size: 13px; color: #16734e; }

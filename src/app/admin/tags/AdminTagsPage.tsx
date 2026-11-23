@@ -155,10 +155,6 @@ export default function AdminTagsPage() {
             <p>Rename or delete tags used across jobs, schemes, articles and other content.</p>
           </div>
           <div className="admin-top-actions admin-tags-header-actions">
-            <div className="admin-tags-total" aria-label={`${tags.length} total tags`}>
-              <strong>{tags.length.toLocaleString("en-IN")}</strong>
-              <span>Total tags</span>
-            </div>
             <Link href="/admin" className="admin-secondary-button">
               <ArrowLeftIcon size={16} />
               <span>Back to dashboard</span>
@@ -171,10 +167,14 @@ export default function AdminTagsPage() {
         </header>
 
         <section className="admin-post-panel admin-tags-panel">
-          <div className="admin-panel-heading">
+          <div className="admin-panel-heading admin-tags-panel-heading">
             <div>
               <h2><TagIcon size={18} /> All tags</h2>
-              <p>{filteredTags.length} tags shown · Changes apply to every post using the tag.</p>
+              <p>Changes apply to every post using the tag.</p>
+            </div>
+            <div className="admin-tags-total" aria-label={`${tags.length} total tags`}>
+              <strong>{tags.length.toLocaleString("en-IN")}</strong>
+              <span>Total tags</span>
             </div>
           </div>
 

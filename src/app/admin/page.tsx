@@ -68,6 +68,7 @@ type AnalyticsPaginationProps = {
   pageSize: number;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+  className?: string;
 };
 
 function AnalyticsPagination({
@@ -76,13 +77,14 @@ function AnalyticsPagination({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  className,
 }: AnalyticsPaginationProps) {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   if (total <= pageSize) return null;
   const firstItem = (page - 1) * pageSize + 1;
   const lastItem = Math.min(page * pageSize, total);
   return (
-    <div className="admin-table-footer admin-analytics-pagination">
+    <div className={`admin-table-footer admin-analytics-pagination ${className || ""}`.trim()}>
       <span>
         Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {total.toLocaleString("en-IN")}
       </span>
@@ -1233,8 +1235,8 @@ export default function AdminPage() {
                     {selectedVisitor.language || "—"}
                   </span>
                 </div>
-                <div className="admin-analytics-table-wrap">
-                  <table className="admin-analytics-table">
+                <div className="admin-analytics-table-wrap admin-visitor-details-table-wrap">
+                  <table className="admin-analytics-table admin-visitor-details-table">
                     <thead>
                       <tr>
                         <th>Page visited</th>
@@ -1266,6 +1268,7 @@ export default function AdminPage() {
                   </table>
                 </div>
                 <AnalyticsPagination
+                  className="admin-visitor-details-pagination"
                   total={visitorPages.length}
                   page={visitorPagesPage}
                   pageSize={analyticsPageSize}

@@ -32,6 +32,7 @@ from .models import (
     JobVacancyBreakdown,
     LanguageChoices,
     Post,
+    PostSlugRedirect,
     PostDate,
     PostFAQ,
     PostReaction,
@@ -348,6 +349,21 @@ class PublicContent(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     lookup_field = "slug"
     lookup_url_kwarg = "slug"
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except NotFound:
+            category = get_content_category(self.kwargs["kind"])
+            redirect = PostSlugRedirect.objects.filter(
+                old_slug=self.kwargs["slug"], post__category=category,
+                post__status=Post.Status.PUBLISHED, post__is_active=True,
+                post__published_at__isnull=False,
+            ).select_related("post").first()
+            if not redirect:
+                raise
+            target = f"/api/v1/portal/content/{self.kwargs['kind']}/{redirect.post.slug}/"
+            return Response({"redirect": target, "canonical_slug": redirect.post.slug}, status=status.HTTP_301_MOVED_PERMANENTLY, headers={"Location": target})
 
     def get_queryset(self):
         return apply_content_discovery_filters(
@@ -914,7 +930,10 @@ class AdminContent(viewsets.ModelViewSet):
         create_post_revision(post, self.request.user.id, "Initial version")
 
     def perform_update(self, serializer):
+        previous_slug = serializer.instance.slug
         post = serializer.save()
+        if previous_slug and previous_slug != post.slug:
+            PostSlugRedirect.objects.update_or_create(old_slug=previous_slug, defaults={"post": post})
         create_post_revision(post, self.request.user.id, "Content updated from Admin Portal")
         if post.status != Post.Status.PUBLISHED or not post.is_active or not post.published_at:
             return
@@ -2665,6 +2684,16 @@ class TrackPostView(APIView):
             published_at__isnull=False,
         )
 
+        event_id = request.data.get("event_id")
+        if event_id:
+            import uuid
+            try:
+                event_id = uuid.UUID(str(event_id))
+            except (TypeError, ValueError, AttributeError):
+                raise ValidationError({"event_id": "Provide a valid UUID event identifier."})
+            if PostView.objects.filter(event_id=event_id).exists():
+                return Response({"tracked": False, "duplicate": True}, status=status.HTTP_200_OK)
+
         visitor_id = request.data.get("visitor_id")
         if not isinstance(visitor_id, str) or not visitor_id.strip():
             raise ValidationError({"visitor_id": "A visitor identifier is required."})
@@ -2718,6 +2747,7 @@ class TrackPostView(APIView):
             PostView.objects.create(
                 post=post,
                 visitor=visitor,
+                event_id=event_id,
                 auth_user_id=auth_user_id,
                 language=language,
                 device=device,
@@ -2743,6 +2773,16 @@ class TrackWebsiteView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        event_id = request.data.get("event_id")
+        if event_id:
+            import uuid
+            try:
+                event_id = uuid.UUID(str(event_id))
+            except (TypeError, ValueError, AttributeError):
+                raise ValidationError({"event_id": "Provide a valid UUID event identifier."})
+            if WebsiteView.objects.filter(event_id=event_id).exists():
+                return Response({"tracked": False, "duplicate": True}, status=status.HTTP_200_OK)
+
         visitor_id = request.data.get("visitor_id")
         path = request.data.get("path")
         if not isinstance(visitor_id, str) or not visitor_id.strip():
@@ -2832,6 +2872,7 @@ class TrackWebsiteView(APIView):
             visitor.save(update_fields=update_fields)
             WebsiteView.objects.create(
                 visitor=visitor,
+                event_id=event_id,
                 path=path,
                 referrer_url=referrer_url[:1000],
                 auth_user_id=auth_user_id,

@@ -83,8 +83,11 @@ export function RelatedJobsPage() {
     const counts = new Map<string, { label: string; count: number; relatedCount: number }>();
     const addTags = (items: typeof data.items, related: boolean) => {
       items.forEach((item) => {
+        const seen = new Set<string>();
         (item.tags || []).forEach((tag) => {
           const key = slugify(tag);
+          if (seen.has(key)) return;
+          seen.add(key);
           if (!key || key === slug) return;
           const current = counts.get(key) || { label: tag.trim(), count: 0, relatedCount: 0 };
           if (related) current.relatedCount += 1;

@@ -2,6 +2,7 @@ from django.db import transaction
 from django.core import signing
 from django.core.mail import send_mass_mail
 import hashlib
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -252,6 +253,10 @@ def apply_content_discovery_filters(queryset, params, *, public=True):
         "title": ("title_en",),
         "popular": ("-views_count", "-published_at"),
         "featured": ("-is_featured", "-published_at"),
+        "title_desc": ("-title_en", "-published_at"),
+        "vacancies_desc": ("-job_details__total_vacancies", "-published_at"),
+        "vacancies_asc": ("job_details__total_vacancies", "-published_at"),
+        "closing_soon": ("important_dates__date", "-published_at"),
     }
     if ordering not in ordering_map:
         raise ValidationError({"sort": "Choose recent, oldest, title, popular or featured."})
@@ -445,6 +450,76 @@ class PublicJobDiscovery(generics.ListAPIView):
             if application_mode not in allowed:
                 raise ValidationError({"application_mode": "Choose a valid application mode."})
             queryset = queryset.filter(job_details__application_mode=application_mode)
+
+        recruitment_types = [value.strip() for value in str(params.get("recruitment_types", "")).split(",") if value.strip()]
+        if recruitment_types:
+            allowed = {choice[0] for choice in JobDetails.RecruitmentType.choices}
+            invalid = sorted(set(recruitment_types) - allowed)
+            if invalid:
+                raise ValidationError({"recruitment_types": "One or more recruitment types are invalid."})
+            queryset = queryset.filter(job_details__recruitment_type__in=recruitment_types)
+
+        application_modes = [value.strip() for value in str(params.get("application_modes", "")).split(",") if value.strip()]
+        if application_modes:
+            allowed = {choice[0] for choice in JobDetails.ApplicationMode.choices}
+            invalid = sorted(set(application_modes) - allowed)
+            if invalid:
+                raise ValidationError({"application_modes": "One or more application modes are invalid."})
+            queryset = queryset.filter(job_details__application_mode__in=application_modes)
+
+        salary_currency = str(params.get("salary_currency", "")).strip().upper()
+        if salary_currency:
+            if len(salary_currency) > 8 or not salary_currency.isalpha():
+                raise ValidationError({"salary_currency": "Use a valid currency code."})
+            queryset = queryset.filter(
+                Q(job_details__salary_currency__iexact=salary_currency)
+                | Q(job_details__posts__salary_currency__iexact=salary_currency)
+            )
+
+        for parameter, lookup in (("posted_after", "published_at__date__gte"), ("posted_before", "published_at__date__lte")):
+            raw = str(params.get(parameter, "")).strip()
+            if raw:
+                parsed = parse_date(raw)
+                if not parsed:
+                    raise ValidationError({parameter: "Use YYYY-MM-DD."})
+                queryset = queryset.filter(**{lookup: parsed})
+
+        closing_within_days = params.get("closing_within_days")
+        if closing_within_days not in (None, ""):
+            try:
+                closing_within_days = int(closing_within_days)
+                if closing_within_days < 1 or closing_within_days > 365:
+                    raise ValueError
+            except (TypeError, ValueError):
+                raise ValidationError({"closing_within_days": "Choose a number of days from 1 to 365."})
+            today = timezone.localdate()
+            deadline_window = PostDate.objects.filter(
+                post_id=OuterRef("pk"),
+                date_type=PostDate.DateType.APPLICATION_END,
+            ).filter(
+                Q(date__range=(today, today + timedelta(days=closing_within_days)))
+                | Q(end_date__range=(today, today + timedelta(days=closing_within_days)))
+                | Q(new_date__range=(today, today + timedelta(days=closing_within_days)))
+            )
+            queryset = queryset.filter(Exists(deadline_window))
+
+        has_posts = str(params.get("has_posts", "")).strip().lower()
+        if has_posts not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"has_posts": "Use true or false."})
+        post_rows = JobPost.objects.filter(job_id=OuterRef("job_details__id"))
+        if has_posts in ("true", "1"):
+            queryset = queryset.filter(Exists(post_rows))
+        elif has_posts in ("false", "0"):
+            queryset = queryset.exclude(Exists(post_rows))
+
+        post_apply_links = JobPost.objects.filter(job_id=OuterRef("job_details__id")).exclude(application_links=[])
+        has_post_links = str(params.get("has_post_application_links", "")).strip().lower()
+        if has_post_links not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"has_post_application_links": "Use true or false."})
+        if has_post_links in ("true", "1"):
+            queryset = queryset.filter(Exists(post_apply_links))
+        elif has_post_links in ("false", "0"):
+            queryset = queryset.exclude(Exists(post_apply_links))
 
         # Advanced discovery filters reuse existing post-level recruitment data.
         qualification = str(params.get("qualification", "")).strip()

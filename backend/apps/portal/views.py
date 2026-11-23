@@ -1780,13 +1780,53 @@ class AdminDashboardStats(APIView):
             total_unsubscribe_events = NewsletterSubscriptionEvent.objects.filter(
                 event_type=NewsletterSubscriptionEvent.EventType.UNSUBSCRIBED
             ).count()
+
+            subscriber_view = request.query_params.get("view", "active")
+            if subscriber_view == "registered":
+                rows = [row for row in rows if next((item.user_auth_id for item in subscriptions if item.id == row["id"]), "")]
+            elif subscriber_view in ("subscriptions", "resubscriptions", "unsubscriptions"):
+                events = list(
+                    NewsletterSubscriptionEvent.objects.select_related("subscription")
+                    .order_by("created_at", "id")
+                )
+                seen_subscriptions = set()
+                event_rows = []
+                for event in events:
+                    is_resubscription = (
+                        event.event_type == NewsletterSubscriptionEvent.EventType.SUBSCRIBED
+                        and event.subscription_id in seen_subscriptions
+                    )
+                    if event.event_type == NewsletterSubscriptionEvent.EventType.SUBSCRIBED:
+                        seen_subscriptions.add(event.subscription_id)
+                    include_event = (
+                        subscriber_view == "subscriptions" and event.event_type == NewsletterSubscriptionEvent.EventType.SUBSCRIBED
+                        or subscriber_view == "resubscriptions" and is_resubscription
+                        or subscriber_view == "unsubscriptions" and event.event_type == NewsletterSubscriptionEvent.EventType.UNSUBSCRIBED
+                    )
+                    if include_event:
+                        subscription = event.subscription
+                        event_rows.append({
+                            "id": event.id,
+                            "full_name": user_names.get(subscription.user_auth_id, ""),
+                            "email": subscription.email,
+                            "subscribed_at": event.created_at,
+                            "visitor_id": visitor_ids.get(subscription.user_auth_id, ""),
+                            "event_type": event.event_type,
+                        })
+                rows = list(reversed(event_rows))
+
+            if subscriber_view in ("active", "registered"):
+                response_rows = rows
+            else:
+                response_rows = rows
+
             return Response({
                 "total_subscribers": len(rows),
                 "registered_users": len({item.user_auth_id for item in subscriptions if item.user_auth_id}),
                 "total_subscriptions": total_subscribe_events,
                 "total_resubscriptions": max(0, total_subscribe_events - NewsletterSubscriptionEvent.objects.filter(event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED).values("subscription_id").distinct().count()),
                 "total_unsubscriptions": total_unsubscribe_events,
-                "results": rows,
+                "results": response_rows,
             })
 
         if reaction_filter == "reports":

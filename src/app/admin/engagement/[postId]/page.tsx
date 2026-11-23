@@ -248,23 +248,23 @@ export default function AdminPostEngagementPage() {
   const detailDescription = (() => {
     switch (selected) {
       case "all":
-        return "All recorded activity for this post, including reactions, comments, shares, saves, subscriptions, and reports.";
+        return "All post activity.";
       case "likes":
-        return `People who liked this post or its comments and replies. ${formatCompactNumber(payload?.likes.post || 0)} post likes · ${formatCompactNumber(payload?.likes.comments_and_replies || 0)} comment and reply likes.`;
+        return "Post and comment likes.";
       case "dislikes":
-        return `People who disliked this post or its comments and replies. ${formatCompactNumber(payload?.dislikes.post || 0)} post dislikes · ${formatCompactNumber(payload?.dislikes.comments_and_replies || 0)} comment and reply dislikes.`;
+        return "Post and comment dislikes.";
       case "comments":
-        return `Comments submitted on this post. ${formatCompactNumber(payload?.comments.approved || 0)} approved · ${formatCompactNumber(payload?.comments.hidden || 0)} hidden.`;
+        return "Comments on this post.";
       case "shares":
-        return "People who shared this post, with the available sharing details and timestamps.";
+        return "Post shares.";
       case "saved":
-        return "People who saved this post to revisit it later.";
+        return "Post saves.";
       case "subscribers":
-        return "People who subscribed to updates from this post or its publisher.";
+        return "Post subscriptions.";
       case "reports":
-        return "Reports submitted about this post, including the available reason and review details.";
+        return "Reports about this post.";
       default:
-        return "A record of activity associated with this post.";
+        return "Post activity.";
     }
   })();
   const columns = tableRows.length

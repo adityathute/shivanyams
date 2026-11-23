@@ -1777,15 +1777,17 @@ export default function AdminPage() {
                       <button type="button" className={subscriberView === "resubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "resubscriptions"} onClick={() => loadSubscriberView("resubscriptions")}><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></button>
                       <button type="button" className={subscriberView === "unsubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "unsubscriptions"} onClick={() => loadSubscriberView("unsubscriptions")}><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></button>
                     </div>
-                    <div className="admin-subscribers-toolbar">
-                      <input
-                        type="search"
-                        value={subscriberSearch}
-                        onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
-                        placeholder="Search by name or email"
-                        aria-label="Search subscribers by name or email"
-                      />
-                    </div>
+                    {subscriberRows.length > 0 && (
+                      <div className="admin-subscribers-toolbar">
+                        <input
+                          type="search"
+                          value={subscriberSearch}
+                          onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
+                          placeholder="Search by name or email"
+                          aria-label="Search subscribers by name or email"
+                        />
+                      </div>
+                    )}
                     {subscriberRows.length === 0 ? (
                       <div className="admin-empty">No {subscriberView === "active" ? "active subscribers" : subscriberView === "registered" ? "registered subscribers" : subscriberView} found.</div>
                     ) : (() => {
@@ -1796,7 +1798,7 @@ export default function AdminPage() {
                       return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
                         <>
                           <div className="admin-analytics-table-wrap">
-                            <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
+                            <table className={`admin-analytics-table admin-likes-analytics-table admin-subscribers-table${isHistory ? " is-history" : ""}`}>
                               <thead><tr><th>Full name</th><th>Email</th>{isHistory ? <><th>Activity</th><th>Date</th></> : <th>Subscribed at</th>}</tr></thead>
                               <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
                                 const dateTime = formatAnalyticsDateTime(item.subscribed_at);

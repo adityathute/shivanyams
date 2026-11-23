@@ -131,3 +131,156 @@
     width: 160px;
   }
 }
+
+.admin-tags-header-actions {
+  align-items: center;
+}
+
+.admin-tags-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 84px;
+  padding: 5px 12px;
+  border-right: 1px solid #e1e8f2;
+  line-height: 1.2;
+}
+
+.admin-tags-total strong {
+  color: #263b55;
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-tags-total span {
+  color: #718198;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.admin-tags-filters {
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 230px);
+}
+
+.admin-tags-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-tags-edit-field label {
+  color: #405571;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-tags-edit-field input {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #263b55;
+  font: inherit;
+  font-size: 13px;
+}
+
+.admin-tags-edit-field input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgb(139 92 246 / 12%);
+}
+
+.admin-tags-edit-field small {
+  color: #718198;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.admin-tags-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+}
+
+.admin-tags-modal-actions .admin-secondary-button,
+.admin-tags-modal-actions .admin-primary-button {
+  min-height: 36px;
+  padding: 8px 13px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-tags-modal-actions .admin-primary-button {
+  border: 1px solid #6d28d9;
+  background: #6d28d9;
+  color: #fff;
+}
+
+.admin-tags-modal-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+[data-theme="dark"] .admin-tags-total {
+  border-color: #344154;
+}
+
+[data-theme="dark"] .admin-tags-total strong {
+  color: #e2eaf4;
+}
+
+[data-theme="dark"] .admin-tags-total span,
+[data-theme="dark"] .admin-tags-edit-field small {
+  color: #9aaabd;
+}
+
+[data-theme="dark"] .admin-tags-edit-field label {
+  color: #d7e2ef;
+}
+
+[data-theme="dark"] .admin-tags-edit-field input {
+  border-color: #344154;
+  background: #1c2633;
+  color: #e2eaf4;
+}
+
+[data-theme="dark"] .admin-tags-modal-actions .admin-primary-button {
+  border-color: #8b5cf6;
+  background: #7c3aed;
+}
+
+@media (max-width: 900px) {
+  .admin-tags-header-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-tags-header-actions {
+    align-items: center;
+  }
+
+  .admin-tags-total {
+    min-width: 72px;
+    padding: 4px 8px;
+  }
+
+  .admin-tags-total strong {
+    font-size: 17px;
+  }
+
+  .admin-tags-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

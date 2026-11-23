@@ -5,7 +5,8 @@ import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
-from django.db.models import Count, F, Greatest, Max, Prefetch, Q, Value
+from django.db.models import Count, F, Max, Prefetch, Q, Value
+from django.db.models.functions import Greatest
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response

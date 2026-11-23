@@ -1838,7 +1838,7 @@ export default function AdminPage() {
                       <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
                         <thead><tr><th>Post</th><th>Visitor</th><th>Sharing method</th><th>Date</th></tr></thead>
                         <tbody>{shareAnalytics.events.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((item, index) => {
-                          const channelLabels: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X", twitter: "X", linkedin: "LinkedIn", email: "Email" };
+                          const channelLabels: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X/Twitter", twitter: "X/Twitter", threads: "Threads", instagram: "Instagram", linkedin: "LinkedIn", email: "Email" };
                           return <tr key={`${item.post_id}-${item.created_at}-${index}`}>
                             <td><span className="admin-likes-post-link" title={item.post__title_en}>{item.post__title_en}</span></td>
                             <td className="admin-shares-visitor-cell">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import {
+  AnimatedNumber,
   StocksIcon,
   BookmarkIcon,
   MessagesIcon,
@@ -329,7 +330,7 @@ export default function AdminPostEngagementPage() {
                     onClick={() => { setSelected(item.key); setPage(1); }}
                   >
                     <span><i>{item.icon}</i>{item.label}</span>
-                    <strong>{formatCompactNumber(value)}</strong>
+                    <strong><AnimatedNumber value={value} /></strong>
                   </button>
                 );
               })}

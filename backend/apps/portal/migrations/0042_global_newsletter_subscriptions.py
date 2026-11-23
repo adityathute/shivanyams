@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
             options={
                 "ordering": ("-created_at", "-id"),
                 "indexes": [
-                    models.Index(fields=["event_type", "created_at"], name="portal_news_event_type_date_idx"),
+                    models.Index(fields=["event_type", "created_at"], name="portal_news_evt_date_idx"),
                 ],
             },
         ),

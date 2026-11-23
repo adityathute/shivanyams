@@ -449,19 +449,7 @@
 .admin-filters {
   grid-template-columns: minmax(220px, 1fr) 190px 180px 170px;
 }
-.admin-post-table th:first-child,
-.admin-post-table td:first-child {
-  width: 34px;
-  min-width: 34px;
-  padding-left: 18px;
-  padding-right: 4px;
-}
-.admin-post-table input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
-  accent-color: #075be8;
-  cursor: pointer;
-}
+/* The selection checkbox column has been removed; keep the post column at its normal width. */
 .admin-table-footer {
   display: flex;
   align-items: center;
@@ -576,8 +564,8 @@
   vertical-align: middle;
 }
 
-.admin-post-table th:nth-child(2),
-.admin-post-table td:nth-child(2) {
+.admin-post-table th:first-child,
+.admin-post-table td:first-child {
   min-width: 250px;
   text-align: left;
   white-space: normal;

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, DislikeIcon, LikeIcon, RefreshIcon } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, DislikeIcon, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../admin-utils";
 import "../admin.css";
@@ -183,13 +183,23 @@ export default function AdminCommentsPage() {
           </div>
           <div className="admin-filters admin-comments-filters">
             <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search comment, user ID or post..." aria-label="Search comments" />
-            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter comment status">
-              <option value="all">All statuses</option>
-              <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
-              <option value="hidden">Hidden</option>
-              <option value="rejected">Rejected</option>
-            </select>
+            <Select
+              size="sm"
+              fullWidth
+              value={statusFilter}
+              onChange={(event) => {
+                setStatusFilter(event.target.value);
+                setPage(1);
+              }}
+              aria-label="Filter comment status"
+              options={[
+                { value: "all", label: "All statuses" },
+                { value: "approved", label: "Approved" },
+                { value: "pending", label: "Pending" },
+                { value: "hidden", label: "Hidden" },
+                { value: "rejected", label: "Rejected" },
+              ]}
+            />
             <label className="admin-comments-reported-filter">
               <input type="checkbox" checked={reportedOnly} onChange={(event) => { setReportedOnly(event.target.checked); setPage(1); }} />
               Reported only

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, EditIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DislikeIcon, EditIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -107,6 +107,7 @@ function CommentThread({
   onReact,
   onReport,
   onEdit,
+  onDelete,
   currentUserId,
   editTarget,
   editDraft,
@@ -136,6 +137,7 @@ function CommentThread({
   onReact: (id: number, reaction: "like" | "dislike") => void;
   onReport: (id: number) => void;
   onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
   currentUserId: string;
   editTarget: number | null;
   editDraft: string;
@@ -206,8 +208,8 @@ function CommentThread({
             <strong>{formatAuthorName(item.author_name || (item.is_admin_reply ? "ShivanyaMS Admin" : "Member"))}</strong>
             {item.is_admin_reply ? <span className="portal-comment-admin-badge">Admin</span> : null}
             <time dateTime={item.created_at}>{dateLabel}</time>
+            {item.edited ? <span className="portal-comment-edited-label">(Edited)</span> : null}
             {item.reviewed_at && !item.is_admin_reply ? <span className="portal-comment-reviewed-badge">Reviewed</span> : null}
-            {item.edited ? <span className="portal-comment-edited-label">Edited</span> : null}
           </div>
           {editTarget === item.id ? (
             <div className="portal-comment-edit-form">
@@ -246,7 +248,7 @@ function CommentThread({
             <button type="button" className={`portal-comment-reaction portal-comment-dislike${item.user_reaction === "dislike" ? " is-active" : ""}`} onClick={() => onReact(item.id, "dislike")} aria-label={`Dislike comment, ${item.dislikes_count} dislikes`}>
               <DislikeIcon size={14} /> {item.dislikes_count}
             </button>
-            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button> : null}
+            {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <><button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button><button type="button" className="portal-comment-delete-action" onClick={() => onDelete(item.id)}>Delete</button></> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button> : null}
             {!item.report_limit_reached ? (
               <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
@@ -311,6 +313,7 @@ function CommentThread({
                 onReact={onReact}
                 onReport={onReport}
                 onEdit={onEdit}
+                onDelete={onDelete}
                 currentUserId={currentUserId}
                 editTarget={editTarget}
                 editDraft={editDraft}
@@ -367,6 +370,8 @@ export function PostCommentsSection({ postId, language }: Props) {
   const [editTarget, setEditTarget] = useState<number | null>(null);
   const [editDraft, setEditDraft] = useState("");
   const [editing, setEditing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const currentUserId = String(user?.id ?? "");
   const draftModerationIssue = getCommentModerationIssue(draft);
   const replyModerationIssue = getCommentModerationIssue(replyDraft);
@@ -494,6 +499,37 @@ export function PostCommentsSection({ postId, language }: Props) {
     }
   }
 
+  async function deleteComment() {
+    if (!deleteTarget || deleting) return;
+    const target = findComment(comments, deleteTarget);
+    if (!target || target.user_auth_id !== currentUserId || target.is_admin_reply) {
+      setDeleteTarget(null);
+      return;
+    }
+
+    setDeleting(true);
+    setError("");
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl(`comments/${deleteTarget}/`), {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail || "Unable to delete your comment.");
+      }
+      setDeleteTarget(null);
+      if (editTarget === deleteTarget) {
+        setEditTarget(null);
+        setEditDraft("");
+      }
+      await loadComments();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to delete your comment.");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   function startEditing(commentId: number) {
     const item = findComment(comments, commentId);
     if (!item || item.user_auth_id !== currentUserId || item.is_admin_reply) return;
@@ -618,6 +654,7 @@ export function PostCommentsSection({ postId, language }: Props) {
             }}
             onReact={(id, reaction) => void reactToComment(id, reaction)}
             onEdit={startEditing}
+            onDelete={(id) => setDeleteTarget(id)}
             currentUserId={currentUserId}
             editTarget={editTarget}
             editDraft={editDraft}
@@ -650,6 +687,18 @@ export function PostCommentsSection({ postId, language }: Props) {
           />
         ))}
       </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete permanently?"
+        message="This comment or reply will be permanently deleted. Any replies under it will also be deleted. This action cannot be undone."
+        confirmText={deleting ? "Deleting..." : "Delete permanently"}
+        cancelText="Cancel"
+        variant="danger"
+        loading={deleting}
+        onCancel={() => { if (!deleting) setDeleteTarget(null); }}
+        onConfirm={() => void deleteComment()}
+      />
 
       {replyTarget && replyTargetItem ? (
         <div

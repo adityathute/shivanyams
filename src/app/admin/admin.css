@@ -809,8 +809,24 @@
 }
 .admin-analytics-link:hover { text-decoration: underline; }
 .admin-analytics-referrer {
+  display: -webkit-box;
   max-width: 220px;
+  overflow: hidden;
   overflow-wrap: anywhere;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Keep referrer URLs readable while limiting tall table rows. */
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td.admin-analytics-referrer {
+  display: -webkit-box;
+  max-height: 4.5em;
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 @media (max-width: 1250px) {
   .admin-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }

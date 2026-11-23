@@ -415,17 +415,3 @@
 .admin-managed-tag-actions button.danger:hover { border-color: #fca5a5; background: #fff7f7; }
 .admin-managed-tag-actions button:disabled { opacity: .55; cursor: wait; }
 @media (max-width: 520px) { .admin-managed-tag-row { align-items: flex-start; flex-direction: column; } .admin-managed-tag-actions { width: 100%; } }
-
-
-/* Keep the original tag layout while removing tag and row outlines. */
-.related-tag-chip,
-.related-tag-chip:hover,
-[data-theme="dark"] .related-tag-chip,
-[data-theme="dark"] .related-tag-chip:hover {
-  border: 0;
-  border-radius: 0;
-}
-.admin-managed-tag-row {
-  border: 0;
-  border-radius: 0;
-}

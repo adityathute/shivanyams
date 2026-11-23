@@ -205,7 +205,7 @@ function CommentThread({
             </button>
             {item.user_auth_id === currentUserId && !item.is_admin_reply && editTarget !== item.id ? <button type="button" className="portal-comment-edit-action" onClick={() => onEdit(item.id)}><EditIcon size={14} /> Edit</button> : null}
             {depth < 3 ? <button type="button" className="portal-comment-reply-action" onClick={() => onReply(item.id)}>Reply</button> : null}
-            {!item.user_has_reported && !item.report_limit_reached ? (
+            {!item.report_limit_reached ? (
               <button type="button" className="portal-comment-report" onClick={() => onReport(item.id)}>Report</button>
             ) : null}
           </div>
@@ -475,7 +475,7 @@ export function PostCommentsSection({ postId, language }: Props) {
       setReportTarget(null);
       setReportDetails("");
       await loadComments();
-      setError(payload.hidden ? "This comment was hidden after multiple reports." : "Thank you. Your report was submitted.");
+      setError(payload.report_limit_reached ? "Your 3 reports for this comment have been used. Thank you for helping keep the discussion safe." : "Thank you. Your report was submitted.");
     } finally {
       setReporting(false);
     }

@@ -1753,6 +1753,51 @@ class AdminDashboardStats(APIView):
 
     def get(self, request):
         reaction_filter = request.query_params.get("type")
+        if reaction_filter == "comments":
+            comments = list(
+                Comment.objects.select_related("post", "parent")
+                .all().order_by("-created_at")
+            )
+            auth_ids = {comment.user_auth_id for comment in comments if comment.user_auth_id}
+            user_visitors = {}
+            user_emails = {}
+            if auth_ids:
+                for visitor in WebsiteVisitor.objects.filter(
+                    auth_user_id__in=auth_ids
+                ).order_by("-last_seen_at").values("auth_user_id", "visitor_id"):
+                    user_visitors.setdefault(visitor["auth_user_id"], visitor["visitor_id"])
+                post_ids = {comment.post_id for comment in comments}
+                for subscription in PostSubscription.objects.filter(
+                    post_id__in=post_ids, user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
+                for subscription in NewsletterSubscription.objects.filter(
+                    user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
+                    user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
+
+            rows = [{
+                "id": f"comment-{comment.id}",
+                "comment_id": comment.id,
+                "parent_id": comment.parent_id,
+                "target_type": "reply" if comment.parent_id else "comment",
+                "post_id": comment.post_id,
+                "post_title": comment.post.title_en,
+                "post_slug": comment.post.slug,
+                "content": comment.content,
+                "parent_content": comment.parent.content if comment.parent_id else "",
+                "user_name": comment.author_name or "",
+                "user_email": user_emails.get(comment.user_auth_id, ""),
+                "visitor_id": user_visitors.get(comment.user_auth_id, ""),
+                "created_at": comment.created_at,
+            } for comment in comments]
+            return Response({
+                "total": len(rows),
+                "comments_count": sum(1 for row in rows if row["target_type"] == "comment"),
+                "replies_count": sum(1 for row in rows if row["target_type"] == "reply"),
+                "results": rows,
+            })
+
         if reaction_filter in ("likes", "dislikes"):
             reaction_value = (
                 PostReaction.ReactionType.LIKE

@@ -201,7 +201,7 @@ export default function AdminTagsPage() {
             />
           </div>
 
-          {error ? <div className="admin-error" role="alert">{error}</div> : null}
+          {error && !editingTag && deleteTarget === null ? <div className="admin-error" role="alert">{error}</div> : null}
 
           {loadingTags ? (
             <div className="admin-empty">Loading tags...</div>
@@ -273,6 +273,7 @@ export default function AdminTagsPage() {
         }
       >
         <div className="admin-tags-edit-field">
+          {error ? <div className="admin-error" role="alert">{error}</div> : null}
           <label htmlFor="admin-edit-tag-name">Tag name</label>
           <input
             id="admin-edit-tag-name"
@@ -292,7 +293,12 @@ export default function AdminTagsPage() {
       <ConfirmDialog
         open={deleteTarget !== null}
         title="Delete tag?"
-        message={deleteTarget ? `Delete “${deleteTarget}” from every post that uses it? This action cannot be undone.` : ""}
+        message={
+          <div>
+            {deleteTarget ? `Delete “${deleteTarget}” from every post that uses it? This action cannot be undone.` : ""}
+            {error ? <p className="admin-tags-dialog-error" role="alert">{error}</p> : null}
+          </div>
+        }
         confirmText="Delete tag"
         cancelText="Cancel"
         variant="danger"

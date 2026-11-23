@@ -81,6 +81,22 @@ function getRowContent(row: DetailRow) {
   return contentEntries.length ? String(contentEntries[0][1]) : "";
 }
 
+function shareChannelLabel(value: unknown) {
+  const channel = String(value || "other").trim().toLowerCase();
+  const labels: Record<string, string> = {
+    copy: "Copy Link",
+    native: "Native Share",
+    whatsapp: "WhatsApp",
+    facebook: "Facebook",
+    telegram: "Telegram",
+    x: "X",
+    twitter: "X",
+    linkedin: "LinkedIn",
+    email: "Email",
+  };
+  return labels[channel] || (channel === "other" ? "Other" : channel.charAt(0).toUpperCase() + channel.slice(1));
+}
+
 function titleCaseName(value: string) {
   return value.trim().toLocaleLowerCase().replace(/(^|[\s'-])([\p{L}])/gu, (_, separator, letter) => separator + letter.toLocaleUpperCase());
 }
@@ -212,6 +228,16 @@ export default function AdminPostEngagementPage() {
     return details[selected] || [];
   }, [payload, selected]);
 
+  const shareChannelBreakdown = useMemo(() => {
+    const counts = new Map<string, number>();
+    (payload?.details?.shares || []).forEach((row) => {
+      const label = shareChannelLabel(row.channel);
+      counts.set(label, (counts.get(label) || 0) + 1);
+    });
+    return Array.from(counts, ([channel, count]) => ({ channel, count }))
+      .sort((a, b) => b.count - a.count || a.channel.localeCompare(b.channel));
+  }, [payload]);
+
   if (loading || !isAdmin) return null;
 
   const tableRows = selectedRows.map((row) => {
@@ -342,6 +368,27 @@ export default function AdminPostEngagementPage() {
                   <p>{detailDescription} {formatCompactNumber(selectedRows.length)} {selectedRows.length === 1 ? "record" : "records"} shown below.</p>
                 </div>
               </div>
+              {selected === "shares" ? (
+                <section className="admin-share-breakdown" aria-label="Share platform breakdown">
+                  <div className="admin-share-breakdown-heading">
+                    <strong>Shares by platform</strong>
+                    <span>{formatCompactNumber(payload.shares)} total share actions</span>
+                  </div>
+                  {shareChannelBreakdown.length ? (
+                    <div className="admin-share-breakdown-grid">
+                      {shareChannelBreakdown.map((item) => (
+                        <div className="admin-share-breakdown-card" key={item.channel}>
+                          <span>{item.channel}</span>
+                          <strong>{formatCompactNumber(item.count)}</strong>
+                          <small>{payload.shares ? Math.round((item.count / payload.shares) * 100) : 0}% of shares</small>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="admin-share-breakdown-empty">No platform share activity recorded yet.</div>
+                  )}
+                </section>
+              ) : null}
               {!selectedRows.length ? (
                 <div className="admin-empty admin-engagement-empty">No {selectedLabel.toLowerCase()} recorded yet.</div>
               ) : (

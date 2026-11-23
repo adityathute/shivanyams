@@ -163,10 +163,63 @@
 }
 
 .portal-share-menu button:hover {
-  border-color: transparent;
-  background: transparent;
-  color: var(--text-primary, #26364b);
   transform: none;
+}
+
+.portal-share-menu button span {
+  color: inherit;
+  transition: color 150ms ease;
+}
+
+/* Brand-tinted hover states apply to the complete share option. */
+.portal-share-menu button.portal-share-copy:hover,
+.portal-share-menu button.portal-share-more:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.24);
+}
+
+.portal-share-menu button.portal-share-whatsapp:hover {
+  color: #25d366;
+  background: rgba(37, 211, 102, 0.09);
+  border-color: rgba(37, 211, 102, 0.26);
+}
+
+.portal-share-menu button.portal-share-facebook:hover {
+  color: #1877f2;
+  background: rgba(24, 119, 242, 0.08);
+  border-color: rgba(24, 119, 242, 0.24);
+}
+
+.portal-share-menu button.portal-share-telegram:hover {
+  color: #229ed9;
+  background: rgba(34, 158, 217, 0.09);
+  border-color: rgba(34, 158, 217, 0.25);
+}
+
+.portal-share-menu button.portal-share-x:hover,
+.portal-share-menu button.portal-share-threads:hover {
+  color: #111827;
+  background: rgba(17, 24, 39, 0.06);
+  border-color: rgba(17, 24, 39, 0.18);
+}
+
+.portal-share-menu button.portal-share-instagram:hover {
+  color: #e1306c;
+  background: rgba(225, 48, 108, 0.08);
+  border-color: rgba(225, 48, 108, 0.24);
+}
+
+.portal-share-menu button.portal-share-linkedin:hover {
+  color: #0a66c2;
+  background: rgba(10, 102, 194, 0.08);
+  border-color: rgba(10, 102, 194, 0.24);
+}
+
+.portal-share-menu button.portal-share-email:hover {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.09);
+  border-color: rgba(249, 115, 22, 0.26);
 }
 
 .portal-share-menu button svg {
@@ -182,7 +235,7 @@
  */
 .portal-share-menu button.portal-share-copy:hover svg,
 .portal-share-menu button.portal-share-more:hover svg {
-  filter: grayscale(1) brightness(.72);
+  filter: invert(34%) sepia(98%) saturate(1645%) hue-rotate(202deg) brightness(98%) contrast(96%);
 }
 
 .portal-share-menu button.portal-share-whatsapp:hover svg {

@@ -1710,6 +1710,13 @@ export default function AdminPage() {
                             : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
                 </p>
               </div>
+              {analyticsType === "tags" && !selectedPost && !selectedVisitor ? (
+                <div className="admin-reaction-view-toggle">
+                  <Link href="/admin/tags" className="admin-reaction-view-button">
+                    Manage Tags
+                  </Link>
+                </div>
+              ) : null}
               {(analyticsType === "likes" || analyticsType === "dislikes" || analyticsType === "comments" || analyticsType === "replies" || analyticsType === "reports") && !selectedVisitor && !selectedAnalyticsPath && !selectedPost && !selectedLikeComment && !selectedReport ? (
                 <div className="admin-reaction-view-toggle">
                   <button

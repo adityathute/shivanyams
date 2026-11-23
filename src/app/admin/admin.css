@@ -2540,3 +2540,33 @@
     font-size: 11px;
   }
 }
+
+/* Reports analytics: show post titles in at most three lines and align the full Post column left in both views. */
+.admin-analytics-modal .admin-reports-analytics-table th:nth-child(2),
+.admin-analytics-modal .admin-reports-analytics-table td:nth-child(2),
+.admin-analytics-modal .admin-report-posts-summary-table th:first-child,
+.admin-analytics-modal .admin-report-posts-summary-table td:first-child {
+  text-align: left;
+}
+
+.admin-analytics-modal .admin-reports-analytics-table .admin-likes-post-link,
+.admin-analytics-modal .admin-report-posts-summary-table .admin-analytics-link {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 650;
+  line-height: 1.4;
+  text-align: left;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+

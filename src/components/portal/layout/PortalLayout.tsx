@@ -114,6 +114,7 @@ function PortalShell({ children }: { children: ReactNode }) {
       },
       body: JSON.stringify({
         visitor_id: visitorId,
+        event_id: typeof window.crypto?.randomUUID === "function" ? window.crypto.randomUUID() : `wv-${Date.now()}-${Math.random().toString(36).slice(2)}`,
         path: pathname,
         referrer_url: document.referrer,
         language: document.documentElement.lang || "en",

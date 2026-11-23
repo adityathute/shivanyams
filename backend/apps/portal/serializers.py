@@ -915,6 +915,9 @@ class CommentSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     dislikes_count = serializers.SerializerMethodField()
     user_reaction = serializers.SerializerMethodField()
+    report_count = serializers.SerializerMethodField()
+    user_has_reported = serializers.SerializerMethodField()
+    report_limit_reached = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -934,6 +937,9 @@ class CommentSerializer(serializers.ModelSerializer):
             "likes_count",
             "dislikes_count",
             "user_reaction",
+            "report_count",
+            "user_has_reported",
+            "report_limit_reached",
             "replies",
             "created_at",
             "updated_at",
@@ -951,6 +957,9 @@ class CommentSerializer(serializers.ModelSerializer):
             "likes_count",
             "dislikes_count",
             "user_reaction",
+            "report_count",
+            "user_has_reported",
+            "report_limit_reached",
             "replies",
             "created_at",
             "updated_at",
@@ -980,6 +989,18 @@ class CommentSerializer(serializers.ModelSerializer):
             user_auth_id=str(request.user.id)
         ).values_list("reaction", flat=True).first()
         return reaction
+
+    def get_report_count(self, obj):
+        return obj.reports.count()
+
+    def get_user_has_reported(self, obj):
+        request = self.context.get("request")
+        if not request or not getattr(request.user, "is_authenticated", False):
+            return False
+        return obj.reports.filter(reporter_auth_id=str(request.user.id)).exists()
+
+    def get_report_limit_reached(self, obj):
+        return obj.reports.count() >= 3
 
     def validate_content(self, value):
         value = value.strip()

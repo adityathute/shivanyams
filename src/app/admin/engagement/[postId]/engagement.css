@@ -134,13 +134,6 @@
 .admin-engagement-data-table {
   width: 100%;
   min-width: 760px;
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-
-.admin-engagement-data-table {
-  width: 100%;
-  min-width: 760px;
   table-layout: auto;
   border-collapse: collapse;
   text-align: left;
@@ -157,7 +150,9 @@
   text-align: left;
   text-transform: uppercase;
   border-bottom: 1px solid #edf1f6;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .admin-engagement-data-table td {
@@ -168,46 +163,41 @@
   line-height: 1.5;
   text-align: left;
   vertical-align: middle;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
   overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .admin-engagement-data-table tbody tr { transition: background .15s ease; }
 .admin-engagement-data-table tbody tr:hover { background: #f8faff; }
 
-/* Keep the first column readable while letting the remaining columns share available width. */
-.admin-engagement-data-table th:first-child,
-.admin-engagement-data-table td:first-child {
-  width: 160px;
-  min-width: 160px;
+.admin-engagement-cell-value {
+  display: block;
+  max-width: 100%;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: pre-wrap;
+  line-height: 1.55;
 }
 
-.admin-engagement-cell-value {
+.admin-engagement-cell-value.is-content {
   display: -webkit-box;
-  max-width: 100%;
+  min-width: 0;
+  max-width: 520px;
   overflow: hidden;
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  line-height: 1.5;
-}
-
-.admin-engagement-cell-value.is-content {
-  display: block;
-  overflow: visible;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  text-overflow: clip;
-  -webkit-line-clamp: unset;
-  line-height: 1.65;
-  min-width: 280px;
-  max-width: 440px;
+  line-height: 1.55;
 }
 
 .admin-engagement-content-cell {
-  min-width: 320px;
+  min-width: 360px;
+  max-width: 520px;
   vertical-align: top !important;
 }
 

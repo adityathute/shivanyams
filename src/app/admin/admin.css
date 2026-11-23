@@ -2154,3 +2154,5 @@
 .admin-analytics-modal .admin-likes-content-link.is-reply-content .admin-analytics-like-content {
   -webkit-line-clamp: 2;
 }
+
+.admin-like-comment-detail{display:flex;flex-direction:column;gap:16px;padding:4px 2px 8px}.admin-like-comment-section{border:1px solid var(--admin-border,#e5e7eb);border-radius:12px;padding:14px 16px;min-width:0}.admin-like-comment-section h3{margin:0 0 10px;font-size:13px;font-weight:700;color:var(--admin-muted,#718198)}.admin-like-comment-section>p,.admin-like-comment-replies article>p{margin:0;color:var(--admin-text,inherit);font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.admin-like-comment-meta,.admin-like-comment-stats{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;color:var(--admin-muted,#718198);font-size:12px}.admin-like-comment-replies{display:flex;flex-direction:column;gap:10px}.admin-like-comment-replies article{border-left:3px solid var(--admin-accent,#2563eb);padding:8px 0 8px 12px}

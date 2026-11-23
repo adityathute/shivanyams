@@ -139,6 +139,8 @@ export default function AdminPage() {
     likes: 0,
     dislikes: 0,
     comments: 0,
+    replies: 0,
+    tags: 0,
     shares: 0,
     saved: 0,
     reports: 0,
@@ -271,6 +273,8 @@ export default function AdminPage() {
           likes_count?: number;
           dislikes_count?: number;
           comments_count?: number;
+          replies_count?: number;
+          tags_count?: number;
           shares_count?: number;
           saved_count?: number;
           reports_count?: number;
@@ -287,6 +291,8 @@ export default function AdminPage() {
               likes: Number(payload.likes_count) || 0,
               dislikes: Number(payload.dislikes_count) || 0,
               comments: Number(payload.comments_count) || 0,
+              replies: Number(payload.replies_count) || 0,
+              tags: Number(payload.tags_count) || 0,
               shares: Number(payload.shares_count) || 0,
               saved: Number(payload.saved_count) || 0,
               reports: Number(payload.reports_count) || 0,
@@ -684,7 +690,9 @@ export default function AdminPage() {
           const engagementItems = [
             { label: "Likes", value: engagementStats.likes },
             { label: "Dislikes", value: engagementStats.dislikes },
-            { label: "Comments & replies", value: engagementStats.comments },
+            { label: "Comments", value: engagementStats.comments },
+            { label: "Replies", value: engagementStats.replies },
+            { label: "Tags", value: engagementStats.tags },
             { label: "Shares", value: engagementStats.shares },
             { label: "Saved posts", value: engagementStats.saved },
             { label: "Total reports", value: engagementStats.reports },

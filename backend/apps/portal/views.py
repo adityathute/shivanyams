@@ -1,5 +1,5 @@
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.db import transaction
 from django.core import signing
 from django.core.mail import send_mass_mail
@@ -355,7 +355,7 @@ class PublicContent(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         try:
             return super().retrieve(request, *args, **kwargs)
-        except NotFound:
+        except (NotFound, Http404):
             category = get_content_category(self.kwargs["kind"])
             redirect = PostSlugRedirect.objects.filter(
                 old_slug=self.kwargs["slug"], post__category=category,

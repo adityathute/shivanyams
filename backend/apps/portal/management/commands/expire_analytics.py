@@ -26,8 +26,10 @@ class Command(BaseCommand):
         delete_before = now - timedelta(days=delete_days)
         website_events = WebsiteView.objects.filter(viewed_at__lt=delete_before)
         post_events = PostView.objects.filter(viewed_at__lt=delete_before)
-        website_visitors = WebsiteVisitor.objects.filter(views__viewed_at__lt=anonymize_before).distinct()
-        post_visitors = PostVisitor.objects.filter(view_events__viewed_at__lt=anonymize_before).distinct()
+        website_visitor_ids = WebsiteView.objects.filter(viewed_at__lt=anonymize_before).values_list("visitor_id", flat=True)
+        post_visitor_ids = PostView.objects.filter(viewed_at__lt=anonymize_before).values_list("visitor_id", flat=True)
+        website_visitors = WebsiteVisitor.objects.filter(pk__in=website_visitor_ids)
+        post_visitors = PostVisitor.objects.filter(pk__in=post_visitor_ids)
         counts = {
             "website_events_to_delete": website_events.count(),
             "post_events_to_delete": post_events.count(),

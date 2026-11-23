@@ -287,7 +287,6 @@ export function PostEngagementActions({ postId, title }: Props) {
       </div>
       {shareMenuOpen ? (
         <div className="portal-share-menu" role="menu" aria-label="Share this post">
-          <button type="button" role="menuitem" className="portal-share-menu-close" onClick={() => { setShareMenuOpen(false); void recordShare("dismissed"); }}>Close</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("copy")}>Copy link</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")}>WhatsApp</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("facebook")}>Facebook</button>
@@ -296,7 +295,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")}>LinkedIn</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("email")}>Email</button>
           {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
-            <button type="button" role="menuitem" onClick={() => { showMessage("Opening share options..."); void shareTo("native"); }}>More options</button>
+            <button type="button" role="menuitem" onClick={() => void shareTo("native")>More options</button>
           ) : null}
         </div>
       ) : null}

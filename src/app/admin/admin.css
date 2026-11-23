@@ -2578,3 +2578,14 @@
   padding-left: 16px;
 }
 
+
+/* Reports analytics: left-align the Reported content header and every cell in Show all. */
+.admin-analytics-modal .admin-reports-analytics-table th:nth-child(3),
+.admin-analytics-modal .admin-reports-analytics-table td:nth-child(3) {
+  text-align: left;
+}
+
+.admin-analytics-modal .admin-reports-analytics-table td:nth-child(3) .admin-likes-content-link,
+.admin-analytics-modal .admin-reports-analytics-table td:nth-child(3) .admin-analytics-like-content {
+  text-align: left;
+}

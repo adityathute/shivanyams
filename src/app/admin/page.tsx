@@ -879,6 +879,7 @@ export default function AdminPage() {
 
   function openSharesAnalytics() {
     setAnalyticsType("shares");
+    setSelectedSharePost(null);
     setSelectedPost(null);
     setSelectedVisitor(null);
     setSelectedAnalyticsPath(null);

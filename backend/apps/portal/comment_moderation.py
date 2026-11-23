@@ -1,50 +1,64 @@
-"""Validation helpers for public comment and reply text."""
+"""Shared validation for public comment and reply text."""
 
 import html
+import json
 import re
 import unicodedata
+from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 
 ALLOWED_COMMENT_HOST = "shivanyams.com"
+WORD_CONFIG_PATH = Path(__file__).resolve().parents[3] / "src" / "config" / "comment-moderation-words.json"
 
-# Keep this list deliberately explicit and maintainable. Add reviewed terms here
-# as moderation coverage is expanded for additional languages and transliterations.
-BLOCKED_TERMS = {
-    # English
-    "fuck", "fucking", "fucker", "motherfucker", "shit", "bullshit",
-    "bitch", "bitches", "asshole", "bastard", "cunt", "dickhead",
-    # Hindi / Marathi - Roman script
-    "madarchod", "madarchod", "mc", "bhenchod", "behenchod", "bc",
-    "chutiya", "chutiye", "chutiyapa", "gaand", "gandu", "ganduu",
-    "harami", "haramkhor", "randi", "bhadwa", "bhadve", "lavde",
-    "lodu", "lode", "jhatu", "jhaatu", "bsdk", "bhosdike",
-    # Hindi / Marathi - Devanagari
-    "मादरचोद", "मादरचोद", "बहनचोद", "भेनचोद", "चूतिया", "चुतिया",
-    "भोसडी", "भोसडीचा", "भोसडीचे", "गांडू", "हरामी", "हरामखोर",
-    "रंडी", "भडवा", "भडवे", "लवड्या", "झवाड्या", "झवणे",
-}
 
+def _normalize_word(value):
+    value = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    value = re.sub(r"[\\u200b-\\u200d\\ufeff]", "", value)
+    value = re.sub(r"[^\\w\\u0900-\\u097f]", "", value, flags=re.UNICODE)
+    return re.sub(r"(.)\\1+", r"\\1", value)
+
+
+def _load_blocked_terms():
+    try:
+        with WORD_CONFIG_PATH.open("r", encoding="utf-8") as config_file:
+            config = json.load(config_file)
+    except (OSError, json.JSONDecodeError):
+        # Fail closed for moderation configuration: a missing dictionary must
+        # never crash comment creation, but the deployment should restore it.
+        return set()
+
+    languages = config.get("languages", {})
+    return {
+        _normalize_word(word)
+        for words in languages.values()
+        if isinstance(words, list)
+        for word in words
+        if isinstance(word, str) and word.strip()
+    }
+
+
+BLOCKED_TERMS = _load_blocked_terms()
+TOKEN_RE = re.compile(r"[\\w\\u0900-\\u097f]+", re.UNICODE)
 URL_CANDIDATE_RE = re.compile(
-    r"(?<![\w@])(?:https?://|ftp://|www\.)[^\s<>]+|"
-    r"(?<![\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}"
-    r"(?:\b[^\s<>]*)?",
+    r"(?<![\\w@])(?:https?://|ftp://|www\\.)[^\\s<>]+|"
+    r"(?<![\\w@])(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}"
+    r"(?:\\b[^\\s<>]*)?",
     re.IGNORECASE,
 )
-TOKEN_RE = re.compile(r"[\w\u0900-\u097F]+", re.UNICODE)
 
 
 def _normalize_text(value):
     text = html.unescape(unicodedata.normalize("NFKC", str(value or "")))
-    text = text.replace("\u200b", "").replace("\u200c", "").replace("\u200d", "")
+    text = re.sub(r"[\\u200b-\\u200d\\ufeff]", "", text)
     text = text.translate(str.maketrans({"。": ".", "．": ".", "｡": "."}))
     for _ in range(2):
         text = unquote(text)
     text = text.casefold()
-    text = re.sub(r"\[\s*(?:dot|\.)\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*(?:dot|\.)\s*\}", ".", text)
-    text = re.sub(r"\s+dot\s+", ".", text)
-    text = re.sub(r"\bhxxps?\b", "https", text)
-    text = re.sub(r"\s*\.\s*", ".", text)
+    text = re.sub(r"\\[\\s*(?:dot|\\.)\\s*\\]|\\(\\s*(?:dot|\\.)\\s*\\)|\\{\\s*(?:dot|\\.)\\s*\\}", ".", text)
+    text = re.sub(r"\\s+dot\\s+", ".", text)
+    text = re.sub(r"\\bhxxps?\\b", "https", text)
+    text = re.sub(r"\\s*\\.\\s*", ".", text)
     return text
 
 
@@ -54,9 +68,8 @@ def _is_allowed_host(host):
 
 
 def _find_external_link(text):
-    normalized = _normalize_text(text)
-    for match in URL_CANDIDATE_RE.finditer(normalized):
-        candidate = match.group(0).rstrip(".,!?;:)]}\"'")
+    for match in URL_CANDIDATE_RE.finditer(_normalize_text(text)):
+        candidate = match.group(0).rstrip(".,!?;:)]}\\\"'")
         if not candidate:
             continue
         parse_value = candidate if "://" in candidate else "https://" + candidate
@@ -70,17 +83,11 @@ def _find_external_link(text):
 
 
 def _contains_blocked_language(value):
-    normalized = _normalize_text(value)
-    tokens = TOKEN_RE.findall(normalized)
-    if any(token in BLOCKED_TERMS for token in tokens):
-        return True
-
-    # Catch a blocked word split across spaces or punctuation, but require
-    # the joined token sequence to equal a term (not merely contain a substring).
+    tokens = TOKEN_RE.findall(_normalize_text(value))
     for start in range(len(tokens)):
         combined = ""
         for token in tokens[start:start + 8]:
-            combined += token
+            combined += _normalize_word(token)
             if combined in BLOCKED_TERMS:
                 return True
             if not any(term.startswith(combined) for term in BLOCKED_TERMS):
@@ -90,8 +97,7 @@ def _contains_blocked_language(value):
 
 def validate_comment_content(value):
     """Return an error message when content violates comment safety rules."""
-    external_link = _find_external_link(value)
-    if external_link:
+    if _find_external_link(value):
         return "Only links from ShivanyaMS (shivanyams.com) are allowed in comments and replies."
 
     if _contains_blocked_language(value):

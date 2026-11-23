@@ -540,6 +540,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     return item
       ? {
           postId: Number(item.id),
+          comments_enabled: item.comments_enabled !== false,
           title:
             getLocalizedText(
               language,

@@ -1480,7 +1480,12 @@ export default function PostEditor({
     setSaving(true);
     setNotice("");
     try {
-      const savedResult = await persistPost();
+      // Autosave may already have created/saved a new post. Do not issue a
+      // second PUT just to run the requested status transition.
+      const savedResult =
+        !postIdRef.current || currentSnapshot !== lastSavedSnapshotRef.current
+          ? await persistPost()
+          : {};
       const postId = postIdRef.current;
       if (!postId) throw new Error("The post has not been saved yet.");
       if (editing && postStatus === "published") {

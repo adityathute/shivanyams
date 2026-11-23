@@ -33,6 +33,7 @@ from .models import (
     PostFAQ,
     PostReaction,
     PostStatusHistory,
+    PostVersion,
     PostView,
     PostVisitor,
     WebsiteVisitor,
@@ -263,6 +264,74 @@ class AdminContent(viewsets.ModelViewSet):
             transaction.on_commit(
                 lambda: send_mass_mail(email_messages, fail_silently=True)
             )
+
+
+class AdminPostVersions(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        return Response([{"id": x.id, "version_number": x.version_number, "is_published": x.is_published,
+            "created_at": x.created_at, "created_by_auth_id": x.created_by_auth_id,
+            "published_at": x.published_at, "published_by_auth_id": x.published_by_auth_id}
+            for x in post.versions.all()])
+
+    def post(self, request, post_id):
+        with transaction.atomic():
+            post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
+            if post.status != Post.Status.PUBLISHED or not post.published_at:
+                raise ValidationError({"detail": "Only published posts can create unpublished versions."})
+            payload = request.data
+            if not isinstance(payload, dict):
+                raise ValidationError({"detail": "A valid post payload is required."})
+            validator = PostWriteSerializer(instance=post, data=payload)
+            validator.is_valid(raise_exception=True)
+            if not post.versions.exists():
+                baseline = PostWriteSerializer(post, context={"request": request}).data
+                PostVersion.objects.create(post=post, version_number=1, payload=baseline, is_published=True,
+                    created_by_auth_id=post.published_by_auth_id or str(request.user.id),
+                    published_at=post.published_at, published_by_auth_id=post.published_by_auth_id)
+            latest = post.versions.order_by("-version_number").first()
+            if latest and latest.payload == dict(payload):
+                version = latest
+            else:
+                version = PostVersion.objects.create(post=post,
+                    version_number=(latest.version_number if latest else 0) + 1,
+                    payload=dict(payload), is_published=False, created_by_auth_id=str(request.user.id))
+        return Response({"id": version.id, "version_number": version.version_number,
+            "is_published": version.is_published, "created_at": version.created_at,
+            "versions": self.get(request, post_id).data}, status=status.HTTP_201_CREATED)
+
+
+class AdminPostVersionPublish(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def post(self, request, post_id, version_id):
+        with transaction.atomic():
+            post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
+            version = get_object_or_404(PostVersion, pk=version_id, post=post)
+            if version.is_published:
+                raise ValidationError({"detail": "This version is already published."})
+            writer = PostWriteSerializer(instance=post, data=version.payload)
+            writer.is_valid(raise_exception=True)
+            post = writer.save()
+            now, auth_id = timezone.now(), str(request.user.id)
+            post.status, post.published_at, post.published_by_auth_id = Post.Status.PUBLISHED, now, auth_id
+            post.save(update_fields=["status", "published_at", "published_by_auth_id", "updated_at"])
+            PostVersion.objects.filter(post=post, is_published=True).update(is_published=False)
+            version.is_published, version.published_at, version.published_by_auth_id = True, now, auth_id
+            version.save(update_fields=["is_published", "published_at", "published_by_auth_id"])
+            PostStatusHistory.objects.create(post=post, previous_status=Post.Status.PUBLISHED,
+                new_status=Post.Status.PUBLISHED, changed_by_auth_id=auth_id,
+                note=f"Published content version {version.version_number}.")
+            emails = set(PostSubscription.objects.filter(post=post, is_active=True).exclude(email="").values_list("email", flat=True))
+            emails.update(NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True))
+            if emails:
+                subject, message = f"Update: {post.title_en}", f'The post "{post.title_en}" has been updated on ShivanyaMS. Open ShivanyaMS to view the latest information.'
+                messages = tuple((subject, message, None, [email]) for email in sorted(emails))
+                transaction.on_commit(lambda: send_mass_mail(messages, fail_silently=True))
+        return Response({"status": post.status, "published_version": version.version_number,
+            "versions": AdminPostVersions().get(request, post_id).data})
 
 
 class AdminPostReview(APIView):

@@ -290,3 +290,54 @@
   display: block;
   flex: 0 0 auto;
 }
+
+
+/* Keep long post titles from pushing the engagement header actions off-screen. */
+.admin-engagement-header-actions {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+}
+
+.admin-engagement-header-actions > * {
+  flex: 0 0 auto;
+}
+
+.admin-engagement-header-actions ~ * {
+  min-width: 0;
+}
+
+.admin-engagement-header-actions {
+  white-space: nowrap;
+}
+
+.admin-topbar:has(.admin-engagement-header-actions) {
+  align-items: flex-start;
+}
+
+.admin-topbar:has(.admin-engagement-header-actions) > div:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-topbar:has(.admin-engagement-header-actions) h1 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+@media (max-width: 900px) {
+  .admin-topbar:has(.admin-engagement-header-actions) {
+    align-items: stretch;
+  }
+
+  .admin-engagement-header-actions {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-engagement-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}

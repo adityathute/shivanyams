@@ -3010,3 +3010,10 @@
   margin-top: 8px;
   padding: 10px 2px 2px;
 }
+
+
+/* Center the complete Sharing method column only in the individual share-post activity table. */
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table th:nth-child(2),
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table td:nth-child(2) {
+  text-align: center !important;
+}

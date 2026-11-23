@@ -37,6 +37,7 @@ type WebsiteAnalyticsPage = {
 };
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
+type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -231,6 +232,9 @@ export default function AdminPage() {
   const [postAnalyticsEvents, setPostAnalyticsEvents] = useState<PostViewEvent[]>([]);
   const [likeAnalyticsEvents, setLikeAnalyticsEvents] = useState<LikeAnalyticsEvent[]>([]);
   const [reportAnalyticsEvents, setReportAnalyticsEvents] = useState<ReportAnalyticsEvent[]>([]);
+  const [savedPostRows, setSavedPostRows] = useState<SavedPostAnalyticsRow[]>([]);
+  const [savedPostTotals, setSavedPostTotals] = useState({ posts: 0, saves: 0, users: 0 });
+  const [savedPostsPage, setSavedPostsPage] = useState(1);
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -732,6 +736,19 @@ export default function AdminPage() {
     }
   }
 
+  function openSavedPostsAnalytics() {
+    setAnalyticsType("saved" as any);
+    setSelectedPost(null); setSelectedVisitor(null); setSavedPostsPage(1); setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/stats/?type=saved", { cache: "no-store" })
+      .then(async (response) => { if (!response.ok) throw new Error(`Unable to load saved posts analytics (${response.status}).`); return response.json(); })
+      .then((payload: { total_posts?: number; total_saved?: number; total_users?: number; results?: SavedPostAnalyticsRow[] }) => {
+        setSavedPostTotals({ posts: Number(payload.total_posts) || 0, saves: Number(payload.total_saved) || 0, users: Number(payload.total_users) || 0 });
+        setSavedPostRows(payload.results ?? []);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load saved posts analytics."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
     setSelectedLikeComment(null);
     setAnalyticsType(type);
@@ -1120,7 +1137,7 @@ export default function AdminPage() {
             { label: "Replies", value: engagementStats.replies, analytics: "replies" as const },
             { label: "Tags", value: engagementStats.tags },
             { label: "Shares", value: engagementStats.shares },
-            { label: "Saved posts", value: engagementStats.saved },
+            { label: "Saved posts", value: engagementStats.saved, analytics: "saved" as const },
             { label: "Reports", value: engagementStats.reports, analytics: "reports" as const },
             { label: "Subscribers", value: engagementStats.subscribers },
           ];
@@ -1175,7 +1192,7 @@ export default function AdminPage() {
                     {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
+                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1572,6 +1589,8 @@ export default function AdminPage() {
                                 ? `Replies (${formatCompactNumber(commentReplyEvents.length)})`
                           : analyticsType === "reports"
                              ? `Reports (${formatCompactNumber(reportAnalyticsEvents.length)})`
+                           : analyticsType === "saved"
+                             ? `Saved posts (${formatCompactNumber(savedPostTotals.saves)})`
                            : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
@@ -1605,6 +1624,8 @@ export default function AdminPage() {
                                 ? reactionPostsOnly ? "Posts with their comment and reply counts, plus total views." : "Individual replies across all posts."
                           : analyticsType === "reports"
                             ? reactionPostsOnly ? "Posts with their report counts, plus total views." : "Individual reports across posts and comments."
+                          : analyticsType === "saved"
+                            ? "Saved post totals, total saves, and unique users who saved posts."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1679,6 +1700,28 @@ export default function AdminPage() {
                 </section>
                 {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{new Date(reply.created_at).toLocaleString()}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
+             ) : analyticsType === "saved" && !selectedPost && !selectedVisitor ? (
+                savedPostRows.length === 0 ? <div className="admin-empty">No saved posts recorded yet.</div> : (
+                  <>
+                    <div className="admin-saved-posts-summary">
+                      <article><span>Total posts</span><strong>{formatCompactNumber(savedPostTotals.posts)}</strong></article>
+                      <article><span>Total saved</span><strong>{formatCompactNumber(savedPostTotals.saves)}</strong></article>
+                      <article><span>Total users</span><strong>{formatCompactNumber(savedPostTotals.users)}</strong></article>
+                    </div>
+                    <div className="admin-analytics-table-wrap">
+                      <table className="admin-analytics-table admin-likes-analytics-table admin-saved-posts-table">
+                        <thead><tr><th>Post</th><th>Total saves</th><th>Total users</th></tr></thead>
+                        <tbody>{savedPostRows.slice((savedPostsPage - 1) * analyticsPageSize, savedPostsPage * analyticsPageSize).map((item) => (
+                          <tr key={item.post_id}>
+                            <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.post_title} onClick={() => void openPostEvents({ id: item.post_id, title: item.post_title, slug: item.post_slug, views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title}</button></td>
+                            <td>{formatCompactNumber(item.saves)}</td><td>{formatCompactNumber(item.users)}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                    <AnalyticsPagination total={savedPostRows.length} page={savedPostsPage} pageSize={analyticsPageSize} onPageChange={setSavedPostsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSavedPostsPage(1); }} />
+                  </>
+                )
              ) : analyticsType === "reports" && !selectedPost && !selectedVisitor ? (
                 reactionPostsOnly ? (
                   reportPostRows.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (

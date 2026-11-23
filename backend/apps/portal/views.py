@@ -1754,7 +1754,7 @@ class AdminDashboardStats(APIView):
     def get(self, request):
         reaction_filter = request.query_params.get("type")
         if reaction_filter == "saved":
-            saved_rows = list(SavedPost.objects.values("post_id", "post__title_en", "post__slug").annotate(saves=Count("id"), users=Count("user_auth_id", distinct=True)).order_by("-saves", "post__title_en"))
+            saved_rows = list(SavedPost.objects.values("post_id", "post__title_en", "post__slug").annotate(saves=Count("id"), users=Count("user_auth_id", filter=~Q(user_auth_id=""), distinct=True)).order_by("-saves", "post__title_en"))
             return Response({
                 "total_posts": len(saved_rows),
                 "total_saved": SavedPost.objects.count(),

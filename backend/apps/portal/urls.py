@@ -55,6 +55,7 @@ from .views import (
     AdminDashboardStats,
     TrackWebsiteView,
     AdminWebsiteAnalytics,
+    AdminWebsiteAnalyticsExport,
     AdminOfficialSources,
     AdminOfficialSourceDetail,
     AdminPostSources,
@@ -137,6 +138,7 @@ urlpatterns = [
     # Website-wide page analytics
     path("website-views/", TrackWebsiteView.as_view(), name="track-website-view"),
     path("admin/website-analytics/", AdminWebsiteAnalytics.as_view(), name="admin-website-analytics"),
+    path("admin/website-analytics/export/", AdminWebsiteAnalyticsExport.as_view(), name="admin-website-analytics-export"),
     # Admin dashboard statistics
     path("admin/stats/", AdminDashboardStats.as_view(), name="admin-dashboard-stats"),
     # Admin content management

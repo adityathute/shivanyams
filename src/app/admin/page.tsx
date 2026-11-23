@@ -38,6 +38,7 @@ type WebsiteAnalyticsPage = {
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
+type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -222,7 +223,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -235,6 +236,10 @@ export default function AdminPage() {
   const [savedPostRows, setSavedPostRows] = useState<SavedPostAnalyticsRow[]>([]);
   const [savedPostTotals, setSavedPostTotals] = useState({ posts: 0, saves: 0, users: 0 });
   const [savedPostsPage, setSavedPostsPage] = useState(1);
+  const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
+  const [subscriberSearch, setSubscriberSearch] = useState("");
+  const [subscribersPage, setSubscribersPage] = useState(1);
+  const [subscriberTotals, setSubscriberTotals] = useState({ total: 0, registered: 0 });
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -749,6 +754,30 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  function openSubscribersAnalytics() {
+    setAnalyticsType("subscribers");
+    setSelectedPost(null);
+    setSelectedVisitor(null);
+    setSelectedAnalyticsPath(null);
+    setSubscriberSearch("");
+    setSubscribersPage(1);
+    setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/stats/?type=subscribers", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Unable to load subscribers (${response.status}).`);
+        return response.json();
+      })
+      .then((payload: { total_subscribers?: number; registered_users?: number; results?: SubscriberAnalyticsRow[] }) => {
+        setSubscriberTotals({
+          total: Number(payload.total_subscribers) || 0,
+          registered: Number(payload.registered_users) || 0,
+        });
+        setSubscriberRows(payload.results ?? []);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load subscribers."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
     setSelectedLikeComment(null);
     setAnalyticsType(type);
@@ -1139,7 +1168,7 @@ export default function AdminPage() {
             { label: "Shares", value: engagementStats.shares },
             { label: "Saved posts", value: engagementStats.saved, analytics: "saved" as const },
             { label: "Reports", value: engagementStats.reports, analytics: "reports" as const },
-            { label: "Subscribers", value: engagementStats.subscribers },
+            { label: "Subscribers", value: engagementStats.subscribers, analytics: "subscribers" as const },
           ];
 
           return (
@@ -1189,10 +1218,10 @@ export default function AdminPage() {
                     key={item.label}
                     className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" ? (
+                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" || item.analytics === "subscribers" ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
+                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1591,6 +1620,8 @@ export default function AdminPage() {
                              ? `Reports (${formatCompactNumber(reportAnalyticsEvents.length)})`
                            : analyticsType === "saved"
                              ? `Saved posts (${formatCompactNumber(savedPostTotals.saves)})`
+                           : analyticsType === "subscribers"
+                             ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
                            : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
@@ -1626,6 +1657,8 @@ export default function AdminPage() {
                             ? reactionPostsOnly ? "Posts with their report counts, plus total views." : "Individual reports across posts and comments."
                           : analyticsType === "saved"
                             ? "Saved post totals, total saves, and unique users who saved posts."
+                          : analyticsType === "subscribers"
+                            ? "Users who subscribed to ShivanyaMS updates, with their email and subscription date."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1720,6 +1753,47 @@ export default function AdminPage() {
                       </table>
                     </div>
                     <AnalyticsPagination total={savedPostRows.length} page={savedPostsPage} pageSize={analyticsPageSize} onPageChange={setSavedPostsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSavedPostsPage(1); }} />
+                  </>
+                )
+             ) : analyticsType === "subscribers" && !selectedPost && !selectedVisitor ? (
+                subscriberRows.length === 0 ? <div className="admin-empty">No subscribers recorded yet.</div> : (
+                  <>
+                    <div className="admin-subscribers-summary">
+                      <article><span>Total subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></article>
+                      <article><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></article>
+                    </div>
+                    <div className="admin-subscribers-toolbar">
+                      <input
+                        type="search"
+                        value={subscriberSearch}
+                        onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
+                        placeholder="Search by name or email"
+                        aria-label="Search subscribers by name or email"
+                      />
+                    </div>
+                    {(() => {
+                      const filteredSubscribers = subscriberRows.filter((item) =>
+                        [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
+                      );
+                      return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
+                        <>
+                          <div className="admin-analytics-table-wrap">
+                            <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
+                              <thead><tr><th>Full name</th><th>Email</th><th>Subscribed at</th></tr></thead>
+                              <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
+                                const dateTime = formatAnalyticsDateTime(item.subscribed_at);
+                                return <tr key={item.id}>
+                                  <td>{item.full_name || "—"}</td>
+                                  <td>{item.email}</td>
+                                  <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>
+                                </tr>;
+                              })}</tbody>
+                            </table>
+                          </div>
+                          <AnalyticsPagination total={filteredSubscribers.length} page={subscribersPage} pageSize={analyticsPageSize} onPageChange={setSubscribersPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSubscribersPage(1); }} />
+                        </>
+                      );
+                    })()}
                   </>
                 )
              ) : analyticsType === "reports" && !selectedPost && !selectedVisitor ? (

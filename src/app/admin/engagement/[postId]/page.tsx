@@ -52,8 +52,8 @@ const statLabels: { key: StatKey; label: string; color: string; icon: ReactNode 
   { key: "comments", label: "Comments", color: "comments", icon: <MessagesIcon size={18} /> },
   { key: "shares", label: "Shares", color: "shares", icon: <ShareIcon size={18} /> },
   { key: "saved", label: "Saved", color: "saved", icon: <BookmarkIcon size={18} /> },
-  { key: "users", label: "Users", color: "users", icon: <UsersIcon size={18} /> },
   { key: "reports", label: "Reports", color: "reports", icon: <ReportIcon size={18} /> },
+  { key: "users", label: "Users", color: "users", icon: <UsersIcon size={18} /> },
 ];
 
 const compactNumberFormat = new Intl.NumberFormat("en", {

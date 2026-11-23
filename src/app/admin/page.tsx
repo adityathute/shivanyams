@@ -990,11 +990,14 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td>
-                          <span
-                            className={`admin-status status-${post.status}`}
-                          >
-                            {statusLabel(post.status)}
-                          </span>
+                          <div className="admin-post-status-stack">
+                            {post.status === "draft" && (
+                              <span className="admin-status admin-status-unpublished">Unpublished</span>
+                            )}
+                            <span className={`admin-status status-${post.status}`}>
+                              {statusLabel(post.status)}
+                            </span>
+                          </div>
                         </td>
                         <td>
                           <span

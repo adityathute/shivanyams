@@ -1700,22 +1700,22 @@
 /* Visitor details only: restore rounded table corners without affecting other analytics tables. */
 .admin-analytics-modal .admin-visitor-details-table-wrap {
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 10px !important;
 }
 
 .admin-analytics-modal .admin-visitor-details-table {
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 10px;
+  border-radius: 10px !important;
   overflow: hidden;
 }
 
 .admin-analytics-modal .admin-visitor-details-table thead tr:first-child th:first-child {
-  border-top-left-radius: 10px;
+  border-top-left-radius: 10px !important;
 }
 
 .admin-analytics-modal .admin-visitor-details-table thead tr:first-child th:last-child {
-  border-top-right-radius: 10px;
+  border-top-right-radius: 10px !important;
 }
 
 .admin-analytics-modal .admin-visitor-details-pagination {

@@ -18,8 +18,8 @@ from .models import (
     Comment,
     CommentReaction,
     CommentReport,
-    PostSubscription,
     NewsletterSubscription,
+    NewsletterSubscriptionEvent,
     PostReport,
     PostShare,
     ImportantLink,
@@ -317,11 +317,6 @@ class AdminContent(viewsets.ModelViewSet):
         if post.status != Post.Status.PUBLISHED or not post.is_active or not post.published_at:
             return
         subscriber_emails = set(
-            PostSubscription.objects.filter(post=post, is_active=True)
-            .exclude(email="")
-            .values_list("email", flat=True)
-        )
-        subscriber_emails.update(
             NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True)
         )
         if subscriber_emails:
@@ -404,8 +399,7 @@ class AdminPostVersionPublish(APIView):
             PostStatusHistory.objects.create(post=post, previous_status=Post.Status.PUBLISHED,
                 new_status=Post.Status.PUBLISHED, changed_by_auth_id=auth_id,
                 note=f"Published content version {version.version_number}.")
-            emails = set(PostSubscription.objects.filter(post=post, is_active=True).exclude(email="").values_list("email", flat=True))
-            emails.update(NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True))
+            emails = set(NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True))
             if emails:
                 subject, message = f"Update: {post.title_en}", f'The post "{post.title_en}" has been updated on ShivanyaMS. Open ShivanyaMS to view the latest information.'
                 messages = tuple((subject, message, None, [email]) for email in sorted(emails))
@@ -544,18 +538,32 @@ class NewsletterSubscribe(APIView):
         if not email or len(email) > 254 or "@" not in email:
             raise ValidationError({"email": "Enter a valid email address."})
 
-        already_subscribed = NewsletterSubscription.objects.filter(
-            email=email,
-            is_active=True,
-        ).exists()
-        subscription, created = NewsletterSubscription.objects.update_or_create(
-            email=email,
-            defaults={
-                "user_auth_id": user_auth_id,
-                "language": language,
-                "is_active": True,
-            },
-        )
+        with transaction.atomic():
+            subscription, created = NewsletterSubscription.objects.get_or_create(
+                email=email,
+                defaults={
+                    "user_auth_id": user_auth_id,
+                    "language": language,
+                    "is_active": True,
+                },
+            )
+            if created:
+                was_active = False
+            else:
+                subscription = NewsletterSubscription.objects.select_for_update().get(pk=subscription.pk)
+                was_active = subscription.is_active
+                if not was_active:
+                    subscription.user_auth_id = user_auth_id
+                    subscription.language = language
+                    subscription.is_active = True
+                    subscription.save(update_fields=["user_auth_id", "language", "is_active", "updated_at"])
+            if created or not was_active:
+                NewsletterSubscriptionEvent.objects.create(
+                    subscription=subscription,
+                    event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED,
+                    user_auth_id=user_auth_id,
+                )
+        already_subscribed = not created and was_active
         response_data = {
             "subscribed": subscription.is_active,
             "already_subscribed": already_subscribed,
@@ -589,10 +597,16 @@ class NewsletterSubscribe(APIView):
             if signed_email != email:
                 raise ValidationError({"detail": "This unsubscribe confirmation does not match the email address."})
 
-        subscription = NewsletterSubscription.objects.filter(email=email, is_active=True).first()
-        if subscription:
-            subscription.is_active = False
-            subscription.save(update_fields=["is_active", "updated_at"])
+        with transaction.atomic():
+            subscription = NewsletterSubscription.objects.select_for_update().filter(email=email, is_active=True).first()
+            if subscription:
+                subscription.is_active = False
+                subscription.save(update_fields=["is_active", "updated_at"])
+                NewsletterSubscriptionEvent.objects.create(
+                    subscription=subscription,
+                    event_type=NewsletterSubscriptionEvent.EventType.UNSUBSCRIBED,
+                    user_auth_id=subscription.user_auth_id,
+                )
         return Response({"subscribed": False, "unsubscribed": True})
 
 
@@ -1003,42 +1017,6 @@ class PostCommentReports(APIView):
         }, status=status.HTTP_201_CREATED)
 
 
-class PostSubscriptions(APIView):
-    permission_classes = [IsPortalIdentity]
-
-    def get(self, request, post_id):
-        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
-        subscription = PostSubscription.objects.filter(post=post, user_auth_id=str(request.user.id), is_active=True).first()
-        return Response({"subscribed": subscription is not None, "email": subscription.email if subscription else ""})
-
-    def post(self, request, post_id):
-        post = get_object_or_404(Post, pk=post_id, status=Post.Status.PUBLISHED, is_active=True)
-        auth_data = getattr(request.user, "auth_data", {})
-        email = str((auth_data.get("email") if isinstance(auth_data, dict) else "") or getattr(request.user, "email", "") or "").strip().lower()
-        if not email or "@" not in email:
-            raise ValidationError({"email": "A valid email address is required on your account to subscribe."})
-        subscription, created = PostSubscription.objects.update_or_create(post=post, user_auth_id=str(request.user.id), defaults={"email": email, "is_active": True})
-        count = PostSubscription.objects.filter(post=post, is_active=True).count()
-        Post.objects.filter(pk=post.pk).update(subscribers_count=count)
-        if created:
-            subject = f"Subscribed to updates: {post.title_en}"
-            message = (
-                f"You are now subscribed to email updates for \"{post.title_en}\". "
-                "We will email you when this post is updated."
-            )
-            transaction.on_commit(
-                lambda: send_mass_mail(((subject, message, None, [email]),), fail_silently=True)
-            )
-        return Response({"subscribed": True, "email": subscription.email, "subscribers_count": count, "created": created}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
-
-    def delete(self, request, post_id):
-        post = get_object_or_404(Post, pk=post_id)
-        PostSubscription.objects.filter(post=post, user_auth_id=str(request.user.id)).update(is_active=False)
-        count = PostSubscription.objects.filter(post=post, is_active=True).count()
-        Post.objects.filter(pk=post.pk).update(subscribers_count=count)
-        return Response({"subscribed": False, "subscribers_count": count})
-
-
 class PostShares(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -1202,9 +1180,9 @@ class AdminPostEngagement(APIView):
                     "auth_user_id", "full_name"
                 ):
                     user_names.setdefault(visit["auth_user_id"], visit["full_name"])
-                for subscription in PostSubscription.objects.filter(
-                    post=post, user_auth_id__in=auth_ids
-                ).exclude(email="").values("user_auth_id", "email"):
+                for subscription in NewsletterSubscription.objects.filter(
+                    user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
 
             for row in details["post_reactions"] + details["comment_reactions"] + details["shares"] + details["saved"]:
@@ -1791,9 +1769,18 @@ class AdminDashboardStats(APIView):
                 "subscribed_at": item.created_at,
                 "visitor_id": visitor_ids.get(item.user_auth_id, ""),
             } for item in subscriptions]
+            total_subscribe_events = NewsletterSubscriptionEvent.objects.filter(
+                event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED
+            ).count()
+            total_unsubscribe_events = NewsletterSubscriptionEvent.objects.filter(
+                event_type=NewsletterSubscriptionEvent.EventType.UNSUBSCRIBED
+            ).count()
             return Response({
                 "total_subscribers": len(rows),
                 "registered_users": len({item.user_auth_id for item in subscriptions if item.user_auth_id}),
+                "total_subscriptions": total_subscribe_events,
+                "total_resubscriptions": max(0, total_subscribe_events - NewsletterSubscription.objects.count()),
+                "total_unsubscriptions": total_unsubscribe_events,
                 "results": rows,
             })
 
@@ -1805,7 +1792,9 @@ class AdminDashboardStats(APIView):
             if auth_ids:
                 for visitor in WebsiteVisitor.objects.filter(auth_user_id__in=auth_ids).order_by("-last_seen_at").values("auth_user_id", "visitor_id", "full_name"):
                     user_visitors.setdefault(visitor["auth_user_id"], {"visitor_id": visitor["visitor_id"], "full_name": visitor["full_name"]})
-                for subscription in PostSubscription.objects.filter(user_auth_id__in=auth_ids).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
+                for subscription in NewsletterSubscription.objects.filter(
+                    user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
                 for subscription in NewsletterSubscription.objects.filter(user_auth_id__in=auth_ids).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
@@ -1834,8 +1823,8 @@ class AdminDashboardStats(APIView):
                 ).order_by("-last_seen_at").values("auth_user_id", "visitor_id"):
                     user_visitors.setdefault(visitor["auth_user_id"], visitor["visitor_id"])
                 post_ids = {comment.post_id for comment in comments}
-                for subscription in PostSubscription.objects.filter(
-                    post_id__in=post_ids, user_auth_id__in=auth_ids
+                for subscription in NewsletterSubscription.objects.filter(
+                    user_auth_id__in=auth_ids
                 ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
                 for subscription in NewsletterSubscription.objects.filter(
@@ -1910,11 +1899,9 @@ class AdminDashboardStats(APIView):
                     "auth_user_id", "full_name"
                 ):
                     user_names.setdefault(visit["auth_user_id"], visit["full_name"])
-                for subscription in PostSubscription.objects.filter(
-                    post_id__in=post_ids, user_auth_id__in=auth_ids
-                ).exclude(email="").order_by("-updated_at").values(
-                    "user_auth_id", "email"
-                ):
+                for subscription in NewsletterSubscription.objects.filter(
+                    user_auth_id__in=auth_ids
+                ).exclude(email="").order_by("-updated_at").values("user_auth_id", "email"):
                     user_emails.setdefault(subscription["user_auth_id"], subscription["email"])
                 for subscription in NewsletterSubscription.objects.filter(
                     user_auth_id__in=auth_ids
@@ -1991,6 +1978,8 @@ class AdminDashboardStats(APIView):
             "saved_count": SavedPost.objects.count(),
             "reports_count": CommentReport.objects.count() + PostReport.objects.count(),
             "newsletter_subscribers_count": NewsletterSubscription.objects.filter(is_active=True).count(),
+            "newsletter_subscriptions_count": NewsletterSubscriptionEvent.objects.filter(event_type=NewsletterSubscriptionEvent.EventType.SUBSCRIBED).count(),
+            "newsletter_unsubscriptions_count": NewsletterSubscriptionEvent.objects.filter(event_type=NewsletterSubscriptionEvent.EventType.UNSUBSCRIBED).count(),
         })
 
 

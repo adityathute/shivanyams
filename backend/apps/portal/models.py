@@ -1687,6 +1687,26 @@ class PostStatusHistory(models.Model):
         return f"{self.post.title_en}: {self.previous_status} -> {self.new_status}"
 
 
+class PostVersion(models.Model):
+    """Immutable content snapshot; only one version is the live publication."""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="versions")
+    version_number = models.PositiveIntegerField()
+    payload = models.JSONField(default=dict)
+    is_published = models.BooleanField(default=False, db_index=True)
+    created_by_auth_id = models.CharField(max_length=128, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    published_by_auth_id = models.CharField(max_length=128, blank=True)
+
+    class Meta:
+        ordering = ("-version_number",)
+        constraints = [models.UniqueConstraint(fields=("post", "version_number"), name="portal_post_version_unique")]
+        indexes = [models.Index(fields=("post", "is_published"))]
+
+    def __str__(self):
+        return f"{self.post.title_en} - v{self.version_number}"
+
+
 
 class NewsletterSubscription(TimestampedModel):
     """Email subscriber for general ShivanyaMS news, promotions and updates."""

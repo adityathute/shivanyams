@@ -7,7 +7,6 @@ from .models import (
     Comment,
     CommentReaction,
     CommentReport,
-    PostSubscription,
     PostShare,
     ExaminationDetails,
     JobDetails,
@@ -31,6 +30,8 @@ from .models import (
     ToolDetails,
     VideoDetails,
     ImportantLink,
+    NewsletterSubscription,
+    NewsletterSubscriptionEvent,
 )
 
 
@@ -864,13 +865,29 @@ class CommentReportAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", "updated_at")
 
 
-@admin.register(PostSubscription)
-class PostSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ("post", "email", "user_auth_id", "is_active", "created_at")
-    list_filter = ("is_active", "created_at")
-    search_fields = ("post__title_en", "email", "user_auth_id")
-    autocomplete_fields = ("post",)
+@admin.register(NewsletterSubscription)
+class NewsletterSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ("email", "user_auth_id", "language", "is_active", "created_at", "updated_at")
+    list_filter = ("is_active", "language", "created_at")
+    search_fields = ("email", "user_auth_id")
     readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(NewsletterSubscriptionEvent)
+class NewsletterSubscriptionEventAdmin(admin.ModelAdmin):
+    list_display = ("subscription", "event_type", "user_auth_id", "created_at")
+    list_filter = ("event_type", "created_at")
+    search_fields = ("subscription__email", "user_auth_id")
+    readonly_fields = ("subscription", "event_type", "user_auth_id", "created_at")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(PostShare)

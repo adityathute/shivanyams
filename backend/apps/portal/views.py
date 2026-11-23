@@ -1752,7 +1752,13 @@ class AdminDashboardStats(APIView):
     permission_classes = [IsPortalAdmin]
 
     def get(self, request):
-        if request.query_params.get("type") == "likes":
+        reaction_filter = request.query_params.get("type")
+        if reaction_filter in ("likes", "dislikes"):
+            reaction_value = (
+                PostReaction.ReactionType.LIKE
+                if reaction_filter == "likes"
+                else PostReaction.ReactionType.DISLIKE
+            )
             post_reactions = list(
                 PostReaction.objects.filter(
                     reaction=PostReaction.ReactionType.LIKE
@@ -1760,7 +1766,7 @@ class AdminDashboardStats(APIView):
             )
             comment_reactions = list(
                 CommentReaction.objects.filter(
-                    reaction=CommentReaction.ReactionType.LIKE
+                    reaction=reaction_value
                 ).select_related("comment__post", "comment__parent")
                 .order_by("-created_at")
             )
@@ -1843,7 +1849,7 @@ class AdminDashboardStats(APIView):
                 PostReaction.objects.filter(reaction=PostReaction.ReactionType.LIKE).count()
                 + CommentReaction.objects.filter(reaction=CommentReaction.ReactionType.LIKE).count()
             )
-            return Response({"total": total, "results": rows})
+            return Response({"total": total, "results": rows, "reaction_type": reaction_filter})
 
         # Portal does not own the Auth user table; count distinct authenticated
         # identities recorded through Portal ownership or user activity.

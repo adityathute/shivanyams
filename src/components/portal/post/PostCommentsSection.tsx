@@ -308,6 +308,7 @@ export function PostCommentsSection({ postId, language }: Props) {
   const [replyTarget, setReplyTarget] = useState<number | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [replySubmitting, setReplySubmitting] = useState(false);
   const [expandRepliesForId, setExpandRepliesForId] = useState<number | null>(null);
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [reportTarget, setReportTarget] = useState<number | null>(null);
@@ -347,8 +348,9 @@ export function PostCommentsSection({ postId, language }: Props) {
 
   async function postComment(content: string, parentId: number | null) {
     const trimmed = content.trim();
-    if (!trimmed || submitting) return;
-    setSubmitting(true);
+    if (!trimmed || submitting || replySubmitting) return;
+    const setRequestSubmitting = parentId ? setReplySubmitting : setSubmitting;
+    setRequestSubmitting(true);
     setError("");
     try {
       const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/comments/`), {
@@ -369,12 +371,12 @@ export function PostCommentsSection({ postId, language }: Props) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to submit your comment.");
     } finally {
-      setSubmitting(false);
+      setRequestSubmitting(false);
     }
   }
 
   function submitComment(content: string, parentId: number | null) {
-    if (!content.trim() || submitting) return;
+    if (!content.trim() || submitting || replySubmitting) return;
     if (!user) {
       openLogin(() => { void postComment(content, parentId); });
       return;
@@ -528,7 +530,7 @@ export function PostCommentsSection({ postId, language }: Props) {
         <Textarea value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a comment..." rows={3} maxLength={500} fullWidth size="md" />
         <div className="portal-comment-composer-footer">
           <span>{draft.length}/500</span>
-          <Button size="sm" variant="primary" disabled={!draft.trim() || submitting} onClick={() => void submitComment(draft, null)}>
+          <Button size="sm" variant="primary" disabled={!draft.trim() || submitting || replySubmitting} onClick={() => void submitComment(draft, null)}>
             {submitting ? "Posting..." : "Post comment"}
           </Button>
         </div>
@@ -590,7 +592,7 @@ export function PostCommentsSection({ postId, language }: Props) {
             onReplyDraftChange={setReplyDraft}
             onCancelReply={() => { setReplyTarget(null); setReplyDraft(""); }}
             onSubmitReply={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}
-            submitting={submitting}
+            submitting={replySubmitting}
             expandRepliesForId={expandRepliesForId}
           />
         ))}
@@ -625,9 +627,9 @@ export function PostCommentsSection({ postId, language }: Props) {
             <Textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} placeholder="Write your reply..." rows={4} maxLength={250} fullWidth size="sm" autoFocus />
             <div className="portal-comment-reply-modal-footer">
               <span>{replyDraft.length}/250</span>
-              <Button type="button" size="sm" variant="outline" disabled={submitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
-              <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || submitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
-                {submitting ? "Sending..." : "Reply"}
+              <Button type="button" size="sm" variant="outline" disabled={replySubmitting} onClick={() => { setReplyTarget(null); setReplyDraft(""); }}>Cancel</Button>
+              <Button type="button" size="sm" variant="primary" disabled={!replyDraft.trim() || replySubmitting} onClick={() => { if (replyTarget) void submitComment(replyDraft, replyTarget); }}>
+                {replySubmitting ? "Sending..." : "Reply"}
               </Button>
             </div>
           </div>

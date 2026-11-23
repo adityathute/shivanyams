@@ -480,6 +480,8 @@ export default function AdminPage() {
 
   function openWebsiteAnalytics(type: "views" | "visitors" | "users") {
     setAnalyticsType(type);
+    setSelectedPost(null);
+    setPostAnalyticsEvents([]);
     setSelectedVisitor(null);
     setVisitorPages([]);
     setSelectedAnalyticsPath(null);
@@ -1218,7 +1220,7 @@ export default function AdminPage() {
                 variant="ghost"
                 iconRotateOnHover
                 className="admin-analytics-close"
-                onClick={() => setAnalyticsType(null)}
+                onClick={() => { setAnalyticsType(null); setSelectedPost(null); setPostAnalyticsEvents([]); }}
                 aria-label="Close"
                 title="Close analytics"
               >

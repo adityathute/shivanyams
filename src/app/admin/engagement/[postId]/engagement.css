@@ -195,6 +195,15 @@
   line-height: 1.55;
 }
 
+.admin-engagement-user-cell {
+  width: 360px;
+  min-width: 320px;
+  max-width: 420px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+
 .admin-engagement-content-cell {
   min-width: 360px;
   max-width: 520px;

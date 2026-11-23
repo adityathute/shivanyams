@@ -1,7 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "shivanya-auth";
+import { API_URL } from "./category/CategoryGrid";
+import { adminFetch } from "../../app/admin/admin-utils";
 import { usePortalData } from "./data/portal-data";
 import { usePortalLanguage } from "./context/PortalLanguageContext";
 import "./saved/SavedPostsPage.css";
@@ -42,6 +45,60 @@ const copy = {
 
 export function TagsPage() {
   const { data } = usePortalData();
+  const { user } = useAuth();
+  const isAdmin = user?.roles?.includes("admin") === true;
+  const [adminTags, setAdminTags] = useState<{ name: string; count: number }[]>([]);
+  const [tagActionError, setTagActionError] = useState("");
+  const [busyTag, setBusyTag] = useState<string | null>(null);
+
+  const loadAdminTags = useCallback(async () => {
+    if (!isAdmin) return;
+    try {
+      const response = await adminFetch(`${API_URL}/admin/tags/`, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Unable to load tags (${response.status}).`);
+      setAdminTags(await response.json());
+      setTagActionError("");
+    } catch (error) {
+      setTagActionError(error instanceof Error ? error.message : "Unable to load tags.");
+    }
+  }, [isAdmin]);
+
+  useEffect(() => { void loadAdminTags(); }, [loadAdminTags]);
+
+  async function renameTag(name: string) {
+    const nextName = window.prompt("Enter the new tag name:", name)?.trim();
+    if (!nextName || nextName === name) return;
+    setBusyTag(name);
+    try {
+      const response = await adminFetch(`${API_URL}/admin/tags/`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ old_name: name, new_name: nextName }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || `Rename failed (${response.status}).`);
+      setAdminTags(payload.tags || []);
+      setTagActionError("");
+    } catch (error) {
+      setTagActionError(error instanceof Error ? error.message : "Unable to rename tag.");
+    } finally { setBusyTag(null); }
+  }
+
+  async function deleteTag(name: string) {
+    if (!window.confirm(`Delete the tag “${name}” from all posts? This cannot be undone.`)) return;
+    setBusyTag(name);
+    try {
+      const response = await adminFetch(`${API_URL}/admin/tags/`, {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || `Delete failed (${response.status}).`);
+      setAdminTags(payload.tags || []);
+      setTagActionError("");
+    } catch (error) {
+      setTagActionError(error instanceof Error ? error.message : "Unable to delete tag.");
+    } finally { setBusyTag(null); }
+  }
   const { language } = usePortalLanguage();
   const text = copy[language];
 
@@ -79,10 +136,10 @@ export function TagsPage() {
       <section className="saved-panel related-tag-suggestions">
         <div className="saved-section-heading">
           <h2>{text.tags}</h2>
-          <span>{tags.length} {text.count}</span>
+          <span>{isAdmin ? adminTags.length : tags.length} {text.count}</span>
         </div>
 
-        {data.loading ? (
+        {isAdmin && tagActionError ? <div className="saved-empty-state" role="alert">{tagActionError}</div> : null}\n\n        {isAdmin ? (\n          adminTags.length ? (\n            <div className="admin-managed-tags-list">\n              {adminTags.map((tag) => (\n                <div className="admin-managed-tag-row" key={tag.name}>\n                  <Link className="related-tag-chip" href={`/tags/${slugify(tag.name)}`}><span>{tag.name}</span><small>{tag.count}</small></Link>\n                  <div className="admin-managed-tag-actions">\n                    <button type="button" disabled={busyTag === tag.name} onClick={() => void renameTag(tag.name)}>Edit</button>\n                    <button type="button" className="danger" disabled={busyTag === tag.name} onClick={() => void deleteTag(tag.name)}>Delete</button>\n                  </div>\n                </div>\n              ))}\n            </div>\n          ) : <div className="saved-empty-state saved-list-empty">No tags are available yet.</div>\n        ) : data.loading ? (
           <div className="saved-empty-state saved-list-empty" role="status">{text.loading}</div>
         ) : tags.length ? (
           <div className="related-tag-list">

@@ -1152,7 +1152,7 @@ export default function AdminPage() {
             aria-labelledby="admin-analytics-title"
           >
             <header className="admin-analytics-header">
-              {(selectedVisitor || selectedAnalyticsPath) && (
+              {selectedAnalyticsPath && (
                 <IconButton
                   size="lg"
                   variant="ghost"

@@ -1164,7 +1164,7 @@ export default function AdminPage() {
             aria-labelledby="admin-analytics-title"
           >
             <header className="admin-analytics-header">
-              {selectedAnalyticsPath && (
+              {(selectedAnalyticsPath || selectedPost) && (
                 <IconButton
                   size="lg"
                   variant="ghost"
@@ -1172,6 +1172,8 @@ export default function AdminPage() {
                   onClick={() => {
                     setSelectedVisitor(null);
                     setVisitorPages([]);
+                    setSelectedPost(null);
+                    setPostAnalyticsEvents([]);
                     setSelectedAnalyticsPath(null);
                     setAnalyticsEvents([]);
                   }}
@@ -1185,9 +1187,13 @@ export default function AdminPage() {
                 <h2 id="admin-analytics-title">
                   {selectedVisitor
                     ? `Visitor details (${formatCompactNumber(visitorPages.length)})`
-                    : selectedAnalyticsPath
-                      ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
-                      : analyticsType === "views"
+                    : selectedPost
+                      ? selectedPost.title + " (" + formatCompactNumber(postAnalyticsEvents.length) + " views)"
+                      : selectedAnalyticsPath
+                        ? `Page view details (${formatCompactNumber(analyticsEvents.length)})`
+                        : analyticsType === "posts"
+                          ? `Post Views (${formatCompactNumber(counts.views)})`
+                          : analyticsType === "views"
                         ? `Website Views (${formatCompactNumber(websiteViewsCount)})`
                         : analyticsType === "users"
                           ? `Portal Users (${formatCompactNumber(usersCount)})`
@@ -1196,11 +1202,15 @@ export default function AdminPage() {
                 <p>
                   {selectedVisitor
                     ? "Pages visited by this browser or device."
-                    : selectedAnalyticsPath
-                      ? "Individual visits recorded for this page."
-                      : analyticsType === "views"
-                        ? "Select a page to inspect its individual page views."
-                        : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
+                    : selectedPost
+                      ? "Individual visits recorded for this post."
+                      : selectedAnalyticsPath
+                        ? "Individual visits recorded for this page."
+                        : analyticsType === "posts"
+                          ? "Select a post to inspect its individual views."
+                          : analyticsType === "views"
+                            ? "Select a page to inspect its individual page views."
+                            : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
                 </p>
               </div>
               <IconButton

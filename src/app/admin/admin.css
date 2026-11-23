@@ -2907,6 +2907,34 @@
 }
 
 
+/* Keep the analytics header and footer fixed while the complete modal content scrolls. */
+.admin-analytics-modal {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.admin-analytics-scroll-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Rounded table frame is scoped only to the individual share-post activity table. */
+.admin-analytics-modal .admin-share-post-table-wrap {
+  overflow: hidden;
+  border: 1px solid var(--admin-border, #e5e7eb);
+  border-radius: 12px;
+  background: var(--admin-card, #fff);
+}
+.admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 /* Share post detail: compact metrics, chart, and activity list inside the existing analytics modal. */
 .admin-analytics-modal .admin-share-post-detail {
   min-width: 0;

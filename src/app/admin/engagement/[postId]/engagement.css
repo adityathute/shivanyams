@@ -90,6 +90,31 @@
 
 .admin-engagement-details .admin-panel-heading p { text-align: left; }
 
+.admin-engagement-details-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+
+.admin-engagement-details-title i {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  color: var(--engagement-title-color, var(--primary, #8b5cf6));
+  font-style: normal;
+}
+
+.admin-engagement-details-title.stat-all { --engagement-title-color: var(--primary, #8b5cf6); }
+.admin-engagement-details-title.stat-likes { --engagement-title-color: #2563eb; }
+.admin-engagement-details-title.stat-dislikes { --engagement-title-color: #ef4444; }
+.admin-engagement-details-title.stat-comments { --engagement-title-color: #0d9488; }
+.admin-engagement-details-title.stat-shares { --engagement-title-color: #64748b; }
+.admin-engagement-details-title.stat-saved { --engagement-title-color: #f97316; }
+.admin-engagement-details-title.stat-subscribers { --engagement-title-color: #8b5cf6; }
+.admin-engagement-details-title.stat-reports { --engagement-title-color: #eab308; }
+
 .admin-engagement-empty {
   display: flex;
   align-items: center;
@@ -109,12 +134,13 @@
 .admin-engagement-table {
   width: 100%;
   min-width: 760px;
-  table-layout: auto;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
 .admin-engagement-table th,
 .admin-engagement-table td {
+  width: auto;
   max-width: 260px;
   padding: 11px 12px;
   text-align: center;
@@ -129,14 +155,10 @@
   text-transform: capitalize;
 }
 
-.admin-engagement-table th:first-child,
-.admin-engagement-table td:first-child {
-  width: 1%;
-  max-width: none;
-  white-space: nowrap;
+.admin-engagement-table th,
+.admin-engagement-table td {
+  white-space: normal;
 }
-
-.admin-engagement-table td { white-space: normal; }
 
 .admin-engagement-cell-value {
   display: -webkit-box;

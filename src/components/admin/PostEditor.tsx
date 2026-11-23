@@ -150,6 +150,36 @@ type JobPostInput = {
   syllabus_en: string;
   syllabus_mr: string;
   syllabus_hi: string;
+  selection_criteria_en: string;
+  selection_criteria_mr: string;
+  selection_criteria_hi: string;
+  skill_test_details_en: string;
+  skill_test_details_mr: string;
+  skill_test_details_hi: string;
+  interview_details_en: string;
+  interview_details_mr: string;
+  interview_details_hi: string;
+  medical_standards_en: string;
+  medical_standards_mr: string;
+  medical_standards_hi: string;
+  training_details_en: string;
+  training_details_mr: string;
+  training_details_hi: string;
+  posting_preferences_en: string;
+  posting_preferences_mr: string;
+  posting_preferences_hi: string;
+  document_verification_en: string;
+  document_verification_mr: string;
+  document_verification_hi: string;
+  application_guidelines_en: string;
+  application_guidelines_mr: string;
+  application_guidelines_hi: string;
+  reservation_policy_en: string;
+  reservation_policy_mr: string;
+  reservation_policy_hi: string;
+  additional_post_notes_en: string;
+  additional_post_notes_mr: string;
+  additional_post_notes_hi: string;
   salary_currency: string;
   salary_period: string;
   salary_min: string;
@@ -268,6 +298,36 @@ const createEmptyJobPost = (sort_order: number): JobPostInput => ({
   syllabus_en: "",
   syllabus_mr: "",
   syllabus_hi: "",
+  selection_criteria_en: "",
+  selection_criteria_mr: "",
+  selection_criteria_hi: "",
+  skill_test_details_en: "",
+  skill_test_details_mr: "",
+  skill_test_details_hi: "",
+  interview_details_en: "",
+  interview_details_mr: "",
+  interview_details_hi: "",
+  medical_standards_en: "",
+  medical_standards_mr: "",
+  medical_standards_hi: "",
+  training_details_en: "",
+  training_details_mr: "",
+  training_details_hi: "",
+  posting_preferences_en: "",
+  posting_preferences_mr: "",
+  posting_preferences_hi: "",
+  document_verification_en: "",
+  document_verification_mr: "",
+  document_verification_hi: "",
+  application_guidelines_en: "",
+  application_guidelines_mr: "",
+  application_guidelines_hi: "",
+  reservation_policy_en: "",
+  reservation_policy_mr: "",
+  reservation_policy_hi: "",
+  additional_post_notes_en: "",
+  additional_post_notes_mr: "",
+  additional_post_notes_hi: "",
   salary_currency: "INR",
   salary_period: "monthly",
   salary_min: "",
@@ -1012,6 +1072,36 @@ export default function PostEditor({
             syllabus_en: String(post.syllabus_en ?? ""),
             syllabus_mr: String(post.syllabus_mr ?? ""),
             syllabus_hi: String(post.syllabus_hi ?? ""),
+            selection_criteria_en: String(post.selection_criteria_en ?? ""),
+            selection_criteria_mr: String(post.selection_criteria_mr ?? ""),
+            selection_criteria_hi: String(post.selection_criteria_hi ?? ""),
+            skill_test_details_en: String(post.skill_test_details_en ?? ""),
+            skill_test_details_mr: String(post.skill_test_details_mr ?? ""),
+            skill_test_details_hi: String(post.skill_test_details_hi ?? ""),
+            interview_details_en: String(post.interview_details_en ?? ""),
+            interview_details_mr: String(post.interview_details_mr ?? ""),
+            interview_details_hi: String(post.interview_details_hi ?? ""),
+            medical_standards_en: String(post.medical_standards_en ?? ""),
+            medical_standards_mr: String(post.medical_standards_mr ?? ""),
+            medical_standards_hi: String(post.medical_standards_hi ?? ""),
+            training_details_en: String(post.training_details_en ?? ""),
+            training_details_mr: String(post.training_details_mr ?? ""),
+            training_details_hi: String(post.training_details_hi ?? ""),
+            posting_preferences_en: String(post.posting_preferences_en ?? ""),
+            posting_preferences_mr: String(post.posting_preferences_mr ?? ""),
+            posting_preferences_hi: String(post.posting_preferences_hi ?? ""),
+            document_verification_en: String(post.document_verification_en ?? ""),
+            document_verification_mr: String(post.document_verification_mr ?? ""),
+            document_verification_hi: String(post.document_verification_hi ?? ""),
+            application_guidelines_en: String(post.application_guidelines_en ?? ""),
+            application_guidelines_mr: String(post.application_guidelines_mr ?? ""),
+            application_guidelines_hi: String(post.application_guidelines_hi ?? ""),
+            reservation_policy_en: String(post.reservation_policy_en ?? ""),
+            reservation_policy_mr: String(post.reservation_policy_mr ?? ""),
+            reservation_policy_hi: String(post.reservation_policy_hi ?? ""),
+            additional_post_notes_en: String(post.additional_post_notes_en ?? ""),
+            additional_post_notes_mr: String(post.additional_post_notes_mr ?? ""),
+            additional_post_notes_hi: String(post.additional_post_notes_hi ?? ""),
             required_documents: Array.isArray(post.required_documents) ? (post.required_documents as Record<string, unknown>[]).map((document, documentIndex) => ({ ...createEmptyJobPostRequiredDocument(documentIndex), ...document, title_en: String(document.title_en ?? ""), title_mr: String(document.title_mr ?? ""), title_hi: String(document.title_hi ?? ""), mandatory: document.mandatory !== false, note_en: String(document.note_en ?? ""), note_mr: String(document.note_mr ?? ""), note_hi: String(document.note_hi ?? ""), sort_order: documentIndex })) : [],
             work_locations: Array.isArray(post.work_locations) ? (post.work_locations as Record<string, unknown>[]).map((location, locationIndex) => ({ ...createEmptyJobPostWorkLocation(locationIndex), ...location, location_type: String(location.location_type ?? "other"), name_en: String(location.name_en ?? ""), name_mr: String(location.name_mr ?? ""), name_hi: String(location.name_hi ?? ""), city: String(location.city ?? ""), district: String(location.district ?? ""), state: String(location.state ?? ""), country: String(location.country ?? ""), office: String(location.office ?? ""), vacancies: location.vacancies == null ? "" : String(location.vacancies), note_en: String(location.note_en ?? ""), note_mr: String(location.note_mr ?? ""), note_hi: String(location.note_hi ?? ""), sort_order: locationIndex })) : [],
             selection_stages: Array.isArray(post.selection_stages)
@@ -2304,6 +2394,95 @@ export default function PostEditor({
                       </div>
                     </section>
 
+                    <section className="post-editor-post-detail-section post-editor-selection_criteria">
+                      <div className="post-editor-subsection-heading"><div><h4>Selection criteria and merit calculation</h4><small>Enter the official selection criteria and merit calculation that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Selection criteria and merit calculation (English)" rows={3} value={post.selection_criteria_en} onChange={(event) => updateJobPost(postIndex, "selection_criteria_en", event.target.value)} fullWidth />
+                        <Textarea label="Selection criteria and merit calculation (Marathi)" rows={3} value={post.selection_criteria_mr} onChange={(event) => updateJobPost(postIndex, "selection_criteria_mr", event.target.value)} fullWidth />
+                        <Textarea label="Selection criteria and merit calculation (Hindi)" rows={3} value={post.selection_criteria_hi} onChange={(event) => updateJobPost(postIndex, "selection_criteria_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-skill_test_details">
+                      <div className="post-editor-subsection-heading"><div><h4>Skill/typing test details</h4><small>Enter the official skill/typing test details that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Skill/typing test details (English)" rows={3} value={post.skill_test_details_en} onChange={(event) => updateJobPost(postIndex, "skill_test_details_en", event.target.value)} fullWidth />
+                        <Textarea label="Skill/typing test details (Marathi)" rows={3} value={post.skill_test_details_mr} onChange={(event) => updateJobPost(postIndex, "skill_test_details_mr", event.target.value)} fullWidth />
+                        <Textarea label="Skill/typing test details (Hindi)" rows={3} value={post.skill_test_details_hi} onChange={(event) => updateJobPost(postIndex, "skill_test_details_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-interview_details">
+                      <div className="post-editor-subsection-heading"><div><h4>Interview details</h4><small>Enter the official interview details that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Interview details (English)" rows={3} value={post.interview_details_en} onChange={(event) => updateJobPost(postIndex, "interview_details_en", event.target.value)} fullWidth />
+                        <Textarea label="Interview details (Marathi)" rows={3} value={post.interview_details_mr} onChange={(event) => updateJobPost(postIndex, "interview_details_mr", event.target.value)} fullWidth />
+                        <Textarea label="Interview details (Hindi)" rows={3} value={post.interview_details_hi} onChange={(event) => updateJobPost(postIndex, "interview_details_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-medical_standards">
+                      <div className="post-editor-subsection-heading"><div><h4>Medical fitness standards</h4><small>Enter the official medical fitness standards that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Medical fitness standards (English)" rows={3} value={post.medical_standards_en} onChange={(event) => updateJobPost(postIndex, "medical_standards_en", event.target.value)} fullWidth />
+                        <Textarea label="Medical fitness standards (Marathi)" rows={3} value={post.medical_standards_mr} onChange={(event) => updateJobPost(postIndex, "medical_standards_mr", event.target.value)} fullWidth />
+                        <Textarea label="Medical fitness standards (Hindi)" rows={3} value={post.medical_standards_hi} onChange={(event) => updateJobPost(postIndex, "medical_standards_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-training_details">
+                      <div className="post-editor-subsection-heading"><div><h4>Training and induction details</h4><small>Enter the official training and induction details that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Training and induction details (English)" rows={3} value={post.training_details_en} onChange={(event) => updateJobPost(postIndex, "training_details_en", event.target.value)} fullWidth />
+                        <Textarea label="Training and induction details (Marathi)" rows={3} value={post.training_details_mr} onChange={(event) => updateJobPost(postIndex, "training_details_mr", event.target.value)} fullWidth />
+                        <Textarea label="Training and induction details (Hindi)" rows={3} value={post.training_details_hi} onChange={(event) => updateJobPost(postIndex, "training_details_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-posting_preferences">
+                      <div className="post-editor-subsection-heading"><div><h4>Posting preferences and allocation</h4><small>Enter the official posting preferences and allocation that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Posting preferences and allocation (English)" rows={3} value={post.posting_preferences_en} onChange={(event) => updateJobPost(postIndex, "posting_preferences_en", event.target.value)} fullWidth />
+                        <Textarea label="Posting preferences and allocation (Marathi)" rows={3} value={post.posting_preferences_mr} onChange={(event) => updateJobPost(postIndex, "posting_preferences_mr", event.target.value)} fullWidth />
+                        <Textarea label="Posting preferences and allocation (Hindi)" rows={3} value={post.posting_preferences_hi} onChange={(event) => updateJobPost(postIndex, "posting_preferences_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-document_verification">
+                      <div className="post-editor-subsection-heading"><div><h4>Document verification process</h4><small>Enter the official document verification process that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Document verification process (English)" rows={3} value={post.document_verification_en} onChange={(event) => updateJobPost(postIndex, "document_verification_en", event.target.value)} fullWidth />
+                        <Textarea label="Document verification process (Marathi)" rows={3} value={post.document_verification_mr} onChange={(event) => updateJobPost(postIndex, "document_verification_mr", event.target.value)} fullWidth />
+                        <Textarea label="Document verification process (Hindi)" rows={3} value={post.document_verification_hi} onChange={(event) => updateJobPost(postIndex, "document_verification_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-application_guidelines">
+                      <div className="post-editor-subsection-heading"><div><h4>Application submission guidelines</h4><small>Enter the official application submission guidelines that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Application submission guidelines (English)" rows={3} value={post.application_guidelines_en} onChange={(event) => updateJobPost(postIndex, "application_guidelines_en", event.target.value)} fullWidth />
+                        <Textarea label="Application submission guidelines (Marathi)" rows={3} value={post.application_guidelines_mr} onChange={(event) => updateJobPost(postIndex, "application_guidelines_mr", event.target.value)} fullWidth />
+                        <Textarea label="Application submission guidelines (Hindi)" rows={3} value={post.application_guidelines_hi} onChange={(event) => updateJobPost(postIndex, "application_guidelines_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-reservation_policy">
+                      <div className="post-editor-subsection-heading"><div><h4>Post-specific reservation policy notes</h4><small>Enter the official post-specific reservation policy notes that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Post-specific reservation policy notes (English)" rows={3} value={post.reservation_policy_en} onChange={(event) => updateJobPost(postIndex, "reservation_policy_en", event.target.value)} fullWidth />
+                        <Textarea label="Post-specific reservation policy notes (Marathi)" rows={3} value={post.reservation_policy_mr} onChange={(event) => updateJobPost(postIndex, "reservation_policy_mr", event.target.value)} fullWidth />
+                        <Textarea label="Post-specific reservation policy notes (Hindi)" rows={3} value={post.reservation_policy_hi} onChange={(event) => updateJobPost(postIndex, "reservation_policy_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
+
+                    <section className="post-editor-post-detail-section post-editor-additional_post_notes">
+                      <div className="post-editor-subsection-heading"><div><h4>Additional post-specific notes</h4><small>Enter the official additional post-specific notes that applies specifically to this advertised post. Leave blank when the notification does not specify it.</small></div></div>
+                      <div className="post-editor-fee-fields">
+                        <Textarea label="Additional post-specific notes (English)" rows={3} value={post.additional_post_notes_en} onChange={(event) => updateJobPost(postIndex, "additional_post_notes_en", event.target.value)} fullWidth />
+                        <Textarea label="Additional post-specific notes (Marathi)" rows={3} value={post.additional_post_notes_mr} onChange={(event) => updateJobPost(postIndex, "additional_post_notes_mr", event.target.value)} fullWidth />
+                        <Textarea label="Additional post-specific notes (Hindi)" rows={3} value={post.additional_post_notes_hi} onChange={(event) => updateJobPost(postIndex, "additional_post_notes_hi", event.target.value)} fullWidth />
+                      </div>
+                    </section>
                     <section className="post-editor-post-detail-section post-editor-post-syllabus">
                       <div className="post-editor-subsection-heading"><div><h4>Post-specific syllabus</h4><small>Enter the official subject-wise syllabus and topics for this post. Keep each translation aligned with the recruitment notification.</small></div></div>
                       <div className="post-editor-fee-fields">

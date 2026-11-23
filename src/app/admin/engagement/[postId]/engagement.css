@@ -59,7 +59,7 @@
 .admin-engagement-stat > strong {
   display: block;
   max-width: 100%;
-  color: #000;
+  color: #142c4b;
   font-size: clamp(.95rem, 1.55vw, 1.65rem);
   font-weight: 750;
   letter-spacing: -.035em;

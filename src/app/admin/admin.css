@@ -1622,3 +1622,32 @@
 .admin-managed-tag-actions button.danger:hover { border-color: #fca5a5; background: #fff7f7; }
 .admin-managed-tag-actions button:disabled { opacity: .55; cursor: wait; }
 @media (max-width: 520px) { .admin-managed-tag-row { align-items: flex-start; flex-direction: column; } .admin-managed-tag-actions { width: 100%; } }
+
+/* Keep all nine engagement statistics in one row on wide dashboard screens. */
+.admin-stats.admin-stats-secondary {
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-stats.admin-stats-secondary .admin-stat-card {
+  padding-left: 9px;
+  padding-right: 9px;
+}
+
+@media (max-width: 1250px) {
+  .admin-stats.admin-stats-secondary {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-stats.admin-stats-secondary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .admin-stats.admin-stats-secondary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

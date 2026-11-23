@@ -38,7 +38,7 @@ type WebsiteAnalyticsPage = {
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
-type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; };
+type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; event_type?: "subscribed" | "unsubscribed"; };
 type SubscriberAnalyticsTotals = { total: number; registered: number; subscriptions: number; resubscriptions: number; unsubscriptions: number };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
@@ -239,6 +239,7 @@ export default function AdminPage() {
   const [savedPostsPage, setSavedPostsPage] = useState(1);
   const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
   const [subscriberSearch, setSubscriberSearch] = useState("");
+  const [subscriberView, setSubscriberView] = useState<"active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions">("active");
   const [subscribersPage, setSubscribersPage] = useState(1);
   const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
@@ -755,17 +756,14 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
-  function openSubscribersAnalytics() {
-    setAnalyticsType("subscribers");
-    setSelectedPost(null);
-    setSelectedVisitor(null);
-    setSelectedAnalyticsPath(null);
+  function loadSubscriberView(view: "active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions") {
+    setSubscriberView(view);
     setSubscriberSearch("");
     setSubscribersPage(1);
     setAnalyticsLoading(true);
-    adminFetch(API_URL + "/admin/stats/?type=subscribers", { cache: "no-store" })
+    adminFetch(API_URL + "/admin/stats/?type=subscribers&view=" + view, { cache: "no-store" })
       .then(async (response) => {
-        if (!response.ok) throw new Error(`Unable to load subscribers (${response.status}).`);
+        if (!response.ok) throw new Error(`Unable to load subscriber details (${response.status}).`);
         return response.json();
       })
       .then((payload: { total_subscribers?: number; registered_users?: number; total_subscriptions?: number; total_resubscriptions?: number; total_unsubscriptions?: number; results?: SubscriberAnalyticsRow[] }) => {
@@ -780,6 +778,14 @@ export default function AdminPage() {
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Unable to load subscribers."))
       .finally(() => setAnalyticsLoading(false));
+  }
+
+  function openSubscribersAnalytics() {
+    setAnalyticsType("subscribers");
+    setSelectedPost(null);
+    setSelectedVisitor(null);
+    setSelectedAnalyticsPath(null);
+    loadSubscriberView("active");
   }
 
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
@@ -1762,14 +1768,14 @@ export default function AdminPage() {
              ) : analyticsType === "subscribers" && !selectedPost && !selectedVisitor ? (
                 <>
                   <div className="admin-subscribers-summary">
-                    <article><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></article>
-                    <article><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></article>
-                    <article><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></article>
-                    <article><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></article>
-                    <article><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></article>
+                    <button type="button" className={subscriberView === "active" ? "is-active" : ""} aria-pressed={subscriberView === "active"} onClick={() => loadSubscriberView("active")}><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></button>
+                    <button type="button" className={subscriberView === "registered" ? "is-active" : ""} aria-pressed={subscriberView === "registered"} onClick={() => loadSubscriberView("registered")}><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></button>
+                    <button type="button" className={subscriberView === "subscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "subscriptions"} onClick={() => loadSubscriberView("subscriptions")}><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></button>
+                    <button type="button" className={subscriberView === "resubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "resubscriptions"} onClick={() => loadSubscriberView("resubscriptions")}><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></button>
+                    <button type="button" className={subscriberView === "unsubscriptions" ? "is-active" : ""} aria-pressed={subscriberView === "unsubscriptions"} onClick={() => loadSubscriberView("unsubscriptions")}><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></button>
                   </div>
-                  {subscriberRows.length === 0 ? (
-                    <div className="admin-empty">No active subscribers. Subscription history is shown above.</div>
+                  {analyticsLoading ? <div className="admin-empty">Loading subscriber details...</div> : subscriberRows.length === 0 ? (
+                    <div className="admin-empty">No {subscriberView === "active" ? "active subscribers" : subscriberView === "registered" ? "registered subscribers" : subscriberView} found.</div>
                   ) : (
                     <>
                       <div className="admin-subscribers-toolbar">
@@ -1785,28 +1791,25 @@ export default function AdminPage() {
                         const filteredSubscribers = subscriberRows.filter((item) =>
                           [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
                         );
+                        const isHistory = subscriberView === "subscriptions" || subscriberView === "resubscriptions" || subscriberView === "unsubscriptions";
                         return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
                           <>
                             <div className="admin-analytics-table-wrap">
                               <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
-                                <thead><tr><th>Full name</th><th>Email</th><th>Subscribed at</th></tr></thead>
+                                <thead><tr><th>Full name</th><th>Email</th>{isHistory ? <><th>Activity</th><th>Date</th></> : <th>Subscribed at</th>}</tr></thead>
                                 <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
                                   const dateTime = formatAnalyticsDateTime(item.subscribed_at);
                                   return <tr key={item.id}>
                                     <td>
                                       {item.full_name ? (
-                                        <button
-                                          type="button"
-                                          className="admin-analytics-link admin-likes-user-link"
-                                          title={formatPersonName(item.full_name)}
-                                          onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}
-                                        >
+                                        <button type="button" className="admin-analytics-link admin-likes-user-link" title={formatPersonName(item.full_name)}
+                                          onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}>
                                           {formatPersonName(item.full_name)}
                                         </button>
                                       ) : "—"}
                                     </td>
                                     <td>{item.email}</td>
-                                    <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>
+                                    {isHistory ? <><td>{item.event_type === "unsubscribed" ? "Unsubscribed" : "Subscribed"}</td><td><span>{dateTime.date}</span><small>{dateTime.time}</small></td></> : <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>}
                                   </tr>;
                                 })}</tbody>
                               </table>

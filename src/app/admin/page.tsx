@@ -801,7 +801,7 @@ export default function AdminPage() {
                     {item.analytics ? (
                       <button
                         type="button"
-                        onClick={() => openWebsiteAnalytics(item.analytics!)}
+                        onClick={() => item.analytics === "posts" ? openPostAnalytics() : openWebsiteAnalytics(item.analytics!)}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>

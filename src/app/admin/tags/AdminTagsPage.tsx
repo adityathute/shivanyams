@@ -13,7 +13,7 @@ import "./tags.css";
 type TagRow = { name: string; count: number };
 
 function slugify(value: string) {
-  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\\p{L}\\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 }
 
 export default function AdminTagsPage() {

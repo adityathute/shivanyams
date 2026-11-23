@@ -2146,8 +2146,7 @@
 .admin-analytics-modal .admin-likes-content-link.is-comment .admin-analytics-like-content {
   -webkit-line-clamp: 3;
 }
-.admin-analytics-modal .admin-likes-content-link.is-comment-context .admin-analytics-like-context,
-.admin-analytics-modal .admin-likes-content-link.is-reply-content .admin-analytics-like-content {
+ .admin-analytics-modal .admin-likes-content-link.is-reply-content .admin-analytics-like-content {
   display: -webkit-box !important;
   width: 100%;
   min-width: 0;
@@ -2156,7 +2155,7 @@
   white-space: normal;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2 !important;
+  -webkit-line-clamp: 3 !important;
   text-align: center;
 }
 
@@ -2188,7 +2187,6 @@
 
 
 /* Likes modal: keep Comment:/Reply: labels inline with their text while clamping the whole item. */
-.admin-analytics-modal .admin-likes-analytics-table td:nth-child(3) .admin-likes-content-link.is-comment-context .admin-analytics-like-context,
 .admin-analytics-modal .admin-likes-analytics-table td:nth-child(3) .admin-likes-content-link.is-reply-content .admin-analytics-like-content {
   display: -webkit-box !important;
   width: 100% !important;
@@ -2198,7 +2196,7 @@
   white-space: normal !important;
   overflow-wrap: anywhere !important;
   -webkit-box-orient: vertical !important;
-  -webkit-line-clamp: 2 !important;
+  -webkit-line-clamp: 3 !important;
   text-align: center !important;
 }
 

@@ -2,6 +2,7 @@ from django.db import transaction
 from django.core import signing
 from django.core.mail import send_mass_mail
 import hashlib
+from decimal import Decimal, InvalidOperation
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
@@ -444,6 +445,89 @@ class PublicJobDiscovery(generics.ListAPIView):
             if application_mode not in allowed:
                 raise ValidationError({"application_mode": "Choose a valid application mode."})
             queryset = queryset.filter(job_details__application_mode=application_mode)
+
+        # Advanced discovery filters reuse existing post-level recruitment data.
+        qualification = str(params.get("qualification", "")).strip()
+        if qualification:
+            queryset = queryset.filter(
+                Q(job_details__posts__educational_qualification_en__icontains=qualification)
+                | Q(job_details__posts__educational_qualification_mr__icontains=qualification)
+                | Q(job_details__posts__educational_qualification_hi__icontains=qualification)
+            )
+
+        exam_mode = str(params.get("exam_mode", "")).strip()
+        if exam_mode:
+            allowed = {choice[0] for choice in JobPost.ExamMode.choices}
+            if exam_mode not in allowed:
+                raise ValidationError({"exam_mode": "Choose a valid examination mode."})
+            queryset = queryset.filter(job_details__posts__exam_mode=exam_mode)
+
+        def parse_salary(name):
+            raw = str(params.get(name, "")).strip()
+            if not raw:
+                return None
+            try:
+                value = Decimal(raw)
+                if not value.is_finite() or value < 0:
+                    raise InvalidOperation
+                return value
+            except (InvalidOperation, ValueError):
+                raise ValidationError({name: "Enter a valid non-negative salary amount."})
+
+        salary_minimum = parse_salary("salary_min")
+        salary_maximum = parse_salary("salary_max")
+        if salary_minimum is not None:
+            queryset = queryset.filter(
+                Q(job_details__posts__salary_max__gte=salary_minimum)
+                | Q(job_details__salary_max__gte=salary_minimum)
+            )
+        if salary_maximum is not None:
+            queryset = queryset.filter(
+                Q(job_details__posts__salary_min__lte=salary_maximum)
+                | Q(job_details__salary_min__lte=salary_maximum)
+            )
+        if salary_minimum is not None and salary_maximum is not None and salary_minimum > salary_maximum:
+            raise ValidationError({"salary_max": "Maximum salary must be greater than or equal to minimum salary."})
+
+        work_city = str(params.get("work_city", "")).strip()
+        if work_city:
+            queryset = queryset.filter(job_details__posts__work_locations__contains=[{"city": work_city}])
+
+        work_district = str(params.get("work_district", "")).strip()
+        if work_district:
+            queryset = queryset.filter(job_details__posts__work_locations__contains=[{"district": work_district}])
+
+        remote_only = str(params.get("remote_only", "")).strip().lower()
+        if remote_only not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"remote_only": "Use true or false."})
+        if remote_only in ("true", "1"):
+            queryset = queryset.filter(job_details__posts__work_locations__contains=[{"location_type": "remote"}])
+
+        has_notification = str(params.get("has_notification", "")).strip().lower()
+        if has_notification not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"has_notification": "Use true or false."})
+        if has_notification in ("true", "1"):
+            queryset = queryset.exclude(job_details__official_notification_url="")
+        elif has_notification in ("false", "0"):
+            queryset = queryset.filter(job_details__official_notification_url="")
+
+        has_apply_link = str(params.get("has_apply_link", "")).strip().lower()
+        if has_apply_link not in ("", "true", "false", "1", "0"):
+            raise ValidationError({"has_apply_link": "Use true or false."})
+        if has_apply_link in ("true", "1"):
+            queryset = queryset.exclude(job_details__apply_url="")
+        elif has_apply_link in ("false", "0"):
+            queryset = queryset.filter(job_details__apply_url="")
+
+        minimum_post_vacancies = params.get("min_post_vacancies")
+        if minimum_post_vacancies not in (None, ""):
+            try:
+                minimum_post_vacancies = int(minimum_post_vacancies)
+                if minimum_post_vacancies < 0:
+                    raise ValueError
+            except (TypeError, ValueError):
+                raise ValidationError({"min_post_vacancies": "Enter a non-negative whole number."})
+            queryset = queryset.filter(job_details__posts__vacancies__gte=minimum_post_vacancies)
 
         minimum = params.get("min_vacancies")
         maximum = params.get("max_vacancies")

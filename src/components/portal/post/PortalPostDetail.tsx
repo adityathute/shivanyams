@@ -949,7 +949,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             name: post.title,
                             description: post.description || undefined,
                             url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")}/${category}/${slug}`,
-                            dateModified: post.updated_date || post.date || undefined,
+                            dateModified: post.updated_date || undefined,
                             primaryImageOfPage: post.image ? { "@type": "ImageObject", url: post.image } : undefined,
                             publisher: {
                               "@type": "Organization",

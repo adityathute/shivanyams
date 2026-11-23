@@ -262,7 +262,7 @@ export default function AdminPostEngagementPage() {
       case "subscribers":
         return "Post subscriptions.";
       case "reports":
-        return "Reports about this post.";
+        return `${formatCompactNumber(payload?.reports || 0)} user reports and ${formatCompactNumber(Math.max(0, selectedRows.length - (payload?.reports || 0)))} admin review records.`;
       default:
         return "Post activity.";
     }

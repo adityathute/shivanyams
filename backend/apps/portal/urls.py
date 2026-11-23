@@ -16,7 +16,6 @@ from .views import (
     PostReactions,
     PostCommentReactions,
     PostCommentReports,
-    PostSubscriptions,
     PostShares,
     AdminComments,
     AdminPostEngagement,

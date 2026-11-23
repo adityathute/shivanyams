@@ -1811,10 +1811,10 @@ class AdminDashboardStats(APIView):
                         subscription = event.subscription
                         event_rows.append({
                             "id": event.id,
-                            "full_name": user_names.get(subscription.user_auth_id, ""),
+                            "full_name": user_names.get(event.user_auth_id or subscription.user_auth_id, ""),
                             "email": subscription.email,
                             "subscribed_at": event.created_at,
-                            "visitor_id": visitor_ids.get(subscription.user_auth_id, ""),
+                            "visitor_id": visitor_ids.get(event.user_auth_id or subscription.user_auth_id, ""),
                             "event_type": event.event_type,
                         })
                 rows = list(reversed(event_rows))

@@ -10,7 +10,7 @@ import {
   MailIcon,
   ShieldCheckIcon,
   ToolsIcon,
-  BookmarkIcon,
+  BookmarkIcon,\n  TagIcon,
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";
@@ -88,6 +88,11 @@ export function getPortalNavigation(
             label: "Admin",
             href: "/admin",
             icon: <ShieldCheckIcon />,
+          },
+          {
+            label: "Tags",
+            href: "/admin/tags",
+            icon: <TagIcon />,
           },
         ]
       : []),

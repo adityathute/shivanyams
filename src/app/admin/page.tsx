@@ -1823,9 +1823,11 @@ export default function AdminPage() {
                     className={"admin-reaction-view-button" + (showAllShareAnalytics ? " is-active" : "")}
                     aria-pressed={showAllShareAnalytics}
                     onClick={() => {
-                      setShareAnalyticsView("events");
-                      setShareAnalyticsPage(1);
-                      setShowAllShareAnalytics(true);
+                      if (!showAllShareAnalytics) {
+                        setShareAnalyticsView("events");
+                        setShareAnalyticsPage(1);
+                      }
+                      setShowAllShareAnalytics((current) => !current);
                     }}
                   >
                     <AnalyticsIcon />
@@ -1963,7 +1965,20 @@ export default function AdminPage() {
                     </div>
                     {showAllShareAnalytics ? (
                       <section className="admin-share-post-chart-section">
-                        <h3>Sharing methods across all posts</h3>
+                        <div className="admin-share-chart-heading">
+                          <h3>Sharing methods across all posts</h3>
+                          <IconButton
+                            size="md"
+                            variant="ghost"
+                            iconRotateOnHover
+                            className="admin-share-chart-close"
+                            onClick={() => setShowAllShareAnalytics(false)}
+                            aria-label="Close sharing methods analytics"
+                            title="Close"
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                        </div>
                         <BarChart
                           data={Object.entries(shareAnalytics.channels).map(([channel, value]) => ({
                             id: channel,

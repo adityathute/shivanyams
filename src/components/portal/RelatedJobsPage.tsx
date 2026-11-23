@@ -182,7 +182,7 @@ export function RelatedJobsPage() {
         </section>
       )}
 
-      <section className="saved-panel">
+      <section ref={resultsPanelRef} className="saved-panel">
         <div className="saved-section-heading">
           <h2>{heading}</h2>
           <span>{visibleItems.length} {labels.count}</span>

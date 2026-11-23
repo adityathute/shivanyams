@@ -1768,13 +1768,16 @@ class AdminDashboardStats(APIView):
             )
             auth_ids = {item.user_auth_id for item in subscriptions if item.user_auth_id}
             user_names = {}
+            visitor_ids = {}
             if auth_ids:
                 for visitor in WebsiteVisitor.objects.filter(
                     auth_user_id__in=auth_ids
-                ).exclude(full_name="").order_by("-last_seen_at").values(
-                    "auth_user_id", "full_name"
+                ).order_by("-last_seen_at").values(
+                    "auth_user_id", "full_name", "visitor_id"
                 ):
-                    user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                    visitor_ids.setdefault(visitor["auth_user_id"], visitor["visitor_id"])
+                    if visitor["full_name"]:
+                        user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
                 for visit in WebsiteView.objects.filter(
                     auth_user_id__in=auth_ids
                 ).exclude(full_name="").order_by("-viewed_at").values(
@@ -1786,6 +1789,7 @@ class AdminDashboardStats(APIView):
                 "full_name": user_names.get(item.user_auth_id, ""),
                 "email": item.email,
                 "subscribed_at": item.created_at,
+                "visitor_id": visitor_ids.get(item.user_auth_id, ""),
             } for item in subscriptions]
             return Response({
                 "total_subscribers": len(rows),

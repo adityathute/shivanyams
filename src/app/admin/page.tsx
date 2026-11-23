@@ -663,7 +663,7 @@ export default function AdminPage() {
             <h1>Admin Dashboard</h1>
             <p>Manage posts, publishing status and website content.</p>
           </div>
-          <div className="admin-top-actions">
+          <div className="admin-top-actions admin-dashboard-header-actions">
             <Link href="/admin/comments" className="admin-secondary-button">
               <MessagesIcon size={16} />
               <span>Comments & reports</span>

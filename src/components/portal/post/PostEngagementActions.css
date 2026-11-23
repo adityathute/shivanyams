@@ -264,7 +264,7 @@
 }
 
 .portal-share-menu button.portal-share-email:hover svg {
-  filter: invert(53%) sepia(93%) saturate(1200%) hue-rotate(2deg) brightness(101%) contrast(96%);
+  filter: brightness(0) saturate(100%) invert(43%) sepia(96%) saturate(1800%) hue-rotate(2deg) brightness(88%) contrast(105%);
 }
 
 .portal-share-menu button:focus-visible {

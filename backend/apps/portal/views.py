@@ -1770,13 +1770,15 @@ class AdminDashboardStats(APIView):
                 if reaction.user_auth_id
             }
             user_names = {}
+            user_visitors = {}
             if auth_ids:
                 for visitor in WebsiteVisitor.objects.filter(
                     auth_user_id__in=auth_ids
-                ).exclude(full_name="").order_by("-last_seen_at").values(
-                    "auth_user_id", "full_name"
+                ).order_by("-last_seen_at").values(
+                    "auth_user_id", "full_name", "visitor_id"
                 ):
                     user_names.setdefault(visitor["auth_user_id"], visitor["full_name"])
+                    user_visitors.setdefault(visitor["auth_user_id"], visitor["visitor_id"])
                 for visit in WebsiteView.objects.filter(
                     auth_user_id__in=auth_ids
                 ).exclude(full_name="").order_by("-viewed_at").values(
@@ -1795,6 +1797,7 @@ class AdminDashboardStats(APIView):
                     "content": reaction.post.title_en,
                     "parent_content": "",
                     "user_name": user_names.get(reaction.user_auth_id, ""),
+                    "visitor_id": user_visitors.get(reaction.user_auth_id, ""),
                     "created_at": reaction.created_at,
                 })
             for reaction in comment_reactions:

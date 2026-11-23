@@ -2747,7 +2747,17 @@ export default function AdminPage() {
                           ? formatCompactNumber(analyticsPages.length) + " pages tracked"
                           : analyticsType === "shares"
                             ? formatCompactNumber(shareAnalytics.total) + " shares"
-                            : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
+                            : analyticsType === "saved"
+                              ? formatCompactNumber(savedPostTotals.saves) + " saved posts"
+                              : analyticsType === "subscribers"
+                                ? formatCompactNumber(subscriberTotals.total) + " subscribers"
+                                : analyticsType === "tags"
+                                  ? formatCompactNumber(tagTotals.total) + " tags"
+                                  : analyticsType === "users"
+                                    ? formatCompactNumber(usersCount) + " portal users"
+                                    : analyticsType === "visitors"
+                                      ? formatCompactNumber(websiteVisitorsCount) + " website visitors"
+                                      : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
               </span>
             </footer>
           </section>

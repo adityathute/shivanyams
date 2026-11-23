@@ -202,11 +202,15 @@
   margin-left: 0;
 }
 .portal-comment-content > p {
+  display: -webkit-box;
   margin: 4px 0 6px;
+  overflow: hidden;
   font-size: 0.86rem;
   line-height: 1.5;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 .portal-comment-actions {
   display: flex;

@@ -36,7 +36,7 @@ type WebsiteAnalyticsPage = {
   last_viewed: string | null;
 };
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
-type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; device: string; language: string; referrer_url: string; };
+type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type WebsiteVisitorRow = {
   visitor_id: string;
   visitor_type: "user" | "anonymous";
@@ -1337,12 +1337,12 @@ export default function AdminPage() {
               <>
                 <div className="admin-analytics-table-wrap">
                   <table className="admin-analytics-table">
-                    <thead><tr><th>Visitor</th><th>Visitor ID</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
+                    <thead><tr><th>Visitor</th><th>Browser</th><th>Device</th><th>Language</th><th>Referrer</th><th>Viewed at</th></tr></thead>
                     <tbody>
                       {postAnalyticsEvents.slice((analyticsEventsPage - 1) * analyticsPageSize, analyticsEventsPage * analyticsPageSize).map((event, index) => (
                         <tr key={event.visitor_id + event.viewed_at + index}>
                           <td>{event.visitor_type === "user" ? formatPersonName(event.full_name) || "Registered user" : "Anonymous"}</td>
-                          <td>{event.visitor_id}</td><td>{event.device}</td><td>{event.language || "—"}</td>
+                          <td>{event.browser || "Unknown"}</td><td>{event.device}</td><td>{event.language || "—"}</td>
                           <td className="admin-analytics-referrer">{event.referrer_url || "Direct"}</td>
                           <td>{new Date(event.viewed_at).toLocaleString()}</td>
                         </tr>

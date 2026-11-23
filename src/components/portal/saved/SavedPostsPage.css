@@ -415,3 +415,60 @@
 .admin-managed-tag-actions button.danger:hover { border-color: #fca5a5; background: #fff7f7; }
 .admin-managed-tag-actions button:disabled { opacity: .55; cursor: wait; }
 @media (max-width: 520px) { .admin-managed-tag-row { align-items: flex-start; flex-direction: column; } .admin-managed-tag-actions { width: 100%; } }
+
+
+/* Flat tag directory rows and admin-table pagination. */
+.related-tag-list { display: grid; gap: 0; padding: 0; }
+.related-tag-chip,
+.related-tag-chip:hover,
+[data-theme="dark"] .related-tag-chip,
+[data-theme="dark"] .related-tag-chip:hover {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.related-tag-chip { background: transparent; padding: 8px 0; }
+.related-tag-chip:hover { background: transparent; color: #075be8; }
+.admin-managed-tags-list { gap: 0; }
+.admin-managed-tag-row {
+  border: 0;
+  border-radius: 0;
+  border-bottom: 0;
+  background: transparent;
+  padding: 8px 0;
+}
+.admin-managed-tag-actions button { border-radius: 0; }
+.tags-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 12px 0 0;
+  border: 0;
+  border-radius: 0;
+  color: #8492a4;
+  font-size: 10px;
+}
+.tags-pagination .admin-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tags-pagination .admin-pagination button,
+.tags-pagination .admin-pagination select {
+  border: 1px solid #dbe4f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #405571;
+  padding: 7px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tags-pagination .admin-pagination button:disabled { opacity: .4; cursor: not-allowed; }
+@media (max-width: 620px) {
+  .tags-pagination { align-items: flex-start; flex-direction: column; }
+  .tags-pagination .admin-pagination { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+}

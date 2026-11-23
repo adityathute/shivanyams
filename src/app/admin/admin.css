@@ -2176,6 +2176,7 @@
   min-width: 0;
   margin: 0;
   padding: 16px;
+  background: #fff;
   border: 1px solid var(--admin-border, #e5e7eb);
   border-radius: 12px;
 }

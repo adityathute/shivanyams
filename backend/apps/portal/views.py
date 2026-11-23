@@ -1362,28 +1362,46 @@ class TrackPostView(APIView):
         if not isinstance(referrer_url, str):
             referrer_url = ""
 
-        # Identity is read only from the authenticated server-side session.
+        # Identity and display name are read only from the authenticated
+        # server-side session; never trust a name supplied by the browser.
         auth_user_id = (
             str(request.user.id)
             if request.user.is_authenticated
             else ""
         )
+        user_data = getattr(request.user, "auth_data", {}) if auth_user_id else {}
+        full_name = ""
+        if isinstance(user_data, dict):
+            full_name = str(
+                user_data.get("full_name") or user_data.get("name") or ""
+            ).strip()
+            if not full_name:
+                full_name = " ".join(
+                    part for part in (
+                        str(user_data.get("first_name") or "").strip(),
+                        str(user_data.get("last_name") or "").strip(),
+                    ) if part
+                )
+        full_name = full_name[:240]
 
         with transaction.atomic():
             visitor, created = PostVisitor.objects.get_or_create(
                 post=post,
                 visitor_id=visitor_id,
-                defaults={"auth_user_id": auth_user_id},
+                defaults={"auth_user_id": auth_user_id, "full_name": full_name},
             )
 
             if not created:
                 visitor.visit_count = F("visit_count") + 1
                 visitor.auth_user_id = auth_user_id or visitor.auth_user_id
+                if full_name:
+                    visitor.full_name = full_name
                 visitor.last_seen_at = timezone.now()
                 visitor.save(
                     update_fields=[
                         "visit_count",
                         "auth_user_id",
+                        "full_name",
                         "last_seen_at",
                         "updated_at",
                     ]
@@ -1538,6 +1556,7 @@ class AdminWebsiteAnalytics(APIView):
                     "events": [{
                         "viewed_at": event.viewed_at,
                         "visitor_type": "user" if event.auth_user_id else "anonymous",
+                        "full_name": event.visitor.full_name if event.auth_user_id else "",
                         "visitor_id": event.visitor.visitor_id,
                         "device": event.device,
                         "language": event.language,

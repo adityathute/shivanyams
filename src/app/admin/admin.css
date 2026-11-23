@@ -589,7 +589,7 @@
   border-radius: 13px; background: #fff; box-shadow: 0 20px 70px #10213b30;
 }
 .admin-analytics-modal > header, .admin-analytics-modal > footer {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 17px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px;
 }
 .admin-analytics-modal > header { border-bottom: 1px solid #edf1f6; }
 .admin-analytics-modal h2 { margin: 0 0 5px; color: #132642; font-size: 18px; }
@@ -920,7 +920,6 @@
 
 .admin-analytics-modal > header {
   flex-shrink: 0;
-  padding: 22px 26px;
   background: linear-gradient(120deg, #ffffff 0%, #f5f3ff 100%);
   border-bottom: 1px solid #e9e5f5;
 }

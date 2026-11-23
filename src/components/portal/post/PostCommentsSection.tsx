@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
 import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, DislikeIcon, EditIcon, LikeIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -159,6 +159,9 @@ function CommentThread({
   expandRepliesForId: number | null;
 }) {
   const [visibleReplies, setVisibleReplies] = useState(0);
+  const [contentExpanded, setContentExpanded] = useState(false);
+  const [contentCanExpand, setContentCanExpand] = useState(false);
+  const commentTextRef = useRef<HTMLParagraphElement>(null);
   const replyCount = item.replies?.length || 0;
   const repliesExpanded = visibleReplies > 0;
   const visibleReplyItems = item.replies?.slice(0, visibleReplies) || [];
@@ -168,6 +171,21 @@ function CommentThread({
       setVisibleReplies(replyCount);
     }
   }, [expandRepliesForId, item.id, replyCount]);
+
+  useEffect(() => {
+    const textElement = commentTextRef.current;
+    if (!textElement || editTarget === item.id) return;
+
+    const measureContent = () => {
+      setContentCanExpand(textElement.scrollHeight > textElement.clientHeight + 1);
+    };
+
+    measureContent();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measureContent);
+    observer.observe(textElement);
+    return () => observer.disconnect();
+  }, [item.content, editTarget, item.id]);
 
   function toggleReplies() {
     setVisibleReplies((current) => current > 0 ? 0 : replyCount);
@@ -195,7 +213,26 @@ function CommentThread({
                 <Button type="button" size="sm" variant="primary" disabled={!editDraft.trim() || editDraft.trim() === item.content.trim() || editing} onClick={onSaveEdit}>{editing ? "Saving..." : "Save"}</Button>
               </div>
             </div>
-          ) : <p>{item.content}</p>}
+          ) : (
+            <>
+              <p
+                ref={commentTextRef}
+                className={contentExpanded ? "is-expanded" : undefined}
+              >
+                {item.content}
+              </p>
+              {contentCanExpand ? (
+                <button
+                  type="button"
+                  className="portal-comment-show-more"
+                  onClick={() => setContentExpanded((expanded) => !expanded)}
+                  aria-expanded={contentExpanded}
+                >
+                  {contentExpanded ? "Hide" : "Show more"}
+                </button>
+              ) : null}
+            </>
+          )}
           <div className="portal-comment-actions">
             <button type="button" className={`portal-comment-reaction portal-comment-like${item.user_reaction === "like" ? " is-active" : ""}`} onClick={() => onReact(item.id, "like")} aria-label={`Like comment, ${item.likes_count} likes`}>
               <LikeIcon size={14} /> {item.likes_count}

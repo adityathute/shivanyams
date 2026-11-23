@@ -283,6 +283,36 @@ class JobPostSerializer(serializers.ModelSerializer):
     syllabus_en = serializers.CharField(required=False, allow_blank=True, max_length=12000)
     syllabus_mr = serializers.CharField(required=False, allow_blank=True, max_length=12000)
     syllabus_hi = serializers.CharField(required=False, allow_blank=True, max_length=12000)
+    selection_criteria_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    selection_criteria_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    selection_criteria_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    skill_test_details_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    skill_test_details_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    skill_test_details_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    interview_details_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    interview_details_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    interview_details_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    medical_standards_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    medical_standards_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    medical_standards_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    training_details_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    training_details_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    training_details_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    posting_preferences_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    posting_preferences_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    posting_preferences_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    document_verification_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    document_verification_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    document_verification_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    application_guidelines_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    application_guidelines_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    application_guidelines_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    reservation_policy_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    reservation_policy_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    reservation_policy_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    additional_post_notes_en = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    additional_post_notes_mr = serializers.CharField(required=False, allow_blank=True, max_length=6000)
+    additional_post_notes_hi = serializers.CharField(required=False, allow_blank=True, max_length=6000)
     fees = JobPostFeeSerializer(many=True, required=False)
     educations = JobPostEducationSerializer(many=True, required=False)
 
@@ -347,6 +377,36 @@ class JobPostSerializer(serializers.ModelSerializer):
             "syllabus_en",
             "syllabus_mr",
             "syllabus_hi",
+            "selection_criteria_en",
+            "selection_criteria_mr",
+            "selection_criteria_hi",
+            "skill_test_details_en",
+            "skill_test_details_mr",
+            "skill_test_details_hi",
+            "interview_details_en",
+            "interview_details_mr",
+            "interview_details_hi",
+            "medical_standards_en",
+            "medical_standards_mr",
+            "medical_standards_hi",
+            "training_details_en",
+            "training_details_mr",
+            "training_details_hi",
+            "posting_preferences_en",
+            "posting_preferences_mr",
+            "posting_preferences_hi",
+            "document_verification_en",
+            "document_verification_mr",
+            "document_verification_hi",
+            "application_guidelines_en",
+            "application_guidelines_mr",
+            "application_guidelines_hi",
+            "reservation_policy_en",
+            "reservation_policy_mr",
+            "reservation_policy_hi",
+            "additional_post_notes_en",
+            "additional_post_notes_mr",
+            "additional_post_notes_hi",
             "sort_order",
             "fees",
             "educations",
@@ -539,6 +599,98 @@ class JobPostSerializer(serializers.ModelSerializer):
             for key in ("note_en", "note_mr", "note_hi"):
                 if len(str(document.get(key, "") or "")) > 600:
                     raise serializers.ValidationError({"required_documents": f"{label} field {key} is too long."})
+
+        # Bound optional multilingual post-specific recruitment sections.
+        value = attrs.get("selection_criteria_en", getattr(self.instance, "selection_criteria_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"selection_criteria_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("selection_criteria_mr", getattr(self.instance, "selection_criteria_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"selection_criteria_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("selection_criteria_hi", getattr(self.instance, "selection_criteria_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"selection_criteria_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("skill_test_details_en", getattr(self.instance, "skill_test_details_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"skill_test_details_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("skill_test_details_mr", getattr(self.instance, "skill_test_details_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"skill_test_details_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("skill_test_details_hi", getattr(self.instance, "skill_test_details_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"skill_test_details_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("interview_details_en", getattr(self.instance, "interview_details_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"interview_details_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("interview_details_mr", getattr(self.instance, "interview_details_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"interview_details_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("interview_details_hi", getattr(self.instance, "interview_details_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"interview_details_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("medical_standards_en", getattr(self.instance, "medical_standards_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"medical_standards_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("medical_standards_mr", getattr(self.instance, "medical_standards_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"medical_standards_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("medical_standards_hi", getattr(self.instance, "medical_standards_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"medical_standards_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("training_details_en", getattr(self.instance, "training_details_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"training_details_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("training_details_mr", getattr(self.instance, "training_details_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"training_details_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("training_details_hi", getattr(self.instance, "training_details_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"training_details_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("posting_preferences_en", getattr(self.instance, "posting_preferences_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"posting_preferences_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("posting_preferences_mr", getattr(self.instance, "posting_preferences_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"posting_preferences_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("posting_preferences_hi", getattr(self.instance, "posting_preferences_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"posting_preferences_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("document_verification_en", getattr(self.instance, "document_verification_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"document_verification_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("document_verification_mr", getattr(self.instance, "document_verification_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"document_verification_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("document_verification_hi", getattr(self.instance, "document_verification_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"document_verification_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("application_guidelines_en", getattr(self.instance, "application_guidelines_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"application_guidelines_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("application_guidelines_mr", getattr(self.instance, "application_guidelines_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"application_guidelines_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("application_guidelines_hi", getattr(self.instance, "application_guidelines_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"application_guidelines_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("reservation_policy_en", getattr(self.instance, "reservation_policy_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"reservation_policy_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("reservation_policy_mr", getattr(self.instance, "reservation_policy_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"reservation_policy_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("reservation_policy_hi", getattr(self.instance, "reservation_policy_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"reservation_policy_hi": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("additional_post_notes_en", getattr(self.instance, "additional_post_notes_en", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"additional_post_notes_en": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("additional_post_notes_mr", getattr(self.instance, "additional_post_notes_mr", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"additional_post_notes_mr": "This field must be text and cannot exceed 6,000 characters."})
+        value = attrs.get("additional_post_notes_hi", getattr(self.instance, "additional_post_notes_hi", "") if self.instance else "") or ""
+        if not isinstance(value, str) or len(value) > 6000:
+            raise serializers.ValidationError({"additional_post_notes_hi": "This field must be text and cannot exceed 6,000 characters."})
 
         # Validate post-specific compensation values.
         salary_min = attrs.get("salary_min", getattr(self.instance, "salary_min", None) if self.instance else None)

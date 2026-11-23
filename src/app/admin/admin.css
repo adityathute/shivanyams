@@ -1896,3 +1896,36 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* Website Views only: keep long page links on one line with a clear ellipsis. */
+.admin-analytics-modal .admin-website-views-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.admin-analytics-modal .admin-website-views-table th:first-child,
+.admin-analytics-modal .admin-website-views-table td:first-child {
+  width: 42%;
+}
+
+.admin-analytics-modal .admin-website-views-table th:nth-child(2),
+.admin-analytics-modal .admin-website-views-table td:nth-child(2),
+.admin-analytics-modal .admin-website-views-table th:nth-child(3),
+.admin-analytics-modal .admin-website-views-table td:nth-child(3) {
+  width: 17%;
+}
+
+.admin-analytics-modal .admin-website-views-table th:last-child,
+.admin-analytics-modal .admin-website-views-table td:last-child {
+  width: 24%;
+}
+
+.admin-analytics-modal .admin-website-views-table .admin-analytics-link {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

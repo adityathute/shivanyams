@@ -186,16 +186,41 @@ export function TagsPage() {
         )}
 
         {tagRows.length > 0 && (
-          <div className="tags-pagination admin-table-footer">
-            <span>Showing {firstTag}–{lastTag} of {tagRows.length} tags</span>
+          <div className="admin-table-footer">
+            <span>
+              Showing {firstTag}–{lastTag} of {tagRows.length} tags
+            </span>
             <div className="admin-pagination">
-              <label htmlFor="tags-page-size">Rows per page</label>
-              <select id="tags-page-size" value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}>
-                {[10, 15, 25, 50].map((size) => <option key={size} value={size}>{size}</option>)}
+              <select
+                value={pageSize}
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setPage(1);
+                }}
+                aria-label="Rows per page"
+              >
+                <option value={10}>10 rows</option>
+                <option value={15}>15 rows</option>
+                <option value={25}>25 rows</option>
+                <option value={50}>50 rows</option>
               </select>
-              <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
-              <span>Page {page} of {pageCount}</span>
-              <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((value) => value - 1)}
+              >
+                Previous
+              </button>
+              <span>
+                Page {page} of {pageCount}
+              </span>
+              <button
+                type="button"
+                disabled={page >= pageCount}
+                onClick={() => setPage((value) => value + 1)}
+              >
+                Next
+              </button>
             </div>
           </div>
         )}

@@ -2211,3 +2211,16 @@
   overflow-wrap: anywhere !important;
   -webkit-line-clamp: unset !important;
 }
+
+
+/* Likes analytics: match each Post title's line clamp to the visible Comment/Reply line count. */
+.admin-analytics-modal .admin-likes-analytics-table .admin-likes-post-link {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: var(--like-title-lines, 3) !important;
+  line-height: inherit;
+  text-overflow: clip !important;
+}

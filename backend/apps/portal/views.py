@@ -636,9 +636,9 @@ class PostComments(APIView):
             while ancestor.parent_id is not None:
                 depth += 1
                 ancestor = ancestor.parent
-            if depth >= 3:
+            if depth >= 4:
                 raise ValidationError(
-                    {"parent": "Replies can be nested up to 3 levels only."}
+                    {"parent": "Replies can be nested up to 4 levels only."}
                 )
 
         author_name, author_avatar = get_comment_author_profile(request)

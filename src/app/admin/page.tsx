@@ -664,6 +664,8 @@ export default function AdminPage() {
 
   async function showReactionPostsOnly(show: boolean) {
     setLikeAnalyticsPage(1);
+    setCommentsAnalyticsPage(1);
+    setRepliesAnalyticsPage(1);
     setReactionPostsOnly(show);
     if (!show) return;
 

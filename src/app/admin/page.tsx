@@ -1509,11 +1509,15 @@ export default function AdminPage() {
               <span>
                 {selectedVisitor
                   ? formatCompactNumber(visitorPages.length) + " pages visited"
-                  : selectedAnalyticsPath
-                    ? analyticsEvents.length + " recent view events"
-                    : analyticsType === "views"
-                      ? formatCompactNumber(analyticsPages.length) + " pages tracked"
-                      : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
+                  : selectedPost
+                    ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"
+                    : selectedAnalyticsPath
+                      ? analyticsEvents.length + " recent view events"
+                      : analyticsType === "posts"
+                        ? formatCompactNumber(postAnalyticsPages.length) + " posts tracked"
+                        : analyticsType === "views"
+                          ? formatCompactNumber(analyticsPages.length) + " pages tracked"
+                          : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
               </span>
             </footer>
           </section>

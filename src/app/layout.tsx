@@ -8,8 +8,26 @@ import "./globals.css";
 import "./portal-base.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL((process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "")),
   title: "ShivanyaMS | Govt Jobs, Schemes & Updates",
   description: "सरकारी नोकरी, योजना, निकाल आणि महत्त्वाच्या अपडेट्स.",
+  applicationName: "ShivanyaMS",
+  openGraph: {
+    type: "website",
+    siteName: "ShivanyaMS",
+    title: "ShivanyaMS | Govt Jobs, Schemes & Updates",
+    description: "Government jobs, schemes, examinations, admit cards and results.",
+    images: [{ url: "/logo.png", width: 1200, height: 630, alt: "ShivanyaMS" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ShivanyaMS | Govt Jobs, Schemes & Updates",
+    description: "Government jobs, schemes, examinations, admit cards and results.",
+    images: ["/logo.png"],
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 const supportedLanguages: Language[] = ["en", "mr", "hi"];

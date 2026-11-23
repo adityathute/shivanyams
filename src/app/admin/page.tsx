@@ -13,7 +13,9 @@ import {
   Select,
   DownloadIcon,
   RefreshIcon,,
-  PlusIcon
+  PlusIcon,
+  GlobeIcon,
+  MessagesIcon
 } from "shivanya-ui";
 import {
   API_URL,
@@ -663,10 +665,12 @@ export default function AdminPage() {
           </div>
           <div className="admin-top-actions">
             <Link href="/admin/comments" className="admin-secondary-button">
-              Comments & reports
+              <MessagesIcon size={16} />
+              <span>Comments & reports</span>
             </Link>
             <Link href="/" target="_blank" className="admin-secondary-button">
-              View website ↗
+              <GlobeIcon size={16} />
+              <span>View website</span>
             </Link>
             <Link href="/admin/add-post" className="admin-primary-button">
               <PlusIcon size={16} />

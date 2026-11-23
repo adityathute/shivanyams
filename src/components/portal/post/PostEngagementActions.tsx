@@ -27,6 +27,20 @@ export function PostEngagementActions({ postId, title }: Props) {
   const [message, setMessage] = useState("");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const shareMenuRef = useRef<HTMLElement | null>(null);
+  const messageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showMessage = useCallback((nextMessage: string) => {
+    if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
+    setMessage(nextMessage);
+    messageTimerRef.current = setTimeout(() => {
+      setMessage("");
+      messageTimerRef.current = null;
+    }, 5000);
+  }, []);
+
+  useEffect(() => () => {
+    if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
+  }, []);
 
   const loadPostReaction = useCallback(async () => {
     const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reactions/`), { cache: "no-store" });
@@ -73,7 +87,7 @@ export function PostEngagementActions({ postId, title }: Props) {
       ...(method === "POST" ? { body: JSON.stringify({ reaction: next }) } : {}),
     });
     if (!response.ok) {
-      setMessage("Unable to update your reaction.");
+      showMessage("Unable to update your reaction.");
       return;
     }
     const payload = await response.json();
@@ -100,7 +114,7 @@ export function PostEngagementActions({ postId, title }: Props) {
           body: JSON.stringify({ post_id: postId }),
         });
     if (!response.ok) {
-      setMessage("Unable to update saved posts.");
+      showMessage("Unable to update saved posts.");
       return;
     }
     setSaved(!saved);
@@ -177,9 +191,9 @@ export function PostEngagementActions({ postId, title }: Props) {
       } else if (navigator.clipboard?.writeText) {
         try {
           await navigator.clipboard.writeText(url);
-          setMessage("Post link copied.");
+          showMessage("Post link copied.");
         } catch {
-          setMessage("Unable to copy the post link.");
+          showMessage("Unable to copy the post link.");
         }
       }
       return;
@@ -279,11 +293,11 @@ export function PostEngagementActions({ postId, title }: Props) {
           <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")}>LinkedIn</button>
           <button type="button" role="menuitem" onClick={() => void shareTo("email")}>Email</button>
           {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
-            <button type="button" role="menuitem" onClick={() => void shareTo("native")}>More…</button>
+            <button type="button" role="menuitem" onClick={() => { showMessage("Opening share options..."); void shareTo("native"); }}>More options</button>
           ) : null}
         </div>
       ) : null}
-      {message ? <p role="status">{message}</p> : null}
+      {message ? <p className="portal-engagement-message" role="status" aria-live="polite">{message}</p> : null}
     </section>
   );
 }

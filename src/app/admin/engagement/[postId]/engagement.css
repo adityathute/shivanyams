@@ -19,7 +19,7 @@
   padding: 11px 5px;
   border: 1px solid var(--border, #30343b);
   border-radius: 11px;
-  background: transparent;
+  background: #fff;
   color: inherit;
   text-align: center;
   cursor: pointer;

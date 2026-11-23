@@ -862,6 +862,22 @@ class ExaminationDetails(TimestampedModel):
     total_marks = models.PositiveIntegerField(null=True, blank=True)
     passing_marks = models.CharField(max_length=120, blank=True)
     negative_marking = models.CharField(max_length=120, blank=True)
+    exam_status = models.CharField(max_length=24, choices=[
+        ("announced", "Announced"), ("applications_open", "Applications Open"),
+        ("applications_closed", "Applications Closed"), ("scheduled", "Scheduled"),
+        ("postponed", "Postponed"), ("completed", "Completed"), ("cancelled", "Cancelled"),
+    ], default="announced", db_index=True)
+    application_start_date = models.DateField(null=True, blank=True)
+    application_end_date = models.DateField(null=True, blank=True)
+    exam_date = models.DateField(null=True, blank=True)
+    eligibility_en = models.TextField(blank=True)
+    eligibility_mr = models.TextField(blank=True)
+    eligibility_hi = models.TextField(blank=True)
+    paper_sections = models.JSONField(default=list, blank=True)
+    result_expected_date = models.DateField(null=True, blank=True)
+    notification_number = models.CharField(max_length=120, blank=True)
+    notification_url = models.URLField(max_length=1000, blank=True)
+    admit_card_url = models.URLField(max_length=1000, blank=True)
 
     exam_pattern = models.TextField(blank=True)
     syllabus = models.TextField(blank=True)
@@ -888,6 +904,27 @@ class AdmitCardDetails(TimestampedModel):
     exam_name = models.CharField(max_length=240, blank=True)
     release_date = models.DateField(null=True, blank=True)
     examination_date = models.DateField(null=True, blank=True)
+    card_status = models.CharField(max_length=16, choices=[
+        ("scheduled", "Scheduled"), ("available", "Available"),
+        ("expired", "Download Window Closed"), ("withdrawn", "Withdrawn"),
+    ], default="scheduled", db_index=True)
+    available_from = models.DateField(null=True, blank=True)
+    available_until = models.DateField(null=True, blank=True)
+    exam_shift = models.CharField(max_length=80, blank=True)
+    reporting_time = models.TimeField(null=True, blank=True)
+    exam_center_name = models.CharField(max_length=240, blank=True)
+    exam_center_address = models.TextField(blank=True)
+    documents_to_carry = models.JSONField(default=list, blank=True)
+    prohibited_items = models.JSONField(default=list, blank=True)
+    photo_signature_requirements = models.TextField(blank=True)
+    download_steps = models.JSONField(default=list, blank=True)
+    forgot_credentials_url = models.URLField(max_length=1000, blank=True)
+    helpdesk_email = models.EmailField(blank=True)
+    helpdesk_phone = models.CharField(max_length=40, blank=True)
+    helpdesk_hours = models.CharField(max_length=160, blank=True)
+    language_options = models.JSONField(default=list, blank=True)
+    correction_window_end = models.DateField(null=True, blank=True)
+    correction_contact = models.TextField(blank=True)
 
     download_url = models.URLField(max_length=1000, blank=True)
     login_url = models.URLField(max_length=1000, blank=True)
@@ -930,6 +967,18 @@ class ResultDetails(TimestampedModel):
 
     examination_name = models.CharField(max_length=240, blank=True)
     result_date = models.DateField(null=True, blank=True)
+    result_status = models.CharField(max_length=16, choices=[
+        ("pending", "Pending"), ("declared", "Declared"), ("revised", "Revised"),
+        ("withheld", "Withheld"), ("cancelled", "Cancelled"),
+    ], default="pending", db_index=True)
+    scorecard_start_date = models.DateField(null=True, blank=True)
+    scorecard_end_date = models.DateField(null=True, blank=True)
+    login_url = models.URLField(max_length=1000, blank=True)
+    required_credentials = models.TextField(blank=True)
+    cutoff_details = models.JSONField(default=list, blank=True)
+    result_summary_en = models.TextField(blank=True)
+    result_summary_mr = models.TextField(blank=True)
+    result_summary_hi = models.TextField(blank=True)
 
     result_url = models.URLField(max_length=1000, blank=True)
     merit_list_url = models.URLField(max_length=1000, blank=True)

@@ -86,6 +86,7 @@ function shareChannelLabel(value: unknown) {
   const labels: Record<string, string> = {
     copy: "Copy Link",
     native: "Native Share",
+    dismissed: "Share Menu Closed",
     whatsapp: "WhatsApp",
     facebook: "Facebook",
     telegram: "Telegram",

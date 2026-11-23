@@ -22,4 +22,3 @@ class Migration(migrations.Migration):
             reverse_sql=migrations.RunSQL.noop,
         ),
     ]
-}

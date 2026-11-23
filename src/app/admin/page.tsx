@@ -1760,60 +1760,64 @@ export default function AdminPage() {
                   </>
                 )
              ) : analyticsType === "subscribers" && !selectedPost && !selectedVisitor ? (
-                subscriberRows.length === 0 ? <div className="admin-empty">No subscribers recorded yet.</div> : (
-                  <>
-                    <div className="admin-subscribers-summary">
-                      <article><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></article>
-                      <article><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></article>
-                      <article><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></article>
-                      <article><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></article>
-                      <article><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></article>
-                    </div>
-                    <div className="admin-subscribers-toolbar">
-                      <input
-                        type="search"
-                        value={subscriberSearch}
-                        onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
-                        placeholder="Search by name or email"
-                        aria-label="Search subscribers by name or email"
-                      />
-                    </div>
-                    {(() => {
-                      const filteredSubscribers = subscriberRows.filter((item) =>
-                        [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
-                      );
-                      return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
-                        <>
-                          <div className="admin-analytics-table-wrap">
-                            <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
-                              <thead><tr><th>Full name</th><th>Email</th><th>Subscribed at</th></tr></thead>
-                              <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
-                                const dateTime = formatAnalyticsDateTime(item.subscribed_at);
-                                return <tr key={item.id}>
-                                  <td>
-                                    {item.full_name ? (
-                                      <button
-                                        type="button"
-                                        className="admin-analytics-link admin-likes-user-link"
-                                        title={formatPersonName(item.full_name)}
-                                        onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}
-                                      >
-                                        {formatPersonName(item.full_name)}
-                                      </button>
-                                    ) : "—"}
-                                  </td>
-                                  <td>{item.email}</td>
-                                  <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>
-                                </tr>;
-                              })}</tbody>
-                            </table>
-                          </div>
-                          <AnalyticsPagination total={filteredSubscribers.length} page={subscribersPage} pageSize={analyticsPageSize} onPageChange={setSubscribersPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSubscribersPage(1); }} />
-                        </>
-                      );
-                    })()}
-                  </>
-                )
+                <>
+                  <div className="admin-subscribers-summary">
+                    <article><span>Active subscribers</span><strong>{formatCompactNumber(subscriberTotals.total)}</strong></article>
+                    <article><span>Registered users</span><strong>{formatCompactNumber(subscriberTotals.registered)}</strong></article>
+                    <article><span>Total subscriptions</span><strong>{formatCompactNumber(subscriberTotals.subscriptions)}</strong></article>
+                    <article><span>Resubscriptions</span><strong>{formatCompactNumber(subscriberTotals.resubscriptions)}</strong></article>
+                    <article><span>Unsubscriptions</span><strong>{formatCompactNumber(subscriberTotals.unsubscriptions)}</strong></article>
+                  </div>
+                  {subscriberRows.length === 0 ? (
+                    <div className="admin-empty">No active subscribers. Subscription history is shown above.</div>
+                  ) : (
+                    <>
+                      <div className="admin-subscribers-toolbar">
+                        <input
+                          type="search"
+                          value={subscriberSearch}
+                          onChange={(event) => { setSubscriberSearch(event.target.value); setSubscribersPage(1); }}
+                          placeholder="Search by name or email"
+                          aria-label="Search subscribers by name or email"
+                        />
+                      </div>
+                      {(() => {
+                        const filteredSubscribers = subscriberRows.filter((item) =>
+                          [item.full_name, item.email].some((value) => value.toLowerCase().includes(subscriberSearch.trim().toLowerCase()))
+                        );
+                        return filteredSubscribers.length === 0 ? <div className="admin-empty">No subscribers match your search.</div> : (
+                          <>
+                            <div className="admin-analytics-table-wrap">
+                              <table className="admin-analytics-table admin-likes-analytics-table admin-subscribers-table">
+                                <thead><tr><th>Full name</th><th>Email</th><th>Subscribed at</th></tr></thead>
+                                <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
+                                  const dateTime = formatAnalyticsDateTime(item.subscribed_at);
+                                  return <tr key={item.id}>
+                                    <td>
+                                      {item.full_name ? (
+                                        <button
+                                          type="button"
+                                          className="admin-analytics-link admin-likes-user-link"
+                                          title={formatPersonName(item.full_name)}
+                                          onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}
+                                        >
+                                          {formatPersonName(item.full_name)}
+                                        </button>
+                                      ) : "—"}
+                                    </td>
+                                    <td>{item.email}</td>
+                                    <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>
+                                  </tr>;
+                                })}</tbody>
+                              </table>
+                            </div>
+                            <AnalyticsPagination total={filteredSubscribers.length} page={subscribersPage} pageSize={analyticsPageSize} onPageChange={setSubscribersPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSubscribersPage(1); }} />
+                          </>
+                        );
+                      })()}
+                    </>
+                  )}
+                </>
              ) : analyticsType === "reports" && !selectedPost && !selectedVisitor ? (
                 reactionPostsOnly ? (
                   reportPostRows.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (

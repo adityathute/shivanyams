@@ -1477,7 +1477,7 @@ export default function AdminPage() {
                                       onClick={() => void openLikeComment(item, "comment")}
                                       aria-label="Open parent comment details"
                                     >
-                                      <span className="admin-analytics-like-context">Comment: {item.parent_content}</span>
+                                      <small className="admin-analytics-like-context">Comment: {item.parent_content}</small>
                                     </button>
                                   ) : null}
                                   <button

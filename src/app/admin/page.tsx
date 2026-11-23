@@ -191,7 +191,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -776,8 +776,8 @@ export default function AdminPage() {
               group: "content",
             },
             { label: "Total posts", value: counts.total, group: "content" },
-            { label: "Drafts", value: counts.drafts, group: "content" },
-            { label: "Pending review", value: counts.review, group: "content" },
+            { label: "Drafts", value: counts.drafts, analytics: "drafts", group: "content" },
+            { label: "Pending review", value: counts.review, analytics: "review", group: "content" },
           ];
 
           const engagementItems = [

@@ -41,7 +41,7 @@ def _normalize_text(value):
     for _ in range(2):
         text = unquote(text)
     text = text.casefold()
-    text = re.sub(r"\[\s*dot\s*\]|\(\s*dot\s*\)|\{\s*dot\s*\}", ".", text)
+    text = re.sub(r"\[\s*(?:dot|\.)\s*\]|\(\s*(?:dot|\.)\s*\)|\{\s*(?:dot|\.)\s*\}", ".", text)
     text = re.sub(r"\s+dot\s+", ".", text)
     text = re.sub(r"\bhxxps?\b", "https", text)
     text = re.sub(r"\s*\.\s*", ".", text)

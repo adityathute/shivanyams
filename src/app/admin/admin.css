@@ -1281,94 +1281,6 @@
 }
 
 
-/* Balanced visitor details layout with a consistent modal height and spacing. */
-.admin-analytics-modal-visitor {
-  height: min(84vh, 820px);
-  max-height: min(84vh, 820px);
-}
-
-.admin-analytics-modal-visitor .admin-analytics-detail {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: 18px;
-  min-height: 0;
-  box-sizing: border-box;
-  padding: 16px;
-  overflow-y: auto;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-summary {
-  flex: 0 0 auto;
-  margin: 0;
-  padding: 16px;
-  gap: 10px;
-  border-radius: 13px;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-summary strong {
-  min-height: 52px;
-  padding: 11px 14px;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-summary span {
-  min-height: 44px;
-  padding: 10px 12px;
-}
-
-.admin-analytics-modal-visitor .admin-analytics-table-wrap {
-  flex: 0 1 auto;
-  min-height: 290px;
-  max-height: clamp(360px, 35vh, 400px);
-  overflow: auto;
-}
-
-.admin-analytics-modal-visitor .admin-analytics-table {
-  min-width: 620px;
-}
-
-@media (max-width: 760px) {
-  .admin-analytics-modal-visitor {
-    height: min(90vh, 900px);
-    max-height: min(90vh, 900px);
-  }
-
-  .admin-analytics-modal-visitor .admin-analytics-detail {
-    gap: 14px;
-    padding: 14px 14px 18px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-summary {
-    padding: 12px;
-    gap: 8px;
-  }
-
-  .admin-analytics-modal-visitor .admin-analytics-table-wrap {
-    max-height: 38vh;
-  }
-}
-
-@media (max-width: 480px) {
-  .admin-analytics-modal-visitor {
-    height: 94vh;
-    max-height: 94vh;
-  }
-
-  .admin-analytics-modal-visitor .admin-analytics-detail {
-    gap: 12px;
-    padding: 11px 11px 14px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-summary {
-    padding: 10px;
-  }
-
-  .admin-analytics-modal-visitor .admin-analytics-table-wrap {
-    max-height: 34vh;
-  }
-}
-
-
 /* Keep analytics icon buttons transparent; only the close icon turns red and rotates. */
 .admin-analytics-modal > header .admin-analytics-back-icon,
 .admin-analytics-modal > header .admin-analytics-close {
@@ -1730,158 +1642,6 @@
 }
 
 
-/* Visitor details: fit ten compact rows in the modal while keeping the table independently scrollable. */
-.admin-analytics-modal-visitor .admin-analytics-detail {
-  gap: 12px;
-  padding: 12px 16px 14px;
-  overflow: hidden;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-summary {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-  padding: 10px;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-summary strong {
-  min-height: 40px;
-  padding: 8px 11px;
-  font-size: 16px;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-summary span {
-  min-height: 34px;
-  padding: 7px 9px;
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table-wrap {
-  flex: 1 1 auto;
-  min-height: 0;
-  height: clamp(300px, 46vh, 520px);
-  max-height: clamp(300px, 46vh, 520px);
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table {
-  width: 100%;
-  min-width: 580px;
-  table-layout: fixed;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  padding: 9px 11px;
-  font-size: 9px;
-  line-height: 1.25;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table td {
-  padding: 8px 11px;
-  font-size: 11px;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table th:first-child,
-.admin-analytics-modal-visitor .admin-visitor-details-table td:first-child {
-  width: 48%;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table th:nth-child(2),
-.admin-analytics-modal-visitor .admin-visitor-details-table td:nth-child(2) {
-  width: 14%;
-  text-align: center;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table th:last-child,
-.admin-analytics-modal-visitor .admin-visitor-details-table td:last-child {
-  width: 38%;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-pagination {
-  flex: 0 0 auto;
-  gap: 8px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  font-size: 11px;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination {
-  gap: 6px;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination button,
-.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination select {
-  padding: 6px 8px;
-  font-size: 10px;
-}
-
-@media (max-width: 760px) {
-  .admin-analytics-modal-visitor .admin-analytics-detail {
-    gap: 10px;
-    padding: 10px 12px 12px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-summary {
-    gap: 6px;
-    padding: 8px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-summary span {
-    min-height: 32px;
-    padding: 6px 8px;
-    font-size: 10px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-table-wrap {
-    height: clamp(260px, 42vh, 440px);
-    max-height: clamp(260px, 42vh, 440px);
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-pagination {
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .admin-analytics-modal-visitor .admin-analytics-detail {
-    padding: 8px 9px 10px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-    padding: 7px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-summary strong {
-    min-height: 36px;
-    font-size: 14px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-table-wrap {
-    height: clamp(230px, 38vh, 360px);
-    max-height: clamp(230px, 38vh, 360px);
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-pagination {
-    flex-direction: column;
-    gap: 7px;
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-}
-
 /* Dashboard stat number colors: highlight the three website metrics in blue. */
 .admin-stats:not(.admin-stats-secondary) .admin-stat-card > strong,
 .admin-stats:not(.admin-stats-secondary) .admin-stat-clickable button > strong,
@@ -1894,74 +1654,7 @@
   color: #2563eb;
 }
 
-/* Visitor details table: use the modal's full available width and height cleanly. */
-.admin-analytics-modal-visitor {
-  width: min(1040px, calc(100vw - 40px));
-  min-width: 0;
-  box-sizing: border-box;
-}
 
-.admin-analytics-modal-visitor .admin-analytics-detail {
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table-wrap {
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  height: auto;
-  max-height: none;
-  flex: 1 1 0;
-  overflow: auto;
-  box-sizing: border-box;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table {
-  width: 100%;
-  min-width: 0;
-  table-layout: fixed;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table th,
-.admin-analytics-modal-visitor .admin-visitor-details-table td {
-  box-sizing: border-box;
-}
-
-.admin-analytics-modal-visitor .admin-visitor-details-table td:first-child a {
-  display: block;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-@media (max-width: 760px) {
-  .admin-analytics-modal-visitor {
-    width: calc(100vw - 24px);
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-table-wrap {
-    flex: 1 1 0;
-    height: auto;
-    max-height: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .admin-analytics-modal-visitor {
-    width: calc(100vw - 14px);
-  }
-
-  .admin-analytics-modal-visitor .admin-visitor-details-table th,
-  .admin-analytics-modal-visitor .admin-visitor-details-table td {
-    padding: 8px 6px;
-    font-size: 10px;
-  }
-}
-
-
-/* Visitor details modal: size the content area as a true flex column so the
    table stays inside the modal instead of overflowing its available height. */
 .admin-analytics-modal.admin-analytics-modal-visitor {
   width: min(1180px, calc(100vw - 48px));
@@ -2109,6 +1802,230 @@
   }
 
   .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination {
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* Visitor details modal: one layout system, no competing legacy sizing rules. */
+.admin-analytics-overlay {
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor {
+  display: flex;
+  flex-direction: column;
+  width: min(1180px, calc(100vw - 48px));
+  height: min(88vh, 900px);
+  max-height: min(88vh, 900px);
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor > header {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-analytics-detail {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  gap: 12px;
+  padding: 12px 16px 14px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-summary {
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+  gap: 7px;
+  margin: 0;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-summary strong {
+  min-width: 0;
+  min-height: 38px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-summary span {
+  min-width: 0;
+  min-height: 34px;
+  padding: 7px 9px;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table-wrap {
+  display: block;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 0;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: auto;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table th,
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td {
+  min-width: 0;
+  padding: 9px 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table th:first-child,
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td:first-child {
+  width: 52%;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table th:nth-child(2),
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td:nth-child(2) {
+  width: 12%;
+  text-align: center;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table th:last-child,
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td:last-child {
+  width: 36%;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td:first-child a {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 0;
+  gap: 8px;
+  margin: 0;
+  padding: 2px 0;
+  box-sizing: border-box;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination {
+  gap: 6px;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination button,
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination .admin-pagination select {
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table-wrap,
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table {
+  border-radius: 10px;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table thead th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table thead th:last-child {
+  border-top-right-radius: 10px;
+}
+
+@media (max-width: 760px) {
+  .admin-analytics-modal.admin-analytics-modal-visitor {
+    width: calc(100vw - 24px);
+    height: min(90vh, 900px);
+    max-height: min(90vh, 900px);
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-analytics-detail {
+    gap: 10px;
+    padding: 10px 12px 12px;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-summary {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-summary span {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table th,
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td {
+    padding: 8px 7px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-analytics-modal.admin-analytics-modal-visitor {
+    width: calc(100vw - 14px);
+    height: 94vh;
+    max-height: 94vh;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-analytics-detail {
+    gap: 9px;
+    padding: 8px 9px 10px;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table th,
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-table td {
+    padding: 7px 5px;
+    font-size: 9px;
+  }
+
+  .admin-analytics-modal.admin-analytics-modal-visitor .admin-visitor-details-pagination {
+    align-items: flex-start;
     flex-direction: column;
     gap: 7px;
   }

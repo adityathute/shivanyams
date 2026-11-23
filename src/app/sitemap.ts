@@ -30,7 +30,7 @@ async function getKindEntries(apiKind: string, route: string, base: string): Pro
           changeFrequency: "weekly" as const,
           priority: 0.6,
         })));
-      if (!payload?.next && !payload?.data?.next && rows.length < 20) break;
+      if (!payload?.next && !payload?.data?.next) break;
     } catch {
       break;
     }

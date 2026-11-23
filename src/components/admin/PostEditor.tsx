@@ -253,7 +253,7 @@ function normalizeDateInput(item: Partial<DateInput>): DateInput {
     new_time: item.new_time ? item.new_time.slice(0, 5) : "",
   };
 }
-type PostVersionInfo = { id: number; version_number: number; is_published: boolean; created_at: string; published_at?: string | null; };
+type PostVersionInfo = { id: number; version_number: number; is_published: boolean; created_at: string; published_at?: string | null; payload?: PostRecord; };
 
 type PostRecord = {
   id: number;
@@ -696,12 +696,20 @@ export default function PostEditor({
           throw new Error(
             payload.detail || `Unable to load post (${response.status}).`,
           );
-        const record = payload as PostRecord;
+        let record = payload as PostRecord;
         postIdRef.current = record.id;
         currentSlugRef.current = record.slug;
         if (record.status === "published") {
           const versionsResponse = await adminFetch(`${API_URL}/admin/content/${record.id}/versions/`, { signal: controller.signal });
-          if (versionsResponse.ok) setPostVersions(await versionsResponse.json());
+          if (versionsResponse.ok) {
+            const versions = await versionsResponse.json() as PostVersionInfo[];
+            setPostVersions(versions);
+            const workingVersion = versions.find((version) => !version.is_published && version.payload);
+            if (workingVersion?.payload) {
+              // Open the unpublished working copy in the editor, while the public post remains unchanged.
+              record = { ...record, ...workingVersion.payload, id: record.id, status: "published", slug: record.slug };
+            }
+          }
         }
         setPostStatus(record.status || "draft");
         setOrganizationType(record.organization_type || "");

@@ -1,4 +1,4 @@
-.admin-engagement-stats {
+ .admin-engagement-stats {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   width: 100%;
@@ -141,7 +141,7 @@
 .admin-engagement-table th,
 .admin-engagement-table td {
   width: auto;
-  max-width: 260px;
+  min-width: 0;
   padding: 11px 12px;
   text-align: center;
   vertical-align: middle;
@@ -155,7 +155,7 @@
   text-transform: capitalize;
 }
 
-/* Keep the first column readable in every engagement table. */
+/* Keep the first column readable while letting every other column share the remaining width. */
 .admin-engagement-table th:first-child,
 .admin-engagement-table td:first-child {
   width: 160px;

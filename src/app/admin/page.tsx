@@ -260,8 +260,8 @@ export default function AdminPage() {
   const [commentsAnalyticsPage, setCommentsAnalyticsPage] = useState(1);
   const [repliesAnalyticsPage, setRepliesAnalyticsPage] = useState(1);
   const [reactionPostsOnly, setReactionPostsOnly] = useState(false);
-  const likeContentRefs = useRef<Map<number, HTMLSpanElement>>(new Map());
-  const likePostRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
+  const likeContentRefs = useRef<Map<string, HTMLSpanElement>>(new Map());
+  const likePostRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsVisitors, setAnalyticsVisitors] = useState<
     WebsiteVisitorRow[]
@@ -1056,7 +1056,6 @@ export default function AdminPage() {
       );
       if (!response.ok) throw new Error(`Delete failed (${response.status}).`);
       setPosts((current) => current.filter((item) => item.id !== post.id));
-      setSelectedIds((current) => current.filter((id) => id !== post.id));
       setDeleteTarget(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to delete post.");
@@ -1247,7 +1246,7 @@ export default function AdminPage() {
                     {item.analytics ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "posts" ? openPostAnalytics() : openWebsiteAnalytics(item.analytics!)}
+                        onClick={() => item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1283,24 +1282,17 @@ export default function AdminPage() {
                     key={item.label}
                     className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" || item.analytics === "subscribers" || item.analytics === "tags" || item.analytics === "shares" ? (
-                      <button
-                        type="button"
-                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : item.analytics === "tags" ? openTagsAnalytics() : item.analytics === "shares" ? openSharesAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
-                        aria-label={`View ${item.label.toLowerCase()} details`}
-                      >
-                        <span>
-                          {item.label}
-                          <small className="admin-stat-open-indicator" aria-hidden="true">↗</small>
-                        </span>
-                        <strong>{formatCompactNumber(item.value)}</strong>
-                      </button>
-                    ) : (
-                      <>
-                        <span>{item.label}</span>
-                        <strong>{formatCompactNumber(item.value)}</strong>
-                      </>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : item.analytics === "tags" ? openTagsAnalytics() : item.analytics === "shares" ? openSharesAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
+                      aria-label={`View ${item.label.toLowerCase()} details`}
+                    >
+                      <span>
+                        {item.label}
+                        <small className="admin-stat-open-indicator" aria-hidden="true">↗</small>
+                      </span>
+                      <strong>{formatCompactNumber(item.value)}</strong>
+                    </button>
                   </article>
                 ))}
               </section>

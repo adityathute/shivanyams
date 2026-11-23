@@ -308,3 +308,82 @@
 .admin-engagement-header-actions {
   flex: 0 0 auto;
 }
+
+
+.admin-share-breakdown {
+  padding: 16px 18px;
+  border-bottom: 1px solid #edf1f6;
+  background: #fbfcff;
+}
+
+.admin-share-breakdown-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-share-breakdown-heading strong {
+  color: #263b57;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-share-breakdown-heading span {
+  color: #8492a4;
+  font-size: 10px;
+}
+
+.admin-share-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 9px;
+}
+
+.admin-share-breakdown-card {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e5ebf4;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-share-breakdown-card span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-share-breakdown-card strong {
+  color: #263b57;
+  font-size: 21px;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-share-breakdown-card small {
+  color: #94a0b0;
+  font-size: 10px;
+}
+
+.admin-share-breakdown-empty {
+  padding: 12px;
+  border: 1px dashed #dbe4f0;
+  border-radius: 8px;
+  color: #8492a4;
+  font-size: 11px;
+  text-align: center;
+}
+
+@media (max-width: 560px) {
+  .admin-share-breakdown-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .admin-share-breakdown-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

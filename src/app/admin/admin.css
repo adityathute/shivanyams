@@ -475,8 +475,7 @@
   gap: 8px;
 }
 .admin-pagination button,
-.admin-pagination select,
-.admin-bulk-bar button {
+.admin-pagination select {
   border: 1px solid #dbe4f0;
   border-radius: 6px;
   background: #fff;
@@ -490,25 +489,9 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
-.admin-bulk-bar {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
-  padding: 12px 18px;
-  background: #f3f7ff;
-  border-top: 1px solid #dfe9fb;
-}
-.admin-bulk-bar strong {
-  font-size: 11px;
-  color: #1c3f73;
-  margin-right: auto;
-}
-.admin-bulk-bar button:nth-of-type(1) {
-  background: #075be8;
-  border-color: #075be8;
-  color: #fff;
-}
+
+
+
 @media (max-width: 900px) {
   .admin-filters {
     grid-template-columns: 1fr 1fr;

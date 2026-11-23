@@ -180,6 +180,75 @@ class AdminSlugAvailability(APIView):
         })
 
 
+class AdminTags(APIView):
+    """Manage shared SEO tags across every portal content type."""
+
+    permission_classes = [IsPortalAdmin]
+
+    @staticmethod
+    def get_tag_rows():
+        rows = {}
+        for keywords in Post.objects.values_list("meta_keywords", flat=True):
+            if not isinstance(keywords, list):
+                continue
+            for raw_tag in keywords:
+                if not isinstance(raw_tag, str):
+                    continue
+                label = raw_tag.strip()
+                if not label:
+                    continue
+                key = label.casefold()
+                if key not in rows:
+                    rows[key] = {"name": label, "count": 0}
+                rows[key]["count"] += 1
+        return sorted(rows.values(), key=lambda item: (-item["count"], item["name"].casefold()))
+
+    def get(self, request):
+        return Response(self.get_tag_rows())
+
+    def patch(self, request):
+        old_name = str(request.data.get("old_name", "")).strip()
+        new_name = str(request.data.get("new_name", "")).strip()
+        if not old_name or not new_name:
+            raise ValidationError({"detail": "Both the current and new tag names are required."})
+        if len(new_name) > 100:
+            raise ValidationError({"new_name": "Tag names must be 100 characters or fewer."})
+        if old_name.casefold() == new_name.casefold() and old_name == new_name:
+            return Response({"detail": "No changes were made."})
+        with transaction.atomic():
+            posts = Post.objects.select_for_update().only("id", "meta_keywords")
+            for post in posts.iterator():
+                keywords = post.meta_keywords if isinstance(post.meta_keywords, list) else []
+                if not any(isinstance(tag, str) and tag.strip().casefold() == old_name.casefold() for tag in keywords):
+                    continue
+                updated, seen = [], set()
+                for tag in keywords:
+                    value = new_name if isinstance(tag, str) and tag.strip().casefold() == old_name.casefold() else tag
+                    key = value.strip().casefold() if isinstance(value, str) else None
+                    if key and key not in seen:
+                        updated.append(value.strip())
+                        seen.add(key)
+                    elif not key:
+                        updated.append(value)
+                post.meta_keywords = updated
+                post.save(update_fields=["meta_keywords", "updated_at"])
+        return Response({"tags": self.get_tag_rows()})
+
+    def delete(self, request):
+        name = str(request.data.get("name", "")).strip()
+        if not name:
+            raise ValidationError({"name": "A tag name is required."})
+        with transaction.atomic():
+            posts = Post.objects.select_for_update().only("id", "meta_keywords")
+            for post in posts.iterator():
+                keywords = post.meta_keywords if isinstance(post.meta_keywords, list) else []
+                updated = [tag for tag in keywords if not (isinstance(tag, str) and tag.strip().casefold() == name.casefold())]
+                if updated != keywords:
+                    post.meta_keywords = updated
+                    post.save(update_fields=["meta_keywords", "updated_at"])
+        return Response({"tags": self.get_tag_rows()})
+
+
 class AdminContent(viewsets.ModelViewSet):
     permission_classes = [IsPortalAdmin]
     lookup_field = "slug"

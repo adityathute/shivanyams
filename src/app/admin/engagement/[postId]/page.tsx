@@ -14,6 +14,7 @@ import {
   ReportIcon,
   ShareIcon,
   UsersIcon,
+  RefreshIcon,
 } from "shivanya-ui";
 import { API_URL } from "../../../../components/portal/category/CategoryGrid";
 import { adminFetch } from "../../admin-utils";
@@ -168,6 +169,7 @@ export default function AdminPostEngagementPage() {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -190,7 +192,7 @@ export default function AdminPostEngagementPage() {
       .catch((err) => { if (active) setError(err instanceof Error ? err.message : "Unable to load engagement."); })
       .finally(() => { if (active) setLoadingData(false); });
     return () => { active = false; };
-  }, [isAdmin, params.postId]);
+  }, [isAdmin, params.postId, refreshKey]);
 
   const selectedRows = useMemo<DetailRow[]>(() => {
     if (!payload) return [];
@@ -296,8 +298,18 @@ export default function AdminPostEngagementPage() {
             <p>Overall post and discussion engagement, with individual activity records.</p>
           </div>
           <div className="admin-top-actions">
-            <Link href="/admin" className="admin-secondary-button">← Back to posts</Link>
-            <Link href="/admin/comments" className="admin-secondary-button">Comments & reports</Link>
+            <Link href="/admin" className="admin-secondary-button">← Back to dashboard</Link>
+            <button
+              type="button"
+              className="admin-refresh-button"
+              onClick={() => setRefreshKey((value) => value + 1)}
+              disabled={loadingData}
+              aria-label="Refresh engagement data"
+              title="Refresh"
+            >
+              <RefreshIcon size={16} />
+              <span>Refresh</span>
+            </button>
           </div>
         </header>
 

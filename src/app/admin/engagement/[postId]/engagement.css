@@ -1,11 +1,10 @@
 .admin-engagement-stats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   width: 100%;
   min-width: 0;
-  gap: 10px;
+  gap: clamp(4px, .7vw, 10px);
   margin: 22px 0;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
 }
 
 .admin-engagement-stat {
@@ -13,10 +12,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 11px;
+  gap: 8px;
+  width: 100%;
   min-width: 0;
   min-height: 104px;
-  padding: 13px 8px;
+  padding: 11px 5px;
   border: 1px solid var(--border, #30343b);
   border-radius: 11px;
   background: transparent;
@@ -37,12 +37,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 5px;
+  width: 100%;
   min-width: 0;
   color: var(--muted-foreground, #9298a2);
-  font-size: .76rem;
-  line-height: 1.25;
-  white-space: nowrap;
+  font-size: clamp(.58rem, .72vw, .76rem);
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .admin-engagement-stat > span i {
@@ -58,7 +60,7 @@
   display: block;
   max-width: 100%;
   color: var(--stat-color, inherit);
-  font-size: clamp(1.2rem, 1.7vw, 1.65rem);
+  font-size: clamp(.95rem, 1.55vw, 1.65rem);
   font-weight: 750;
   letter-spacing: -.035em;
   line-height: 1.1;
@@ -141,13 +143,20 @@
 }
 
 @media (max-width: 700px) {
-  .admin-engagement-stats { gap: 8px; }
+  .admin-engagement-stats { gap: 5px; }
 
   .admin-engagement-stat {
-    min-height: 88px;
-    padding: 11px 7px;
+    min-height: 78px;
+    gap: 6px;
+    padding: 8px 3px;
   }
 
-  .admin-engagement-stat > span { font-size: .74rem; }
+  .admin-engagement-stat > span {
+    flex-direction: column;
+    gap: 3px;
+    font-size: clamp(.52rem, 1.5vw, .68rem);
+  }
+
+  .admin-engagement-stat > strong { font-size: clamp(.82rem, 2.8vw, 1.15rem); }
   .admin-engagement-table { min-width: 680px; }
 }

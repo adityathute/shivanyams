@@ -221,6 +221,7 @@ export default function AdminPostEngagementPage() {
         ...details.reports.map((row) => ({ ...row, activity: "Report" })),
       ];
     }
+    if (selected === "users") return [];
     return details[selected] || [];
   }, [payload, selected]);
 

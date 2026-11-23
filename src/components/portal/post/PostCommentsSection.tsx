@@ -596,7 +596,11 @@ export function PostCommentsSection({ postId, language }: Props) {
       <div className="portal-comments-heading">
         <div>
           <h2 id="portal-comments-heading">Comments</h2>
-          <span>{countComments(comments).toLocaleString()} comments and replies</span>
+          <span>
+            {comments.length.toLocaleString()} {comments.length === 1 ? "comment" : "comments"}
+            {" · "}
+            {(countComments(comments) - comments.length).toLocaleString()} {(countComments(comments) - comments.length) === 1 ? "reply" : "replies"}
+          </span>
         </div>
         {!loading && comments.length > 0 ? (
           <div className="portal-comments-sort">

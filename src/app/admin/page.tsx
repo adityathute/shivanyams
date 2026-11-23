@@ -1476,22 +1476,14 @@ export default function AdminPage() {
                 </p>
               </div>
               {(analyticsType === "likes" || analyticsType === "dislikes") && !selectedVisitor && !selectedAnalyticsPath && !selectedPost && !selectedLikeComment ? (
-                <div className="admin-reaction-view-toggle" role="group" aria-label="Reaction analytics view">
-                  <button
-                    type="button"
-                    className={`admin-reaction-view-button${!reactionPostsOnly ? " is-active" : ""}`}
-                    aria-pressed={!reactionPostsOnly}
-                    onClick={() => void showReactionPostsOnly(false)}
-                  >
-                    Show All
-                  </button>
+                <div className="admin-reaction-view-toggle">
                   <button
                     type="button"
                     className={`admin-reaction-view-button${reactionPostsOnly ? " is-active" : ""}`}
                     aria-pressed={reactionPostsOnly}
-                    onClick={() => void showReactionPostsOnly(true)}
+                    onClick={() => void showReactionPostsOnly(!reactionPostsOnly)}
                   >
-                    Show Posts Only
+                    {reactionPostsOnly ? "Show All" : `Show Post ${analyticsType === "dislikes" ? "Dislikes" : "Likes"} Only`}
                   </button>
                 </div>
               ) : null}

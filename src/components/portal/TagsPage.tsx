@@ -139,7 +139,23 @@ export function TagsPage() {
           <span>{isAdmin ? adminTags.length : tags.length} {text.count}</span>
         </div>
 
-        {isAdmin && tagActionError ? <div className="saved-empty-state" role="alert">{tagActionError}</div> : null}\n\n        {isAdmin ? (\n          adminTags.length ? (\n            <div className="admin-managed-tags-list">\n              {adminTags.map((tag) => (\n                <div className="admin-managed-tag-row" key={tag.name}>\n                  <Link className="related-tag-chip" href={`/tags/${slugify(tag.name)}`}><span>{tag.name}</span><small>{tag.count}</small></Link>\n                  <div className="admin-managed-tag-actions">\n                    <button type="button" disabled={busyTag === tag.name} onClick={() => void renameTag(tag.name)}>Edit</button>\n                    <button type="button" className="danger" disabled={busyTag === tag.name} onClick={() => void deleteTag(tag.name)}>Delete</button>\n                  </div>\n                </div>\n              ))}\n            </div>\n          ) : <div className="saved-empty-state saved-list-empty">No tags are available yet.</div>\n        ) : data.loading ? (
+        {isAdmin && tagActionError ? <div className="saved-empty-state" role="alert">{tagActionError}</div> : null}
+
+        {isAdmin ? (
+          adminTags.length ? (
+            <div className="admin-managed-tags-list">
+              {adminTags.map((tag) => (
+                <div className="admin-managed-tag-row" key={tag.name}>
+                  <Link className="related-tag-chip" href={`/tags/${slugify(tag.name)}`}><span>{tag.name}</span><small>{tag.count}</small></Link>
+                  <div className="admin-managed-tag-actions">
+                    <button type="button" disabled={busyTag === tag.name} onClick={() => void renameTag(tag.name)}>Edit</button>
+                    <button type="button" className="danger" disabled={busyTag === tag.name} onClick={() => void deleteTag(tag.name)}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : <div className="saved-empty-state saved-list-empty">No tags are available yet.</div>
+        ) : data.loading ? (
           <div className="saved-empty-state saved-list-empty" role="status">{text.loading}</div>
         ) : tags.length ? (
           <div className="related-tag-list">

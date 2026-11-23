@@ -2013,22 +2013,30 @@ padding-right: 24px;
   text-transform: capitalize;
   white-space: nowrap;
 }
+
+/* Match the exact status palette used in the admin posts table. */
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--published {
-  color: #166534 !important;
-  background-color: #dcfce7 !important;
+  color: #187447 !important;
+  background-color: #e8f7ef !important;
 }
-.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--reviewed {
-  color: #9a3412 !important;
-  background-color: #ffedd5 !important;
-}
-.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--draft {
-  color: #475569 !important;
-  background-color: #e2e8f0 !important;
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--reviewed,
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--approved {
+  color: #245db4 !important;
+  background-color: #eaf2ff !important;
 }
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--pending-review,
 .post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--pending {
-  color: #9a3412 !important;
-  background-color: #ffedd5 !important;
+  color: #946200 !important;
+  background-color: #fff5df !important;
+}
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--rejected {
+  color: #b33434 !important;
+  background-color: #fff0f0 !important;
+}
+.post-editor-header-actions > .post-editor-status-badge.post-editor-status-badge--draft,
+.post-editor-header-actions > .post-editor-status-badge {
+  color: #596a80 !important;
+  background-color: #eef2f7 !important;
 }
 
 .post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }

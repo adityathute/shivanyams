@@ -21,5 +21,4 @@ class Migration(migrations.Migration):
             options={"ordering": ("-version_number",)},
         ),
         migrations.AddConstraint(model_name="postversion", constraint=models.UniqueConstraint(fields=("post", "version_number"), name="portal_post_version_unique")),
-        migrations.AddIndex(model_name="postversion", index=models.Index(fields=["post", "is_published"], name="portal_postve_post_id_8b6f21_idx")),
     ]

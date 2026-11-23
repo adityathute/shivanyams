@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import {
-  AnimatedNumber,
   StocksIcon,
   BookmarkIcon,
   MessagesIcon,
@@ -19,7 +18,7 @@ import {
   ArrowLeftIcon,
 } from "shivanya-ui";
 import { API_URL } from "../../../../components/portal/category/CategoryGrid";
-import { adminFetch } from "../../admin-utils";
+import { adminFetch, formatCompactNumber } from "../../admin-utils";
 import "../../admin.css";
 import "./engagement.css";
 
@@ -328,11 +327,11 @@ export default function AdminPostEngagementPage() {
                 const content = (
                   <>
                     <span><i>{item.icon}</i>{item.label}</span>
-                    <strong><AnimatedNumber key={`${item.key}-${statsAnimationKey}`} value={value} /></strong>
+                    <strong>{formatCompactNumber(value)}</strong>
                   </>
                 );
                 return item.key === "users" ? (
-                  <div key={item.key} className="admin-engagement-stat stat-users" aria-label={`Total users: ${value}`}>
+                  <div key={item.key} className="admin-engagement-stat stat-users" aria-label={`Total users: ${formatCompactNumber(value)}`}>
                     {content}
                   </div>
                 ) : (
@@ -378,7 +377,7 @@ export default function AdminPostEngagementPage() {
               {selectedRows.length > 0 && (
                 <div className="admin-engagement-table-footer">
                   <span>
-                    Showing {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, selectedRows.length)} of {selectedRows.length} records
+                    Showing {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, selectedRows.length)} of {formatCompactNumber(selectedRows.length)} records
                   </span>
                   <div className="admin-engagement-pagination">
                     <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page">

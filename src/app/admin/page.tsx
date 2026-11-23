@@ -1456,7 +1456,7 @@ export default function AdminPage() {
                                 {item.post_title}
                               </button>
                             </td>
-                            <td title={item.target_type === "reply" && item.parent_content ? `Comment: ${item.parent_content}\nReply: ${item.content}` : item.content}>
+                            <td title={item.target_type === "reply" ? `Reply: ${item.content}` : item.content}>
                               {item.target_type === "post" ? (
                                 <span className="admin-analytics-like-content">Liked this post</span>
                               ) : item.target_type === "comment" ? (
@@ -1470,16 +1470,6 @@ export default function AdminPage() {
                                 </button>
                               ) : (
                                 <div className="admin-likes-reply-content">
-                                  {item.parent_content ? (
-                                    <button
-                                      type="button"
-                                      className="admin-likes-content-link is-comment-context"
-                                      onClick={() => void openLikeComment(item, "comment")}
-                                      aria-label="Open parent comment details"
-                                    >
-                                      <span className="admin-analytics-like-context"><span className="admin-likes-inline-label">Comment: </span><span className="admin-likes-inline-text">{item.parent_content}</span></span>
-                                    </button>
-                                  ) : null}
                                   <button
                                     type="button"
                                     className="admin-likes-content-link is-reply-content"

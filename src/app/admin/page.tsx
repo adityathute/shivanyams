@@ -41,6 +41,8 @@ type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: s
 type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; event_type?: "subscribed" | "unsubscribed"; };
 type SubscriberAnalyticsTotals = { total: number; registered: number; subscriptions: number; resubscriptions: number; unsubscriptions: number };
 type TagAnalyticsTotals = { total: number; used: number; unused: number };
+type ShareAnalyticsEvent = { post_id: number; post__title_en: string; post__slug: string; user_auth_id: string; visitor_id: string; channel: string; created_at: string; user_name: string; visitor_type: "user" | "anonymous"; visitor_label: string };
+type ShareAnalyticsPayload = { total: number; unique_visitors: number; posts_shared: number; channels: Record<string, number>; events: ShareAnalyticsEvent[] };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -231,7 +233,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | "shares" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -249,6 +251,8 @@ export default function AdminPage() {
   const [subscribersPage, setSubscribersPage] = useState(1);
   const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
   const [tagTotals, setTagTotals] = useState<TagAnalyticsTotals>({ total: 0, used: 0, unused: 0 });
+  const [shareAnalytics, setShareAnalytics] = useState<ShareAnalyticsPayload>({ total: 0, unique_visitors: 0, posts_shared: 0, channels: {}, events: [] });
+  const [shareAnalyticsPage, setShareAnalyticsPage] = useState(1);
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -814,6 +818,31 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  function openSharesAnalytics() {
+    setAnalyticsType("shares");
+    setSelectedPost(null);
+    setSelectedVisitor(null);
+    setSelectedAnalyticsPath(null);
+    setShareAnalyticsPage(1);
+    setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/shares/", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Unable to load share analytics (${response.status}).`);
+        return response.json();
+      })
+      .then((payload: ShareAnalyticsPayload) => {
+        setShareAnalytics({
+          total: Number(payload.total) || 0,
+          unique_visitors: Number(payload.unique_visitors) || 0,
+          posts_shared: Number(payload.posts_shared) || 0,
+          channels: payload.channels || {},
+          events: Array.isArray(payload.events) ? payload.events : [],
+        });
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load share analytics."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openLikesAnalytics(type: "likes" | "dislikes" = "likes") {
     setSelectedLikeComment(null);
     setAnalyticsType(type);
@@ -1201,7 +1230,7 @@ export default function AdminPage() {
             { label: "Comments", value: engagementStats.comments, analytics: "comments" as const },
             { label: "Replies", value: engagementStats.replies, analytics: "replies" as const },
             { label: "Tags", value: engagementStats.tags, analytics: "tags" as const },
-            { label: "Shares", value: engagementStats.shares },
+            { label: "Shares", value: engagementStats.shares, analytics: "shares" as const },
             { label: "Saved posts", value: engagementStats.saved, analytics: "saved" as const },
             { label: "Reports", value: engagementStats.reports, analytics: "reports" as const },
             { label: "Subscribers", value: engagementStats.subscribers, analytics: "subscribers" as const },
@@ -1254,10 +1283,10 @@ export default function AdminPage() {
                     key={item.label}
                     className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" || item.analytics === "subscribers" || item.analytics === "tags" ? (
+                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" || item.analytics === "saved" || item.analytics === "subscribers" || item.analytics === "tags" || item.analytics === "shares" ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : item.analytics === "tags" ? openTagsAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
+                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : item.analytics === "saved" ? openSavedPostsAnalytics() : item.analytics === "subscribers" ? openSubscribersAnalytics() : item.analytics === "tags" ? openTagsAnalytics() : item.analytics === "shares" ? openSharesAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1660,6 +1689,8 @@ export default function AdminPage() {
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
                            : analyticsType === "tags"
                              ? `Tags (${formatCompactNumber(tagTotals.total)})`
+                           : analyticsType === "shares"
+                             ? `Shares (${formatCompactNumber(shareAnalytics.total)})`
                            : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
@@ -1699,6 +1730,8 @@ export default function AdminPage() {
                             ? "Users who subscribed to ShivanyaMS updates, with their email and subscription date."
                           : analyticsType === "tags"
                             ? "Overview of all tags and how many are assigned to posts."
+                          : analyticsType === "shares"
+                            ? "Share activity across all posts, including the sharing method and visitor details."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1789,6 +1822,35 @@ export default function AdminPage() {
                     <article><span>Used tags</span><strong>{formatCompactNumber(tagTotals.used)}</strong><small>Used in at least one post</small></article>
                     <article><span>Unused tags</span><strong>{formatCompactNumber(tagTotals.unused)}</strong><small>Not assigned to any post</small></article>
                   </div>
+                )
+             ) : analyticsType === "shares" && !selectedPost && !selectedVisitor ? (
+                analyticsLoading ? (
+                  <div className="admin-empty">Loading share analytics...</div>
+                ) : shareAnalytics.events.length === 0 ? (
+                  <div className="admin-empty">No shares recorded yet.</div>
+                ) : (
+                  <>
+                    <div className="admin-shares-summary">
+                      <article><span>Total shares</span><strong>{formatCompactNumber(shareAnalytics.total)}</strong><small>All recorded share actions</small></article>
+                      <article><span>Unique visitors</span><strong>{formatCompactNumber(shareAnalytics.unique_visitors)}</strong><small>Users and anonymous visitors</small></article>
+                      <article><span>Posts shared</span><strong>{formatCompactNumber(shareAnalytics.posts_shared)}</strong><small>Posts with at least one share</small></article>
+                    </div>
+                    <div className="admin-analytics-table-wrap">
+                      <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
+                        <thead><tr><th>Post</th><th>Visitor</th><th>Sharing method</th><th>Date</th></tr></thead>
+                        <tbody>{shareAnalytics.events.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((item, index) => {
+                          const channelLabels: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X", twitter: "X", linkedin: "LinkedIn", email: "Email" };
+                          return <tr key={`${item.post_id}-${item.created_at}-${index}`}>
+                            <td><Link className="admin-likes-post-link" href={`/admin/content/${item.post__slug}/edit`} title={item.post__title_en}>{item.post__title_en}</Link></td>
+                            <td>{item.user_name ? formatPersonName(item.user_name) : item.visitor_id ? <span title={item.visitor_id}>Anonymous ({item.visitor_id.slice(0, 8)})</span> : "Anonymous visitor"}</td>
+                            <td>{channelLabels[item.channel] || statusLabel(item.channel || "other")}</td>
+                            <td>{formatAdminDateTime(item.created_at)}</td>
+                          </tr>;
+                        })}</tbody>
+                      </table>
+                    </div>
+                    <AnalyticsPagination total={shareAnalytics.events.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
+                  </>
                 )
              ) : analyticsType === "saved" && !selectedPost && !selectedVisitor ? (
                 savedPostRows.length === 0 ? <div className="admin-empty">No saved posts recorded yet.</div> : (

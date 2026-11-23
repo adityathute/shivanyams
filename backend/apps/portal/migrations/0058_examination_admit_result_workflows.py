@@ -1,0 +1,47 @@
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+    dependencies = [("portal", "0057_job_post_recruitment_detail_sections")]
+
+    operations = [
+        migrations.AddField("examinationdetails", "exam_status", models.CharField(choices=[("announced", "Announced"), ("applications_open", "Applications Open"), ("applications_closed", "Applications Closed"), ("scheduled", "Scheduled"), ("postponed", "Postponed"), ("completed", "Completed"), ("cancelled", "Cancelled")], db_index=True, default="announced", max_length=24)),
+        migrations.AddField("examinationdetails", "application_start_date", models.DateField(blank=True, null=True)),
+        migrations.AddField("examinationdetails", "application_end_date", models.DateField(blank=True, null=True)),
+        migrations.AddField("examinationdetails", "exam_date", models.DateField(blank=True, null=True)),
+        migrations.AddField("examinationdetails", "eligibility_en", models.TextField(blank=True)),
+        migrations.AddField("examinationdetails", "eligibility_mr", models.TextField(blank=True)),
+        migrations.AddField("examinationdetails", "eligibility_hi", models.TextField(blank=True)),
+        migrations.AddField("examinationdetails", "paper_sections", models.JSONField(blank=True, default=list)),
+        migrations.AddField("examinationdetails", "result_expected_date", models.DateField(blank=True, null=True)),
+        migrations.AddField("examinationdetails", "notification_number", models.CharField(blank=True, max_length=120)),
+        migrations.AddField("examinationdetails", "notification_url", models.URLField(blank=True, max_length=1000)),
+        migrations.AddField("examinationdetails", "admit_card_url", models.URLField(blank=True, max_length=1000)),
+        migrations.AddField("admitcarddetails", "card_status", models.CharField(choices=[("scheduled", "Scheduled"), ("available", "Available"), ("expired", "Download Window Closed"), ("withdrawn", "Withdrawn")], db_index=True, default="scheduled", max_length=16)),
+        migrations.AddField("admitcarddetails", "available_from", models.DateField(blank=True, null=True)),
+        migrations.AddField("admitcarddetails", "available_until", models.DateField(blank=True, null=True)),
+        migrations.AddField("admitcarddetails", "exam_shift", models.CharField(blank=True, max_length=80)),
+        migrations.AddField("admitcarddetails", "reporting_time", models.TimeField(blank=True, null=True)),
+        migrations.AddField("admitcarddetails", "exam_center_name", models.CharField(blank=True, max_length=240)),
+        migrations.AddField("admitcarddetails", "exam_center_address", models.TextField(blank=True)),
+        migrations.AddField("admitcarddetails", "documents_to_carry", models.JSONField(blank=True, default=list)),
+        migrations.AddField("admitcarddetails", "prohibited_items", models.JSONField(blank=True, default=list)),
+        migrations.AddField("admitcarddetails", "photo_signature_requirements", models.TextField(blank=True)),
+        migrations.AddField("admitcarddetails", "download_steps", models.JSONField(blank=True, default=list)),
+        migrations.AddField("admitcarddetails", "forgot_credentials_url", models.URLField(blank=True, max_length=1000)),
+        migrations.AddField("admitcarddetails", "helpdesk_email", models.EmailField(blank=True, max_length=254)),
+        migrations.AddField("admitcarddetails", "helpdesk_phone", models.CharField(blank=True, max_length=40)),
+        migrations.AddField("admitcarddetails", "helpdesk_hours", models.CharField(blank=True, max_length=160)),
+        migrations.AddField("admitcarddetails", "language_options", models.JSONField(blank=True, default=list)),
+        migrations.AddField("admitcarddetails", "correction_window_end", models.DateField(blank=True, null=True)),
+        migrations.AddField("admitcarddetails", "correction_contact", models.TextField(blank=True)),
+        migrations.AddField("resultdetails", "result_status", models.CharField(choices=[("pending", "Pending"), ("declared", "Declared"), ("revised", "Revised"), ("withheld", "Withheld"), ("cancelled", "Cancelled")], db_index=True, default="pending", max_length=16)),
+        migrations.AddField("resultdetails", "scorecard_start_date", models.DateField(blank=True, null=True)),
+        migrations.AddField("resultdetails", "scorecard_end_date", models.DateField(blank=True, null=True)),
+        migrations.AddField("resultdetails", "login_url", models.URLField(blank=True, max_length=1000)),
+        migrations.AddField("resultdetails", "required_credentials", models.TextField(blank=True)),
+        migrations.AddField("resultdetails", "cutoff_details", models.JSONField(blank=True, default=list)),
+        migrations.AddField("resultdetails", "result_summary_en", models.TextField(blank=True)),
+        migrations.AddField("resultdetails", "result_summary_mr", models.TextField(blank=True)),
+        migrations.AddField("resultdetails", "result_summary_hi", models.TextField(blank=True)),
+    ]

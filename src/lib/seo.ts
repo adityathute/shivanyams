@@ -68,7 +68,7 @@ export async function getPublicPostMetadata(kind: string, slug: string, route = 
       twitter: { card: "summary_large_image", title, description, images: [image] },
     };
   } catch {
-    return fallback;
+    return { ...fallback, robots: { index: false, follow: false } };
   }
 }
 

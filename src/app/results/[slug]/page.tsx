@@ -6,7 +6,7 @@ type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  return getPublicPostMetadata("results", slug);
+  return getPublicPostMetadata("results", slug, "results");
 }
 
 export default function Page() {

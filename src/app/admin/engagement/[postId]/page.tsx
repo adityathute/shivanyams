@@ -83,6 +83,8 @@ export default function AdminPostEngagementPage() {
   const [selected, setSelected] = useState<StatKey>("all");
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -133,6 +135,10 @@ export default function AdminPostEngagementPage() {
 
   if (loading || !isAdmin) return null;
 
+  const pageCount = Math.max(1, Math.ceil(selectedRows.length / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const visibleRows = selectedRows.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   const selectedStat = statLabels.find((item) => item.key === selected) || statLabels[0];
   const selectedLabel = selectedStat.label;
   const columns = selectedRows.length
@@ -169,7 +175,7 @@ export default function AdminPostEngagementPage() {
                     type="button"
                     key={item.key}
                     className={"admin-engagement-stat stat-" + item.color + (selected === item.key ? " is-selected" : "")}
-                    onClick={() => setSelected(item.key)}
+                    onClick={() => { setSelected(item.key); setPage(1); }}
                   >
                     <span><i>{item.icon}</i>{item.label}</span>
                     <strong>{formatCompactNumber(value)}</strong>
@@ -196,7 +202,7 @@ export default function AdminPostEngagementPage() {
                   <table className="admin-engagement-data-table">
                     <thead><tr>{columns.map((column) => <th key={column}>{column.replaceAll("_", " ")}</th>)}</tr></thead>
                     <tbody>
-                      {selectedRows.map((row, index) => (
+                      {visibleRows.map((row, index) => (
                         <tr key={String(row.id ?? row.user_auth_id ?? row.reporter_auth_id ?? index) + "-" + index}>
                           {columns.map((column) => {
                             const value = displayValue(row[column]);
@@ -206,6 +212,24 @@ export default function AdminPostEngagementPage() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+              {selectedRows.length > 0 && (
+                <div className="admin-engagement-table-footer">
+                  <span>
+                    Showing {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, selectedRows.length)} of {selectedRows.length} records
+                  </span>
+                  <div className="admin-engagement-pagination">
+                    <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page">
+                      <option value={10}>10 rows</option>
+                      <option value={15}>15 rows</option>
+                      <option value={25}>25 rows</option>
+                      <option value={50}>50 rows</option>
+                    </select>
+                    <button type="button" disabled={safePage <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</button>
+                    <span>Page {safePage} of {pageCount}</span>
+                    <button type="button" disabled={safePage >= pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))}>Next</button>
+                  </div>
                 </div>
               )}
             </section>

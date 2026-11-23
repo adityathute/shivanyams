@@ -40,7 +40,7 @@
   gap: 5px;
   width: 100%;
   min-width: 0;
-  color: var(--muted-foreground, #9298a2);
+  color: #667991;
   font-size: clamp(.58rem, .72vw, .76rem);
   line-height: 1.2;
   white-space: normal;

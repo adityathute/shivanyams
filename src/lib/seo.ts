@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { getPortalApiUrl } from "./portal-api";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com").replace(/\/+$/, "");
@@ -26,6 +27,8 @@ type ApiPost = {
 
 export async function getPublicPostMetadata(kind: string, slug: string, route = kind): Promise<Metadata> {
   const canonical = `${SITE_URL}/${route}/${encodeURIComponent(slug)}`;
+  const languageValue = (await cookies()).get("shivanya-language")?.value;
+  const language = languageValue === "mr" || languageValue === "hi" ? languageValue : "en";
   const fallback: Metadata = {
     title: "ShivanyaMS | Government Jobs, Schemes & Updates",
     description: "Official updates, government jobs, schemes, examinations and results.",
@@ -40,8 +43,12 @@ export async function getPublicPostMetadata(kind: string, slug: string, route = 
     if (!response.ok) return { ...fallback, robots: { index: false, follow: false } };
     const payload = await response.json();
     const post = (payload?.data ?? payload) as ApiPost;
-    const title = post.meta_title_en?.trim() || post.title_en?.trim() || fallback.title as string;
-    const description = post.meta_description_en?.trim() || post.summary_en?.trim() || fallback.description as string;
+    const title = (language === "mr" ? post.meta_title_mr : language === "hi" ? post.meta_title_hi : post.meta_title_en)?.trim()
+      || (language === "mr" ? post.title_mr : language === "hi" ? post.title_hi : post.title_en)?.trim()
+      || post.meta_title_en?.trim() || post.title_en?.trim() || fallback.title as string;
+    const description = (language === "mr" ? post.meta_description_mr : language === "hi" ? post.meta_description_hi : post.meta_description_en)?.trim()
+      || (language === "mr" ? post.summary_mr : language === "hi" ? post.summary_hi : post.summary_en)?.trim()
+      || post.meta_description_en?.trim() || post.summary_en?.trim() || fallback.description as string;
     const image = post.featured_image_url || DEFAULT_IMAGE;
     return {
       title,

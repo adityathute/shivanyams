@@ -1826,8 +1826,6 @@ export default function AdminPage() {
              ) : analyticsType === "shares" && !selectedPost && !selectedVisitor ? (
                 analyticsLoading ? (
                   <div className="admin-empty">Loading share analytics...</div>
-                ) : shareAnalytics.events.length === 0 ? (
-                  <div className="admin-empty">No shares recorded yet.</div>
                 ) : (
                   <>
                     <div className="admin-shares-summary">
@@ -1835,6 +1833,7 @@ export default function AdminPage() {
                       <article><span>Unique visitors</span><strong>{formatCompactNumber(shareAnalytics.unique_visitors)}</strong><small>Users and anonymous visitors</small></article>
                       <article><span>Posts shared</span><strong>{formatCompactNumber(shareAnalytics.posts_shared)}</strong><small>Posts with at least one share</small></article>
                     </div>
+                    {shareAnalytics.events.length === 0 ? <div className="admin-empty">No shares recorded yet.</div> : <>
                     <div className="admin-analytics-table-wrap">
                       <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
                         <thead><tr><th>Post</th><th>Visitor</th><th>Sharing method</th><th>Date</th></tr></thead>
@@ -1842,7 +1841,7 @@ export default function AdminPage() {
                           const channelLabels: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X", twitter: "X", linkedin: "LinkedIn", email: "Email" };
                           return <tr key={`${item.post_id}-${item.created_at}-${index}`}>
                             <td><span className="admin-likes-post-link" title={item.post__title_en}>{item.post__title_en}</span></td>
-                            <td>{item.user_name ? formatPersonName(item.user_name) : item.visitor_id ? <span title={item.visitor_id}>Anonymous ({item.visitor_id.slice(0, 8)})</span> : "Anonymous visitor"}</td>
+                            <td>{item.user_name ? formatPersonName(item.user_name) : item.user_auth_id ? "Registered user" : item.visitor_id ? <span title={item.visitor_id}>Anonymous ({item.visitor_id.slice(0, 8)})</span> : "Anonymous visitor"}</td>
                             <td>{channelLabels[item.channel] || statusLabel(item.channel || "other")}</td>
                             <td>{formatAdminDateTime(item.created_at)}</td>
                           </tr>;
@@ -1850,6 +1849,7 @@ export default function AdminPage() {
                       </table>
                     </div>
                     <AnalyticsPagination total={shareAnalytics.events.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
+                    </>}
                   </>
                 )
              ) : analyticsType === "saved" && !selectedPost && !selectedVisitor ? (

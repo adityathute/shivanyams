@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: adityathute/shivanya-sdk
-          ref: 1b4a29eba39c43285899751674989af80a32f8cd
+          ref: 1081c47f7b21c4e80ee5924b541e457432f0cebd
           path: .ci/shivanya-sdk
 
       - name: Setup Node.js

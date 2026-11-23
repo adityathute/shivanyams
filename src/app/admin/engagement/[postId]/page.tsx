@@ -80,7 +80,7 @@ function isContentColumn(column: string) {
 }
 
 function titleCaseName(value: string) {
-  return value.trim().toLocaleLowerCase().replace(/(^|[\\s'-])([\\p{L}])/gu, (_, separator, letter) => separator + letter.toLocaleUpperCase());
+  return value.trim().toLocaleLowerCase().replace(/(^|[\s'-])([\p{L}])/gu, (_, separator, letter) => separator + letter.toLocaleUpperCase());
 }
 
 function getUserLabel(row: DetailRow) {

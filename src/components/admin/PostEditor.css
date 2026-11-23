@@ -1997,11 +1997,28 @@ padding-right: 24px;
 }
 
 
-.post-editor-status-badge { display: inline-flex; align-items: center; justify-content: center; align-self: flex-end; padding: 5px 11px; border: 1px solid transparent; border-radius: 7px; font-size: 11px; font-weight: 700; line-height: 1.25; text-transform: capitalize; white-space: nowrap; }
-.post-editor-status-badge--published { border-color: #a7f3d0; background: #ecfdf5; color: #047857; }
-.post-editor-status-badge--reviewed { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
-.post-editor-status-badge--draft { border-color: #fed7aa; background: #fff7ed; color: #c2410c; }
-.post-editor-status-badge--pending-review, .post-editor-status-badge--pending { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
+.post-editor-status-badge {
+  --status-accent: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--status-accent) 28%, var(--surface, transparent));
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--status-accent) 12%, var(--surface, transparent));
+  color: var(--status-accent);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.post-editor-status-badge--published { --status-accent: #16845b; }
+.post-editor-status-badge--reviewed { --status-accent: #3976c6; }
+.post-editor-status-badge--draft { --status-accent: #c47a22; }
+.post-editor-status-badge--pending-review,
+.post-editor-status-badge--pending { --status-accent: #8056b3; }
 
 .post-editor-publication-status { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 12px; color: #334155; font-size: 12px; white-space: nowrap; }
 .post-editor-publication-status > strong { text-transform: capitalize; font-size: 13px; color: #16734e; }

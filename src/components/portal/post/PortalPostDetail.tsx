@@ -896,7 +896,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       {post.tags.map((tag) => (
                         <a
                           className="portal-custom-tag"
-                          href={`/jobs/related/tag/${createPostSlug(tag)}`}
+                          href={`/tags/${createPostSlug(tag)}`}
                           key={tag}
                         >
                           {tag}

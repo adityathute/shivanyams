@@ -144,7 +144,7 @@ export function TagsPage() {
       const top = panel.getBoundingClientRect().top;
       const availableHeight = Math.max(150, window.innerHeight - top - 150);
       const columns = Math.max(1, Math.floor((width - 36) / (isAdmin ? 270 : 155)));
-      const rowHeight = isAdmin ? 58 : 48;
+      const rowHeight = isAdmin ? 58 : 54;
       const rows = Math.max(1, Math.floor(availableHeight / rowHeight));
       setPageSize(Math.max(1, columns * rows));
     };

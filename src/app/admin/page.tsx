@@ -37,6 +37,12 @@ type WebsiteAnalyticsPage = {
 };
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
+type ReportAnalyticsEvent = {
+  id: string; report_id: number; target_type: "post" | "comment" | "reply";
+  post_id: number; post_title: string; post_slug: string; content: string;
+  parent_content?: string; reason: string; details: string; status: string;
+  reporter_name: string; reporter_email: string; visitor_id: string; created_at: string;
+};
 type LikeAnalyticsEvent = {
   id: string;
   target_type: "post" | "comment" | "reply";
@@ -206,7 +212,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -215,6 +221,9 @@ export default function AdminPage() {
   const [selectedPost, setSelectedPost] = useState<PostAnalyticsPage | null>(null);
   const [postAnalyticsEvents, setPostAnalyticsEvents] = useState<PostViewEvent[]>([]);
   const [likeAnalyticsEvents, setLikeAnalyticsEvents] = useState<LikeAnalyticsEvent[]>([]);
+  const [reportAnalyticsEvents, setReportAnalyticsEvents] = useState<ReportAnalyticsEvent[]>([]);
+  const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
+  const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
   const [likeAnalyticsPage, setLikeAnalyticsPage] = useState(1);
   const [commentsAnalyticsPage, setCommentsAnalyticsPage] = useState(1);
@@ -592,6 +601,19 @@ export default function AdminPage() {
     (commentReplyPage - 1) * analyticsPageSize,
     commentReplyPage * analyticsPageSize,
   );
+  const reportPostRows = useMemo(() => {
+    const grouped = new Map<number, { id: number; title: string; slug: string; reports: number }>();
+    reportAnalyticsEvents.forEach((event) => {
+      const current = grouped.get(event.post_id);
+      if (current) current.reports += 1;
+      else grouped.set(event.post_id, { id: event.post_id, title: event.post_title, slug: event.post_slug, reports: 1 });
+    });
+    const viewsByPost = new Map(postAnalyticsPages.map((post) => [post.id, post.views]));
+    return Array.from(grouped.values()).map((post) => ({ ...post, views: viewsByPost.get(post.id) || 0 }))
+      .sort((a, b) => b.reports - a.reports || a.title.localeCompare(b.title));
+  }, [reportAnalyticsEvents, postAnalyticsPages]);
+  const visibleReportPostRows = reportPostRows.slice((reportsAnalyticsPage - 1) * analyticsPageSize, reportsAnalyticsPage * analyticsPageSize);
+  const visibleReportEvents = reportAnalyticsEvents.slice((reportsAnalyticsPage - 1) * analyticsPageSize, reportsAnalyticsPage * analyticsPageSize);
   const statusAnalyticsPosts = useMemo(
     () => analyticsType === "drafts"
       ? posts.filter((post) => post.status === "draft")
@@ -733,6 +755,20 @@ export default function AdminPage() {
       })
       .then((payload: { results?: LikeAnalyticsEvent[] }) => setLikeAnalyticsEvents(payload.results ?? []))
       .catch((err) => setError(err instanceof Error ? err.message : "Unable to load comments analytics."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
+  function openReportsAnalytics() {
+    setSelectedReport(null); setAnalyticsType("reports");
+    setSelectedPost(null); setPostAnalyticsEvents([]);
+    setSelectedVisitor(null); setVisitorPages([]);
+    setSelectedAnalyticsPath(null); setAnalyticsEvents([]);
+    setReportAnalyticsEvents([]); setReportsAnalyticsPage(1);
+    setReactionPostsOnly(false); setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/stats/?type=reports", { cache: "no-store" })
+      .then(async (response) => { if (!response.ok) throw new Error("Unable to load reports analytics (" + response.status + ")."); return response.json(); })
+      .then((payload: { results?: ReportAnalyticsEvent[] }) => setReportAnalyticsEvents(payload.results ?? []))
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load reports analytics."))
       .finally(() => setAnalyticsLoading(false));
   }
 
@@ -1058,7 +1094,7 @@ export default function AdminPage() {
             { label: "Tags", value: engagementStats.tags },
             { label: "Shares", value: engagementStats.shares },
             { label: "Saved posts", value: engagementStats.saved },
-            { label: "Total reports", value: engagementStats.reports },
+            { label: "Reports", value: engagementStats.reports, analytics: "reports" as const },
             { label: "Subscribers", value: engagementStats.subscribers },
           ];
 
@@ -1109,10 +1145,10 @@ export default function AdminPage() {
                     key={item.label}
                     className={`admin-stat-card admin-stat-posts${item.analytics ? " admin-stat-clickable" : ""}`}
                   >
-                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" ? (
+                    {item.analytics === "likes" || item.analytics === "dislikes" || item.analytics === "comments" || item.analytics === "replies" || item.analytics === "reports" ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
+                        onClick={() => item.analytics === "comments" || item.analytics === "replies" ? openCommentsAnalytics(item.analytics) : item.analytics === "reports" ? openReportsAnalytics() : openLikesAnalytics(item.analytics as "likes" | "dislikes")}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1450,12 +1486,13 @@ export default function AdminPage() {
             aria-labelledby="admin-analytics-title"
           >
             <header className="admin-analytics-header">
-              {(selectedVisitor || selectedAnalyticsPath || selectedPost || selectedLikeComment) && (
+              {(selectedVisitor || selectedAnalyticsPath || selectedPost || selectedLikeComment || selectedReport) && (
                 <IconButton
                   size="lg"
                   variant="ghost"
                   className="admin-analytics-back-icon"
                   onClick={() => {
+                    if (selectedReport) { setSelectedReport(null); return; }
                     if (selectedLikeComment) { setSelectedLikeComment(null); return; }
                     if (visitorReturnState) {
                       setSelectedAnalyticsPath(null);
@@ -1490,6 +1527,8 @@ export default function AdminPage() {
                 <h2 id="admin-analytics-title">
                   {selectedLikeComment
                     ? `${selectedLikeComment.liked_target === "reply" ? "Reply" : "Comment"} details`
+                    : selectedReport
+                    ? "Report details"
                     : selectedVisitor
                     ? `Visitor details (${formatCompactNumber(visitorPages.length)})`
                     : selectedPost
@@ -1504,7 +1543,9 @@ export default function AdminPage() {
                               ? `Comments (${formatCompactNumber(commentReplyEvents.length)})`
                               : analyticsType === "replies"
                                 ? `Replies (${formatCompactNumber(commentReplyEvents.length)})`
-                          : analyticsType === "posts"
+                          : analyticsType === "reports"
+                             ? `Reports (${formatCompactNumber(reportAnalyticsEvents.length)})`
+                           : analyticsType === "posts"
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
                             ? `Drafts (${formatCompactNumber(counts.drafts)})`
@@ -1519,6 +1560,8 @@ export default function AdminPage() {
                 <p>
                   {selectedLikeComment
                     ? `Comment on ${selectedLikeComment.post_title}`
+                    : selectedReport
+                    ? `Report submitted for ${selectedReport.post_title}.`
                     : selectedVisitor
                     ? "Pages visited by this browser or device."
                     : selectedPost
@@ -1533,6 +1576,8 @@ export default function AdminPage() {
                               ? reactionPostsOnly ? "Posts with their comment and reply counts, plus total views." : "Individual comments across all posts."
                               : analyticsType === "replies"
                                 ? reactionPostsOnly ? "Posts with their comment and reply counts, plus total views." : "Individual replies across all posts."
+                          : analyticsType === "reports"
+                            ? reactionPostsOnly ? "Posts with their report counts, plus total views." : "Individual reports across posts and comments."
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
@@ -1544,7 +1589,7 @@ export default function AdminPage() {
                             : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
                 </p>
               </div>
-              {(analyticsType === "likes" || analyticsType === "dislikes" || analyticsType === "comments" || analyticsType === "replies") && !selectedVisitor && !selectedAnalyticsPath && !selectedPost && !selectedLikeComment ? (
+              {(analyticsType === "likes" || analyticsType === "dislikes" || analyticsType === "comments" || analyticsType === "replies" || analyticsType === "reports") && !selectedVisitor && !selectedAnalyticsPath && !selectedPost && !selectedLikeComment && !selectedReport ? (
                 <div className="admin-reaction-view-toggle">
                   <button
                     type="button"
@@ -1581,6 +1626,20 @@ export default function AdminPage() {
             </header>
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
+            ) : selectedReport ? (
+              <div className="admin-analytics-detail admin-like-comment-detail">
+                <section className="admin-like-comment-section">
+                  <h3>{selectedReport.target_type === "post" ? "Reported post" : selectedReport.target_type === "reply" ? "Reported reply" : "Reported comment"}</h3>
+                  <p>{selectedReport.content}</p>
+                  <div className="admin-like-comment-meta"><span>{selectedReport.post_title}</span><span>{new Date(selectedReport.created_at).toLocaleString()}</span><span>Status: {statusLabel(selectedReport.status)}</span></div>
+                </section>
+                <section className="admin-like-comment-section">
+                  <h3>Report details</h3>
+                  <p><strong>Reason:</strong> {statusLabel(selectedReport.reason)}</p>
+                  <p>{selectedReport.details || "No additional details provided."}</p>
+                  <div className="admin-like-comment-meta"><span>Reported by: {selectedReport.reporter_name || selectedReport.reporter_email || "Registered user"}</span></div>
+                </section>
+              </div>
             ) : selectedLikeComment ? (
               <div className="admin-analytics-detail admin-like-comment-detail">
                 {selectedLikeComment.parent_comment ? <section className="admin-like-comment-section"><h3>Parent comment</h3><p>{selectedLikeComment.parent_comment.content}</p><div className="admin-like-comment-meta"><span>{selectedLikeComment.parent_comment.author_name || "User"}</span><span>{new Date(selectedLikeComment.parent_comment.created_at).toLocaleString()}</span></div></section> : null}
@@ -1592,6 +1651,42 @@ export default function AdminPage() {
                 </section>
                 {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{new Date(reply.created_at).toLocaleString()}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
+             ) : analyticsType === "reports" && !selectedPost && !selectedVisitor ? (
+                reactionPostsOnly ? (
+                  reportPostRows.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (
+                    <>
+                      <div className="admin-analytics-table-wrap">
+                        <table className="admin-analytics-table admin-reaction-posts-table">
+                          <thead><tr><th>Post</th><th>Views</th><th>Reports</th></tr></thead>
+                          <tbody>{visibleReportPostRows.map((post) => (
+                            <tr key={post.id}>
+                              <td><button type="button" className="admin-analytics-link" title={post.title} onClick={() => void openPostEvents({ id: post.id, title: post.title, slug: post.slug, views: post.views, unique_visitors: 0, last_viewed: null })}>{post.title}</button></td>
+                              <td>{formatCompactNumber(post.views)}</td><td>{formatCompactNumber(post.reports)}</td>
+                            </tr>
+                          ))}</tbody>
+                        </table>
+                      </div>
+                      <AnalyticsPagination total={reportPostRows.length} page={reportsAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setReportsAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setReportsAnalyticsPage(1); }} />
+                    </>
+                  )
+                ) : reportAnalyticsEvents.length === 0 ? <div className="admin-empty">No reports recorded yet.</div> : (
+                  <>
+                    <div className="admin-analytics-table-wrap">
+                      <table className="admin-analytics-table admin-likes-analytics-table">
+                        <thead><tr><th>Type</th><th>Post</th><th>Reported content</th><th>Reason</th><th>Reported by</th><th>Reported at</th></tr></thead>
+                        <tbody>{visibleReportEvents.map((item) => (
+                          <tr key={item.id}>
+                            <td><span className="admin-analytics-type-label">{item.target_type === "post" ? "Post" : item.target_type === "reply" ? "Reply" : "Comment"}</span></td>
+                            <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.post_title} onClick={() => void openPostEvents({ id: item.post_id, title: item.post_title, slug: item.post_slug, views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title}</button></td>
+                            <td><button type="button" className="admin-likes-content-link is-comment" onClick={() => setSelectedReport(item)}><span className="admin-analytics-like-content">{item.content}</span></button></td>
+                            <td>{statusLabel(item.reason)}</td><td>{item.reporter_name ? formatPersonName(item.reporter_name) : item.reporter_email || "Registered user"}</td><td>{new Date(item.created_at).toLocaleString()}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                    <AnalyticsPagination total={reportAnalyticsEvents.length} page={reportsAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setReportsAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setReportsAnalyticsPage(1); }} />
+                  </>
+                )
              ) : (analyticsType === "comments" || analyticsType === "replies") && !selectedPost && !selectedVisitor ? (
                reactionPostsOnly ? (
                  commentPostRows.length === 0 ? (

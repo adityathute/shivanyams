@@ -870,7 +870,7 @@ class NewsletterSubscriptionAdmin(admin.ModelAdmin):
     list_display = ("email", "user_auth_id", "language", "is_active", "created_at", "updated_at")
     list_filter = ("is_active", "language", "created_at")
     search_fields = ("email", "user_auth_id")
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("is_active", "created_at", "updated_at")
 
     def has_delete_permission(self, request, obj=None):
         return False

@@ -38,7 +38,7 @@ type WebsiteAnalyticsPage = {
 type PostAnalyticsPage = { id: number; title: string; slug: string; views: number; unique_visitors: number; last_viewed: string | null; };
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
-type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; };
+type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -1783,7 +1783,18 @@ export default function AdminPage() {
                               <tbody>{filteredSubscribers.slice((subscribersPage - 1) * analyticsPageSize, subscribersPage * analyticsPageSize).map((item) => {
                                 const dateTime = formatAnalyticsDateTime(item.subscribed_at);
                                 return <tr key={item.id}>
-                                  <td>{item.full_name || "—"}</td>
+                                  <td>
+                                    {item.full_name ? (
+                                      <button
+                                        type="button"
+                                        className="admin-analytics-link admin-likes-user-link"
+                                        title={formatPersonName(item.full_name)}
+                                        onClick={() => item.visitor_id ? void openPostEventVisitor(item.visitor_id) : window.location.href = `mailto:${encodeURIComponent(item.email)}`}
+                                      >
+                                        {formatPersonName(item.full_name)}
+                                      </button>
+                                    ) : "—"}
+                                  </td>
                                   <td>{item.email}</td>
                                   <td><span>{dateTime.date}</span><small>{dateTime.time}</small></td>
                                 </tr>;

@@ -15,7 +15,8 @@ import {
   PlusIcon,
   GlobeIcon,
   MessagesIcon,
-  TagIcon
+  TagIcon,
+  BarChart
 } from "shivanya-ui";
 import {
   API_URL,
@@ -43,6 +44,8 @@ type SubscriberAnalyticsTotals = { total: number; registered: number; subscripti
 type TagAnalyticsTotals = { total: number; used: number; unused: number };
 type ShareAnalyticsEvent = { post_id: number; post__title_en: string; post__slug: string; user_auth_id: string; visitor_id: string; channel: string; created_at: string; user_name: string; visitor_type: "user" | "anonymous"; visitor_label: string };
 type ShareAnalyticsPayload = { total: number; unique_visitors: number; posts_shared: number; channels: Record<string, number>; events: ShareAnalyticsEvent[] };
+type SharePostSelection = { post_id: number; title: string; slug: string };
+const SHARE_CHANNEL_LABELS: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X/Twitter", twitter: "X/Twitter", threads: "Threads", instagram: "Instagram", linkedin: "LinkedIn", email: "Email" };
 type ReportAnalyticsEvent = {
   id: string; report_id: number; target_type: "post" | "comment" | "reply";
   post_id: number; post_title: string; post_slug: string; content: string;
@@ -254,6 +257,7 @@ export default function AdminPage() {
   const [shareAnalytics, setShareAnalytics] = useState<ShareAnalyticsPayload>({ total: 0, unique_visitors: 0, posts_shared: 0, channels: {}, events: [] });
   const [shareAnalyticsPage, setShareAnalyticsPage] = useState(1);
   const [shareAnalyticsView, setShareAnalyticsView] = useState<"events" | "posts">("events");
+  const [selectedSharePost, setSelectedSharePost] = useState<SharePostSelection | null>(null);
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
   const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
@@ -497,6 +501,30 @@ export default function AdminPage() {
       (first, second) => second.total - first.total || first.title.localeCompare(second.title),
     );
   }, [shareAnalytics.events]);
+
+  const selectedSharePostEvents = useMemo(
+    () => selectedSharePost ? shareAnalytics.events.filter((event) => event.post_id === selectedSharePost.post_id) : [],
+    [selectedSharePost, shareAnalytics.events],
+  );
+
+  const selectedSharePostStats = useMemo(() => {
+    const channels = new Map<string, number>();
+    const visitors = new Set<string>();
+    let closed = 0;
+    selectedSharePostEvents.forEach((event) => {
+      channels.set(event.channel || "other", (channels.get(event.channel || "other") || 0) + 1);
+      if (event.visitor_id) visitors.add(event.visitor_id);
+      if (event.channel === "dismissed") closed += 1;
+    });
+    return {
+      total: selectedSharePostEvents.length,
+      uniqueVisitors: visitors.size,
+      closed,
+      useful: selectedSharePostEvents.length - closed,
+      channels: Array.from(channels, ([channel, value]) => ({ label: SHARE_CHANNEL_LABELS[channel] || statusLabel(channel), value }))
+        .sort((first, second) => second.value - first.value || first.label.localeCompare(second.label)),
+    };
+  }, [selectedSharePostEvents]);
 
   const filteredPosts = useMemo(
     () =>
@@ -1713,7 +1741,9 @@ export default function AdminPage() {
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
                            : analyticsType === "tags"
                              ? `Tags (${formatCompactNumber(tagTotals.total)})`
-                           : analyticsType === "shares"
+                           : selectedSharePost
+                            ? `Shares for ${selectedSharePost.title}`
+                          : analyticsType === "shares"
                              ? shareAnalyticsView === "posts"
                                ? `Posts shared (${formatCompactNumber(sharePostRows.length)})`
                                : `Shares (${formatCompactNumber(shareAnalytics.total)})`
@@ -1732,6 +1762,8 @@ export default function AdminPage() {
                 <p>
                   {selectedLikeComment
                     ? `Comment on ${selectedLikeComment.post_title}`
+                    : selectedSharePost
+                    ? `Share activity and channel breakdown for ${selectedSharePost.title}.`
                     : selectedReport
                     ? `Report submitted for ${selectedReport.post_title}.`
                     : selectedVisitor
@@ -1807,6 +1839,7 @@ export default function AdminPage() {
                   setAnalyticsEvents([]);
                   setSelectedLikeComment(null);
                   setSelectedReport(null);
+                  setSelectedSharePost(null);
                 }}
                 aria-label="Close"
                 title="Close analytics"
@@ -1816,6 +1849,46 @@ export default function AdminPage() {
             </header>
             {analyticsLoading ? (
               <div className="admin-empty">Loading analytics...</div>
+            ) : selectedSharePost ? (
+              <div className="admin-share-post-detail">
+                <button type="button" className="admin-reaction-view-button admin-share-post-back" onClick={() => setSelectedSharePost(null)}>Back to shares</button>
+                <div className="admin-shares-summary admin-share-post-metrics">
+                  <article><span>Total shares</span><strong>{formatCompactNumber(selectedSharePostStats.total)}</strong><small>All recorded actions</small></article>
+                  <article><span>Unique visitors</span><strong>{formatCompactNumber(selectedSharePostStats.uniqueVisitors)}</strong><small>Distinct browsers and users</small></article>
+                  <article><span>Useful actions</span><strong>{formatCompactNumber(selectedSharePostStats.useful)}</strong><small>Share actions excluding closed menus</small></article>
+                  <article><span>Closed menus</span><strong>{formatCompactNumber(selectedSharePostStats.closed)}</strong><small>Share menu dismissed</small></article>
+                </div>
+                <section className="admin-share-post-chart-section">
+                  <h3>Sharing methods</h3>
+                  <BarChart
+                    data={selectedSharePostStats.channels}
+                    direction="horizontal"
+                    size="lg"
+                    showGrid
+                    showLabels
+                    showValues
+                    animate
+                  />
+                </section>
+                <section className="admin-share-post-events-section">
+                  <h3>Share activity</h3>
+                  {selectedSharePostEvents.length === 0 ? <div className="admin-empty">No share activity recorded for this post.</div> : (
+                    <div className="admin-analytics-table-wrap">
+                      <table className="admin-analytics-table admin-likes-analytics-table admin-shares-table">
+                        <thead><tr><th>Visitor</th><th>Sharing method</th><th>Date</th></tr></thead>
+                        <tbody>{selectedSharePostEvents.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((event, index) => (
+                          <tr key={`${event.post_id}-${event.created_at}-${index}`}>
+                            <td>{event.user_name ? formatPersonName(event.user_name) : event.user_auth_id ? "Registered user" : event.visitor_id ? `Anonymous (${event.visitor_id.slice(0, 8)})` : "Anonymous visitor"}</td>
+                            <td>{SHARE_CHANNEL_LABELS[event.channel] || statusLabel(event.channel || "other")}</td>
+                            <td>{formatAdminDateTime(event.created_at)}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                  )}
+                  <AnalyticsPagination total={selectedSharePostEvents.length} page={shareAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setShareAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setShareAnalyticsPage(1); }} />
+                </section>
+              </div>
             ) : selectedReport ? (
               <div className="admin-analytics-detail admin-like-comment-detail">
                 <section className="admin-like-comment-section">
@@ -1872,7 +1945,7 @@ export default function AdminPage() {
                             <thead><tr><th>Post</th><th>Closed</th><th>Useful</th><th>Total shares</th></tr></thead>
                             <tbody>{sharePostRows.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((item) => (
                               <tr key={item.post_id}>
-                                <td><span className="admin-likes-post-link" title={item.title}>{item.title}</span></td>
+                                <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.title} onClick={() => { setSelectedSharePost({ post_id: item.post_id, title: item.title, slug: item.slug }); setShareAnalyticsPage(1); }}>{item.title}</button></td>
                                 <td>{formatCompactNumber(item.closed)}</td>
                                 <td>{formatCompactNumber(item.useful)}</td>
                                 <td><strong>{formatCompactNumber(item.total)}</strong></td>
@@ -1891,7 +1964,7 @@ export default function AdminPage() {
                         <tbody>{shareAnalytics.events.slice((shareAnalyticsPage - 1) * analyticsPageSize, shareAnalyticsPage * analyticsPageSize).map((item, index) => {
                           const channelLabels: Record<string, string> = { copy: "Copy Link", native: "Native Share", dismissed: "Share Menu Closed", whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X/Twitter", twitter: "X/Twitter", threads: "Threads", instagram: "Instagram", linkedin: "LinkedIn", email: "Email" };
                           return <tr key={`${item.post_id}-${item.created_at}-${index}`}>
-                            <td><span className="admin-likes-post-link" title={item.post__title_en}>{item.post__title_en}</span></td>
+                            <td><button type="button" className="admin-analytics-link admin-likes-post-link" title={item.post__title_en} onClick={() => { setSelectedSharePost({ post_id: item.post_id, title: item.post__title_en || "Untitled post", slug: item.post__slug || "" }); setShareAnalyticsPage(1); }}>{item.post__title_en || "Untitled post"}</button></td>
                             <td className="admin-shares-visitor-cell">
                               {item.visitor_id ? (
                                 <button
@@ -2591,7 +2664,9 @@ export default function AdminPage() {
             )}
             <footer>
               <span>
-                {selectedVisitor
+                {selectedSharePost
+                  ? formatCompactNumber(selectedSharePostEvents.length) + " share events"
+                  : selectedVisitor
                   ? formatCompactNumber(visitorPages.length) + " pages visited"
                   : selectedPost
                     ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"

@@ -1413,13 +1413,29 @@ export default function AdminPage() {
                                 {item.post_title}
                               </button>
                             </td>
-                            <td title={item.content}>
-                              <span className="admin-analytics-like-content">
-                                {item.target_type === "post" ? "Liked this post" : item.content}
-                              </span>
-                              {item.target_type === "reply" && item.parent_content
-                                ? <small className="admin-analytics-like-context">Reply to: {item.parent_content}</small>
-                                : null}
+                            <td title={item.target_type === "reply" && item.parent_content ? `Reply: ${item.content}\nComment: ${item.parent_content}` : item.content}>
+                              {item.target_type === "post" ? (
+                                <span className="admin-analytics-like-content">Liked this post</span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  className={`admin-likes-content-link ${item.target_type === "reply" ? "is-reply" : "is-comment"}`}
+                                  onClick={() => void openPostEvents({
+                                    id: item.post_id,
+                                    title: item.post_title,
+                                    slug: item.post_slug,
+                                    views: 0,
+                                    unique_visitors: 0,
+                                    last_viewed: null,
+                                  })}
+                                  aria-label={`Open post details for ${item.target_type}`}
+                                >
+                                  <span className="admin-analytics-like-content">{item.content}</span>
+                                  {item.target_type === "reply" && item.parent_content
+                                    ? <small className="admin-analytics-like-context">Comment: {item.parent_content}</small>
+                                    : null}
+                                </button>
+                              )}
                             </td>
                             <td className="admin-likes-user-cell">
                               {item.visitor_id ? (

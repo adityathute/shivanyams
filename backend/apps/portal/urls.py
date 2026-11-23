@@ -112,13 +112,16 @@ urlpatterns = [
         AdminPostReview.as_view(),
         name="admin-post-review",
     ),
+    # Specific post engagement route must precede the generic
+    # <kind>/<slug>/ detail route, otherwise "post_id/engagement"
+    # is interpreted as a content category and returns Unknown content category.
+    path("admin/content/<int:post_id>/engagement/", AdminPostEngagement.as_view(), name="admin-post-engagement"),
     path(
         "admin/content/<str:kind>/<slug:slug>/",
         admin_content_detail,
         name="admin-content-detail",
     ),
     path("admin/comments/", AdminComments.as_view(), name="admin-comments"),
-    path("admin/content/<int:post_id>/engagement/", AdminPostEngagement.as_view(), name="admin-post-engagement"),
 
     # Saved posts
     path("saved-posts/", SavedPosts.as_view(), name="saved-posts"),

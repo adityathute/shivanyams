@@ -1,3 +1,5 @@
+import csv
+from django.http import HttpResponse
 from django.db import transaction
 from django.core import signing
 from django.core.mail import send_mass_mail
@@ -2887,13 +2889,30 @@ class AdminWebsiteAnalytics(APIView):
         analytics_type = request.query_params.get("type", "views")
         visitor_id = request.query_params.get("visitor_id")
         path = request.query_params.get("path")
+        start_raw = request.query_params.get("from", "")
+        end_raw = request.query_params.get("to", "")
+        start_date = parse_date(start_raw) if start_raw else None
+        end_date = parse_date(end_raw) if end_raw else None
+        if start_raw and not start_date:
+            raise ValidationError({"from": "Use YYYY-MM-DD."})
+        if end_raw and not end_date:
+            raise ValidationError({"to": "Use YYYY-MM-DD."})
+        if start_date and end_date and end_date < start_date:
+            raise ValidationError({"to": "End date must be on or after start date."})
+        if start_date and end_date and (end_date - start_date).days > 365:
+            raise ValidationError({"range": "Analytics reports are limited to 366 calendar days."})
+        view_events = WebsiteView.objects.all()
+        if start_date:
+            view_events = view_events.filter(viewed_at__date__gte=start_date)
+        if end_date:
+            view_events = view_events.filter(viewed_at__date__lte=end_date)
 
         if analytics_type == "visitors":
-            visitors = WebsiteVisitor.objects.annotate(
-                total_views=Count("views"),
-                total_pages=Count("views__path", distinct=True),
-                last_viewed=Max("views__viewed_at"),
-            ).order_by("-last_seen_at")
+            visitors = WebsiteVisitor.objects.filter(views__in=view_events).annotate(
+                total_views=Count("views", filter=Q(views__in=view_events)),
+                total_pages=Count("views__path", filter=Q(views__in=view_events), distinct=True),
+                last_viewed=Max("views__viewed_at", filter=Q(views__in=view_events)),
+            ).order_by("-last_seen_at").distinct()
             if request.query_params.get("authenticated") == "true":
                 visitors = visitors.exclude(auth_user_id="")
             elif request.query_params.get("authenticated") == "false":
@@ -2914,23 +2933,23 @@ class AdminWebsiteAnalytics(APIView):
             } for item in visitors[:500]]
             if visitor_id:
                 page_rows = (
-                    WebsiteView.objects.filter(visitor__visitor_id=visitor_id)
+                    view_events.filter(visitor__visitor_id=visitor_id)
                     .values("path")
                     .annotate(views=Count("id"), last_viewed=Max("viewed_at"))
                     .order_by("-views", "path")
                 )
                 return Response({"visitor": next((row for row in rows if row["visitor_id"] == visitor_id), None), "pages": list(page_rows)})
             return Response({
-                "visitors_count": WebsiteVisitor.objects.count(),
-                "users_count": WebsiteVisitor.objects.exclude(auth_user_id="").values("auth_user_id").distinct().count(),
+                "visitors_count": visitors.count(),
+                "users_count": visitors.exclude(auth_user_id="").values("auth_user_id").distinct().count(),
                 "visitors": rows,
             })
 
         if path:
-            events = WebsiteView.objects.filter(path=path).select_related("visitor").order_by("-viewed_at")[:500]
+            events = view_events.filter(path=path).select_related("visitor").order_by("-viewed_at")[:500]
             return Response({
                 "path": path,
-                "views": WebsiteView.objects.filter(path=path).count(),
+                "views": view_events.filter(path=path).count(),
                 "events": [{
                     "viewed_at": event.viewed_at,
                     "visitor_type": "user" if event.auth_user_id else "anonymous",
@@ -2945,7 +2964,7 @@ class AdminWebsiteAnalytics(APIView):
             })
 
         page_rows = (
-            WebsiteView.objects.values("path")
+            view_events.values("path")
             .annotate(
                 views=Count("id"),
                 unique_visitors=Count("visitor", distinct=True),
@@ -2954,10 +2973,45 @@ class AdminWebsiteAnalytics(APIView):
             .order_by("-views", "path")
         )
         return Response({
-            "views_count": WebsiteView.objects.count(),
-            "visitors_count": WebsiteVisitor.objects.count(),
+            "views_count": view_events.count(),
+            "visitors_count": view_events.values("visitor_id").distinct().count(),
             "pages": list(page_rows),
         })
+
+class AdminWebsiteAnalyticsExport(APIView):
+    """Privacy-safe, bounded CSV export for analytics managers."""
+
+    permission_classes = [IsPortalAnalyticsManager]
+
+    def get(self, request):
+        start_raw = request.query_params.get("from", "")
+        end_raw = request.query_params.get("to", "")
+        start = parse_date(start_raw) if start_raw else None
+        end = parse_date(end_raw) if end_raw else None
+        if start_raw and not start:
+            raise ValidationError({"from": "Use YYYY-MM-DD."})
+        if end_raw and not end:
+            raise ValidationError({"to": "Use YYYY-MM-DD."})
+        if start and end and end < start:
+            raise ValidationError({"to": "End date must be on or after start date."})
+        if start and end and (end - start).days > 365:
+            raise ValidationError({"range": "CSV exports are limited to 366 calendar days."})
+        queryset = WebsiteView.objects.order_by("viewed_at")
+        if start:
+            queryset = queryset.filter(viewed_at__date__gte=start)
+        if end:
+            queryset = queryset.filter(viewed_at__date__lte=end)
+        if queryset.count() > 50000:
+            raise ValidationError({"range": "Narrow the date range; CSV export is limited to 50,000 events."})
+        response = HttpResponse(content_type="text/csv; charset=utf-8")
+        response["Content-Disposition"] = 'attachment; filename="shivanyams-analytics.csv"'
+        response["Cache-Control"] = "no-store"
+        writer = csv.writer(response)
+        writer.writerow(["viewed_at", "path", "visitor_type", "browser", "device", "language"])
+        for event in queryset.iterator(chunk_size=1000):
+            writer.writerow([event.viewed_at.isoformat(), event.path, "authenticated" if event.auth_user_id else "anonymous", event.browser, event.device, event.language])
+        return response
+
 
 class AdminDashboardStats(APIView):
     permission_classes = [IsPortalAdmin]

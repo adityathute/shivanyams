@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, Avatar, DislikeIcon, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
-import { adminFetch } from "../admin-utils";
+import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
 import "./comments.css";
 
@@ -186,11 +186,11 @@ export default function AdminCommentsPage() {
             </div>
             <div className="admin-comments-totals" aria-label={`${comments.length} total comments and ${totalReports} total reports`}>
               <div className="admin-comments-total">
-                <strong>{comments.length.toLocaleString("en-IN")}</strong>
+                <strong>{formatCompactNumber(comments.length)}</strong>
                 <span>Total comments</span>
               </div>
               <div className="admin-comments-total">
-                <strong>{totalReports.toLocaleString("en-IN")}</strong>
+                <strong>{formatCompactNumber(totalReports)}</strong>
                 <span>Total reports</span>
               </div>
             </div>
@@ -239,10 +239,10 @@ export default function AdminCommentsPage() {
                   <div className="admin-comment-meta">
                     <span>{new Date(comment.created_at).toLocaleString()}</span>
                     <span className="admin-comment-reactions">
-                      <LikeIcon size={14} /> {comment.likes_count}
-                      <DislikeIcon size={14} /> {comment.dislikes_count}
+                      <LikeIcon size={14} /> {formatCompactNumber(comment.likes_count)}
+                      <DislikeIcon size={14} /> {formatCompactNumber(comment.dislikes_count)}
                     </span>
-                    <span className={comment.report_count ? "has-reports" : ""}>{comment.report_count} reports</span>
+                    <span className={comment.report_count ? "has-reports" : ""}>{formatCompactNumber(comment.report_count)} reports</span>
                   </div>
                   {comment.reports?.length ? (
                     <div className="admin-comment-reports">
@@ -279,7 +279,7 @@ export default function AdminCommentsPage() {
           <div className="admin-table-footer">
             <span>
               Showing {comments.length ? (page - 1) * pageSize + 1 : 0}–
-              {Math.min(page * pageSize, comments.length)} of {comments.length} comments
+              {Math.min(page * pageSize, comments.length)} of {formatCompactNumber(comments.length)} comments
             </span>
             <div className="admin-pagination">
               <select

@@ -104,7 +104,7 @@ def public_posts_for_kind(kind):
             Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
             Prefetch(
                 "questions",
-                queryset=PostQuestion.objects.order_by("answered_at", "id"),
+                queryset=PostQuestion.objects.filter(status=PostQuestion.Status.ACTIVE).order_by("answered_at", "id"),
             ),
             Prefetch(
                 "important_dates",
@@ -851,6 +851,7 @@ class PostQuestions(APIView):
             post=post,
             user_auth_id=str(request.user.id),
             answer="",
+            status=PostQuestion.Status.ACTIVE,
         ).order_by("created_at", "id")
         return Response([
             {
@@ -879,7 +880,8 @@ class PostQuestions(APIView):
             user_auth_id=str(request.user.id),
             answer="",
         )
-        question.delete()
+        question.status = PostQuestion.Status.DELETED
+        question.save(update_fields=["status", "updated_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, post_id):
@@ -951,6 +953,7 @@ class PostQuestionHelpful(APIView):
             pk=question_id,
             post__status=Post.Status.PUBLISHED,
             post__is_active=True,
+            status=PostQuestion.Status.ACTIVE,
         )
         if not (question.answer or "").strip():
             raise NotFound("This question does not have an answer yet.")
@@ -1477,10 +1480,14 @@ class AdminQuestions(APIView):
         question_status = request.query_params.get("status", "all")
         search = request.query_params.get("search", "").strip()
 
-        if question_status == "answered":
-            queryset = queryset.exclude(answer="")
+        if question_status == "deleted":
+            queryset = queryset.filter(status=PostQuestion.Status.DELETED)
+        elif question_status == "answered":
+            queryset = queryset.filter(status=PostQuestion.Status.ACTIVE).exclude(answer="")
         elif question_status == "unanswered":
-            queryset = queryset.filter(answer="")
+            queryset = queryset.filter(status=PostQuestion.Status.ACTIVE, answer="")
+        else:
+            queryset = queryset.filter(status=PostQuestion.Status.ACTIVE)
 
         if search:
             queryset = queryset.filter(
@@ -1503,6 +1510,7 @@ class AdminQuestions(APIView):
                 "answer": question.answer,
                 "answer_visibility": question.answer_visibility,
                 "answered": bool(question.answer.strip()),
+                "status": question.status,
                 "helpful_count": question.helpful_count,
                 "created_at": question.created_at,
                 "answered_at": question.answered_at,

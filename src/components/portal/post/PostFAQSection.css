@@ -94,6 +94,7 @@
   align-items: flex-start;
   min-height: 0;
   overflow: hidden;
+  background: var(--surface-muted, #f8fafc);
 }
 
 .portal-faq-answer-inner p {
@@ -568,7 +569,7 @@
   flex: 0 0 auto;
   align-items: flex-start;
   justify-content: flex-end;
-  padding: 0 17px 16px 8px;
+  padding: 4px 17px 16px 8px;
 }
 
 .portal-faq-helpful-button,

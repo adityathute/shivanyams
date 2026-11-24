@@ -1,5 +1,11 @@
 .admin-questions-panel { margin-top: 22px; overflow: hidden; }
 .admin-questions-header-actions { align-items: center; gap: 10px; }
+.admin-questions-header-actions .admin-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 .admin-questions-panel-heading { align-items: center; gap: 18px; }
 .admin-questions-totals { display: flex; align-items: stretch; gap: 10px; }
 .admin-questions-totals > div { display: grid; gap: 3px; min-width: 94px; padding: 9px 12px; border: 1px solid var(--border-color, #e5e7eb); border-radius: 9px; }

@@ -1670,6 +1670,7 @@ class PostVersion(models.Model):
     is_published = models.BooleanField(default=False, db_index=True)
     created_by_auth_id = models.CharField(max_length=128, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(null=True, blank=True)
     published_by_auth_id = models.CharField(max_length=128, blank=True)
 

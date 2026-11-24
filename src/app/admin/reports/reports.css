@@ -450,3 +450,69 @@
   line-height: 1.4;
   font-size: 11px;
 }
+
+
+/* Match Reports action controls to the Comments & Replies table. */
+.admin-reports-page table.admin-reports-table th:nth-child(7),
+.admin-reports-page table.admin-reports-table td:nth-child(7) {
+  width: 170px;
+}
+
+.admin-reports-page .admin-reports-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.admin-reports-page .admin-reports-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 27px;
+  padding: 5px 7px;
+  border: 1px solid var(--border-color, #dbe4f0);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color .16s ease, color .16s ease, background .16s ease;
+}
+
+.admin-reports-page .admin-reports-actions button:hover:not(:disabled) {
+  border-color: var(--primary, #8b5cf6);
+  color: var(--primary, #8b5cf6);
+  background: color-mix(in srgb, var(--primary, #8b5cf6) 6%, transparent);
+}
+
+.admin-reports-page .admin-reports-actions button.danger {
+  color: #dc2626;
+  border-color: color-mix(in srgb, #dc2626 28%, var(--border-color, #dbe4f0));
+}
+
+.admin-reports-page .admin-reports-actions button.danger:hover:not(:disabled) {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: color-mix(in srgb, #dc2626 6%, transparent);
+}
+
+.admin-reports-page .admin-reports-actions button:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+@media (max-width: 760px) {
+  .admin-reports-page .admin-reports-actions {
+    gap: 5px;
+  }
+
+  .admin-reports-page .admin-reports-actions button {
+    min-height: 27px;
+    padding: 5px 7px;
+  }
+}

@@ -42,6 +42,7 @@ class ExternalAuthUser:
 
 
 class ShivanyaAuthAuthentication(BaseAuthentication):
+    enforce_cookie_csrf = True
     """
     Validate access tokens through Shivanya Auth itself.
 
@@ -65,7 +66,7 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
             if not access_token:
                 return None
 
-        if used_cookie and request.method not in ("GET", "HEAD", "OPTIONS", "TRACE"):
+        if self.enforce_cookie_csrf and used_cookie and request.method not in ("GET", "HEAD", "OPTIONS", "TRACE"):
             enforce_csrf(request._request)
 
         auth_request = Request(
@@ -114,3 +115,15 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
 
     def authenticate_header(self, request):
         return "Bearer"
+
+
+class ShivanyaAuthNoCSRFAuthentication(ShivanyaAuthAuthentication):
+    """
+    Cookie authentication for the public FAQ helpful endpoint.
+
+    This endpoint records a low-risk public vote and uses its own
+    visitor/account uniqueness constraints. All other API writes continue
+    to enforce the normal cookie-authenticated CSRF check.
+    """
+
+    enforce_cookie_csrf = False

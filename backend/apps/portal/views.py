@@ -1486,8 +1486,7 @@ class AdminQuestions(APIView):
             queryset = queryset.filter(status=PostQuestion.Status.ACTIVE).exclude(answer="")
         elif question_status == "unanswered":
             queryset = queryset.filter(status=PostQuestion.Status.ACTIVE, answer="")
-        else:
-            queryset = queryset.filter(status=PostQuestion.Status.ACTIVE)
+        # "all" intentionally includes deleted records for the admin audit view.
 
         if search:
             queryset = queryset.filter(

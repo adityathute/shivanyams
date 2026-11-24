@@ -203,51 +203,42 @@ export default function AdminCommentsPage() {
           </div>
 
           {error ? <div className="admin-error">{error}</div> : null}
-          {loadingRows ? <div className="admin-empty">Loading comments...</div> : filteredComments.length === 0 ? <div className="admin-empty">No comments match these filters.</div> : (
-            <div className="admin-comments-list">
-              {visibleComments.map((comment) => (
-                <article className="admin-comment-card" key={comment.id}>
-                  <div className="admin-comment-card-head">
-                    <div className="admin-comment-author">
-                      <Avatar size="sm" name={comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={comment.author_avatar?.trim() || undefined} />
-                      <div>
-                        <strong>{comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : `User ${comment.user_auth_id}`)}</strong>
-                        <span>{comment.post_title} · #{comment.id}{comment.parent ? ` · Reply to #${comment.parent}` : ""}</span>
-                      </div>
-                    </div>
-                    <span className={`admin-status status-${comment.status}`}>{comment.status}</span>
-                  </div>
-                  <p className="admin-comment-text">{comment.content}</p>
-                  <div className="admin-comment-meta">
-                    <span>{new Date(comment.created_at).toLocaleString()}</span>
-                    <span className="admin-comment-reactions">
-                      <LikeIcon size={14} /> {formatCompactNumber(comment.likes_count)}
-                      <DislikeIcon size={14} /> {formatCompactNumber(comment.dislikes_count)}
-                    </span>
-                  </div>
-                  <div className="admin-comment-actions">
-                    {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "approved")}>Approve / restore</button> : null}
-                    {comment.status !== "hidden" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "hidden")}>Hide</button> : null}
-                    {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "rejected")}>Reject</button> : null}
-                    <button type="button" onClick={() => { setReplyTarget(comment); setReplyDraft(""); }}>Reply as admin</button>
-                  </div>
-                  {replyTarget?.id === comment.id ? (
-                    <div className="admin-comment-reply">
-                      <textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} rows={3} maxLength={10000} placeholder="Write an official reply..." />
-                      <div>
-                        <button type="button" onClick={() => setReplyTarget(null)}>Cancel</button>
-                        <button type="button" disabled={!replyDraft.trim() || busyId === comment.id} onClick={() => void sendAdminReply()}>Send reply</button>
-                      </div>
-                    </div>
-                  ) : null}
-                </article>
-              ))}
+          {loadingRows ? (
+            <div className="admin-empty">Loading comments...</div>
+          ) : filteredComments.length === 0 ? (
+            <div className="admin-empty">{search.trim() || statusFilter !== "all" || typeFilter !== "all" ? "No comments or replies match these filters." : "No comments or replies are available yet."}</div>
+          ) : (
+            <div className="admin-table-wrap admin-comments-table-wrap">
+              <table className="admin-post-table admin-comments-table">
+                <thead><tr><th>Type</th><th>Discussion</th><th>Post</th><th>Author</th><th>Activity</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                  {visibleComments.map((comment) => (
+                    <tr key={comment.id}>
+                      <td><span className={comment.parent === null ? "admin-discussion-type comment" : "admin-discussion-type reply"}>{comment.parent === null ? "Comment" : "Reply"}</span></td>
+                      <td className="admin-comments-content-cell"><p>{comment.content}</p><small>#{comment.id}{comment.parent !== null ? " · Reply to #" + comment.parent : ""}</small></td>
+                      <td className="admin-comments-post-cell">{comment.post_title || "Post #" + comment.post}</td>
+                      <td className="admin-comments-author-cell"><div className="admin-comments-author"><Avatar size="sm" name={comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={comment.author_avatar?.trim() || undefined} /><span>{comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "User " + comment.user_auth_id)}</span></div></td>
+                      <td className="admin-comments-activity-cell"><span>{new Date(comment.created_at).toLocaleDateString()}</span><small><LikeIcon size={12} /> {formatCompactNumber(comment.likes_count)} <DislikeIcon size={12} /> {formatCompactNumber(comment.dislikes_count)}</small></td>
+                      <td><span className={"admin-status status-" + comment.status}>{comment.status}</span></td>
+                      <td>
+                        <div className="admin-comments-row-actions">
+                          {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "approved")}>Approve</button> : null}
+                          {comment.status !== "hidden" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "hidden")}>Hide</button> : null}
+                          {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "rejected")}>Reject</button> : null}
+                          <button type="button" onClick={() => { setReplyTarget(comment); setReplyDraft(""); }}>Reply</button>
+                        </div>
+                        {replyTarget?.id === comment.id ? <div className="admin-comment-reply admin-comments-reply-editor"><textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} rows={3} maxLength={10000} placeholder="Write an official reply..." /><div><button type="button" onClick={() => setReplyTarget(null)}>Cancel</button><button type="button" disabled={!replyDraft.trim() || busyId === comment.id} onClick={() => void sendAdminReply()}>Send</button></div></div> : null}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
           <div className="admin-table-footer">
             <span>
               Showing {filteredComments.length ? (page - 1) * pageSize + 1 : 0}–
-              {Math.min(page * pageSize, filteredComments.length)} of {formatCompactNumber(filteredComments.length)} comments
+              {Math.min(page * pageSize, filteredComments.length)} of {formatCompactNumber(filteredComments.length)} discussions
             </span>
             <div className="admin-pagination">
               <select

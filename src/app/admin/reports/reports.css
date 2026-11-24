@@ -406,3 +406,47 @@
 .admin-reports-page .admin-reports-date { font-size: 11px; }
 .admin-reports-page .admin-reports-complete { color: var(--muted-foreground,#9298a2); }
 @media (max-width: 760px) { .admin-reports-page .admin-reports-filters { grid-template-columns: 1fr; } }
+
+
+/* Keep reported text readable in a narrow, vertically wrapping column. */
+.admin-reports-page table.admin-reports-table th:nth-child(3),
+.admin-reports-page table.admin-reports-table td:nth-child(3) {
+  width: 190px;
+}
+
+.admin-reports-page .admin-reports-content {
+  vertical-align: top;
+}
+
+.admin-reports-page .admin-reports-content > span {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.5;
+  font-size: 11px;
+}
+
+.admin-reports-page table.admin-reports-table th:nth-child(4),
+.admin-reports-page table.admin-reports-table td:nth-child(4) {
+  width: 180px;
+}
+
+.admin-reports-page .admin-reports-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-reports-page .admin-reports-user > .shivanya-avatar {
+  flex: 0 0 30px;
+}
+
+.admin-reports-page .admin-reports-user > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+  font-size: 11px;
+}

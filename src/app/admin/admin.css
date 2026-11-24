@@ -467,6 +467,19 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
+.admin-export-button:hover,
+.admin-export-button:focus-visible {
+  color: #16a34a;
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.admin-export-button:hover svg,
+.admin-export-button:focus-visible svg {
+  color: #166534;
+  stroke: #166534;
+}
 .admin-toolbar-icon-button {
   width: 40px;
   min-width: 40px;

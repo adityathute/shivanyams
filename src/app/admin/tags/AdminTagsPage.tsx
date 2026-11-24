@@ -12,6 +12,7 @@ import "./tags.css";
 
 type TagRow = { name: string; count: number };
 type TagSort = "popular" | "least" | "az" | "za";
+type TagSortColumn = "name" | "count";
 
 function slugify(value: string) {
   return value.normalize("NFKD").toLowerCase().trim().replace(/[^\\p{L}\\p{N}]+/gu, "-").replace(/^-|-$/g, "");
@@ -68,6 +69,18 @@ export default function AdminTagsPage() {
   }, [tags, search, sort]);
 
   const pageCount = Math.max(1, Math.ceil(filteredTags.length / pageSize));
+
+  function toggleColumnSort(column: TagSortColumn) {
+    if (column === "name") setSort((current) => current === "az" ? "za" : "az");
+    else setSort((current) => current === "popular" ? "least" : "popular");
+    setPage(1);
+  }
+
+  function sortHeader(column: TagSortColumn, label: string) {
+    const active = column === "name" ? sort === "az" || sort === "za" : sort === "popular" || sort === "least";
+    const ascending = column === "name" ? sort === "az" : sort === "least";
+    return <button type="button" className="admin-tags-sort" onClick={() => toggleColumnSort(column)} aria-label={`Sort by ${label}`} aria-pressed={active}>{label}<span aria-hidden="true">{active ? (ascending ? "↑" : "↓") : "↕"}</span></button>;
+  }
   const visibleTags = filteredTags.slice((page - 1) * pageSize, page * pageSize);
   const firstTag = filteredTags.length ? (page - 1) * pageSize + 1 : 0;
   const lastTag = Math.min(page * pageSize, filteredTags.length);
@@ -146,7 +159,7 @@ export default function AdminTagsPage() {
   if (loading || !isAdmin) return null;
 
   return (
-    <main className="admin-page">
+    <main className="admin-page admin-tags-page">
       <div className="admin-shell">
         <header className="admin-topbar">
           <div>

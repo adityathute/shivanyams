@@ -12,11 +12,12 @@ import "./PostEngagementActions.css";
 type Props = {
   postId: number;
   title: string;
+  placement?: "header" | "footer";
 };
 
 type Reaction = "like" | "dislike" | null;
 
-export function PostEngagementActions({ postId, title }: Props) {
+export function PostEngagementActions({ postId, title, placement = "footer" }: Props) {
   const { user } = useAuth();
   const { openLogin } = usePortalAuth();
   const [reaction, setReaction] = useState<Reaction>(null);
@@ -65,6 +66,15 @@ export function PostEngagementActions({ postId, title }: Props) {
 
   useEffect(() => { void loadPostReaction(); }, [loadPostReaction]);
   useEffect(() => { void loadSavedState(); }, [loadSavedState]);
+
+  useEffect(() => {
+    const syncSavedState = (event: Event) => {
+      const detail = (event as CustomEvent<{ postId: number; saved: boolean }>).detail;
+      if (detail?.postId === postId) setSaved(detail.saved);
+    };
+    window.addEventListener("portal-post-saved-state", syncSavedState);
+    return () => window.removeEventListener("portal-post-saved-state", syncSavedState);
+  }, [postId]);
 
   const loadPostReportState = useCallback(async () => {
     if (!user) {
@@ -117,7 +127,9 @@ export function PostEngagementActions({ postId, title }: Props) {
       showMessage("Unable to update saved posts.");
       return;
     }
-    setSaved(!saved);
+    const nextSaved = !saved;
+    setSaved(nextSaved);
+    window.dispatchEvent(new CustomEvent("portal-post-saved-state", { detail: { postId, saved: nextSaved } }));
     setMessage("");
   }
 
@@ -263,7 +275,7 @@ export function PostEngagementActions({ postId, title }: Props) {
   }, [shareMenuOpen, postId]);
 
   return (
-    <section ref={shareMenuRef} className="portal-post-engagement-actions" aria-label="Post actions">
+    <section ref={shareMenuRef} className={`portal-post-engagement-actions ${placement === "header" ? "is-header" : "is-footer"}`} aria-label="Post actions">
       <div className="portal-post-reaction-actions">
         <button
           type="button"

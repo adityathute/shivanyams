@@ -2013,13 +2013,15 @@
 }
 
 .admin-analytics-modal .admin-content-status-table th:first-child,
-.admin-analytics-modal .admin-content-status-table td:first-child { width: 42%; }
+.admin-analytics-modal .admin-content-status-table td:first-child { width: 36%; }
 .admin-analytics-modal .admin-content-status-table th:nth-child(2),
-.admin-analytics-modal .admin-content-status-table td:nth-child(2) { width: 18%; }
+.admin-analytics-modal .admin-content-status-table td:nth-child(2) { width: 16%; }
 .admin-analytics-modal .admin-content-status-table th:nth-child(3),
-.admin-analytics-modal .admin-content-status-table td:nth-child(3) { width: 25%; }
+.admin-analytics-modal .admin-content-status-table td:nth-child(3) { width: 19%; }
+.admin-analytics-modal .admin-content-status-table th:nth-child(4),
+.admin-analytics-modal .admin-content-status-table td:nth-child(4) { width: 17%; }
 .admin-analytics-modal .admin-content-status-table th:last-child,
-.admin-analytics-modal .admin-content-status-table td:last-child { width: 15%; }
+.admin-analytics-modal .admin-content-status-table td:last-child { width: 12%; }
 .admin-analytics-modal .admin-content-status-table .admin-analytics-link {
   display: block;
   width: 100%;

@@ -345,92 +345,13 @@
 .admin-tags-page table.admin-tags-table th { vertical-align: middle; }
 
 
-/* Tags page owns its filter layout; do not inherit shared admin dashboard filters. */
+/* Use the same shared filter layout and Select control as the Reports page. */
 .admin-tags-page .admin-tags-filters {
-  display: grid;
-  /* Match the Reports page search + compact select filter proportions. */
   grid-template-columns: minmax(240px, 1fr) minmax(150px, 190px);
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 16px 22px;
-  border-bottom: 1px solid #edf1f6;
-}
-
-.admin-tags-page .admin-tags-filters > input[type="search"] {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  height: 40px;
-  box-sizing: border-box;
-  padding: 9px 12px;
-  border: 1px solid #dbe4f0;
-  border-radius: 7px;
-  outline: none;
-  background: #fff;
-  color: #263b57;
-  font: inherit;
-  font-size: 12px;
-}
-
-.admin-tags-page .admin-tags-filters > input[type="search"]:focus {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgb(139 92 246 / 12%);
-}
-
-.admin-tags-page .admin-tags-filters > * {
-  display: block;
-  min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Match the visible custom Select control height used by Reports.
-   The shared component is a wrapper + button, not a native <select>. */
-.admin-tags-page .admin-tags-filters .shivanya-select-control {
-  display: block;
-  position: relative;
-  min-width: 0;
-  width: 100%;
-  height: 40px !important;
-  min-height: 40px !important;
-  box-sizing: border-box;
-}
-
-.admin-tags-page .admin-tags-filters .shivanya-select-control button,
-.admin-tags-page .admin-tags-filters .shivanya-select-control [role="combobox"] {
-  width: 100%;
-  height: 40px !important;
-  min-height: 40px !important;
-  max-height: 40px !important;
-  box-sizing: border-box;
-}
-
-.admin-tags-page .admin-tags-filters .shivanya-select-control .shivanya-select-arrow {
-  top: 20px !important;
-}
-
-[data-theme="dark"] .admin-tags-page .admin-tags-filters {
-  border-bottom-color: #344154;
-}
-
-[data-theme="dark"] .admin-tags-page .admin-tags-filters > input[type="search"] {
-  border-color: #344154;
-  background: #1c2633;
-  color: #e2eaf4;
 }
 
 @media (max-width: 760px) {
   .admin-tags-page .admin-tags-filters {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 1fr;
   }
 }
-
-@media (max-width: 620px) {
-  .admin-tags-page .admin-tags-filters {
-    padding: 12px;
-  }
-}
-

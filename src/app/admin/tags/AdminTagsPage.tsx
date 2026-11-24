@@ -12,7 +12,6 @@ import "./tags.css";
 
 type TagRow = { name: string; count: number };
 type TagSort = "popular" | "least" | "az" | "za";
-type TagSortColumn = "name" | "count";
 
 export default function AdminTagsPage() {
   const router = useRouter();
@@ -66,17 +65,6 @@ export default function AdminTagsPage() {
 
   const pageCount = Math.max(1, Math.ceil(filteredTags.length / pageSize));
 
-  function toggleColumnSort(column: TagSortColumn) {
-    if (column === "name") setSort((current) => current === "az" ? "za" : "az");
-    else setSort((current) => current === "popular" ? "least" : "popular");
-    setPage(1);
-  }
-
-  function sortHeader(column: TagSortColumn, label: string) {
-    const active = column === "name" ? sort === "az" || sort === "za" : sort === "popular" || sort === "least";
-    const ascending = column === "name" ? sort === "az" : sort === "least";
-    return <button type="button" className="admin-tags-sort" onClick={() => toggleColumnSort(column)} aria-label={`Sort by ${label}`} aria-pressed={active}>{label}<span aria-hidden="true">{active ? (ascending ? "↑" : "↓") : "↕"}</span></button>;
-  }
   const visibleTags = filteredTags.slice((page - 1) * pageSize, page * pageSize);
   const firstTag = filteredTags.length ? (page - 1) * pageSize + 1 : 0;
   const lastTag = Math.min(page * pageSize, filteredTags.length);
@@ -219,8 +207,8 @@ export default function AdminTagsPage() {
               <table className="admin-post-table admin-tags-table">
                 <thead>
                   <tr>
-                    <th>{sortHeader("name", "Tag")}</th>
-                    <th>{sortHeader("count", "Posts")}</th>
+                    <th scope="col">Tag</th>
+                    <th scope="col">Posts</th>
                     <th>Actions</th>
                   </tr>
                 </thead>

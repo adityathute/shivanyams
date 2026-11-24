@@ -1900,32 +1900,71 @@ class AdminWebsiteAnalytics(APIView):
                     .filter(total_views__gt=0)
                     .order_by("-last_seen_at")
                 )
-                auth_ids = {item.auth_user_id for item in post_visitors if item.auth_user_id}
+
+                # A visitor can have a PostVisitor row for many posts. Collapse
+                # those rows by the first-party visitor ID for unique people/devices.
+                unique_visitors = {}
+                for item in post_visitors:
+                    row = unique_visitors.get(item.visitor_id)
+                    last_event = item.view_events.order_by("-viewed_at").first()
+                    if row is None:
+                        unique_visitors[item.visitor_id] = {
+                            "visitor_id": item.visitor_id,
+                            "auth_user_id": item.auth_user_id,
+                            "first_seen": item.first_seen_at,
+                            "last_seen": item.last_seen_at,
+                            "last_viewed": item.last_viewed,
+                            "total_views": item.total_views,
+                            "post_ids": {item.post_id},
+                            "device": last_event.device if last_event else "unknown",
+                            "language": last_event.language if last_event else "",
+                            "post_id": item.post_id,
+                        }
+                        continue
+
+                    row["first_seen"] = min(row["first_seen"], item.first_seen_at)
+                    if item.last_seen_at > row["last_seen"]:
+                        row["last_seen"] = item.last_seen_at
+                        row["last_viewed"] = item.last_viewed
+                        row["device"] = last_event.device if last_event else "unknown"
+                        row["language"] = last_event.language if last_event else ""
+                        row["post_id"] = item.post_id
+                        if item.auth_user_id:
+                            row["auth_user_id"] = item.auth_user_id
+                    row["total_views"] += item.total_views
+                    row["post_ids"].add(item.post_id)
+
+                unique_rows = sorted(
+                    unique_visitors.values(),
+                    key=lambda row: row["last_seen"],
+                    reverse=True,
+                )[:500]
+                auth_ids = {row["auth_user_id"] for row in unique_rows if row["auth_user_id"]}
                 website_visitors = {}
                 if auth_ids:
                     for item in WebsiteVisitor.objects.filter(auth_user_id__in=auth_ids).order_by("-last_seen_at"):
                         website_visitors.setdefault(item.auth_user_id, item)
+
                 rows = []
-                for item in post_visitors[:500]:
-                    last_event = item.view_events.order_by("-viewed_at").first()
-                    website_visitor = website_visitors.get(item.auth_user_id)
+                for row in unique_rows:
+                    website_visitor = website_visitors.get(row["auth_user_id"])
                     rows.append({
-                        "visitor_id": item.visitor_id,
-                        "visitor_type": "user" if item.auth_user_id else "anonymous",
+                        "visitor_id": row["visitor_id"],
+                        "visitor_type": "user" if row["auth_user_id"] else "anonymous",
                         "full_name": website_visitor.full_name if website_visitor else "",
                         "ip_address": website_visitor.ip_address if website_visitor else None,
                         "browser": website_visitor.browser if website_visitor else "Unknown",
-                        "first_seen": item.first_seen_at,
-                        "last_seen": item.last_seen_at,
-                        "last_viewed": item.last_viewed,
-                        "total_views": item.total_views,
-                        "total_pages": 1,
-                        "device": last_event.device if last_event else "unknown",
-                        "language": last_event.language if last_event else "",
-                        "post_id": item.post_id,
+                        "first_seen": row["first_seen"],
+                        "last_seen": row["last_seen"],
+                        "last_viewed": row["last_viewed"],
+                        "total_views": row["total_views"],
+                        "total_pages": len(row["post_ids"]),
+                        "device": row["device"],
+                        "language": row["language"],
+                        "post_id": row["post_id"],
                     })
                 return Response({
-                    "visitors_count": PostVisitor.objects.filter(view_events__isnull=False).distinct().count(),
+                    "visitors_count": len(unique_visitors),
                     "visitors": rows,
                 })
 

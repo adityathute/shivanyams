@@ -1322,6 +1322,7 @@ export default function AdminPage() {
             {
               label: "Post visitors",
               value: postVisitorsCount,
+              analytics: "visitors",
               group: "posts",
             },
             {
@@ -2745,7 +2746,7 @@ export default function AdminPage() {
                 </>
               )
             ) : analyticsVisitors.length === 0 ? (
-              <div className="admin-empty">No visitors recorded yet.</div>
+              <div className="admin-empty">{postVisitorsMode ? "No post visitors recorded yet." : "No visitors recorded yet."}</div>
             ) : (
               <>
               <div className="admin-analytics-table-wrap">

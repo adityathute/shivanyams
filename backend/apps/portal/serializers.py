@@ -540,7 +540,7 @@ class PostSerializer(serializers.ModelSerializer):
     users_count = serializers.IntegerField(read_only=True, default=0)
     has_unpublished_changes = serializers.BooleanField(read_only=True, default=False)
     latest_version_number = serializers.IntegerField(read_only=True, allow_null=True)
-    latest_version_created_at = serializers.DateTimeField(read_only=True, allow_null=True)
+    latest_version_updated_at = serializers.DateTimeField(read_only=True, allow_null=True)
     published_version_number = serializers.IntegerField(read_only=True, allow_null=True)
 
     job_details = serializers.SerializerMethodField()

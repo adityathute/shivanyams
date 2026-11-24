@@ -786,7 +786,6 @@ export default function AdminPage() {
 
   function openWebsiteAnalytics(type: "views" | "visitors" | "users") {
     setPostVisitorsMode(false);
-    setPostVisitorsPostId(null);
     setAnalyticsType(type);
     setSelectedPost(null);
     setPostAnalyticsEvents([]);

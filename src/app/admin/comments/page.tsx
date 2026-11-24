@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, ConfirmDialog, CloseIcon, DislikeIcon, IconButton, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, ConfirmDialog, CloseIcon, DislikeIcon, IconButton, LikeIcon, MessagesIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
@@ -120,7 +120,7 @@ export default function AdminCommentsPage() {
         </header>
         <section className="admin-post-panel admin-comments-panel">
           <div className="admin-panel-heading admin-comments-panel-heading">
-            <div><h2>Community Discussions</h2><p>Monitor community conversations and manage member comments and replies.</p></div>
+            <div><h2><MessagesIcon size={18} /> Community Discussions</h2><p>Monitor community conversations and manage member comments and replies.</p></div>
             <div className="admin-comments-totals" aria-label={`${totalComments} comments across ${postsWithComments} posts and ${totalReplies} replies across ${postsWithReplies} posts`}>
               <div className="admin-comments-total"><strong>{formatCompactNumber(totalComments)}</strong><span>Total comments</span><small>{formatCompactNumber(postsWithComments)} posts</small></div>
               <div className="admin-comments-total"><strong>{formatCompactNumber(totalReplies)}</strong><span>Total replies</span><small>{formatCompactNumber(postsWithReplies)} posts</small></div>

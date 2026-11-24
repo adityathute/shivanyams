@@ -17,7 +17,8 @@ import {
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { LinkIcon, MailIcon } from "shivanya-ui";
+import { EyeIcon, LinkIcon, MailIcon } from "shivanya-ui";
+import { formatCompactNumber } from "../../../lib/format-number";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import {
   NOT_FOUND_RECOMMENDATIONS_LIMIT,
@@ -321,9 +322,9 @@ const detailLabels = {
     hi: "प्रकाशित तिथि",
   },
   lastUpdated: {
-    en: "Last updated",
-    mr: "शेवटचे अपडेट",
-    hi: "अंतिम अपडेट",
+    en: "Updated",
+    mr: "अपडेट",
+    hi: "अपडेट",
   },
   eventDate: {
     en: "Event date",
@@ -492,6 +493,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       return video
         ? {
             postId: Number(video.id),
+            viewsCount: Number(video.views_count) || 0,
             title:
               getLocalizedText(
                 language,
@@ -540,6 +542,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     return item
       ? {
           postId: Number(item.id),
+          viewsCount: Number(item.views_count) || 0,
           comments_enabled: item.comments_enabled !== false,
           title:
             getLocalizedText(
@@ -856,7 +859,13 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     {updatedPostDate ? (
                       <div className="portal-post-header-updated">
                         <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}:</span>
-                        <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
+                        <time dateTime={updatedPostDate}>{formatDate(updatedPostDate, language)}</time>
+                      </div>
+                    ) : null}
+                    {Number(post.viewsCount) >= 0 ? (
+                      <div className="portal-post-header-views" aria-label={`${formatCompactNumber(Number(post.viewsCount) || 0)} views`}>
+                        <EyeIcon size={14} aria-hidden="true" />
+                        <span>{formatCompactNumber(Number(post.viewsCount) || 0)}</span>
                       </div>
                     ) : null}
                   </div>

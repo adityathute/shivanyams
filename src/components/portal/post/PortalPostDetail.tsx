@@ -872,7 +872,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       </div>
                     </div>
                     {!previewItem ? (
-                      <PostEngagementActions postId={post.postId} title={post.title} />
+                      <PostEngagementActions postId={post.postId} title={post.title} placement="header" />
                     ) : null}
                   </div>
 
@@ -1402,6 +1402,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       <span aria-hidden="true">↗</span>
                     </a>
                   ) : null}
+                {!previewItem ? (
+                  <div className="portal-post-card-footer">
+                    <PostEngagementActions postId={post.postId} title={post.title} placement="footer" />
+                  </div>
+                ) : null}
                 </article>
                 {!previewItem ? (
                   <>

@@ -81,6 +81,11 @@ urlpatterns = [
         name="post-questions",
     ),
     path(
+        "content/<int:post_id>/questions/<int:question_id>/",
+        PostQuestions.as_view(),
+        name="post-question-detail",
+    ),
+    path(
         "questions/<int:question_id>/helpful/",
         PostQuestionHelpful.as_view(),
         name="post-question-helpful",

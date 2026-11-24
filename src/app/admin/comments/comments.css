@@ -393,7 +393,7 @@
 .admin-comments-page table.admin-comments-table th,
 .admin-comments-page table.admin-comments-table td { padding: 11px 12px; text-align: left; vertical-align: middle; }
 .admin-comments-page table.admin-comments-table th { white-space: nowrap; }
-.admin-comments-page table.admin-comments-table th:nth-child(1), .admin-comments-page table.admin-comments-table td:nth-child(1) { width: 66px; }
+.admin-comments-page table.admin-comments-table th:nth-child(1), .admin-comments-page table.admin-comments-table td:nth-child(1) { width: 100px; }
 .admin-comments-page table.admin-comments-table th:nth-child(2), .admin-comments-page table.admin-comments-table td:nth-child(2) { width: 25%; }
 .admin-comments-page table.admin-comments-table th:nth-child(3), .admin-comments-page table.admin-comments-table td:nth-child(3) { width: 16%; }
 .admin-comments-page table.admin-comments-table th:nth-child(4), .admin-comments-page table.admin-comments-table td:nth-child(4) { width: 17%; }
@@ -564,12 +564,15 @@
   flex: 0 0 32px;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--border-color, #dbe4f0);
+  /* border: 1px solid var(--border-color, #dbe4f0); */
   border-radius: 8px;
   background: transparent;
   color: inherit;
   font-size: 22px;
   cursor: pointer;
+}
+.admin-comments-reply-modal-head .admin-comments-reply-close:hover {
+  color: red;
 }
 .admin-comments-reply-context {
   margin-bottom: 16px;

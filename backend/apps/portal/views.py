@@ -2,6 +2,7 @@ from django.db import transaction
 from django.core import signing
 from django.core.mail import send_mass_mail
 import hashlib
+import uuid
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
@@ -32,6 +33,7 @@ from .models import (
     PostDate,
     PostFAQ,
     PostQuestion,
+    PostQuestionHelpfulVote,
     PostReaction,
     PostStatusHistory,
     PostVersion,
@@ -898,6 +900,81 @@ class PostQuestions(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class PostQuestionHelpful(APIView):
+    """Public helpful voting, deduplicated by a first-party visitor cookie."""
+
+    permission_classes = [permissions.AllowAny]
+    cookie_name = "portal_faq_visitor"
+
+    def _visitor_token(self, request):
+        return str(request.COOKIES.get(self.cookie_name) or "").strip()
+
+    def _visitor_hash(self, token):
+        return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+    def _question(self, question_id, request):
+        question = get_object_or_404(
+            PostQuestion.objects.select_related("post"),
+            pk=question_id,
+            post__status=Post.Status.PUBLISHED,
+            post__is_active=True,
+        )
+        if not (question.answer or "").strip():
+            raise NotFound("This question does not have an answer yet.")
+        if question.answer_visibility == PostQuestion.AnswerVisibility.HIDDEN:
+            raise NotFound("This answer is not available.")
+        if question.answer_visibility == PostQuestion.AnswerVisibility.PRIVATE:
+            viewer_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+            if not viewer_id or viewer_id != question.user_auth_id:
+                raise NotFound("This answer is not available.")
+        return question
+
+    def get(self, request, question_id):
+        question = self._question(question_id, request)
+        token = self._visitor_token(request)
+        has_voted = bool(token) and PostQuestionHelpfulVote.objects.filter(
+            question=question,
+            visitor_hash=self._visitor_hash(token),
+        ).exists()
+        return Response({
+            "helpful_count": question.helpful_votes.count(),
+            "has_voted": has_voted,
+        })
+
+    def post(self, request, question_id):
+        question = self._question(question_id, request)
+        token = self._visitor_token(request)
+        new_token = not token
+        if new_token:
+            token = uuid.uuid4().hex
+        visitor_hash = self._visitor_hash(token)
+        vote, created = PostQuestionHelpfulVote.objects.get_or_create(
+            question=question,
+            visitor_hash=visitor_hash,
+            defaults={
+                "user_auth_id": str(request.user.id)
+                if getattr(request.user, "is_authenticated", False)
+                else "",
+            },
+        )
+        response = Response({
+            "helpful_count": question.helpful_votes.count(),
+            "has_voted": True,
+            "created": created,
+        })
+        if new_token:
+            response.set_cookie(
+                self.cookie_name,
+                token,
+                max_age=60 * 60 * 24 * 365,
+                httponly=True,
+                secure=request.is_secure(),
+                samesite="Lax",
+                path="/",
+            )
+        return response
 
 
 class PostComments(APIView):

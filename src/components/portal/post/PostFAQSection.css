@@ -139,6 +139,7 @@
 @media (max-width: 600px) {
   .portal-faq-section {
     margin: 12px 0 8px;
+    margin-bottom: 0;
     padding: 12px;
     border-radius: 15px;
   }

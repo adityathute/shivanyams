@@ -414,6 +414,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [trackedViewsCount, setTrackedViewsCount] = useState<{ postId: number; count: number } | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -613,13 +614,14 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       if (!response.ok) {
         throw new Error(`View tracking failed (${response.status}).`);
       }
+      setTrackedViewsCount({ postId, count: (Number(post?.viewsCount) || 0) + 1 });
     }).catch((error) => {
       if (trackedPostIdRef.current === postId) {
         trackedPostIdRef.current = null;
       }
       console.error("Post view tracking failed:", error);
     });
-  }, [post?.postId, language, previewItem]);
+  }, [post?.postId, post?.viewsCount, language, previewItem]);
 
   const categoryApiSlug = category === "guides" ? "articles-guides" : category;
   const categoryRecord = categories.find(
@@ -816,12 +818,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         <time dateTime={updatedPostDate}>{formatDate(updatedPostDate, language)}</time>
                       </div>
                     ) : null}
-                    {Number(post.viewsCount) >= 0 ? (
-                      <div className="portal-post-header-views" aria-label={`${formatCompactNumber(Number(post.viewsCount) || 0)} views`}>
-                        <EyeIcon size={14} aria-hidden="true" />
-                        <span>{formatCompactNumber(Number(post.viewsCount) || 0)}</span>
-                      </div>
-                    ) : null}
+                    <div className="portal-post-header-views" aria-label={`${formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)} views`}>
+                      <EyeIcon size={14} aria-hidden="true" />
+                      <span>{formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)}</span>
+                    </div>
                   </div>
 
                   <h1>{post.title}</h1>

@@ -8,7 +8,7 @@ import { ArrowLeftIcon, RefreshIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
-import "../comments/comments.css";
+import "./reports.css";
 
 type Report = {
   id: number;
@@ -139,7 +139,7 @@ export default function AdminReportsPage() {
             <h1>Reports</h1>
             <p>Review and manage reports submitted against community comments and replies.</p>
           </div>
-          <div className="admin-top-actions admin-comments-header-actions">
+          <div className="admin-top-actions admin-reports-header-actions">
             <Link href="/admin" className="admin-secondary-button">
               <ArrowLeftIcon size={16} />
               <span>Back to dashboard</span>
@@ -151,33 +151,33 @@ export default function AdminReportsPage() {
           </div>
         </header>
 
-        <section className="admin-post-panel admin-comments-panel">
-          <div className="admin-panel-heading admin-comments-panel-heading">
+        <section className="admin-post-panel admin-reports-panel">
+          <div className="admin-panel-heading admin-reports-panel-heading">
             <div>
               <h2>Report activity</h2>
               <p>Review report reasons, related discussions, and take action on open reports.</p>
             </div>
-            <div className="admin-comments-totals admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
-              <div className="admin-comments-total">
+            <div className="admin-reports-totals admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
+              <div className="admin-reports-total">
                 <strong>{formatCompactNumber(reports.length)}</strong>
                 <span>Total reports</span>
               </div>
-              <div className="admin-comments-total">
+              <div className="admin-reports-total">
                 <strong>{formatCompactNumber(postsWithReports)}</strong>
                 <span>Posts reported</span>
               </div>
-              <div className="admin-comments-total">
+              <div className="admin-reports-total">
                 <strong>{formatCompactNumber(reportedComments)}</strong>
                 <span>Comments reported</span>
               </div>
-              <div className="admin-comments-total">
+              <div className="admin-reports-total">
                 <strong>{formatCompactNumber(reportedReplies)}</strong>
                 <span>Replies reported</span>
               </div>
             </div>
           </div>
 
-          <div className="admin-filters admin-comments-filters">
+          <div className="admin-filters admin-reports-filters">
             <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search report, reason, user or post..." aria-label="Search reports" />
             <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter report status">
               <option value="all">All statuses</option>
@@ -189,27 +189,27 @@ export default function AdminReportsPage() {
 
           {error ? <div className="admin-error">{error}</div> : null}
           {loadingRows ? <div className="admin-empty">Loading reports...</div> : filteredReports.length === 0 ? <div className="admin-empty">No reports match these filters.</div> : (
-            <div className="admin-comments-list">
+            <div className="admin-reports-list">
               {visibleReports.map((report) => (
-                <article className="admin-comment-card" key={report.id}>
-                  <div className="admin-comment-card-head">
+                <article className="admin-report-card" key={report.id}>
+                  <div className="admin-report-card-head">
                     <div>
                       <strong>{report.reason || "Community report"}</strong>
                       <span>{report.post_title || "Post"} · {report.parent ? `Reply #${report.comment_id}` : `Comment #${report.comment_id}`} · Report #{report.id}</span>
                     </div>
                     <span className={`admin-status status-${report.status}`}>{report.status}</span>
                   </div>
-                  <p className="admin-comment-text">{report.details || "No additional details provided."}</p>
-                  <div className="admin-comment-meta">
+                  <p className="admin-report-text">{report.details || "No additional details provided."}</p>
+                  <div className="admin-report-meta">
                     <span>Reported by {report.reporter_auth_id || "Unknown user"}</span>
                     <span>{new Date(report.created_at).toLocaleString()}</span>
                   </div>
-                  <div className="admin-comment-reply">
+                  <div className="admin-report-reply">
                     <strong>Reported content</strong>
-                    <p className="admin-comment-text">{report.content}</p>
+                    <p className="admin-report-text">{report.content}</p>
                   </div>
                   {report.status === "open" ? (
-                    <div className="admin-comment-actions">
+                    <div className="admin-report-actions">
                       <button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "reviewed")}>Mark reviewed</button>
                       <button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button>
                     </div>

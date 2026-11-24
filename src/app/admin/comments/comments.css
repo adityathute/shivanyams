@@ -558,7 +558,7 @@
   color: var(--muted-foreground, #9298a2);
   font-size: .84rem;
 }
-.admin-comments-reply-modal-head > button {
+.admin-comments-reply-modal-head .admin-comments-reply-close {
   display: grid;
   place-items: center;
   flex: 0 0 32px;
@@ -640,7 +640,7 @@
   filter: brightness(1.08);
 }
 .admin-comments-reply-modal-actions button:disabled,
-.admin-comments-reply-modal-head > button:disabled {
+.admin-comments-reply-modal-head .admin-comments-reply-close:disabled {
   opacity: .5;
   cursor: not-allowed;
 }

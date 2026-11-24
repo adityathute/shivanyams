@@ -2766,7 +2766,7 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {visibleAnalyticsVisitors.map((visitor) => (
-                      <tr key={visitor.visitor_id}>
+                      <tr key={postVisitorsMode ? `${visitor.visitor_id}-${visitor.post_id ?? "post"}` : visitor.visitor_id}>
                         <td>
                           <button
                             type="button"

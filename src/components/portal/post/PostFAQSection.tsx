@@ -197,12 +197,12 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               }}
               placeholder={labels.placeholder}
               rows={5}
-              maxLength={2000}
+              maxLength={500}
               autoFocus
               disabled={submitting}
             />
             <div className="portal-ask-question-footer">
-              <span className={error ? "has-error" : ""} role={error ? "alert" : undefined}>{error || `${questionDraft.length}/2000`}</span>
+              <span className={error ? "has-error" : ""} role={error ? "alert" : undefined}>{error || `${questionDraft.length}/500`}</span>
               <div>
                 <button type="button" className="portal-ask-question-cancel" onClick={() => setModalOpen(false)} disabled={submitting}>{labels.cancel}</button>
                 <button type="button" className="portal-ask-question-submit" onClick={() => void submitQuestion()} disabled={submitting || !questionDraft.trim()}>{submitting ? labels.submitting : labels.submit}</button>

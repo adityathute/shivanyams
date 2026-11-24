@@ -146,7 +146,7 @@ export default function AdminCommentsPage() {
                     <td className="admin-comments-date">{new Date(comment.created_at).toLocaleString()}</td>
                     <td className="admin-comments-reactions"><span><LikeIcon size={13} /> {formatCompactNumber(comment.likes_count)}</span><span><DislikeIcon size={13} /> {formatCompactNumber(comment.dislikes_count)}</span></td>
                     <td><div className="admin-comments-actions">
-                      {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => setPendingAction({ comment, status: "approved" })}>Approve</button> : null}
+                      {comment.status !== "approved" ? <button type="button" className="approve" disabled={busyId === comment.id} onClick={() => setPendingAction({ comment, status: "approved" })}>Approve</button> : null}
                       {comment.status !== "hidden" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "hidden")}>Hide</button> : null}
                       {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => setPendingAction({ comment, status: "rejected" })}>Reject</button> : null}
                       {comment.parent === null ? <button type="button" className="reply" onClick={() => { setReplyTarget(comment); setReplyDraft(""); }}>Reply</button> : null}

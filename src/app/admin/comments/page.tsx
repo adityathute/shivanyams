@@ -142,7 +142,7 @@ export default function AdminCommentsPage() {
                     <td className="admin-comments-content"><span title={comment.content || "No content available."}>{comment.content || "No content available."}</span></td>
                     <td><div className="admin-comments-author"><Avatar size="sm" name={comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={comment.author_avatar?.trim() || undefined} /><span>{comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : `User ${comment.user_auth_id}`)}</span></div></td>
                     <td className="admin-comments-post"><span title={comment.post_title || `Post #${comment.post}`}>{comment.post_title || `Post #${comment.post}`}</span></td>
-                    <td><span className={`admin-status status-${comment.status}`}>{comment.status}</span></td>
+                    <td><span className={`admin-status admin-comments-status status-${String(comment.status || "pending").trim().toLowerCase()}`}>{String(comment.status || "pending").trim().toLowerCase().replace(/^./, (character) => character.toUpperCase())}</span></td>
                     <td className="admin-comments-date">{new Date(comment.created_at).toLocaleString()}</td>
                     <td className="admin-comments-reactions"><span><LikeIcon size={13} /> {formatCompactNumber(comment.likes_count)}</span><span><DislikeIcon size={13} /> {formatCompactNumber(comment.dislikes_count)}</span></td>
                     <td><div className="admin-comments-actions">

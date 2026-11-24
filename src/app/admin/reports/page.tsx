@@ -147,7 +147,6 @@ export default function AdminReportsPage() {
         </section>
       </div>
       <ConfirmDialog
-        size="sm"
         open={pendingAction !== null}
         title={pendingAction?.status === "reviewed" ? "Mark report as reviewed?" : "Dismiss this report?"}
         message={pendingAction?.status === "reviewed" ? "Confirm that you have reviewed this report. Its status will be updated." : "Are you sure you want to dismiss this report? Its status will be updated to dismissed."}

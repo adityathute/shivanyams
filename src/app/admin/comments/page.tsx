@@ -118,7 +118,7 @@ export default function AdminCommentsPage() {
         </header>
         <section className="admin-post-panel admin-comments-panel">
           <div className="admin-panel-heading admin-comments-panel-heading">
-            <div><h2>Community discussions</h2><p>Monitor community conversations and manage member comments and replies.</p></div>
+            <div><h2>Community Discussions</h2><p>Monitor community conversations and manage member comments and replies.</p></div>
             <div className="admin-comments-totals" aria-label={`${totalComments} comments across ${postsWithComments} posts and ${totalReplies} replies across ${postsWithReplies} posts`}>
               <div className="admin-comments-total"><strong>{formatCompactNumber(totalComments)}</strong><span>Total comments</span><small>{formatCompactNumber(postsWithComments)} posts</small></div>
               <div className="admin-comments-total"><strong>{formatCompactNumber(totalReplies)}</strong><span>Total replies</span><small>{formatCompactNumber(postsWithReplies)} posts</small></div>

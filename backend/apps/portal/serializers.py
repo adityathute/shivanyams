@@ -676,10 +676,19 @@ class PostSerializer(serializers.ModelSerializer):
         ).data)
 
         # Only questions with an official answer become public FAQs.
+        request = self.context.get("request")
+        viewer_auth_id = ""
+        if request and getattr(request.user, "is_authenticated", False):
+            viewer_auth_id = str(request.user.id)
+
         for question in obj.questions.all():
             answer = (question.answer or "").strip()
             prompt = (question.question or "").strip()
             if not prompt or not answer:
+                continue
+            if not question.is_public_answer and (
+                not viewer_auth_id or viewer_auth_id != question.user_auth_id
+            ):
                 continue
             rows.append({
                 "id": -question.pk,

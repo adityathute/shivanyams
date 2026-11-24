@@ -273,9 +273,9 @@ class AdminContent(viewsets.ModelViewSet):
         latest_post_version_number = PostVersion.objects.filter(
             post_id=OuterRef("pk")
         ).order_by("-version_number").values("version_number")[:1]
-        latest_post_version_created_at = PostVersion.objects.filter(
+        latest_post_version_updated_at = PostVersion.objects.filter(
             post_id=OuterRef("pk")
-        ).order_by("-version_number").values("created_at")[:1]
+        ).order_by("-version_number").values("updated_at")[:1]
         latest_published_for_post = PostVersion.objects.filter(
             post_id=OuterRef("pk"), is_published=True
         ).order_by("-version_number").values("version_number")[:1]
@@ -290,7 +290,7 @@ class AdminContent(viewsets.ModelViewSet):
             .annotate(
                 has_unpublished_changes=Exists(active_unpublished_revision),
                 latest_version_number=Subquery(latest_post_version_number),
-                latest_version_created_at=Subquery(latest_post_version_created_at),
+                latest_version_updated_at=Subquery(latest_post_version_updated_at),
                 published_version_number=Subquery(latest_published_for_post),
                 users_count=Count(
                     "view_events__auth_user_id",
@@ -403,7 +403,7 @@ class AdminPostVersions(APIView):
             if pending:
                 pending.payload = snapshot
                 pending.created_by_auth_id = str(request.user.id)
-                pending.save(update_fields=["payload", "created_by_auth_id"])
+                pending.save(update_fields=["payload", "created_by_auth_id", "updated_at"])
                 version = pending
             elif published_version and published_version.payload == snapshot:
                 version = published_version

@@ -74,14 +74,6 @@ export default function AdminReportsPage() {
   const reportedReplies = reports.filter((report) => report.parent !== null).length;
 
   useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
-  function changeSort(key: SortKey) {
-    setSortDirection((current) => sortKey === key ? (current === "asc" ? "desc" : "asc") : (key === "date" || key === "id" ? "desc" : "asc"));
-    setSortKey(key); setPage(1);
-  }
-  function sortLabel(key: SortKey, label: string) {
-    return <button type="button" className="admin-reports-sort" onClick={() => changeSort(key)} aria-label={`Sort by ${label}`} aria-pressed={sortKey === key}>{label}<span aria-hidden="true">{sortKey === key ? (sortDirection === "asc" ? "↑" : "↓") : "↕"}</span></button>;
-  }
-
   async function updateReportStatus(reportId: number, reportStatus: string) {
     setBusyId(reportId);
     try {
@@ -122,7 +114,7 @@ export default function AdminReportsPage() {
           {loadingRows ? <div className="admin-empty">Loading reports...</div> : filteredReports.length === 0 ? <div className="admin-empty">No reports match these filters.</div> : (
             <div className="admin-table-wrap admin-reports-table-wrap">
               <table className="admin-post-table admin-reports-table">
-                <thead><tr><th>{sortLabel("id", "ID")}</th><th>{sortLabel("reason", "Reason")}</th><th>Reported content</th><th>{sortLabel("reporter", "Reporter")}</th><th>{sortLabel("status", "Status")}</th><th>{sortLabel("date", "Date")}</th><th>Actions</th></tr></thead>
+                <thead><tr><th>ID</th><th>Reason</th><th>Reported content</th><th>Reporter</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody>{visibleReports.map((report) => (
                   <tr key={report.id}>
                     <td className="admin-reports-id">#{report.id}</td>

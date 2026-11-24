@@ -28,7 +28,8 @@ export default function AdminReportsPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [loadingRows, setLoadingRows] = useState(true);
   const [error, setError] = useState("");
-  const [busyId, setBusyId] = useState<number | null>(null);\n  const [pendingAction, setPendingAction] = useState<{ reportId: number; status: "reviewed" | "dismissed" } | null>(null);
+  const [busyId, setBusyId] = useState<number | null>(null);
+  const [pendingAction, setPendingAction] = useState<{ reportId: number; status: "reviewed" | "dismissed" } | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 

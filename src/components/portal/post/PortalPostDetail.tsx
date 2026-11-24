@@ -586,7 +586,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       post?.updatedAt &&
       new Date(post.updatedAt).getTime() > new Date(post.createdAt).getTime(),
   );
-  const createdPostDate = post?.createdAt || post?.date || "";
   const updatedPostDate = hasPostBeenUpdated ? post?.updatedAt || "" : "";
 
   const trackedPostIdRef = useRef<number | null>(null);

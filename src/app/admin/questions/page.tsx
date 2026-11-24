@@ -20,6 +20,7 @@ type QuestionRow = {
   question: string;
   language: string;
   answer: string;
+  is_public_answer: boolean;
   answered: boolean;
   created_at: string;
   answered_at: string | null;
@@ -38,7 +39,9 @@ export default function AdminQuestionsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [selectedQuestion, setSelectedQuestion] = useState<QuestionRow | null>(null);
+  const [questionDraft, setQuestionDraft] = useState("");
   const [answerDraft, setAnswerDraft] = useState("");
+  const [isPublicAnswer, setIsPublicAnswer] = useState(true);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -97,25 +100,33 @@ export default function AdminQuestionsPage() {
 
   function openAnswer(row: QuestionRow) {
     setSelectedQuestion(row);
+    setQuestionDraft(row.question || "");
     setAnswerDraft(row.answer || "");
+    setIsPublicAnswer(row.is_public_answer !== false);
     setError("");
   }
 
   async function saveAnswer() {
-    if (!selectedQuestion || !answerDraft.trim()) return;
+    if (!selectedQuestion || !questionDraft.trim() || !answerDraft.trim()) return;
     setSaving(true);
     setError("");
     try {
       const response = await adminFetch(`${API_URL}/admin/questions/`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: selectedQuestion.id, answer: answerDraft.trim() }),
+        body: JSON.stringify({
+          id: selectedQuestion.id,
+          question: questionDraft.trim(),
+          answer: answerDraft.trim(),
+          is_public_answer: isPublicAnswer,
+        }),
       });
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
         throw new Error(payload.answer || payload.detail || "Unable to save the answer.");
       }
       setSelectedQuestion(null);
+      setQuestionDraft("");
       setAnswerDraft("");
       await loadQuestions();
     } catch (saveError) {
@@ -148,7 +159,7 @@ export default function AdminQuestionsPage() {
           <div className="admin-panel-heading admin-questions-panel-heading">
             <div>
               <h2>Post Questions</h2>
-              <p>Answers you publish here will automatically appear in the FAQ of the same post.</p>
+              <p>Publish answers to everyone or privately to the person who asked. You can also correct the question.</p>
             </div>
             <div className="admin-questions-totals">
               <div><strong>{formatCompactNumber(rows.length)}</strong><span>Total questions</span></div>
@@ -193,7 +204,7 @@ export default function AdminQuestionsPage() {
                       <td className="admin-questions-post"><span title={row.post_title || `Post #${row.post}`}>{row.post_title || `Post #${row.post}`}</span></td>
                       <td>{row.author_name || "Guest"}</td>
                       <td><span className="admin-questions-language">{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[row.language] || row.language.toUpperCase()}</span></td>
-                      <td><span className={`admin-status admin-questions-status ${row.answered ? "status-approved" : "status-pending"}`}>{row.answered ? "Answered" : "Awaiting answer"}</span></td>
+                      <td><span className={`admin-status admin-questions-status ${row.answered ? "status-approved" : "status-pending"}`}>{row.answered ? "Answered" : "Awaiting answer"}</span>{row.answered ? <span className={`admin-questions-visibility ${row.is_public_answer ? "is-public" : "is-private"}`}>{row.is_public_answer ? "Public" : "Private"}</span> : null}</td>
                       <td className="admin-questions-date">{new Date(row.created_at).toLocaleString()}</td>
                       <td><button type="button" className="admin-questions-answer-button" onClick={() => openAnswer(row)}>{row.answered ? "Edit answer" : "Answer"}</button></td>
                     </tr>
@@ -233,17 +244,32 @@ export default function AdminQuestionsPage() {
             <div className="admin-questions-context">
               <span>POST</span>
               <strong>{selectedQuestion.post_title || `Post #${selectedQuestion.post}`}</strong>
-              <span>VISITOR QUESTION</span>
+              <span>ORIGINAL VISITOR QUESTION</span>
               <p>{selectedQuestion.question}</p>
             </div>
+            <label htmlFor="admin-question-correction">Question (you can correct the wording)</label>
+            <textarea id="admin-question-correction" value={questionDraft} onChange={(event) => setQuestionDraft(event.target.value)} rows={3} maxLength={2000} placeholder="Correct the visitor question..." disabled={saving} />
             <label htmlFor="admin-question-answer">Official answer</label>
-            <textarea id="admin-question-answer" value={answerDraft} onChange={(event) => setAnswerDraft(event.target.value)} rows={6} maxLength={10000} placeholder="Write the official answer..." autoFocus disabled={saving} />
+            <textarea id="admin-question-answer" value={answerDraft} onChange={(event) => setAnswerDraft(event.target.value)} rows={5} maxLength={10000} placeholder="Write the official answer..." disabled={saving} />
+            <div className="admin-questions-visibility-control">
+              <label htmlFor="admin-question-visibility">Answer visibility</label>
+              <select
+                id="admin-question-visibility"
+                value={isPublicAnswer ? "public" : "private"}
+                onChange={(event) => setIsPublicAnswer(event.target.value === "public")}
+                disabled={saving || (!selectedQuestion.user_auth_id && !selectedQuestion.is_public_answer)}
+              >
+                <option value="public">Public — show in this post's FAQ for everyone</option>
+                <option value="private" disabled={!selectedQuestion.user_auth_id}>Private — show only to the person who asked</option>
+              </select>
+              {!selectedQuestion.user_auth_id ? <small>This question was submitted as a guest, so its answer can only be public.</small> : null}
+            </div>
             {error ? <p className="admin-questions-modal-error" role="alert">{error}</p> : null}
             <div className="admin-questions-modal-footer">
               <span>{answerDraft.length}/10000</span>
               <div>
                 <button type="button" className="cancel" onClick={() => setSelectedQuestion(null)} disabled={saving}>Cancel</button>
-                <button type="button" className="save" onClick={() => void saveAnswer()} disabled={saving || !answerDraft.trim()}>{saving ? "Saving..." : "Publish answer"}</button>
+                <button type="button" className="save" onClick={() => void saveAnswer()} disabled={saving || !questionDraft.trim() || !answerDraft.trim()}>{saving ? "Saving..." : "Save changes"}</button>
               </div>
             </div>
           </section>

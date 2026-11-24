@@ -231,6 +231,8 @@ export default function AdminPage() {
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
+  const [postVisitorsMode, setPostVisitorsMode] = useState(false);
+  const [postVisitorsPostId, setPostVisitorsPostId] = useState<number | null>(null);
   const [editedPostsCount, setEditedPostsCount] = useState(0);
   const [engagementStats, setEngagementStats] = useState({
     likes: 0,
@@ -763,7 +765,29 @@ export default function AdminPage() {
     setAnalyticsLoading(false);
   }
 
+  function openPostVisitorsAnalytics() {
+    setAnalyticsType("visitors");
+    setPostVisitorsMode(true);
+    setPostVisitorsPostId(null);
+    setSelectedPost(null);
+    setSelectedVisitor(null);
+    setVisitorPages([]);
+    setSelectedAnalyticsPath(null);
+    setAnalyticsVisitorsPage(1);
+    setAnalyticsLoading(true);
+    adminFetch(API_URL + "/admin/website-analytics/?type=visitors&post_visitors=true", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unable to load post visitors (" + response.status + ").");
+        return response.json();
+      })
+      .then((payload: { visitors?: WebsiteVisitorRow[] }) => setAnalyticsVisitors(payload.visitors ?? []))
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load post visitors."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openWebsiteAnalytics(type: "views" | "visitors" | "users") {
+    setPostVisitorsMode(false);
+    setPostVisitorsPostId(null);
     setAnalyticsType(type);
     setSelectedPost(null);
     setPostAnalyticsEvents([]);
@@ -1334,7 +1358,7 @@ export default function AdminPage() {
                     {item.analytics ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "edited" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
+                        onClick={() => item.label === "Post visitors" ? openPostVisitorsAnalytics() : item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "edited" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1802,7 +1826,9 @@ export default function AdminPage() {
                         ? `Website Views (${formatCompactNumber(websiteViewsCount)})`
                         : analyticsType === "users"
                           ? `Portal Users (${formatCompactNumber(usersCount)})`
-                          : `Website Visitors (${formatCompactNumber(websiteVisitorsCount)})`}
+                          : postVisitorsMode
+                              ? "Post Visitors (" + formatCompactNumber(analyticsVisitors.length) + ")"
+                              : `Website Visitors (${formatCompactNumber(websiteVisitorsCount)})`}
                 </h2>
                 <p>
                   {selectedLikeComment
@@ -1812,7 +1838,9 @@ export default function AdminPage() {
                     : selectedReport
                     ? `Report submitted for ${selectedReport.post_title}.`
                     : selectedVisitor
-                    ? "Pages visited by this browser or device."
+                    ? postVisitorsMode ? "Post visits recorded by this browser or device." : "Pages visited by this browser or device."
+                    : postVisitorsMode
+                      ? "Unique visitors who have viewed posts on ShivanyaMS."
                     : selectedPost
                       ? "Individual visits recorded for this post."
                       : selectedAnalyticsPath
@@ -1847,7 +1875,9 @@ export default function AdminPage() {
                               ? "Posts waiting for an administrator to review."
                               : analyticsType === "views"
                             ? "Select a page to inspect its individual page views."
-                            : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
+                            : postVisitorsMode
+                              ? "Unique browser/device visitors across posts. IP address is informational and does not determine visitor identity."
+                              : "Unique browser/device visitors. IP address is informational and does not determine visitor identity."}
                 </p>
               </div>
               {analyticsType === "tags" && !selectedPost && !selectedVisitor ? (
@@ -2741,7 +2771,9 @@ export default function AdminPage() {
                           <button
                             type="button"
                             className="admin-analytics-link"
-                            onClick={() => void openVisitorDetails(visitor)}
+                            onClick={() => postVisitorsMode && visitor.post_id
+                              ? void openPostEventVisitor(visitor.visitor_id, visitor.post_id)
+                              : void openVisitorDetails(visitor)}
                           >
                             {visitor.visitor_type === "user"
                               ? formatPersonName(visitor.full_name) ||
@@ -2812,7 +2844,9 @@ export default function AdminPage() {
                                   : analyticsType === "users"
                                     ? formatCompactNumber(usersCount) + " portal users"
                                     : analyticsType === "visitors"
-                                      ? formatCompactNumber(websiteVisitorsCount) + " website visitors"
+                                      ? postVisitorsMode
+                                        ? formatCompactNumber(analyticsVisitors.length) + " post visitors"
+                                        : formatCompactNumber(websiteVisitorsCount) + " website visitors"
                                       : formatCompactNumber(analyticsVisitors.length) + " unique browsers/devices"}
               </span>
             </footer>

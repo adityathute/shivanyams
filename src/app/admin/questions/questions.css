@@ -12,38 +12,10 @@
 .admin-questions-totals strong { font-size: 1.15rem; line-height: 1.2; }
 .admin-questions-totals span { color: var(--muted-foreground, #9298a2); font-size: .68rem; white-space: nowrap; }
 .admin-questions-page .admin-questions-filters {
-  display: grid;
-  grid-template-columns: minmax(240px, 1fr) 190px;
+  grid-template-columns: minmax(240px, 1fr) minmax(150px, 190px);
   align-items: center;
-  gap: 10px;
-  padding: 16px 22px;
-  border-bottom: 1px solid var(--border-color, #edf1f6);
 }
 
-.admin-questions-page .admin-questions-filters > input {
-  min-width: 0;
-  width: 100%;
-  min-height: 40px;
-  box-sizing: border-box;
-  padding: 10px 12px;
-  border: 1px solid var(--border-color, #dbe4f0);
-  border-radius: 7px;
-  background: var(--surface, #fff);
-  color: var(--text-primary, #263b57);
-  font: inherit;
-  font-size: 12px;
-}
-
-.admin-questions-page .admin-questions-filters > input:focus {
-  outline: 2px solid color-mix(in srgb, var(--primary, #3973c8) 22%, transparent);
-  border-color: var(--primary, #3973c8);
-}
-
-:root[data-theme="dark"] .admin-questions-page .admin-questions-filters > input {
-  background: var(--surface, #171c28);
-  border-color: var(--border-color, #303746);
-  color: var(--text-primary, #f8fafc);
-}
 .admin-questions-table { min-width: 940px; }
 .admin-questions-content { max-width: 320px; }
 .admin-questions-content > span, .admin-questions-post > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

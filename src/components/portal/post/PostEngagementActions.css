@@ -49,6 +49,14 @@
 
 .portal-post-reaction-actions .portal-action-bookmark.is-active { color: #f97316; }
 
+/* Use filled glyphs for Like, Share and Save; keep Dislike unchanged. */
+.portal-post-reaction-actions .portal-action-like svg,
+.portal-post-reaction-actions .portal-action-share svg,
+.portal-post-reaction-actions .portal-action-bookmark svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
 .portal-post-reaction-actions button strong {
   color: inherit;
   font-size: 11px;

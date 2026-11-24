@@ -348,7 +348,8 @@
 /* Tags page owns its filter layout; do not inherit shared admin dashboard filters. */
 .admin-tags-page .admin-tags-filters {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(180px, 230px);
+  /* Match the Reports page search + compact select filter proportions. */
+  grid-template-columns: minmax(240px, 1fr) minmax(150px, 190px);
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -380,6 +381,14 @@
 }
 
 .admin-tags-page .admin-tags-filters > * {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Keep the shared Shivanya Select trigger aligned with the Reports filters. */
+.admin-tags-page .admin-tags-filters .shivanya-select-control {
   min-width: 0;
   width: 100%;
 }
@@ -394,9 +403,14 @@
   color: #e2eaf4;
 }
 
-@media (max-width: 620px) {
+@media (max-width: 760px) {
   .admin-tags-page .admin-tags-filters {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .admin-tags-page .admin-tags-filters {
     padding: 12px;
   }
 }

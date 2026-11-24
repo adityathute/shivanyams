@@ -1114,61 +1114,62 @@ class AdminComments(APIView):
             data["reports"] = report_rows
             rows.append(data)
 
-        # PostReport records are stored separately from CommentReport records.
-        # Include them in this endpoint so the admin Reports page sees every
-        # reported content type in one combined list.
-        post_reports = PostReport.objects.select_related("post").order_by("-created_at")
-        if post_id:
-            post_reports = post_reports.filter(post_id=post_id)
-        if comment_status and comment_status != "all":
-            post_reports = post_reports.filter(status=comment_status)
-        if reported == "true":
-            post_reports = post_reports.filter(status=PostReport.Status.OPEN)
-        if search:
-            post_reports = post_reports.filter(
-                Q(reason__icontains=search)
-                | Q(details__icontains=search)
-                | Q(reporter_auth_id__icontains=search)
-                | Q(post__title_en__icontains=search)
-            )
+        if request.query_params.get("include_post_reports") == "true":
+            # PostReport records are stored separately from CommentReport records.
+            # Include them in this endpoint so the admin Reports page sees every
+            # reported content type in one combined list.
+            post_reports = PostReport.objects.select_related("post").order_by("-created_at")
+            if post_id:
+                post_reports = post_reports.filter(post_id=post_id)
+            if comment_status and comment_status != "all":
+                post_reports = post_reports.filter(status=comment_status)
+            if reported == "true":
+                post_reports = post_reports.filter(status=PostReport.Status.OPEN)
+            if search:
+                post_reports = post_reports.filter(
+                    Q(reason__icontains=search)
+                    | Q(details__icontains=search)
+                    | Q(reporter_auth_id__icontains=search)
+                    | Q(post__title_en__icontains=search)
+                )
 
-        post_report_rows = list(post_reports[:500])
-        post_reporter_ids = {str(item.reporter_auth_id) for item in post_report_rows if item.reporter_auth_id}
-        post_reporter_profiles = {}
-        if post_reporter_ids:
-            for author in Comment.objects.filter(user_auth_id__in=post_reporter_ids).exclude(author_name="").order_by("-created_at").values("user_auth_id", "author_name", "author_avatar"):
-                post_reporter_profiles.setdefault(author["user_auth_id"], {"reporter_name": author["author_name"], "reporter_avatar": author["author_avatar"]})
-            for visitor in WebsiteVisitor.objects.filter(auth_user_id__in=post_reporter_ids).exclude(full_name="").order_by("-last_seen_at").values("auth_user_id", "full_name"):
-                profile = post_reporter_profiles.setdefault(visitor["auth_user_id"], {})
-                profile.setdefault("reporter_name", visitor["full_name"])
-            for visit in WebsiteView.objects.filter(auth_user_id__in=post_reporter_ids).exclude(full_name="").order_by("-viewed_at").values("auth_user_id", "full_name"):
-                profile = post_reporter_profiles.setdefault(visit["auth_user_id"], {})
-                profile.setdefault("reporter_name", visit["full_name"])
+            post_report_rows = list(post_reports[:500])
+            post_reporter_ids = {str(item.reporter_auth_id) for item in post_report_rows if item.reporter_auth_id}
+            post_reporter_profiles = {}
+            if post_reporter_ids:
+                for author in Comment.objects.filter(user_auth_id__in=post_reporter_ids).exclude(author_name="").order_by("-created_at").values("user_auth_id", "author_name", "author_avatar"):
+                    post_reporter_profiles.setdefault(author["user_auth_id"], {"reporter_name": author["author_name"], "reporter_avatar": author["author_avatar"]})
+                for visitor in WebsiteVisitor.objects.filter(auth_user_id__in=post_reporter_ids).exclude(full_name="").order_by("-last_seen_at").values("auth_user_id", "full_name"):
+                    profile = post_reporter_profiles.setdefault(visitor["auth_user_id"], {})
+                    profile.setdefault("reporter_name", visitor["full_name"])
+                for visit in WebsiteView.objects.filter(auth_user_id__in=post_reporter_ids).exclude(full_name="").order_by("-viewed_at").values("auth_user_id", "full_name"):
+                    profile = post_reporter_profiles.setdefault(visit["auth_user_id"], {})
+                    profile.setdefault("reporter_name", visit["full_name"])
 
-        for report in post_report_rows:
-            profile = post_reporter_profiles.get(str(report.reporter_auth_id), {})
-            rows.append({
-                "id": 0,
-                "post": report.post_id,
-                "post_title": report.post.title_en,
-                "parent": None,
-                "author_name": "",
-                "content": report.post.title_en,
-                "reports": [{
-                    "id": report.id,
-                    "reporter_auth_id": report.reporter_auth_id,
-                    "reporter_name": profile.get("reporter_name", ""),
-                    "reporter_avatar": profile.get("reporter_avatar", ""),
-                    "reason": report.reason,
-                    "details": report.details,
-                    "status": report.status,
-                    "created_at": report.created_at,
-                    "report_type": "post",
-                    "target_id": report.post_id,
-                    "target_title": report.post.title_en,
-                    "target_content": report.post.title_en,
-                }],
-            })
+            for report in post_report_rows:
+                profile = post_reporter_profiles.get(str(report.reporter_auth_id), {})
+                rows.append({
+                    "id": 0,
+                    "post": report.post_id,
+                    "post_title": report.post.title_en,
+                    "parent": None,
+                    "author_name": "",
+                    "content": report.post.title_en,
+                    "reports": [{
+                        "id": report.id,
+                        "reporter_auth_id": report.reporter_auth_id,
+                        "reporter_name": profile.get("reporter_name", ""),
+                        "reporter_avatar": profile.get("reporter_avatar", ""),
+                        "reason": report.reason,
+                        "details": report.details,
+                        "status": report.status,
+                        "created_at": report.created_at,
+                        "report_type": "post",
+                        "target_id": report.post_id,
+                        "target_title": report.post.title_en,
+                        "target_content": report.post.title_en,
+                    }],
+                })
         return Response(rows)
 
     def post(self, request):

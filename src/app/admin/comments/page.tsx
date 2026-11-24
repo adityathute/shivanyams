@@ -200,9 +200,8 @@ export default function AdminCommentsPage() {
                       <LikeIcon size={14} /> {formatCompactNumber(comment.likes_count)}
                       <DislikeIcon size={14} /> {formatCompactNumber(comment.dislikes_count)}
                     </span>
-                    <span className=
                   </div>
-                                    <div className="admin-comment-actions">
+                  <div className="admin-comment-actions">
                     {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "approved")}>Approve / restore</button> : null}
                     {comment.status !== "hidden" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "hidden")}>Hide</button> : null}
                     {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "rejected")}>Reject</button> : null}

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, ConfirmDialog, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
@@ -28,7 +28,7 @@ export default function AdminReportsPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [loadingRows, setLoadingRows] = useState(true);
   const [error, setError] = useState("");
-  const [busyId, setBusyId] = useState<number | null>(null);
+  const [busyId, setBusyId] = useState<number | null>(null);\n  const [pendingAction, setPendingAction] = useState<{ reportId: number; status: "reviewed" | "dismissed" } | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -74,14 +74,17 @@ export default function AdminReportsPage() {
   const reportedReplies = reports.filter((report) => report.parent !== null).length;
 
   useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
-  async function updateReportStatus(reportId: number, reportStatus: string) {
+  async function updateReportStatus(reportId: number, reportStatus: "reviewed" | "dismissed"): Promise<boolean> {
     setBusyId(reportId);
     try {
       const response = await adminFetch(`${API_URL}/admin/comments/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report_id: reportId, report_status: reportStatus }) });
       if (!response.ok) throw new Error("Unable to update report.");
       await loadReports();
-    } catch (err) { setError(err instanceof Error ? err.message : "Unable to update report."); }
-    finally { setBusyId(null); }
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to update report.");
+      return false;
+    } finally { setBusyId(null); }
   }
 
   if (loading || !isAdmin) return null;
@@ -123,7 +126,7 @@ export default function AdminReportsPage() {
                     <td><div className="admin-reports-user"><Avatar size="sm" name={report.reporter_name || "Unknown user"} src={report.reporter_avatar?.trim() || undefined} /><span>{report.reporter_name || "Unknown user"}</span></div></td>
                     <td><span className={`admin-status status-${report.status}`}>{report.status}</span></td>
                     <td className="admin-reports-date">{new Date(report.created_at).toLocaleString()}</td>
-                    <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "reviewed")}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>
+                    <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => setPendingAction({ reportId: report.id, status: "reviewed" })}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => setPendingAction({ reportId: report.id, status: "dismissed" })}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>
                   </tr>
                 ))}</tbody>
               </table>
@@ -134,6 +137,21 @@ export default function AdminReportsPage() {
           </div>
         </section>
       </div>
+      <ConfirmDialog
+        open={pendingAction !== null}
+        title={pendingAction?.status === "reviewed" ? "Mark report as reviewed?" : "Dismiss this report?"}
+        message={pendingAction?.status === "reviewed" ? "Confirm that you have reviewed this report. Its status will be updated." : "Are you sure you want to dismiss this report? Its status will be updated to dismissed."}
+        confirmText={pendingAction?.status === "reviewed" ? "Mark as reviewed" : "Dismiss report"}
+        cancelText="Cancel"
+        variant={pendingAction?.status === "dismissed" ? "danger" : "warning"}
+        loading={pendingAction !== null && busyId === pendingAction.reportId}
+        onCancel={() => { if (busyId === null) setPendingAction(null); }}
+        onConfirm={async () => {
+          if (!pendingAction) return;
+          const succeeded = await updateReportStatus(pendingAction.reportId, pendingAction.status);
+          if (succeeded) setPendingAction(null);
+        }}
+      />
       <footer className="admin-footer">ShivanyaMS · Community Reports</footer>
     </main>
   );

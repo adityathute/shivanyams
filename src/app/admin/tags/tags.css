@@ -323,7 +323,8 @@
   align-content: center;
   min-width: 94px;
   padding: 9px 12px;
-  border: 0;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 9px;
   text-align: center;
   line-height: 1.2;
 }
@@ -380,4 +381,9 @@
   .admin-tags-page .admin-tags-filters {
     grid-template-columns: 1fr;
   }
+}
+
+
+[data-theme="dark"] .admin-tags-panel-heading .admin-tags-total {
+  border-color: #344154;
 }

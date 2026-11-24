@@ -26,6 +26,8 @@ function getLocalizedText(language: string, en?: string, mr?: string, hi?: strin
 const copy = {
   en: {
     heading: "Frequently Asked Questions (FAQ)",
+    emptyTitle: "No questions yet",
+    emptyDescription: "Be the first to ask a question.",
     ask: "Ask Question",
     title: "Ask a question",
     description: "Have a question about this post? Send it to our team.",
@@ -39,6 +41,8 @@ const copy = {
   },
   mr: {
     heading: "वारंवार विचारले जाणारे प्रश्न (FAQ)",
+    emptyTitle: "अजून कोणतेही प्रश्न नाहीत",
+    emptyDescription: "प्रश्न विचारणारे पहिले व्हा.",
     ask: "प्रश्न विचारा",
     title: "प्रश्न विचारा",
     description: "या पोस्टबद्दल काही प्रश्न आहे? आम्हाला पाठवा.",
@@ -52,6 +56,8 @@ const copy = {
   },
   hi: {
     heading: "अक्सर पूछे जाने वाले प्रश्न (FAQ)",
+    emptyTitle: "अभी तक कोई प्रश्न नहीं",
+    emptyDescription: "प्रश्न पूछने वाले पहले व्यक्ति बनें.",
     ask: "प्रश्न पूछें",
     title: "प्रश्न पूछें",
     description: "इस पोस्ट के बारे में कोई सवाल है? हमें भेजें।",
@@ -164,7 +170,15 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
             );
           })}
         </div>
-      ) : null}
+      ) : (
+        <div className="portal-faq-empty-state">
+          <span className="portal-faq-empty-icon" aria-hidden="true">
+            <QuestionMarkCircleIcon size={25} />
+          </span>
+          <h3>{labels.emptyTitle}</h3>
+          <p>{labels.emptyDescription}</p>
+        </div>
+      )}
 
       {modalOpen ? (
         <div

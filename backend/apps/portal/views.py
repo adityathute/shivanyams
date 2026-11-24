@@ -1890,6 +1890,45 @@ class AdminWebsiteAnalytics(APIView):
             })
 
         if analytics_type == "visitors":
+            if request.query_params.get("post_visitors") == "true":
+                post_visitors = (
+                    PostVisitor.objects.select_related("post")
+                    .annotate(
+                        total_views=Count("view_events"),
+                        last_viewed=Max("view_events__viewed_at"),
+                    )
+                    .filter(total_views__gt=0)
+                    .order_by("-last_seen_at")
+                )
+                auth_ids = {item.auth_user_id for item in post_visitors if item.auth_user_id}
+                website_visitors = {}
+                if auth_ids:
+                    for item in WebsiteVisitor.objects.filter(auth_user_id__in=auth_ids).order_by("-last_seen_at"):
+                        website_visitors.setdefault(item.auth_user_id, item)
+                rows = []
+                for item in post_visitors[:500]:
+                    last_event = item.view_events.order_by("-viewed_at").first()
+                    website_visitor = website_visitors.get(item.auth_user_id)
+                    rows.append({
+                        "visitor_id": item.visitor_id,
+                        "visitor_type": "user" if item.auth_user_id else "anonymous",
+                        "full_name": website_visitor.full_name if website_visitor else "",
+                        "ip_address": website_visitor.ip_address if website_visitor else None,
+                        "browser": website_visitor.browser if website_visitor else "Unknown",
+                        "first_seen": item.first_seen_at,
+                        "last_seen": item.last_seen_at,
+                        "last_viewed": item.last_viewed,
+                        "total_views": item.total_views,
+                        "total_pages": 1,
+                        "device": last_event.device if last_event else "unknown",
+                        "language": last_event.language if last_event else "",
+                        "post_id": item.post_id,
+                    })
+                return Response({
+                    "visitors_count": PostVisitor.objects.filter(view_events__isnull=False).distinct().count(),
+                    "visitors": rows,
+                })
+
             post_visitor_id = request.query_params.get("post_visitor_id")
             post_id_for_visitor = request.query_params.get("post_id")
 

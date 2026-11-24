@@ -994,8 +994,8 @@ class PostQuestion(TimestampedModel):
     class Meta:
         ordering = ("-created_at",)
         indexes = [
-            models.Index(fields=("post", "answered_at", "created_at")),
-            models.Index(fields=("answered_at", "created_at")),
+            models.Index(fields=("post", "answered_at", "created_at"), name="portal_ques_post_ans_idx"),
+            models.Index(fields=("answered_at", "created_at"), name="portal_ques_ans_created_idx"),
         ]
 
     def __str__(self):

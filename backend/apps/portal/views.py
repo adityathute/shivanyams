@@ -1054,11 +1054,58 @@ class AdminComments(APIView):
             data = CommentSerializer(comment, context={"request": request}).data
             data["post_title"] = comment.post.title_en
             data["report_count"] = comment.reports.exclude(status=CommentReport.Status.DISMISSED).count()
-            data["reports"] = list(
+            report_rows = list(
                 comment.reports.order_by("-created_at").values(
                     "id", "reporter_auth_id", "reason", "details", "status", "created_at"
                 )
             )
+
+            # Resolve each reporter to the same profile name/avatar used by
+            # the Comments & Replies table. Comment author snapshots are the
+            # primary source; visitor profile snapshots cover users who have
+            # not authored a comment on this post.
+            reporter_ids = {
+                str(report.get("reporter_auth_id") or "")
+                for report in report_rows
+                if report.get("reporter_auth_id")
+            }
+            reporter_profiles = {}
+            if reporter_ids:
+                for author in Comment.objects.filter(
+                    user_auth_id__in=reporter_ids
+                ).exclude(author_name="").order_by("-created_at").values(
+                    "user_auth_id", "author_name", "author_avatar"
+                ):
+                    reporter_profiles.setdefault(
+                        author["user_auth_id"],
+                        {
+                            "reporter_name": author["author_name"],
+                            "reporter_avatar": author["author_avatar"],
+                        },
+                    )
+
+                for visitor in WebsiteVisitor.objects.filter(
+                    auth_user_id__in=reporter_ids
+                ).exclude(full_name="").order_by("-last_seen_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    profile = reporter_profiles.setdefault(visitor["auth_user_id"], {})
+                    profile.setdefault("reporter_name", visitor["full_name"])
+
+                for visit in WebsiteView.objects.filter(
+                    auth_user_id__in=reporter_ids
+                ).exclude(full_name="").order_by("-viewed_at").values(
+                    "auth_user_id", "full_name"
+                ):
+                    profile = reporter_profiles.setdefault(visit["auth_user_id"], {})
+                    profile.setdefault("reporter_name", visit["full_name"])
+
+            for report in report_rows:
+                profile = reporter_profiles.get(str(report.get("reporter_auth_id") or ""), {})
+                report["reporter_name"] = profile.get("reporter_name", "")
+                report["reporter_avatar"] = profile.get("reporter_avatar", "")
+
+            data["reports"] = report_rows
             rows.append(data)
         return Response(rows)
 

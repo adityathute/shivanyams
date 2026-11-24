@@ -1603,6 +1603,22 @@ export default function PostEditor({
               ) : (
                 <span className="post-editor-unpublished-version">Draft · v{Math.max(...postVersions.map((item) => item.version_number))}</span>
               )}
+              {postStatus === "published" && (() => {
+                const publishedVersion = postVersions.filter((version) => version.is_published).sort((a, b) => b.version_number - a.version_number)[0];
+                const publishedNumber = publishedVersion?.version_number || 0;
+                const editedVersion = postVersions.filter((version) => !version.is_published && version.version_number > publishedNumber).sort((a, b) => b.version_number - a.version_number)[0];
+                const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api;
+                return (
+                  <div className="post-editor-version-quick-links">
+                    {publishedVersion && <button type="button" className="post-editor-version-preview" onClick={() => router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${publishedVersion.id}`)}>
+                      <b>Published version · v{publishedVersion.version_number}</b><span>View live published content</span>
+                    </button>}
+                    {editedVersion && <button type="button" className="post-editor-version-preview" onClick={() => router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${editedVersion.id}`)}>
+                      <b>Edited version · v{editedVersion.version_number}</b><span>View unpublished changes</span>
+                    </button>}
+                  </div>
+                );
+              })()}
               <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
             </div>}
             <div className="post-editor-save-status" aria-live="polite">

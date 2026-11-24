@@ -1013,6 +1013,33 @@ class PostQuestion(TimestampedModel):
         return f"Question on {self.post.title_en}"
 
 
+class PostQuestionHelpfulVote(models.Model):
+    """One helpful vote per browser visitor for each answered post question."""
+
+    question = models.ForeignKey(
+        PostQuestion,
+        on_delete=models.CASCADE,
+        related_name="helpful_votes",
+    )
+    visitor_hash = models.CharField(max_length=64)
+    user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("question", "visitor_hash"),
+                name="unique_post_question_helpful_visitor",
+            ),
+        ]
+        indexes = [
+            models.Index(fields=("question", "created_at")),
+        ]
+
+    def __str__(self):
+        return f"Helpful vote for question {self.question_id}"
+
+
 class PostDate(TimestampedModel):
     """Structured important dates for jobs, schemes, exams, admit cards and results."""
 

@@ -596,7 +596,7 @@ class PostSerializer(serializers.ModelSerializer):
             "users_count",
             "has_unpublished_changes",
             "latest_version_number",
-            "latest_version_created_at",
+            "latest_version_updated_at",
             "published_version_number",
             "likes_count",
             "dislikes_count",

@@ -187,7 +187,7 @@ type ApiLink = {
 
 export type PostFAQ = {
   id?: number; question_en: string; question_mr?: string; question_hi?: string;
-  answer_en: string; answer_mr?: string; answer_hi?: string; sort_order?: number; is_active?: boolean; status?: "under_review";
+  answer_en: string; answer_mr?: string; answer_hi?: string; sort_order?: number; is_active?: boolean; status?: "under_review"; visibility?: "public" | "private" | "hidden"; author_name?: string; is_mine?: boolean; helpful_count?: number;
 };
 
 export type ImportantDate = {

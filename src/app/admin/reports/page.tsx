@@ -56,7 +56,7 @@ export default function AdminReportsPage() {
       const isReply = report.parent !== null;
       const matchesStatus = statusFilter === "all" || String(report.status || "").trim().toLowerCase() === statusFilter;
       const matchesType = typeFilter === "all" || (typeFilter === "replies" ? isReply : !isReply);
-      const matchesSearch = !query || [report.reason, report.details, report.reporter_auth_id, report.post_title, report.author_name, report.content, report.status, String(report.id), String(report.comment_id), String(report.post_id), isReply ? "reply" : "comment"].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
+      const matchesSearch = !query || [report.reason, report.details, report.reporter_name, report.reporter_auth_id, report.post_title, report.author_name, report.content, report.status, String(report.id), String(report.comment_id), String(report.post_id), isReply ? "reply" : "comment"].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
       return matchesStatus && matchesType && matchesSearch;
     });
     const value = (row: ReportRow) => ({ id: row.id, reason: row.reason || "", content: row.content || "", reporter: row.reporter_auth_id || "", status: row.status || "", date: new Date(row.created_at).getTime() || 0 })[sortKey];
@@ -120,7 +120,7 @@ export default function AdminReportsPage() {
                     <td className="admin-reports-id">#{report.id}</td>
                     <td><strong className="admin-reports-reason">{report.reason || "Community report"}</strong><small className="admin-reports-related">{report.post_title || `Post #${report.post_id}`} · {report.parent === null ? `Comment #${report.comment_id}` : `Reply #${report.comment_id}`}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
                     <td className="admin-reports-content"><span>{report.content || "No content available."}</span></td>
-                    <td><div className="admin-reports-user"><Avatar size="sm" name={report.reporter_name || (report.reporter_auth_id ? `User ${report.reporter_auth_id}` : "Unknown user")} src={report.reporter_avatar?.trim() || undefined} /><span>{report.reporter_name || (report.reporter_auth_id ? `User ${report.reporter_auth_id}` : "Unknown user")}</span></div></td>
+                    <td><div className="admin-reports-user"><Avatar size="sm" name={report.reporter_name || "Unknown user"} src={report.reporter_avatar?.trim() || undefined} /><span>{report.reporter_name || "Unknown user"}</span></div></td>
                     <td><span className={`admin-status status-${report.status}`}>{report.status}</span></td>
                     <td className="admin-reports-date">{new Date(report.created_at).toLocaleString()}</td>
                     <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "reviewed")}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>

@@ -761,3 +761,16 @@
     padding-top: 0;
   }
 }
+
+
+/* Keep the Helpful action and its confirmation below the answer on every screen size. */
+.portal-faq-answer-inner {
+  flex-direction: column;
+}
+
+.portal-faq-answer-inner .portal-faq-helpful-row {
+  align-self: flex-end;
+  width: 100%;
+  justify-content: flex-end;
+  padding-top: 0;
+}

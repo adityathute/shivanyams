@@ -360,15 +360,23 @@ class AdminPostVersions(APIView):
                 PostVersion.objects.create(post=post, version_number=1, payload=baseline, is_published=True,
                     created_by_auth_id=post.published_by_auth_id or str(request.user.id),
                     published_at=post.published_at, published_by_auth_id=post.published_by_auth_id)
+            # Older published versions are also marked is_published=False when a
+            # newer version goes live. Only a version newer than the current
+            # published version can be treated as the active unpublished draft.
+            published_version = post.versions.filter(is_published=True).order_by("-version_number").first()
+            published_version_number = published_version.version_number if published_version else 0
             latest = post.versions.order_by("-version_number").first()
-            pending = post.versions.filter(is_published=False).order_by("-version_number").first()
+            pending = post.versions.filter(
+                is_published=False,
+                version_number__gt=published_version_number,
+            ).order_by("-version_number").first()
             if pending:
                 pending.payload = dict(payload)
                 pending.created_by_auth_id = str(request.user.id)
                 pending.save(update_fields=["payload", "created_by_auth_id"])
                 version = pending
-            elif latest and latest.payload == dict(payload):
-                version = latest
+            elif published_version and published_version.payload == dict(payload):
+                version = published_version
             else:
                 version = PostVersion.objects.create(post=post,
                     version_number=(latest.version_number if latest else 0) + 1,

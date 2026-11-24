@@ -496,11 +496,27 @@
 }
 
 .portal-faq-pending-question {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 8px;
   cursor: default;
 }
 
 .portal-faq-pending-question > span:first-child {
-  flex: 1 1 auto;
+  width: 100%;
+  flex: 0 1 auto;
+}
+
+.portal-faq-pending-actions {
+  display: flex;
+  width: 100%;
+  min-height: 30px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
 }
 
 .portal-faq-asked-by {
@@ -545,8 +561,16 @@
 
 @media (max-width: 480px) {
   .portal-faq-pending-question {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
+    gap: 8px;
+    padding: 12px 13px;
+  }
+
+  .portal-faq-pending-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
     gap: 8px;
   }
 }

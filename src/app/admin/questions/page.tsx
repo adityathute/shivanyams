@@ -168,7 +168,7 @@ export default function AdminQuestionsPage() {
             </div>
           </div>
 
-          <div className="admin-filters admin-questions-filters">
+          <div className="admin-questions-filters">
             <input
               type="search"
               value={search}

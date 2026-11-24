@@ -258,7 +258,7 @@
 }
 .admin-posts-total {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 7px;
   min-height: 40px;
   box-sizing: border-box;

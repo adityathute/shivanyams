@@ -1552,11 +1552,15 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td>
-                          <span className={`admin-status status-${post.status}`}>
-                            {statusLabel(post.status)}
-                          </span>
-                          {post.status === "published" && post.has_unpublished_changes && (
-                            <span className="admin-status status-draft">Edited · Unpublished</span>
+                          {post.status === "published" && post.has_unpublished_changes ? (
+                            <span className="admin-post-status-stack">
+                              <span className="admin-status status-draft">Edited</span>
+                              <span className="admin-status status-published">Published</span>
+                            </span>
+                          ) : (
+                            <span className={`admin-status status-${post.status}`}>
+                              {statusLabel(post.status)}
+                            </span>
                           )}
                         </td>
                         <td>

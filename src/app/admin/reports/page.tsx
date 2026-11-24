@@ -101,6 +101,9 @@ export default function AdminReportsPage() {
 
   const pageCount = Math.max(1, Math.ceil(filteredReports.length / pageSize));
   const visibleReports = filteredReports.slice((page - 1) * pageSize, page * pageSize);
+  const postsWithReports = new Set(reports.map((report) => report.post_id)).size;
+  const reportedComments = reports.filter((report) => report.parent === null).length;
+  const reportedReplies = reports.filter((report) => report.parent !== null).length;
 
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
@@ -152,14 +155,22 @@ export default function AdminReportsPage() {
               <h2>Report activity</h2>
               <p>Review report reasons, related discussions, and take action on open reports.</p>
             </div>
-            <div className="admin-comments-totals" aria-label={`${comments.length} comments and ${reports.length} reports`}>
-              <div className="admin-comments-total">
-                <strong>{formatCompactNumber(comments.length)}</strong>
-                <span>Total comments</span>
-              </div>
+            <div className="admin-comments-totals admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
               <div className="admin-comments-total">
                 <strong>{formatCompactNumber(reports.length)}</strong>
                 <span>Total reports</span>
+              </div>
+              <div className="admin-comments-total">
+                <strong>{formatCompactNumber(postsWithReports)}</strong>
+                <span>Posts reported</span>
+              </div>
+              <div className="admin-comments-total">
+                <strong>{formatCompactNumber(reportedComments)}</strong>
+                <span>Comments reported</span>
+              </div>
+              <div className="admin-comments-total">
+                <strong>{formatCompactNumber(reportedReplies)}</strong>
+                <span>Replies reported</span>
               </div>
             </div>
           </div>

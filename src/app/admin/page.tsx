@@ -231,6 +231,7 @@ export default function AdminPage() {
   const [usersCount, setUsersCount] = useState(0);
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
+  const [questionsCount, setQuestionsCount] = useState(0);
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
   const [postVisitorsMode, setPostVisitorsMode] = useState(false);
   const [editedPostsCount, setEditedPostsCount] = useState(0);
@@ -434,6 +435,7 @@ export default function AdminPage() {
           users_count?: number;
           website_views_count?: number;
           website_visitors_count?: number;
+          questions_count?: number;
           post_visitors_count?: number;
           likes_count?: number;
           dislikes_count?: number;
@@ -452,6 +454,7 @@ export default function AdminPage() {
             setWebsiteVisitorsCount(
               Number(payload.website_visitors_count) || 0,
             );
+            setQuestionsCount(Number(payload.questions_count) || 0);
             setPostVisitorsCount(Number(payload.post_visitors_count) || 0);
             setEditedPostsCount(Number(payload.edited_posts_count) || 0);
             setEngagementStats({
@@ -1317,17 +1320,13 @@ export default function AdminPage() {
               analytics: "visitors",
               group: "website",
             },
+            { label: "Questions", value: questionsCount, group: "content" },
             { label: "Post views", value: counts.views, analytics: "posts", group: "posts" },
             {
               label: "Post visitors",
               value: postVisitorsCount,
               analytics: "visitors",
               group: "posts",
-            },
-            {
-              label: "Published posts",
-              value: counts.published,
-              group: "content",
             },
             { label: "Edited posts", value: counts.edited, analytics: "edited", group: "content" },
             { label: "Drafts", value: counts.drafts, analytics: "drafts", group: "content" },

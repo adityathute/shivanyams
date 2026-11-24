@@ -18,6 +18,30 @@ type CommentRow = {
 type SortKey = "id" | "content" | "author" | "post" | "type" | "status" | "date";
 type SortDirection = "asc" | "desc";
 
+
+function AnimatedNumber({ value, replayKey = 0 }: { value: number; replayKey?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const target = Number.isFinite(value) ? Math.max(0, value) : 0;
+    if (target === 0) { setDisplayValue(0); return; }
+    let frame = 0;
+    let startTime = 0;
+    const duration = 850;
+    setDisplayValue(0);
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [value, replayKey]);
+
+  return <>{formatCompactNumber(displayValue)}</>;
+}
+
 export default function AdminCommentsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -36,6 +60,7 @@ export default function AdminCommentsPage() {
   const [pendingAction, setPendingAction] = useState<{ comment: CommentRow; status: "approved" | "rejected" } | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
+  const [animationKey, setAnimationKey] = useState(0);
 
   const totalComments = allComments.filter((row) => row.parent === null).length;
   const totalReplies = allComments.filter((row) => row.parent !== null).length;
@@ -77,6 +102,7 @@ export default function AdminCommentsPage() {
       if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail || "Unable to load comments."); }
       const payload = await response.json();
       setAllComments(Array.isArray(payload) ? payload : []);
+      setAnimationKey((value) => value + 1);
     } catch (err) { setError(err instanceof Error ? err.message : "Unable to load comments."); }
     finally { setLoadingRows(false); }
   }, []);
@@ -122,8 +148,8 @@ export default function AdminCommentsPage() {
           <div className="admin-panel-heading admin-comments-panel-heading">
             <div><h2><MessagesIcon size={18} /> Community Discussions</h2><p>Monitor community conversations and manage member comments and replies.</p></div>
             <div className="admin-comments-totals" aria-label={`${totalComments} comments across ${postsWithComments} posts and ${totalReplies} replies across ${postsWithReplies} posts`}>
-              <div className="admin-comments-total"><strong>{formatCompactNumber(totalComments)}</strong><span>Total comments</span><small>{formatCompactNumber(postsWithComments)} posts</small></div>
-              <div className="admin-comments-total"><strong>{formatCompactNumber(totalReplies)}</strong><span>Total replies</span><small>{formatCompactNumber(postsWithReplies)} posts</small></div>
+              <div className="admin-comments-total"><strong><AnimatedNumber value={totalComments} replayKey={animationKey} /></strong><span>Total comments</span><small><AnimatedNumber value={postsWithComments} replayKey={animationKey} /> posts</small></div>
+              <div className="admin-comments-total"><strong><AnimatedNumber value={totalReplies} replayKey={animationKey} /></strong><span>Total replies</span><small><AnimatedNumber value={postsWithReplies} replayKey={animationKey} /> posts</small></div>
             </div>
           </div>
           <div className="admin-filters admin-comments-filters">

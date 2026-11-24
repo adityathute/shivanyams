@@ -1820,6 +1820,7 @@ class AdminWebsiteAnalytics(APIView):
     def get(self, request):
         analytics_type = request.query_params.get("type", "views")
         visitor_id = request.query_params.get("visitor_id")
+        auth_user_id = request.query_params.get("auth_user_id")
         path = request.query_params.get("path")
         post_id = request.query_params.get("post_id")
 
@@ -2028,6 +2029,14 @@ class AdminWebsiteAnalytics(APIView):
                             "last_viewed": last_event.viewed_at if last_event else None,
                         }] if events.exists() else [],
                     })
+
+            if auth_user_id and not visitor_id:
+                visitor_id = (
+                    WebsiteVisitor.objects.filter(auth_user_id=auth_user_id)
+                    .order_by("-last_seen_at")
+                    .values_list("visitor_id", flat=True)
+                    .first()
+                )
 
             if visitor_id:
                 visitor = WebsiteVisitor.objects.annotate(

@@ -22,12 +22,13 @@ type QuestionRow = {
   answer: string;
   answer_visibility: "public" | "private" | "hidden";
   answered: boolean;
+  status: "active" | "deleted";
   helpful_count: number;
   created_at: string;
   answered_at: string | null;
 };
 
-type StatusFilter = "all" | "unanswered" | "answered";
+type StatusFilter = "all" | "unanswered" | "answered" | "deleted";
 
 export default function AdminQuestionsPage() {
   const router = useRouter();
@@ -76,7 +77,8 @@ export default function AdminQuestionsPage() {
     const query = search.trim().toLowerCase();
     return rows.filter((row) => {
       const matchesStatus = statusFilter === "all"
-        || (statusFilter === "answered" ? row.answered : !row.answered);
+        || (statusFilter === "deleted" ? row.status === "deleted"
+          : row.status === "active" && (statusFilter === "answered" ? row.answered : !row.answered));
       const matchesSearch = !query || [
         row.question,
         row.answer,
@@ -90,8 +92,9 @@ export default function AdminQuestionsPage() {
     });
   }, [rows, search, statusFilter]);
 
-  const answeredCount = rows.filter((row) => row.answered).length;
-  const unansweredCount = rows.length - answeredCount;
+  const activeRows = rows.filter((row) => row.status === "active");
+  const answeredCount = activeRows.filter((row) => row.answered).length;
+  const unansweredCount = activeRows.length - answeredCount;
   const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
   const visibleRows = filteredRows.slice((page - 1) * pageSize, page * pageSize);
 
@@ -163,7 +166,7 @@ export default function AdminQuestionsPage() {
               <p>Publish answers to everyone or privately to the person who asked. You can also correct the question.</p>
             </div>
             <div className="admin-questions-totals">
-              <div><strong>{formatCompactNumber(rows.length)}</strong><span>Total questions</span></div>
+              <div><strong>{formatCompactNumber(activeRows.length)}</strong><span>Total questions</span></div>
               <div><strong>{formatCompactNumber(unansweredCount)}</strong><span>Awaiting answer</span></div>
               <div><strong>{formatCompactNumber(answeredCount)}</strong><span>Answered</span></div>
             </div>
@@ -187,6 +190,7 @@ export default function AdminQuestionsPage() {
                 { value: "all", label: "All questions" },
                 { value: "unanswered", label: "Awaiting answer" },
                 { value: "answered", label: "Answered" },
+                { value: "deleted", label: "Deleted" },
               ]}
             />
           </div>
@@ -206,9 +210,9 @@ export default function AdminQuestionsPage() {
                       <td>{row.author_name || "Guest"}</td>
                       <td><span className="admin-questions-language">{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[row.language] || row.language.toUpperCase()}</span></td>
                       <td><span className="admin-questions-helpful-count" title={`${row.helpful_count || 0} helpful votes`}>{formatCompactNumber(row.helpful_count || 0)}</span></td>
-                      <td><span className={`admin-status admin-questions-status ${row.answered ? "status-approved" : "status-pending"}`}>{row.answered ? "Answered" : "Awaiting answer"}</span>{row.answered ? <span className={`admin-questions-visibility ${row.answer_visibility === "public" ? "is-public" : row.answer_visibility === "private" ? "is-private" : "is-hidden"}`}>{({ public: "Public", private: "Private", hidden: "Hidden" } as Record<string, string>)[row.answer_visibility || "public"]}</span> : null}</td>
+                      <td><span className={`admin-status admin-questions-status ${row.status === "deleted" ? "status-rejected" : row.answered ? "status-approved" : "status-pending"}`}>{row.status === "deleted" ? "Deleted" : row.answered ? "Answered" : "Awaiting answer"}</span>{row.status === "active" && row.answered ? <span className={`admin-questions-visibility ${row.answer_visibility === "public" ? "is-public" : row.answer_visibility === "private" ? "is-private" : "is-hidden"}`}>{({ public: "Public", private: "Private", hidden: "Hidden" } as Record<string, string>)[row.answer_visibility || "public"]}</span> : null}</td>
                       <td className="admin-questions-date">{new Date(row.created_at).toLocaleString()}</td>
-                      <td><button type="button" className="admin-questions-answer-button" onClick={() => openAnswer(row)}>{row.answered ? "Edit answer" : "Answer"}</button></td>
+                      <td>{row.status === "deleted" ? <span className="admin-questions-deleted-action">Kept in records</span> : <button type="button" className="admin-questions-answer-button" onClick={() => openAnswer(row)}>{row.answered ? "Edit answer" : "Answer"}</button>}</td>
                     </tr>
                   ))}
                 </tbody>

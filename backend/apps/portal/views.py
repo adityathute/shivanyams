@@ -905,16 +905,23 @@ class PostQuestions(APIView):
 
 class PostQuestionHelpful(APIView):
     authentication_classes = [ShivanyaAuthNoCSRFAuthentication]
-    """Public helpful voting, deduplicated by a first-party visitor cookie."""
+    """Public helpful voting: one vote per account or anonymous IP per question."""
 
     permission_classes = [permissions.AllowAny]
-    cookie_name = "portal_faq_visitor"
 
-    def _visitor_token(self, request):
-        return str(request.COOKIES.get(self.cookie_name) or "").strip()
-
-    def _visitor_hash(self, token):
-        return hashlib.sha256(token.encode("utf-8")).hexdigest()
+    def _vote_identity(self, request):
+        user_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+        if user_id:
+            # Account identity prevents repeat votes across browsers/devices.
+            identity = f"user:{user_id}"
+        else:
+            # Use the direct peer address; never trust visitor-supplied forwarding headers.
+            ip_address = str(request.META.get("REMOTE_ADDR") or "").strip()
+            if not ip_address:
+                raise ValidationError("Unable to determine visitor IP address.")
+            identity = f"ip:{ip_address}"
+        visitor_hash = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+        return user_id, visitor_hash
 
     def _question(self, question_id, request):
         question = get_object_or_404(
@@ -935,18 +942,16 @@ class PostQuestionHelpful(APIView):
 
     def get(self, request, question_id):
         question = self._question(question_id, request)
-        token = self._visitor_token(request)
-        viewer_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
-        has_voted = bool(
-            (token and PostQuestionHelpfulVote.objects.filter(
+        user_id, visitor_hash = self._vote_identity(request)
+        has_voted = PostQuestionHelpfulVote.objects.filter(
+            question=question,
+            visitor_hash=visitor_hash,
+        ).exists()
+        if user_id:
+            has_voted = has_voted or PostQuestionHelpfulVote.objects.filter(
                 question=question,
-                visitor_hash=self._visitor_hash(token),
-            ).exists())
-            or (viewer_id and PostQuestionHelpfulVote.objects.filter(
-                question=question,
-                user_auth_id=viewer_id,
-            ).exists())
-        )
+                user_auth_id=user_id,
+            ).exists()
         return Response({
             "helpful_count": question.helpful_votes.count(),
             "has_voted": has_voted,
@@ -954,50 +959,24 @@ class PostQuestionHelpful(APIView):
 
     def post(self, request, question_id):
         question = self._question(question_id, request)
-        token = self._visitor_token(request)
-        new_token = not token
-        if new_token:
-            token = uuid.uuid4().hex
-        visitor_hash = self._visitor_hash(token)
-        viewer_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
-        if viewer_id:
-            anonymous_vote = PostQuestionHelpfulVote.objects.filter(
+        user_id, visitor_hash = self._vote_identity(request)
+        if user_id:
+            vote, created = PostQuestionHelpfulVote.objects.get_or_create(
                 question=question,
-                visitor_hash=visitor_hash,
-                user_auth_id="",
-            ).first()
-            if anonymous_vote:
-                anonymous_vote.user_auth_id = viewer_id
-                anonymous_vote.save(update_fields=["user_auth_id"])
-                vote, created = anonymous_vote, False
-            else:
-                vote, created = PostQuestionHelpfulVote.objects.get_or_create(
-                    question=question,
-                    user_auth_id=viewer_id,
-                    defaults={"visitor_hash": visitor_hash},
-                )
+                user_auth_id=user_id,
+                defaults={"visitor_hash": visitor_hash},
+            )
         else:
             vote, created = PostQuestionHelpfulVote.objects.get_or_create(
                 question=question,
                 visitor_hash=visitor_hash,
                 defaults={"user_auth_id": ""},
             )
-        response = Response({
+        return Response({
             "helpful_count": question.helpful_votes.count(),
             "has_voted": True,
             "created": created,
         })
-        if new_token:
-            response.set_cookie(
-                self.cookie_name,
-                token,
-                max_age=60 * 60 * 24 * 365,
-                httponly=True,
-                secure=request.is_secure(),
-                samesite="Lax",
-                path="/",
-            )
-        return response
 
 
 class PostComments(APIView):

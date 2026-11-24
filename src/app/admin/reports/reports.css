@@ -615,3 +615,72 @@
 .admin-reports-page table.admin-reports-table td:nth-child(7),
 .admin-reports-page table.admin-reports-table th:nth-child(8),
 .admin-reports-page table.admin-reports-table td:nth-child(8) { text-align: center; }
+
+
+/* Compact, centered report statistics matching the Questions summary cards. */
+.admin-reports-page .admin-reports-totals {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  flex: 0 1 auto;
+  gap: 10px;
+}
+
+.admin-reports-page .admin-reports-total {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  min-width: 104px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 9px;
+  text-align: center;
+}
+
+.admin-reports-page .admin-reports-total strong {
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 750;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-reports-page .admin-reports-total span {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .68rem;
+  font-weight: 650;
+  white-space: nowrap;
+  text-align: center;
+}
+
+[data-theme="dark"] .admin-reports-page .admin-reports-total {
+  border-color: #344154;
+}
+
+@media (max-width: 760px) {
+  .admin-reports-page .admin-reports-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-reports-page .admin-reports-totals {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-reports-page .admin-reports-totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-reports-page .admin-reports-total {
+    min-width: 0;
+  }
+
+  .admin-reports-page .admin-reports-total span {
+    white-space: normal;
+  }
+}

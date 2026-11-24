@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useAuth } from "shivanya-auth";
 import { CloseIcon, QuestionMarkCircleIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
+import { usePortalAuth } from "../context/PortalAuthContext";
 import type { PostFAQ } from "../data/portal-data";
 import "./PostFAQSection.css";
 
@@ -76,6 +78,8 @@ const copy = {
 } as const;
 
 export function PostFAQSection({ postId, faqs, language }: Props) {
+  const { user } = useAuth();
+  const { openLogin } = usePortalAuth();
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [questionDraft, setQuestionDraft] = useState("");
@@ -153,6 +157,10 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
           type="button"
           className="portal-faq-ask-button"
           onClick={() => {
+            if (!user) {
+              openLogin();
+              return;
+            }
             setError("");
             setSuccess(false);
             setModalOpen(true);
@@ -168,10 +176,22 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
       {faqs?.length || submittedQuestions.length ? (
         <div className="portal-faq-list">
           {faqs.map((faq, index) => {
-            const isExpanded = expandedItems.includes(index);
+            const isPending = faq.status === "under_review";
+            const isExpanded = !isPending && expandedItems.includes(index);
             const question = getLocalizedText(language, faq.question_en, faq.question_mr, faq.question_hi) || faq.question_en;
             const answer = getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en;
             const answerId = `portal-faq-answer-${faq.id ?? index}`;
+
+            if (isPending) {
+              return (
+                <div className="portal-faq-item portal-faq-pending" key={faq.id ?? index}>
+                  <div className="portal-faq-question portal-faq-pending-question">
+                    <span>{question}</span>
+                    <span className="portal-faq-review-status">{labels.underReview}</span>
+                  </div>
+                </div>
+              );
+            }
 
             return (
               <div className={`portal-faq-item${isExpanded ? " is-open" : ""}`} key={faq.id ?? index}>
@@ -191,7 +211,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               </div>
             );
           })}
-          {submittedQuestions.map((item) => (
+          {submittedQuestions.filter((item) => !faqs.some((faq) => faq.id === -item.id)).map((item) => (
             <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
               <div className="portal-faq-question portal-faq-pending-question">
                 <span>{item.question}</span>

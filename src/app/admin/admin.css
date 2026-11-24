@@ -3174,7 +3174,15 @@
 
 /* Questions analytics: compact text columns and three clickable status totals. */
 .admin-analytics-modal .admin-questions-analytics-summary {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.admin-analytics-modal .admin-questions-analytics-summary > button {
+  min-width: 0;
+}
+.admin-analytics-modal .admin-status.status-deleted {
+  border-color: color-mix(in srgb, #dc4545 25%, transparent);
+  background: color-mix(in srgb, #dc4545 9%, transparent);
+  color: #dc4545;
 }
 .admin-analytics-modal .admin-questions-analytics-table {
   width: 100%;

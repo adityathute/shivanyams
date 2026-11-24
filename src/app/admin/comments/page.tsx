@@ -85,7 +85,7 @@ export default function AdminCommentsPage() {
   useEffect(() => { if (isAdmin) void loadComments(); }, [isAdmin, loadComments]);
   useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
 
-  async function updateStatus(comment: CommentRow, status: "approved" | "rejected"): Promise<boolean> {
+  async function updateStatus(comment: CommentRow, status: "approved" | "rejected" | "hidden"): Promise<boolean> {
     setBusyId(comment.id);
     try {
       const response = await adminFetch(`${API_URL}/admin/comments/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: comment.id, status }) });

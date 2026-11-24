@@ -10,15 +10,6 @@ import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
 import "./comments.css";
 
-type Report = {
-  id: number;
-  reporter_auth_id: string;
-  reason: string;
-  details: string;
-  status: string;
-  created_at: string;
-};
-
 type CommentRow = {
   id: number;
   post: number;
@@ -32,8 +23,6 @@ type CommentRow = {
   is_admin_reply: boolean;
   likes_count: number;
   dislikes_count: number;
-  report_count: number;
-  reports: Report[];
   created_at: string;
 };
 
@@ -43,7 +32,6 @@ export default function AdminCommentsPage() {
   const isAdmin = user?.roles?.includes("admin") === true;
   const [comments, setComments] = useState<CommentRow[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
-  const [reportedOnly, setReportedOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [loadingRows, setLoadingRows] = useState(true);
   const [error, setError] = useState("");
@@ -54,7 +42,6 @@ export default function AdminCommentsPage() {
   const [pageSize, setPageSize] = useState(15);
   const pageCount = Math.max(1, Math.ceil(comments.length / pageSize));
   const visibleComments = comments.slice((page - 1) * pageSize, page * pageSize);
-  const totalReports = comments.reduce((total, comment) => total + (comment.report_count || comment.reports?.length || 0), 0);
 
   const loadComments = useCallback(async () => {
     setLoadingRows(true);
@@ -62,7 +49,6 @@ export default function AdminCommentsPage() {
     try {
       const params = new URLSearchParams();
       params.set("status", statusFilter);
-      if (reportedOnly) params.set("reported", "true");
       if (search.trim()) params.set("search", search.trim());
       const response = await adminFetch(`${API_URL}/admin/comments/?${params.toString()}`, { cache: "no-store" });
       if (!response.ok) {
@@ -76,7 +62,7 @@ export default function AdminCommentsPage() {
     } finally {
       setLoadingRows(false);
     }
-  }, [statusFilter, reportedOnly, search]);
+  }, [statusFilter, search]);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -104,20 +90,6 @@ export default function AdminCommentsPage() {
       setError(err instanceof Error ? err.message : "Unable to update comment.");
     } finally {
       setBusyId(null);
-    }
-  }
-
-  async function updateReportStatus(reportId: number, reportStatus: string) {
-    try {
-      const response = await adminFetch(`${API_URL}/admin/comments/`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ report_id: reportId, report_status: reportStatus }),
-      });
-      if (!response.ok) throw new Error("Unable to update report.");
-      await loadComments();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to update report.");
     }
   }
 
@@ -156,8 +128,8 @@ export default function AdminCommentsPage() {
         <header className="admin-topbar">
           <div>
             <span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span>
-            <h1>Comments & reports</h1>
-            <p>Review discussions, handle reports and reply as ShivanyaMS.</p>
+            <h1>Comments & Replies</h1>
+            <p>Review community discussions and reply as ShivanyaMS.</p>
           </div>
           <div className="admin-top-actions admin-comments-header-actions">
             <Link href="/admin" className="admin-secondary-button">
@@ -169,7 +141,7 @@ export default function AdminCommentsPage() {
               className="admin-secondary-button"
               onClick={() => void loadComments()}
               disabled={loadingRows}
-              aria-label="Refresh comments and reports"
+              aria-label="Refresh comments and replies"
               title="Refresh"
             >
               <RefreshIcon size={16} />
@@ -181,18 +153,8 @@ export default function AdminCommentsPage() {
         <section className="admin-post-panel admin-comments-panel">
           <div className="admin-panel-heading admin-comments-panel-heading">
             <div>
-              <h2>Discussion activity</h2>
-              <p>Monitor community conversations, review reported content, and manage member discussions.</p>
-            </div>
-            <div className="admin-comments-totals" aria-label={`${comments.length} total comments and ${totalReports} total reports`}>
-              <div className="admin-comments-total">
-                <strong>{formatCompactNumber(comments.length)}</strong>
-                <span>Total comments</span>
-              </div>
-              <div className="admin-comments-total">
-                <strong>{formatCompactNumber(totalReports)}</strong>
-                <span>Total reports</span>
-              </div>
+              <h2>Community discussions</h2>
+              <p>Monitor community conversations and manage member comments and replies.</p>
             </div>
           </div>
           <div className="admin-filters admin-comments-filters">
@@ -214,10 +176,6 @@ export default function AdminCommentsPage() {
                 { value: "rejected", label: "Rejected" },
               ]}
             />
-            <label className="admin-comments-reported-filter">
-              <input type="checkbox" checked={reportedOnly} onChange={(event) => { setReportedOnly(event.target.checked); setPage(1); }} />
-              Reported only
-            </label>
           </div>
 
           {error ? <div className="admin-error">{error}</div> : null}
@@ -242,22 +200,9 @@ export default function AdminCommentsPage() {
                       <LikeIcon size={14} /> {formatCompactNumber(comment.likes_count)}
                       <DislikeIcon size={14} /> {formatCompactNumber(comment.dislikes_count)}
                     </span>
-                    <span className={comment.report_count ? "has-reports" : ""}>{formatCompactNumber(comment.report_count)} reports</span>
+                    <span className=
                   </div>
-                  {comment.reports?.length ? (
-                    <div className="admin-comment-reports">
-                      <strong>Reports</strong>
-                      {comment.reports.map((report) => (
-                        <div key={report.id}>
-                          <span>{report.reason}</span>
-                          {report.details ? <p>{report.details}</p> : null}
-                          <small>{report.status} · {new Date(report.created_at).toLocaleString()}</small>
-                          {report.status === "open" ? <div className="admin-report-actions"><button type="button" onClick={() => void updateReportStatus(report.id, "reviewed")}>Mark reviewed</button><button type="button" onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button></div> : null}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                  <div className="admin-comment-actions">
+                                    <div className="admin-comment-actions">
                     {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "approved")}>Approve / restore</button> : null}
                     {comment.status !== "hidden" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "hidden")}>Hide</button> : null}
                     {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "rejected")}>Reject</button> : null}
@@ -306,7 +251,7 @@ export default function AdminCommentsPage() {
           </div>
         </section>
       </div>
-      <footer className="admin-footer">ShivanyaMS · Community Management</footer>
+      <footer className="admin-footer">ShivanyaMS · Comments & Replies</footer>
     </main>
   );
 }

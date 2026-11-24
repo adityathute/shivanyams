@@ -1416,17 +1416,6 @@ export default function AdminPage() {
                 <DownloadIcon size={16} />
                 <span>Export CSV</span>
               </button>
-              <button
-                type="button"
-                className="admin-refresh-button admin-toolbar-action"
-                onClick={() => setRefreshKey((value) => value + 1)}
-                disabled={postsLoading}
-                aria-label="Refresh admin posts"
-                title="Refresh"
-              >
-                <RefreshIcon size={16} />
-                <span>Refresh</span>
-              </button>
               <div className="admin-posts-total" aria-live="polite">
                 <strong>{formatCompactNumber(counts.published)}</strong>
                 <span>Published posts</span>
@@ -1435,6 +1424,16 @@ export default function AdminPage() {
                 <strong>{formatCompactNumber(posts.length)}</strong>
                 <span>Total posts</span>
               </div>
+              <button
+                type="button"
+                className="admin-refresh-button admin-toolbar-action admin-toolbar-icon-button"
+                onClick={() => setRefreshKey((value) => value + 1)}
+                disabled={postsLoading}
+                aria-label="Refresh admin posts"
+                title="Refresh"
+              >
+                <RefreshIcon size={16} />
+              </button>
             </div>
           </div>
 

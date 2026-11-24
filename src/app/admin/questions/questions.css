@@ -16,7 +16,8 @@
   align-items: center;
 }
 
-.admin-questions-table { min-width: 940px; }
+.admin-questions-table { min-width: 990px; }
+.admin-questions-helpful-count { display: inline-flex; min-width: 28px; justify-content: center; padding: 4px 8px; border: 1px solid color-mix(in srgb, #16a34a 24%, var(--border-color, #e5e7eb)); border-radius: 7px; background: color-mix(in srgb, #16a34a 7%, transparent); color: #168044; font-size: .76rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .admin-questions-content { max-width: 320px; }
 .admin-questions-content > span, .admin-questions-post > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-questions-post { max-width: 190px; }

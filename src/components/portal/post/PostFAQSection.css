@@ -618,3 +618,15 @@
     padding: 0 13px 13px;
   }
 }
+
+
+.portal-faq-moderation-warning {
+  margin: 8px 0 0;
+  color: #b45309;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+:root[data-theme="dark"] .portal-faq-moderation-warning {
+  color: #fbbf24;
+}

@@ -1256,7 +1256,7 @@ export default function AdminPage() {
               <span>Questions</span>
             </Link>
             <Link href="/admin/reports" className="admin-secondary-button">
-              <ReportIcon size={16} />
+              <ReportIcon size={16} color="#F59E0B" />
               <span>Reports</span>
             </Link>
             <Link href="/" target="_blank" className="admin-secondary-button">

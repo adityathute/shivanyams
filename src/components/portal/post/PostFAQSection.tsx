@@ -298,8 +298,8 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                   onClick={() => setExpandedItems((current) => isExpanded ? current.filter((item) => item !== index) : [...current, index])}
                 >
                   <span className="portal-faq-question-content">
-                    {faq.visibility ? <span className="portal-faq-asked-by">Asked by {askedBy}{helpful.count > 0 ? <span className="portal-faq-helpful-summary"> · Helpful {helpful.count}</span> : null}</span> : null}
                     <span className="portal-faq-question-text">{question}</span>
+                    {faq.visibility ? <span className="portal-faq-asked-by">Asked by {askedBy}{helpful.count > 0 ? <span className="portal-faq-helpful-summary"> · Helpful ({helpful.count})</span> : null}</span> : null}
                   </span>
                   <span className="portal-faq-question-side"><span className="portal-faq-chevron" aria-hidden="true" /></span>
                 </button>

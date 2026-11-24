@@ -40,6 +40,7 @@ const copy = {
     submitting: "Submitting...",
     success: "Your question has been submitted. It is now under review.",
     underReview: "Under review",
+    publicLabel: "Public", privateLabel: "Private", helpful: "Helpful", markedHelpful: "Marked helpful",
     error: "Unable to submit your question. Please try again.",
     required: "Please enter your question.",
   },
@@ -56,6 +57,7 @@ const copy = {
     submitting: "पाठवत आहे...",
     success: "तुमचा प्रश्न पाठवला आहे. तो सध्या तपासणीसाठी आहे.",
     underReview: "तपासणी सुरू आहे",
+    publicLabel: "सार्वजनिक", privateLabel: "खाजगी", helpful: "उपयुक्त", markedHelpful: "उपयुक्त म्हणून नोंदवले",
     error: "प्रश्न पाठवता आला नाही. कृपया पुन्हा प्रयत्न करा.",
     required: "कृपया तुमचा प्रश्न लिहा.",
   },
@@ -72,6 +74,7 @@ const copy = {
     submitting: "भेज रहे हैं...",
     success: "आपका प्रश्न भेज दिया गया है। यह अभी समीक्षा के अधीन है।",
     underReview: "समीक्षा के अधीन",
+    publicLabel: "सार्वजनिक", privateLabel: "निजी", helpful: "उपयोगी", markedHelpful: "उपयोगी के रूप में दर्ज",
     error: "प्रश्न भेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
     required: "कृपया अपना प्रश्न लिखें।",
   },
@@ -87,6 +90,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submittedQuestions, setSubmittedQuestions] = useState<Array<{ id: number; question: string }>>([]);
+  const [helpfulStates, setHelpfulStates] = useState<Record<number, { count: number; voted: boolean; busy?: boolean }>>({});
 
   const locale = language === "mr" || language === "hi" ? language : "en";
   const labels = copy[locale];
@@ -144,8 +148,44 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
     };
   }, [modalOpen]);
 
+  function ensureQuestionMark(value: string) {
+    const clean = value.trim();
+    return clean && !/[?؟]$/.test(clean) ? clean + "?" : clean;
+  }
+
+  useEffect(() => {
+    const ids = faqs.filter((faq) => typeof faq.id === "number" && faq.id < 0 && faq.status !== "under_review" && Boolean(faq.answer_en)).map((faq) => Math.abs(Number(faq.id)));
+    if (!ids.length) return;
+    let cancelled = false;
+    Promise.all(ids.map(async (id) => {
+      try {
+        const response = await fetch(getPortalApiUrl("questions/" + id + "/helpful/"), { credentials: "include", cache: "no-store" });
+        if (!response.ok) return null;
+        const payload = await response.json();
+        return [id, { count: Number(payload.helpful_count) || 0, voted: Boolean(payload.has_voted) }] as const;
+      } catch { return null; }
+    })).then((results) => {
+      if (cancelled) return;
+      setHelpfulStates((current) => { const next = { ...current }; results.forEach((result) => { if (result) next[result[0]] = result[1]; }); return next; });
+    });
+    return () => { cancelled = true; };
+  }, [faqs]);
+
+  async function markHelpful(questionId: number) {
+    const current = helpfulStates[questionId];
+    if (current?.voted || current?.busy) return;
+    setHelpfulStates((state) => ({ ...state, [questionId]: { count: current?.count || 0, voted: false, busy: true } }));
+    try {
+      const response = await fetch(getPortalApiUrl("questions/" + questionId + "/helpful/"), { method: "POST", credentials: "include" });
+      if (!response.ok) throw new Error("Unable to record vote");
+      const payload = await response.json();
+      setHelpfulStates((state) => ({ ...state, [questionId]: { count: Number(payload.helpful_count) || 0, voted: true, busy: false } }));
+    } catch {
+      setHelpfulStates((state) => ({ ...state, [questionId]: { count: current?.count || 0, voted: false, busy: false } }));
+    }
+  }
   async function submitQuestion() {
-    const question = questionDraft.trim();
+    const question = ensureQuestionMark(questionDraft);
     if (!question) {
       setError(labels.required);
       return;
@@ -210,7 +250,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
           {faqs.map((faq, index) => {
             const isPending = faq.status === "under_review";
             const isExpanded = !isPending && expandedItems.includes(index);
-            const question = getLocalizedText(language, faq.question_en, faq.question_mr, faq.question_hi) || faq.question_en;
+            const rawQuestion = getLocalizedText(language, faq.question_en, faq.question_mr, faq.question_hi) || faq.question_en;
+            const question = ensureQuestionMark(rawQuestion);
+            const questionId = Math.abs(Number(faq.id || 0));
+            const helpful = helpfulStates[questionId] || { count: Number(faq.helpful_count) || 0, voted: false };
+            const visibilityLabel = faq.is_mine ? (faq.visibility === "private" ? labels.privateLabel : labels.publicLabel) : (faq.author_name || "Member");
             const answer = getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en;
             const answerId = `portal-faq-answer-${faq.id ?? index}`;
 
@@ -234,11 +278,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                   aria-controls={answerId}
                   onClick={() => setExpandedItems((current) => isExpanded ? current.filter((item) => item !== index) : [...current, index])}
                 >
-                  <span>{question}</span>
-                  <span className="portal-faq-chevron" aria-hidden="true" />
+                  <span className="portal-faq-question-text">{question}</span>
+                  <span className="portal-faq-question-side">{faq.visibility ? <span className="portal-faq-review-status">{visibilityLabel}</span> : null}<span className="portal-faq-chevron" aria-hidden="true" /></span>
                 </button>
                 <div id={answerId} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
-                  <div className="portal-faq-answer-inner"><p>{answer}</p></div>
+                  <div className="portal-faq-answer-inner"><p>{answer}</p>{faq.id && faq.id < 0 ? <div className="portal-faq-helpful-row"><button type="button" className={"portal-faq-helpful-button" + (helpful.voted ? " is-voted" : "")} onClick={() => void markHelpful(questionId)} disabled={Boolean(helpful.voted || helpful.busy)} aria-pressed={helpful.voted}><span aria-hidden="true">👍</span><span>{helpful.voted ? labels.markedHelpful : labels.helpful}</span></button><span className="portal-faq-helpful-count">{helpful.count}</span></div> : null}</div>
                 </div>
               </div>
             );
@@ -246,7 +290,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
           {submittedQuestions.filter((item) => !faqs.some((faq) => faq.id === -item.id)).map((item) => (
             <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
               <div className="portal-faq-question portal-faq-pending-question">
-                <span>{item.question}</span>
+                <span>{ensureQuestionMark(item.question)}</span>
                 <span className="portal-faq-review-status">{labels.underReview}</span>
               </div>
             </div>

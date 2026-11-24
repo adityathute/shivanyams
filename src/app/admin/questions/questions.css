@@ -51,3 +51,5 @@
 .admin-questions-visibility-control select:focus { outline: 2px solid color-mix(in srgb, var(--primary, #3973c8) 28%, transparent); border-color: var(--primary, #3973c8); }
 .admin-questions-visibility-control small { color: var(--muted-foreground, #9298a2); font-size: .72rem; line-height: 1.5; }
 :root[data-theme="dark"] .admin-questions-visibility-control select { background: var(--surface, #171c28); border-color: var(--border-color, #303746); color: var(--text-primary, #f8fafc); }
+
+.admin-questions-visibility.is-hidden { background: color-mix(in srgb, #64748b 13%, transparent); color: #64748b; }

@@ -36,7 +36,7 @@ export default function AdminReportsPage() {
   const loadReports = useCallback(async () => {
     setLoadingRows(true); setError("");
     try {
-      const response = await adminFetch(`${API_URL}/admin/comments/?status=all`, { cache: "no-store" });
+      const response = await adminFetch(`${API_URL}/admin/comments/?status=all&include_post_reports=true`, { cache: "no-store" });
       if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail || "Unable to load reports."); }
       const payload = await response.json(); setComments(Array.isArray(payload) ? payload : []);
     } catch (err) { setError(err instanceof Error ? err.message : "Unable to load reports."); }

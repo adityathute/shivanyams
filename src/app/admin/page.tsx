@@ -239,7 +239,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | "shares" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "edited" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | "shares" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -731,13 +731,15 @@ export default function AdminPage() {
   const statusAnalyticsPosts = useMemo(
     () => analyticsType === "drafts"
       ? posts.filter((post) => post.status === "draft")
-      : analyticsType === "review"
-        ? posts.filter((post) => post.status === "pending_review")
+      : analyticsType === "edited"
+        ? posts.filter((post) => post.status === "published" && post.has_unpublished_changes)
+        : analyticsType === "review"
+          ? posts.filter((post) => post.status === "pending_review")
         : [],
     [analyticsType, posts],
   );
 
-  function openContentStatusAnalytics(type: "drafts" | "review") {
+  function openContentStatusAnalytics(type: "drafts" | "edited" | "review") {
     setAnalyticsType(type);
     setSelectedPost(null);
     setPostAnalyticsEvents([]);
@@ -1259,7 +1261,7 @@ export default function AdminPage() {
           const statItems: {
             label: string;
             value: number;
-            analytics?: "views" | "visitors" | "users" | "posts" | "drafts" | "review";
+            analytics?: "views" | "visitors" | "users" | "posts" | "drafts" | "edited" | "review";
             group: "users" | "website" | "posts" | "content";
           }[] = [
             {
@@ -1291,7 +1293,7 @@ export default function AdminPage() {
               value: counts.published,
               group: "content",
             },
-            { label: "Edited posts", value: counts.edited, group: "content" },
+            { label: "Edited posts", value: counts.edited, analytics: "edited", group: "content" },
             { label: "Drafts", value: counts.drafts, analytics: "drafts", group: "content" },
             { label: "Pending review", value: counts.review, analytics: "review", group: "content" },
           ];
@@ -1319,7 +1321,7 @@ export default function AdminPage() {
                     {item.analytics ? (
                       <button
                         type="button"
-                        onClick={() => item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
+                        onClick={() => item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "edited" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -2565,10 +2567,10 @@ export default function AdminPage() {
                 }}
               />
               </>
-            ) : analyticsType === "drafts" || analyticsType === "review" ? (
+            ) : analyticsType === "drafts" || analyticsType === "edited" || analyticsType === "review" ? (
               statusAnalyticsPosts.length === 0 ? (
                 <div className="admin-empty">
-                  {analyticsType === "drafts" ? "No draft posts found." : "No posts are waiting for review."}
+                  {analyticsType === "drafts" ? "No draft posts found." : analyticsType === "edited" ? "No edited posts found." : "No posts are waiting for review."}
                 </div>
               ) : (
                 <>
@@ -2583,7 +2585,7 @@ export default function AdminPage() {
                               <td><Link className="admin-analytics-link" href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`} title={post.title_en}>{post.title_en}</Link></td>
                               <td>{kind?.label || post.category?.name_en || "—"}</td>
                               <td>{post.updated_at ? formatAdminDateTime(post.updated_at) : "—"}</td>
-                              <td>{statusLabel(post.status)}</td>
+                              <td>{analyticsType === "edited" ? "Edited · Published" : statusLabel(post.status)}</td>
                             </tr>
                           );
                         })}

@@ -558,7 +558,8 @@
 .portal-faq-helpful-row {
   display: flex;
   align-items: center;
-  gap: 9px;
+  justify-content: flex-end;
+  min-height: 30px;
   padding: 0 17px 15px;
   background: var(--surface-muted, #f8fafc);
 }
@@ -566,49 +567,45 @@
 .portal-faq-helpful-button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 30px;
-  padding: 5px 10px;
-  border: 1px solid var(--border-color, #dce3ed);
-  border-radius: 8px;
-  background: var(--surface, #fff);
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
   color: var(--text-secondary, #596579);
   font: inherit;
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 500;
   cursor: pointer;
 }
 
 .portal-faq-helpful-button:hover:not(:disabled) {
-  border-color: var(--primary, #3973c8);
-  color: var(--primary, #3973c8);
-}
-
-.portal-faq-helpful-button.is-voted {
-  border-color: color-mix(in srgb, #16a34a 35%, var(--border-color, #dce3ed));
-  color: #168044;
-  cursor: default;
+  color: var(--text-primary, #172033);
 }
 
 .portal-faq-helpful-button:disabled {
-  opacity: .8;
-  cursor: default;
+  opacity: .55;
+  cursor: wait;
 }
 
-.portal-faq-helpful-count {
+.portal-faq-helpful-summary {
   color: var(--text-secondary, #778195);
+  font-weight: 400;
+}
+
+.portal-faq-thank-you {
+  color: var(--text-secondary, #596579);
   font-size: 11px;
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
+  font-weight: 400;
 }
 
 :root[data-theme="dark"] .portal-faq-helpful-row {
   background: var(--surface-muted, #1d2431);
 }
 
-:root[data-theme="dark"] .portal-faq-helpful-button {
-  border-color: var(--border-color, #303746);
-  background: var(--surface, #171c28);
+:root[data-theme="dark"] .portal-faq-helpful-button,
+:root[data-theme="dark"] .portal-faq-thank-you,
+:root[data-theme="dark"] .portal-faq-helpful-summary {
   color: var(--text-secondary, #cbd5e1);
 }
 

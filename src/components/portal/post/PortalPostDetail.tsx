@@ -107,6 +107,20 @@ function getAnalyticsVisitorId() {
   }
 }
 
+function formatPostHeaderDate(value: string, language: string) {
+  if (!value) return "";
+  const locale =
+    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
+  const date = new Date(`${value.slice(0, 10)}T12:00:00`);
+  return Number.isNaN(date.getTime())
+    ? ""
+    : date.toLocaleDateString(locale, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+}
+
 function formatDate(value: string, language: string) {
   if (!value) return "";
   const locale =
@@ -815,7 +829,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     {updatedPostDate ? (
                       <div className="portal-post-header-updated">
                         <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
-                        <time dateTime={updatedPostDate}>{formatDate(updatedPostDate, language)}</time>
+                        <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
                       </div>
                     ) : null}
                     <div className="portal-post-header-views" aria-label={`${formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)} views`}>

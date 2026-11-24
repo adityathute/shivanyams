@@ -3071,3 +3071,38 @@
   margin-inline: auto;
   text-align: center !important;
 }
+
+
+/* Content status modals: use the same category and status badges as the admin posts table. */
+.admin-analytics-modal .admin-content-status-table .admin-category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  max-width: 100%;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: transparent !important;
+  color: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  white-space: nowrap;
+}
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.job { color: #2563eb; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.scheme { color: #059669; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.exam,
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.examination { color: #4f46e5; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.result { color: #7c3aed; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.admit { color: #0891b2; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.guide { color: #d97706; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.video { color: #dc2626; }
+.admin-analytics-modal .admin-content-status-table .admin-category-badge.tool { color: #4b5563; }
+.admin-analytics-modal .admin-content-status-table .admin-post-status-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}

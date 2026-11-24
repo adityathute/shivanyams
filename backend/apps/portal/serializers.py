@@ -538,6 +538,7 @@ class PostSerializer(serializers.ModelSerializer):
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
     users_count = serializers.IntegerField(read_only=True, default=0)
+    has_unpublished_changes = serializers.BooleanField(read_only=True, default=False)
 
     job_details = serializers.SerializerMethodField()
     scheme_details = serializers.SerializerMethodField()
@@ -590,6 +591,7 @@ class PostSerializer(serializers.ModelSerializer):
             "views_count",
             "unique_visitors_count",
             "users_count",
+            "has_unpublished_changes",
             "likes_count",
             "dislikes_count",
             "comments_count",

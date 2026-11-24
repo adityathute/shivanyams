@@ -1534,8 +1534,9 @@ class AdminQuestions(APIView):
             raise ValidationError({"id": "Question ID is required."})
         if not corrected_question:
             raise ValidationError({"question": "Please enter the question."})
-        if len(corrected_question) > 500:
-            raise ValidationError({"question": "A question can contain a maximum of 500 characters."})
+        # Allow the optional trailing question mark added after a 500-character visitor question.
+        if len(corrected_question) > 501:
+            raise ValidationError({"question": "A question can contain a maximum of 500 characters, plus an optional question mark."})
         if not answer:
             raise ValidationError({"answer": "Please enter an answer."})
         if len(answer) > 2000:

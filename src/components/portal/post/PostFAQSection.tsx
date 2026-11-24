@@ -254,7 +254,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
             const question = ensureQuestionMark(rawQuestion);
             const questionId = Math.abs(Number(faq.id || 0));
             const helpful = helpfulStates[questionId] || { count: Number(faq.helpful_count) || 0, voted: false };
-            const visibilityLabel = faq.is_mine ? (faq.visibility === "private" ? labels.privateLabel : labels.publicLabel) : (faq.author_name || "Member");
+            const askedBy = faq.is_mine ? "You" : (faq.author_name || "Member");
             const answer = getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en;
             const answerId = `portal-faq-answer-${faq.id ?? index}`;
 
@@ -262,6 +262,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               return (
                 <div className="portal-faq-item portal-faq-pending" key={faq.id ?? index}>
                   <div className="portal-faq-question portal-faq-pending-question">
+                    <span className="portal-faq-asked-by">Asked by {askedBy}</span>
                     <span>{question}</span>
                     <span className="portal-faq-review-status">{labels.underReview}</span>
                   </div>
@@ -278,8 +279,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                   aria-controls={answerId}
                   onClick={() => setExpandedItems((current) => isExpanded ? current.filter((item) => item !== index) : [...current, index])}
                 >
-                  <span className="portal-faq-question-text">{question}</span>
-                  <span className="portal-faq-question-side">{faq.visibility ? <span className="portal-faq-review-status">{visibilityLabel}</span> : null}<span className="portal-faq-chevron" aria-hidden="true" /></span>
+                  <span className="portal-faq-question-content">
+                    {faq.visibility ? <span className="portal-faq-asked-by">Asked by {askedBy}</span> : null}
+                    <span className="portal-faq-question-text">{question}</span>
+                  </span>
+                  <span className="portal-faq-question-side"><span className="portal-faq-chevron" aria-hidden="true" /></span>
                 </button>
                 <div id={answerId} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
                   <div className="portal-faq-answer-inner"><p>{answer}</p>{faq.id && faq.id < 0 ? <div className="portal-faq-helpful-row"><button type="button" className={"portal-faq-helpful-button" + (helpful.voted ? " is-voted" : "")} onClick={() => void markHelpful(questionId)} disabled={Boolean(helpful.voted || helpful.busy)} aria-pressed={helpful.voted}><span aria-hidden="true">👍</span><span>{helpful.voted ? labels.markedHelpful : labels.helpful}</span></button><span className="portal-faq-helpful-count">{helpful.count}</span></div> : null}</div>
@@ -290,6 +294,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
           {submittedQuestions.filter((item) => !faqs.some((faq) => faq.id === -item.id)).map((item) => (
             <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
               <div className="portal-faq-question portal-faq-pending-question">
+                <span className="portal-faq-asked-by">Asked by You</span>
                 <span>{ensureQuestionMark(item.question)}</span>
                 <span className="portal-faq-review-status">{labels.underReview}</span>
               </div>

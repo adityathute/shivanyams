@@ -1234,7 +1234,11 @@ export default function AdminPage() {
             </Link>
             <Link href="/admin/comments" className="admin-secondary-button">
               <MessagesIcon size={16} />
-              <span>Comments & reports</span>
+              <span>Comments & Replies</span>
+            </Link>
+            <Link href="/admin/reports" className="admin-secondary-button">
+              <MessagesIcon size={16} />
+              <span>Reports</span>
             </Link>
             <Link href="/" target="_blank" className="admin-secondary-button">
               <GlobeIcon size={16} />

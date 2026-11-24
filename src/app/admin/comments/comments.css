@@ -693,3 +693,81 @@
   background: #482323;
   color: #fca5a5;
 }
+
+
+/* Compact bordered comment/reply statistics matching the Questions cards. */
+.admin-comments-page .admin-comments-totals {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  flex: 0 1 auto;
+  gap: 10px;
+}
+
+.admin-comments-page .admin-comments-total {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  min-width: 104px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 9px;
+  text-align: center;
+}
+
+.admin-comments-page .admin-comments-total strong {
+  color: var(--foreground, #243247);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 750;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-comments-page .admin-comments-total span {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .68rem;
+  font-weight: 650;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.admin-comments-page .admin-comments-total small {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .64rem;
+  line-height: 1.25;
+  font-weight: 500;
+  text-align: center;
+}
+
+[data-theme="dark"] .admin-comments-page .admin-comments-total {
+  border-color: #344154;
+}
+
+@media (max-width: 760px) {
+  .admin-comments-page .admin-comments-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-comments-page .admin-comments-totals {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-comments-page .admin-comments-totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-comments-page .admin-comments-total {
+    min-width: 0;
+  }
+
+  .admin-comments-page .admin-comments-total span {
+    white-space: normal;
+  }
+}

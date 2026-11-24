@@ -1349,14 +1349,15 @@
 
 /* Compact post heading: category and update date on the left, actions on the right. */
 .portal-post-compact-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   min-width: 0;
   margin: 0 0 10px;
-  padding: 0 0 10px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
+  background: var(--surface-muted, #f5f7fa);
 }
 
 .portal-post-meta-compact {
@@ -1432,8 +1433,9 @@
   box-sizing: border-box;
   width: calc(100% + 32px);
   margin: 0 -16px 10px;
-  padding: 0 16px 10px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
+  background: var(--surface-muted, #f5f7fa);
 }
 
 
@@ -1444,6 +1446,7 @@
   margin: 18px -16px -16px;
   padding: 10px 16px 12px;
   border-top: 1px solid var(--border-color, #e5e7eb);
+  background: var(--surface-muted, #f5f7fa);
   display: flex;
   justify-content: flex-end;
 }
@@ -1462,5 +1465,61 @@
   .portal-post-card-footer .portal-post-reaction-actions {
     width: 100%;
     justify-content: flex-end;
+  }
+}
+
+
+/* Center the single last-updated timestamp in the header. */
+.portal-post-header-updated {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--text-secondary, #718096);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.portal-post-header-updated time,
+.portal-post-footer-updated time {
+  color: var(--text-secondary, #718096);
+}
+
+.portal-post-compact-header .portal-post-engagement-actions {
+  justify-self: end;
+  grid-column: 3;
+}
+
+.portal-post-card-footer {
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-muted, #f5f7fa);
+}
+
+.portal-post-footer-updated {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--text-secondary, #718096);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .portal-post-compact-header {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .portal-post-header-updated {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .portal-post-footer-updated {
+    white-space: normal;
   }
 }

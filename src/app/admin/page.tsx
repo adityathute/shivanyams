@@ -83,6 +83,7 @@ type WebsiteVisitorRow = {
   device: string;
   browser: string;
   language: string;
+  post_id?: number;
 };
 type WebsiteViewEvent = {
   viewed_at: string;
@@ -232,7 +233,6 @@ export default function AdminPage() {
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
   const [postVisitorsMode, setPostVisitorsMode] = useState(false);
-  const [postVisitorsPostId, setPostVisitorsPostId] = useState<number | null>(null);
   const [editedPostsCount, setEditedPostsCount] = useState(0);
   const [engagementStats, setEngagementStats] = useState({
     likes: 0,
@@ -768,7 +768,6 @@ export default function AdminPage() {
   function openPostVisitorsAnalytics() {
     setAnalyticsType("visitors");
     setPostVisitorsMode(true);
-    setPostVisitorsPostId(null);
     setSelectedPost(null);
     setSelectedVisitor(null);
     setVisitorPages([]);
@@ -2812,7 +2811,7 @@ export default function AdminPage() {
                 {selectedSharePost
                   ? formatCompactNumber(selectedSharePostEvents.length) + " share events"
                   : selectedVisitor
-                  ? formatCompactNumber(visitorPages.length) + " pages visited"
+                  ? formatCompactNumber(visitorPages.length) + (postVisitorsMode ? " post visits" : " pages visited")
                   : selectedPost
                     ? formatCompactNumber(postAnalyticsEvents.length) + " post view events"
                     : selectedAnalyticsPath

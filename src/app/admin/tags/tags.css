@@ -387,10 +387,29 @@
   box-sizing: border-box;
 }
 
-/* Keep the shared Shivanya Select trigger aligned with the Reports filters. */
+/* Match the visible custom Select control height used by Reports.
+   The shared component is a wrapper + button, not a native <select>. */
 .admin-tags-page .admin-tags-filters .shivanya-select-control {
+  display: block;
+  position: relative;
   min-width: 0;
   width: 100%;
+  height: 40px !important;
+  min-height: 40px !important;
+  box-sizing: border-box;
+}
+
+.admin-tags-page .admin-tags-filters .shivanya-select-control button,
+.admin-tags-page .admin-tags-filters .shivanya-select-control [role="combobox"] {
+  width: 100%;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  box-sizing: border-box;
+}
+
+.admin-tags-page .admin-tags-filters .shivanya-select-control .shivanya-select-arrow {
+  top: 20px !important;
 }
 
 [data-theme="dark"] .admin-tags-page .admin-tags-filters {
@@ -415,7 +434,3 @@
   }
 }
 
-/* .shivanya-select-control select {
-  height: 40px;
-  background: #fff;
-} */

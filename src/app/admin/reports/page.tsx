@@ -64,7 +64,7 @@ export default function AdminReportsPage() {
     const rows = reports.filter((report) => {
       const isReply = report.report_type === "reply";
       const matchesStatus = statusFilter === "all" || String(report.status || "").trim().toLowerCase() === statusFilter;
-      const matchesType = typeFilter === "all" || (typeFilter === "replies" ? isReply : !isReply);
+      const matchesType = typeFilter === "all" || (typeFilter === "posts" ? report.report_type === "post" : typeFilter === "replies" ? isReply : report.report_type === "comment");
       const matchesSearch = !query || [report.reason, report.details, report.reporter_name, report.reporter_auth_id, report.post_title, report.author_name, report.content, report.status, String(report.id), String(report.comment_id), String(report.post_id), report.report_type || (isReply ? "reply" : "comment")].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
       return matchesStatus && matchesType && matchesSearch;
     });
@@ -101,7 +101,7 @@ export default function AdminReportsPage() {
     <main className="admin-page admin-reports-page">
       <div className="admin-shell">
         <header className="admin-topbar">
-          <div><span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span><h1>Reports</h1><p>Review and manage reports submitted against community comments and replies.</p></div>
+          <div><span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span><h1>Reports</h1><p>Review and manage reports submitted against posts, comments, and replies.</p></div>
           <div className="admin-top-actions admin-reports-header-actions">
             <Link href="/admin" className="admin-secondary-button"><ArrowLeftIcon size={16} /><span>Back to dashboard</span></Link>
             <button type="button" className="admin-secondary-button" onClick={() => void loadReports()} disabled={loadingRows} aria-label="Refresh reports"><RefreshIcon size={16} /><span>Refresh</span></button>
@@ -120,7 +120,7 @@ export default function AdminReportsPage() {
           <div className="admin-filters admin-reports-filters">
             <input type="search" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search report, reason, user or post..." aria-label="Search reports" />
             <Select size="sm" fullWidth value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter status" options={[{ value: "all", label: "All statuses" }, { value: "open", label: "Open" }, { value: "reviewed", label: "Reviewed" }, { value: "dismissed", label: "Dismissed" }]} />
-            <Select size="sm" fullWidth value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value); setPage(1); }} aria-label="Filter reported content type" options={[{ value: "all", label: "All types" }, { value: "comments", label: "Comments only" }, { value: "replies", label: "Replies only" }]} />
+            <Select size="sm" fullWidth value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value); setPage(1); }} aria-label="Filter reported content type" options={[{ value: "all", label: "All types" }, { value: "posts", label: "Posts only" }, { value: "comments", label: "Comments only" }, { value: "replies", label: "Replies only" }]} />
           </div>
           {error ? <div className="admin-error" role="alert">{error}</div> : null}
           {loadingRows ? <div className="admin-empty">Loading reports...</div> : filteredReports.length === 0 ? <div className="admin-empty">No reports match these filters.</div> : (
@@ -128,7 +128,7 @@ export default function AdminReportsPage() {
               <table className="admin-post-table admin-reports-table">
                 <thead><tr><th>ID</th><th>Reason</th><th>Reported item</th><th>Reported content</th><th>User</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody>{visibleReports.map((report) => (
-                  <tr key={report.id}>
+                  <tr key={`${report.report_type || "comment"}-${report.id}`}>
                     <td className="admin-reports-id">#{report.id}</td>
                     <td><strong className="admin-reports-reason">{report.reason ? report.reason.charAt(0).toUpperCase() + report.reason.slice(1) : "Community report"}</strong><small className="admin-reports-related">{report.report_type === "post" ? "Post report" : report.report_type === "reply" ? "Reply report" : "Comment report"}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
                     <td className="admin-reports-target"><strong>{report.report_type === "post" ? "Post" : report.report_type === "reply" ? "Reply" : "Comment"}</strong><span>{report.target_title || report.post_title || "Untitled post"}</span></td><td className="admin-reports-content"><span title={report.content || "No content available."}>{report.content || "No content available."}</span></td>

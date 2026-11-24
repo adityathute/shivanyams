@@ -1410,10 +1410,6 @@ export default function AdminPage() {
                 <DownloadIcon size={16} />
                 <span>Export CSV</span>
               </button>
-              <div className="admin-posts-total" aria-live="polite">
-                <strong>{formatCompactNumber(posts.length)}</strong>
-                <span>Total posts</span>
-              </div>
               <button
                 type="button"
                 className="admin-refresh-button admin-toolbar-action"
@@ -1425,6 +1421,10 @@ export default function AdminPage() {
                 <RefreshIcon size={16} />
                 <span>Refresh</span>
               </button>
+              <div className="admin-posts-total" aria-live="polite">
+                <strong>{formatCompactNumber(posts.length)}</strong>
+                <span>Total posts</span>
+              </div>
             </div>
           </div>
 

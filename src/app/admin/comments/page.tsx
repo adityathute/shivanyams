@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
@@ -30,8 +30,7 @@ export default function AdminCommentsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
-  const [comments, setComments] = useState<CommentRow[]>([]);
-  const [summaryComments, setSummaryComments] = useState<CommentRow[]>([]);
+  const [allComments, setAllComments] = useState<CommentRow[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [loadingRows, setLoadingRows] = useState(true);
@@ -41,40 +40,41 @@ export default function AdminCommentsPage() {
   const [replyDraft, setReplyDraft] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
-  const pageCount = Math.max(1, Math.ceil(comments.length / pageSize));
-  const visibleComments = comments.slice((page - 1) * pageSize, page * pageSize);
-  const totalComments = summaryComments.filter((comment) => comment.parent === null).length;
-  const totalReplies = summaryComments.filter((comment) => comment.parent !== null).length;
-  const postsWithComments = new Set(summaryComments.filter((comment) => comment.parent === null).map((comment) => comment.post)).size;
-  const postsWithReplies = new Set(summaryComments.filter((comment) => comment.parent !== null).map((comment) => comment.post)).size;
+  const totalComments = allComments.filter((comment) => comment.parent === null).length;
+  const totalReplies = allComments.filter((comment) => comment.parent !== null).length;
+  const postsWithComments = new Set(allComments.filter((comment) => comment.parent === null).map((comment) => comment.post)).size;
+  const postsWithReplies = new Set(allComments.filter((comment) => comment.parent !== null).map((comment) => comment.post)).size;
+  const filteredComments = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return allComments.filter((comment) => {
+      const matchesStatus = statusFilter === "all" || String(comment.status || "").trim().toLowerCase() === statusFilter;
+      const matchesSearch = !query || [
+        comment.content, comment.post_title, comment.author_name, comment.user_auth_id,
+        comment.status, String(comment.id), String(comment.post), String(comment.parent ?? ""),
+      ].some((value) => String(value ?? "").toLowerCase().includes(query));
+      return matchesStatus && matchesSearch;
+    });
+  }, [allComments, search, statusFilter]);
+  const pageCount = Math.max(1, Math.ceil(filteredComments.length / pageSize));
+  const visibleComments = filteredComments.slice((page - 1) * pageSize, page * pageSize);
 
   const loadComments = useCallback(async () => {
     setLoadingRows(true);
     setError("");
     try {
-      const params = new URLSearchParams();
-      params.set("status", statusFilter);
-      if (search.trim()) params.set("search", search.trim());
-      const [response, summaryResponse] = await Promise.all([
-        adminFetch(`${API_URL}/admin/comments/?${params.toString()}`, { cache: "no-store" }),
-        adminFetch(`${API_URL}/admin/comments/?status=all`, { cache: "no-store" }),
-      ]);
+      const response = await adminFetch(`${API_URL}/admin/comments/?status=all`, { cache: "no-store" });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
         throw new Error(body.detail || "Unable to load comments.");
       }
       const payload = await response.json();
-      setComments(Array.isArray(payload) ? payload : []);
-      if (summaryResponse.ok) {
-        const summaryPayload = await summaryResponse.json();
-        setSummaryComments(Array.isArray(summaryPayload) ? summaryPayload : []);
-      }
+      setAllComments(Array.isArray(payload) ? payload : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load comments.");
     } finally {
       setLoadingRows(false);
     }
-  }, [statusFilter, search]);
+  }, []);
 
   useEffect(() => {
     if (!loading && !isAdmin) router.replace("/");
@@ -203,7 +203,7 @@ export default function AdminCommentsPage() {
           </div>
 
           {error ? <div className="admin-error">{error}</div> : null}
-          {loadingRows ? <div className="admin-empty">Loading comments...</div> : comments.length === 0 ? <div className="admin-empty">No comments match these filters.</div> : (
+          {loadingRows ? <div className="admin-empty">Loading comments...</div> : filteredComments.length === 0 ? <div className="admin-empty">No comments match these filters.</div> : (
             <div className="admin-comments-list">
               {visibleComments.map((comment) => (
                 <article className="admin-comment-card" key={comment.id}>
@@ -246,8 +246,8 @@ export default function AdminCommentsPage() {
           )}
           <div className="admin-table-footer">
             <span>
-              Showing {comments.length ? (page - 1) * pageSize + 1 : 0}–
-              {Math.min(page * pageSize, comments.length)} of {formatCompactNumber(comments.length)} comments
+              Showing {filteredComments.length ? (page - 1) * pageSize + 1 : 0}–
+              {Math.min(page * pageSize, filteredComments.length)} of {formatCompactNumber(filteredComments.length)} comments
             </span>
             <div className="admin-pagination">
               <select

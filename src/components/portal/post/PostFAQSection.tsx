@@ -359,7 +359,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                   <span className="portal-faq-question-side"><span className="portal-faq-chevron" aria-hidden="true" /></span>
                 </button>
                 <div id={answerId} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
-                  <div className="portal-faq-answer-inner">
+                  <div className={`portal-faq-answer-inner${helpful.feedback ? " has-helpful-feedback" : ""}`}>
                     <p>{answer}</p>
                     {faq.id && faq.id < 0 && (!helpful.voted || helpful.feedback) ? (
                       <div className="portal-faq-helpful-row">

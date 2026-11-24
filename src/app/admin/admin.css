@@ -3215,7 +3215,7 @@
 }
 @media (max-width: 620px) {
   .admin-analytics-modal .admin-questions-analytics-summary {
-    grid-template-columns: repeat(3, minmax(112px, 1fr));
+    grid-template-columns: repeat(4, minmax(112px, 1fr));
   }
   .admin-analytics-modal .admin-questions-analytics-table { min-width: 760px; }
 }

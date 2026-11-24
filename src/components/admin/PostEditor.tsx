@@ -1287,9 +1287,13 @@ export default function PostEditor({
                 age_as_on_date: normalizeApiDate(details.age_as_on_date),
                 eligible_dob_from: normalizeApiDate(details.eligible_dob_from),
                 eligible_dob_to: normalizeApiDate(details.eligible_dob_to),
-                posts: ((details.posts as JobPostInput[]) || []).map(
-                  normalizeJobPost,
-                ),
+                // Do not send a newly added but still-empty recruitment row.
+                // DRF requires post_number and post_name_en for each nested JobPost;
+                // keeping incomplete rows in editor state lets the admin finish
+                // typing without causing an invalid autosave request.
+                posts: ((details.posts as JobPostInput[]) || [])
+                  .filter((post) => post.post_number.trim() && post.post_name_en.trim())
+                  .map(normalizeJobPost),
               }
             : details,
 
@@ -1415,10 +1419,22 @@ export default function PostEditor({
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const message = result.detail || Object.entries(result)
-        .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : String(value)}`)
-        .join(" · ");
-      throw new Error(message || `Save failed (${response.status}).`);
+      const formatError = (value: unknown): string => {
+        if (typeof value === "string") return value;
+        if (Array.isArray(value)) return value.map(formatError).filter(Boolean).join(", ");
+        if (value && typeof value === "object") {
+          return Object.entries(value as Record<string, unknown>)
+            .map(([key, nested]) => {
+              const message = formatError(nested);
+              return message ? key + ": " + message : "";
+            })
+            .filter(Boolean)
+            .join(" · ");
+        }
+        return value == null ? "" : String(value);
+      };
+      const message = formatError(result.detail || result);
+      throw new Error(message || "Save failed (" + response.status + ").");
     }
     if (typeof result.id === "number") {
       postIdRef.current = result.id;
@@ -1470,7 +1486,8 @@ export default function PostEditor({
       try {
         await persistPost();
       } catch (error) {
-        console.error("Post autosave failed:", error);
+        // Autosave failures are reflected in the editor status; avoid noisy
+        // console errors for expected validation responses.
         setAutosaveState("error");
       } finally {
         saveInFlightRef.current = false;

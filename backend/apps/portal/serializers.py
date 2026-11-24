@@ -669,29 +669,33 @@ class PostSerializer(serializers.ModelSerializer):
         return self._get_detail(obj, "tool_details", ToolDetailsSerializer)
 
     def get_faqs(self, obj):
-        rows = list(PostFAQSerializer(
+        static_rows = list(PostFAQSerializer(
             obj.faqs.all(),
             many=True,
             context=self.context,
         ).data)
 
-        # Only questions with an official answer become public FAQs.
         request = self.context.get("request")
         viewer_auth_id = ""
         if request and getattr(request.user, "is_authenticated", False):
             viewer_auth_id = str(request.user.id)
 
-        for question in obj.questions.all():
+        question_rows = []
+        questions = sorted(
+            obj.questions.all(),
+            key=lambda item: (item.created_at, item.pk),
+        )
+        for question in questions:
             answer = (question.answer or "").strip()
             prompt = (question.question or "").strip()
             if not prompt:
                 continue
 
-            # Pending questions are visible only to the authenticated author.
+            is_mine = bool(viewer_auth_id and viewer_auth_id == question.user_auth_id)
             if not answer:
-                if not viewer_auth_id or viewer_auth_id != question.user_auth_id:
+                if not is_mine:
                     continue
-                rows.append({
+                question_rows.append({
                     "id": -question.pk,
                     "question_en": prompt,
                     "question_mr": prompt,
@@ -699,19 +703,21 @@ class PostSerializer(serializers.ModelSerializer):
                     "answer_en": "",
                     "answer_mr": "",
                     "answer_hi": "",
-                    "sort_order": 10000 + len(rows),
+                    "sort_order": len(question_rows),
                     "is_active": True,
                     "status": "under_review",
+                    "visibility": question.answer_visibility,
+                    "author_name": question.author_name or "Member",
+                    "is_mine": True,
+                    "helpful_count": 0,
                 })
                 continue
 
             if question.answer_visibility == "hidden":
                 continue
-            if question.answer_visibility == "private" and (
-                not viewer_auth_id or viewer_auth_id != question.user_auth_id
-            ):
+            if question.answer_visibility == "private" and not is_mine:
                 continue
-            rows.append({
+            question_rows.append({
                 "id": -question.pk,
                 "question_en": prompt,
                 "question_mr": prompt,
@@ -719,10 +725,16 @@ class PostSerializer(serializers.ModelSerializer):
                 "answer_en": answer,
                 "answer_mr": answer,
                 "answer_hi": answer,
-                "sort_order": 10000 + len(rows),
+                "sort_order": len(question_rows),
                 "is_active": True,
+                "visibility": question.answer_visibility,
+                "author_name": question.author_name or "Member",
+                "is_mine": is_mine,
+                "helpful_count": question.helpful_votes.count(),
             })
-        return rows
+
+        # Community questions and answers appear before editor-authored FAQs.
+        return question_rows + static_rows
 
     def get_related_posts(self, obj):
         relations = obj.outgoing_relations.select_related(

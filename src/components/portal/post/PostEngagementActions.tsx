@@ -297,9 +297,9 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
           <DislikeIcon size={19} />
         </button>
         <div className="portal-action-share-wrap">
-        <button type="button" className="portal-action-share" onClick={() => { if (shareMenuOpen) { setShareMenuOpen(false); void recordShare("dismissed"); } else { setShareMenuOpen(true); } }} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
-          <ShareIcon size={19} />
-        </button>
+          <button type="button" className="portal-action-share" onClick={() => { if (shareMenuOpen) { setShareMenuOpen(false); void recordShare("dismissed"); } else { setShareMenuOpen(true); } }} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
+            <ShareIcon size={19} />
+          </button>
           {shareMenuOpen ? (
             <div className="portal-share-menu" role="menu" aria-label="Share this post">
               <button type="button" role="menuitem" onClick={() => void shareTo("copy")} className="portal-share-copy"><CopyIcon size={17} /><span>Copy link</span></button>

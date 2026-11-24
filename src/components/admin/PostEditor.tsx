@@ -588,6 +588,7 @@ export default function PostEditor({
   const [postVersions, setPostVersions] = useState<PostVersionInfo[]>([]);
   const postIdRef = useRef<number | null>(null);
   const currentSlugRef = useRef(editSlug || "");
+  const versionHistoryRef = useRef<HTMLDetailsElement | null>(null);
   const lastSavedSnapshotRef = useRef("");
   const actionSnapshotRef = useRef<string | null>(null);
   const [actionBaselineReady, setActionBaselineReady] = useState(false);
@@ -597,6 +598,18 @@ export default function PostEditor({
   const [notice, setNotice] = useState("");
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+
+  useEffect(() => {
+    const closeVersionHistoryOnOutsideClick = (event: PointerEvent) => {
+      const dropdown = versionHistoryRef.current;
+      if (dropdown?.open && event.target instanceof Node && !dropdown.contains(event.target)) {
+        dropdown.open = false;
+      }
+    };
+
+    document.addEventListener("pointerdown", closeVersionHistoryOnOutsideClick);
+    return () => document.removeEventListener("pointerdown", closeVersionHistoryOnOutsideClick);
+  }, []);
 
   const [organizationType, setOrganizationType] = useState("");
   const [activeLanguage, setActiveLanguage] = useState<ContentLanguage>("en");
@@ -1603,7 +1616,7 @@ export default function PostEditor({
               ) : (
                 <span className="post-editor-unpublished-version">Draft · v{Math.max(...postVersions.map((item) => item.version_number))}</span>
               )}
-              <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
+              <details ref={versionHistoryRef} className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
             </div>}
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />

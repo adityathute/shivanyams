@@ -224,6 +224,35 @@ function formatAdminDateTime(value: string | null | undefined) {
   });
 }
 
+
+function AnimatedNumber({ value, replayKey = 0 }: { value: number; replayKey?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const target = Number.isFinite(value) ? Math.max(0, value) : 0;
+    if (target === 0) {
+      setDisplayValue(0);
+      return;
+    }
+
+    let frame = 0;
+    let startTime = 0;
+    const duration = 850;
+    setDisplayValue(0);
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(target * eased));
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [value, replayKey]);
+
+  return <>{formatCompactNumber(displayValue)}</>;
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -1422,14 +1451,14 @@ export default function AdminPage() {
                           {item.label}
                         </span>
                         <strong>
-                          {formatCompactNumber(item.value)}
+                          <AnimatedNumber value={item.value} replayKey={refreshKey} />
                         </strong>
                       </button>
                     ) : (
                       <>
                         <span>{item.label}</span>
                         <strong>
-                          {formatCompactNumber(item.value)}
+                          <AnimatedNumber value={item.value} replayKey={refreshKey} />
                         </strong>
                       </>
                     )}
@@ -1453,7 +1482,7 @@ export default function AdminPage() {
                       <span>
                         {item.label}
                       </span>
-                      <strong>{formatCompactNumber(item.value)}</strong>
+                      <strong><AnimatedNumber value={item.value} replayKey={refreshKey} /></strong>
                     </button>
                   </article>
                 ))}
@@ -1491,11 +1520,11 @@ export default function AdminPage() {
                 <span>Export CSV</span>
               </button>
               <div className="admin-posts-total" aria-live="polite">
-                <strong>{formatCompactNumber(counts.published)}</strong>
+                <strong><AnimatedNumber value={counts.published} replayKey={refreshKey} /></strong>
                 <span>Published posts</span>
               </div>
               <div className="admin-posts-total" aria-live="polite">
-                <strong>{formatCompactNumber(posts.length)}</strong>
+                <strong><AnimatedNumber value={posts.length} replayKey={refreshKey} /></strong>
                 <span>Total posts</span>
               </div>
               <button
@@ -1742,7 +1771,7 @@ export default function AdminPage() {
               {formatCompactNumber(sortedPosts.length)} filtered posts ·{" "}
               {formatCompactNumber(posts.filter((post) => post.is_active !== false).length)} active ·{" "}
               {formatCompactNumber(posts.filter((post) => post.is_active === false).length)} inactive
-              · {formatCompactNumber(posts.length)} total
+              · <AnimatedNumber value={posts.length} replayKey={refreshKey} /> total
             </span>
             <div className="admin-pagination">
               <select
@@ -1857,9 +1886,9 @@ export default function AdminPage() {
                            : analyticsType === "subscribers"
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
                            : analyticsType === "questions"
-                             ? `Questions (${formatCompactNumber(questionAnalyticsRows.length)})`
+                             ? `Questions ($<AnimatedNumber value={questionAnalyticsRows.length} replayKey={refreshKey} />)`
                            : analyticsType === "tags"
-                             ? `Tags (${formatCompactNumber(tagTotals.total)})`
+                             ? `Tags ($<AnimatedNumber value={tagTotals.total} replayKey={refreshKey} />)`
                            : selectedSharePost
                             ? `${selectedSharePost.title} (${formatCompactNumber(selectedSharePostStats.total)} shares)`
                           : analyticsType === "shares"
@@ -2067,9 +2096,9 @@ export default function AdminPage() {
                   <div className="admin-empty">Loading tag statistics...</div>
                 ) : (
                   <div className="admin-tags-summary">
-                    <article><span>Total tags</span><strong>{formatCompactNumber(tagTotals.total)}</strong><small>All created tags</small></article>
-                    <article><span>Used tags</span><strong>{formatCompactNumber(tagTotals.used)}</strong><small>Used in at least one post</small></article>
-                    <article><span>Unused tags</span><strong>{formatCompactNumber(tagTotals.unused)}</strong><small>Not assigned to any post</small></article>
+                    <article><span>Total tags</span><strong><AnimatedNumber value={tagTotals.total} replayKey={refreshKey} /></strong><small>All created tags</small></article>
+                    <article><span>Used tags</span><strong><AnimatedNumber value={tagTotals.used} replayKey={refreshKey} /></strong><small>Used in at least one post</small></article>
+                    <article><span>Unused tags</span><strong><AnimatedNumber value={tagTotals.unused} replayKey={refreshKey} /></strong><small>Not assigned to any post</small></article>
                   </div>
                 )
              ) : analyticsType === "shares" && !selectedPost && !selectedVisitor ? (
@@ -2198,9 +2227,9 @@ export default function AdminPage() {
                 ) : (
                   <>
                     <div className="admin-subscribers-summary admin-questions-analytics-summary">
-                      <button type="button" className={questionAnalyticsView === "all" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "all"} onClick={() => { setQuestionAnalyticsView("all"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Total questions</span><strong>{formatCompactNumber(questionAnalyticsRows.length)}</strong></button>
-                      <button type="button" className={questionAnalyticsView === "unanswered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "unanswered"} onClick={() => { setQuestionAnalyticsView("unanswered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Awaiting answer</span><strong>{formatCompactNumber(questionAnalyticsRows.filter((item) => !item.answered).length)}</strong></button>
-                      <button type="button" className={questionAnalyticsView === "answered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "answered"} onClick={() => { setQuestionAnalyticsView("answered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Answered</span><strong>{formatCompactNumber(questionAnalyticsRows.filter((item) => item.answered).length)}</strong></button>
+                      <button type="button" className={questionAnalyticsView === "all" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "all"} onClick={() => { setQuestionAnalyticsView("all"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Total questions</span><strong><AnimatedNumber value={questionAnalyticsRows.length} replayKey={refreshKey} /></strong></button>
+                      <button type="button" className={questionAnalyticsView === "unanswered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "unanswered"} onClick={() => { setQuestionAnalyticsView("unanswered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Awaiting answer</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => !item.answered).length} replayKey={refreshKey} /></strong></button>
+                      <button type="button" className={questionAnalyticsView === "answered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "answered"} onClick={() => { setQuestionAnalyticsView("answered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Answered</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => item.answered).length} replayKey={refreshKey} /></strong></button>
                     </div>
                     {questionAuthorFilter ? <div className="admin-reaction-view-toggle"><span>Asked by: {questionAuthorFilter}</span><button type="button" className="admin-reaction-view-button" onClick={() => { setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}>Clear filter</button></div> : null}
                     {(() => {
@@ -2282,10 +2311,10 @@ export default function AdminPage() {
                             <tr key={post.id}>
                               <td><button type="button" className="admin-analytics-link" title={post.title} onClick={() => void openPostEvents({ id: post.id, title: post.title, slug: post.slug, views: post.views, unique_visitors: 0, last_viewed: null })}>{post.title}</button></td>
                               <td>{formatCompactNumber(post.views)}</td>
-                              <td>{formatCompactNumber(post.postReports)}</td>
-                              <td>{formatCompactNumber(post.commentReports)}</td>
-                              <td>{formatCompactNumber(post.replyReports)}</td>
-                              <td>{formatCompactNumber(post.postReports + post.commentReports + post.replyReports)}</td>
+                              <td><AnimatedNumber value={post.postReports} replayKey={refreshKey} /></td>
+                              <td><AnimatedNumber value={post.commentReports} replayKey={refreshKey} /></td>
+                              <td><AnimatedNumber value={post.replyReports} replayKey={refreshKey} /></td>
+                              <td><AnimatedNumber value={post.postReports + post.commentReports + post.replyReports} replayKey={refreshKey} /></td>
                             </tr>
                           ))}</tbody>
                         </table>

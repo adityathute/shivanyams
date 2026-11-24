@@ -306,7 +306,8 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
       </div>
       {placement === "footer" && userReportCount < 3 ? (
         <button type="button" className="portal-action-report" onClick={requestReport} title="Report" aria-label="Report post">
-          <ReportIcon size={19} />
+          <ReportIcon size={18} />
+          <span>Report</span>
         </button>
       ) : null}
       {shareMenuOpen ? (

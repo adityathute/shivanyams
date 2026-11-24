@@ -270,6 +270,12 @@ class AdminContent(viewsets.ModelViewSet):
         latest_published_number = PostVersion.objects.filter(
             post_id=OuterRef(OuterRef("pk")), is_published=True
         ).order_by("-version_number").values("version_number")[:1]
+        latest_post_version_number = PostVersion.objects.filter(
+            post_id=OuterRef("pk")
+        ).order_by("-version_number").values("version_number")[:1]
+        latest_published_for_post = PostVersion.objects.filter(
+            post_id=OuterRef("pk"), is_published=True
+        ).order_by("-version_number").values("version_number")[:1]
         active_unpublished_revision = PostVersion.objects.filter(
             post_id=OuterRef("pk"),
             is_published=False,
@@ -280,6 +286,8 @@ class AdminContent(viewsets.ModelViewSet):
             Post.objects.filter(category=category)
             .annotate(
                 has_unpublished_changes=Exists(active_unpublished_revision),
+                latest_version_number=Subquery(latest_post_version_number),
+                published_version_number=Subquery(latest_published_for_post),
                 users_count=Count(
                     "view_events__auth_user_id",
                     filter=~Q(view_events__auth_user_id=""),

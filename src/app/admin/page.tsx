@@ -225,6 +225,7 @@ export default function AdminPage() {
   const [websiteViewsCount, setWebsiteViewsCount] = useState(0);
   const [websiteVisitorsCount, setWebsiteVisitorsCount] = useState(0);
   const [postVisitorsCount, setPostVisitorsCount] = useState(0);
+  const [editedPostsCount, setEditedPostsCount] = useState(0);
   const [engagementStats, setEngagementStats] = useState({
     likes: 0,
     dislikes: 0,
@@ -435,6 +436,7 @@ export default function AdminPage() {
           saved_count?: number;
           reports_count?: number;
           newsletter_subscribers_count?: number;
+          edited_posts_count?: number;
         }) => {
           if (active) {
             setUsersCount(Number(payload.users_count) || 0);
@@ -443,6 +445,7 @@ export default function AdminPage() {
               Number(payload.website_visitors_count) || 0,
             );
             setPostVisitorsCount(Number(payload.post_visitors_count) || 0);
+            setEditedPostsCount(Number(payload.edited_posts_count) || 0);
             setEngagementStats({
               likes: Number(payload.likes_count) || 0,
               dislikes: Number(payload.dislikes_count) || 0,
@@ -629,13 +632,13 @@ export default function AdminPage() {
 
   const counts = useMemo(
     () => ({
-      total: posts.length,
+      edited: editedPostsCount,
       published: posts.filter((post) => post.status === "published").length,
       drafts: posts.filter((post) => post.status === "draft").length,
       review: posts.filter((post) => post.status === "pending_review").length,
       views: posts.reduce((sum, post) => sum + (post.views_count || 0), 0),
     }),
-    [posts],
+    [posts, editedPostsCount],
   );
   const reactionPostRows = useMemo(() => {
     const grouped = new Map<number, { id: number; title: string; slug: string; reactions: number }>();
@@ -1287,7 +1290,7 @@ export default function AdminPage() {
               value: counts.published,
               group: "content",
             },
-            { label: "Total posts", value: counts.total, group: "content" },
+            { label: "Edited posts", value: counts.edited, group: "content" },
             { label: "Drafts", value: counts.drafts, analytics: "drafts", group: "content" },
             { label: "Pending review", value: counts.review, analytics: "review", group: "content" },
           ];

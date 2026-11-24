@@ -255,7 +255,15 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
 
       {faqs?.length || submittedQuestions.length ? (
         <div className="portal-faq-list">
-          {faqs.map((faq, index) => {
+          {submittedQuestions.filter((item) => !faqs.some((faq) => faq.id === -item.id)).map((item) => (
+            <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
+              <div className="portal-faq-question portal-faq-pending-question">
+                <span>{ensureQuestionMark(item.question)}</span>
+                <span className="portal-faq-review-status">{labels.underReview}</span>
+              </div>
+            </div>
+          ))}
+          {[...faqs].sort((a, b) => Number(b.status === "under_review") - Number(a.status === "under_review")).map((faq, index) => {
             const isPending = faq.status === "under_review";
             const isExpanded = !isPending && expandedItems.includes(index);
             const rawQuestion = getLocalizedText(language, faq.question_en, faq.question_mr, faq.question_hi) || faq.question_en;
@@ -270,7 +278,6 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               return (
                 <div className="portal-faq-item portal-faq-pending" key={faq.id ?? index}>
                   <div className="portal-faq-question portal-faq-pending-question">
-                    <span className="portal-faq-asked-by">Asked by {askedBy}</span>
                     <span>{question}</span>
                     <span className="portal-faq-review-status">{labels.underReview}</span>
                   </div>
@@ -299,15 +306,6 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               </div>
             );
           })}
-          {submittedQuestions.filter((item) => !faqs.some((faq) => faq.id === -item.id)).map((item) => (
-            <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
-              <div className="portal-faq-question portal-faq-pending-question">
-                <span className="portal-faq-asked-by">Asked by You</span>
-                <span>{ensureQuestionMark(item.question)}</span>
-                <span className="portal-faq-review-status">{labels.underReview}</span>
-              </div>
-            </div>
-          ))}
         </div>
       ) : (
         <div className="portal-faq-empty-state">

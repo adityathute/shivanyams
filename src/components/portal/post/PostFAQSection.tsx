@@ -315,7 +315,26 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                   <span className="portal-faq-question-side"><span className="portal-faq-chevron" aria-hidden="true" /></span>
                 </button>
                 <div id={answerId} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
-                  <div className="portal-faq-answer-inner"><p>{answer}</p>{faq.id && faq.id < 0 ? <div className="portal-faq-helpful-row">{helpful.feedback ? <span className="portal-faq-thank-you" role="status">Thank you for your feedback!</span> : !helpful.voted ? <button type="button" className="portal-faq-helpful-button" onClick={() => void markHelpful(questionId)} disabled={Boolean(helpful.busy)}><LikeIcon size="sm" /><span>{labels.helpful}</span></button> : null}</div> : null}</div>
+                  <div className="portal-faq-answer-inner">
+                    <p>{answer}</p>
+                    {faq.id && faq.id < 0 && (!helpful.voted || helpful.feedback) ? (
+                      <div className="portal-faq-helpful-row">
+                        {helpful.feedback ? (
+                          <span className="portal-faq-thank-you" role="status">Thank you for your feedback!</span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="portal-faq-helpful-button"
+                            onClick={() => void markHelpful(questionId)}
+                            disabled={Boolean(helpful.busy)}
+                          >
+                            <LikeIcon size="sm" />
+                            <span>{labels.helpful}</span>
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             );

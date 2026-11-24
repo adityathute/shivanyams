@@ -101,7 +101,7 @@ def public_posts_for_kind(kind):
             Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
             Prefetch(
                 "questions",
-                queryset=PostQuestion.objects.exclude(answer="").order_by("answered_at", "id"),
+                queryset=PostQuestion.objects.order_by("answered_at", "id"),
             ),
             Prefetch(
                 "important_dates",
@@ -834,7 +834,7 @@ def get_comment_author_profile(request):
 
 
 class PostQuestions(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsPortalIdentity]
 
     def post(self, request, post_id):
         post = get_object_or_404(

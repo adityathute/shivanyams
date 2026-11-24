@@ -47,7 +47,7 @@
   min-height: 54px;
   padding: 14px 17px;
   border: 0;
-  background: transparent;
+  background: var(--surface-muted, #f8fafc);
   color: var(--text-primary, #172033);
   font: inherit;
   font-size: 14px;
@@ -102,6 +102,7 @@
   line-height: 1.75;
   white-space: pre-line;
   overflow-wrap: anywhere;
+    background: var(--surface-muted, #f8fafc);
 }
 
 .portal-faq-question:focus-visible {

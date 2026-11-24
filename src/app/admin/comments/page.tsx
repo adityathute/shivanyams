@@ -84,16 +84,6 @@ export default function AdminCommentsPage() {
   useEffect(() => { if (isAdmin) void loadComments(); }, [isAdmin, loadComments]);
   useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
 
-  function changeSort(key: SortKey) {
-    setSortDirection((current) => sortKey === key ? (current === "asc" ? "desc" : "asc") : (key === "date" || key === "id" ? "desc" : "asc"));
-    setSortKey(key); setPage(1);
-  }
-  function sortLabel(key: SortKey, label: string) {
-    return <button type="button" className="admin-comments-sort" onClick={() => changeSort(key)} aria-label={`Sort by ${label}`} aria-pressed={sortKey === key}>
-      {label}<span aria-hidden="true">{sortKey === key ? (sortDirection === "asc" ? "↑" : "↓") : "↕"}</span>
-    </button>;
-  }
-
   async function updateStatus(comment: CommentRow, status: string) {
     setBusyId(comment.id);
     try {
@@ -143,7 +133,7 @@ export default function AdminCommentsPage() {
           {loadingRows ? <div className="admin-empty">Loading comments...</div> : filteredComments.length === 0 ? <div className="admin-empty">No comments or replies match these filters.</div> : (
             <div className="admin-table-wrap admin-comments-table-wrap">
               <table className="admin-post-table admin-comments-table">
-                <thead><tr><th>{sortLabel("id", "ID")}</th><th>{sortLabel("content", "Content")}</th><th>{sortLabel("author", "Author")}</th><th>{sortLabel("post", "Post")}</th><th>{sortLabel("type", "Type")}</th><th>{sortLabel("status", "Status")}</th><th>{sortLabel("date", "Date")}</th><th>Reactions</th><th>Actions</th></tr></thead>
+                <thead><tr><th>ID</th><th>Content</th><th>Author</th><th>Post</th><th>Type</th><th>Status</th><th>Date</th><th>Reactions</th><th>Actions</th></tr></thead>
                 <tbody>{visibleComments.map((comment) => (
                   <tr key={comment.id}>
                     <td className="admin-comments-id">#{comment.id}</td>

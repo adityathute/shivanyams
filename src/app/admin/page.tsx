@@ -164,6 +164,7 @@ type AdminPost = {
   has_unpublished_changes?: boolean;
   latest_version_number?: number | null;
   published_version_number?: number | null;
+  latest_version_created_at?: string | null;
 };
 
 const CONTENT_KINDS = [
@@ -731,13 +732,17 @@ export default function AdminPage() {
   const visibleReportPostRows = reportPostRows.slice((reportsAnalyticsPage - 1) * analyticsPageSize, reportsAnalyticsPage * analyticsPageSize);
   const visibleReportEvents = reportAnalyticsEvents.slice((reportsAnalyticsPage - 1) * analyticsPageSize, reportsAnalyticsPage * analyticsPageSize);
   const statusAnalyticsPosts = useMemo(
-    () => analyticsType === "drafts"
+    () => (analyticsType === "drafts"
       ? posts.filter((post) => post.status === "draft")
       : analyticsType === "edited"
         ? posts.filter((post) => post.status === "published" && post.has_unpublished_changes)
         : analyticsType === "review"
           ? posts.filter((post) => post.status === "pending_review")
-        : [],
+          : []
+    ).sort((a, b) =>
+      new Date(b.latest_version_created_at || b.updated_at || b.created_at || 0).getTime() -
+      new Date(a.latest_version_created_at || a.updated_at || a.created_at || 0).getTime()
+    ),
     [analyticsType, posts],
   );
 
@@ -2582,7 +2587,7 @@ export default function AdminPage() {
                 <>
                   <div className="admin-analytics-table-wrap">
                     <table className="admin-analytics-table admin-post-views-table admin-content-status-table">
-                      <thead><tr><th>Post</th><th>Category</th><th>Last updated</th><th>Status</th></tr></thead>
+                      <thead><tr><th>Post</th><th>Category</th><th>Last updated</th><th>Last changed</th><th>Status</th></tr></thead>
                       <tbody>
                         {statusAnalyticsPosts.slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize).map((post) => {
                           const kind = CONTENT_KINDS.find((item) => item.slug === post.category?.slug);
@@ -2595,6 +2600,7 @@ export default function AdminPage() {
                                 </span>
                               </td>
                               <td>{post.updated_at ? formatAdminDateTime(post.updated_at) : "—"}</td>
+                              <td>{formatAdminDateTime(post.latest_version_created_at || post.updated_at || post.created_at)}</td>
                               <td>
                                 {analyticsType === "edited" ? (
                                   <span className="admin-post-status-stack">

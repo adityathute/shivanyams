@@ -670,3 +670,49 @@
 :root[data-theme="dark"] .portal-faq-moderation-warning {
   color: #fbbf24;
 }
+
+
+.portal-faq-pending-text {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.portal-faq-delete-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground, #9298a2);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.portal-faq-delete-button:hover,
+.portal-faq-delete-button:focus-visible {
+  border-color: color-mix(in srgb, #ef4444 38%, var(--border-color, #e5e7eb));
+  background: color-mix(in srgb, #ef4444 9%, var(--surface, #fff));
+  color: #dc2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, .09);
+}
+
+.portal-faq-delete-button:focus-visible {
+  outline: 2px solid color-mix(in srgb, #ef4444 35%, transparent);
+  outline-offset: 2px;
+}
+
+:root[data-theme="dark"] .portal-faq-delete-button {
+  color: #9ca3af;
+}
+
+:root[data-theme="dark"] .portal-faq-delete-button:hover,
+:root[data-theme="dark"] .portal-faq-delete-button:focus-visible {
+  border-color: color-mix(in srgb, #f87171 45%, var(--border-color, #303746));
+  background: color-mix(in srgb, #ef4444 13%, var(--surface, #171c28));
+  color: #f87171;
+}

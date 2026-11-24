@@ -3053,3 +3053,7 @@
 .admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table td:nth-child(2) {
   text-align: center !important;
 }
+
+.shivanya-select-control select {
+  height: 40px;
+}

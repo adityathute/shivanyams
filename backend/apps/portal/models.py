@@ -978,7 +978,12 @@ class PostFAQ(TimestampedModel):
 class PostQuestion(TimestampedModel):
     """A visitor's question about a post and the official answer from an admin."""
 
+    class Status(models.TextChoices):
+        ACTIVE = "active", "Active"
+        DELETED = "deleted", "Deleted"
+
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="questions")
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.ACTIVE, db_index=True)
     user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
     author_name = models.CharField(max_length=255, blank=True)
     question = models.TextField()

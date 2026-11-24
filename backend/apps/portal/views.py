@@ -1455,7 +1455,7 @@ class AdminQuestions(APIView):
     permission_classes = [IsPortalAdmin]
 
     def get(self, request):
-        queryset = PostQuestion.objects.select_related("post").all()
+        queryset = PostQuestion.objects.select_related("post").annotate(helpful_count=Count("helpful_votes")).all()
         question_status = request.query_params.get("status", "all")
         search = request.query_params.get("search", "").strip()
 
@@ -1485,6 +1485,7 @@ class AdminQuestions(APIView):
                 "answer": question.answer,
                 "answer_visibility": question.answer_visibility,
                 "answered": bool(question.answer.strip()),
+                "helpful_count": question.helpful_count,
                 "created_at": question.created_at,
                 "answered_at": question.answered_at,
             }

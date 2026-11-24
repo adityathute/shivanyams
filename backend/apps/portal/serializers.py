@@ -684,8 +684,27 @@ class PostSerializer(serializers.ModelSerializer):
         for question in obj.questions.all():
             answer = (question.answer or "").strip()
             prompt = (question.question or "").strip()
-            if not prompt or not answer:
+            if not prompt:
                 continue
+
+            # Pending questions are visible only to the authenticated author.
+            if not answer:
+                if not viewer_auth_id or viewer_auth_id != question.user_auth_id:
+                    continue
+                rows.append({
+                    "id": -question.pk,
+                    "question_en": prompt,
+                    "question_mr": prompt,
+                    "question_hi": prompt,
+                    "answer_en": "",
+                    "answer_mr": "",
+                    "answer_hi": "",
+                    "sort_order": 10000 + len(rows),
+                    "is_active": True,
+                    "status": "under_review",
+                })
+                continue
+
             if question.answer_visibility == "hidden":
                 continue
             if question.answer_visibility == "private" and (

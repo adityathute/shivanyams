@@ -812,7 +812,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </div>
                     {updatedPostDate ? (
                       <div className="portal-post-header-updated">
-                        <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}:</span>
+                        <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
                         <time dateTime={updatedPostDate}>{formatDate(updatedPostDate, language)}</time>
                       </div>
                     ) : null}

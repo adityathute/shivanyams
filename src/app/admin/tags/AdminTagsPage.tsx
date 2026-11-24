@@ -196,7 +196,7 @@ export default function AdminTagsPage() {
               <p>Changes apply to every post using the tag.</p>
             </div>
             <div className="admin-tags-total" aria-label={`${tags.length} total tags`}>
-              <strong>{formatCompactNumber(tags.length)}</strong>
+              <strong><AnimatedNumber value={tags.length} replayKey={animationKey} /></strong>
               <span>Total tags</span>
             </div>
           </div>

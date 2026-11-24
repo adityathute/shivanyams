@@ -1522,13 +1522,18 @@ export default function PostEditor({
     try {
       // Autosave may already have created/saved a new post. Do not issue a
       // second PUT just to run the requested status transition.
+      const needsInitialDraftVersion = postStatus !== "published" && postVersions.length === 0;
       const savedResult =
-        !postIdRef.current || currentSnapshot !== lastSavedSnapshotRef.current
+        !postIdRef.current || currentSnapshot !== lastSavedSnapshotRef.current || needsInitialDraftVersion
           ? await persistPost()
           : {};
       const postId = postIdRef.current;
       if (!postId) throw new Error("The post has not been saved yet.");
       if (status === "published") {
+        if (savedResult.is_published === true) {
+          router.push("/admin");
+          return;
+        }
         const savedVersionId = typeof savedResult.id === "number" ? savedResult.id : null;
         const pendingVersionId = savedVersionId
           || postVersions.find((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number)))?.id;

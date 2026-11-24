@@ -1088,6 +1088,35 @@ export default function AdminPage() {
     finally { setAnalyticsLoading(false); }
   }
 
+  async function openQuestionAuthorVisitor(userAuthId: string) {
+    if (!userAuthId) {
+      setError("This guest question is not linked to a browser visitor.");
+      return;
+    }
+    setAnalyticsLoading(true);
+    setSelectedVisitor(null);
+    setVisitorPages([]);
+    setVisitorPagesPage(1);
+    setSelectedAnalyticsPath(null);
+    setError("");
+    try {
+      const response = await adminFetch(
+        API_URL + "/admin/website-analytics/?type=visitors&auth_user_id=" + encodeURIComponent(userAuthId),
+        { cache: "no-store" },
+      );
+      if (!response.ok)
+        throw new Error(`Unable to load visitor details (${response.status}).`);
+      const payload: { visitor?: WebsiteVisitorRow | null; pages?: WebsiteAnalyticsPage[] } = await response.json();
+      if (!payload.visitor) throw new Error("No browser visitor history is available for this user.");
+      setSelectedVisitor(payload.visitor);
+      setVisitorPages(payload.pages ?? []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to open visitor details.");
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }
+
   async function openVisitorDetails(visitor: WebsiteVisitorRow) {
     setSelectedVisitor(visitor);
     setSelectedAnalyticsPath(null);
@@ -2191,7 +2220,7 @@ export default function AdminPage() {
                           <tr key={item.id}>
                             <td className="admin-question-truncate" title={item.question}><span>{item.question}</span></td>
                             <td className="admin-question-truncate" title={item.post_title || `Post #${item.post}`}><button type="button" className="admin-analytics-link admin-likes-post-link" onClick={() => void openPostEvents({ id: item.post, title: item.post_title || `Post #${item.post}`, slug: item.post_slug || "", views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title || `Post #${item.post}`}</button></td>
-                            <td><button type="button" className="admin-analytics-link admin-likes-user-link" onClick={() => { setQuestionAuthorFilter(item.author_name || "Guest"); setQuestionsAnalyticsPage(1); }}>{item.author_name || "Guest"}</button></td>
+                            <td><button type="button" className="admin-analytics-link admin-likes-user-link" onClick={() => void openQuestionAuthorVisitor(item.user_auth_id)} disabled={!item.user_auth_id} title={item.user_auth_id ? "View visitor details" : "Guest questions are not linked to a browser visitor"}>{item.author_name || "Guest"}</button></td>
                             <td>{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[item.language] || item.language.toUpperCase()}</td>
                             <td><span className={`admin-status ${item.answered ? "status-approved" : "status-pending"}`}>{item.answered ? "Answered" : "Awaiting answer"}</span></td>
                             <td>{formatAdminDateTime(item.created_at)}</td>

@@ -8,6 +8,7 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import type { PostFAQ } from "../data/portal-data";
+import { getCommentModerationIssue } from "./comment-moderation";
 import "./PostFAQSection.css";
 
 type Props = {
@@ -94,6 +95,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
 
   const locale = language === "mr" || language === "hi" ? language : "en";
   const labels = copy[locale];
+  const questionModerationIssue = getCommentModerationIssue(questionDraft);
 
   useEffect(() => {
     if (!user) {
@@ -199,6 +201,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
     const question = ensureQuestionMark(questionDraft);
     if (!question) {
       setError(labels.required);
+      return;
+    }
+    const moderationIssue = getCommentModerationIssue(question);
+    if (moderationIssue) {
+      setError(moderationIssue);
       return;
     }
 
@@ -355,11 +362,12 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               autoFocus
               disabled={submitting}
             />
+            {questionModerationIssue ? <p className="portal-faq-moderation-warning" role="alert">{questionModerationIssue}</p> : null}
             <div className="portal-ask-question-footer">
               <span className={error ? "has-error" : ""} role={error ? "alert" : undefined}>{error || `${questionDraft.length}/500`}</span>
               <div>
                 <button type="button" className="portal-ask-question-cancel" onClick={() => setModalOpen(false)} disabled={submitting}>{labels.cancel}</button>
-                <button type="button" className="portal-ask-question-submit" onClick={() => void submitQuestion()} disabled={submitting || !questionDraft.trim()}>{submitting ? labels.submitting : labels.submit}</button>
+                <button type="button" className="portal-ask-question-submit" onClick={() => void submitQuestion()} disabled={submitting || !questionDraft.trim() || Boolean(questionModerationIssue)}>{submitting ? labels.submitting : labels.submit}</button>
               </div>
             </div>
           </section>

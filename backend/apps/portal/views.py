@@ -836,6 +836,31 @@ def get_comment_author_profile(request):
 class PostQuestions(APIView):
     permission_classes = [IsPortalIdentity]
 
+    def get(self, request, post_id):
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        )
+        questions = PostQuestion.objects.filter(
+            post=post,
+            user_auth_id=str(request.user.id),
+            answer="",
+        ).order_by("created_at", "id")
+        return Response([
+            {
+                "id": question.pk,
+                "post": post.pk,
+                "question": question.question,
+                "language": question.language,
+                "created_at": question.created_at,
+                "status": "under_review",
+            }
+            for question in questions
+        ])
+
     def post(self, request, post_id):
         post = get_object_or_404(
             Post,

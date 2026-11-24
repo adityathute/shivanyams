@@ -895,8 +895,9 @@ class PostQuestions(APIView):
         question_text = str(request.data.get("question", "")).strip()
         if not question_text:
             raise ValidationError({"question": "Please enter your question."})
-        if len(question_text) > 500:
-            raise ValidationError({"question": "A question can contain a maximum of 500 characters."})
+        # The frontend accepts 500 typed characters and may append one final '?'.
+        if len(question_text) > 501:
+            raise ValidationError({"question": "A question can contain a maximum of 501 characters."})
 
         moderation_issue = validate_comment_content(question_text)
         if moderation_issue:

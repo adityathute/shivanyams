@@ -264,6 +264,8 @@ export default function AdminPage() {
   const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
   const [questionAnalyticsRows, setQuestionAnalyticsRows] = useState<QuestionAnalyticsRow[]>([]);
   const [questionsAnalyticsPage, setQuestionsAnalyticsPage] = useState(1);
+  const [questionAnalyticsView, setQuestionAnalyticsView] = useState<"all" | "unanswered" | "answered">("all");
+  const [questionAuthorFilter, setQuestionAuthorFilter] = useState<string | null>(null);
   const [subscriberView, setSubscriberView] = useState<"active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions">("active");
   const [subscribersPage, setSubscribersPage] = useState(1);
   const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
@@ -901,6 +903,8 @@ export default function AdminPage() {
     setSelectedVisitor(null);
     setSelectedAnalyticsPath(null);
     setQuestionsAnalyticsPage(1);
+    setQuestionAnalyticsView("all");
+    setQuestionAuthorFilter(null);
     setAnalyticsLoading(true);
     setError("");
     adminFetch(API_URL + "/admin/questions/?status=all", { cache: "no-store" })
@@ -2171,14 +2175,23 @@ export default function AdminPage() {
                   <div className="admin-empty">No questions submitted yet.</div>
                 ) : (
                   <>
+                    <div className="admin-subscribers-summary admin-questions-analytics-summary">
+                      <button type="button" className={questionAnalyticsView === "all" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "all"} onClick={() => { setQuestionAnalyticsView("all"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Total questions</span><strong>{formatCompactNumber(questionAnalyticsRows.length)}</strong></button>
+                      <button type="button" className={questionAnalyticsView === "unanswered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "unanswered"} onClick={() => { setQuestionAnalyticsView("unanswered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Awaiting answer</span><strong>{formatCompactNumber(questionAnalyticsRows.filter((item) => !item.answered).length)}</strong></button>
+                      <button type="button" className={questionAnalyticsView === "answered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "answered"} onClick={() => { setQuestionAnalyticsView("answered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Answered</span><strong>{formatCompactNumber(questionAnalyticsRows.filter((item) => item.answered).length)}</strong></button>
+                    </div>
+                    {questionAuthorFilter ? <div className="admin-reaction-view-toggle"><span>Asked by: {questionAuthorFilter}</span><button type="button" className="admin-reaction-view-button" onClick={() => { setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}>Clear filter</button></div> : null}
+                    {(() => {
+                      const filteredQuestions = questionAnalyticsRows.filter((item) => (questionAnalyticsView === "all" || (questionAnalyticsView === "answered" ? item.answered : !item.answered)) && (!questionAuthorFilter || (item.author_name || "Guest") === questionAuthorFilter));
+                      return filteredQuestions.length === 0 ? <div className="admin-empty">No questions found for this selection.</div> : <>
                     <div className="admin-analytics-table-wrap">
-                      <table className="admin-analytics-table admin-likes-analytics-table">
+                      <table className="admin-analytics-table admin-likes-analytics-table admin-questions-analytics-table">
                         <thead><tr><th>Question</th><th>Post</th><th>Asked by</th><th>Language</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody>{questionAnalyticsRows.slice((questionsAnalyticsPage - 1) * analyticsPageSize, questionsAnalyticsPage * analyticsPageSize).map((item) => (
+                        <tbody>{filteredQuestions.slice((questionsAnalyticsPage - 1) * analyticsPageSize, questionsAnalyticsPage * analyticsPageSize).map((item) => (
                           <tr key={item.id}>
-                            <td title={item.question}>{item.question}</td>
-                            <td title={item.post_title || `Post #${item.post}`}>{item.post_title || `Post #${item.post}`}</td>
-                            <td>{item.author_name || "Guest"}</td>
+                            <td className="admin-question-truncate" title={item.question}><span>{item.question}</span></td>
+                            <td className="admin-question-truncate" title={item.post_title || `Post #${item.post}`}><button type="button" className="admin-analytics-link admin-likes-post-link" onClick={() => void openPostEvents({ id: item.post, title: item.post_title || `Post #${item.post}`, slug: item.post_slug || "", views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title || `Post #${item.post}`}</button></td>
+                            <td><button type="button" className="admin-analytics-link admin-likes-user-link" onClick={() => { setQuestionAuthorFilter(item.author_name || "Guest"); setQuestionsAnalyticsPage(1); }}>{item.author_name || "Guest"}</button></td>
                             <td>{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[item.language] || item.language.toUpperCase()}</td>
                             <td><span className={`admin-status ${item.answered ? "status-approved" : "status-pending"}`}>{item.answered ? "Answered" : "Awaiting answer"}</span></td>
                             <td>{formatAdminDateTime(item.created_at)}</td>
@@ -2186,7 +2199,9 @@ export default function AdminPage() {
                         ))}</tbody>
                       </table>
                     </div>
-                    <AnalyticsPagination total={questionAnalyticsRows.length} page={questionsAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setQuestionsAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setQuestionsAnalyticsPage(1); }} />
+                    <AnalyticsPagination total={filteredQuestions.length} page={questionsAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setQuestionsAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setQuestionsAnalyticsPage(1); }} />
+                  </>;
+                    })()}
                   </>
                 )
              ) : analyticsType === "subscribers" && !selectedPost && !selectedVisitor ? (

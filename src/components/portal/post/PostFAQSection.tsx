@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { CloseIcon, QuestionMarkCircleIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
@@ -91,6 +92,18 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalOpen, submitting]);
 
+  useEffect(() => {
+    if (!modalOpen) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [modalOpen]);
+
   async function submitQuestion() {
     const question = questionDraft.trim();
     if (!question) {
@@ -180,7 +193,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
         </div>
       )}
 
-      {modalOpen ? (
+      {modalOpen ? createPortal((
         <div
           className="portal-ask-question-backdrop"
           role="presentation"
@@ -224,7 +237,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
             </div>
           </section>
         </div>
-      ) : null}
+      ), document.body) : null}
     </section>
   );
 }

@@ -337,3 +337,18 @@
   color: #eab308;
   transform: translateY(-1px);
 }
+
+
+.portal-post-engagement-actions > .portal-action-report {
+  gap: 6px;
+  min-width: auto;
+  padding: 5px 0 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.portal-post-engagement-actions > .portal-action-report span {
+  color: inherit;
+}

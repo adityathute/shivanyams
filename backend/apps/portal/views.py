@@ -878,6 +878,10 @@ class PostQuestions(APIView):
         if len(question_text) > 500:
             raise ValidationError({"question": "A question can contain a maximum of 500 characters."})
 
+        moderation_issue = validate_comment_content(question_text)
+        if moderation_issue:
+            raise ValidationError({"question": moderation_issue})
+
         language = str(request.data.get("language", "en")).strip().lower()
         if language not in {"en", "mr", "hi"}:
             language = "en"

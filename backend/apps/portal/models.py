@@ -1031,6 +1031,11 @@ class PostQuestionHelpfulVote(models.Model):
                 fields=("question", "visitor_hash"),
                 name="unique_post_question_helpful_visitor",
             ),
+            models.UniqueConstraint(
+                fields=("question", "user_auth_id"),
+                condition=Q(user_auth_id__gt=""),
+                name="unique_post_question_helpful_user",
+            ),
         ]
         indexes = [
             models.Index(fields=("question", "created_at"), name="portal_pqvote_q_created_idx"),

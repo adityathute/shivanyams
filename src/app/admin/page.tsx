@@ -43,6 +43,7 @@ type PostAnalyticsPage = { id: number; title: string; slug: string; views: numbe
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
 type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; event_type?: "subscribed" | "unsubscribed"; };
+type QuestionAnalyticsRow = { id: number; post: number; post_title: string; post_slug: string; author_name: string; user_auth_id: string; question: string; language: string; answer: string; answer_visibility: "public" | "private" | "hidden"; answered: boolean; created_at: string; answered_at: string | null; };
 type SubscriberAnalyticsTotals = { total: number; registered: number; subscriptions: number; resubscriptions: number; unsubscriptions: number };
 type TagAnalyticsTotals = { total: number; used: number; unused: number };
 type ShareAnalyticsEvent = { post_id: number; post__title_en: string; post__slug: string; user_auth_id: string; visitor_id: string; channel: string; created_at: string; user_name: string; visitor_type: "user" | "anonymous"; visitor_label: string };
@@ -247,7 +248,7 @@ export default function AdminPage() {
     subscribers: 0,
   });
   const [analyticsType, setAnalyticsType] = useState<
-    "views" | "visitors" | "users" | "posts" | "drafts" | "edited" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | "shares" | null
+    "views" | "visitors" | "users" | "posts" | "drafts" | "edited" | "review" | "likes" | "dislikes" | "comments" | "replies" | "reports" | "saved" | "subscribers" | "tags" | "shares" | "questions" | null
   >(null);
   const [analyticsPages, setAnalyticsPages] = useState<WebsiteAnalyticsPage[]>(
     [],
@@ -261,6 +262,8 @@ export default function AdminPage() {
   const [savedPostTotals, setSavedPostTotals] = useState({ posts: 0, saves: 0, users: 0 });
   const [savedPostsPage, setSavedPostsPage] = useState(1);
   const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
+  const [questionAnalyticsRows, setQuestionAnalyticsRows] = useState<QuestionAnalyticsRow[]>([]);
+  const [questionsAnalyticsPage, setQuestionsAnalyticsPage] = useState(1);
   const [subscriberView, setSubscriberView] = useState<"active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions">("active");
   const [subscribersPage, setSubscribersPage] = useState(1);
   const [subscriberTotals, setSubscriberTotals] = useState<SubscriberAnalyticsTotals>({ total: 0, registered: 0, subscriptions: 0, resubscriptions: 0, unsubscriptions: 0 });
@@ -892,6 +895,29 @@ export default function AdminPage() {
       .finally(() => setAnalyticsLoading(false));
   }
 
+  function openQuestionsAnalytics() {
+    setAnalyticsType("questions");
+    setSelectedPost(null);
+    setSelectedVisitor(null);
+    setSelectedAnalyticsPath(null);
+    setQuestionsAnalyticsPage(1);
+    setAnalyticsLoading(true);
+    setError("");
+    adminFetch(API_URL + "/admin/questions/?status=all", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload.detail || `Unable to load questions (${response.status}).`);
+        }
+        return response.json();
+      })
+      .then((payload: { results?: QuestionAnalyticsRow[] }) => {
+        setQuestionAnalyticsRows(Array.isArray(payload.results) ? payload.results : []);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load questions."))
+      .finally(() => setAnalyticsLoading(false));
+  }
+
   function openSubscribersAnalytics() {
     setAnalyticsType("subscribers");
     setSelectedPost(null);
@@ -1320,7 +1346,7 @@ export default function AdminPage() {
               analytics: "visitors",
               group: "website",
             },
-            { label: "Questions", value: questionsCount, group: "content" },
+            { label: "Questions", value: questionsCount, analytics: "questions", group: "content" },
             { label: "Post views", value: counts.views, analytics: "posts", group: "posts" },
             {
               label: "Post visitors",
@@ -1356,7 +1382,7 @@ export default function AdminPage() {
                     {item.analytics ? (
                       <button
                         type="button"
-                        onClick={() => item.label === "Post visitors" ? openPostVisitorsAnalytics() : item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "edited" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
+                        onClick={() => item.analytics === "questions" ? openQuestionsAnalytics() : item.label === "Post visitors" ? openPostVisitorsAnalytics() : item.analytics === "posts" ? openPostAnalytics() : item.analytics === "drafts" || item.analytics === "edited" || item.analytics === "review" ? openContentStatusAnalytics(item.analytics) : openWebsiteAnalytics(item.analytics!)}
                         aria-label={`View ${item.label.toLowerCase()} details`}
                       >
                         <span>
@@ -1804,6 +1830,8 @@ export default function AdminPage() {
                              ? `Saved posts (${formatCompactNumber(savedPostTotals.saves)})`
                            : analyticsType === "subscribers"
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
+                           : analyticsType === "questions"
+                             ? `Questions (${formatCompactNumber(questionAnalyticsRows.length)})`
                            : analyticsType === "tags"
                              ? `Tags (${formatCompactNumber(tagTotals.total)})`
                            : selectedSharePost
@@ -1857,6 +1885,8 @@ export default function AdminPage() {
                             ? "Saved post totals, total saves, and unique users who saved posts."
                           : analyticsType === "subscribers"
                             ? "Users who subscribed to ShivanyaMS updates, with their email and subscription date."
+                          : analyticsType === "questions"
+                            ? "Questions submitted by visitors, including the post, author, language, answer status and date."
                           : analyticsType === "tags"
                             ? "Overview of all tags and how many are assigned to posts."
                           : analyticsType === "shares"
@@ -2132,6 +2162,31 @@ export default function AdminPage() {
                       </table>
                     </div>
                     <AnalyticsPagination total={savedPostRows.length} page={savedPostsPage} pageSize={analyticsPageSize} onPageChange={setSavedPostsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setSavedPostsPage(1); }} />
+                  </>
+                )
+             ) : analyticsType === "questions" && !selectedPost && !selectedVisitor ? (
+                analyticsLoading ? (
+                  <div className="admin-empty">Loading questions...</div>
+                ) : questionAnalyticsRows.length === 0 ? (
+                  <div className="admin-empty">No questions submitted yet.</div>
+                ) : (
+                  <>
+                    <div className="admin-analytics-table-wrap">
+                      <table className="admin-analytics-table admin-likes-analytics-table">
+                        <thead><tr><th>Question</th><th>Post</th><th>Asked by</th><th>Language</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>{questionAnalyticsRows.slice((questionsAnalyticsPage - 1) * analyticsPageSize, questionsAnalyticsPage * analyticsPageSize).map((item) => (
+                          <tr key={item.id}>
+                            <td title={item.question}>{item.question}</td>
+                            <td title={item.post_title || `Post #${item.post}`}>{item.post_title || `Post #${item.post}`}</td>
+                            <td>{item.author_name || "Guest"}</td>
+                            <td>{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[item.language] || item.language.toUpperCase()}</td>
+                            <td><span className={`admin-status ${item.answered ? "status-approved" : "status-pending"}`}>{item.answered ? "Answered" : "Awaiting answer"}</span></td>
+                            <td>{formatAdminDateTime(item.created_at)}</td>
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                    <AnalyticsPagination total={questionAnalyticsRows.length} page={questionsAnalyticsPage} pageSize={analyticsPageSize} onPageChange={setQuestionsAnalyticsPage} onPageSizeChange={(size) => { setAnalyticsPageSize(size); setQuestionsAnalyticsPage(1); }} />
                   </>
                 )
              ) : analyticsType === "subscribers" && !selectedPost && !selectedVisitor ? (
@@ -2837,6 +2892,8 @@ export default function AdminPage() {
                               ? formatCompactNumber(savedPostTotals.saves) + " saved posts"
                               : analyticsType === "subscribers"
                                 ? formatCompactNumber(subscriberTotals.total) + " subscribers"
+                              : analyticsType === "questions"
+                                ? formatCompactNumber(questionAnalyticsRows.length) + " questions"
                                 : analyticsType === "tags"
                                   ? formatCompactNumber(tagTotals.total) + " tags"
                                   : analyticsType === "users"

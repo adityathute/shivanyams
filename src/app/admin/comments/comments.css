@@ -425,3 +425,41 @@
 @media (max-width: 760px) { .admin-comments-page .admin-comments-filters { grid-template-columns: 1fr; } }
 [data-theme="dark"] .admin-comments-page .admin-comments-type.is-comment { background: #1e3558; color: #bfdbfe; }
 [data-theme="dark"] .admin-comments-page .admin-comments-type.is-reply { background: #382653; color: #e9d5ff; }
+
+
+/* Center all Comments & Replies table content and keep Post/Content columns consistent. */
+.admin-comments-page table.admin-comments-table th,
+.admin-comments-page table.admin-comments-table td {
+  text-align: center;
+}
+.admin-comments-page table.admin-comments-table th {
+  vertical-align: middle;
+}
+.admin-comments-page table.admin-comments-table th:nth-child(2),
+.admin-comments-page table.admin-comments-table td:nth-child(2),
+.admin-comments-page table.admin-comments-table th:nth-child(4),
+.admin-comments-page table.admin-comments-table td:nth-child(4) {
+  width: 22%;
+}
+.admin-comments-page .admin-comments-content > span,
+.admin-comments-page .admin-comments-post > span {
+  display: -webkit-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  text-align: center;
+  cursor: help;
+}
+.admin-comments-page .admin-comments-author {
+  justify-content: center;
+}
+.admin-comments-page .admin-comments-reactions {
+  text-align: center;
+}
+.admin-comments-page .admin-comments-actions {
+  justify-content: center;
+}

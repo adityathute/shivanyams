@@ -51,6 +51,8 @@ export function PortalAuthProvider({ children }: { children: ReactNode }) {
       <AuthModal
         open={authView !== null}
         initialView={authView ?? "login"}
+        features={["login", "register", "forgot", "reset", "verify", "google"]}
+        onAuthenticated={() => setAuthView(null)}
         onClose={() => setAuthView(null)}
       />
     </PortalAuthContext.Provider>

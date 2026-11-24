@@ -934,10 +934,17 @@ class PostQuestionHelpful(APIView):
     def get(self, request, question_id):
         question = self._question(question_id, request)
         token = self._visitor_token(request)
-        has_voted = bool(token) and PostQuestionHelpfulVote.objects.filter(
-            question=question,
-            visitor_hash=self._visitor_hash(token),
-        ).exists()
+        viewer_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+        has_voted = bool(
+            (token and PostQuestionHelpfulVote.objects.filter(
+                question=question,
+                visitor_hash=self._visitor_hash(token),
+            ).exists())
+            or (viewer_id and PostQuestionHelpfulVote.objects.filter(
+                question=question,
+                user_auth_id=viewer_id,
+            ).exists())
+        )
         return Response({
             "helpful_count": question.helpful_votes.count(),
             "has_voted": has_voted,
@@ -950,15 +957,35 @@ class PostQuestionHelpful(APIView):
         if new_token:
             token = uuid.uuid4().hex
         visitor_hash = self._visitor_hash(token)
-        vote, created = PostQuestionHelpfulVote.objects.get_or_create(
-            question=question,
-            visitor_hash=visitor_hash,
-            defaults={
-                "user_auth_id": str(request.user.id)
-                if getattr(request.user, "is_authenticated", False)
-                else "",
-            },
-        )
+        viewer_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
+        if viewer_id:
+            vote = PostQuestionHelpfulVote.objects.filter(
+                question=question,
+                user_auth_id=viewer_id,
+            ).first()
+            created = False
+            if vote is None:
+                vote = PostQuestionHelpfulVote.objects.filter(
+                    question=question,
+                    visitor_hash=visitor_hash,
+                    user_auth_id="",
+                ).first()
+                if vote:
+                    vote.user_auth_id = viewer_id
+                    vote.save(update_fields=["user_auth_id"])
+                    created = False
+                else:
+                    vote, created = PostQuestionHelpfulVote.objects.get_or_create(
+                        question=question,
+                        visitor_hash=visitor_hash,
+                        defaults={"user_auth_id": viewer_id},
+                    )
+        else:
+            vote, created = PostQuestionHelpfulVote.objects.get_or_create(
+                question=question,
+                visitor_hash=visitor_hash,
+                defaults={"user_auth_id": ""},
+            )
         response = Response({
             "helpful_count": question.helpful_votes.count(),
             "has_voted": True,

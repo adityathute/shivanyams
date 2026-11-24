@@ -2119,3 +2119,17 @@ padding-right: 24px;
 .post-editor-version-preview time { color: #94a3b8; font-size: 10px; }
 .admin-version-preview-banner { position: relative; z-index: 5; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 10px 16px; border-bottom: 1px solid #dbe3ed; background: #eff6ff; color: #1e40af; font-size: 13px; font-weight: 700; }
 .admin-version-preview-banner button { border: 1px solid #93c5fd; border-radius: 7px; padding: 5px 10px; background: #fff; color: #1d4ed8; font: inherit; cursor: pointer; }
+
+
+/* Keep the published and edited revision previews visible as separate choices. */
+.post-editor-version-quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin: 8px 0;
+}
+.post-editor-version-quick-links .post-editor-version-preview {
+  flex: 1 1 220px;
+  min-width: 0;
+}

@@ -1425,3 +1425,13 @@
     flex-wrap: wrap;
   }
 }
+
+/* Extend the post header separator to the full card width, past the
+   card's inner content padding, while keeping the content aligned. */
+.portal-post-card > .portal-post-compact-header {
+  box-sizing: border-box;
+  width: calc(100% + 32px);
+  margin: 0 -16px 10px;
+  padding: 0 16px 10px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}

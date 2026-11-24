@@ -1347,17 +1347,18 @@
 }
 
 
-/* Compact post heading: category and update date on the left, actions on the right. */
+/* Compact post heading: category badge followed by the update date. */
 .portal-post-compact-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px 10px;
   min-width: 0;
   margin: 0 0 10px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
-  background: var(--surface-muted, #f5f7fa);
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .portal-post-meta-compact {
@@ -1427,52 +1428,40 @@
   }
 }
 
-/* Full-bleed post header and footer.
-   Negative side margins expand each strip across the card's padded content area;
-   the matching corner radii keep the muted background inside the card outline. */
-.portal-post-card {
-  --portal-post-strip-background: var(--surface-muted, #f5f7fa);
-}
-
+/* Header and footer remain transparent and use the card's normal content width. */
 .portal-post-card > .portal-post-compact-header {
-  box-sizing: border-box;
-  width: calc(100% + 32px);
-  max-width: none;
-  margin: 0 -16px 10px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 19px 19px 0 0;
-  background: var(--portal-post-strip-background, var(--surface-muted, #f5f7fa));
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
-/* Footer spans the complete card width and finishes with the card's lower corners. */
 .portal-post-card > .portal-post-card-footer {
-  box-sizing: border-box;
-  width: calc(100% + 32px);
-  max-width: none;
-  margin: 18px -16px -16px;
-  padding: 10px 16px 12px;
-  border-top: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 0 0 19px 19px;
-  background: var(--portal-post-strip-background, var(--surface-muted, #f5f7fa));
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  width: 100%;
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .portal-post-card-footer .portal-post-engagement-actions {
   width: 100%;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .portal-post-card-footer .portal-post-reaction-actions {
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .portal-post-header-updated {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 5px;
   min-width: 0;
   color: var(--text-secondary, #718096);
@@ -1523,12 +1512,4 @@
   }
 }
 
-@media (max-width: 600px) {
-  .portal-post-card > .portal-post-compact-header {
-    border-radius: 14px 14px 0 0;
-  }
 
-  .portal-post-card > .portal-post-card-footer {
-    border-radius: 0 0 14px 14px;
-  }
-}

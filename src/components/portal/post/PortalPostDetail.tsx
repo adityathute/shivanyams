@@ -859,9 +859,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
                       </div>
                     ) : null}
-                    {!previewItem ? (
-                      <PostEngagementActions postId={post.postId} title={post.title} placement="header" />
-                    ) : null}
                   </div>
 
                   <h1>{post.title}</h1>
@@ -1392,12 +1389,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   ) : null}
                 {!previewItem ? (
                   <div className="portal-post-card-footer">
-                    {updatedPostDate ? (
-                      <div className="portal-post-footer-updated">
-                        <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}:</span>
-                        <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
-                      </div>
-                    ) : <span />}
                     <PostEngagementActions postId={post.postId} title={post.title} placement="footer" />
                   </div>
                 ) : null}

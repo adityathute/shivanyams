@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, DislikeIcon, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, ConfirmDialog, DislikeIcon, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
@@ -33,6 +33,7 @@ export default function AdminCommentsPage() {
   const [busyId, setBusyId] = useState<number | null>(null);
   const [replyTarget, setReplyTarget] = useState<CommentRow | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
+  const [pendingAction, setPendingAction] = useState<{ comment: CommentRow; status: "approved" | "rejected" } | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -84,13 +85,14 @@ export default function AdminCommentsPage() {
   useEffect(() => { if (isAdmin) void loadComments(); }, [isAdmin, loadComments]);
   useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
 
-  async function updateStatus(comment: CommentRow, status: string) {
+  async function updateStatus(comment: CommentRow, status: "approved" | "rejected"): Promise<boolean> {
     setBusyId(comment.id);
     try {
       const response = await adminFetch(`${API_URL}/admin/comments/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: comment.id, status }) });
       if (!response.ok) throw new Error("Unable to update comment status.");
       await loadComments();
-    } catch (err) { setError(err instanceof Error ? err.message : "Unable to update comment."); }
+      return true;
+    } catch (err) { setError(err instanceof Error ? err.message : "Unable to update comment."); return false; }
     finally { setBusyId(null); }
   }
 
@@ -137,17 +139,17 @@ export default function AdminCommentsPage() {
                 <tbody>{visibleComments.map((comment) => (
                   <tr key={comment.id}>
                     <td><span className={`admin-comments-type ${comment.parent === null ? "is-comment" : "is-reply"}`}>{comment.parent === null ? "Comment" : "Reply"}</span></td>
-                    <td className="admin-comments-content"><span title={comment.content || "No content available."}>{comment.content || "No content available."}</span>{replyTarget?.id === comment.id ? <div className="admin-comments-reply-editor"><textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} rows={3} maxLength={10000} placeholder="Write an official reply..." /><div><button type="button" onClick={() => setReplyTarget(null)}>Cancel</button><button type="button" disabled={!replyDraft.trim() || busyId === comment.id} onClick={() => void sendAdminReply()}>Send reply</button></div></div> : null}</td>
+                    <td className="admin-comments-content"><span title={comment.content || "No content available."}>{comment.content || "No content available."}</span></td>
                     <td><div className="admin-comments-author"><Avatar size="sm" name={comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={comment.author_avatar?.trim() || undefined} /><span>{comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : `User ${comment.user_auth_id}`)}</span></div></td>
                     <td className="admin-comments-post"><span title={comment.post_title || `Post #${comment.post}`}>{comment.post_title || `Post #${comment.post}`}</span></td>
                     <td><span className={`admin-status status-${comment.status}`}>{comment.status}</span></td>
                     <td className="admin-comments-date">{new Date(comment.created_at).toLocaleString()}</td>
                     <td className="admin-comments-reactions"><span><LikeIcon size={13} /> {formatCompactNumber(comment.likes_count)}</span><span><DislikeIcon size={13} /> {formatCompactNumber(comment.dislikes_count)}</span></td>
                     <td><div className="admin-comments-actions">
-                      {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "approved")}>Approve</button> : null}
+                      {comment.status !== "approved" ? <button type="button" disabled={busyId === comment.id} onClick={() => setPendingAction({ comment, status: "approved" })}>Approve</button> : null}
                       {comment.status !== "hidden" ? <button type="button" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "hidden")}>Hide</button> : null}
-                      {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => void updateStatus(comment, "rejected")}>Reject</button> : null}
-                      {comment.parent === null ? <button type="button" onClick={() => { setReplyTarget(comment); setReplyDraft(""); }}>Reply</button> : null}
+                      {comment.status !== "rejected" ? <button type="button" className="danger" disabled={busyId === comment.id} onClick={() => setPendingAction({ comment, status: "rejected" })}>Reject</button> : null}
+                      {comment.parent === null ? <button type="button" className="reply" onClick={() => { setReplyTarget(comment); setReplyDraft(""); }}>Reply</button> : null}
                     </div></td>
                   </tr>
                 ))}</tbody>
@@ -159,6 +161,32 @@ export default function AdminCommentsPage() {
           </div>
         </section>
       </div>
+      {replyTarget ? (
+        <div className="admin-comments-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && busyId !== replyTarget.id) setReplyTarget(null); }}>
+          <section className="admin-comments-reply-modal" role="dialog" aria-modal="true" aria-labelledby="admin-comments-reply-title">
+            <div className="admin-comments-reply-modal-head"><div><span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span><h2 id="admin-comments-reply-title">Reply to comment</h2><p>Respond officially as ShivanyaMS.</p></div><button type="button" aria-label="Close reply dialog" onClick={() => setReplyTarget(null)} disabled={busyId === replyTarget.id}>×</button></div>
+            <div className="admin-comments-reply-context"><strong>{replyTarget.author_name || "Community member"}</strong><p>{replyTarget.content}</p></div>
+            <label className="admin-comments-reply-label" htmlFor="admin-comments-reply-input">Your reply</label>
+            <textarea id="admin-comments-reply-input" value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} rows={5} maxLength={10000} placeholder="Write an official reply..." autoFocus />
+            <div className="admin-comments-reply-modal-actions"><button type="button" className="cancel" onClick={() => setReplyTarget(null)} disabled={busyId === replyTarget.id}>Cancel</button><button type="button" className="send" disabled={!replyDraft.trim() || busyId === replyTarget.id} onClick={() => void sendAdminReply()}>{busyId === replyTarget.id ? "Sending..." : "Send reply"}</button></div>
+          </section>
+        </div>
+      ) : null}
+      <ConfirmDialog
+        open={pendingAction !== null}
+        title={pendingAction?.status === "approved" ? "Approve this comment?" : "Reject this comment?"}
+        message={pendingAction?.status === "approved" ? "This comment will be approved and visible to the community." : "This comment will be rejected and will not be visible to the community."}
+        confirmText={pendingAction?.status === "approved" ? "Approve comment" : "Reject comment"}
+        cancelText="Cancel"
+        variant={pendingAction?.status === "rejected" ? "danger" : "warning"}
+        loading={pendingAction !== null && busyId === pendingAction.comment.id}
+        onCancel={() => { if (busyId === null) setPendingAction(null); }}
+        onConfirm={async () => {
+          if (!pendingAction) return;
+          const succeeded = await updateStatus(pendingAction.comment, pendingAction.status);
+          if (succeeded) setPendingAction(null);
+        }}
+      />
       <footer className="admin-footer">ShivanyaMS · Comments & Replies</footer>
     </main>
   );

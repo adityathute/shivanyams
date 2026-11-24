@@ -3177,3 +3177,44 @@
   border-radius: 50%;
   background: currentColor;
 }
+
+
+/* Questions analytics: compact text columns and three clickable status totals. */
+.admin-analytics-modal .admin-questions-analytics-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.admin-analytics-modal .admin-questions-analytics-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.admin-analytics-modal .admin-questions-analytics-table th:nth-child(1),
+.admin-analytics-modal .admin-questions-analytics-table td:nth-child(1) { width: 28%; }
+.admin-analytics-modal .admin-questions-analytics-table th:nth-child(2),
+.admin-analytics-modal .admin-questions-analytics-table td:nth-child(2) { width: 22%; }
+.admin-analytics-modal .admin-questions-analytics-table th:nth-child(3),
+.admin-analytics-modal .admin-questions-analytics-table td:nth-child(3) { width: 15%; }
+.admin-analytics-modal .admin-questions-analytics-table th:nth-child(4),
+.admin-analytics-modal .admin-questions-analytics-table td:nth-child(4) { width: 11%; }
+.admin-analytics-modal .admin-questions-analytics-table th:nth-child(5),
+.admin-analytics-modal .admin-questions-analytics-table td:nth-child(5) { width: 13%; }
+.admin-analytics-modal .admin-questions-analytics-table th:nth-child(6),
+.admin-analytics-modal .admin-questions-analytics-table td:nth-child(6) { width: 11%; }
+.admin-analytics-modal .admin-question-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-analytics-modal .admin-question-truncate > span,
+.admin-analytics-modal .admin-question-truncate > button {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 620px) {
+  .admin-analytics-modal .admin-questions-analytics-summary {
+    grid-template-columns: repeat(3, minmax(112px, 1fr));
+  }
+  .admin-analytics-modal .admin-questions-analytics-table { min-width: 760px; }
+}

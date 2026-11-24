@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
+from .authentication import ShivanyaAuthNoCSRFAuthentication
 from .models import (
     Category,
     Comment,
@@ -903,6 +904,7 @@ class PostQuestions(APIView):
 
 
 class PostQuestionHelpful(APIView):
+    authentication_classes = [ShivanyaAuthNoCSRFAuthentication]
     """Public helpful voting, deduplicated by a first-party visitor cookie."""
 
     permission_classes = [permissions.AllowAny]

@@ -975,6 +975,33 @@ class PostFAQ(TimestampedModel):
         return self.question_en
 
 
+class PostQuestion(TimestampedModel):
+    """A visitor's question about a post and the official answer from an admin."""
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="questions")
+    user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
+    author_name = models.CharField(max_length=255, blank=True)
+    question = models.TextField()
+    language = models.CharField(
+        max_length=2,
+        choices=LanguageChoices.choices,
+        default=LanguageChoices.ENGLISH,
+    )
+    answer = models.TextField(blank=True)
+    answered_by_auth_id = models.CharField(max_length=128, blank=True)
+    answered_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [
+            models.Index(fields=("post", "answered_at", "created_at")),
+            models.Index(fields=("answered_at", "created_at")),
+        ]
+
+    def __str__(self):
+        return f"Question on {self.post.title_en}"
+
+
 class PostDate(TimestampedModel):
     """Structured important dates for jobs, schemes, exams, admit cards and results."""
 

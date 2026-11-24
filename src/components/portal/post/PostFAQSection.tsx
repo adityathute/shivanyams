@@ -148,13 +148,17 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
     };
   }, [modalOpen]);
 
-  function ensureQuestionMark(value: string) {
+  function capitalizeFirstCharacter(value: string) {
     const clean = value.trim();
     if (!clean) return "";
     const characters = Array.from(clean);
     characters[0] = characters[0].toLocaleUpperCase(locale);
-    const capitalized = characters.join("");
-    return /[?؟]$/.test(capitalized) ? capitalized : capitalized + "?";
+    return characters.join("");
+  }
+
+  function ensureQuestionMark(value: string) {
+    const capitalized = capitalizeFirstCharacter(value);
+    return capitalized && !/[?؟]$/.test(capitalized) ? capitalized + "?" : capitalized;
   }
 
   useEffect(() => {
@@ -259,7 +263,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
             const questionId = Math.abs(Number(faq.id || 0));
             const helpful = helpfulStates[questionId] || { count: Number(faq.helpful_count) || 0, voted: false };
             const askedBy = faq.is_mine ? "You" : (faq.author_name || "Member");
-            const answer = getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en;
+            const answer = capitalizeFirstCharacter(getLocalizedText(language, faq.answer_en, faq.answer_mr, faq.answer_hi) || faq.answer_en);
             const answerId = `portal-faq-answer-${faq.id ?? index}`;
 
             if (isPending) {

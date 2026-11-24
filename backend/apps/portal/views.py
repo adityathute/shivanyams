@@ -2607,7 +2607,7 @@ class AdminDashboardStats(APIView):
             "users_count": len(user_ids),
             "website_views_count": WebsiteView.objects.count(),
             "website_visitors_count": WebsiteVisitor.objects.count(),
-            "questions_count": PostQuestion.objects.filter(status=PostQuestion.Status.ACTIVE).count(),
+            "questions_count": PostQuestion.objects.count(),
             # Count each visitor once across all posts, not once per post.
             "post_visitors_count": PostVisitor.objects.values("visitor_id").distinct().count(),
             "likes_count": sum(Post.objects.values_list("likes_count", flat=True)) + CommentReaction.objects.filter(reaction=CommentReaction.ReactionType.LIKE).count(),

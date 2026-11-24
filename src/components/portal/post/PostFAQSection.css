@@ -2,7 +2,7 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  margin: 16px 0 8px;
+  margin: 16px 0 0;
   padding: 16px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 20px;

@@ -705,7 +705,8 @@ export default function PostEditor({
           if (versionsResponse.ok) {
             const versions = await versionsResponse.json() as PostVersionInfo[];
             setPostVersions(versions);
-            const workingVersion = versions.find((version) => !version.is_published && version.payload);
+            const publishedVersionNumber = Math.max(0, ...versions.filter((version) => version.is_published).map((version) => version.version_number));
+            const workingVersion = versions.find((version) => !version.is_published && version.version_number > publishedVersionNumber && version.payload);
             if (workingVersion?.payload) {
               // Open the unpublished working copy in the editor, while the public post remains unchanged.
               record = { ...record, ...workingVersion.payload, id: record.id, status: "published", slug: record.slug };
@@ -1500,7 +1501,7 @@ export default function PostEditor({
         if (status === "draft") { router.push("/admin"); return; }
         const savedVersionId = typeof savedResult.id === "number" ? savedResult.id : null;
         const pendingVersionId = savedVersionId
-          || postVersions.find((item) => !item.is_published)?.id;
+          || postVersions.find((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number)))?.id;
         if (!pendingVersionId) throw new Error("There are no unpublished changes to publish.");
         const publishResponse = await adminFetch(`${API_URL}/admin/content/${postId}/versions/${pendingVersionId}/publish/`, {
           method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}),
@@ -1563,7 +1564,7 @@ export default function PostEditor({
             {(editing || postCreated) && (postStatus === "draft" || postStatus === "reviewed") && <span className="post-editor-status-badge post-editor-status-badge--unpublished">Unpublished</span>}
             {(editing || postCreated) && <span className={`post-editor-status-badge post-editor-status-badge--${postStatus.toLowerCase().replaceAll("_", "-")}`}>{postStatus === "published" ? <>Published{postVersions.some((item) => item.is_published) && <> · v{Math.max(...postVersions.filter((item) => item.is_published).map((item) => item.version_number))}</>}</> : postStatus.replaceAll("_", " ")}</span>}
             {editing && postStatus === "published" && <div className="post-editor-publication-status">
-              {postVersions.some((item) => !item.is_published) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published).map((item) => item.version_number))}</span>}
+              {postVersions.some((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number))) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number))).map((item) => item.version_number))}</span>}
               <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
             </div>}
             <div className="post-editor-save-status" aria-live="polite">

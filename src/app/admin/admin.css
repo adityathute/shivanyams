@@ -467,6 +467,16 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+.admin-toolbar-icon-button {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  margin-left: auto;
+}
+.admin-toolbar-icon-button svg {
+  flex-shrink: 0;
+}
 .admin-filters {
   grid-template-columns: minmax(220px, 1fr) 190px 180px 170px;
 }

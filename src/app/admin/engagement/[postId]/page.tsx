@@ -165,6 +165,33 @@ function getColumnWidth(column: string, rows: DetailRow[]) {
   return Math.min(220, Math.max(110, longest * 7 + 36));
 }
 
+
+function AnimatedNumber({ value, replayKey = 0 }: { value: number; replayKey?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const target = Number.isFinite(value) ? Math.max(0, value) : 0;
+    if (target === 0) {
+      setDisplayValue(0);
+      return;
+    }
+    let frame = 0;
+    let startTime = 0;
+    const duration = 850;
+    setDisplayValue(0);
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [value, replayKey]);
+
+  return <>{formatCompactNumber(displayValue)}</>;
+}
+
 export default function AdminPostEngagementPage() {
   const params = useParams<{ postId: string }>();
   const router = useRouter();
@@ -343,7 +370,7 @@ export default function AdminPostEngagementPage() {
                 const content = (
                   <>
                     <span><i>{item.icon}</i>{item.label}</span>
-                    <strong>{formatCompactNumber(value)}</strong>
+                    <strong><AnimatedNumber value={value} replayKey={refreshKey} /></strong>
                   </>
                 );
                 return item.key === "users" ? (
@@ -367,7 +394,7 @@ export default function AdminPostEngagementPage() {
               <div className="admin-panel-heading">
                 <div>
                   <h2 className={"admin-engagement-details-title stat-" + selectedStat.color}><i>{selectedStat.icon}</i><span>{selectedLabel} details</span></h2>
-                  <p>{detailDescription} {formatCompactNumber(selectedRows.length)} {selectedRows.length === 1 ? "record" : "records"} shown below.</p>
+                  <p>{detailDescription} <AnimatedNumber value={selectedRows.length} replayKey={refreshKey} /> {selectedRows.length === 1 ? "record" : "records"} shown below.</p>
                 </div>
               </div>
               {selected === "shares" ? (

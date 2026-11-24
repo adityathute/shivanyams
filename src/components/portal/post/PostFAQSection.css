@@ -748,3 +748,16 @@
   background: color-mix(in srgb, #ef4444 13%, var(--surface, #171c28));
   color: #f87171;
 }
+
+@media (max-width: 600px) {
+  .portal-faq-answer-inner.has-helpful-feedback {
+    flex-direction: column;
+  }
+
+  .portal-faq-answer-inner.has-helpful-feedback .portal-faq-helpful-row {
+    align-self: flex-end;
+    width: 100%;
+    justify-content: flex-end;
+    padding-top: 0;
+  }
+}

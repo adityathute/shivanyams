@@ -471,8 +471,8 @@
 .admin-export-button:hover,
 .admin-export-button:focus-visible {
   color: #16a34a;
-  border-color: #86efac;
-  background: #f0fdf4;
+  border-color: #dbe4f0;
+  background: #fff;
 }
 
 .admin-export-button:hover svg,

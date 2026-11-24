@@ -253,16 +253,18 @@ export default function AdminQuestionsPage() {
             <textarea id="admin-question-answer" value={answerDraft} onChange={(event) => setAnswerDraft(event.target.value)} rows={5} maxLength={10000} placeholder="Write the official answer..." disabled={saving} />
             <div className="admin-questions-visibility-control">
               <label htmlFor="admin-question-visibility">Answer visibility</label>
-              <select
-                id="admin-question-visibility"
+              <Select
+                size="sm"
+                fullWidth
                 value={answerVisibility}
                 onChange={(event) => setAnswerVisibility(event.target.value as "public" | "private" | "hidden")}
-                disabled={saving}
-              >
-                <option value="public">Public — show in this post's FAQ for everyone</option>
-                <option value="private" disabled={!selectedQuestion.user_auth_id}>Private — show only to the person who asked</option>
-                <option value="hidden">Don't show anyone — keep it in Admin only</option>
-              </select>
+                aria-label="Answer visibility"
+                options={[
+                  { value: "public", label: "Public — show in this post's FAQ for everyone" },
+                  { value: "private", label: "Private — show only to the person who asked", disabled: !selectedQuestion.user_auth_id },
+                  { value: "hidden", label: "Don't show anyone — keep it in Admin only" },
+                ]}
+              />
               {!selectedQuestion.user_auth_id ? <small>This question was submitted as a guest, so a private answer is unavailable. You can still publish it publicly or keep it hidden from everyone.</small> : null}
             </div>
             {error ? <p className="admin-questions-modal-error" role="alert">{error}</p> : null}

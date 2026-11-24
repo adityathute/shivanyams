@@ -542,3 +542,27 @@
   background: rgb(185 28 28 / 18%);
 }
 
+/* Center the User, Status, Date, and Actions headers and their full columns. */
+.admin-reports-page table.admin-reports-table th:nth-child(4),
+.admin-reports-page table.admin-reports-table td:nth-child(4),
+.admin-reports-page table.admin-reports-table th:nth-child(5),
+.admin-reports-page table.admin-reports-table td:nth-child(5),
+.admin-reports-page table.admin-reports-table th:nth-child(6),
+.admin-reports-page table.admin-reports-table td:nth-child(6),
+.admin-reports-page table.admin-reports-table th:nth-child(7),
+.admin-reports-page table.admin-reports-table td:nth-child(7) {
+  text-align: center;
+}
+
+.admin-reports-page .admin-reports-user {
+  justify-content: center;
+}
+
+.admin-reports-page .admin-reports-actions {
+  justify-content: center;
+}
+
+.admin-reports-page .admin-reports-date {
+  text-align: center;
+}
+

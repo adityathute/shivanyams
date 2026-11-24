@@ -4,37 +4,17 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, RefreshIcon } from "shivanya-ui";
+import { ArrowLeftIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
 import "./reports.css";
 
-type Report = {
-  id: number;
-  reporter_auth_id: string;
-  reason: string;
-  details: string;
-  status: string;
-  created_at: string;
-};
-type CommentWithReports = {
-  id: number;
-  post: number;
-  post_title: string;
-  parent: number | null;
-  author_name: string;
-  content: string;
-  reports?: Report[];
-};
-type ReportRow = Report & {
-  comment_id: number;
-  post_id: number;
-  post_title: string;
-  parent: number | null;
-  author_name: string;
-  content: string;
-};
+type Report = { id: number; reporter_auth_id: string; reason: string; details: string; status: string; created_at: string; };
+type CommentWithReports = { id: number; post: number; post_title: string; parent: number | null; author_name: string; content: string; reports?: Report[]; };
+type ReportRow = Report & { comment_id: number; post_id: number; post_title: string; parent: number | null; author_name: string; content: string; };
+type SortKey = "id" | "reason" | "content" | "reporter" | "status" | "date";
+type SortDirection = "asc" | "desc";
 
 export default function AdminReportsPage() {
   const router = useRouter();
@@ -42,7 +22,10 @@ export default function AdminReportsPage() {
   const isAdmin = user?.roles?.includes("admin") === true;
   const [comments, setComments] = useState<CommentWithReports[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [loadingRows, setLoadingRows] = useState(true);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<number | null>(null);
@@ -50,56 +33,39 @@ export default function AdminReportsPage() {
   const [pageSize, setPageSize] = useState(15);
 
   const loadReports = useCallback(async () => {
-    setLoadingRows(true);
-    setError("");
+    setLoadingRows(true); setError("");
     try {
       const response = await adminFetch(`${API_URL}/admin/comments/?status=all`, { cache: "no-store" });
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        throw new Error(body.detail || "Unable to load reports.");
-      }
-      const payload = await response.json();
-      setComments(Array.isArray(payload) ? payload : []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load reports.");
-    } finally {
-      setLoadingRows(false);
-    }
+      if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail || "Unable to load reports."); }
+      const payload = await response.json(); setComments(Array.isArray(payload) ? payload : []);
+    } catch (err) { setError(err instanceof Error ? err.message : "Unable to load reports."); }
+    finally { setLoadingRows(false); }
   }, []);
 
-  useEffect(() => {
-    if (!loading && !isAdmin) router.replace("/");
-  }, [loading, isAdmin, router]);
+  useEffect(() => { if (!loading && !isAdmin) router.replace("/"); }, [loading, isAdmin, router]);
+  useEffect(() => { if (isAdmin) void loadReports(); }, [isAdmin, loadReports]);
 
-  useEffect(() => {
-    if (isAdmin) void loadReports();
-  }, [isAdmin, loadReports]);
-
-  const reports = useMemo<ReportRow[]>(() => comments.flatMap((comment) =>
-    (comment.reports || []).map((report) => ({
-      ...report,
-      comment_id: comment.id,
-      post_id: comment.post,
-      post_title: comment.post_title,
-      parent: comment.parent,
-      author_name: comment.author_name,
-      content: comment.content,
-    }))
-  ), [comments]);
+  const reports = useMemo<ReportRow[]>(() => comments.flatMap((comment) => (comment.reports || []).map((report) => ({
+    ...report, comment_id: comment.id, post_id: comment.post, post_title: comment.post_title,
+    parent: comment.parent, author_name: comment.author_name, content: comment.content,
+  }))), [comments]);
 
   const filteredReports = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return reports.filter((report) => {
+    const rows = reports.filter((report) => {
+      const isReply = report.parent !== null;
       const matchesStatus = statusFilter === "all" || String(report.status || "").trim().toLowerCase() === statusFilter;
-      const matchesSearch = !query || [
-        report.reason, report.details, report.reporter_auth_id, report.post_title,
-        report.author_name, report.content, report.status,
-        String(report.id), String(report.comment_id), String(report.post_id),
-        report.parent === null ? "comment" : "reply",
-      ].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
-      return matchesStatus && matchesSearch;
+      const matchesType = typeFilter === "all" || (typeFilter === "replies" ? isReply : !isReply);
+      const matchesSearch = !query || [report.reason, report.details, report.reporter_auth_id, report.post_title, report.author_name, report.content, report.status, String(report.id), String(report.comment_id), String(report.post_id), isReply ? "reply" : "comment"].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
+      return matchesStatus && matchesType && matchesSearch;
     });
-  }, [reports, search, statusFilter]);
+    const value = (row: ReportRow) => ({ id: row.id, reason: row.reason || "", content: row.content || "", reporter: row.reporter_auth_id || "", status: row.status || "", date: new Date(row.created_at).getTime() || 0 })[sortKey];
+    return rows.sort((a, b) => {
+      const av = value(a), bv = value(b);
+      const comparison = typeof av === "number" && typeof bv === "number" ? av - bv : String(av).localeCompare(String(bv), undefined, { numeric: true, sensitivity: "base" });
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
+  }, [reports, search, statusFilter, typeFilter, sortKey, sortDirection]);
 
   const pageCount = Math.max(1, Math.ceil(filteredReports.length / pageSize));
   const visibleReports = filteredReports.slice((page - 1) * pageSize, page * pageSize);
@@ -107,131 +73,72 @@ export default function AdminReportsPage() {
   const reportedComments = reports.filter((report) => report.parent === null).length;
   const reportedReplies = reports.filter((report) => report.parent !== null).length;
 
-  useEffect(() => {
-    if (page > pageCount) setPage(pageCount);
-  }, [page, pageCount]);
+  useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
+  function changeSort(key: SortKey) {
+    setSortDirection((current) => sortKey === key ? (current === "asc" ? "desc" : "asc") : (key === "date" || key === "id" ? "desc" : "asc"));
+    setSortKey(key); setPage(1);
+  }
+  function sortLabel(key: SortKey, label: string) {
+    return <button type="button" className="admin-reports-sort" onClick={() => changeSort(key)} aria-label={`Sort by ${label}`} aria-pressed={sortKey === key}>{label}<span aria-hidden="true">{sortKey === key ? (sortDirection === "asc" ? "↑" : "↓") : "↕"}</span></button>;
+  }
 
   async function updateReportStatus(reportId: number, reportStatus: string) {
     setBusyId(reportId);
     try {
-      const response = await adminFetch(`${API_URL}/admin/comments/`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ report_id: reportId, report_status: reportStatus }),
-      });
+      const response = await adminFetch(`${API_URL}/admin/comments/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report_id: reportId, report_status: reportStatus }) });
       if (!response.ok) throw new Error("Unable to update report.");
       await loadReports();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to update report.");
-    } finally {
-      setBusyId(null);
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : "Unable to update report."); }
+    finally { setBusyId(null); }
   }
 
   if (loading || !isAdmin) return null;
-
   return (
-    <main className="admin-page">
+    <main className="admin-page admin-reports-page">
       <div className="admin-shell">
         <header className="admin-topbar">
-          <div>
-            <span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span>
-            <h1>Reports</h1>
-            <p>Review and manage reports submitted against community comments and replies.</p>
-          </div>
+          <div><span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span><h1>Reports</h1><p>Review and manage reports submitted against community comments and replies.</p></div>
           <div className="admin-top-actions admin-reports-header-actions">
-            <Link href="/admin" className="admin-secondary-button">
-              <ArrowLeftIcon size={16} />
-              <span>Back to dashboard</span>
-            </Link>
-            <button type="button" className="admin-secondary-button" onClick={() => void loadReports()} disabled={loadingRows} aria-label="Refresh reports" title="Refresh">
-              <RefreshIcon size={16} />
-              <span>Refresh</span>
-            </button>
+            <Link href="/admin" className="admin-secondary-button"><ArrowLeftIcon size={16} /><span>Back to dashboard</span></Link>
+            <button type="button" className="admin-secondary-button" onClick={() => void loadReports()} disabled={loadingRows} aria-label="Refresh reports"><RefreshIcon size={16} /><span>Refresh</span></button>
           </div>
         </header>
-
         <section className="admin-post-panel admin-reports-panel">
           <div className="admin-panel-heading admin-reports-panel-heading">
-            <div>
-              <h2>Report activity</h2>
-              <p>Review report reasons, related discussions, and take action on open reports.</p>
-            </div>
-            <div className="admin-reports-totals admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
-              <div className="admin-reports-total">
-                <strong>{formatCompactNumber(reports.length)}</strong>
-                <span>Total reports</span>
-              </div>
-              <div className="admin-reports-total">
-                <strong>{formatCompactNumber(postsWithReports)}</strong>
-                <span>Posts reported</span>
-              </div>
-              <div className="admin-reports-total">
-                <strong>{formatCompactNumber(reportedComments)}</strong>
-                <span>Comments reported</span>
-              </div>
-              <div className="admin-reports-total">
-                <strong>{formatCompactNumber(reportedReplies)}</strong>
-                <span>Replies reported</span>
-              </div>
+            <div><h2>Report activity</h2><p>Review report reasons, related discussions, and take action on open reports.</p></div>
+            <div className="admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
+              <div className="admin-reports-total"><strong>{formatCompactNumber(reports.length)}</strong><span>Total reports</span></div>
+              <div className="admin-reports-total"><strong>{formatCompactNumber(postsWithReports)}</strong><span>Posts reported</span></div>
+              <div className="admin-reports-total"><strong>{formatCompactNumber(reportedComments)}</strong><span>Comments reported</span></div>
+              <div className="admin-reports-total"><strong>{formatCompactNumber(reportedReplies)}</strong><span>Replies reported</span></div>
             </div>
           </div>
-
           <div className="admin-filters admin-reports-filters">
-            <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search report, reason, user or post..." aria-label="Search reports" />
-            <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter report status">
-              <option value="all">All statuses</option>
-              <option value="open">Open</option>
-              <option value="reviewed">Reviewed</option>
-              <option value="dismissed">Dismissed</option>
-            </select>
+            <input type="search" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search report, reason, user or post..." aria-label="Search reports" />
+            <Select size="sm" fullWidth value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} aria-label="Filter status" options={[{ value: "all", label: "All statuses" }, { value: "open", label: "Open" }, { value: "reviewed", label: "Reviewed" }, { value: "dismissed", label: "Dismissed" }]} />
+            <Select size="sm" fullWidth value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value); setPage(1); }} aria-label="Filter reported content type" options={[{ value: "all", label: "All types" }, { value: "comments", label: "Comments only" }, { value: "replies", label: "Replies only" }]} />
           </div>
-
-          {error ? <div className="admin-error">{error}</div> : null}
+          {error ? <div className="admin-error" role="alert">{error}</div> : null}
           {loadingRows ? <div className="admin-empty">Loading reports...</div> : filteredReports.length === 0 ? <div className="admin-empty">No reports match these filters.</div> : (
-            <div className="admin-reports-list">
-              {visibleReports.map((report) => (
-                <article className="admin-report-card" key={report.id}>
-                  <div className="admin-report-card-head">
-                    <div>
-                      <strong>{report.reason || "Community report"}</strong>
-                      <span>{report.post_title || "Post"} · {report.parent ? `Reply #${report.comment_id}` : `Comment #${report.comment_id}`} · Report #{report.id}</span>
-                    </div>
-                    <span className={`admin-status status-${report.status}`}>{report.status}</span>
-                  </div>
-                  <p className="admin-report-text">{report.details || "No additional details provided."}</p>
-                  <div className="admin-report-meta">
-                    <span>Reported by {report.reporter_auth_id || "Unknown user"}</span>
-                    <span>{new Date(report.created_at).toLocaleString()}</span>
-                  </div>
-                  <div className="admin-report-reply">
-                    <strong>Reported content</strong>
-                    <p className="admin-report-text">{report.content}</p>
-                  </div>
-                  {report.status === "open" ? (
-                    <div className="admin-report-actions">
-                      <button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "reviewed")}>Mark reviewed</button>
-                      <button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button>
-                    </div>
-                  ) : null}
-                </article>
-              ))}
+            <div className="admin-table-wrap admin-reports-table-wrap">
+              <table className="admin-post-table admin-reports-table">
+                <thead><tr><th>{sortLabel("id", "ID")}</th><th>{sortLabel("reason", "Reason")}</th><th>Reported content</th><th>{sortLabel("reporter", "Reporter")}</th><th>{sortLabel("status", "Status")}</th><th>{sortLabel("date", "Date")}</th><th>Actions</th></tr></thead>
+                <tbody>{visibleReports.map((report) => (
+                  <tr key={report.id}>
+                    <td className="admin-reports-id">#{report.id}</td>
+                    <td><strong className="admin-reports-reason">{report.reason || "Community report"}</strong><small className="admin-reports-related">{report.post_title || `Post #${report.post_id}`} · {report.parent === null ? `Comment #${report.comment_id}` : `Reply #${report.comment_id}`}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
+                    <td className="admin-reports-content"><span>{report.content || "No content available."}</span></td>
+                    <td>{report.reporter_auth_id || "Unknown user"}</td>
+                    <td><span className={`admin-status status-${report.status}`}>{report.status}</span></td>
+                    <td className="admin-reports-date">{new Date(report.created_at).toLocaleString()}</td>
+                    <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "reviewed")}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
             </div>
           )}
-
-          <div className="admin-table-footer">
-            <span>Showing {filteredReports.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, filteredReports.length)} of {formatCompactNumber(filteredReports.length)} reports</span>
-            <div className="admin-pagination">
-              <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Reports per page">
-                <option value={10}>10 rows</option>
-                <option value={15}>15 rows</option>
-                <option value={25}>25 rows</option>
-                <option value={50}>50 rows</option>
-              </select>
-              <button type="button" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button>
-              <span>Page {page} of {pageCount}</span>
-              <button type="button" disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>Next</button>
-            </div>
+          <div className="admin-table-footer"><span>Showing {filteredReports.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, filteredReports.length)} of {formatCompactNumber(filteredReports.length)} reports</span>
+            <div className="admin-pagination"><select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page"><option value={10}>10 rows</option><option value={15}>15 rows</option><option value={25}>25 rows</option><option value={50}>50 rows</option></select><button type="button" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page} of {pageCount}</span><button type="button" disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>Next</button></div>
           </div>
         </section>
       </div>

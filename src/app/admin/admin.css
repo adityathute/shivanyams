@@ -260,7 +260,9 @@
   display: inline-flex;
   align-items: baseline;
   gap: 7px;
-  margin-top: 10px;
+  min-height: 40px;
+  box-sizing: border-box;
+  margin: 0;
   padding: 6px 10px;
   border: 1px solid #e1e8f2;
   border-radius: 8px;
@@ -461,6 +463,7 @@
 
 .admin-toolbar-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, ConfirmDialog, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, ConfirmDialog, RefreshIcon, ReportIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
@@ -109,7 +109,7 @@ export default function AdminReportsPage() {
         </header>
         <section className="admin-post-panel admin-reports-panel">
           <div className="admin-panel-heading admin-reports-panel-heading">
-            <div><h2>Report activity</h2><p>Review report reasons, related discussions, and take action on open reports.</p></div>
+            <div><h2><ReportIcon size={18} /> Report activity</h2><p>Review report reasons, related discussions, and take action on open reports.</p></div>
             <div className="admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
               <div className="admin-reports-total"><strong>{formatCompactNumber(reports.length)}</strong><span>Total reports</span></div>
               <div className="admin-reports-total"><strong>{formatCompactNumber(postsWithReports)}</strong><span>Posts reported</span></div>

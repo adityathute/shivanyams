@@ -5,7 +5,7 @@ import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
-from django.db.models import Count, F, Max, Prefetch, Q, Value
+from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery, Value
 from django.db.models.functions import Greatest
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -348,42 +348,54 @@ class AdminPostVersions(APIView):
     def post(self, request, post_id):
         with transaction.atomic():
             post = get_object_or_404(Post.objects.select_for_update(), pk=post_id)
-            if post.status != Post.Status.PUBLISHED or not post.published_at:
-                raise ValidationError({"detail": "Only published posts can create unpublished versions."})
             payload = request.data
             if not isinstance(payload, dict):
                 raise ValidationError({"detail": "A valid post payload is required."})
             validator = PostWriteSerializer(instance=post, data=payload)
             validator.is_valid(raise_exception=True)
-            if not post.versions.exists():
+
+            # Draft edits update the admin-facing Post record and its snapshot.
+            # Published edits stay isolated until an administrator publishes them.
+            if post.status != Post.Status.PUBLISHED or not post.published_at:
+                post = validator.save()
+                snapshot = PostWriteSerializer(post, context={"request": request}).data
+            else:
+                snapshot = dict(payload)
+
+            if post.status == Post.Status.PUBLISHED and post.published_at and not post.versions.exists():
                 baseline = PostWriteSerializer(post, context={"request": request}).data
-                PostVersion.objects.create(post=post, version_number=1, payload=baseline, is_published=True,
+                PostVersion.objects.create(
+                    post=post, version_number=1, payload=baseline, is_published=True,
                     created_by_auth_id=post.published_by_auth_id or str(request.user.id),
-                    published_at=post.published_at, published_by_auth_id=post.published_by_auth_id)
-            # Older published versions are also marked is_published=False when a
-            # newer version goes live. Only a version newer than the current
-            # published version can be treated as the active unpublished draft.
+                    published_at=post.published_at,
+                    published_by_auth_id=post.published_by_auth_id,
+                )
+
             published_version = post.versions.filter(is_published=True).order_by("-version_number").first()
-            published_version_number = published_version.version_number if published_version else 0
+            published_number = published_version.version_number if published_version else 0
             latest = post.versions.order_by("-version_number").first()
             pending = post.versions.filter(
-                is_published=False,
-                version_number__gt=published_version_number,
+                is_published=False, version_number__gt=published_number
             ).order_by("-version_number").first()
+
             if pending:
-                pending.payload = dict(payload)
+                pending.payload = snapshot
                 pending.created_by_auth_id = str(request.user.id)
                 pending.save(update_fields=["payload", "created_by_auth_id"])
                 version = pending
-            elif published_version and published_version.payload == dict(payload):
+            elif published_version and published_version.payload == snapshot:
                 version = published_version
             else:
-                version = PostVersion.objects.create(post=post,
-                    version_number=(latest.version_number if latest else 0) + 1,
-                    payload=dict(payload), is_published=False, created_by_auth_id=str(request.user.id))
-        return Response({"id": version.id, "version_number": version.version_number,
+                version = PostVersion.objects.create(
+                    post=post, version_number=(latest.version_number if latest else 0) + 1,
+                    payload=snapshot, is_published=False,
+                    created_by_auth_id=str(request.user.id),
+                )
+        return Response({
+            "id": version.id, "version_number": version.version_number,
             "is_published": version.is_published, "created_at": version.created_at,
-            "versions": self.get(request, post_id).data}, status=status.HTTP_201_CREATED)
+            "versions": self.get(request, post_id).data,
+        }, status=status.HTTP_200_OK)
 
 
 class AdminPostVersionPublish(APIView):
@@ -395,21 +407,36 @@ class AdminPostVersionPublish(APIView):
             version = get_object_or_404(PostVersion, pk=version_id, post=post)
             if version.is_published:
                 raise ValidationError({"detail": "This version is already published."})
+            latest_published = post.versions.filter(is_published=True).order_by("-version_number").first()
+            published_number = latest_published.version_number if latest_published else 0
+            latest_pending = post.versions.filter(
+                is_published=False, version_number__gt=published_number
+            ).order_by("-version_number").first()
+            if version.version_number <= published_number or not latest_pending or latest_pending.pk != version.pk:
+                raise ValidationError({"detail": "This version is no longer the active unpublished revision."})
             writer = PostWriteSerializer(instance=post, data=version.payload)
             writer.is_valid(raise_exception=True)
             post = writer.save()
+            previous_status = post.status
             now, auth_id = timezone.now(), str(request.user.id)
             post.status, post.published_at, post.published_by_auth_id = Post.Status.PUBLISHED, now, auth_id
             post.save(update_fields=["status", "published_at", "published_by_auth_id", "updated_at"])
             PostVersion.objects.filter(post=post, is_published=True).update(is_published=False)
             version.is_published, version.published_at, version.published_by_auth_id = True, now, auth_id
             version.save(update_fields=["is_published", "published_at", "published_by_auth_id"])
-            PostStatusHistory.objects.create(post=post, previous_status=Post.Status.PUBLISHED,
-                new_status=Post.Status.PUBLISHED, changed_by_auth_id=auth_id,
-                note=f"Published content version {version.version_number}.")
+            PostStatusHistory.objects.create(
+                post=post, previous_status=previous_status, new_status=Post.Status.PUBLISHED,
+                changed_by_auth_id=auth_id, note=f"Published content version {version.version_number}.",
+            )
             emails = set(NewsletterSubscription.objects.filter(is_active=True).values_list("email", flat=True))
             if emails:
-                subject, message = f"Update: {post.title_en}", f'The post "{post.title_en}" has been updated on ShivanyaMS. Open ShivanyaMS to view the latest information.'
+                is_first_publication = previous_status != Post.Status.PUBLISHED
+                subject = f"New post: {post.title_en}" if is_first_publication else f"Update: {post.title_en}"
+                message = (
+                    f'A new post, "{post.title_en}", is now available on ShivanyaMS. Visit ShivanyaMS to read it.'
+                    if is_first_publication else
+                    f'The post "{post.title_en}" has been updated on ShivanyaMS. Open ShivanyaMS to view the latest information.'
+                )
                 messages = tuple((subject, message, None, [email]) for email in sorted(emails))
                 transaction.on_commit(lambda: send_mass_mail(messages, fail_silently=True))
         return Response({"status": post.status, "published_version": version.version_number,
@@ -2181,7 +2208,17 @@ class AdminDashboardStats(APIView):
         )
         for identities in identity_queries:
             user_ids.update(identities)
+        published_version_number = PostVersion.objects.filter(
+            post_id=OuterRef("pk"), is_published=True
+        ).order_by("-version_number").values("version_number")[:1]
+        edited_posts_count = Post.objects.filter(
+            status=Post.Status.PUBLISHED,
+            versions__is_published=False,
+            versions__version_number__gt=Subquery(published_version_number),
+        ).values("pk").distinct().count()
+
         return Response({
+            "edited_posts_count": edited_posts_count,
             "users_count": len(user_ids),
             "website_views_count": WebsiteView.objects.count(),
             "website_visitors_count": WebsiteVisitor.objects.count(),

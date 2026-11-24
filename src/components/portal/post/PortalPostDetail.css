@@ -1513,3 +1513,24 @@
 }
 
 
+
+
+/* Full-width footer divider with no horizontal inset. */
+.portal-post-card > .portal-post-card-footer {
+  justify-content: space-between;
+  width: auto;
+  margin: 16px -16px -16px;
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  background: transparent;
+}
+
+.portal-post-card-footer .portal-post-engagement-actions.is-footer {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.portal-post-card-footer .portal-post-engagement-actions.is-footer .portal-post-reaction-actions {
+  width: auto;
+  justify-content: flex-start;
+}

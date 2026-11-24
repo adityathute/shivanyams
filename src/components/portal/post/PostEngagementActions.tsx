@@ -295,7 +295,6 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
           aria-label={`Dislike, ${formatCompactNumber(dislikes)} dislikes`}
         >
           <DislikeIcon size={19} />
-          <strong>{formatCompactNumber(dislikes)}</strong>
         </button>
         <button type="button" className="portal-action-share" onClick={() => { if (shareMenuOpen) { setShareMenuOpen(false); void recordShare("dismissed"); } else { setShareMenuOpen(true); } }} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
           <ShareIcon size={19} />

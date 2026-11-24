@@ -959,27 +959,21 @@ class PostQuestionHelpful(APIView):
         visitor_hash = self._visitor_hash(token)
         viewer_id = str(request.user.id) if getattr(request.user, "is_authenticated", False) else ""
         if viewer_id:
-            vote = PostQuestionHelpfulVote.objects.filter(
+            anonymous_vote = PostQuestionHelpfulVote.objects.filter(
                 question=question,
-                user_auth_id=viewer_id,
+                visitor_hash=visitor_hash,
+                user_auth_id="",
             ).first()
-            created = False
-            if vote is None:
-                vote = PostQuestionHelpfulVote.objects.filter(
+            if anonymous_vote:
+                anonymous_vote.user_auth_id = viewer_id
+                anonymous_vote.save(update_fields=["user_auth_id"])
+                vote, created = anonymous_vote, False
+            else:
+                vote, created = PostQuestionHelpfulVote.objects.get_or_create(
                     question=question,
-                    visitor_hash=visitor_hash,
-                    user_auth_id="",
-                ).first()
-                if vote:
-                    vote.user_auth_id = viewer_id
-                    vote.save(update_fields=["user_auth_id"])
-                    created = False
-                else:
-                    vote, created = PostQuestionHelpfulVote.objects.get_or_create(
-                        question=question,
-                        visitor_hash=visitor_hash,
-                        defaults={"user_auth_id": viewer_id},
-                    )
+                    user_auth_id=viewer_id,
+                    defaults={"visitor_hash": visitor_hash},
+                )
         else:
             vote, created = PostQuestionHelpfulVote.objects.get_or_create(
                 question=question,

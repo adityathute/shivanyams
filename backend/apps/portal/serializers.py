@@ -533,7 +533,7 @@ DETAIL_SERIALIZERS = {
 class PostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     important_links = PostLinkSerializer(many=True, read_only=True)
-    faqs = PostFAQSerializer(many=True, read_only=True)
+    faqs = serializers.SerializerMethodField()
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
@@ -667,6 +667,32 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_tool_details(self, obj):
         return self._get_detail(obj, "tool_details", ToolDetailsSerializer)
+
+    def get_faqs(self, obj):
+        rows = list(PostFAQSerializer(
+            obj.faqs.all(),
+            many=True,
+            context=self.context,
+        ).data)
+
+        # Only questions with an official answer become public FAQs.
+        for question in obj.questions.all():
+            answer = (question.answer or "").strip()
+            prompt = (question.question or "").strip()
+            if not prompt or not answer:
+                continue
+            rows.append({
+                "id": -question.pk,
+                "question_en": prompt,
+                "question_mr": prompt,
+                "question_hi": prompt,
+                "answer_en": answer,
+                "answer_mr": answer,
+                "answer_hi": answer,
+                "sort_order": 10000 + len(rows),
+                "is_active": True,
+            })
+        return rows
 
     def get_related_posts(self, obj):
         relations = obj.outgoing_relations.select_related(

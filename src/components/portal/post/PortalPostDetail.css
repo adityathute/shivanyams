@@ -1430,25 +1430,31 @@
 /* Full-bleed post header and footer.
    Negative side margins expand each strip across the card's padded content area;
    the matching corner radii keep the muted background inside the card outline. */
+.portal-post-card {
+  --portal-post-strip-background: var(--surface-muted, #f5f7fa);
+}
+
 .portal-post-card > .portal-post-compact-header {
   box-sizing: border-box;
-  width: auto;
+  width: calc(100% + 32px);
+  max-width: none;
   margin: 0 -16px 10px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
   border-radius: 19px 19px 0 0;
-  background-color: var(--surface-muted, #f5f7fa);
+  background: var(--portal-post-strip-background, var(--surface-muted, #f5f7fa));
 }
 
 /* Footer spans the complete card width and finishes with the card's lower corners. */
 .portal-post-card > .portal-post-card-footer {
   box-sizing: border-box;
-  width: auto;
+  width: calc(100% + 32px);
+  max-width: none;
   margin: 18px -16px -16px;
   padding: 10px 16px 12px;
   border-top: 1px solid var(--border-color, #e5e7eb);
   border-radius: 0 0 19px 19px;
-  background-color: var(--surface-muted, #f5f7fa);
+  background: var(--portal-post-strip-background, var(--surface-muted, #f5f7fa));
   display: flex;
   align-items: center;
   justify-content: space-between;

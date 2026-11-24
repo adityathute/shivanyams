@@ -1435,3 +1435,32 @@
   padding: 0 16px 10px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
 }
+
+
+/* Post actions footer: full-width separator with controls aligned right. */
+.portal-post-card-footer {
+  box-sizing: border-box;
+  width: calc(100% + 32px);
+  margin: 18px -16px -16px;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.portal-post-card-footer .portal-post-engagement-actions {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.portal-post-card-footer .portal-post-reaction-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 760px) {
+  .portal-post-card-footer .portal-post-engagement-actions,
+  .portal-post-card-footer .portal-post-reaction-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

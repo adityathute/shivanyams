@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
-import { CloseIcon, LikeIcon, QuestionMarkCircleIcon } from "shivanya-ui";
+import { CloseIcon, ConfirmDialog, DeleteIcon, LikeIcon, QuestionMarkCircleIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -91,6 +91,9 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submittedQuestions, setSubmittedQuestions] = useState<Array<{ id: number; question: string }>>([]);
+  const [deleteQuestionId, setDeleteQuestionId] = useState<number | null>(null);
+  const [deletingQuestion, setDeletingQuestion] = useState(false);
+  const [deletedPendingQuestionIds, setDeletedPendingQuestionIds] = useState<number[]>([]);
   const [helpfulStates, setHelpfulStates] = useState<Record<number, { count: number; voted: boolean; busy?: boolean; feedback?: boolean }>>({});
 
   const locale = language === "mr" || language === "hi" ? language : "en";
@@ -197,6 +200,29 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
       setHelpfulStates((state) => ({ ...state, [questionId]: { count: current?.count || 0, voted: false, busy: false } }));
     }
   }
+  async function deletePendingQuestion() {
+    if (!deleteQuestionId || deletingQuestion) return;
+    setDeletingQuestion(true);
+    try {
+      const response = await authenticatedFetch(
+        getPortalApiUrl(`content/${postId}/questions/${deleteQuestionId}/`),
+        { method: "DELETE" },
+      );
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.detail || "Unable to delete your question.");
+      }
+      setSubmittedQuestions((current) => current.filter((item) => item.id !== deleteQuestionId));
+      setDeletedPendingQuestionIds((current) => [...current, deleteQuestionId]);
+      setDeleteQuestionId(null);
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Unable to delete your question.");
+      setDeleteQuestionId(null);
+    } finally {
+      setDeletingQuestion(false);
+    }
+  }
+
   async function submitQuestion() {
     const question = ensureQuestionMark(questionDraft);
     if (!question) {
@@ -269,11 +295,14 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
 
       {faqs?.length || submittedQuestions.length ? (
         <div className="portal-faq-list">
-          {submittedQuestions.filter((item) => !faqs.some((faq) => faq.id === -item.id)).map((item) => (
+          {submittedQuestions.filter((item) => !deletedPendingQuestionIds.includes(item.id) && !faqs.some((faq) => faq.id === -item.id)).map((item) => (
             <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
               <div className="portal-faq-question portal-faq-pending-question">
-                <span>{ensureQuestionMark(item.question)}</span>
+                <span className="portal-faq-pending-text">{ensureQuestionMark(item.question)}</span>
                 <span className="portal-faq-review-status">{labels.underReview}</span>
+                <button type="button" className="portal-faq-delete-button" onClick={() => setDeleteQuestionId(item.id)} aria-label="Delete your question" title="Delete question">
+                  <DeleteIcon size={16} />
+                </button>
               </div>
             </div>
           ))}
@@ -289,11 +318,17 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
             const answerId = `portal-faq-answer-${faq.id ?? index}`;
 
             if (isPending) {
+              if (deletedPendingQuestionIds.includes(questionId)) return null;
               return (
                 <div className="portal-faq-item portal-faq-pending" key={faq.id ?? index}>
                   <div className="portal-faq-question portal-faq-pending-question">
-                    <span>{question}</span>
+                    <span className="portal-faq-pending-text">{question}</span>
                     <span className="portal-faq-review-status">{labels.underReview}</span>
+                    {faq.is_mine ? (
+                      <button type="button" className="portal-faq-delete-button" onClick={() => setDeleteQuestionId(questionId)} aria-label="Delete your question" title="Delete question">
+                        <DeleteIcon size={16} />
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               );
@@ -349,6 +384,21 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
           <p>{labels.emptyDescription}</p>
         </div>
       )}
+
+      {deleteQuestionId !== null && typeof document !== "undefined" ? createPortal(
+        <ConfirmDialog
+          open
+          title="Delete question permanently?"
+          message="Your question will be permanently deleted and removed from this post. This action cannot be undone."
+          confirmText={deletingQuestion ? "Deleting..." : "Delete permanently"}
+          cancelText="Cancel"
+          variant="danger"
+          loading={deletingQuestion}
+          onCancel={() => { if (!deletingQuestion) setDeleteQuestionId(null); }}
+          onConfirm={() => void deletePendingQuestion()}
+        />,
+        document.body,
+      ) : null}
 
       {modalOpen ? createPortal((
         <div

@@ -284,3 +284,24 @@
     min-width: min(250px, calc(100vw - 32px));
   }
 }
+
+
+/* The compact header keeps only the saved-state bookmark. */
+.portal-post-engagement-actions.is-header .portal-post-reaction-actions > button:not(.portal-action-bookmark),
+.portal-post-engagement-actions.is-header .portal-share-menu,
+.portal-post-engagement-actions.is-header .portal-engagement-message {
+  display: none;
+}
+
+.portal-post-engagement-actions.is-header {
+  flex: 0 0 auto;
+}
+
+.portal-post-engagement-actions.is-header .portal-post-reaction-actions {
+  gap: 0;
+}
+
+.portal-post-engagement-actions.is-header .portal-action-bookmark {
+  min-width: 30px;
+  min-height: 30px;
+}

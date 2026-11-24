@@ -326,3 +326,9 @@
   }
 }
 
+
+/* Keep Tags table controls isolated from shared dashboard table styles. */
+.admin-tags-page .admin-tags-table-wrap { overflow-x: auto; }
+.admin-tags-page table.admin-tags-table th { vertical-align: middle; }
+.admin-tags-page .admin-tags-sort { min-height: 24px; }
+.admin-tags-page .admin-tags-sort span { color: var(--primary,#6366f1); font-size: 14px; font-weight: 800; }

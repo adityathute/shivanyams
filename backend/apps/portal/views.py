@@ -847,8 +847,8 @@ class PostQuestions(APIView):
         question_text = str(request.data.get("question", "")).strip()
         if not question_text:
             raise ValidationError({"question": "Please enter your question."})
-        if len(question_text) > 2000:
-            raise ValidationError({"question": "A question can contain a maximum of 2000 characters."})
+        if len(question_text) > 500:
+            raise ValidationError({"question": "A question can contain a maximum of 500 characters."})
 
         language = str(request.data.get("language", "en")).strip().lower()
         if language not in {"en", "mr", "hi"}:
@@ -1399,12 +1399,12 @@ class AdminQuestions(APIView):
             raise ValidationError({"id": "Question ID is required."})
         if not corrected_question:
             raise ValidationError({"question": "Please enter the question."})
-        if len(corrected_question) > 2000:
-            raise ValidationError({"question": "A question can contain a maximum of 2000 characters."})
+        if len(corrected_question) > 500:
+            raise ValidationError({"question": "A question can contain a maximum of 500 characters."})
         if not answer:
             raise ValidationError({"answer": "Please enter an answer."})
-        if len(answer) > 10000:
-            raise ValidationError({"answer": "An answer can contain a maximum of 10000 characters."})
+        if len(answer) > 2000:
+            raise ValidationError({"answer": "An answer can contain a maximum of 2000 characters."})
         if answer_visibility not in PostQuestion.AnswerVisibility.values:
             raise ValidationError({"answer_visibility": "Choose public, private, or hidden visibility."})
 

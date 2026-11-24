@@ -303,12 +303,12 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
         <button type="button" className={`portal-action-bookmark${saved ? " is-active" : ""}`} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
           <BookmarkIcon size={19} />
         </button>
-        {userReportCount < 3 ? (
-          <button type="button" className="portal-action-report" onClick={requestReport} title="Report" aria-label="Report post">
-            <ReportIcon size={19} />
-          </button>
-        ) : null}
       </div>
+      {placement === "footer" && userReportCount < 3 ? (
+        <button type="button" className="portal-action-report" onClick={requestReport} title="Report" aria-label="Report post">
+          <ReportIcon size={19} />
+        </button>
+      ) : null}
       {shareMenuOpen ? (
         <div className="portal-share-menu" role="menu" aria-label="Share this post">
           <button type="button" role="menuitem" onClick={() => void shareTo("copy")} className="portal-share-copy"><CopyIcon size={17} /><span>Copy link</span></button>

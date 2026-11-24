@@ -852,25 +852,13 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   <div className="portal-post-compact-header">
                     <div className="portal-post-meta portal-post-meta-compact">
                       <span>{post.category || label}</span>
-                      <div className="portal-post-dates">
-                        {createdPostDate ? (
-                          <div className="portal-post-date-group">
-                            <span className="portal-post-date-label">
-                              {getDetailLabel("posted", language)}:
-                            </span>
-                            <time dateTime={createdPostDate}>{formatRelativePostDate(createdPostDate, language)}</time>
-                          </div>
-                        ) : null}
-                        {updatedPostDate ? (
-                          <div className="portal-post-date-group">
-                            <span className="portal-post-date-label">
-                              {getDetailLabel("lastUpdated", language)}:
-                            </span>
-                            <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
-                          </div>
-                        ) : null}
-                      </div>
                     </div>
+                    {updatedPostDate ? (
+                      <div className="portal-post-header-updated">
+                        <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}:</span>
+                        <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
+                      </div>
+                    ) : null}
                     {!previewItem ? (
                       <PostEngagementActions postId={post.postId} title={post.title} placement="header" />
                     ) : null}
@@ -1404,6 +1392,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   ) : null}
                 {!previewItem ? (
                   <div className="portal-post-card-footer">
+                    {updatedPostDate ? (
+                      <div className="portal-post-footer-updated">
+                        <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}:</span>
+                        <time dateTime={updatedPostDate}>{formatRelativePostDate(updatedPostDate, language)}</time>
+                      </div>
+                    ) : <span />}
                     <PostEngagementActions postId={post.postId} title={post.title} placement="footer" />
                   </div>
                 ) : null}

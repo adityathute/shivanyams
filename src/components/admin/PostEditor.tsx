@@ -1596,7 +1596,6 @@ export default function PostEditor({
             </p>
           </div>
           <div className="post-editor-header-actions">
-            {(editing || postCreated) && (postStatus === "draft" || postStatus === "reviewed") && <span className="post-editor-status-badge post-editor-status-badge--unpublished">Unpublished</span>}
             {(editing || postCreated) && <span className={`post-editor-status-badge post-editor-status-badge--${postStatus.toLowerCase().replaceAll("_", "-")}`}>{postStatus === "published" ? <>Published{postVersions.some((item) => item.is_published) && <> · v{Math.max(...postVersions.filter((item) => item.is_published).map((item) => item.version_number))}</>}</> : postStatus.replaceAll("_", " ")}</span>}
             {(editing || postCreated) && postVersions.length > 0 && <div className="post-editor-publication-status">
               {postStatus === "published" ? (

@@ -5,7 +5,7 @@ import hashlib
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
-from django.db.models import Count, F, Max, OuterRef, Prefetch, Q, Subquery, Value
+from django.db.models import Count, Exists, F, Max, OuterRef, Prefetch, Q, Subquery, Value
 from django.db.models.functions import Greatest
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -267,9 +267,19 @@ class AdminContent(viewsets.ModelViewSet):
     def get_queryset(self):
         category = get_content_category(self.kwargs["kind"])
 
+        latest_published_number = PostVersion.objects.filter(
+            post_id=OuterRef("pk"), is_published=True
+        ).order_by("-version_number").values("version_number")[:1]
+        active_unpublished_revision = PostVersion.objects.filter(
+            post_id=OuterRef("pk"),
+            is_published=False,
+            version_number__gt=Subquery(latest_published_number),
+        )
+
         return (
             Post.objects.filter(category=category)
             .annotate(
+                has_unpublished_changes=Exists(active_unpublished_revision),
                 users_count=Count(
                     "view_events__auth_user_id",
                     filter=~Q(view_events__auth_user_id=""),

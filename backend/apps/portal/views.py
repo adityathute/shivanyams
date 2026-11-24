@@ -1375,6 +1375,7 @@ class AdminQuestions(APIView):
                 "question": question.question,
                 "language": question.language,
                 "answer": question.answer,
+                "is_public_answer": question.is_public_answer,
                 "answered": bool(question.answer.strip()),
                 "created_at": question.created_at,
                 "answered_at": question.answered_at,
@@ -1391,19 +1392,37 @@ class AdminQuestions(APIView):
     def patch(self, request):
         question_id = request.data.get("id")
         answer = str(request.data.get("answer", "")).strip()
+        corrected_question = str(request.data.get("question", "")).strip()
+        is_public_answer = request.data.get("is_public_answer", True)
+
         if not question_id:
             raise ValidationError({"id": "Question ID is required."})
+        if not corrected_question:
+            raise ValidationError({"question": "Please enter the question."})
+        if len(corrected_question) > 2000:
+            raise ValidationError({"question": "A question can contain a maximum of 2000 characters."})
         if not answer:
             raise ValidationError({"answer": "Please enter an answer."})
         if len(answer) > 10000:
             raise ValidationError({"answer": "An answer can contain a maximum of 10000 characters."})
+        if not isinstance(is_public_answer, bool):
+            raise ValidationError({"is_public_answer": "Choose whether the answer is public or private."})
 
         question = get_object_or_404(PostQuestion.objects.select_related("post"), pk=question_id)
+        if not is_public_answer and not question.user_auth_id:
+            raise ValidationError({
+                "is_public_answer": "Private answers are only available for questions submitted by a signed-in user."
+            })
+
+        question.question = corrected_question
         question.answer = answer
+        question.is_public_answer = is_public_answer
         question.answered_by_auth_id = str(request.user.id)
         question.answered_at = timezone.now()
         question.save(update_fields=[
+            "question",
             "answer",
+            "is_public_answer",
             "answered_by_auth_id",
             "answered_at",
             "updated_at",

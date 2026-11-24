@@ -13,6 +13,30 @@ import "./tags.css";
 type TagRow = { name: string; count: number };
 type TagSort = "popular" | "least" | "az" | "za";
 
+
+function AnimatedNumber({ value, replayKey = 0 }: { value: number; replayKey?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const target = Number.isFinite(value) ? Math.max(0, value) : 0;
+    if (target === 0) { setDisplayValue(0); return; }
+    let frame = 0;
+    let startTime = 0;
+    const duration = 850;
+    setDisplayValue(0);
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [value, replayKey]);
+
+  return <>{formatCompactNumber(displayValue)}</>;
+}
+
 export default function AdminTagsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -27,6 +51,7 @@ export default function AdminTagsPage() {
   const [editName, setEditName] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [animationKey, setAnimationKey] = useState(0);
   const pageSize = 15;
 
   const loadTags = useCallback(async () => {
@@ -37,6 +62,7 @@ export default function AdminTagsPage() {
       const payload = await response.json().catch(() => []);
       if (!response.ok) throw new Error(payload.detail || `Unable to load tags (${response.status}).`);
       setTags(Array.isArray(payload) ? payload : []);
+      setAnimationKey((value) => value + 1);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load tags.");
     } finally {

@@ -2587,9 +2587,24 @@ export default function AdminPage() {
                           return (
                             <tr key={post.id}>
                               <td><Link className="admin-analytics-link" href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`} title={post.title_en}>{post.title_en}</Link></td>
-                              <td>{kind?.label || post.category?.name_en || "—"}</td>
+                              <td>
+                                <span className={`admin-category-badge ${categoryConfig[normalizeCategorySlug(post.category?.slug || kind?.slug || "")]?.type || "tool"}`}>
+                                  {kind?.label || post.category?.name_en || "—"}
+                                </span>
+                              </td>
                               <td>{post.updated_at ? formatAdminDateTime(post.updated_at) : "—"}</td>
-                              <td>{analyticsType === "edited" ? "Edited · Published" : statusLabel(post.status)}</td>
+                              <td>
+                                {analyticsType === "edited" ? (
+                                  <span className="admin-post-status-stack">
+                                    <span className="admin-status status-draft">Edited</span>
+                                    <span className="admin-status status-published">Published</span>
+                                  </span>
+                                ) : (
+                                  <span className={`admin-status status-${post.status}`}>
+                                    {statusLabel(post.status)}
+                                  </span>
+                                )}
+                              </td>
                             </tr>
                           );
                         })}

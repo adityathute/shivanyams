@@ -13,6 +13,7 @@ from .views import (
     PostReports,
     PostComments,
     PostQuestions,
+    PostQuestionHelpful,
     PostCommentDetail,
     PostReactions,
     PostCommentReactions,
@@ -78,6 +79,11 @@ urlpatterns = [
         "content/<int:post_id>/questions/",
         PostQuestions.as_view(),
         name="post-questions",
+    ),
+    path(
+        "questions/<int:question_id>/helpful/",
+        PostQuestionHelpful.as_view(),
+        name="post-question-helpful",
     ),
     path(
         "content/<int:post_id>/reactions/",

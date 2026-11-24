@@ -36,7 +36,8 @@ const copy = {
     cancel: "Cancel",
     submit: "Submit question",
     submitting: "Submitting...",
-    success: "Your question has been submitted. Our team will review it and publish the answer here.",
+    success: "Your question has been submitted. It is now under review.",
+    underReview: "Under review",
     error: "Unable to submit your question. Please try again.",
     required: "Please enter your question.",
   },
@@ -51,7 +52,8 @@ const copy = {
     cancel: "रद्द करा",
     submit: "प्रश्न पाठवा",
     submitting: "पाठवत आहे...",
-    success: "तुमचा प्रश्न पाठवला आहे. आमची टीम त्याचे उत्तर येथे प्रकाशित करेल.",
+    success: "तुमचा प्रश्न पाठवला आहे. तो सध्या तपासणीसाठी आहे.",
+    underReview: "तपासणी सुरू आहे",
     error: "प्रश्न पाठवता आला नाही. कृपया पुन्हा प्रयत्न करा.",
     required: "कृपया तुमचा प्रश्न लिहा.",
   },
@@ -66,7 +68,8 @@ const copy = {
     cancel: "रद्द करें",
     submit: "प्रश्न भेजें",
     submitting: "भेज रहे हैं...",
-    success: "आपका प्रश्न भेज दिया गया है। हमारी टीम इसका उत्तर यहाँ प्रकाशित करेगी।",
+    success: "आपका प्रश्न भेज दिया गया है। यह अभी समीक्षा के अधीन है।",
+    underReview: "समीक्षा के अधीन",
     error: "प्रश्न भेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
     required: "कृपया अपना प्रश्न लिखें।",
   },
@@ -79,6 +82,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [submittedQuestions, setSubmittedQuestions] = useState<Array<{ id: number; question: string }>>([]);
 
   const locale = language === "mr" || language === "hi" ? language : "en";
   const labels = copy[locale];
@@ -126,6 +130,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
         const payload = await response.json().catch(() => ({}));
         throw new Error(payload.question || payload.detail || labels.error);
       }
+      const payload = await response.json().catch(() => ({}));
+      setSubmittedQuestions((current) => [
+        ...current,
+        { id: Number(payload.id) || Date.now(), question },
+      ]);
       setQuestionDraft("");
       setModalOpen(false);
       setSuccess(true);
@@ -156,7 +165,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
 
       {success ? <p className="portal-faq-question-success" role="status">{labels.success}</p> : null}
 
-      {faqs?.length ? (
+      {faqs?.length || submittedQuestions.length ? (
         <div className="portal-faq-list">
           {faqs.map((faq, index) => {
             const isExpanded = expandedItems.includes(index);
@@ -182,6 +191,14 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
               </div>
             );
           })}
+          {submittedQuestions.map((item) => (
+            <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
+              <div className="portal-faq-question portal-faq-pending-question">
+                <span>{item.question}</span>
+                <span className="portal-faq-review-status">{labels.underReview}</span>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="portal-faq-empty-state">

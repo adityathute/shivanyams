@@ -161,6 +161,7 @@ type AdminPost = {
   unique_visitors_count?: number;
   users_count?: number;
   is_active?: boolean;
+  has_unpublished_changes?: boolean;
 };
 
 const CONTENT_KINDS = [
@@ -1554,6 +1555,9 @@ export default function AdminPage() {
                           <span className={`admin-status status-${post.status}`}>
                             {statusLabel(post.status)}
                           </span>
+                          {post.status === "published" && post.has_unpublished_changes && (
+                            <span className="admin-status status-draft">Edited · Unpublished</span>
+                          )}
                         </td>
                         <td>
                           <span

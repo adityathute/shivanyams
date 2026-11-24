@@ -2754,7 +2754,7 @@ export default function AdminPage() {
                             ? formatCompactNumber(commentReplyEvents.length) + " comment events"
                             : analyticsType === "replies"
                               ? formatCompactNumber(commentReplyEvents.length) + " reply events"
-                        : analyticsType === "drafts" || analyticsType === "review"
+                        : analyticsType === "drafts" || analyticsType === "edited" || analyticsType === "review"
                           ? formatCompactNumber(statusAnalyticsPosts.length) + " posts"
                         : analyticsType === "posts"
                           ? formatCompactNumber(postAnalyticsPages.length) + " posts tracked"

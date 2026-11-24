@@ -10,9 +10,9 @@ import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
 import "./reports.css";
 
-type Report = { id: number; reporter_auth_id: string; reporter_name?: string; reporter_avatar?: string; reason: string; details: string; status: string; created_at: string; };
+type Report = { id: number; reporter_auth_id: string; reporter_name?: string; reporter_avatar?: string; reason: string; details: string; status: string; created_at: string; report_type?: "post" | "comment" | "reply"; target_id?: number; target_title?: string; target_content?: string; };
 type CommentWithReports = { id: number; post: number; post_title: string; parent: number | null; author_name: string; content: string; reports?: Report[]; };
-type ReportRow = Report & { comment_id: number; post_id: number; post_title: string; parent: number | null; author_name: string; content: string; };
+type ReportRow = Report & { comment_id: number | null; post_id: number; post_title: string; parent: number | null; author_name: string; content: string; };
 type SortKey = "id" | "reason" | "content" | "reporter" | "status" | "date";
 type SortDirection = "asc" | "desc";
 
@@ -29,7 +29,7 @@ export default function AdminReportsPage() {
   const [loadingRows, setLoadingRows] = useState(true);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<number | null>(null);
-  const [pendingAction, setPendingAction] = useState<{ reportId: number; status: "reviewed" | "dismissed" } | null>(null);
+  const [pendingAction, setPendingAction] = useState<{ reportId: number; type: "post" | "comment" | "reply"; status: "reviewed" | "dismissed" } | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -47,17 +47,25 @@ export default function AdminReportsPage() {
   useEffect(() => { if (isAdmin) void loadReports(); }, [isAdmin, loadReports]);
 
   const reports = useMemo<ReportRow[]>(() => comments.flatMap((comment) => (comment.reports || []).map((report) => ({
-    ...report, comment_id: comment.id, post_id: comment.post, post_title: comment.post_title,
-    parent: comment.parent, author_name: comment.author_name, content: comment.content,
+    ...report,
+    comment_id: report.report_type === "post" ? null : comment.id,
+    post_id: comment.post,
+    post_title: comment.post_title,
+    parent: comment.parent,
+    author_name: comment.author_name,
+    content: report.target_content ?? comment.content,
+    report_type: report.report_type ?? (comment.parent === null ? "comment" : "reply"),
+    target_id: report.target_id ?? comment.id,
+    target_title: report.target_title ?? comment.post_title,
   }))), [comments]);
 
   const filteredReports = useMemo(() => {
     const query = search.trim().toLowerCase();
     const rows = reports.filter((report) => {
-      const isReply = report.parent !== null;
+      const isReply = report.report_type === "reply";
       const matchesStatus = statusFilter === "all" || String(report.status || "").trim().toLowerCase() === statusFilter;
       const matchesType = typeFilter === "all" || (typeFilter === "replies" ? isReply : !isReply);
-      const matchesSearch = !query || [report.reason, report.details, report.reporter_name, report.reporter_auth_id, report.post_title, report.author_name, report.content, report.status, String(report.id), String(report.comment_id), String(report.post_id), isReply ? "reply" : "comment"].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
+      const matchesSearch = !query || [report.reason, report.details, report.reporter_name, report.reporter_auth_id, report.post_title, report.author_name, report.content, report.status, String(report.id), String(report.comment_id), String(report.post_id), report.report_type || (isReply ? "reply" : "comment")].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
       return matchesStatus && matchesType && matchesSearch;
     });
     const value = (row: ReportRow) => ({ id: row.id, reason: row.reason || "", content: row.content || "", reporter: row.reporter_auth_id || "", status: row.status || "", date: new Date(row.created_at).getTime() || 0 })[sortKey];
@@ -71,14 +79,14 @@ export default function AdminReportsPage() {
   const pageCount = Math.max(1, Math.ceil(filteredReports.length / pageSize));
   const visibleReports = filteredReports.slice((page - 1) * pageSize, page * pageSize);
   const postsWithReports = new Set(reports.map((report) => report.post_id)).size;
-  const reportedComments = reports.filter((report) => report.parent === null).length;
-  const reportedReplies = reports.filter((report) => report.parent !== null).length;
+  const reportedComments = reports.filter((report) => report.report_type === "comment").length;
+  const reportedReplies = reports.filter((report) => report.report_type === "reply").length;
 
   useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
-  async function updateReportStatus(reportId: number, reportStatus: "reviewed" | "dismissed"): Promise<boolean> {
+  async function updateReportStatus(reportId: number, reportStatus: "reviewed" | "dismissed", reportType: "post" | "comment" | "reply"): Promise<boolean> {
     setBusyId(reportId);
     try {
-      const response = await adminFetch(`${API_URL}/admin/comments/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ report_id: reportId, report_status: reportStatus }) });
+      const response = await adminFetch(`${API_URL}/admin/comments/`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ [reportType === "post" ? "post_report_id" : "report_id"]: reportId, report_status: reportStatus }) });
       if (!response.ok) throw new Error("Unable to update report.");
       await loadReports();
       return true;
@@ -118,16 +126,16 @@ export default function AdminReportsPage() {
           {loadingRows ? <div className="admin-empty">Loading reports...</div> : filteredReports.length === 0 ? <div className="admin-empty">No reports match these filters.</div> : (
             <div className="admin-table-wrap admin-reports-table-wrap">
               <table className="admin-post-table admin-reports-table">
-                <thead><tr><th>ID</th><th>Reason</th><th>Reported content</th><th>User</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                <thead><tr><th>ID</th><th>Reason</th><th>Reported item</th><th>Reported content</th><th>User</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody>{visibleReports.map((report) => (
                   <tr key={report.id}>
                     <td className="admin-reports-id">#{report.id}</td>
-                    <td><strong className="admin-reports-reason">{report.reason ? report.reason.charAt(0).toUpperCase() + report.reason.slice(1) : "Community report"}</strong><small className="admin-reports-related">{report.post_title || `Post #${report.post_id}`} · {report.parent === null ? `Comment #${report.comment_id}` : `Reply #${report.comment_id}`}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
-                    <td className="admin-reports-content"><span title={report.content || "No content available."}>{report.content || "No content available."}</span></td>
+                    <td><strong className="admin-reports-reason">{report.reason ? report.reason.charAt(0).toUpperCase() + report.reason.slice(1) : "Community report"}</strong><small className="admin-reports-related">{report.report_type === "post" ? "Post report" : report.report_type === "reply" ? "Reply report" : "Comment report"}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
+                    <td className="admin-reports-target"><strong>{report.report_type === "post" ? "Post" : report.report_type === "reply" ? "Reply" : "Comment"}</strong><span>{report.target_title || report.post_title || "Untitled post"}</span></td><td className="admin-reports-content"><span title={report.content || "No content available."}>{report.content || "No content available."}</span></td>
                     <td><div className="admin-reports-user"><Avatar size="sm" name={report.reporter_name || "Unknown user"} src={report.reporter_avatar?.trim() || undefined} /><span>{report.reporter_name || "Unknown user"}</span></div></td>
                     <td><span className={`admin-status status-${report.status}`}>{report.status}</span></td>
                     <td className="admin-reports-date">{new Date(report.created_at).toLocaleString()}</td>
-                    <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => setPendingAction({ reportId: report.id, status: "reviewed" })}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => setPendingAction({ reportId: report.id, status: "dismissed" })}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>
+                    <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => setPendingAction({ reportId: report.id, type: report.report_type || "comment", status: "reviewed" })}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => setPendingAction({ reportId: report.id, type: report.report_type || "comment", status: "dismissed" })}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>
                   </tr>
                 ))}</tbody>
               </table>
@@ -149,7 +157,7 @@ export default function AdminReportsPage() {
         onCancel={() => { if (busyId === null) setPendingAction(null); }}
         onConfirm={async () => {
           if (!pendingAction) return;
-          const succeeded = await updateReportStatus(pendingAction.reportId, pendingAction.status);
+          const succeeded = await updateReportStatus(pendingAction.reportId, pendingAction.status, pendingAction.type);
           if (succeeded) setPendingAction(null);
         }}
       />

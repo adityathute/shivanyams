@@ -570,3 +570,48 @@
   text-align: center;
 }
 
+
+
+/* Identify the reported object by type and content rather than only its ID. */
+.admin-reports-page table.admin-reports-table { min-width: 1380px; }
+.admin-reports-page table.admin-reports-table th:nth-child(3),
+.admin-reports-page table.admin-reports-table td:nth-child(3) { width: 250px; }
+.admin-reports-page table.admin-reports-table th:nth-child(4),
+.admin-reports-page table.admin-reports-table td:nth-child(4) { width: 230px; }
+.admin-reports-page table.admin-reports-table th:nth-child(5),
+.admin-reports-page table.admin-reports-table td:nth-child(5) { width: 180px; }
+.admin-reports-page table.admin-reports-table th:nth-child(6),
+.admin-reports-page table.admin-reports-table td:nth-child(6) { width: 100px; }
+.admin-reports-page table.admin-reports-table th:nth-child(7),
+.admin-reports-page table.admin-reports-table td:nth-child(7) { width: 145px; }
+.admin-reports-page table.admin-reports-table th:nth-child(8),
+.admin-reports-page table.admin-reports-table td:nth-child(8) { width: 170px; }
+.admin-reports-page .admin-reports-target { vertical-align: top; }
+.admin-reports-page .admin-reports-target strong {
+  display: inline-flex;
+  margin-bottom: 5px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  color: var(--primary, #8b5cf6);
+  background: color-mix(in srgb, var(--primary, #8b5cf6) 9%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+}
+.admin-reports-page .admin-reports-target span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.admin-reports-page table.admin-reports-table th:nth-child(5),
+.admin-reports-page table.admin-reports-table td:nth-child(5),
+.admin-reports-page table.admin-reports-table th:nth-child(6),
+.admin-reports-page table.admin-reports-table td:nth-child(6),
+.admin-reports-page table.admin-reports-table th:nth-child(7),
+.admin-reports-page table.admin-reports-table td:nth-child(7),
+.admin-reports-page table.admin-reports-table th:nth-child(8),
+.admin-reports-page table.admin-reports-table td:nth-child(8) { text-align: center; }

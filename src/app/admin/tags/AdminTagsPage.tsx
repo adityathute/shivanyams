@@ -6,17 +6,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, ConfirmDialog, Modal, RefreshIcon, Select, TagIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
-import { adminFetch, formatCompactNumber } from "../admin-utils";
+import { adminFetch, formatCompactNumber, slugify } from "../admin-utils";
 import "../admin.css";
 import "./tags.css";
 
 type TagRow = { name: string; count: number };
 type TagSort = "popular" | "least" | "az" | "za";
 type TagSortColumn = "name" | "count";
-
-function slugify(value: string) {
-  return value.normalize("NFKD").toLowerCase().trim().replace(/[^\\p{L}\\p{N}]+/gu, "-").replace(/^-|-$/g, "");
-}
 
 export default function AdminTagsPage() {
   const router = useRouter();
@@ -223,8 +219,8 @@ export default function AdminTagsPage() {
               <table className="admin-post-table admin-tags-table">
                 <thead>
                   <tr>
-                    <th>Tag</th>
-                    <th>Posts</th>
+                    <th>{sortHeader("name", "Tag")}</th>
+                    <th>{sortHeader("count", "Posts")}</th>
                     <th>Actions</th>
                   </tr>
                 </thead>

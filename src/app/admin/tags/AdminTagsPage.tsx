@@ -175,7 +175,7 @@ export default function AdminTagsPage() {
             </div>
           </div>
 
-          <div className="admin-tags-filters">
+          <div className="admin-filters admin-tags-filters">
             <input
               type="search"
               value={search}

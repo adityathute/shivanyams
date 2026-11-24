@@ -1033,7 +1033,7 @@ class PostQuestionHelpfulVote(models.Model):
             ),
         ]
         indexes = [
-            models.Index(fields=("question", "created_at")),
+            models.Index(fields=("question", "created_at"), name="portal_pqvote_q_created_idx"),
         ]
 
     def __str__(self):

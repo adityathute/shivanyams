@@ -930,6 +930,11 @@
   flex-wrap: wrap;
   padding-right: 0px;
 }
+.post-editor-translation-heading-description span {
+  color: #344a65;
+    font-size: 12px;
+    font-weight: 750;
+}
 .post-editor-translation-heading > span {
   color: #344a65;
   font-size: 12px;
@@ -1525,6 +1530,8 @@
   gap: 8px;
   width: 100%;
   min-width: 0;
+      padding-right: 24px;
+
 }
 .post-editor-date-label-section > .post-editor-grid {
   grid-template-columns: minmax(0, 1fr);
@@ -1620,6 +1627,7 @@
   width: 100%;
   min-width: 0;
   margin-top: 12px;
+    padding-right: 24px;
 }
 .post-editor-date-description-section > .post-editor-translation-heading {
   display: flex;
@@ -1627,7 +1635,6 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  padding-right: 12px;
   box-sizing: border-box;
 }
 .post-editor-date-description-section > .post-editor-grid {

@@ -1408,7 +1408,7 @@ export default function AdminPage() {
             <div className="admin-toolbar-actions">
               <button
                 type="button"
-                className="admin-refresh-button admin-toolbar-action"
+                className="admin-refresh-button admin-toolbar-action admin-export-button"
                 onClick={exportCsv}
                 aria-label="Export posts as CSV"
                 title="Export CSV"

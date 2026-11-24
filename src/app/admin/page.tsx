@@ -43,7 +43,7 @@ type PostAnalyticsPage = { id: number; title: string; slug: string; views: numbe
 type PostViewEvent = { viewed_at: string; visitor_type: "user" | "anonymous"; full_name: string; visitor_id: string; browser: string; device: string; language: string; referrer_url: string; };
 type SavedPostAnalyticsRow = { post_id: number; post_title: string; post_slug: string; saves: number; users: number; };
 type SubscriberAnalyticsRow = { id: number; full_name: string; email: string; subscribed_at: string; visitor_id?: string; event_type?: "subscribed" | "unsubscribed"; };
-type QuestionAnalyticsRow = { id: number; post: number; post_title: string; post_slug: string; author_name: string; user_auth_id: string; question: string; language: string; answer: string; answer_visibility: "public" | "private" | "hidden"; answered: boolean; created_at: string; answered_at: string | null; };
+type QuestionAnalyticsRow = { id: number; post: number; post_title: string; post_slug: string; author_name: string; user_auth_id: string; question: string; language: string; answer: string; answer_visibility: "public" | "private" | "hidden"; answered: boolean; status: "active" | "deleted"; created_at: string; answered_at: string | null; };
 type SubscriberAnalyticsTotals = { total: number; registered: number; subscriptions: number; resubscriptions: number; unsubscriptions: number };
 type TagAnalyticsTotals = { total: number; used: number; unused: number };
 type ShareAnalyticsEvent = { post_id: number; post__title_en: string; post__slug: string; user_auth_id: string; visitor_id: string; channel: string; created_at: string; user_name: string; visitor_type: "user" | "anonymous"; visitor_label: string };
@@ -293,7 +293,7 @@ export default function AdminPage() {
   const [subscriberRows, setSubscriberRows] = useState<SubscriberAnalyticsRow[]>([]);
   const [questionAnalyticsRows, setQuestionAnalyticsRows] = useState<QuestionAnalyticsRow[]>([]);
   const [questionsAnalyticsPage, setQuestionsAnalyticsPage] = useState(1);
-  const [questionAnalyticsView, setQuestionAnalyticsView] = useState<"all" | "unanswered" | "answered">("all");
+  const [questionAnalyticsView, setQuestionAnalyticsView] = useState<"all" | "unanswered" | "answered" | "deleted">("all");
   const [questionAuthorFilter, setQuestionAuthorFilter] = useState<string | null>(null);
   const [subscriberView, setSubscriberView] = useState<"active" | "registered" | "subscriptions" | "resubscriptions" | "unsubscriptions">("active");
   const [subscribersPage, setSubscribersPage] = useState(1);
@@ -1886,7 +1886,7 @@ export default function AdminPage() {
                            : analyticsType === "subscribers"
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
                            : analyticsType === "questions"
-                             ? <>Questions (<AnimatedNumber value={questionAnalyticsRows.filter((row) => row.status !== "deleted").length} replayKey={refreshKey} />)</>
+                             ? <>Questions (<AnimatedNumber value={questionAnalyticsRows.length} replayKey={refreshKey} />)</>
                            : analyticsType === "tags"
                              ? <>Tags (<AnimatedNumber value={tagTotals.total} replayKey={refreshKey} />)</>
                            : selectedSharePost
@@ -2228,12 +2228,13 @@ export default function AdminPage() {
                   <>
                     <div className="admin-subscribers-summary admin-questions-analytics-summary">
                       <button type="button" className={questionAnalyticsView === "all" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "all"} onClick={() => { setQuestionAnalyticsView("all"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Total questions</span><strong><AnimatedNumber value={questionAnalyticsRows.length} replayKey={refreshKey} /></strong></button>
-                      <button type="button" className={questionAnalyticsView === "unanswered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "unanswered"} onClick={() => { setQuestionAnalyticsView("unanswered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Awaiting answer</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => !item.answered).length} replayKey={refreshKey} /></strong></button>
-                      <button type="button" className={questionAnalyticsView === "answered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "answered"} onClick={() => { setQuestionAnalyticsView("answered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Answered</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => item.answered).length} replayKey={refreshKey} /></strong></button>
+                      <button type="button" className={questionAnalyticsView === "unanswered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "unanswered"} onClick={() => { setQuestionAnalyticsView("unanswered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Awaiting answer</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => item.status !== "deleted" && !item.answered).length} replayKey={refreshKey} /></strong></button>
+                      <button type="button" className={questionAnalyticsView === "answered" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "answered"} onClick={() => { setQuestionAnalyticsView("answered"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Answered</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => item.status !== "deleted" && item.answered).length} replayKey={refreshKey} /></strong></button>
+                      <button type="button" className={questionAnalyticsView === "deleted" ? "is-active" : ""} aria-pressed={questionAnalyticsView === "deleted"} onClick={() => { setQuestionAnalyticsView("deleted"); setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}><span>Deleted</span><strong><AnimatedNumber value={questionAnalyticsRows.filter((item) => item.status === "deleted").length} replayKey={refreshKey} /></strong></button>
                     </div>
                     {questionAuthorFilter ? <div className="admin-reaction-view-toggle"><span>Asked by: {questionAuthorFilter}</span><button type="button" className="admin-reaction-view-button" onClick={() => { setQuestionAuthorFilter(null); setQuestionsAnalyticsPage(1); }}>Clear filter</button></div> : null}
                     {(() => {
-                      const filteredQuestions = questionAnalyticsRows.filter((item) => (questionAnalyticsView === "all" || (questionAnalyticsView === "answered" ? item.answered : !item.answered)) && (!questionAuthorFilter || (item.author_name || "Guest") === questionAuthorFilter));
+                      const filteredQuestions = questionAnalyticsRows.filter((item) => (questionAnalyticsView === "all" ? true : questionAnalyticsView === "deleted" ? item.status === "deleted" : item.status !== "deleted" && (questionAnalyticsView === "answered" ? item.answered : !item.answered)) && (!questionAuthorFilter || (item.author_name || "Guest") === questionAuthorFilter));
                       return filteredQuestions.length === 0 ? <div className="admin-empty">No questions found for this selection.</div> : <>
                     <div className="admin-analytics-table-wrap">
                       <table className="admin-analytics-table admin-likes-analytics-table admin-questions-analytics-table">
@@ -2244,7 +2245,7 @@ export default function AdminPage() {
                             <td className="admin-question-truncate" title={item.post_title || `Post #${item.post}`}><button type="button" className="admin-analytics-link admin-likes-post-link" onClick={() => void openPostEvents({ id: item.post, title: item.post_title || `Post #${item.post}`, slug: item.post_slug || "", views: 0, unique_visitors: 0, last_viewed: null })}>{item.post_title || `Post #${item.post}`}</button></td>
                             <td><button type="button" className="admin-analytics-link admin-likes-user-link" onClick={() => void openQuestionAuthorVisitor(item.user_auth_id)} disabled={!item.user_auth_id} title={item.user_auth_id ? "View visitor details" : "Guest questions are not linked to a browser visitor"}>{item.author_name || "Guest"}</button></td>
                             <td>{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[item.language] || item.language.toUpperCase()}</td>
-                            <td><span className={`admin-status ${item.answered ? "status-approved" : "status-pending"}`}>{item.answered ? "Answered" : "Awaiting answer"}</span></td>
+                            <td><span className={`admin-status ${item.status === "deleted" ? "status-deleted" : item.answered ? "status-approved" : "status-pending"}`}>{item.status === "deleted" ? "Deleted" : item.answered ? "Answered" : "Awaiting answer"}</span></td>
                             <td>{formatAdminDateTime(item.created_at)}</td>
                           </tr>
                         ))}</tbody>

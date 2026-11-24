@@ -296,9 +296,27 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
         >
           <DislikeIcon size={19} />
         </button>
+        <div className="portal-action-share-wrap">
         <button type="button" className="portal-action-share" onClick={() => { if (shareMenuOpen) { setShareMenuOpen(false); void recordShare("dismissed"); } else { setShareMenuOpen(true); } }} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
           <ShareIcon size={19} />
         </button>
+          {shareMenuOpen ? (
+            <div className="portal-share-menu" role="menu" aria-label="Share this post">
+              <button type="button" role="menuitem" onClick={() => void shareTo("copy")} className="portal-share-copy"><CopyIcon size={17} /><span>Copy link</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")} className="portal-share-whatsapp"><WhatsappIcon size={17} /><span>WhatsApp</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("facebook")} className="portal-share-facebook"><FacebookIcon size={17} /><span>Facebook</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("telegram")} className="portal-share-telegram"><TelegramIcon size={17} /><span>Telegram</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("x")} className="portal-share-x"><TwitterIcon size={17} /><span>X/Twitter</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("threads")} className="portal-share-threads"><ThreadsIcon size={17} /><span>Threads</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("instagram")} className="portal-share-instagram"><InstagramIcon size={17} /><span>Instagram</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")} className="portal-share-linkedin"><LinkedInIcon size={17} /><span>LinkedIn</span></button>
+              <button type="button" role="menuitem" onClick={() => void shareTo("email")} className="portal-share-email"><MailIcon size={17} /><span>Email</span></button>
+              {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
+                <button type="button" role="menuitem" onClick={() => void shareTo("native")} className="portal-share-more"><MoreVerticalIcon size={17} /><span>More options</span></button>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
         <button type="button" className={`portal-action-bookmark${saved ? " is-active" : ""}`} onClick={() => void toggleSaved()} title={saved ? "Saved" : "Save"} aria-label={saved ? "Remove saved post" : "Save post"}>
           <BookmarkIcon size={19} />
         </button>
@@ -308,22 +326,6 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
           <ReportIcon size={18} />
           <span>Report</span>
         </button>
-      ) : null}
-      {shareMenuOpen ? (
-        <div className="portal-share-menu" role="menu" aria-label="Share this post">
-          <button type="button" role="menuitem" onClick={() => void shareTo("copy")} className="portal-share-copy"><CopyIcon size={17} /><span>Copy link</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")} className="portal-share-whatsapp"><WhatsappIcon size={17} /><span>WhatsApp</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("facebook")} className="portal-share-facebook"><FacebookIcon size={17} /><span>Facebook</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("telegram")} className="portal-share-telegram"><TelegramIcon size={17} /><span>Telegram</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("x")} className="portal-share-x"><TwitterIcon size={17} /><span>X/Twitter</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("threads")} className="portal-share-threads"><ThreadsIcon size={17} /><span>Threads</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("instagram")} className="portal-share-instagram"><InstagramIcon size={17} /><span>Instagram</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("linkedin")} className="portal-share-linkedin"><LinkedInIcon size={17} /><span>LinkedIn</span></button>
-          <button type="button" role="menuitem" onClick={() => void shareTo("email")} className="portal-share-email"><MailIcon size={17} /><span>Email</span></button>
-          {typeof navigator !== "undefined" && typeof navigator.share === "function" ? (
-            <button type="button" role="menuitem" onClick={() => void shareTo("native")} className="portal-share-more"><MoreVerticalIcon size={17} /><span>More options</span></button>
-          ) : null}
-        </div>
       ) : null}
       {message ? <p className="portal-engagement-message" role="status" aria-live="polite">{message}</p> : null}
     </section>

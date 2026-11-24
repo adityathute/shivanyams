@@ -90,11 +90,13 @@ export default function AdminReportsPage() {
   const filteredReports = useMemo(() => {
     const query = search.trim().toLowerCase();
     return reports.filter((report) => {
-      const matchesStatus = statusFilter === "all" || report.status === statusFilter;
+      const matchesStatus = statusFilter === "all" || String(report.status || "").trim().toLowerCase() === statusFilter;
       const matchesSearch = !query || [
         report.reason, report.details, report.reporter_auth_id, report.post_title,
-        report.author_name, report.content, String(report.id), String(report.comment_id),
-      ].some((value) => String(value || "").toLowerCase().includes(query));
+        report.author_name, report.content, report.status,
+        String(report.id), String(report.comment_id), String(report.post_id),
+        report.parent === null ? "comment" : "reply",
+      ].some((value) => String(value ?? "").trim().toLowerCase().includes(query));
       return matchesStatus && matchesSearch;
     });
   }, [reports, search, statusFilter]);

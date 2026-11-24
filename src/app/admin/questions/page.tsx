@@ -248,9 +248,9 @@ export default function AdminQuestionsPage() {
               <p>{selectedQuestion.question}</p>
             </div>
             <label htmlFor="admin-question-correction">Question (you can correct the wording)</label>
-            <textarea id="admin-question-correction" value={questionDraft} onChange={(event) => setQuestionDraft(event.target.value)} rows={3} maxLength={2000} placeholder="Correct the visitor question..." disabled={saving} />
+            <textarea id="admin-question-correction" value={questionDraft} onChange={(event) => setQuestionDraft(event.target.value)} rows={3} maxLength={500} placeholder="Correct the visitor question..." disabled={saving} />
             <label htmlFor="admin-question-answer">Official answer</label>
-            <textarea id="admin-question-answer" value={answerDraft} onChange={(event) => setAnswerDraft(event.target.value)} rows={5} maxLength={10000} placeholder="Write the official answer..." disabled={saving} />
+            <textarea id="admin-question-answer" value={answerDraft} onChange={(event) => setAnswerDraft(event.target.value)} rows={5} maxLength={2000} placeholder="Write the official answer..." disabled={saving} />
             <div className="admin-questions-visibility-control">
               <label htmlFor="admin-question-visibility">Answer visibility</label>
               <Select
@@ -269,7 +269,7 @@ export default function AdminQuestionsPage() {
             </div>
             {error ? <p className="admin-questions-modal-error" role="alert">{error}</p> : null}
             <div className="admin-questions-modal-footer">
-              <span>{answerDraft.length}/10000</span>
+              <span>{answerDraft.length}/2000</span>
               <div>
                 <button type="button" className="cancel" onClick={() => setSelectedQuestion(null)} disabled={saving}>Cancel</button>
                 <button type="button" className="save" onClick={() => void saveAnswer()} disabled={saving || !questionDraft.trim() || !answerDraft.trim()}>{saving ? "Saving..." : "Save changes"}</button>

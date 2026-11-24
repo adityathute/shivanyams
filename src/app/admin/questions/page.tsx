@@ -22,6 +22,7 @@ type QuestionRow = {
   answer: string;
   answer_visibility: "public" | "private" | "hidden";
   answered: boolean;
+  helpful_count: number;
   created_at: string;
   answered_at: string | null;
 };
@@ -196,7 +197,7 @@ export default function AdminQuestionsPage() {
           ) : (
             <div className="admin-table-wrap admin-questions-table-wrap">
               <table className="admin-post-table admin-questions-table">
-                <thead><tr><th>Question</th><th>Post</th><th>Asked by</th><th>Language</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+                <thead><tr><th>Question</th><th>Post</th><th>Asked by</th><th>Language</th><th>Helpful</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
                 <tbody>
                   {visibleRows.map((row) => (
                     <tr key={row.id}>
@@ -204,6 +205,7 @@ export default function AdminQuestionsPage() {
                       <td className="admin-questions-post"><span title={row.post_title || `Post #${row.post}`}>{row.post_title || `Post #${row.post}`}</span></td>
                       <td>{row.author_name || "Guest"}</td>
                       <td><span className="admin-questions-language">{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[row.language] || row.language.toUpperCase()}</span></td>
+                      <td><span className="admin-questions-helpful-count" title={`${row.helpful_count || 0} helpful votes`}>{formatCompactNumber(row.helpful_count || 0)}</span></td>
                       <td><span className={`admin-status admin-questions-status ${row.answered ? "status-approved" : "status-pending"}`}>{row.answered ? "Answered" : "Awaiting answer"}</span>{row.answered ? <span className={`admin-questions-visibility ${row.answer_visibility === "public" ? "is-public" : row.answer_visibility === "private" ? "is-private" : "is-hidden"}`}>{({ public: "Public", private: "Private", hidden: "Hidden" } as Record<string, string>)[row.answer_visibility || "public"]}</span> : null}</td>
                       <td className="admin-questions-date">{new Date(row.created_at).toLocaleString()}</td>
                       <td><button type="button" className="admin-questions-answer-button" onClick={() => openAnswer(row)}>{row.answered ? "Edit answer" : "Answer"}</button></td>

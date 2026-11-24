@@ -497,25 +497,26 @@
 
 .portal-faq-pending-question {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   cursor: default;
 }
 
-.portal-faq-pending-question > span:first-child {
-  width: 100%;
-  flex: 0 1 auto;
+.portal-faq-pending-question .portal-faq-pending-text {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
 }
 
 .portal-faq-pending-actions {
   display: flex;
-  width: 100%;
+  width: auto;
   min-height: 30px;
   flex: 0 0 auto;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -567,7 +568,13 @@
     padding: 12px 13px;
   }
 
+  .portal-faq-pending-question .portal-faq-pending-text {
+    width: 100%;
+    flex: 0 1 auto;
+  }
+
   .portal-faq-pending-actions {
+    width: 100%;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;

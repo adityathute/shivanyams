@@ -308,12 +308,12 @@
 
 
 /* Footer keeps the four engagement actions together and Report at the far right. */
-.portal-post-engagement-actions.is-footer {
+.portal-post-card-footer .portal-post-engagement-actions.is-footer {
   width: 100%;
   justify-content: space-between;
 }
 
-.portal-post-engagement-actions.is-footer .portal-post-reaction-actions {
+.portal-post-card-footer .portal-post-engagement-actions.is-footer .portal-post-reaction-actions {
   justify-content: flex-start;
 }
 

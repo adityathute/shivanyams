@@ -1428,6 +1428,10 @@ export default function AdminPage() {
                 <span>Refresh</span>
               </button>
               <div className="admin-posts-total" aria-live="polite">
+                <strong>{formatCompactNumber(counts.published)}</strong>
+                <span>Published posts</span>
+              </div>
+              <div className="admin-posts-total" aria-live="polite">
                 <strong>{formatCompactNumber(posts.length)}</strong>
                 <span>Total posts</span>
               </div>

@@ -248,7 +248,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
           className="portal-faq-ask-button"
           onClick={() => {
             if (!user) {
-              openLogin();
+              openLogin(() => {
+                setError("");
+                setSuccess(false);
+                setModalOpen(true);
+              });
               return;
             }
             setError("");

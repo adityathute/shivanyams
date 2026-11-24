@@ -164,7 +164,7 @@ type AdminPost = {
   has_unpublished_changes?: boolean;
   latest_version_number?: number | null;
   published_version_number?: number | null;
-  latest_version_created_at?: string | null;
+  latest_version_updated_at?: string | null;
 };
 
 const CONTENT_KINDS = [
@@ -740,8 +740,8 @@ export default function AdminPage() {
           ? posts.filter((post) => post.status === "pending_review")
           : []
     ).sort((a, b) =>
-      new Date(b.latest_version_created_at || b.updated_at || b.created_at || 0).getTime() -
-      new Date(a.latest_version_created_at || a.updated_at || a.created_at || 0).getTime()
+      new Date(b.latest_version_updated_at || b.updated_at || b.created_at || 0).getTime() -
+      new Date(a.latest_version_updated_at || a.updated_at || a.created_at || 0).getTime()
     ),
     [analyticsType, posts],
   );
@@ -2600,7 +2600,7 @@ export default function AdminPage() {
                                 </span>
                               </td>
                               <td>{post.updated_at ? formatAdminDateTime(post.updated_at) : "—"}</td>
-                              <td>{formatAdminDateTime(post.latest_version_created_at || post.updated_at || post.created_at)}</td>
+                              <td>{formatAdminDateTime(post.latest_version_updated_at || post.updated_at || post.created_at)}</td>
                               <td>
                                 {analyticsType === "edited" ? (
                                   <span className="admin-post-status-stack">

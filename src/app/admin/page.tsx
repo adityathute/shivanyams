@@ -1886,7 +1886,7 @@ export default function AdminPage() {
                            : analyticsType === "subscribers"
                              ? `Subscribers (${formatCompactNumber(subscriberTotals.total)})`
                            : analyticsType === "questions"
-                             ? <>Questions (<AnimatedNumber value={questionAnalyticsRows.length} replayKey={refreshKey} />)</>
+                             ? <>Questions (<AnimatedNumber value={questionAnalyticsRows.filter((row) => row.status !== "deleted").length} replayKey={refreshKey} />)</>
                            : analyticsType === "tags"
                              ? <>Tags (<AnimatedNumber value={tagTotals.total} replayKey={refreshKey} />)</>
                            : selectedSharePost

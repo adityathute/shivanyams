@@ -1363,7 +1363,7 @@
 
 .portal-post-meta-compact {
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   gap: 10px;
   margin: 0;
   font-size: 11px;
@@ -1456,6 +1456,22 @@
 
 .portal-post-card-footer .portal-post-reaction-actions {
   justify-content: flex-start;
+}
+
+.portal-post-header-views {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  min-width: 0;
+  color: var(--text-secondary, #718096);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.portal-post-header-views svg {
+  flex: 0 0 auto;
 }
 
 .portal-post-header-updated {

@@ -3106,3 +3106,24 @@
   justify-content: center;
   gap: 5px;
 }
+
+
+/* Version labels inside status badges in content-status analytics modals. */
+.admin-analytics-modal .admin-content-status-table .admin-status-version {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 5px;
+  font-size: 9px;
+  font-weight: 750;
+  white-space: nowrap;
+  opacity: .88;
+}
+.admin-analytics-modal .admin-content-status-table .admin-status-version-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  flex: 0 0 3px;
+  border-radius: 50%;
+  background: currentColor;
+}

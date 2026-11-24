@@ -104,6 +104,13 @@
 
 
 
+.portal-action-share-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
 .portal-share-menu {
   position: absolute;
   z-index: 35;

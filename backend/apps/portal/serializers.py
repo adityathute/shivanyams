@@ -686,7 +686,9 @@ class PostSerializer(serializers.ModelSerializer):
             prompt = (question.question or "").strip()
             if not prompt or not answer:
                 continue
-            if not question.is_public_answer and (
+            if question.answer_visibility == "hidden":
+                continue
+            if question.answer_visibility == "private" and (
                 not viewer_auth_id or viewer_auth_id != question.user_auth_id
             ):
                 continue

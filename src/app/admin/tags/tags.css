@@ -39,18 +39,30 @@
 .admin-tags-table th:nth-child(2),
 .admin-tags-table td:nth-child(2) {
   width: 130px;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
 }
 
 .admin-tags-table th:last-child,
 .admin-tags-table td:last-child {
   width: 190px;
-  text-align: left;
+  text-align: center;
 }
 
 .admin-tags-table td {
   vertical-align: middle;
+}
+
+.admin-tags-table th:first-child,
+.admin-tags-table td:first-child {
+  text-align: left;
+}
+
+.admin-tags-table th:nth-child(2),
+.admin-tags-table td:nth-child(2),
+.admin-tags-table th:last-child,
+.admin-tags-table td:last-child {
+  text-align: center;
 }
 
 .admin-tag-name {
@@ -68,6 +80,7 @@
 .admin-tag-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -330,8 +343,6 @@
 /* Keep Tags table controls isolated from shared dashboard table styles. */
 .admin-tags-page .admin-tags-table-wrap { overflow-x: auto; }
 .admin-tags-page table.admin-tags-table th { vertical-align: middle; }
-.admin-tags-page .admin-tags-sort { min-height: 24px; }
-.admin-tags-page .admin-tags-sort span { color: var(--primary,#6366f1); font-size: 14px; font-weight: 800; }
 
 
 /* Tags page owns its filter layout; do not inherit shared admin dashboard filters. */

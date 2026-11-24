@@ -1398,6 +1398,10 @@ export default function AdminPage() {
             <div>
               <h2>All Posts</h2>
               <p>View, search, edit and manage every category.</p>
+              <div className="admin-posts-total" aria-live="polite">
+                <strong>{formatCompactNumber(posts.length)}</strong>
+                <span>Total posts</span>
+              </div>
             </div>
             <div className="admin-toolbar-actions">
               <button

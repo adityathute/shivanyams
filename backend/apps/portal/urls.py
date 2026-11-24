@@ -12,12 +12,14 @@ from .views import (
     NewsletterSubscribe,
     PostReports,
     PostComments,
+    PostQuestions,
     PostCommentDetail,
     PostReactions,
     PostCommentReactions,
     PostCommentReports,
     PostShares,
     AdminComments,
+    AdminQuestions,
     AdminPostEngagement,
     TrackPostView,
     AdminPostReview,
@@ -73,6 +75,11 @@ urlpatterns = [
         name="post-comments",
     ),
     path(
+        "content/<int:post_id>/questions/",
+        PostQuestions.as_view(),
+        name="post-questions",
+    ),
+    path(
         "content/<int:post_id>/reactions/",
         PostReactions.as_view(),
         name="post-reactions",
@@ -120,6 +127,7 @@ urlpatterns = [
         name="admin-content-detail",
     ),
     path("admin/comments/", AdminComments.as_view(), name="admin-comments"),
+    path("admin/questions/", AdminQuestions.as_view(), name="admin-questions"),
 
     # Saved posts
     path("saved-posts/", SavedPosts.as_view(), name="saved-posts"),

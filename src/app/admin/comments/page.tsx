@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, ConfirmDialog, DislikeIcon, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, ConfirmDialog, CloseIcon, DislikeIcon, IconButton, LikeIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
@@ -164,7 +164,7 @@ export default function AdminCommentsPage() {
       {replyTarget ? (
         <div className="admin-comments-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && busyId !== replyTarget.id) setReplyTarget(null); }}>
           <section className="admin-comments-reply-modal" role="dialog" aria-modal="true" aria-labelledby="admin-comments-reply-title">
-            <div className="admin-comments-reply-modal-head"><div><span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span><h2 id="admin-comments-reply-title">Reply to comment</h2><p>Respond officially as ShivanyaMS.</p></div><button type="button" aria-label="Close reply dialog" onClick={() => setReplyTarget(null)} disabled={busyId === replyTarget.id}>×</button></div>
+            <div className="admin-comments-reply-modal-head"><div><span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span><h2 id="admin-comments-reply-title">Reply to comment</h2><p>Respond officially as ShivanyaMS.</p></div><IconButton type="button" size="lg" variant="ghost" iconRotateOnHover className="admin-comments-reply-close" onClick={() => setReplyTarget(null)} disabled={busyId === replyTarget.id} aria-label="Close reply dialog" title="Close reply"><CloseIcon /></IconButton></div>
             <div className="admin-comments-reply-context"><strong>{replyTarget.author_name || "Community member"}</strong><p>{replyTarget.content}</p></div>
             <label className="admin-comments-reply-label" htmlFor="admin-comments-reply-input">Your reply</label>
             <textarea id="admin-comments-reply-input" value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} rows={5} maxLength={10000} placeholder="Write an official reply..." autoFocus />

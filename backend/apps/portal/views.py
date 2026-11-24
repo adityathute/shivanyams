@@ -31,6 +31,7 @@ from .models import (
     Post,
     PostDate,
     PostFAQ,
+    PostQuestion,
     PostReaction,
     PostStatusHistory,
     PostVersion,
@@ -98,6 +99,10 @@ def public_posts_for_kind(kind):
         .prefetch_related(
             "important_links",
             Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
+            Prefetch(
+                "questions",
+                queryset=PostQuestion.objects.exclude(answer="").order_by("answered_at", "id"),
+            ),
             Prefetch(
                 "important_dates",
                 queryset=PostDate.objects.order_by("sort_order", "id"),
@@ -828,6 +833,48 @@ def get_comment_author_profile(request):
     return full_name, avatar
 
 
+class PostQuestions(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, post_id):
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        )
+        question_text = str(request.data.get("question", "")).strip()
+        if not question_text:
+            raise ValidationError({"question": "Please enter your question."})
+        if len(question_text) > 2000:
+            raise ValidationError({"question": "A question can contain a maximum of 2000 characters."})
+
+        language = str(request.data.get("language", "en")).strip().lower()
+        if language not in {"en", "mr", "hi"}:
+            language = "en"
+
+        is_authenticated = bool(getattr(request.user, "is_authenticated", False))
+        author_name = get_comment_author_profile(request)[0] if is_authenticated else "Guest"
+        question = PostQuestion.objects.create(
+            post=post,
+            user_auth_id=str(request.user.id) if is_authenticated else "",
+            author_name=author_name or "Member",
+            question=question_text,
+            language=language,
+        )
+        return Response(
+            {
+                "id": question.pk,
+                "post": post.pk,
+                "question": question.question,
+                "language": question.language,
+                "created_at": question.created_at,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
 class PostComments(APIView):
     def get_permissions(self):
         if self.request.method == "POST":
@@ -1294,6 +1341,82 @@ class AdminComments(APIView):
                 status=CommentReport.Status.REVIEWED
             )
         return Response(CommentSerializer(comment, context={"request": request}).data)
+
+
+class AdminQuestions(APIView):
+    permission_classes = [IsPortalAdmin]
+
+    def get(self, request):
+        queryset = PostQuestion.objects.select_related("post").all()
+        question_status = request.query_params.get("status", "all")
+        search = request.query_params.get("search", "").strip()
+
+        if question_status == "answered":
+            queryset = queryset.exclude(answer="")
+        elif question_status == "unanswered":
+            queryset = queryset.filter(answer="")
+
+        if search:
+            queryset = queryset.filter(
+                Q(question__icontains=search)
+                | Q(answer__icontains=search)
+                | Q(author_name__icontains=search)
+                | Q(post__title_en__icontains=search)
+            )
+
+        rows = [
+            {
+                "id": question.pk,
+                "post": question.post_id,
+                "post_title": question.post.title_en,
+                "post_slug": question.post.slug,
+                "author_name": question.author_name or "Guest",
+                "user_auth_id": question.user_auth_id,
+                "question": question.question,
+                "language": question.language,
+                "answer": question.answer,
+                "answered": bool(question.answer.strip()),
+                "created_at": question.created_at,
+                "answered_at": question.answered_at,
+            }
+            for question in queryset.order_by("-created_at")[:500]
+        ]
+        return Response({
+            "total": len(rows),
+            "answered_count": sum(1 for row in rows if row["answered"]),
+            "unanswered_count": sum(1 for row in rows if not row["answered"]),
+            "results": rows,
+        })
+
+    def patch(self, request):
+        question_id = request.data.get("id")
+        answer = str(request.data.get("answer", "")).strip()
+        if not question_id:
+            raise ValidationError({"id": "Question ID is required."})
+        if not answer:
+            raise ValidationError({"answer": "Please enter an answer."})
+        if len(answer) > 10000:
+            raise ValidationError({"answer": "An answer can contain a maximum of 10000 characters."})
+
+        question = get_object_or_404(PostQuestion.objects.select_related("post"), pk=question_id)
+        question.answer = answer
+        question.answered_by_auth_id = str(request.user.id)
+        question.answered_at = timezone.now()
+        question.save(update_fields=[
+            "answer",
+            "answered_by_auth_id",
+            "answered_at",
+            "updated_at",
+        ])
+        return Response({
+            "id": question.pk,
+            "post": question.post_id,
+            "post_title": question.post.title_en,
+            "question": question.question,
+            "answer": question.answer,
+            "answered": True,
+            "answered_at": question.answered_at,
+        })
 
 
 class AdminPostEngagement(APIView):

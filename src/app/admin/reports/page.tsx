@@ -118,7 +118,7 @@ export default function AdminReportsPage() {
                 <tbody>{visibleReports.map((report) => (
                   <tr key={report.id}>
                     <td className="admin-reports-id">#{report.id}</td>
-                    <td><strong className="admin-reports-reason">{report.reason || "Community report"}</strong><small className="admin-reports-related">{report.post_title || `Post #${report.post_id}`} · {report.parent === null ? `Comment #${report.comment_id}` : `Reply #${report.comment_id}`}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
+                    <td><strong className="admin-reports-reason">{report.reason ? report.reason.charAt(0).toUpperCase() + report.reason.slice(1) : "Community report"}</strong><small className="admin-reports-related">{report.post_title || `Post #${report.post_id}`} · {report.parent === null ? `Comment #${report.comment_id}` : `Reply #${report.comment_id}`}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
                     <td className="admin-reports-content"><span>{report.content || "No content available."}</span></td>
                     <td><div className="admin-reports-user"><Avatar size="sm" name={report.reporter_name || "Unknown user"} src={report.reporter_avatar?.trim() || undefined} /><span>{report.reporter_name || "Unknown user"}</span></div></td>
                     <td><span className={`admin-status status-${report.status}`}>{report.status}</span></td>

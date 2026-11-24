@@ -15,6 +15,7 @@ import {
   PlusIcon,
   GlobeIcon,
   MessagesIcon,
+  ReportIcon,
   QuestionMarkCircleIcon,
   TagIcon,
   AnalyticsIcon,
@@ -1255,7 +1256,7 @@ export default function AdminPage() {
               <span>Questions</span>
             </Link>
             <Link href="/admin/reports" className="admin-secondary-button">
-              <MessagesIcon size={16} />
+              <ReportIcon size={16} />
               <span>Reports</span>
             </Link>
             <Link href="/" target="_blank" className="admin-secondary-button">

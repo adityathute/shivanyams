@@ -1437,6 +1437,8 @@ export default function PostEditor({
     if (typeof result.id === "number") {
       postIdRef.current = result.id;
       setPostCreated(true);
+      if (typeof result.slug === "string") currentSlugRef.current = result.slug;
+      if (typeof result.status === "string") setPostStatus(result.status);
       const versionResponse = await adminFetch(`${API_URL}/admin/content/${result.id}/versions/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1445,7 +1447,10 @@ export default function PostEditor({
       const versionResult = await versionResponse.json().catch(() => ({}));
       if (!versionResponse.ok) throw new Error(versionResult.detail || "Post created, but its initial version could not be saved. Retry saving.");
       if (Array.isArray(versionResult.versions)) setPostVersions(versionResult.versions);
-      lastSavedSnapshotRef.current = JSON.stringify(payload);
+      const savedSnapshot = JSON.stringify(payload);
+      lastSavedSnapshotRef.current = savedSnapshot;
+      actionSnapshotRef.current = savedSnapshot;
+      setActionBaselineReady(true);
       setAutosaveState("saved");
       return versionResult as Record<string, unknown>;
     }

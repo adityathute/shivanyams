@@ -1888,7 +1888,7 @@ export default function AdminPage() {
                            : analyticsType === "questions"
                              ? <>Questions (<AnimatedNumber value={questionAnalyticsRows.length} replayKey={refreshKey} />)</>
                            : analyticsType === "tags"
-                             ? `Tags ($<AnimatedNumber value={tagTotals.total} replayKey={refreshKey} />)`
+                             ? <>Tags (<AnimatedNumber value={tagTotals.total} replayKey={refreshKey} />)</>
                            : selectedSharePost
                             ? `${selectedSharePost.title} (${formatCompactNumber(selectedSharePostStats.total)} shares)`
                           : analyticsType === "shares"

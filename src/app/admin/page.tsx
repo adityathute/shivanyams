@@ -1774,6 +1774,8 @@ export default function AdminPage() {
                             ? `Post Views (${formatCompactNumber(counts.views)})`
                             : analyticsType === "drafts"
                             ? `Drafts (${formatCompactNumber(counts.drafts)})`
+                            : analyticsType === "edited"
+                              ? `Edited Posts (${formatCompactNumber(counts.edited)})`
                             : analyticsType === "review"
                               ? `Pending review (${formatCompactNumber(counts.review)})`
                               : analyticsType === "views"
@@ -1818,8 +1820,10 @@ export default function AdminPage() {
                           : analyticsType === "posts"
                             ? "Select a post to inspect its individual views."
                             : analyticsType === "drafts"
-                            ? "Draft posts saved but not yet submitted for review."
-                            : analyticsType === "review"
+                             ? "Draft posts saved but not yet submitted for review."
+                             : analyticsType === "edited"
+                               ? "Published posts with saved changes that have not yet been published."
+                             : analyticsType === "review"
                               ? "Posts waiting for an administrator to review."
                               : analyticsType === "views"
                             ? "Select a page to inspect its individual page views."

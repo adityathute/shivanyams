@@ -419,13 +419,17 @@
 }
 
 .admin-reports-page .admin-reports-content > span {
-  display: block;
+  display: -webkit-box;
   max-width: 100%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
   line-height: 1.5;
   font-size: 11px;
+  cursor: help;
 }
 
 .admin-reports-page table.admin-reports-table th:nth-child(4),

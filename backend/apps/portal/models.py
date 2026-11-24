@@ -988,6 +988,7 @@ class PostQuestion(TimestampedModel):
         default=LanguageChoices.ENGLISH,
     )
     answer = models.TextField(blank=True)
+    is_public_answer = models.BooleanField(default=True, db_index=True)
     answered_by_auth_id = models.CharField(max_length=128, blank=True)
     answered_at = models.DateTimeField(null=True, blank=True)
 

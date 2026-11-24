@@ -3053,3 +3053,21 @@
 .admin-analytics-modal .admin-share-post-table-wrap .admin-shares-table td:nth-child(2) {
   text-align: center !important;
 }
+
+
+/* Admin posts table: center the complete Status column and both stacked badges. */
+.admin-post-table th:nth-child(3),
+.admin-post-table td:nth-child(3) {
+  text-align: center !important;
+  vertical-align: middle;
+}
+.admin-post-table td:nth-child(3) .admin-post-status-stack {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center;
+  gap: 5px;
+  margin-inline: auto;
+  text-align: center !important;
+}

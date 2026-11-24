@@ -133,14 +133,13 @@ export default function AdminCommentsPage() {
           {loadingRows ? <div className="admin-empty">Loading comments...</div> : filteredComments.length === 0 ? <div className="admin-empty">No comments or replies match these filters.</div> : (
             <div className="admin-table-wrap admin-comments-table-wrap">
               <table className="admin-post-table admin-comments-table">
-                <thead><tr><th>ID</th><th>Content</th><th>Author</th><th>Post</th><th>Type</th><th>Status</th><th>Date</th><th>Reactions</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Type</th><th>Content</th><th>Author</th><th>Post</th><th>Status</th><th>Date</th><th>Reactions</th><th>Actions</th></tr></thead>
                 <tbody>{visibleComments.map((comment) => (
                   <tr key={comment.id}>
-                    <td className="admin-comments-id">#{comment.id}</td>
+                    <td><span className={`admin-comments-type ${comment.parent === null ? "is-comment" : "is-reply"}`}>{comment.parent === null ? "Comment" : "Reply"}</span></td>
                     <td className="admin-comments-content"><span title={comment.content || "No content available."}>{comment.content || "No content available."}</span>{replyTarget?.id === comment.id ? <div className="admin-comments-reply-editor"><textarea value={replyDraft} onChange={(event) => setReplyDraft(event.target.value)} rows={3} maxLength={10000} placeholder="Write an official reply..." /><div><button type="button" onClick={() => setReplyTarget(null)}>Cancel</button><button type="button" disabled={!replyDraft.trim() || busyId === comment.id} onClick={() => void sendAdminReply()}>Send reply</button></div></div> : null}</td>
                     <td><div className="admin-comments-author"><Avatar size="sm" name={comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : "Member")} src={comment.author_avatar?.trim() || undefined} /><span>{comment.author_name || (comment.is_admin_reply ? "ShivanyaMS Admin" : `User ${comment.user_auth_id}`)}</span></div></td>
                     <td className="admin-comments-post"><span title={comment.post_title || `Post #${comment.post}`}>{comment.post_title || `Post #${comment.post}`}</span></td>
-                    <td><span className={`admin-comments-type ${comment.parent === null ? "is-comment" : "is-reply"}`}>{comment.parent === null ? "Comment" : `Reply to #${comment.parent}`}</span></td>
                     <td><span className={`admin-status status-${comment.status}`}>{comment.status}</span></td>
                     <td className="admin-comments-date">{new Date(comment.created_at).toLocaleString()}</td>
                     <td className="admin-comments-reactions"><span><LikeIcon size={13} /> {formatCompactNumber(comment.likes_count)}</span><span><DislikeIcon size={13} /> {formatCompactNumber(comment.dislikes_count)}</span></td>

@@ -90,7 +90,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [submittedQuestions, setSubmittedQuestions] = useState<Array<{ id: number; question: string }>>([]);
-  const [helpfulStates, setHelpfulStates] = useState<Record<number, { count: number; voted: boolean; busy?: boolean }>>({});
+  const [helpfulStates, setHelpfulStates] = useState<Record<number, { count: number; voted: boolean; busy?: boolean; feedback?: boolean }>>({});
 
   const locale = language === "mr" || language === "hi" ? language : "en";
   const labels = copy[locale];
@@ -187,7 +187,10 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
       const response = await fetch(getPortalApiUrl("questions/" + questionId + "/helpful/"), { method: "POST", credentials: "include" });
       if (!response.ok) throw new Error("Unable to record vote");
       const payload = await response.json();
-      setHelpfulStates((state) => ({ ...state, [questionId]: { count: Number(payload.helpful_count) || 0, voted: true, busy: false } }));
+      setHelpfulStates((state) => ({ ...state, [questionId]: { count: Number(payload.helpful_count) || 0, voted: true, busy: false, feedback: true } }));
+      window.setTimeout(() => {
+        setHelpfulStates((state) => ({ ...state, [questionId]: { ...state[questionId], feedback: false } }));
+      }, 5000);
     } catch {
       setHelpfulStates((state) => ({ ...state, [questionId]: { count: current?.count || 0, voted: false, busy: false } }));
     }
@@ -295,13 +298,13 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                   onClick={() => setExpandedItems((current) => isExpanded ? current.filter((item) => item !== index) : [...current, index])}
                 >
                   <span className="portal-faq-question-content">
-                    {faq.visibility ? <span className="portal-faq-asked-by">Asked by {askedBy}</span> : null}
+                    {faq.visibility ? <span className="portal-faq-asked-by">Asked by {askedBy}{helpful.count > 0 ? <span className="portal-faq-helpful-summary"> · Helpful {helpful.count}</span> : null}</span> : null}
                     <span className="portal-faq-question-text">{question}</span>
                   </span>
                   <span className="portal-faq-question-side"><span className="portal-faq-chevron" aria-hidden="true" /></span>
                 </button>
                 <div id={answerId} className="portal-faq-answer-panel" aria-hidden={!isExpanded}>
-                  <div className="portal-faq-answer-inner"><p>{answer}</p>{faq.id && faq.id < 0 ? <div className="portal-faq-helpful-row"><button type="button" className={"portal-faq-helpful-button" + (helpful.voted ? " is-voted" : "")} onClick={() => void markHelpful(questionId)} disabled={Boolean(helpful.voted || helpful.busy)} aria-pressed={helpful.voted}><span aria-hidden="true">👍</span><span>{helpful.voted ? labels.markedHelpful : labels.helpful}</span></button><span className="portal-faq-helpful-count">{helpful.count}</span></div> : null}</div>
+                  <div className="portal-faq-answer-inner"><p>{answer}</p>{faq.id && faq.id < 0 ? <div className="portal-faq-helpful-row">{helpful.feedback ? <span className="portal-faq-thank-you" role="status">Thank you for your feedback!</span> : !helpful.voted ? <button type="button" className="portal-faq-helpful-button" onClick={() => void markHelpful(questionId)} disabled={Boolean(helpful.busy)}><span aria-hidden="true">👍</span><span>{labels.helpful}</span></button> : null}</div> : null}</div>
                 </div>
               </div>
             );

@@ -268,7 +268,7 @@ class AdminContent(viewsets.ModelViewSet):
         category = get_content_category(self.kwargs["kind"])
 
         latest_published_number = PostVersion.objects.filter(
-            post_id=OuterRef("pk"), is_published=True
+            post_id=OuterRef(OuterRef("pk")), is_published=True
         ).order_by("-version_number").values("version_number")[:1]
         active_unpublished_revision = PostVersion.objects.filter(
             post_id=OuterRef("pk"),

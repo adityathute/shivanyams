@@ -988,7 +988,17 @@ class PostQuestion(TimestampedModel):
         default=LanguageChoices.ENGLISH,
     )
     answer = models.TextField(blank=True)
-    is_public_answer = models.BooleanField(default=True, db_index=True)
+    class AnswerVisibility(models.TextChoices):
+        PUBLIC = "public", "Public"
+        PRIVATE = "private", "Private"
+        HIDDEN = "hidden", "Don't show anyone"
+
+    answer_visibility = models.CharField(
+        max_length=10,
+        choices=AnswerVisibility.choices,
+        default=AnswerVisibility.PUBLIC,
+        db_index=True,
+    )
     answered_by_auth_id = models.CharField(max_length=128, blank=True)
     answered_at = models.DateTimeField(null=True, blank=True)
 

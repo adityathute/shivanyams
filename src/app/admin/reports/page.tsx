@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
 import "./reports.css";
 
-type Report = { id: number; reporter_auth_id: string; reason: string; details: string; status: string; created_at: string; };
+type Report = { id: number; reporter_auth_id: string; reporter_name?: string; reporter_avatar?: string; reason: string; details: string; status: string; created_at: string; };
 type CommentWithReports = { id: number; post: number; post_title: string; parent: number | null; author_name: string; content: string; reports?: Report[]; };
 type ReportRow = Report & { comment_id: number; post_id: number; post_title: string; parent: number | null; author_name: string; content: string; };
 type SortKey = "id" | "reason" | "content" | "reporter" | "status" | "date";
@@ -114,13 +114,13 @@ export default function AdminReportsPage() {
           {loadingRows ? <div className="admin-empty">Loading reports...</div> : filteredReports.length === 0 ? <div className="admin-empty">No reports match these filters.</div> : (
             <div className="admin-table-wrap admin-reports-table-wrap">
               <table className="admin-post-table admin-reports-table">
-                <thead><tr><th>ID</th><th>Reason</th><th>Reported content</th><th>Reporter</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                <thead><tr><th>ID</th><th>Reason</th><th>Reported content</th><th>User</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                 <tbody>{visibleReports.map((report) => (
                   <tr key={report.id}>
                     <td className="admin-reports-id">#{report.id}</td>
                     <td><strong className="admin-reports-reason">{report.reason || "Community report"}</strong><small className="admin-reports-related">{report.post_title || `Post #${report.post_id}`} · {report.parent === null ? `Comment #${report.comment_id}` : `Reply #${report.comment_id}`}</small>{report.details ? <p className="admin-reports-details">{report.details}</p> : null}</td>
                     <td className="admin-reports-content"><span>{report.content || "No content available."}</span></td>
-                    <td>{report.reporter_auth_id || "Unknown user"}</td>
+                    <td><div className="admin-reports-user"><Avatar size="sm" name={report.reporter_name || (report.reporter_auth_id ? `User ${report.reporter_auth_id}` : "Unknown user")} src={report.reporter_avatar?.trim() || undefined} /><span>{report.reporter_name || (report.reporter_auth_id ? `User ${report.reporter_auth_id}` : "Unknown user")}</span></div></td>
                     <td><span className={`admin-status status-${report.status}`}>{report.status}</span></td>
                     <td className="admin-reports-date">{new Date(report.created_at).toLocaleString()}</td>
                     <td>{report.status === "open" ? <div className="admin-reports-actions"><button type="button" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "reviewed")}>Review</button><button type="button" className="danger" disabled={busyId === report.id} onClick={() => void updateReportStatus(report.id, "dismissed")}>Dismiss</button></div> : <span className="admin-reports-complete">—</span>}</td>

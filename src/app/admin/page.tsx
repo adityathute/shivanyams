@@ -1420,12 +1420,6 @@ export default function AdminPage() {
                       >
                         <span>
                           {item.label}
-                          <small
-                            className="admin-stat-open-indicator"
-                            aria-hidden="true"
-                          >
-                            ↗
-                          </small>
                         </span>
                         <strong>
                           {formatCompactNumber(item.value)}
@@ -1458,7 +1452,6 @@ export default function AdminPage() {
                     >
                       <span>
                         {item.label}
-                        <small className="admin-stat-open-indicator" aria-hidden="true">↗</small>
                       </span>
                       <strong>{formatCompactNumber(item.value)}</strong>
                     </button>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, CloseIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, CloseIcon, QuestionMarkCircleIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "../admin.css";
@@ -158,7 +158,7 @@ export default function AdminQuestionsPage() {
         <section className="admin-post-panel admin-questions-panel">
           <div className="admin-panel-heading admin-questions-panel-heading">
             <div>
-              <h2>Post Questions</h2>
+              <h2><QuestionMarkCircleIcon size={18} /> Post Questions</h2>
               <p>Publish answers to everyone or privately to the person who asked. You can also correct the question.</p>
             </div>
             <div className="admin-questions-totals">

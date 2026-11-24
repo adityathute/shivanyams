@@ -16,6 +16,30 @@ type ReportRow = Report & { comment_id: number | null; post_id: number; post_tit
 type SortKey = "id" | "reason" | "content" | "reporter" | "status" | "date";
 type SortDirection = "asc" | "desc";
 
+
+function AnimatedNumber({ value, replayKey = 0 }: { value: number; replayKey?: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const target = Number.isFinite(value) ? Math.max(0, value) : 0;
+    if (target === 0) { setDisplayValue(0); return; }
+    let frame = 0;
+    let startTime = 0;
+    const duration = 850;
+    setDisplayValue(0);
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setDisplayValue(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [value, replayKey]);
+
+  return <>{formatCompactNumber(displayValue)}</>;
+}
+
 export default function AdminReportsPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -32,13 +56,14 @@ export default function AdminReportsPage() {
   const [pendingAction, setPendingAction] = useState<{ reportId: number; type: "post" | "comment" | "reply"; status: "reviewed" | "dismissed" } | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
+  const [animationKey, setAnimationKey] = useState(0);
 
   const loadReports = useCallback(async () => {
     setLoadingRows(true); setError("");
     try {
       const response = await adminFetch(`${API_URL}/admin/comments/?status=all&include_post_reports=true`, { cache: "no-store" });
       if (!response.ok) { const body = await response.json().catch(() => ({})); throw new Error(body.detail || "Unable to load reports."); }
-      const payload = await response.json(); setComments(Array.isArray(payload) ? payload : []);
+      const payload = await response.json(); setComments(Array.isArray(payload) ? payload : []); setAnimationKey((value) => value + 1);
     } catch (err) { setError(err instanceof Error ? err.message : "Unable to load reports."); }
     finally { setLoadingRows(false); }
   }, []);
@@ -111,10 +136,10 @@ export default function AdminReportsPage() {
           <div className="admin-panel-heading admin-reports-panel-heading">
             <div><h2><ReportIcon size={18} /> Report activity</h2><p>Review report reasons, related discussions, and take action on open reports.</p></div>
             <div className="admin-reports-totals" aria-label={`${reports.length} reports across ${postsWithReports} posts, including ${reportedComments} comments and ${reportedReplies} replies`}>
-              <div className="admin-reports-total"><strong>{formatCompactNumber(reports.length)}</strong><span>Total reports</span></div>
-              <div className="admin-reports-total"><strong>{formatCompactNumber(postsWithReports)}</strong><span>Posts reported</span></div>
-              <div className="admin-reports-total"><strong>{formatCompactNumber(reportedComments)}</strong><span>Comments reported</span></div>
-              <div className="admin-reports-total"><strong>{formatCompactNumber(reportedReplies)}</strong><span>Replies reported</span></div>
+              <div className="admin-reports-total"><strong><AnimatedNumber value={reports.length} replayKey={animationKey} /></strong><span>Total reports</span></div>
+              <div className="admin-reports-total"><strong><AnimatedNumber value={postsWithReports} replayKey={animationKey} /></strong><span>Posts reported</span></div>
+              <div className="admin-reports-total"><strong><AnimatedNumber value={reportedComments} replayKey={animationKey} /></strong><span>Comments reported</span></div>
+              <div className="admin-reports-total"><strong><AnimatedNumber value={reportedReplies} replayKey={animationKey} /></strong><span>Replies reported</span></div>
             </div>
           </div>
           <div className="admin-filters admin-reports-filters">

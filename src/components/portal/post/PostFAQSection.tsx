@@ -150,7 +150,11 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
 
   function ensureQuestionMark(value: string) {
     const clean = value.trim();
-    return clean && !/[?؟]$/.test(clean) ? clean + "?" : clean;
+    if (!clean) return "";
+    const characters = Array.from(clean);
+    characters[0] = characters[0].toLocaleUpperCase(locale);
+    const capitalized = characters.join("");
+    return /[?؟]$/.test(capitalized) ? capitalized : capitalized + "?";
   }
 
   useEffect(() => {

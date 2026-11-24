@@ -163,7 +163,9 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
 
   function ensureQuestionMark(value: string) {
     const capitalized = capitalizeFirstCharacter(value);
-    return capitalized && !/[?؟]$/.test(capitalized) ? capitalized + "?" : capitalized;
+    if (!capitalized || /[?؟]$/.test(capitalized)) return capitalized;
+    // Keep the submitted value within the backend's 500-character limit.
+    return Array.from(capitalized).length < 500 ? capitalized + "?" : capitalized;
   }
 
   useEffect(() => {
@@ -299,10 +301,12 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
             <div className="portal-faq-item portal-faq-pending" key={`pending-${item.id}`}>
               <div className="portal-faq-question portal-faq-pending-question">
                 <span className="portal-faq-pending-text">{ensureQuestionMark(item.question)}</span>
-                <span className="portal-faq-review-status">{labels.underReview}</span>
-                <button type="button" className="portal-faq-delete-button" onClick={() => setDeleteQuestionId(item.id)} aria-label="Delete your question" title="Delete question">
-                  <DeleteIcon size={16} />
-                </button>
+                <div className="portal-faq-pending-actions">
+                  <span className="portal-faq-review-status">{labels.underReview}</span>
+                  <button type="button" className="portal-faq-delete-button" onClick={() => setDeleteQuestionId(item.id)} aria-label="Delete your question" title="Delete question">
+                    <DeleteIcon size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -323,12 +327,18 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
                 <div className="portal-faq-item portal-faq-pending" key={faq.id ?? index}>
                   <div className="portal-faq-question portal-faq-pending-question">
                     <span className="portal-faq-pending-text">{question}</span>
-                    <span className="portal-faq-review-status">{labels.underReview}</span>
                     {faq.is_mine ? (
-                      <button type="button" className="portal-faq-delete-button" onClick={() => setDeleteQuestionId(questionId)} aria-label="Delete your question" title="Delete question">
-                        <DeleteIcon size={16} />
-                      </button>
-                    ) : null}
+                      <div className="portal-faq-pending-actions">
+                        <span className="portal-faq-review-status">{labels.underReview}</span>
+                        <button type="button" className="portal-faq-delete-button" onClick={() => setDeleteQuestionId(questionId)} aria-label="Delete your question" title="Delete question">
+                          <DeleteIcon size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="portal-faq-pending-actions">
+                        <span className="portal-faq-review-status">{labels.underReview}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

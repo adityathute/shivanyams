@@ -115,9 +115,10 @@
   position: absolute;
   z-index: 35;
   top: calc(100% + 10px);
-  right: 0;
+  left: 0;
+  right: auto;
   display: grid;
-  grid-template-columns: repeat(2, minmax(118px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
   width: min(286px, calc(100vw - 28px));
   padding: 9px;
@@ -132,7 +133,7 @@
 .portal-share-menu::before {
   position: absolute;
   top: -5px;
-  right: 19px;
+  left: 19px;
   width: 9px;
   height: 9px;
   border-top: 1px solid var(--border-color, #e2e8f0);
@@ -280,9 +281,8 @@
 
 @media (max-width: 420px) {
   .portal-share-menu {
-    right: auto;
-    left: 0;
-    min-width: min(250px, calc(100vw - 32px));
+    width: min(250px, calc(100vw - 96px));
+    min-width: min(220px, calc(100vw - 96px));
   }
 }
 

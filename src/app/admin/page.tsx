@@ -162,6 +162,8 @@ type AdminPost = {
   users_count?: number;
   is_active?: boolean;
   has_unpublished_changes?: boolean;
+  latest_version_number?: number | null;
+  published_version_number?: number | null;
 };
 
 const CONTENT_KINDS = [
@@ -2596,12 +2598,13 @@ export default function AdminPage() {
                               <td>
                                 {analyticsType === "edited" ? (
                                   <span className="admin-post-status-stack">
-                                    <span className="admin-status status-draft">Edited</span>
-                                    <span className="admin-status status-published">Published</span>
+                                    <span className="admin-status status-draft">Edited <span className="admin-status-version"><span className="admin-status-version-dot" />v{post.latest_version_number ?? "—"}</span></span>
+                                    <span className="admin-status status-published">Published <span className="admin-status-version"><span className="admin-status-version-dot" />v{post.published_version_number ?? "—"}</span></span>
                                   </span>
                                 ) : (
                                   <span className={`admin-status status-${post.status}`}>
                                     {statusLabel(post.status)}
+                                    <span className="admin-status-version"><span className="admin-status-version-dot" />v{post.latest_version_number ?? "—"}</span>
                                   </span>
                                 )}
                               </td>

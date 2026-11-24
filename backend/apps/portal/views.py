@@ -864,6 +864,24 @@ class PostQuestions(APIView):
             for question in questions
         ])
 
+    def delete(self, request, post_id, question_id):
+        post = get_object_or_404(
+            Post,
+            pk=post_id,
+            status=Post.Status.PUBLISHED,
+            published_at__isnull=False,
+            is_active=True,
+        )
+        question = get_object_or_404(
+            PostQuestion,
+            pk=question_id,
+            post=post,
+            user_auth_id=str(request.user.id),
+            answer="",
+        )
+        question.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def post(self, request, post_id):
         post = get_object_or_404(
             Post,

@@ -317,14 +317,40 @@
 }
 
 .admin-tags-panel-heading .admin-tags-total {
+  display: grid;
   flex: 0 0 auto;
-  border-right: 0;
-  border-left: 1px solid #e1e8f2;
-  padding: 5px 0 5px 16px;
+  justify-items: center;
+  align-content: center;
+  min-width: 94px;
+  padding: 9px 12px;
+  border: 0;
+  text-align: center;
+  line-height: 1.2;
 }
 
-[data-theme="dark"] .admin-tags-panel-heading .admin-tags-total {
-  border-left-color: #344154;
+.admin-tags-panel-heading .admin-tags-total strong {
+  color: #263b55;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.admin-tags-panel-heading .admin-tags-total span {
+  color: #718198;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-align: center;
+  text-transform: none;
+}
+
+[data-theme="dark"] .admin-tags-panel-heading .admin-tags-total strong {
+  color: #e2eaf4;
+}
+
+[data-theme="dark"] .admin-tags-panel-heading .admin-tags-total span {
+  color: #9aaabd;
 }
 
 @media (max-width: 620px) {

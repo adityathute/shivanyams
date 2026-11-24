@@ -164,8 +164,7 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
   function ensureQuestionMark(value: string) {
     const capitalized = capitalizeFirstCharacter(value);
     if (!capitalized || /[?؟]$/.test(capitalized)) return capitalized;
-    // Keep the submitted value within the backend's 500-character limit.
-    return Array.from(capitalized).length < 500 ? capitalized + "?" : capitalized;
+    return capitalized + "?";
   }
 
   useEffect(() => {

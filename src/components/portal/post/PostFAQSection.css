@@ -425,3 +425,61 @@
     flex: 1;
   }
 }
+
+ 
+.portal-faq-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 154px;
+  padding: 22px 16px;
+  border: 1px dashed var(--border-color, #dce3ed);
+  border-radius: 12px;
+  background: var(--surface-muted, #f8fafc);
+  text-align: center;
+}
+
+.portal-faq-empty-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  margin-bottom: 3px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary, #3973c8) 10%, transparent);
+  color: var(--primary, #3973c8);
+}
+
+.portal-faq-empty-state h3 {
+  margin: 0;
+  color: var(--text-primary, #172033);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.portal-faq-empty-state p {
+  margin: 0;
+  color: var(--text-secondary, #596579);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+:root[data-theme="dark"] .portal-faq-empty-state {
+  border-color: var(--border-color, #303746);
+  background: var(--surface-muted, #1d2431);
+}
+
+:root[data-theme="dark"] .portal-faq-empty-icon {
+  color: #a9caff;
+  background: color-mix(in srgb, #93baff 10%, transparent);
+}
+
+:root[data-theme="dark"] .portal-faq-empty-state h3 {
+  color: var(--text-primary, #f8fafc);
+}
+
+:root[data-theme="dark"] .portal-faq-empty-state p {
+  color: var(--text-secondary, #cbd5e1);
+}

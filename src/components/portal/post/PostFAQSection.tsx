@@ -92,6 +92,38 @@ export function PostFAQSection({ postId, faqs, language }: Props) {
   const labels = copy[locale];
 
   useEffect(() => {
+    if (!user) {
+      setSubmittedQuestions([]);
+      return;
+    }
+
+    let cancelled = false;
+    async function loadMyPendingQuestions() {
+      try {
+        const response = await authenticatedFetch(
+          getPortalApiUrl(`content/${postId}/questions/`),
+          { cache: "no-store" },
+        );
+        if (!response.ok) return;
+        const payload = await response.json().catch(() => []);
+        if (!cancelled && Array.isArray(payload)) {
+          setSubmittedQuestions(payload.map((item: { id: number; question: string }) => ({
+            id: Number(item.id),
+            question: String(item.question || ""),
+          })));
+        }
+      } catch {
+        // Keep the locally submitted question visible if the refresh request fails.
+      }
+    }
+
+    void loadMyPendingQuestions();
+    return () => {
+      cancelled = true;
+    };
+  }, [postId, user?.id]);
+
+  useEffect(() => {
     if (!modalOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !submitting) setModalOpen(false);

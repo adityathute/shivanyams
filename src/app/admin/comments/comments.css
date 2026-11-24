@@ -352,3 +352,35 @@
     font-size: .62rem;
   }
 }
+
+
+/* Summary breakdowns for comments, replies, and reports */
+.admin-comments-total small {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .64rem;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+.admin-reports-totals {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 9px;
+}
+
+@media (max-width: 760px) {
+  .admin-comments-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-comments-totals {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .admin-reports-totals .admin-comments-total {
+    min-width: 92px;
+  }
+}

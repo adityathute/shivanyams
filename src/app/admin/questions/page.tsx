@@ -20,7 +20,7 @@ type QuestionRow = {
   question: string;
   language: string;
   answer: string;
-  is_public_answer: boolean;
+  answer_visibility: "public" | "private" | "hidden";
   answered: boolean;
   created_at: string;
   answered_at: string | null;
@@ -41,7 +41,7 @@ export default function AdminQuestionsPage() {
   const [selectedQuestion, setSelectedQuestion] = useState<QuestionRow | null>(null);
   const [questionDraft, setQuestionDraft] = useState("");
   const [answerDraft, setAnswerDraft] = useState("");
-  const [isPublicAnswer, setIsPublicAnswer] = useState(true);
+  const [answerVisibility, setAnswerVisibility] = useState<"public" | "private" | "hidden">("public");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -102,7 +102,7 @@ export default function AdminQuestionsPage() {
     setSelectedQuestion(row);
     setQuestionDraft(row.question || "");
     setAnswerDraft(row.answer || "");
-    setIsPublicAnswer(row.is_public_answer !== false);
+    setAnswerVisibility(row.answer_visibility || "public");
     setError("");
   }
 
@@ -118,7 +118,7 @@ export default function AdminQuestionsPage() {
           id: selectedQuestion.id,
           question: questionDraft.trim(),
           answer: answerDraft.trim(),
-          is_public_answer: isPublicAnswer,
+          answer_visibility: answerVisibility,
         }),
       });
       if (!response.ok) {
@@ -204,7 +204,7 @@ export default function AdminQuestionsPage() {
                       <td className="admin-questions-post"><span title={row.post_title || `Post #${row.post}`}>{row.post_title || `Post #${row.post}`}</span></td>
                       <td>{row.author_name || "Guest"}</td>
                       <td><span className="admin-questions-language">{({ en: "English", mr: "Marathi", hi: "Hindi" } as Record<string, string>)[row.language] || row.language.toUpperCase()}</span></td>
-                      <td><span className={`admin-status admin-questions-status ${row.answered ? "status-approved" : "status-pending"}`}>{row.answered ? "Answered" : "Awaiting answer"}</span>{row.answered ? <span className={`admin-questions-visibility ${row.is_public_answer ? "is-public" : "is-private"}`}>{row.is_public_answer ? "Public" : "Private"}</span> : null}</td>
+                      <td><span className={`admin-status admin-questions-status ${row.answered ? "status-approved" : "status-pending"}`}>{row.answered ? "Answered" : "Awaiting answer"}</span>{row.answered ? <span className={`admin-questions-visibility ${row.answer_visibility === "public" ? "is-public" : row.answer_visibility === "private" ? "is-private" : "is-hidden"}`}>{({ public: "Public", private: "Private", hidden: "Hidden" } as Record<string, string>)[row.answer_visibility || "public"]}</span> : null}</td>
                       <td className="admin-questions-date">{new Date(row.created_at).toLocaleString()}</td>
                       <td><button type="button" className="admin-questions-answer-button" onClick={() => openAnswer(row)}>{row.answered ? "Edit answer" : "Answer"}</button></td>
                     </tr>
@@ -255,14 +255,15 @@ export default function AdminQuestionsPage() {
               <label htmlFor="admin-question-visibility">Answer visibility</label>
               <select
                 id="admin-question-visibility"
-                value={isPublicAnswer ? "public" : "private"}
-                onChange={(event) => setIsPublicAnswer(event.target.value === "public")}
-                disabled={saving || (!selectedQuestion.user_auth_id && !selectedQuestion.is_public_answer)}
+                value={answerVisibility}
+                onChange={(event) => setAnswerVisibility(event.target.value as "public" | "private" | "hidden")}
+                disabled={saving}
               >
                 <option value="public">Public — show in this post's FAQ for everyone</option>
                 <option value="private" disabled={!selectedQuestion.user_auth_id}>Private — show only to the person who asked</option>
+                <option value="hidden">Don't show anyone — keep it in Admin only</option>
               </select>
-              {!selectedQuestion.user_auth_id ? <small>This question was submitted as a guest, so its answer can only be public.</small> : null}
+              {!selectedQuestion.user_auth_id ? <small>This question was submitted as a guest, so a private answer is unavailable. You can still publish it publicly or keep it hidden from everyone.</small> : null}
             </div>
             {error ? <p className="admin-questions-modal-error" role="alert">{error}</p> : null}
             <div className="admin-questions-modal-footer">

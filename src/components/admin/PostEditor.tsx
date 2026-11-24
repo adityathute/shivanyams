@@ -700,17 +700,15 @@ export default function PostEditor({
         let record = payload as PostRecord;
         postIdRef.current = record.id;
         currentSlugRef.current = record.slug;
-        if (record.status === "published") {
-          const versionsResponse = await adminFetch(`${API_URL}/admin/content/${record.id}/versions/`, { signal: controller.signal });
-          if (versionsResponse.ok) {
-            const versions = await versionsResponse.json() as PostVersionInfo[];
-            setPostVersions(versions);
-            const publishedVersionNumber = Math.max(0, ...versions.filter((version) => version.is_published).map((version) => version.version_number));
-            const workingVersion = versions.find((version) => !version.is_published && version.version_number > publishedVersionNumber && version.payload);
-            if (workingVersion?.payload) {
-              // Open the unpublished working copy in the editor, while the public post remains unchanged.
-              record = { ...record, ...workingVersion.payload, id: record.id, status: "published", slug: record.slug };
-            }
+        const versionsResponse = await adminFetch(`${API_URL}/admin/content/${record.id}/versions/`, { signal: controller.signal });
+        if (versionsResponse.ok) {
+          const versions = await versionsResponse.json() as PostVersionInfo[];
+          setPostVersions(versions);
+          const publishedVersionNumber = Math.max(0, ...versions.filter((version) => version.is_published).map((version) => version.version_number));
+          const workingVersion = versions.find((version) => !version.is_published && version.version_number > publishedVersionNumber && version.payload);
+          if (record.status === "published" && workingVersion?.payload) {
+            // Open the unpublished working copy in the editor, while the public post remains unchanged.
+            record = { ...record, ...workingVersion.payload, id: record.id, status: "published", slug: record.slug };
           }
         }
         setPostStatus(record.status || "draft");
@@ -1377,12 +1375,12 @@ export default function PostEditor({
 
   async function persistPost() {
     if (!activeCategory) throw new Error("The selected category is not active in the backend.");
-    if (editing && postStatus === "published" && postIdRef.current) {
+    if (postIdRef.current) {
       const response = await adminFetch(`${API_URL}/admin/content/${postIdRef.current}/versions/`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.detail || "Unable to save unpublished version.");
+      if (!response.ok) throw new Error(result.detail || "Unable to save post version.");
       if (Array.isArray(result.versions)) setPostVersions(result.versions);
       lastSavedSnapshotRef.current = JSON.stringify(payload);
       setAutosaveState("saved");
@@ -1439,6 +1437,17 @@ export default function PostEditor({
     if (typeof result.id === "number") {
       postIdRef.current = result.id;
       setPostCreated(true);
+      const versionResponse = await adminFetch(`${API_URL}/admin/content/${result.id}/versions/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const versionResult = await versionResponse.json().catch(() => ({}));
+      if (!versionResponse.ok) throw new Error(versionResult.detail || "Post created, but its initial version could not be saved. Retry saving.");
+      if (Array.isArray(versionResult.versions)) setPostVersions(versionResult.versions);
+      lastSavedSnapshotRef.current = JSON.stringify(payload);
+      setAutosaveState("saved");
+      return versionResult as Record<string, unknown>;
     }
     if (typeof result.slug === "string") currentSlugRef.current = result.slug;
     if (typeof result.status === "string") setPostStatus(result.status);
@@ -1514,8 +1523,7 @@ export default function PostEditor({
           : {};
       const postId = postIdRef.current;
       if (!postId) throw new Error("The post has not been saved yet.");
-      if (editing && postStatus === "published") {
-        if (status === "draft") { router.push("/admin"); return; }
+      if (status === "published") {
         const savedVersionId = typeof savedResult.id === "number" ? savedResult.id : null;
         const pendingVersionId = savedVersionId
           || postVersions.find((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number)))?.id;
@@ -1580,8 +1588,12 @@ export default function PostEditor({
           <div className="post-editor-header-actions">
             {(editing || postCreated) && (postStatus === "draft" || postStatus === "reviewed") && <span className="post-editor-status-badge post-editor-status-badge--unpublished">Unpublished</span>}
             {(editing || postCreated) && <span className={`post-editor-status-badge post-editor-status-badge--${postStatus.toLowerCase().replaceAll("_", "-")}`}>{postStatus === "published" ? <>Published{postVersions.some((item) => item.is_published) && <> · v{Math.max(...postVersions.filter((item) => item.is_published).map((item) => item.version_number))}</>}</> : postStatus.replaceAll("_", " ")}</span>}
-            {editing && postStatus === "published" && <div className="post-editor-publication-status">
-              {postVersions.some((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number))) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number))).map((item) => item.version_number))}</span>}
+            {(editing || postCreated) && postVersions.length > 0 && <div className="post-editor-publication-status">
+              {postStatus === "published" ? (
+                postVersions.some((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number))) && <span className="post-editor-unpublished-version">Unpublished changes · v{Math.max(...postVersions.filter((item) => !item.is_published && item.version_number > Math.max(0, ...postVersions.filter((version) => version.is_published).map((version) => version.version_number))).map((item) => item.version_number))}</span>
+              ) : (
+                <span className="post-editor-unpublished-version">Draft · v{Math.max(...postVersions.map((item) => item.version_number))}</span>
+              )}
               <details className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
             </div>}
             <div className="post-editor-save-status" aria-live="polite">

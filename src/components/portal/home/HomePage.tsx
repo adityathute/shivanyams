@@ -33,14 +33,21 @@ export function HomePage() {
 
   useEffect(() => {
     const tabletQuery = window.matchMedia("(min-width: 761px) and (max-width: 1100px)");
+    const ultraWideQuery = window.matchMedia("(min-width: 1920px)");
     const updateVisibleCount = () => {
-      setVisibleTickerCount(tabletQuery.matches ? 4 : 6);
+      setVisibleTickerCount(
+        tabletQuery.matches ? 4 : ultraWideQuery.matches ? 8 : 6,
+      );
       setTickerIndex(0);
     };
 
     updateVisibleCount();
     tabletQuery.addEventListener("change", updateVisibleCount);
-    return () => tabletQuery.removeEventListener("change", updateVisibleCount);
+    ultraWideQuery.addEventListener("change", updateVisibleCount);
+    return () => {
+      tabletQuery.removeEventListener("change", updateVisibleCount);
+      ultraWideQuery.removeEventListener("change", updateVisibleCount);
+    };
   }, []);
 
   const getPostTitle = (item: Item): string => {
@@ -114,7 +121,7 @@ export function HomePage() {
                 );
             }
             ) : data.loading ? (
-              Array.from({ length: 6 }, (_, index) => (
+              Array.from({ length: visibleTickerCount }, (_, index) => (
                 <span
                   key={`ticker-skeleton-${index}`}
                   className="ticker-item ticker-skeleton"

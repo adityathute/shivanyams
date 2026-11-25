@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
   createContext,
   useContext,
@@ -826,6 +827,7 @@ function writePortalDataCache(data: PortalData) {
 }
 
 export function PortalDataProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [data, setData] = useState<PortalData>(emptyData);
 
   useEffect(() => {
@@ -874,7 +876,7 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [pathname]);
 
   async function refresh() {
     const controller = new AbortController();

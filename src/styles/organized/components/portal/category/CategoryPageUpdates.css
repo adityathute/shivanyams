@@ -5,8 +5,9 @@
   min-width: 0;
 }
 
-/* Marathi labels are visually shorter; keep the homepage badge column compact. */
-.updates-panel-language-mr .update-row {
+/* Marathi and Hindi labels use a compact homepage badge column. */
+.updates-panel-language-mr .update-row,
+.updates-panel-language-hi .update-row {
   grid-template-columns: 106px minmax(0, 1fr) 100px 42px;
 }
 
@@ -94,7 +95,8 @@
     gap: 8px;
   }
 
-  .updates-panel-language-mr .update-row {
+  .updates-panel-language-mr .update-row,
+  .updates-panel-language-hi .update-row {
     grid-template-columns: 98px minmax(0, 1fr) 78px 35px;
   }
 

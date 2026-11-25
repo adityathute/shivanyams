@@ -517,6 +517,16 @@ class VideoDetailsSerializer(serializers.ModelSerializer):
 
 
 class ToolDetailsSerializer(serializers.ModelSerializer):
+    tool_key = serializers.SlugField(
+        max_length=120,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
+
+    def validate_tool_key(self, value):
+        return value or None
+
     class Meta:
         model = ToolDetails
         exclude = ("id", "post", "created_at", "updated_at")

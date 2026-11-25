@@ -5,7 +5,7 @@ import {
   AccountModal,
   type AccountView,
 } from "shivanya-auth";
-import { SearchIcon } from "shivanya-ui";
+import { CloseIcon, SearchIcon } from "shivanya-ui";
 
 import { LanguageDropdown } from "../../language/LanguageDropdown";
 import { PortalUserDropdown } from "./PortalUserDropdown";
@@ -37,7 +37,7 @@ export function PortalHeader() {
 
       <div className="portal-shell-actions portal-header-search-actions">
         <button ref={searchToggleRef} type="button" className="portal-topbar-search-toggle" aria-label={searchOpen ? "Close search" : "Search"} aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>
-          {searchOpen ? <span className="portal-search-close-icon" aria-hidden="true">×</span> : <SearchIcon size={17} aria-hidden="true" />}
+          {searchOpen ? <CloseIcon size={17} aria-hidden="true" /> : <SearchIcon size={17} aria-hidden="true" />}
         </button>
         <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={(event) => event.preventDefault()}>
           <SearchIcon size={17} aria-hidden="true" />

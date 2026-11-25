@@ -926,7 +926,7 @@
   color: var(--shivanya-color-text-primary, #e6edf3);
 }
 
-[data-theme="dark] .portal-topbar-search-mobile-panel::before {
+[data-theme="dark"] .portal-topbar-search-mobile-panel::before {
   background: rgba(15, 23, 32, 0.28);
   border-bottom-color: rgba(148, 163, 184, 0.22);
 }

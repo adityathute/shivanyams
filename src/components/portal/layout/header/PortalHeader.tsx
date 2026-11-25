@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   AccountModal,
   type AccountView,
@@ -14,6 +15,7 @@ import "../PortalShell.css";
 
 export function PortalHeader() {
   const { openLogin, openRegister } = usePortalAuth();
+  const pathname = usePathname();
   const [accountView, setAccountView] = useState<AccountView | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -36,6 +38,32 @@ export function PortalHeader() {
     }, 50);
 
     return () => window.clearTimeout(focusTimer);
+  }, [searchOpen]);
+
+  // Close the mobile search when navigation changes the current page.
+  useEffect(() => {
+    setSearchOpen(false);
+  }, [pathname]);
+
+  // Close it when another button is used (for example, the menu, language,
+  // or account controls), but do not close it for ordinary outside clicks.
+  useEffect(() => {
+    if (!searchOpen) return;
+
+    const handleOtherButtonClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const button = target.closest("button");
+      if (!button) return;
+      if (searchToggleRef.current?.contains(button)) return;
+      if (searchPanelRef.current?.contains(button)) return;
+
+      setSearchOpen(false);
+    };
+
+    document.addEventListener("click", handleOtherButtonClick);
+    return () => document.removeEventListener("click", handleOtherButtonClick);
   }, [searchOpen]);
 
   return (

@@ -99,10 +99,20 @@ export function HomePage() {
                     </span>
                   </a>
                 );
-            }) : (
-              <span className="ticker-empty-state">
-                {data.loading ? "Loading updates..." : "No updates available"}
-              </span>
+            }
+            ) : data.loading ? (
+              Array.from({ length: 6 }, (_, index) => (
+                <span
+                  key={`ticker-skeleton-${index}`}
+                  className="ticker-item ticker-skeleton"
+                  aria-hidden="true"
+                >
+                  <span className="ticker-skeleton-icon" />
+                  <span className="ticker-skeleton-title" />
+                </span>
+              ))
+            ) : (
+              <span className="ticker-empty-state">No updates available</span>
             )}
           </div>
         </div>

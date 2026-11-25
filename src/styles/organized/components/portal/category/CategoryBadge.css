@@ -38,6 +38,10 @@
   flex: 0 0 auto;
 }
 
+.update-row > .portal-post-category-badge {
+  justify-self: start;
+}
+
 .portal-post-category-badge > span:last-child {
   min-width: 0;
   overflow: hidden;

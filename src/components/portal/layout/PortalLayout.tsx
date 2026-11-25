@@ -128,7 +128,7 @@ function PortalShell({ children }: { children: ReactNode }) {
     <DashboardShell
       branding={{
         name: "ShivanyaMS",
-        subtitle: "Govt Jobs, Schemes & Updates",
+        subtitle: "Public Updates",
         src: "/logo.png",
         alt: "ShivanyaMS",
         href: "/",

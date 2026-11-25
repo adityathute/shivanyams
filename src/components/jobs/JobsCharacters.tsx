@@ -18,6 +18,8 @@ export function JobsCharacters() {
         width={1728}
         height={832}
         priority
+        unoptimized
+        decoding="sync"
         className="jobs-characters-image"
       />
 

@@ -76,7 +76,6 @@ export function LanguageDropdown() {
             aria-label={`Language: ${selectedLanguage.label}`}
           >
             <span>{selectedLanguage.short}</span>
-            <span className="language-menu-trigger-arrow" aria-hidden="true" />
           </Dropdown.Trigger>
 
           <Dropdown.Content className="language-menu-content">

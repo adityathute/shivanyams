@@ -11,7 +11,7 @@ import { CloseIcon, SearchIcon } from "shivanya-ui";
 import { LanguageDropdown } from "../../language/LanguageDropdown";
 import { PortalUserDropdown } from "./PortalUserDropdown";
 import { usePortalAuth } from "../../context/PortalAuthContext";
-import "../PortalShell.css";
+import "../../../../styles/legacy/components/portal/layout/PortalShell.css";
 
 export function PortalHeader() {
   const { openLogin, openRegister } = usePortalAuth();

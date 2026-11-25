@@ -18,6 +18,8 @@ export function ResultsCharacters() {
         width={1536}
         height={1024}
         priority
+        unoptimized
+        decoding="sync"
         className="results-characters-image"
       />
 

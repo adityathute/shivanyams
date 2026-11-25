@@ -116,7 +116,7 @@ function formatPostHeaderDate(value: string, language: string) {
     ? ""
     : date.toLocaleDateString(locale, {
         day: "numeric",
-        month: "short",
+        month: "long",
         year: "numeric",
       });
 }
@@ -835,7 +835,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       ) : null}
                       <div className="portal-post-header-views">
                         <span>{formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)}</span>
-                        <span>{getDetailLabel("views", language)}</span>
+                        <span>views</span>
                       </div>
                     </div>
                   </div>

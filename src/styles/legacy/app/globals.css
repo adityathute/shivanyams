@@ -1,32 +1,31 @@
 /*
- * Legacy global reset.
+ * Existing global reset.
  *
- * Scoped to legacy mode so organized mode can be evaluated without legacy
- * global selectors leaking into the page.
+ * Kept active in both CSS modes while organized styles are introduced
+ * incrementally. This prevents switching the mode from changing the app
+ * before an organized replacement is ready.
  */
-@scope (html[data-css-mode="legacy"]) {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
 
-  html,
-  body {
-    width: 100%;
-    min-height: 100%;
-  }
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
 
-  body {
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+a {
+  color: inherit;
+  text-decoration: none;
 }

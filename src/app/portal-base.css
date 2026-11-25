@@ -1,3 +1,35 @@
+@font-face {
+  font-family: "Hind";
+  src: url("/fonts/Hind-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hind";
+  src: url("/fonts/Hind-Medium.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hind";
+  src: url("/fonts/Hind-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hind";
+  src: url("/fonts/Hind-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+}
+
 :root {
   --blue: #075be8;
   --primary: #075be8;

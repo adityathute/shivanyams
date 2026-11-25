@@ -1474,7 +1474,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
           </div>
 
         </div>
-        <div className="portal-post-category-grid">
+        <div className="portal portal-post-category-grid">
           <CategoryGrid language={language as CategoryLanguage} />
         </div>
       </main>

@@ -1,6 +1,6 @@
 "use client";
 
-import "./SiteMobileFooter.css";
+import "./../../../../styles/legacy/components/portal/layout/footer/SiteMobileFooter.css";
 
 export default function SiteMobileFooter() {
   return (

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
-import "./saved/SavedPostsPage.css";
+import "./../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 
 const organizationLabels: Record<string, Record<string, string>> = {
   central: { en: "Central Government", mr: "केंद्र सरकार", hi: "केंद्र सरकार" },

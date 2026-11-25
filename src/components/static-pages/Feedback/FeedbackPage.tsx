@@ -19,8 +19,8 @@ import {
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 
-import "../Contact/ContactPage.css";
-import "./FeedbackPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/Feedback/FeedbackPage.css";
 
 type FeedbackOptionKey =
   | "categoryGeneral"

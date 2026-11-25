@@ -5,7 +5,7 @@ import {
   ResultIcon,
 } from "shivanya-ui";
 
-import "./ResultsCharacters.css";
+import "./../../styles/legacy/components/results/ResultsCharacters.css";
 
 export function ResultsCharacters() {
   return (

@@ -1,8 +1,8 @@
 
 "use client";
 
-import "../portal/home/UpdatesSection.css";
-import "./ToolsPage.css";
+import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
+import "./../../styles/legacy/components/tools/ToolsPage.css";
 
 import { useMemo, useState } from "react";
 import { usePortalData } from "../portal/data/portal-data";

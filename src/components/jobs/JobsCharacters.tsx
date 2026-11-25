@@ -5,7 +5,7 @@ import Image from "next/image";
 import {
   GovernmentJobIcon,
 } from "shivanya-ui";
-import "./JobsCharacters.css";
+import "./../../styles/legacy/components/jobs/JobsCharacters.css";
 
 export function JobsCharacters() {
   return (

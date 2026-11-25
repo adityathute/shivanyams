@@ -1,6 +1,6 @@
 "use client";
 
-import "./PortalClock.css";
+import "./../../../styles/legacy/components/animation/Clock/PortalClock.css";
 
 import { useEffect, useState } from "react";
 import { usePortalLanguage } from "../../portal/context/PortalLanguageContext";

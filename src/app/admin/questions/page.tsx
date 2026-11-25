@@ -7,8 +7,8 @@ import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, CloseIcon, QuestionMarkCircleIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
-import "../admin.css";
-import "./questions.css";
+import "./../../../styles/legacy/app/admin/admin.css";
+import "./../../../styles/legacy/app/admin/questions/questions.css";
 
 type QuestionRow = {
   id: number;

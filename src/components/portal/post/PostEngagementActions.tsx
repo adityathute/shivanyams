@@ -8,7 +8,7 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
-import "./PostEngagementActions.css";
+import "./../../../styles/legacy/components/portal/post/PostEngagementActions.css";
 
 type Props = {
   postId: number;

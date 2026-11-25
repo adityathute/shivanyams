@@ -19,8 +19,8 @@ import {
 } from "shivanya-ui";
 import { API_URL } from "../../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../../admin-utils";
-import "../../admin.css";
-import "./engagement.css";
+import "./../../../../styles/legacy/app/admin/admin.css";
+import "./../../../../styles/legacy/app/admin/engagement/[postId]/engagement.css";
 
 type DetailRow = Record<string, unknown>;
 type EngagementPayload = {

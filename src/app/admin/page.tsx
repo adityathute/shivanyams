@@ -29,7 +29,7 @@ import {
 import { adminFetch, formatCompactNumber } from "./admin-utils";
 import type { Category } from "../../components/portal/category/CategoryGrid";
 
-import "./admin.css";
+import "./../../styles/legacy/app/admin/admin.css";
 
 type PaginatedPosts = { results?: AdminPost[]; next?: string | null };
 

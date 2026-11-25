@@ -7,8 +7,8 @@ import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, Avatar, ConfirmDialog, CloseIcon, DislikeIcon, IconButton, LikeIcon, MessagesIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
-import "../admin.css";
-import "./comments.css";
+import "./../../../styles/legacy/app/admin/admin.css";
+import "./../../../styles/legacy/app/admin/comments/comments.css";
 
 type CommentRow = {
   id: number; post: number; post_title: string; parent: number | null;

@@ -1,7 +1,7 @@
 "use client";
 
-import "../portal/home/UpdatesSection.css";
-import "./AdmitCardsPage.css";
+import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
+import "./../../styles/legacy/components/admitCard/AdmitCardsPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";

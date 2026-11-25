@@ -1,6 +1,6 @@
 "use client";
 
-import "./PortalShell.css";
+import "./../../../styles/legacy/components/portal/layout/PortalShell.css";
 
 import { type ReactNode, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";

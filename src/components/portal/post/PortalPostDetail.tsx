@@ -7,7 +7,7 @@ import { usePortalData, type ImportantDate, type Item, type PostFAQ } from "../d
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { PortalFooter } from "../layout/footer/PortalFooter";
 import { PortalContentNotFound } from "./PortalContentNotFound";
-import "./PortalPostDetail.css";
+import "./../../../styles/legacy/components/portal/post/PortalPostDetail.css";
 import {
   CategoryGrid,
   getPortalApiUrl,
@@ -25,7 +25,7 @@ import {
   NOT_FOUND_RECOMMENDATIONS_LIMIT,
   getNotFoundRecommendationText,
 } from "./not-found-recommendations-config";
-import "../home/UpdatesSection.css";
+import "./../../../styles/legacy/components/portal/home/UpdatesSection.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PostCommentsSection } from "./PostCommentsSection";
 import { PostFAQSection } from "./PostFAQSection";

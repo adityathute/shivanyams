@@ -12,7 +12,7 @@ import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
-import "./VideosPage.css";
+import "./../../styles/legacy/components/videos/VideosPage.css";
 
 function getYouTubeEmbedUrl(url?: string | null): string | null {
   if (!url) return null;

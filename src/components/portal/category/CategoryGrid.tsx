@@ -1,7 +1,7 @@
 
 "use client";
 
-import "./CategoryGrid.css";
+import "./../../../styles/legacy/components/portal/category/CategoryGrid.css";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";

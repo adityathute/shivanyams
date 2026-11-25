@@ -1,6 +1,6 @@
 "use client";
 
-import "./LandscapeTerrain.css";
+import "./../../../styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css";
 // import { HillFlowers } from "../HillFlowers/HillFlowers";
 
 export function LandscapeTerrain() {

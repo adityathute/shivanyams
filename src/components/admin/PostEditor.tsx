@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Checkbox, Input, Select, Textarea } from "shivanya-ui";
 import { API_URL, type Category } from "../portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber, slugify } from "../../app/admin/admin-utils";
-import "./PostEditor.css";
+import "./../../styles/legacy/components/admin/PostEditor.css";
 
 type OrganizationType = {
   value: string;

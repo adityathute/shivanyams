@@ -1,6 +1,6 @@
 "use client";
 
-import "./Stars.css";
+import "./../../../styles/legacy/components/animation/Stars/Stars.css";
 
 export function Stars() {
   return (

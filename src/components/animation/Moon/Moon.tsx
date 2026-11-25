@@ -1,6 +1,6 @@
 "use client";
 
-import "./Moon.css";
+import "./../../../styles/legacy/components/animation/Moon/Moon.css";
 
 export function Moon() {
   return (

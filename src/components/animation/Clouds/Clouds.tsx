@@ -1,6 +1,6 @@
 "use client";
 
-import "./Clouds.css";
+import "./../../../styles/legacy/components/animation/Clouds/Clouds.css";
 
 export function Clouds() {
   return (

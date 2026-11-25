@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { GuideIcon } from "shivanya-ui";
 
-import "./GuidesCharacters.css";
+import "./../../styles/legacy/components/guide/GuidesCharacters.css";
 
 export function GuidesCharacters() {
   return (

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
 import { IconButton, CloseIcon } from "shivanya-ui";
-import "./NewsletterSubscribeButton.css";
+import "./../../../styles/legacy/components/portal/post/NewsletterSubscribeButton.css";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 

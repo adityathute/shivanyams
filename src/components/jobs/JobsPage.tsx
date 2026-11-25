@@ -1,7 +1,7 @@
 "use client";
 
-import "../portal/home/UpdatesSection.css";
-import "./JobsPage.css";
+import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
+import "./../../styles/legacy/components/jobs/JobsPage.css";
 import { useMemo, useState } from "react";
 import { usePortalData } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";

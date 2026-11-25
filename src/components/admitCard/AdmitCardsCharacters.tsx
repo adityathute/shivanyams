@@ -5,7 +5,7 @@ import {
   AdmitCardIcon,
 } from "shivanya-ui";
 
-import "./AdmitCardsCharacters.css";
+import "./../../styles/legacy/components/admitCard/AdmitCardsCharacters.css";
 
 export function AdmitCardsCharacters() {
   return (

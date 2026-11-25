@@ -6,7 +6,7 @@ import { useAuth } from "shivanya-auth";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, slugify } from "../admin-utils";
 
-import "../add-post/AddPostPage.css";
+import "./../../../styles/legacy/app/admin/add-post/AddPostPage.css";
 
 type ContentKind = "scheme" | "update" | "result" | "admit_card" | "guide" | "video";
 type ContentForm = {

@@ -1,6 +1,6 @@
 "use client";
 
-import "./Sun.css";
+import "./../../../styles/legacy/components/animation/Sun/Sun.css";
 
 export function Sun() {
   return (

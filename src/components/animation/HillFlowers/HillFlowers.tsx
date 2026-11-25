@@ -1,6 +1,6 @@
 "use client";
 
-import "./HillFlowers.css";
+import "./../../../styles/legacy/components/animation/HillFlowers/HillFlowers.css";
 
 export function HillFlowers() {
   return (

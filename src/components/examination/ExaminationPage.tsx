@@ -1,7 +1,7 @@
 "use client";
 
-import "../portal/home/UpdatesSection.css";
-import "../jobs/JobsPage.css";
+import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
+import "./../../styles/legacy/components/jobs/JobsPage.css";
 
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";

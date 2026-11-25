@@ -9,7 +9,7 @@ import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import type { PostFAQ } from "../data/portal-data";
 import { getCommentModerationIssue } from "./comment-moderation";
-import "./PostFAQSection.css";
+import "./../../../styles/legacy/components/portal/post/PostFAQSection.css";
 
 type Props = {
   postId: number;

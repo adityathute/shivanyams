@@ -4,9 +4,9 @@ import { cookies } from "next/headers";
 import type { Language } from "shivanya-i18n";
 
 import { PortalLayout } from "../components/portal/layout/PortalLayout";
-import "./globals.css";
+import "./../styles/legacy/app/globals.css";
 import "shivanya-ui/styles";
-import "./portal-base.css";
+import "./../styles/legacy/app/portal-base.css";
 
 export const metadata: Metadata = {
   title: "ShivanyaMS | Public Updates",

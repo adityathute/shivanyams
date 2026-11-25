@@ -12,8 +12,8 @@ import {
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 
-import "../Contact/ContactPage.css";
-import "./TermsPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/Terms/TermsPage.css";
 
 export function TermsPage() {
   const { language } = usePortalLanguage();

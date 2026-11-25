@@ -7,8 +7,8 @@ import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, Avatar, ConfirmDialog, RefreshIcon, ReportIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
-import "../admin.css";
-import "./reports.css";
+import "./../../../styles/legacy/app/admin/admin.css";
+import "./../../../styles/legacy/app/admin/reports/reports.css";
 
 type Report = { id: number; reporter_auth_id: string; reporter_name?: string; reporter_avatar?: string; reason: string; details: string; status: string; created_at: string; report_type?: "post" | "comment" | "reply"; target_id?: number; target_title?: string; target_content?: string; };
 type CommentWithReports = { id: number; post: number; post_title: string; parent: number | null; author_name: string; content: string; reports?: Report[]; };

@@ -12,8 +12,8 @@ import {
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 
-import "../Contact/ContactPage.css";
-import "./DisclaimerPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/Disclaimer/DisclaimerPage.css";
 
 export function DisclaimerPage() {
   const { language } = usePortalLanguage();

@@ -1,6 +1,6 @@
 "use client";
 
-import "./BanyanTree.css";
+import "./../../../styles/legacy/components/animation/BanyanTree/BanyanTree.css";
 
 export function BanyanTree() {
   return (

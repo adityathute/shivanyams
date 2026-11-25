@@ -1,6 +1,6 @@
 "use client";
 
-import "./SavedPostsPage.css";
+import "./../../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";

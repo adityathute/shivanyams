@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { VideoIcon } from "shivanya-ui";
-import "./VideosCharacters.css";
+import "./../../styles/legacy/components/videos/VideosCharacters.css";
 
 export function VideosCharacters() {
   return (

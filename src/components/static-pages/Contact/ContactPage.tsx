@@ -23,7 +23,7 @@ import { getContactText } from "../../../i18n/dictionaries/ContactPageDictionary
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 
-import "./ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
 
 const socialLinks = [
   {

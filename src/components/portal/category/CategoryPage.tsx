@@ -1,7 +1,7 @@
 
 "use client";
 
-import "./CategoryPage.css";
+import "./../../../styles/legacy/components/portal/category/CategoryPage.css";
 
 import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ItemType } from "../data/portal-data";

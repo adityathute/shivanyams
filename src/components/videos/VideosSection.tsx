@@ -1,6 +1,6 @@
 "use client";
 
-import "./VideosSection.css";
+import "./../../styles/legacy/components/videos/VideosSection.css";
 import { usePortalData } from "../portal/data/portal-data";
 
 export function VideosSection() {

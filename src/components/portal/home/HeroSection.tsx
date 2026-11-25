@@ -1,6 +1,6 @@
 "use client";
 
-import "./HeroSection.css";
+import "./../../../styles/legacy/components/portal/home/HeroSection.css";
 
 import { PortalClock } from "../../animation/Clock/PortalClock";
 import { useEffect, useState } from "react";

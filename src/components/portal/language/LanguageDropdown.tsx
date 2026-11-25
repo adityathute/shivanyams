@@ -5,7 +5,7 @@ import { useAuth } from "shivanya-auth";
 import { Dropdown, Select } from "shivanya-ui";
 
 import { usePortalLanguage } from "../context/PortalLanguageContext";
-import "./LanguageDropdown.css";
+import "./../../../styles/legacy/components/portal/language/LanguageDropdown.css";
 
 function persistLanguage(language: Language) {
   try {

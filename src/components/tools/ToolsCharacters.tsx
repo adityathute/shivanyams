@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import "./ToolsCharacters.css";
+import "./../../styles/legacy/components/tools/ToolsCharacters.css";
 
 export function ToolsCharacters() {
   return (

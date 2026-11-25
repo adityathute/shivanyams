@@ -1,4 +1,4 @@
-import "./GovernmentBuilding.css";
+import "./../../../styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css";
 
 export function GovernmentBuilding() {
   return (

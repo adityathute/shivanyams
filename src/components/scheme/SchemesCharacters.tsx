@@ -4,7 +4,7 @@ import Image from "next/image";
 import {
   GovernmentSchemeIcon,
 } from "shivanya-ui";
-import "./SchemesCharacters.css";
+import "./../../styles/legacy/components/scheme/SchemesCharacters.css";
 
 export function SchemesCharacters() {
   return (

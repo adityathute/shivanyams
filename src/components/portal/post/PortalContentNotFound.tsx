@@ -4,7 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import "./PortalContentNotFound.css";
+import "./../../../styles/legacy/components/portal/post/PortalContentNotFound.css";
 
 interface PortalContentNotFoundProps {
   categoryLabel: string;

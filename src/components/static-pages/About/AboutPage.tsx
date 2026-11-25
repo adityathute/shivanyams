@@ -8,8 +8,8 @@ import { usePortalLanguage } from "../../portal/context/PortalLanguageContext";
 import { getAboutText } from "../../../i18n/dictionaries/AboutPageDictionary";
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 
-import "../Contact/ContactPage.css";
-import "./AboutPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/About/AboutPage.css";
 
 export function AboutPage() {
   const { language } = usePortalLanguage();

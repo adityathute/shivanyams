@@ -4,7 +4,7 @@ import Image from "next/image";
 import {
   ExaminationIcon,
 } from "shivanya-ui";
-import "./ExaminationCharacters.css";
+import "./../../styles/legacy/components/examination/ExaminationCharacters.css";
 
 export function ExaminationCharacters() {
   return (

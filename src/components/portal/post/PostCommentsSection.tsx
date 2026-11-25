@@ -8,7 +8,7 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";
-import "./PostCommentsSection.css";
+import "./../../../styles/legacy/components/portal/post/PostCommentsSection.css";
 import { getCommentModerationIssue } from "./comment-moderation";
 
 type Reaction = "like" | "dislike" | null;

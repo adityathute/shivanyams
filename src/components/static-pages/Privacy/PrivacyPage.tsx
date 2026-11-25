@@ -11,8 +11,8 @@ import {
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 
-import "../Contact/ContactPage.css";
-import "./PrivacyPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/Privacy/PrivacyPage.css";
 
 export function PrivacyPage() {
   const { language } = usePortalLanguage();

@@ -34,7 +34,7 @@
 
 .section-heading {
   min-height: 52px;
-  padding: 0 12px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -103,7 +103,7 @@
 }
 
 .update-list {
-  padding: 0 16px 7px;
+  padding: 0;
 }
 
 .update-row {
@@ -113,7 +113,7 @@
   gap: 12px;
   align-items: center;
   border-bottom: 1px solid #edf1f6;
-  padding: 8px 0;
+  padding: 8px 16px;
 }
 
 .update-row:last-child {
@@ -328,15 +328,17 @@
     font-size: 19px;
   }
   .filter-row {
-    padding: 9px 14px;
+    padding: 7px 10px;
   }
   .update-list {
-    padding: 0 10px 6px;
+    padding: 0;
   }
   .update-row {
     grid-template-columns: 65px minmax(0, 1fr) 36px;
     gap: 7px;
     min-height: 57px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
   .update-title {
     font-size: 13px;
@@ -345,7 +347,7 @@
   .update-row time {
     display: none;
   }
-  
+
   .subscribe-content h3 {
     font-size: 14px;
   }

@@ -33,6 +33,7 @@ export function PortalHeader() {
             placeholder="Search..."
             aria-label="Search website"
           />
+          <button type="submit">Search</button>
         </form>
 
         <button

@@ -1,0 +1,116 @@
+/* Shared hover and badge sizing for non-video category update lists. */
+.jobs-updates .update-row,
+.schemes-updates .update-row,
+.admit-updates .update-row,
+.results-updates .update-row,
+.guides-updates .update-row,
+.tools-updates .update-row {
+  grid-template-columns: max-content minmax(0, 1fr) 100px 42px;
+  margin: 0 -10px;
+  padding-right: 10px;
+  padding-left: 10px;
+  border: 1px solid transparent;
+  border-bottom-color: #edf1f6;
+  border-radius: 8px;
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.jobs-updates .update-row > .portal-post-category-badge,
+.schemes-updates .update-row > .portal-post-category-badge,
+.admit-updates .update-row > .portal-post-category-badge,
+.results-updates .update-row > .portal-post-category-badge,
+.guides-updates .update-row > .portal-post-category-badge,
+.tools-updates .update-row > .portal-post-category-badge {
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.jobs-updates .update-row:hover,
+.schemes-updates .update-row:hover,
+.admit-updates .update-row:hover,
+.results-updates .update-row:hover,
+.guides-updates .update-row:hover,
+.tools-updates .update-row:hover,
+.jobs-updates .update-row:focus-visible,
+.schemes-updates .update-row:focus-visible,
+.admit-updates .update-row:focus-visible,
+.results-updates .update-row:focus-visible,
+.guides-updates .update-row:focus-visible,
+.tools-updates .update-row:focus-visible {
+  color: #075be8;
+  border-color: #dce7f7;
+  background: #f7faff;
+  box-shadow: 0 3px 10px rgba(7, 91, 232, 0.10);
+  outline: none;
+}
+
+.jobs-updates .update-row:hover .update-title,
+.schemes-updates .update-row:hover .update-title,
+.admit-updates .update-row:hover .update-title,
+.results-updates .update-row:hover .update-title,
+.guides-updates .update-row:hover .update-title,
+.tools-updates .update-row:hover .update-title,
+.jobs-updates .update-row:focus-visible .update-title,
+.schemes-updates .update-row:focus-visible .update-title,
+.admit-updates .update-row:focus-visible .update-title,
+.results-updates .update-row:focus-visible .update-title,
+.guides-updates .update-row:focus-visible .update-title,
+.tools-updates .update-row:focus-visible .update-title {
+  color: #075be8;
+}
+
+@media (max-width: 1100px) {
+  .jobs-updates .update-row,
+  .schemes-updates .update-row,
+  .admit-updates .update-row,
+  .results-updates .update-row,
+  .guides-updates .update-row,
+  .tools-updates .update-row {
+    grid-template-columns: max-content minmax(0, 1fr) 78px 35px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 760px) {
+  .jobs-updates .update-row,
+  .schemes-updates .update-row,
+  .admit-updates .update-row,
+  .results-updates .update-row,
+  .guides-updates .update-row,
+  .tools-updates .update-row {
+    grid-template-columns: max-content minmax(0, 1fr) 36px;
+    gap: 7px;
+    margin-right: -6px;
+    margin-left: -6px;
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+}
+
+@media (max-width: 390px) {
+  .jobs-updates .update-row,
+  .schemes-updates .update-row,
+  .admit-updates .update-row,
+  .results-updates .update-row,
+  .guides-updates .update-row,
+  .tools-updates .update-row {
+    grid-template-columns: max-content minmax(0, 1fr) 31px;
+    gap: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jobs-updates .update-row,
+  .schemes-updates .update-row,
+  .admit-updates .update-row,
+  .results-updates .update-row,
+  .guides-updates .update-row,
+  .tools-updates .update-row {
+    transition: none;
+  }
+}

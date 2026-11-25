@@ -98,13 +98,13 @@ function getPostHref(item: Item): string {
       return `/examination/${slug}`;
 
     case "admit":
-      return `/admit-card/${slug}`;
+      return `/admit-cards/${slug}`;
 
     case "result":
       return `/results/${slug}`;
 
     case "guide":
-      return `/articles/${slug}`;
+      return `/guides/${slug}`;
 
     case "video":
       return `/videos/${slug}`;

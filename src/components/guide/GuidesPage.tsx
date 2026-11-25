@@ -131,7 +131,7 @@ export function GuidesPage() {
                 <div className="empty-state empty-guide">
                    {t("noGuidesAvailable")}
                 </div>
-              )
+              )}
             </div>
           </section>
         </main>

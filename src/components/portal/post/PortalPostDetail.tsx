@@ -17,7 +17,7 @@ import {
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { LinkIcon, MailIcon } from "shivanya-ui";
+import { LinkIcon, MailIcon, TagIcon } from "shivanya-ui";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import {
@@ -824,7 +824,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 <article className="portal-post-card">
                   <div className="portal-post-compact-header">
                     <div className="portal-post-meta portal-post-meta-compact">
-                      <span>{post.category || label}</span>
+                      <span className="portal-post-category-badge">
+                        <TagIcon size={14} aria-hidden="true" />
+                        <span>{post.category || label}</span>
+                      </span>
                     </div>
                     <div className="portal-post-header-meta-right">
                       {updatedPostDate ? (

@@ -1,4 +1,5 @@
 /* Organized global stylesheet entry point. */
+@import "./components/portal/category/CategoryGrid.css";
 @import "./components/portal/category/CategoryBadge.css";
 @import "./components/portal/layout/PortalFooter.css";
 @import "./components/portal/home/LatestUpdatesTicker.css";

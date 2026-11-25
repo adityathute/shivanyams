@@ -2,6 +2,7 @@
 "use client";
 
 import "./CategoryGrid.css";
+import "./CategoryBadge.css";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -161,6 +162,26 @@ export function getCategoryTitle(
   }[language];
 }
 
+export function getCategorySlugForType(type: string) {
+  const slugs: Record<string, string> = {
+    job: "jobs", scheme: "schemes", examination: "examination", exam: "examination",
+    result: "results", admit: "admit-cards", guide: "articles-guides",
+    video: "videos", tool: "tools",
+  };
+  return slugs[type] || normalizeCategorySlug(type);
+}
+
+export function CategoryBadge({ category, label }: { category: string; label: string }) {
+  const slug = normalizeCategorySlug(category);
+  const config = categoryConfig[slug];
+  return (
+    <span className={`portal-category-badge portal-category-badge--${slug}`}>
+      {config?.icon ? <span className="portal-category-badge-icon" aria-hidden="true">{config.icon}</span> : null}
+      <span>{label}</span>
+    </span>
+  );
+}
+
 export function getCategoryDescription(
   category: Category,
   language: Language = "mr",
@@ -260,22 +281,12 @@ export function CategoryGrid({
         return (
           <button
             key={category.slug}
-            className={`category-card ${config.color}`}
+            type="button"
+            className={`portal-category-badge portal-category-badge--home portal-category-badge--${category.slug}`}
             onClick={() => router.push(config.href)}
           >
-            <span className="category-icon">
-              {config.icon}
-            </span>
-
-            <span className="category-content">
-              <strong>
-                {getCategoryTitle(category, language)}
-              </strong>
-
-              <small>
-                {getCategorySubtitle(category, language)}
-              </small>
-            </span>
+            <span className="portal-category-badge-icon" aria-hidden="true">{config.icon}</span>
+            <span>{getCategoryTitle(category, language)}</span>
           </button>
         );
       })}

@@ -206,7 +206,7 @@
 }
 
 .social-links a:hover {
-    color: #fff;
+  color: #fff;
   transform: translateY(-3px);
 }
 
@@ -564,24 +564,23 @@
   }
   /* ------------------------------------- */
 
-/* Copyright and policy links remain separate */
-.footer-bottom {
-  margin-top: auto;
-  min-height: 47px;
-  border-top: 1px solid #e1e8f0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  background: #f8fafc;
-}
+  /* Copyright and policy links remain separate */
+  .footer-bottom {
+    margin-top: auto;
+    min-height: 47px;
+    border-top: 1px solid #e1e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background: #f8fafc;
+  }
   .footer-bottom > div {
     flex-wrap: wrap;
     justify-content: center;
     gap: 13px;
   }
 }
-
 
 /* Portal language selector */
 .portal-shell-actions {
@@ -641,8 +640,6 @@
 .footer-category-link:hover svg {
   opacity: 1;
 }
-
-
 
 /* Brand */
 .portal-footer .brand strong {
@@ -741,11 +738,11 @@
   }
 
   .shivanya-shell-mobile-menu .shivanya-button {
-    width: 42px;
-    min-width: 42px;
+    width: 28px;
+    min-width: 28px;
     height: 42px;
     padding: 0;
-    font-size: 23px;
+    font-size: 24px;
     line-height: 1;
   }
 

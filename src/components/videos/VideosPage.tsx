@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { Language } from "shivanya-i18n";
 import { VideosCharacters } from "./VideosCharacters";
 import { SearchIcon, VideoIcon } from "shivanya-ui";
-import { usePortalData } from "../portal/data/portal-data";
+import { usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
@@ -54,6 +54,7 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
 }
 
 export function VideosPage() {
+  useRefreshPortalDataOnMount();
   const [query, setQuery] = useState("");
 
   const { data } = usePortalData();

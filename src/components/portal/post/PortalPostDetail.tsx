@@ -828,7 +828,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     <div className="portal-post-meta portal-post-meta-compact">
                       <CategoryBadge
                         category={category}
-                        label={post.category || label}
+                        label={
+                          category === "videos"
+                            ? label || (language === "mr" ? "व्हिडिओ" : language === "hi" ? "वीडियो" : "Videos")
+                            : post.category || label
+                        }
                       />
                     </div>
                     <div className="portal-post-header-meta-right">

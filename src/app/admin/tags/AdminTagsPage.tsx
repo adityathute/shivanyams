@@ -7,8 +7,8 @@ import { useAuth } from "shivanya-auth";
 import { ArrowLeftIcon, ConfirmDialog, Modal, RefreshIcon, Select, TagIcon } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber, slugify } from "../admin-utils";
-import "../admin.css";
-import "./tags.css";
+import "../../../styles/legacy/app/admin/admin.css";
+import "../../../styles/legacy/app/admin/tags/tags.css";
 
 type TagRow = { name: string; count: number };
 type TagSort = "popular" | "least" | "az" | "za";

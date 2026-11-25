@@ -176,6 +176,31 @@ export type PortalData = {
   error: string;
   failedTypes?: ItemType[];
 };
+ 
+export function getLocalizedPostTitle(
+  item: Pick<Item, "title" | "title_en" | "title_mr" | "title_hi">,
+  language: "en" | "mr" | "hi",
+) {
+  const titles = {
+    en: item.title_en,
+    mr: item.title_mr,
+    hi: item.title_hi,
+  };
+  return titles[language]?.trim() || item.title_en?.trim() || item.title_mr?.trim() || item.title_hi?.trim() || item.title;
+}
+
+export function getLocalizedPostSummary(
+  item: Pick<Item, "description" | "summary_en" | "summary_mr" | "summary_hi">,
+  language: "en" | "mr" | "hi",
+) {
+  const summaries = {
+    en: item.summary_en,
+    mr: item.summary_mr,
+    hi: item.summary_hi,
+  };
+  return summaries[language]?.trim() || item.summary_en?.trim() || item.summary_mr?.trim() || item.summary_hi?.trim() || item.description;
+}
+
 
 type ApiLink = {
   group_key?: string;

@@ -24,11 +24,18 @@ export function PortalHeader() {
   useEffect(() => {
     if (!searchOpen) return;
 
-    const input = searchInputRef.current;
-    if (!input) return;
+    // Wait until the toggle click finishes so the browser cannot move focus
+    // back to the clicked button after this effect runs.
+    const focusTimer = window.setTimeout(() => {
+      const input = searchInputRef.current;
+      if (!input) return;
 
-    input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
+      input.focus({ preventScroll: true });
+      const cursorPosition = input.value.length;
+      input.setSelectionRange(cursorPosition, cursorPosition);
+    }, 50);
+
+    return () => window.clearTimeout(focusTimer);
   }, [searchOpen]);
 
   return (

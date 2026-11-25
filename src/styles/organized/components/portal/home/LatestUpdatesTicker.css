@@ -5,7 +5,22 @@
 
 .portal .ticker .ticker-item .ticker-dot,
 .portal .ticker .ticker-item:hover .ticker-dot {
+  display: inline-flex;
+  flex: 0 0 10px;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
   color: #6b7280;
   font-size: 10px;
   line-height: 1;
+}
+
+.portal .ticker .ticker-item .ticker-dot svg,
+.portal .ticker .ticker-item:hover .ticker-dot svg {
+  display: block;
+  width: 10px !important;
+  height: 10px !important;
+  min-width: 10px;
+  min-height: 10px;
 }

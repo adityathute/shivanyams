@@ -453,9 +453,16 @@ class AdminPostVersionPublish(APIView):
             ).order_by("-version_number").first()
             if version.version_number <= published_number or not latest_pending or latest_pending.pk != version.pk:
                 raise ValidationError({"detail": "This version is no longer the active unpublished revision."})
-            writer = PostWriteSerializer(instance=post, data=version.payload)
-            writer.is_valid(raise_exception=True)
-            post = writer.save()
+            # A first publication is already represented by the canonical Post
+            # record: AdminPostVersions.post() validates and saves the draft
+            # before creating its version snapshot. Re-running the nested
+            # PostWriteSerializer here needlessly rewrites every related job
+            # row and can fail on legacy database constraints. Only apply the
+            # snapshot again when publishing a revision of an existing post.
+            if latest_published:
+                writer = PostWriteSerializer(instance=post, data=version.payload)
+                writer.is_valid(raise_exception=True)
+                post = writer.save()
             previous_status = post.status
             now, auth_id = timezone.now(), str(request.user.id)
             post.status, post.published_at, post.published_by_auth_id = Post.Status.PUBLISHED, now, auth_id

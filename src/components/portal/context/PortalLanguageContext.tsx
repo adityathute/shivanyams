@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   type ReactNode,
 } from "react";
 import type { Language } from "shivanya-i18n";
@@ -24,6 +25,10 @@ export function PortalLanguageProvider({
   initialLanguage: Language;
 }) {
   const [language, setLanguage] = useState<Language>(initialLanguage);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   return (
     <PortalLanguageContext.Provider value={{ language, setLanguage }}>

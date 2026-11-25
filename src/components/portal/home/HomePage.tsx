@@ -77,7 +77,7 @@ export function HomePage() {
           <div
             className="ticker-slides"
             style={{
-              "--ticker-index": tickerIndex,
+              transform: `translateX(-${tickerIndex * (100 / visibleTickerCount)}%)`,
             } as React.CSSProperties}
           >
             {tickerItems.length > 0 ? tickerItems.map((item) => {

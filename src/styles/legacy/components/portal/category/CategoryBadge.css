@@ -50,3 +50,39 @@
     font-size: 11px;
   }
 }
+
+/* Canonical post-header badge styling, also used by home update rows. */
+.update-row > .portal-post-category-badge {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  gap:6px;
+  min-height:30px;
+  box-sizing:border-box;
+  padding:5px 11px;
+  border:1px solid #bfdbfe;
+  border-radius:999px;
+  color:#0969da;
+  background:#eff6ff;
+  font-family:"Outfit","Hind",sans-serif;
+  font-size:12px;
+  font-weight:650;
+  line-height:1.25;
+  white-space:nowrap;
+  user-select:none;
+}
+.update-row > .portal-post-category-badge .portal-post-category-icon {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 15px;
+  width:15px;
+  height:15px;
+}
+.update-row > .portal-post-category-badge .portal-post-category-icon svg {
+  display:block;
+  width:15px;
+  height:15px;
+  flex:0 0 auto;
+}

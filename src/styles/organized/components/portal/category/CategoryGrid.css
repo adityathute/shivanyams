@@ -24,8 +24,16 @@
 
 .portal .category-grid .category-card:hover {
   transform: translateY(-2px);
-  border-color: #b5ceff;
 }
+
+.portal .category-grid .category-card.blue:hover { border-color: #cfe0ff; }
+.portal .category-grid .category-card.green:hover { border-color: #c9eed9; }
+.portal .category-grid .category-card.indigo:hover { border-color: #d8d5ff; }
+.portal .category-grid .category-card.purple:hover { border-color: #e8d6ff; }
+.portal .category-grid .category-card.cyan:hover { border-color: #c9eff8; }
+.portal .category-grid .category-card.orange:hover { border-color: #ffe3bf; }
+.portal .category-grid .category-card.red:hover { border-color: #ffd4d8; }
+.portal .category-grid .category-card.gray:hover { border-color: #d9dde3; }
 
 /* Keep each category's soft background gradient and matching icon color. */
 .portal .category-grid .category-card.blue {

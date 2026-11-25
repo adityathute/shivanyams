@@ -315,7 +315,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
           </div>
 
           <div className="update-list">
-            {(data.loading || categoriesLoading) && filtered.length === 0 ? (
+            {data.loading || categoriesLoading ? (
               <div className="update-skeleton-list" aria-label="Loading updates" aria-busy="true">
                 {Array.from({ length: 2 }, (_, index) => (
                   <div className="update-skeleton-row" key={index} aria-hidden="true">

@@ -42,7 +42,7 @@
 
 .category-card strong {
   display: block;
-  font-family: "Outfit", "Hind", sans-serif;
+  font-family: var(--shivanya-font-sans, "Outfit", "Hind", sans-serif);
   font-size: 16px;
   line-height: 1.4;
 }

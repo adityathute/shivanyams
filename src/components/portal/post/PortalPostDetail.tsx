@@ -17,7 +17,7 @@ import {
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { EyeIcon, LinkIcon, MailIcon } from "shivanya-ui";
+import { LinkIcon, MailIcon } from "shivanya-ui";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import {
@@ -294,6 +294,7 @@ const detailLabels = {
     mr: "अपडेट",
     hi: "अपडेट",
   },
+  views: { en: "views", mr: "दृश्ये", hi: "व्यू" },
   eventDate: {
     en: "Event date",
     mr: "कार्यक्रमाची तारीख",
@@ -825,15 +826,17 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     <div className="portal-post-meta portal-post-meta-compact">
                       <span>{post.category || label}</span>
                     </div>
-                    {updatedPostDate ? (
-                      <div className="portal-post-header-updated">
-                        <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
-                        <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
+                    <div className="portal-post-header-meta-right">
+                      {updatedPostDate ? (
+                        <div className="portal-post-header-updated">
+                          <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
+                          <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
+                        </div>
+                      ) : null}
+                      <div className="portal-post-header-views">
+                        <span>{formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)}</span>
+                        <span>{getDetailLabel("views", language)}</span>
                       </div>
-                    ) : null}
-                    <div className="portal-post-header-views" aria-label={`${formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)} views`}>
-                      <EyeIcon size={14} aria-hidden="true" />
-                      <span>{formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)}</span>
                     </div>
                   </div>
 

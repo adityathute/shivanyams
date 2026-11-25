@@ -56,7 +56,7 @@
 }
 
 .portal .ticker .ticker-skeleton-title {
-  width: 68%;
+  width: clamp(48px, 58%, 150px);
   max-width: 150px;
 }
 

@@ -1,0 +1,57 @@
+/*
+ * Organized global reset.
+ * Every selector is scoped so this stylesheet cannot alter legacy mode.
+ */
+
+html[data-css-mode="organized"] {
+  min-height: 100%;
+  background: var(--shivanya-color-background);
+  color: var(--shivanya-color-text-primary);
+  scroll-behavior: smooth;
+}
+
+html[data-css-mode="organized"] *,
+html[data-css-mode="organized"] *::before,
+html[data-css-mode="organized"] *::after {
+  box-sizing: border-box;
+}
+
+html[data-css-mode="organized"] body {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--shivanya-color-background);
+  color: var(--shivanya-color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-css-mode="organized"] button,
+html[data-css-mode="organized"] input,
+html[data-css-mode="organized"] textarea,
+html[data-css-mode="organized"] select {
+  font: inherit;
+}
+
+html[data-css-mode="organized"] button,
+html[data-css-mode="organized"] a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-css-mode="organized"] button {
+  cursor: pointer;
+}
+
+html[data-css-mode="organized"] a {
+  color: inherit;
+  text-decoration: none;
+}
+
+html[data-css-mode="organized"] img,
+html[data-css-mode="organized"] svg,
+html[data-css-mode="organized"] video,
+html[data-css-mode="organized"] canvas {
+  display: block;
+  max-width: 100%;
+}

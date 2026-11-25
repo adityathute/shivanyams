@@ -25,6 +25,14 @@
 
 .video-card {
   min-width: 0;
+  border-radius: 8px;
+  transition: background-color 180ms ease;
+}
+
+/* Videos use the same category-tinted background hover as other homepage updates. */
+.video-card:hover,
+.video-card:focus-visible {
+  background-color: #fff5f5;
 }
 
 .video-thumb {
@@ -82,6 +90,12 @@
   background: #edf4ff;
   padding: 4px 9px;
   border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-card {
+    transition: none;
+  }
 }
 
 @media (max-width: 760px) {

@@ -87,7 +87,7 @@ export function JobsPage() {
             <div className="update-list">
               {data.loading && jobs.length === 0 ? (
                 <div className="update-skeleton-list" aria-label="Loading jobs" aria-busy="true">
-                  {Array.from({ length: 5 }, (_, index) => (
+                  {Array.from({ length: 3 }, (_, index) => (
                     <div className="update-skeleton-row" key={index} aria-hidden="true">
                       <span className="update-skeleton-badge" />
                       <span className="update-skeleton-copy"><span className="update-skeleton-title" /><span className="update-skeleton-summary" /></span>

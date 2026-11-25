@@ -134,7 +134,7 @@ export function SchemesPage() {
                 ))
                ) : data.loading ? (
                 <div className="empty-state empty-scheme">Loading...</div>
-              ) : data.error ? (
+              ) : data.failedTypes?.includes("scheme") && data.error ? (
                 <div className="empty-state empty-scheme">{data.error}</div>
               ) : (
                 <div className="empty-state empty-scheme">

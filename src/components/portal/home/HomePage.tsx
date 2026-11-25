@@ -47,7 +47,7 @@ export function HomePage() {
   };
 
   const handleNextTicker = () => {
-    const maxIndex = Math.max(0, tickerItems.length - 5);
+    const maxIndex = Math.max(0, tickerItems.length - 6);
 
     setTickerIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
@@ -65,7 +65,7 @@ export function HomePage() {
             <div
               className="ticker-slides"
               style={{
-                transform: `translateX(-${tickerIndex * 20}%)`,
+                transform: `translateX(-${tickerIndex * (100 / 6)}%)`,
               }}
             >
               {tickerItems.map((item) => {

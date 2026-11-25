@@ -823,7 +823,6 @@
 .portal-topbar-search-toggle,
 .portal-topbar-search-mobile-panel { display: none; }
 
-.portal-topbar-search-mobile-panel.portal-search-open { max-height: 56px; opacity: 1; transform: translateY(0); pointer-events: auto; }
 
 @media (max-width: 767px) {
   .portal-topbar-search-desktop { display: none; }
@@ -859,27 +858,6 @@
 
   .portal-topbar-search-toggle:active { transform: scale(0.97); }
 
-  .portal-topbar-search-mobile-panel {
-    display: block;
-    flex: 0 0 100%;
-    width: 100%;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-6px);
-    pointer-events: none;
-    transition: max-height 220ms ease, opacity 180ms ease, transform 220ms ease;
-  }
-
-
-
-  .portal-topbar-search-mobile {
-    width: 100%;
-    max-width: none;
-    height: 40px;
-    margin-top: 3px;
-    border-radius: 12px;
-  }
 }
 
 [data-theme="dark"] .portal-topbar-search,
@@ -894,7 +872,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .portal-topbar-search-mobile-panel,
   .portal-topbar-search-toggle,
   .portal-topbar-search { transition: none; }
 }

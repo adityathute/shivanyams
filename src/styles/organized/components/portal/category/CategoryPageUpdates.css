@@ -200,3 +200,46 @@
   .update-skeleton-date,
   .update-skeleton-pill { animation: none; }
 }
+
+
+/* Polished empty state used across portal categories and homepage. */
+.portal-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 190px;
+  margin: 12px;
+  padding: 28px 18px;
+  border: 1px solid #e8edf4;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 0%, #f7faff 0, #fff 65%);
+  text-align: center;
+}
+.portal-empty-state-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #e4eaf2;
+  border-radius: 15px;
+  background: #f4f7fb;
+  color: #8190a5;
+  font-size: 20px;
+  font-weight: 700;
+}
+.portal-empty-state h3 { margin: 2px 0 0; color: #273449; font-size: 15px; font-weight: 750; }
+.portal-empty-state p { max-width: 420px; margin: 0; color: #8190a2; font-size: 12px; line-height: 1.65; }
+
+/* Video-card placeholders for a clean first-load experience. */
+.videos-skeleton-grid { padding-top: 18px; }
+.videos-skeleton-card { min-width: 0; overflow: hidden; padding-bottom: 16px; border: 1px solid #edf0f4; border-radius: 14px; background: #fff; }
+.videos-skeleton-thumbnail, .videos-skeleton-line { display: block; background: linear-gradient(100deg, #f0f2f6 20%, #f8f9fb 45%, #eceff4 70%); background-size: 220% 100%; animation: portal-update-shimmer 1.35s ease-in-out infinite; }
+.videos-skeleton-thumbnail { aspect-ratio: 16 / 9; width: 100%; }
+.videos-skeleton-line { height: 10px; margin: 13px 14px 0; border-radius: 6px; }
+.videos-skeleton-tag { width: 65px; height: 17px; margin-top: 14px; }
+.videos-skeleton-title { width: calc(100% - 28px); }
+.videos-skeleton-title-short { width: 58%; margin-top: 8px; }
+@media (max-width: 600px) { .videos-skeleton-grid { padding: 0 12px 12px; } }
+@media (prefers-reduced-motion: reduce) { .videos-skeleton-thumbnail, .videos-skeleton-line { animation: none; } }

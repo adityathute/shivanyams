@@ -21,7 +21,7 @@ export function VideosSection() {
       </div>
 
       <div className="video-grid">
-        {data.videos.map((video) => (
+        {data.videos.slice(0, 4).map((video) => (
           <a
             className="video-card"
             key={video.id}

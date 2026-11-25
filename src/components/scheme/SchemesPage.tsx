@@ -6,7 +6,7 @@ import "./../../styles/legacy/components/scheme/SchemesPage.css";
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
 import { SchemesCharacters } from "./SchemesCharacters";
-import { usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
+import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
@@ -37,8 +37,8 @@ export function SchemesPage() {
 
       return (
         !term ||
-        [item.title, item.category, item.description].some((value) =>
-          value.toLowerCase().includes(term),
+        [item.title, item.title_en, item.title_mr, item.title_hi, item.category, item.description, item.summary_en, item.summary_mr, item.summary_hi].some((value) =>
+          String(value || "").toLowerCase().includes(term),
         )
       );
     });
@@ -113,8 +113,8 @@ export function SchemesPage() {
                     />
 
                     <span className="update-title">
-                      {item.title}
-                      <small>{item.description}</small>
+                      {getLocalizedPostTitle(item, language)}
+                      <small>{getLocalizedPostSummary(item, language)}</small>
                     </span>
 
                     <time>

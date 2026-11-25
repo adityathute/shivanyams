@@ -1628,9 +1628,17 @@
   white-space: nowrap;
 }
 
-.portal-post-header-updated time,
+.portal-post-header-updated time {
+  color: #222;
+  font-weight: 500;
+}
+
 .portal-post-footer-updated time {
   color: var(--text-secondary, #718096);
+}
+
+:root[data-theme="dark"] .portal-post-header-updated time {
+  color: #e5e7eb;
 }
 
 .portal-post-compact-header .portal-post-engagement-actions {

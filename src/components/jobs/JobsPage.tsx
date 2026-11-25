@@ -12,6 +12,7 @@ import type { Language } from "shivanya-i18n";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 import { JobsCharacters } from "./JobsCharacters";
+import { PortalEmptyState } from "../portal/category/PortalEmptyState";
 
 export function JobsPage() {
   useRefreshPortalDataOnMount();
@@ -84,7 +85,17 @@ export function JobsPage() {
             </div>
 
             <div className="update-list">
-              {data.loading && jobs.length === 0 ? <div className="empty-state empty-job">Loading...</div> : null}
+              {data.loading && jobs.length === 0 ? (
+                <div className="update-skeleton-list" aria-label="Loading jobs" aria-busy="true">
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <div className="update-skeleton-row" key={index} aria-hidden="true">
+                      <span className="update-skeleton-badge" />
+                      <span className="update-skeleton-copy"><span className="update-skeleton-title" /><span className="update-skeleton-summary" /></span>
+                      <span className="update-skeleton-date" /><span className="update-skeleton-pill" />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
               {!data.loading && jobs.length === 0 && data.failedTypes?.includes("job") && data.error ? <div className="empty-state empty-job">{data.error}</div> : null}
               {jobs.length ? (
                 jobs.map((item) => (
@@ -124,7 +135,7 @@ export function JobsPage() {
                   </a>
                 ))
               ) : !data.loading && !data.failedTypes?.includes("job") ? (
-                <div className="empty-state empty-job">{t("noJobsAvailable")}</div>
+                <PortalEmptyState title={t("noJobsAvailable")} description={language === "en" ? "New opportunities will appear here as soon as they are published." : language === "mr" ? "नवीन संधी प्रकाशित झाल्यावर येथे दिसतील." : "नई भर्तियां प्रकाशित होते ही यहाँ दिखाई देंगी।"} icon="⌕" />
               ) : null}
             </div>
           </section>

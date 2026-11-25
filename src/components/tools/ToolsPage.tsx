@@ -5,7 +5,7 @@ import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/tools/ToolsPage.css";
 
 import { useMemo, useState } from "react";
-import { usePortalData } from "../portal/data/portal-data";
+import { usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { SearchIcon } from "shivanya-ui";
@@ -53,6 +53,7 @@ const pageCopy = {
 };
 
 export function ToolsPage() {
+  useRefreshPortalDataOnMount();
   const [query, setQuery] = useState("");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();

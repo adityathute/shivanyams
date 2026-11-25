@@ -1,6 +1,7 @@
 "use client";
 
 import "./UpdatesSection.css";
+import "../category/CategoryBadge.css";
 
 import { useEffect, useMemo, useState } from "react";
 

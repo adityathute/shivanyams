@@ -79,5 +79,11 @@
   .portal .ticker .ticker-item {
     flex-basis: 25%;
   }
+}
 
+/* 4K / large desktop: show eight ticker items at a time. */
+@media (min-width: 1920px) {
+  .portal .ticker .ticker-item {
+    flex: 0 0 12.5%;
+  }
 }

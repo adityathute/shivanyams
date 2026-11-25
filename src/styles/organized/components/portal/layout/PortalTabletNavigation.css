@@ -1,0 +1,60 @@
+/* Tablet navigation: use the shared shell drawer instead of a fixed sidebar. */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .shivanya-dashboard-shell .shivanya-shell-desktop-sidebar {
+    display: none;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-menu {
+    display: flex;
+    align-items: center;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-layer {
+    display: flex;
+    touch-action: pan-y;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-header-inner {
+    gap: 10px;
+    padding-inline: 16px;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-header-start {
+    gap: 8px;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-sidebar {
+    display: block;
+    flex: 1 1 0%;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    scrollbar-width: thin;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-sidebar .shivanya-shell-nav {
+    display: block;
+    min-height: max-content;
+    height: auto;
+    overflow: visible;
+    touch-action: pan-y;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-sidebar .shivanya-shell-sidebar-footer {
+    flex: 0 0 auto;
+  }
+}

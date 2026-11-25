@@ -1,3 +1,35 @@
+.language-select-display {
+  position: relative;
+  min-width: 0;
+}
+
+.language-select-display .shivanya-select {
+  color: transparent;
+}
+
+.language-select-display .shivanya-select option {
+  color: var(--shivanya-color-text-primary, #111827);
+}
+
+.language-select-closed-label {
+  position: absolute;
+  inset: 0 34px 0 12px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  color: var(--shivanya-color-text-primary, #111827);
+  font: inherit;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.language-select-display-mobile .language-select-closed-label {
+  inset-inline-start: 4px;
+  inset-inline-end: 20px;
+  justify-content: center;
+  font-size: 11px;
+}
+
 .language-dropdown-mobile {
   display: none;
 }

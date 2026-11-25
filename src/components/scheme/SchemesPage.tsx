@@ -140,7 +140,7 @@ export function SchemesPage() {
                 <div className="empty-state empty-scheme">
                    {t("noSchemesAvailable")}
                 </div>
-              )
+              )}
             </div>
           </section>
         </main>

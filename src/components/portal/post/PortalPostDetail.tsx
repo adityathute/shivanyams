@@ -12,12 +12,13 @@ import {
   CategoryGrid,
   getPortalApiUrl,
   getCategoryTitle,
+  categoryConfig,
   type Category,
   type Language as CategoryLanguage,
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { LinkIcon, MailIcon, TagIcon } from "shivanya-ui";
+import { LinkIcon, MailIcon } from "shivanya-ui";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import {
@@ -825,7 +826,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   <div className="portal-post-compact-header">
                     <div className="portal-post-meta portal-post-meta-compact">
                       <span className={`portal-post-category-badge portal-post-category-badge-${category}`}>
-                        <TagIcon size={14} aria-hidden="true" />
+                        <span className="portal-post-category-icon" aria-hidden="true">
+                          {categoryConfig[category === "guides" ? "articles-guides" : category]?.icon}
+                        </span>
                         <span>{post.category || label}</span>
                       </span>
                     </div>

@@ -926,16 +926,6 @@
   color: var(--shivanya-color-text-primary, #e6edf3);
 }
 
-[data-theme="dark"] .portal-topbar-search-mobile-panel::before {
-  background: rgba(15, 23, 32, 0.28);
-  border-bottom-color: rgba(148, 163, 184, 0.22);
-}
-
-[data-theme="dark"] .portal-topbar-search-mobile-panel::after {
-  background: var(--shivanya-color-surface, #151b23);
-  border-color: var(--shivanya-color-border, #293544);
-}
-
 [data-theme="dark"] .portal-topbar-search input,
 [data-theme="dark"] .portal-topbar-search-mobile-panel input {
   color: var(--shivanya-color-text-primary, #e6edf3);
@@ -1004,12 +994,11 @@
     width: auto;
     height: 44px;
     padding: 5px 6px 5px 14px;
-    border: 1px solid transparent;
+    border: 1px solid var(--shivanya-color-border, #dce3ec);
     border-radius: 12px;
-    background: transparent;
+    background: var(--shivanya-color-surface, #fff);
     color: var(--shivanya-color-text-secondary, #64748b);
-    box-shadow: none;
-    isolation: isolate;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -1025,38 +1014,9 @@
     transform: translateY(0) scale(1);
   }
 
-  /* Soft strip behind the search field; intentionally no blur filter. */
-  .portal-topbar-search-mobile-panel::before {
-    content: "";
-    position: absolute;
-    inset: -12px -10px;
-    z-index: 0;
-    background: rgba(148, 163, 184, 0.16);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.28);
-    pointer-events: none;
-  }
-
-  /* Keep the actual search input surface solid and crisp above the strip. */
-  .portal-topbar-search-mobile-panel::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border: 1px solid var(--shivanya-color-border, #dce3ec);
-    border-radius: 12px;
-    background: var(--shivanya-color-surface, #fff);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
-    pointer-events: none;
-  }
-
-  .portal-topbar-search-mobile-panel:focus-within::after {
+  .portal-topbar-search-mobile-panel:focus-within {
     border-color: var(--shivanya-color-primary, #2563eb);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--shivanya-color-primary, #2563eb) 12%, transparent), 0 12px 30px rgba(15, 23, 42, 0.16);
-  }
-
-  .portal-topbar-search-mobile-panel > * {
-    position: relative;
-    z-index: 2;
   }
 
   .portal-topbar-search-mobile-panel svg { flex-shrink: 0; }

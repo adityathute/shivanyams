@@ -716,14 +716,6 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
     ),
   );
 
-  if (responses.every((response) => response.status === "rejected")) {
-    const firstError = responses.find(
-      (response): response is PromiseRejectedResult =>
-        response.status === "rejected",
-    );
-    throw firstError?.reason || new Error("Unable to load portal content.");
-  }
-
   const items: Item[] = [];
   const videos: Video[] = [];
   const errors: string[] = [];
@@ -895,7 +887,7 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
           : nextData;
 
         return hasSamePortalContent(current, resolvedData)
-          ? { ...current, loading: false, error: nextData.error }
+          ? { ...current, loading: false, error: nextData.error, failedTypes: nextData.failedTypes || [] }
           : { ...resolvedData, loading: false, error: nextData.error };
       });
     } catch (error) {

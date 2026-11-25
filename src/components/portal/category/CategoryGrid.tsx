@@ -45,8 +45,8 @@ export function getCategorySubtitle(
   category: Category,
   language: Language,
 ) {
-  const definition = getPortalCategoryDefinition(category.slug);
-  return definition?.translations[language].name || category.name_en;
+  // Keep the secondary label bilingual without repeating the selected title.
+  return language === "en" ? category.name_mr : category.name_en;
 }
 
 interface CategoryConfig {

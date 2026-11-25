@@ -27,23 +27,6 @@ export function PortalHeader() {
     }
   }, [searchOpen]);
 
-  useEffect(() => {
-    if (!searchOpen) return;
-
-    const handleOutsidePointer = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (
-        !searchToggleRef.current?.contains(target) &&
-        !searchPanelRef.current?.contains(target)
-      ) {
-        setSearchOpen(false);
-      }
-    };
-
-    document.addEventListener("pointerdown", handleOutsidePointer);
-    return () => document.removeEventListener("pointerdown", handleOutsidePointer);
-  }, [searchOpen]);
-
   return (
     <>
       <form className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={(event) => event.preventDefault()}>
@@ -53,8 +36,8 @@ export function PortalHeader() {
       </form>
 
       <div className="portal-shell-actions portal-header-search-actions">
-        <button ref={searchToggleRef} type="button" className="portal-topbar-search-toggle" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>
-          <SearchIcon size={17} aria-hidden="true" />
+        <button ref={searchToggleRef} type="button" className="portal-topbar-search-toggle" aria-label={searchOpen ? "Close search" : "Search"} aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>
+          {searchOpen ? <span className="portal-search-close-icon" aria-hidden="true">×</span> : <SearchIcon size={17} aria-hidden="true" />}
         </button>
         <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={(event) => event.preventDefault()}>
           <SearchIcon size={17} aria-hidden="true" />

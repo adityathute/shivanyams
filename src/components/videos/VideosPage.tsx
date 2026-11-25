@@ -131,13 +131,13 @@ export function VideosPage() {
             </div>
           )}
 
-          {!data.loading && data.error && (
+          {!data.loading && data.failedTypes?.includes("video") && data.error && (
             <div className="videos-empty">
               {data.error}
             </div>
           )}
 
-          {!data.loading && !data.error && videos.length > 0 && (
+          {videos.length > 0 && (
             <div className="videos-grid">
               {videos.map((video) => {
                 const videoItem = data.items.find((item) => item.id === video.id);
@@ -206,7 +206,7 @@ export function VideosPage() {
             </div>
           )}
 
-          {!data.loading && !data.error && videos.length === 0 && (
+          {!data.loading && videos.length === 0 && !data.failedTypes?.includes("video") && (
             <div className="videos-empty">
               {hasVideos ? (
                 <>

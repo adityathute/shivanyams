@@ -84,7 +84,7 @@ export function getPortalNavigation(
         ]
       : []),
     {
-      label: "Tags",
+      label: translate(language, sidebarTranslations, "tags"),
       href: "/tags",
       icon: <TagIcon />,
     },

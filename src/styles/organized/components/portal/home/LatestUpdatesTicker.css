@@ -1,0 +1,11 @@
+/* Homepage latest updates ticker refinements (light mode). */
+.ticker-item {
+  flex-basis: 16.666667%;
+}
+
+.ticker .ticker-item .ticker-dot,
+.ticker .ticker-item:hover .ticker-dot {
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1;
+}

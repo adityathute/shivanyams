@@ -84,9 +84,9 @@ export function JobsPage() {
             </div>
 
             <div className="update-list">
-              {data.loading ? <div className="empty-state empty-job">Loading...</div> : null}
-              {!data.loading && data.error ? <div className="empty-state empty-job">{data.error}</div> : null}
-              {!data.loading && !data.error && jobs.length ? (
+              {data.loading && jobs.length === 0 ? <div className="empty-state empty-job">Loading...</div> : null}
+              {!data.loading && jobs.length === 0 && data.failedTypes?.includes("job") && data.error ? <div className="empty-state empty-job">{data.error}</div> : null}
+              {jobs.length ? (
                 jobs.map((item) => (
                   <a
                     className="update-row"
@@ -123,7 +123,7 @@ export function JobsPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
-              ) : !data.loading && !data.error ? (
+              ) : !data.loading && !data.failedTypes?.includes("job") ? (
                 <div className="empty-state empty-job">{t("noJobsAvailable")}</div>
               ) : null}
             </div>

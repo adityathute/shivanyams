@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { HeroSection } from "./HeroSection";
 import { CategoryGrid, categoryConfig, getCategorySlugForType } from "../category/CategoryGrid";
 import { UpdatesSection } from "./UpdatesSection";
@@ -23,7 +23,7 @@ export function HomePage() {
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");
   const { data } = usePortalData();
-  const tickerItems = data.items.slice(0, 20);
+  const tickerItems = useMemo(() => data.items.slice(0, 20), [data.items]);
   const { links, getLinkTitle } = useImportantLinks();
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>

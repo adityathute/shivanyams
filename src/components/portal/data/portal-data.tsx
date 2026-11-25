@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import {
   createContext,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -771,6 +771,7 @@ type PortalDataContextValue = {
 const PortalDataContext = createContext<PortalDataContextValue | null>(null);
 
 const PORTAL_DATA_CACHE_VERSION = 1;
+const PORTAL_DATA_CACHE_TTL = 60_000;
 
 type CachedPortalData = {
   version: number;
@@ -783,7 +784,7 @@ type CachedPortalData = {
  * Public portal content is safe to keep for the lifetime of the current tab.
  * On a reload, render this snapshot immediately and revalidate it from Django.
  */
-function readPortalDataCache(): Pick<PortalData, "items" | "videos"> | null {
+function readPortalDataCache(): CachedPortalData | null {
   if (typeof window === "undefined") return null;
 
   try {
@@ -794,12 +795,16 @@ function readPortalDataCache(): Pick<PortalData, "items" | "videos"> | null {
     if (
       cached.version !== PORTAL_DATA_CACHE_VERSION ||
       !Array.isArray(cached.items) ||
-      !Array.isArray(cached.videos)
+      !Array.isArray(cached.videos) ||
+      typeof cached.savedAt !== "number" ||
+      !Number.isFinite(cached.savedAt)
     ) {
       return null;
     }
 
     return {
+      version: PORTAL_DATA_CACHE_VERSION,
+      savedAt: cached.savedAt,
       items: cached.items as Item[],
       videos: cached.videos as Video[],
     };
@@ -826,20 +831,34 @@ function writePortalDataCache(data: PortalData) {
   }
 }
 
+function hasSamePortalContent(left: PortalData, right: PortalData) {
+  return (
+    JSON.stringify(left.items) === JSON.stringify(right.items) &&
+    JSON.stringify(left.videos) === JSON.stringify(right.videos)
+  );
+}
+
 export function PortalDataProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [data, setData] = useState<PortalData>(emptyData);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const cachedData = readPortalDataCache();
     const hasCachedData = cachedData !== null;
 
     if (cachedData) {
-      setData({
-        ...cachedData,
+      setData((current) => ({
+        ...current,
+        items: cachedData.items,
+        videos: cachedData.videos,
         loading: false,
         error: "",
-      });
+      }));
+
+      // Avoid another API round trip while this tab's snapshot is fresh.
+      if (Date.now() - cachedData.savedAt < PORTAL_DATA_CACHE_TTL) {
+        return;
+      }
     }
 
     const controller = new AbortController();
@@ -859,6 +878,16 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
               error: nextData.error,
             };
           }
+
+          // Keep the existing data reference and UI intact when nothing changed.
+          if (hasSamePortalContent(current, nextData)) {
+            return {
+              ...current,
+              loading: false,
+              error: nextData.error,
+            };
+          }
+
           return nextData;
         });
       })

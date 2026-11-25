@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap");
-
 :root {
   --blue: #075be8;
   --primary: #075be8;
@@ -31,7 +29,7 @@ body {
   color: #111827;
   background: var(--shivanya-color-background, #f8fafc);
   color: var(--shivanya-color-text-primary, #111827);
-  font-family: Inter, Hind, sans-serif;
+  font-family: "Outfit", "Hind", sans-serif;
   font-size: 14px;
 }
 

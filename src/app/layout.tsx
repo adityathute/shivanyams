@@ -5,6 +5,7 @@ import type { Language } from "shivanya-i18n";
 
 import { PortalLayout } from "../components/portal/layout/PortalLayout";
 import "./globals.css";
+import "shivanya-ui/styles";
 import "./portal-base.css";
 
 export const metadata: Metadata = {

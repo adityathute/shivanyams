@@ -4,7 +4,7 @@
   flex-direction: column;
   background: #f4f7fc;
   color: #132642;
-  font-family: Inter, Hind, sans-serif;
+  font-family: "Outfit", "Hind", sans-serif;
 
   padding: 0;
 }
@@ -85,7 +85,7 @@
 }
 
 .admin-dashboard-content h1 {
-  font-family: Hind, Inter, sans-serif;
+  font-family: "Outfit", "Hind", sans-serif;
   font-size: 30px;
   margin: 12px 0 8px;
 }

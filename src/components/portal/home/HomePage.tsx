@@ -103,11 +103,11 @@ export function HomePage() {
                           : item.type === "result"
                             ? `/results/${item.slug || createPostSlug(item.title)}`
                             : item.type === "admit"
-                              ? `/admit-card/${item.slug || createPostSlug(item.title)}`
+                              ? `/admit-cards/${item.slug || createPostSlug(item.title)}`
                               : item.type === "video"
                                 ? `/videos/${item.slug || createPostSlug(item.title)}`
                                 : item.type === "guide"
-                                  ? `/articles/${item.slug || createPostSlug(item.title)}`
+                                  ? `/guides/${item.slug || createPostSlug(item.title)}`
                                   : `/examinations/${item.slug || createPostSlug(item.title)}`
                     }
                     className="ticker-item"

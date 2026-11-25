@@ -918,11 +918,18 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
     try {
       const nextData = await loadPortalData(controller.signal);
       if (!nextData.error) writePortalDataCache(nextData);
-      setData((current) =>
-        nextData.error && (current.items.length > 0 || current.videos.length > 0)
+      setData((current) => {
+        if (
+          nextData.error &&
+          (current.items.length > 0 || current.videos.length > 0)
+        ) {
+          return { ...current, loading: false, error: nextData.error };
+        }
+
+        return hasSamePortalContent(current, nextData)
           ? { ...current, loading: false, error: nextData.error }
-          : nextData,
-      );
+          : nextData;
+      });
     } catch (error) {
       setData((current) => ({
         ...current,

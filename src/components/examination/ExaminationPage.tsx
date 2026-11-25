@@ -124,7 +124,23 @@ export function ExaminationPage() {
                   </a>
                 ))
                ) : data.loading ? (
-                <div className="empty-state empty-exam">Loading...</div>
+                <div
+                  className="update-skeleton-list"
+                  aria-label="Loading examination updates"
+                  aria-busy="true"
+                >
+                  {Array.from({ length: 2 }, (_, index) => (
+                    <div className="update-skeleton-row" key={index} aria-hidden="true">
+                      <span className="update-skeleton-badge" />
+                      <span className="update-skeleton-copy">
+                        <span className="update-skeleton-title" />
+                        <span className="update-skeleton-summary" />
+                      </span>
+                      <span className="update-skeleton-date" />
+                      <span className="update-skeleton-pill" />
+                    </div>
+                  ))}
+                </div>
               ) : data.failedTypes?.includes("examination") && data.error ? (
                 <div className="empty-state empty-exam">{data.error}</div>
               ) : (

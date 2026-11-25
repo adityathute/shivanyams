@@ -114,6 +114,25 @@ export function normalizeCategorySlug(slug: string) {
   return normalizePortalCategorySlug(slug.trim().toLowerCase().replace(/[_\s]+/g, "-"));
 }
 
+const configuredPortalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
+
+export const API_URL = (
+  configuredPortalApiUrl ||
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:8001/api/v1/portal"
+    : "")
+).replace(/\\/+$/, "");
+
+export function getPortalApiUrl(path: string) {
+  if (!API_URL) {
+    throw new Error(
+      "Portal API is not configured. Set NEXT_PUBLIC_PORTAL_API_URL to the deployed Portal API base URL.",
+    );
+  }
+
+  return `${API_URL}/${path.replace(/^\\/+/, "")}`;
+}
+
 // Stable navigation categories are sourced locally; no category API request is needed.
 export const STATIC_PORTAL_CATEGORIES: Category[] = PORTAL_CATEGORIES.map((category) => ({
   id: category.sortOrder,

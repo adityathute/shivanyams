@@ -366,6 +366,11 @@
   color: #075be8;
 }
 
+.related-tag-chip .related-tag-label::before {
+  content: "#";
+  margin-right: 2px;
+}
+
 .related-tag-chip small {
   color: #8491a3;
   font-size: 10px;

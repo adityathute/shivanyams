@@ -44,6 +44,10 @@ export default async function RootLayout({
       style={{ colorScheme: initialTheme }}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preload" href="/fonts/Hind-Regular.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/Hind-Bold.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
+      </head>
       <body>
         <PortalLayout initialLanguage={initialLanguage}>
           {children}

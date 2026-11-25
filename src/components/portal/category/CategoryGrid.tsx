@@ -121,7 +121,7 @@ export function getPortalApiUrl(path: string) {
     );
   }
 
-  return `${API_URL}/${path.replace(/^\\/+/, "")}`;
+  return `${API_URL}/${path.replace(/^\/+/, "")}`;
 }
 
 export function getCategoryTitle(
@@ -198,7 +198,7 @@ export function normalizeCategorySlug(slug: string) {
   const normalized = slug
     .trim()
     .toLowerCase()
-    .replace(/[_\\s]+/g, "-");
+    .replace(/[_\s]+/g, "-");
 
   return normalizePortalCategorySlug(normalized);
 }

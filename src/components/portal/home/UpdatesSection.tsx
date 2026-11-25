@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   getPortalApiUrl,
+  CategoryBadge,
+  getCategorySlugForType,
   categoryConfig,
   getCategoryTitle,
   normalizeCategorySlug,
@@ -253,9 +255,7 @@ export function UpdatesSection({
 
             return (
               <a className="update-row" key={item.id} href={getPostHref(item)}>
-                <span className={`update-badge ${item.type}`}>
-                  {itemCategory}
-                </span>
+                <CategoryBadge category={getCategorySlugForType(item.type)} label={itemCategory} />
 
                 <span className="update-title">
                   {itemTitle}

@@ -15,6 +15,8 @@ export function ToolsCharacters() {
         width={1728}
         height={832}
         priority
+        unoptimized
+        decoding="sync"
         className="tools-characters-image"
       />
 

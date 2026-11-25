@@ -54,21 +54,20 @@ export function HomePage() {
 
   return (
     <div className="portal">
-      {data.items && data.items.length > 0 && (
-        <div className="ticker">
-          <span className="ticker-label">
-            <span className="ticker-label-icon">⚑</span>
-            Latest Updates
-          </span>
+      <div className="ticker" aria-label="Latest updates">
+        <span className="ticker-label">
+          <span className="ticker-label-icon">⚑</span>
+          Latest Updates
+        </span>
 
-          <div className="ticker-track">
-            <div
-              className="ticker-slides"
-              style={{
-                transform: `translateX(-${tickerIndex * (100 / 6)}%)`,
-              }}
-            >
-              {tickerItems.map((item) => {
+        <div className="ticker-track" aria-live="polite">
+          <div
+            className="ticker-slides"
+            style={{
+              transform: `translateX(-${tickerIndex * (100 / 6)}%)`,
+            }}
+          >
+            {tickerItems.length > 0 ? tickerItems.map((item) => {
                 const categorySlug = getCategorySlugForType(item.type);
                 const categoryIcon = categoryConfig[categorySlug]?.icon;
 
@@ -100,20 +99,24 @@ export function HomePage() {
                     </span>
                   </a>
                 );
-              })}
-            </div>
+            }) : (
+              <span className="ticker-empty-state">
+                {data.loading ? "Loading updates..." : "No updates available"}
+              </span>
+            )}
           </div>
-
-          <button
-            className="ticker-arrow"
-            type="button"
-            aria-label="Show next update"
-            onClick={handleNextTicker}
-          >
-            ›
-          </button>
         </div>
-      )}
+
+        <button
+          className="ticker-arrow"
+          type="button"
+          aria-label="Show next update"
+          onClick={handleNextTicker}
+          disabled={tickerItems.length <= 6}
+        >
+          ›
+        </button>
+      </div>
 
       <main>
         <HeroSection />

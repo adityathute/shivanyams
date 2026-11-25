@@ -11,6 +11,7 @@ import {
   categoryConfig,
   getCategoryTitle,
   normalizeCategorySlug,
+  STATIC_PORTAL_CATEGORIES,
   type Category,
   type Language,
 } from "../category/CategoryGrid";
@@ -127,13 +128,25 @@ export function UpdatesSection({
 }: Props) {
   const { data } = usePortalData();
 
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
 
   const sectionTitle = title ?? getPortalText("updatesTitle", language);
 
   // Load actual categories from Django API
   useEffect(() => {
     const controller = new AbortController();
+    const cacheKey = "shivanyams-portal-categories";
+
+    // Show the last successful category list immediately, before revalidating.
+    try {
+      const cached = window.sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached) as Category[];
+        if (Array.isArray(parsed) && parsed.length) setCategories(parsed);
+      }
+    } catch {
+      // Keep the locally defined categories if the browser cache is unavailable.
+    }
 
     async function fetchCategories() {
       try {
@@ -151,11 +164,20 @@ export function UpdatesSection({
           ? payload
           : (payload.results ?? []);
 
-        setCategories(
-          result.filter(
-            (category) => category.is_active ?? category.active ?? false,
-          ),
+        const activeCategories = result.filter(
+          (category) => category.is_active ?? category.active ?? false,
         );
+
+        if (activeCategories.length) {
+          setCategories(activeCategories);
+          try {
+            window.sessionStorage.setItem(cacheKey, JSON.stringify(activeCategories));
+          } catch {
+            // Category navigation remains available from the local fallback.
+          }
+        } else {
+          setCategories(STATIC_PORTAL_CATEGORIES);
+        }
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category loading failed:", error);

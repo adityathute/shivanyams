@@ -17,6 +17,8 @@ export function ExaminationCharacters() {
         width={1536}
         height={1024}
         priority
+        unoptimized
+        decoding="sync"
         className="examination-characters-image"
       />
 

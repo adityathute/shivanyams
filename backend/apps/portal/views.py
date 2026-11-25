@@ -61,9 +61,11 @@ SUPPORTED_CONTENT_KINDS = {
     "jobs",
     "schemes",
     "examination",
+    "exams",
     "admit-card",
     "results",
     "articles",
+    "guides",
     "videos",
     "tools",
 }
@@ -71,7 +73,13 @@ SUPPORTED_CONTENT_KINDS = {
 
 CONTENT_CATEGORY_SLUGS = {
     "admit-card": "admit-cards",
-    "articles": "articles-guides",
+    # Keep the existing API endpoint names working while category slugs
+    # move to their shorter canonical values.
+    "examination": "exams",
+    "articles": "guides",
+    "articles-guides": "guides",
+    "exams": "exams",
+    "guides": "guides",
 }
 
 

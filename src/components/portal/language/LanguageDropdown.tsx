@@ -56,23 +56,33 @@ export function LanguageDropdown() {
   return (
     <>
       <div className="language-dropdown-desktop">
-        <Select
-          value={language}
-          options={desktopLanguages}
-          onChange={handleSelect}
-          aria-label="Select language"
-        />
+        <div className="language-select-display">
+          <Select
+            value={language}
+            options={desktopLanguages}
+            onChange={handleSelect}
+            aria-label="Select language"
+          />
+          <span className="language-select-closed-label" aria-hidden="true">
+            {closedLabel}
+          </span>
+        </div>
       </div>
 
       <div className="language-dropdown-mobile">
-        <Select
-          size="sm"
-          className="language-select-mobile"
-          value={language}
-          options={mobileLanguages}
-          onChange={handleSelect}
-          aria-label="Select language"
-        />
+        <div className="language-select-display language-select-display-mobile">
+          <Select
+            size="sm"
+            className="language-select-mobile"
+            value={language}
+            options={mobileLanguages}
+            onChange={handleSelect}
+            aria-label="Select language"
+          />
+          <span className="language-select-closed-label" aria-hidden="true">
+            {closedLabel}
+          </span>
+        </div>
       </div>
     </>
   );

@@ -24,3 +24,51 @@
   min-width: 16px;
   min-height: 16px;
 }
+
+
+/* Loading placeholders for the latest updates ticker. */
+.portal .ticker .ticker-skeleton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.portal .ticker .ticker-skeleton-icon,
+.portal .ticker .ticker-skeleton-title {
+  display: block;
+  flex: 0 0 auto;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #e5e7eb 25%,
+    #f3f4f6 50%,
+    #e5e7eb 75%
+  );
+  background-size: 200% 100%;
+  animation: ticker-skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.portal .ticker .ticker-skeleton-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.portal .ticker .ticker-skeleton-title {
+  width: 68%;
+  max-width: 150px;
+}
+
+@keyframes ticker-skeleton-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal .ticker .ticker-skeleton-icon,
+  .portal .ticker .ticker-skeleton-title {
+    animation: none;
+  }
+}

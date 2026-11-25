@@ -18,6 +18,8 @@ export function AdmitCardsCharacters() {
         width={1600}
         height={1024}
         priority
+        unoptimized
+        decoding="sync"
         className="admit-characters-image"
       />
 

@@ -507,6 +507,10 @@ class ArticleGuideDetailsSerializer(serializers.ModelSerializer):
 
 
 class VideoDetailsSerializer(serializers.ModelSerializer):
+    # A video post can be saved as a draft before its media URL is ready.
+    # Keep the field in the payload, but accept an empty value during draft editing.
+    video_url = serializers.URLField(required=False, allow_blank=True)
+
     class Meta:
         model = VideoDetails
         exclude = ("id", "post", "created_at", "updated_at")

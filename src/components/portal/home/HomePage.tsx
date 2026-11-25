@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HeroSection } from "./HeroSection";
 import { CategoryGrid, categoryConfig, getCategorySlugForType } from "../category/CategoryGrid";
 import { UpdatesSection } from "./UpdatesSection";
@@ -29,7 +29,6 @@ export function HomePage() {
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, selectedLanguage);
 
-  const tickerRef = useRef<HTMLDivElement>(null);
   const [tickerIndex, setTickerIndex] = useState(0);
   const [visibleTickerCount, setVisibleTickerCount] = useState(6);
 
@@ -66,39 +65,6 @@ export function HomePage() {
     return () => window.clearInterval(interval);
   }, [tickerItems.length, visibleTickerCount]);
 
-  useEffect(() => {
-    const ticker = tickerRef.current;
-    if (!ticker) return;
-
-    const titleElements = ticker.querySelectorAll<HTMLElement>(".ticker-item-title");
-    const updateTitleAnimation = (element: HTMLElement) => {
-      const text = element.firstElementChild as HTMLElement | null;
-      if (!text) return;
-
-      const distance = Math.ceil(text.scrollWidth - element.clientWidth);
-      if (distance > 4) {
-        element.dataset.overflow = "true";
-        element.style.setProperty("--ticker-scroll-distance", `${distance}px`);
-        element.style.setProperty("--ticker-scroll-duration", `${Math.max(8, distance / 18)}s`);
-      } else {
-        delete element.dataset.overflow;
-        element.style.removeProperty("--ticker-scroll-distance");
-        element.style.removeProperty("--ticker-scroll-duration");
-      }
-    };
-
-    const observer = new ResizeObserver(() => {
-      titleElements.forEach(updateTitleAnimation);
-    });
-
-    titleElements.forEach((element) => {
-      observer.observe(element);
-      updateTitleAnimation(element);
-    });
-
-    return () => observer.disconnect();
-  }, [tickerItems, visibleTickerCount]);
-
   const getPostTitle = (item: Item): string => {
     const titles: Record<string, string | undefined> = {
       en: item.title_en,
@@ -123,7 +89,7 @@ export function HomePage() {
 
   return (
     <div className="portal">
-      <div className="ticker" aria-label="Latest updates" ref={tickerRef}>
+      <div className="ticker" aria-label="Latest updates">
         <span className="ticker-label">
           <span className="ticker-label-icon">⚑</span>
           Latest Updates

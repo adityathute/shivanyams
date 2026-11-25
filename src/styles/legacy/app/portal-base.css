@@ -26,7 +26,7 @@
   font-family: "Hind";
   src: url("/fonts/Hind-Bold.ttf") format("truetype");
   font-style: normal;
-  font-weight: 700 900;
+  font-weight: 700;
   font-display: swap;
 }
 
@@ -46,6 +46,11 @@
 
 * {
   box-sizing: border-box;
+}
+
+html[lang="mr"],
+html[lang="hi"] {
+  --shivanya-font-sans: "Hind", sans-serif;
 }
 
 html {

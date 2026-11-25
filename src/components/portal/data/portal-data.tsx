@@ -174,6 +174,7 @@ export type PortalData = {
   videos: Video[];
   loading: boolean;
   error: string;
+  failedTypes?: ItemType[];
 };
 
 type ApiLink = {
@@ -362,6 +363,7 @@ const emptyData: PortalData = {
   videos: [],
   loading: true,
   error: "",
+  failedTypes: [],
 };
 
 function getDate(value?: string | null) {
@@ -725,11 +727,13 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
   const items: Item[] = [];
   const videos: Video[] = [];
   const errors: string[] = [];
+  const failedTypes: ItemType[] = [];
 
   responses.forEach((response, index) => {
     const { type } = contentKinds[index];
 
     if (response.status === "rejected") {
+      failedTypes.push(type);
       if (!signal.aborted) {
         errors.push(
           `${contentKinds[index].endpoint}: ${String(response.reason)}`,
@@ -767,6 +771,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
     videos,
     loading: false,
     error: errors.join("\n"),
+    failedTypes,
   };
 }
 
@@ -844,6 +849,24 @@ function hasSamePortalContent(left: PortalData, right: PortalData) {
   );
 }
 
+/**
+ * One failed endpoint must not block fresh content from the other categories.
+ * Keep the previous snapshot only for the category whose request failed.
+ */
+function mergePartialPortalData(current: PortalData, next: PortalData): PortalData {
+  const failedTypes = new Set(next.failedTypes || []);
+  const items = [
+    ...current.items.filter((item) => failedTypes.has(item.type)),
+    ...next.items.filter((item) => !failedTypes.has(item.type)),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+
+  return {
+    ...next,
+    items,
+    videos: failedTypes.has("video") ? current.videos : next.videos,
+  };
+}
+
 export function PortalDataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<PortalData>(emptyData);
   const activeLoadRef = useRef<Promise<PortalData> | null>(null);
@@ -867,13 +890,13 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
       if (!nextData.error) writePortalDataCache(nextData);
 
       setData((current) => {
-        if (nextData.error && (current.items.length > 0 || current.videos.length > 0)) {
-          return { ...current, loading: false, error: nextData.error };
-        }
-
-        return hasSamePortalContent(current, nextData)
-          ? { ...current, loading: false, error: nextData.error }
+        const resolvedData = nextData.error
+          ? mergePartialPortalData(current, nextData)
           : nextData;
+
+        return hasSamePortalContent(current, resolvedData)
+          ? { ...current, loading: false, error: nextData.error }
+          : { ...resolvedData, loading: false, error: nextData.error };
       });
     } catch (error) {
       setData((current) => ({

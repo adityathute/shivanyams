@@ -1044,38 +1044,46 @@
 }
 
 
-/* Keep the mobile navigation drawer usable when its menu is taller than the screen. */
+/* Override the shell package's touch-action:none and overflow:hidden rules.
+   The drawer header stays fixed while the navigation area scrolls independently. */
 @media (max-width: 767px) {
   .shivanya-shell-mobile-layer {
-    touch-action: pan-y;
+    touch-action: pan-y !important;
   }
 
-  .shivanya-shell-mobile-panel {
-    overflow: hidden;
-    touch-action: pan-y;
-    overscroll-behavior: contain;
+  .shivanya-shell-mobile-layer .shivanya-shell-mobile-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    touch-action: pan-y !important;
+    overscroll-behavior: contain !important;
   }
 
-  .shivanya-shell-mobile-sidebar {
-    flex: 1 1 auto;
-    min-height: 0;
-    height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
+  .shivanya-shell-mobile-layer .shivanya-shell-mobile-panel .shivanya-shell-mobile-sidebar {
+    display: block !important;
+    flex: 1 1 0% !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
     scrollbar-width: thin;
   }
 
-  .shivanya-shell-mobile-sidebar .shivanya-shell-nav {
-    flex: 0 0 auto;
-    min-height: max-content;
-    overflow: visible;
-    touch-action: pan-y;
+  .shivanya-shell-mobile-layer .shivanya-shell-mobile-sidebar .shivanya-shell-nav {
+    display: block !important;
+    min-height: max-content !important;
+    height: auto !important;
+    overflow: visible !important;
+    touch-action: pan-y !important;
   }
 
-  .shivanya-shell-mobile-sidebar .shivanya-shell-sidebar-footer {
-    flex: 0 0 auto;
+  .shivanya-shell-mobile-layer .shivanya-shell-mobile-sidebar .shivanya-shell-sidebar-footer {
+    flex: 0 0 auto !important;
   }
 }

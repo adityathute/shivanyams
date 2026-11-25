@@ -24,7 +24,7 @@ const desktopLanguages: { value: Language; label: string }[] = [
 ];
 
 const mobileLanguages: { value: Language; label: string }[] = [
-  { value: "en", label: "EN" },
+  { value: "en", label: "English" },
   { value: "mr", label: "मराठी" },
   { value: "hi", label: "हिंदी" },
 ];

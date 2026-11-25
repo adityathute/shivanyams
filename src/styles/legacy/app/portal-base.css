@@ -67,7 +67,7 @@ body {
   color: #111827;
   background: var(--shivanya-color-background, #f8fafc);
   color: var(--shivanya-color-text-primary, #111827);
-  font-family: "Outfit", "Hind", sans-serif;
+  font-family: var(--shivanya-font-sans, "Outfit", "Hind", sans-serif);
   font-size: 14px;
 }
 

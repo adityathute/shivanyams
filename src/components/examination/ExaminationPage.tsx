@@ -6,7 +6,7 @@ import "./../../styles/legacy/components/jobs/JobsPage.css";
 import { useMemo, useState } from "react";
 import type { Language } from "shivanya-i18n";
 import { ExaminationCharacters } from "./ExaminationCharacters";
-import { usePortalData } from "../portal/data/portal-data";
+import { usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
@@ -17,6 +17,7 @@ import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function ExaminationPage() {
+  useRefreshPortalDataOnMount();
   const [query, setQuery] = useState("");
 
   const { data } = usePortalData();

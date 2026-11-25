@@ -65,6 +65,7 @@ SUPPORTED_CONTENT_KINDS = {
     "admit-card",
     "results",
     "articles",
+    "articles-guides",
     "guides",
     "videos",
     "tools",

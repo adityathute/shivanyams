@@ -125,7 +125,7 @@ export function AdmitCardsPage() {
                 ))
                ) : data.loading ? (
                 <div className="empty-state empty-admit">Loading...</div>
-              ) : data.error ? (
+              ) : data.failedTypes?.includes("admit") && data.error ? (
                 <div className="empty-state empty-admit">{data.error}</div>
               ) : (
                 <div className="empty-state empty-admit">

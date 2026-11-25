@@ -7,8 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import { usePortalData, type ItemType } from "../data/portal-data";
 import {
   getPortalApiUrl,
-  CategoryBadge,
-  getCategorySlugForType,
   normalizeCategorySlug,
   getCategoryDescription,
   getCategoryTitle,
@@ -283,7 +281,9 @@ export function CategoryPage({ type }: { type: ItemType }) {
                   target={item.link ? "_blank" : undefined}
                   rel={item.link ? "noreferrer" : undefined}
                 >
-                  <CategoryBadge category={getCategorySlugForType(item.type)} label={item.category} />
+                  <span className={`update-badge ${item.type}`}>
+                    {item.category}
+                  </span>
 
                   <span className="update-title">
                     {item.title}

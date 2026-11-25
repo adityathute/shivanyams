@@ -1,2 +1,3 @@
 /* Organized global stylesheet entry point. */
 @import "./components/portal/category/CategoryBadge.css";
+@import "./components/portal/layout/PortalFooter.css";

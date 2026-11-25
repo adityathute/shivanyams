@@ -80,7 +80,4 @@
     flex-basis: 25%;
   }
 
-  .portal .ticker .ticker-slides {
-    transform: translateX(calc(var(--ticker-index, 0) * -25%)) !important;
-  }
 }

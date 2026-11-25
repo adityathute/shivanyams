@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
 import { BookmarkIcon, Button, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, Select, ShareIcon, TelegramIcon, Textarea, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkedInIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -359,8 +360,9 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
         </button>
       ) : null}
       {message ? <p className="portal-engagement-message" role="status" aria-live="polite">{message}</p> : null}
-      {placement === "footer" && reportOpen ? (
-        <div
+      {placement === "footer" && reportOpen && typeof document !== "undefined"
+        ? createPortal(
+            <div
           className="portal-post-report-modal"
           role="presentation"
           onClick={(event) => {
@@ -421,8 +423,10 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
               <Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void submitPostReport()}>{reporting ? "Sending..." : "Submit report"}</Button>
             </div>
           </div>
-        </div>
-      ) : null}
+        </div>,
+            document.body,
+          )
+        : null}
     </section>
   );
 }

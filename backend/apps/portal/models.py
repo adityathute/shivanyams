@@ -902,7 +902,7 @@ class ToolDetails(TimestampedModel):
         related_name="tool_details",
     )
 
-    tool_key = models.SlugField(max_length=120, unique=True)
+    tool_key = models.SlugField(max_length=120, unique=True, null=True, blank=True)
     tool_type = models.CharField(
         max_length=20,
         choices=ToolType.choices,

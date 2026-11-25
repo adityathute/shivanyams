@@ -842,6 +842,13 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
 
                   <h1>{post.title}</h1>
 
+                  {updatedPostDate ? (
+                    <div className="portal-post-mobile-updated">
+                      <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
+                      <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
+                    </div>
+                  ) : null}
+
                   {post.description ? (
                     <p className="portal-post-summary">{post.description}</p>
                   ) : null}

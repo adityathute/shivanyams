@@ -833,21 +833,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
                         </div>
                       ) : null}
-                      <div className="portal-post-header-views">
-                        <span>{formatCompactNumber(trackedViewsCount?.postId === post.postId ? trackedViewsCount.count : Number(post.viewsCount) || 0)}</span>
-                        <span>views</span>
-                      </div>
                     </div>
                   </div>
 
                   <h1>{post.title}</h1>
 
-                  {updatedPostDate ? (
-                    <div className="portal-post-mobile-updated">
-                      <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
-                      <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
-                    </div>
-                  ) : null}
 
                   {post.description ? (
                     <p className="portal-post-summary">{post.description}</p>

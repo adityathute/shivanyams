@@ -1,4 +1,4 @@
-.language-dropdown-mobile {
+.l {
   display: none;
 }
 
@@ -40,7 +40,7 @@
     background: var(--shivanya-color-surface);
     color: var(--shivanya-color-text-primary);
     font: inherit;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: -0.2px;
     cursor: pointer;

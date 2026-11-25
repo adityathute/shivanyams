@@ -1388,11 +1388,33 @@
   font-size: 11px;
 }
 
-.portal-post-meta-compact > span {
+.portal-post-meta-compact > .portal-post-category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 10px;
+  gap: 6px;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  color: #0969da;
+  background: #eff6ff;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  cursor: default;
+  user-select: none;
+}
+
+.portal-post-category-badge svg {
+  flex: 0 0 auto;
+}
+
+:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge {
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(96, 165, 250, 0.3);
 }
 
 .portal-post-meta-compact .portal-post-dates {

@@ -245,8 +245,20 @@ export function UpdatesSection({
       )}
 
       <div className="update-list">
-        {data.loading ? (
-          <div className="empty-state">Loading updates...</div>
+        {data.loading && filtered.length === 0 ? (
+          <div className="update-skeleton-list" aria-label="Loading updates" aria-busy="true">
+            {Array.from({ length: 5 }, (_, index) => (
+              <div className="update-skeleton-row" key={index} aria-hidden="true">
+                <span className="update-skeleton-badge" />
+                <span className="update-skeleton-copy">
+                  <span className="update-skeleton-title" />
+                  <span className="update-skeleton-summary" />
+                </span>
+                <span className="update-skeleton-date" />
+                <span className="update-skeleton-pill" />
+              </div>
+            ))}
+          </div>
         ) : filtered.length > 0 ? (
           filtered.map((item) => {
             const itemTitle = getItemTitle(item, language);

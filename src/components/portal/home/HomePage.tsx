@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HeroSection } from "./HeroSection";
 import { CategoryGrid, categoryConfig, getCategorySlugForType } from "../category/CategoryGrid";
 import { UpdatesSection } from "./UpdatesSection";
@@ -29,6 +29,19 @@ export function HomePage() {
     getBaseText(key, selectedLanguage);
 
   const [tickerIndex, setTickerIndex] = useState(0);
+  const [visibleTickerCount, setVisibleTickerCount] = useState(6);
+
+  useEffect(() => {
+    const tabletQuery = window.matchMedia("(min-width: 761px) and (max-width: 1100px)");
+    const updateVisibleCount = () => {
+      setVisibleTickerCount(tabletQuery.matches ? 4 : 6);
+      setTickerIndex(0);
+    };
+
+    updateVisibleCount();
+    tabletQuery.addEventListener("change", updateVisibleCount);
+    return () => tabletQuery.removeEventListener("change", updateVisibleCount);
+  }, []);
 
   const getPostTitle = (item: Item): string => {
     const titles: Record<string, string | undefined> = {
@@ -47,7 +60,7 @@ export function HomePage() {
   };
 
   const handleNextTicker = () => {
-    const maxIndex = Math.max(0, tickerItems.length - 6);
+    const maxIndex = Math.max(0, tickerItems.length - visibleTickerCount);
 
     setTickerIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
@@ -64,8 +77,8 @@ export function HomePage() {
           <div
             className="ticker-slides"
             style={{
-              transform: `translateX(-${tickerIndex * (100 / 6)}%)`,
-            }}
+              "--ticker-index": tickerIndex,
+            } as React.CSSProperties}
           >
             {tickerItems.length > 0 ? tickerItems.map((item) => {
                 const categorySlug = getCategorySlugForType(item.type);
@@ -122,7 +135,7 @@ export function HomePage() {
           type="button"
           aria-label="Show next update"
           onClick={handleNextTicker}
-          disabled={tickerItems.length <= 6}
+          disabled={tickerItems.length <= visibleTickerCount}
         >
           ›
         </button>

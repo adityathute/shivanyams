@@ -5,6 +5,11 @@
   min-width: 0;
 }
 
+/* Marathi labels are visually shorter; keep the homepage badge column compact. */
+.updates-panel-language-mr .update-row {
+  grid-template-columns: 106px minmax(0, 1fr) 100px 42px;
+}
+
 /* Category pages retain their content-sized badge columns. */
 .jobs-updates .update-row,
 .schemes-updates .update-row,
@@ -89,6 +94,10 @@
     gap: 8px;
   }
 
+  .updates-panel-language-mr .update-row {
+    grid-template-columns: 98px minmax(0, 1fr) 78px 35px;
+  }
+
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,
@@ -106,6 +115,10 @@
     gap: 7px;
   }
 
+  .updates-panel-language-mr .update-row {
+    grid-template-columns: 92px minmax(0, 1fr) 36px;
+  }
+
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,
@@ -121,6 +134,10 @@
   .updates-panel .update-row {
     grid-template-columns: 94px minmax(0, 1fr) 31px;
     gap: 5px;
+  }
+
+  .updates-panel-language-mr .update-row {
+    grid-template-columns: 86px minmax(0, 1fr) 31px;
   }
 
   .jobs-updates .update-row,

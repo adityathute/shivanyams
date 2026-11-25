@@ -67,13 +67,6 @@
   }
 
   .language-dropdown-mobile .shivanya-select-arrow {
-    display: block;
-    z-index: 2;
-    right: 10px;
-    width: 7px;
-    height: 7px;
-    border-right: 2px solid var(--shivanya-color-text-secondary, currentColor);
-    border-bottom: 2px solid var(--shivanya-color-text-secondary, currentColor);
-    pointer-events: none;
+    display: none;
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "shivanya-auth";
 import {
   AccountModal,
   UserDropdown,
@@ -14,6 +15,7 @@ import "../PortalShell.css";
 
 export function PortalHeader() {
   const { openLogin, openRegister } = usePortalAuth();
+  const { loading: authLoading } = useAuth();
   const [accountView, setAccountView] = useState<AccountView | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -36,7 +38,26 @@ export function PortalHeader() {
           <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
         </form>
         <LanguageDropdown />
-        <UserDropdown onLogin={() => openLogin()} onRegister={openRegister} onNavigate={(view) => setAccountView(view)} />
+        {authLoading ? (
+          <button
+            type="button"
+            className="portal-user-loading"
+            aria-label="Loading account"
+            aria-busy="true"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.5" />
+              <path d="M5.5 20c.4-3.5 2.8-5.5 6.5-5.5s6.1 2 6.5 5.5" />
+            </svg>
+          </button>
+        ) : (
+          <UserDropdown
+            onLogin={() => openLogin()}
+            onRegister={openRegister}
+            onNavigate={(view) => setAccountView(view)}
+          />
+        )}
       </div>
 
       <AccountModal

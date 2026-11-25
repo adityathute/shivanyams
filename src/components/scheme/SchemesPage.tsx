@@ -100,7 +100,21 @@ export function SchemesPage() {
             </div>
 
             <div className="update-list">
-              {schemes.length ? (
+              {data.loading && schemes.length === 0 ? (
+                <div className="update-skeleton-list" aria-label="Loading schemes" aria-busy="true">
+                  {Array.from({ length: 2 }, (_, index) => (
+                    <div className="update-skeleton-row" key={index} aria-hidden="true">
+                      <span className="update-skeleton-badge" />
+                      <span className="update-skeleton-copy">
+                        <span className="update-skeleton-title" />
+                        <span className="update-skeleton-summary" />
+                      </span>
+                      <span className="update-skeleton-date" />
+                      <span className="update-skeleton-pill" />
+                    </div>
+                  ))}
+                </div>
+              ) : schemes.length ? (
                 schemes.map((item) => (
                   <a
                     className="update-row"
@@ -132,8 +146,6 @@ export function SchemesPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
-               ) : data.loading ? (
-                <div className="empty-state empty-scheme">Loading...</div>
               ) : data.failedTypes?.includes("scheme") && data.error ? (
                 <div className="empty-state empty-scheme">{data.error}</div>
               ) : (

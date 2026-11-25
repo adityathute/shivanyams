@@ -2,7 +2,7 @@
 
 import type { Language } from "shivanya-i18n";
 import { useAuth } from "shivanya-auth";
-import { Select } from "shivanya-ui";
+import { Dropdown, Select } from "shivanya-ui";
 
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import "./LanguageDropdown.css";
@@ -23,10 +23,10 @@ const desktopLanguages: { value: Language; label: string }[] = [
   { value: "hi", label: "हिंदी" },
 ];
 
-const mobileLanguages: { value: Language; label: string }[] = [
-  { value: "en", label: "EN" },
-  { value: "mr", label: "मर" },
-  { value: "hi", label: "हि" },
+const mobileLanguages: { value: Language; label: string; short: string }[] = [
+  { value: "en", label: "English", short: "EN" },
+  { value: "mr", label: "मराठी", short: "मर" },
+  { value: "hi", label: "हिंदी", short: "हि" },
 ];
 
 export function LanguageDropdown() {
@@ -49,6 +49,9 @@ export function LanguageDropdown() {
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) =>
     void handleChange(event.target.value as Language);
 
+  const selectedLanguage =
+    mobileLanguages.find((item) => item.value === language) ?? mobileLanguages[0];
+
   return (
     <>
       <div className="language-dropdown-desktop">
@@ -61,14 +64,41 @@ export function LanguageDropdown() {
       </div>
 
       <div className="language-dropdown-mobile">
-        <Select
-          size="sm"
-          className="language-select-mobile"
-          value={language}
-          options={mobileLanguages}
-          onChange={handleSelect}
-          aria-label="Select language"
-        />
+        <Dropdown
+          placement="bottom-end"
+          closeOnSelect
+          closeOnEscape
+          closeOnOutsideClick
+          className="language-menu"
+        >
+          <Dropdown.Trigger
+            className="language-menu-trigger"
+            aria-label={`Language: ${selectedLanguage.label}`}
+          >
+            <span>{selectedLanguage.short}</span>
+            <span className="language-menu-trigger-arrow" aria-hidden="true" />
+          </Dropdown.Trigger>
+
+          <Dropdown.Content className="language-menu-content">
+            <span className="language-menu-pointer" aria-hidden="true" />
+            <div className="language-menu-heading">Choose language</div>
+            {mobileLanguages.map((item) => (
+              <Dropdown.Item
+                key={item.value}
+                className="language-menu-item"
+                active={language === item.value}
+                rightSection={
+                  language === item.value ? (
+                    <span className="language-menu-check" aria-hidden="true">✓</span>
+                  ) : undefined
+                }
+                onClick={() => void handleChange(item.value)}
+              >
+                {item.label}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Content>
+        </Dropdown>
       </div>
     </>
   );

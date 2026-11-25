@@ -1,7 +1,6 @@
 "use client";
 
 import type { Language } from "shivanya-i18n";
-import { useAuth } from "shivanya-auth";
 import { Select } from "shivanya-ui";
 
 import { usePortalLanguage } from "../context/PortalLanguageContext";
@@ -19,38 +18,10 @@ const mobileLanguages: { value: Language; label: string }[] = [
   { value: "hi", label: "हिंदी" },
 ];
 
-function persistLanguage(language: Language) {
-  try {
-    localStorage.setItem("shivanya-language", language);
-    document.cookie =
-      `shivanya-language=${language}; Path=/; Max-Age=31536000; SameSite=Lax`;
-  } catch {}
-
-  document.documentElement.lang = language;
-}
-
 export function LanguageDropdown() {
-  const { language, setLanguage } = usePortalLanguage();
-  const { isAuthenticated, loading, updateSettings } = useAuth();
+  const { language } = usePortalLanguage();
 
-  async function handleChange(nextLanguage: Language) {
-    setLanguage(nextLanguage);
-    persistLanguage(nextLanguage);
-
-    if (!loading && isAuthenticated) {
-      try {
-        await updateSettings({ language: nextLanguage });
-      } catch (error) {
-        console.error("Failed to save account language preference:", error);
-      }
-    }
-  }
-
-  const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) =>
-    void handleChange(event.target.value as Language);
-
-  // Show the language users can switch to while the control is closed.
-  // The native select retains the actual language value and selected option.
+  // This selector is a display-only language indicator, not a language switcher.
   const closedLabel = language === "en" ? "मराठी" : "English";
 
   return (
@@ -60,7 +31,7 @@ export function LanguageDropdown() {
           <Select
             value={language}
             options={desktopLanguages}
-            onChange={handleSelect}
+            onChange={() => {}}
             aria-label="Select language"
           />
           <span className="language-select-closed-label" aria-hidden="true">
@@ -76,7 +47,7 @@ export function LanguageDropdown() {
             className="language-select-mobile"
             value={language}
             options={mobileLanguages}
-            onChange={handleSelect}
+            onChange={() => {}}
             aria-label="Select language"
           />
           <span className="language-select-closed-label" aria-hidden="true">

@@ -829,7 +829,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         <span className="portal-post-category-icon" aria-hidden="true">
                           {categoryConfig[category === "guides" ? "articles-guides" : category]?.icon}
                         </span>
-                        <span>{post.category || label}</span>
+                        <span>{category === "guides" ? "Articles" : post.category || label}</span>
                       </span>
                     </div>
                     <div className="portal-post-header-meta-right">

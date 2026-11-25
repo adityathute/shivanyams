@@ -1407,7 +1407,19 @@
   user-select: none;
 }
 
-.portal-post-category-badge svg {
+.portal-post-category-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.portal-post-category-icon svg {
+  display: block;
+  width: 15px;
+  height: 15px;
   flex: 0 0 auto;
 }
 

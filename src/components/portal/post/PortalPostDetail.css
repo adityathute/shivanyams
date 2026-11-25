@@ -1391,6 +1391,148 @@
   font-size: 11px;
 }
 
+.portal-post-meta-compact > .portal-post-category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 6px;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  color: #0969da;
+  background: #eff6ff;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  cursor: default;
+  user-select: none;
+}
+
+.portal-post-category-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.portal-post-category-icon svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+
+/* Match the category badge palette used by CategoryGrid. */
+.portal-post-meta-compact > .portal-post-category-badge-schemes {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.portal-post-meta-compact > .portal-post-category-badge-examination {
+  color: #4338ca;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.portal-post-meta-compact > .portal-post-category-badge-results {
+  color: #7e22ce;
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.portal-post-meta-compact > .portal-post-category-badge-admit-cards {
+  color: #0e7490;
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+
+.portal-post-meta-compact > .portal-post-category-badge-guides {
+  color: #c2410c;
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.portal-post-meta-compact > .portal-post-category-badge-videos {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.portal-post-meta-compact > .portal-post-category-badge-tools {
+  color: #475569;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge {
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-schemes {
+  color: #86efac;
+  background: rgba(22, 163, 74, 0.16);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-examination {
+  color: #a5b4fc;
+  background: rgba(79, 70, 229, 0.18);
+  border-color: rgba(129, 140, 248, 0.32);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-results {
+  color: #d8b4fe;
+  background: rgba(147, 51, 234, 0.17);
+  border-color: rgba(192, 132, 252, 0.3);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-admit-cards {
+  color: #67e8f9;
+  background: rgba(8, 145, 178, 0.17);
+  border-color: rgba(34, 211, 238, 0.3);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-guides {
+  color: #fdba74;
+  background: rgba(234, 88, 12, 0.16);
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-videos {
+  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.16);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-tools {
+  color: #cbd5e1;
+  background: rgba(100, 116, 139, 0.17);
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
 .portal-post-meta-compact .portal-post-dates {
   min-width: 0;
   gap: 4px 8px;

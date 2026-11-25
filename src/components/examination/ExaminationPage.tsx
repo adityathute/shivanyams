@@ -131,7 +131,7 @@ export function ExaminationPage() {
                 <div className="empty-state empty-exam">
                    {t("noExaminationUpdates")}
                 </div>
-              )
+              )}
             </div>
           </section>
         </main>

@@ -9,7 +9,7 @@ import "shivanya-ui/styles";
 import "./portal-base.css";
 
 export const metadata: Metadata = {
-  title: "ShivanyaMS | Govt Jobs, Schemes & Updates",
+  title: "ShivanyaMS | Public Updates",
   description: "सरकारी नोकरी, योजना, निकाल आणि महत्त्वाच्या अपडेट्स.",
 };
 

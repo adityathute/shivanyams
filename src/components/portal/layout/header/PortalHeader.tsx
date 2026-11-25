@@ -20,56 +20,24 @@ export function PortalHeader() {
 
   return (
     <>
-      <div className={`portal-shell-actions portal-header-search-actions ${searchOpen ? "portal-search-open" : ""}`}>
-        <form
-          className="portal-topbar-search"
-          role="search"
-          onSubmit={(event) => event.preventDefault()}
-        >
-          <SearchIcon size={17} aria-hidden="true" />
-          <input
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search..."
-            aria-label="Search website"
-          />
-          <button type="submit">Search</button>
-        </form>
+      <form className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={(event) => event.preventDefault()}>
+        <SearchIcon size={17} aria-hidden="true" />
+        <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" />
+        <button type="submit">Search</button>
+      </form>
 
-        <button
-          type="button"
-          className="portal-topbar-search-toggle"
-          aria-label={searchOpen ? "Close search" : "Open search"}
-          aria-expanded={searchOpen}
-          onClick={() => setSearchOpen((open) => !open)}
-        >
+      <div className="portal-shell-actions portal-header-search-actions">
+        <button type="button" className="portal-topbar-search-toggle" aria-label={searchOpen ? "Close search" : "Open search"} aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>
           <SearchIcon size={17} aria-hidden="true" />
         </button>
-
-        <div className="portal-topbar-search-mobile-panel" aria-hidden={!searchOpen}>
-          <form
-            className="portal-topbar-search portal-topbar-search-mobile"
-            role="search"
-            onSubmit={(event) => event.preventDefault()}
-          >
+        <div className={`portal-topbar-search-mobile-panel ${searchOpen ? "portal-search-open" : ""}`} aria-hidden={!searchOpen}>
+          <form className="portal-topbar-search portal-topbar-search-mobile" role="search" onSubmit={(event) => event.preventDefault()}>
             <SearchIcon size={17} aria-hidden="true" />
-            <input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search..."
-              aria-label="Search website"
-              tabIndex={searchOpen ? 0 : -1}
-            />
+            <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
           </form>
         </div>
-
         <LanguageDropdown />
-
-        <UserDropdown
-          onLogin={() => openLogin()}
-          onRegister={openRegister}
-          onNavigate={(view) => setAccountView(view)}
-        />
+        <UserDropdown onLogin={() => openLogin()} onRegister={openRegister} onNavigate={(view) => setAccountView(view)} />
       </div>
 
       <AccountModal

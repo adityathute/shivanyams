@@ -3,3 +3,4 @@
 @import "./components/portal/layout/PortalFooter.css";
 @import "./components/portal/home/LatestUpdatesTicker.css";
 @import "./components/portal/home/HomeResponsive.css";
+@import "./components/portal/layout/PortalTabletNavigation.css";

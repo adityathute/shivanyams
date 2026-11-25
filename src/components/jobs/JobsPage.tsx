@@ -5,6 +5,7 @@ import "./../../styles/legacy/components/jobs/JobsPage.css";
 import { useMemo, useState } from "react";
 import { usePortalData } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
+import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import type { Language } from "shivanya-i18n";
@@ -91,9 +92,10 @@ export function JobsPage() {
                     key={item.id}
                     href={`/jobs/${item.slug || createPostSlug(item.title)}`}
                   >
-                    <span className={`update-badge ${item.type}`}>
-                      {item.category}
-                    </span>
+                    <CategoryBadge
+                      category={getCategorySlugForType(item.type)}
+                      label={getLocalizedCategoryLabel(item, language)}
+                    />
 
                     <span className="update-title">
                       {item.title}

@@ -1,6 +1,5 @@
-.l {
-  display: none;
-}
+.language-dropdown-desktop { display: inline-flex; }
+.language-dropdown-mobile { display: none; }
 
 @media (max-width: 768px) {
   .language-dropdown-desktop {

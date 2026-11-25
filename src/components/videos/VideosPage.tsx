@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { Language } from "shivanya-i18n";
 import { VideosCharacters } from "./VideosCharacters";
 import { SearchIcon, VideoIcon } from "shivanya-ui";
-import { usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
+import { getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
@@ -69,8 +69,8 @@ export function VideosPage() {
     return data.videos.filter(
       (video) =>
         !term ||
-        [video.title, video.language].some((value) =>
-          value.toLowerCase().includes(term),
+        [video.title, video.title_en, video.title_mr, video.title_hi, video.language].some((value) =>
+          String(value || "").toLowerCase().includes(term),
         ),
     );
   }, [data.videos, query]);
@@ -194,9 +194,9 @@ export function VideosPage() {
 
                       <h3>
                         <Link
-                          href={`/videos/${video.slug || createPostSlug(video.title)}`}
+                          href={`/videos/${video.slug || createPostSlug(video.title_en || video.title)}`}
                         >
-                          {video.title}
+                          {getLocalizedPostTitle(video, language)}
                         </Link>
                       </h3>
                     </div>

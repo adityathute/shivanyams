@@ -2,7 +2,6 @@
 "use client";
 
 import "./CategoryGrid.css";
-import "./CategoryBadge.css";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -281,12 +280,22 @@ export function CategoryGrid({
         return (
           <button
             key={category.slug}
-            type="button"
-            className={`portal-category-badge portal-category-badge--home portal-category-badge--${category.slug}`}
+            className={`category-card ${config.color}`}
             onClick={() => router.push(config.href)}
           >
-            <span className="portal-category-badge-icon" aria-hidden="true">{config.icon}</span>
-            <span>{getCategoryTitle(category, language)}</span>
+            <span className="category-icon">
+              {config.icon}
+            </span>
+
+            <span className="category-content">
+              <strong>
+                {getCategoryTitle(category, language)}
+              </strong>
+
+              <small>
+                {getCategorySubtitle(category, language)}
+              </small>
+            </span>
           </button>
         );
       })}

@@ -1,10 +1,8 @@
-@import "./foundations/tokens.css";
-@import "./foundations/reset.css";
-@import "./foundations/typography.css";
-
 /*
  * Organized global stylesheet entry point.
  *
- * Add new global foundations here. Keep page and component styles in their
- * respective organized folders rather than growing this file indefinitely.
+ * Intentionally empty for now. The existing global design remains active
+ * in both modes until each organized replacement is implemented and tested.
+ *
+ * Add organized foundation/component imports here incrementally.
  */

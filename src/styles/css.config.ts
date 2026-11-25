@@ -6,6 +6,6 @@
  *
  * Shared shivanya-ui styles remain loaded in both modes.
  */
-export const USE_ORGANIZED_CSS: boolean = false;
+export const USE_ORGANIZED_CSS: boolean = true;
 
 export const CSS_MODE = USE_ORGANIZED_CSS ? "organized" : "legacy";

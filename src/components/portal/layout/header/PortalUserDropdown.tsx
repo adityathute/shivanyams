@@ -52,17 +52,6 @@ export function PortalUserDropdown({
     capitalizeWords(user?.username ?? "") ||
     user?.email?.trim() ||
     "User";
-  const initials =
-    `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() ||
-    fullName
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase() ||
-    "U";
-
   const navigate = (view: UserDropdownView) => {
     setOpen(false);
     onNavigate?.(view);

@@ -197,7 +197,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
           ? payload
           : payload.results ?? [];
 
-        setCategories(result);
+        setCategories(result.length ? result : STATIC_PORTAL_CATEGORIES);
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category metadata loading failed:", error);

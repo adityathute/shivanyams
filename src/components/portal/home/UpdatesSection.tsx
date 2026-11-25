@@ -21,6 +21,7 @@ import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
 import { createPostSlug } from "../post/PortalPostDetail";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { PortalEmptyState } from "../category/PortalEmptyState";
 
 type Props = {
   type?: ItemType | "all";
@@ -294,9 +295,7 @@ export function UpdatesSection({
             );
           })
         ) : (
-          <div className="empty-state">
-            {getPortalText("emptyUpdates", language)}
-          </div>
+          <PortalEmptyState title={getPortalText("emptyUpdates", language)} description={language === "en" ? "Fresh announcements and updates will appear here." : language === "mr" ? "नवीन घोषणा आणि अपडेट्स येथे दिसतील." : "नई घोषणाएँ और अपडेट यहाँ दिखाई देंगे।"} icon="✦" />
         )}
       </div>
     </section>

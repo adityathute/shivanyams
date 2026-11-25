@@ -19,6 +19,13 @@ export function PortalHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const searchPanelRef = useRef<HTMLFormElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchOpen]);
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -51,7 +58,7 @@ export function PortalHeader() {
         </button>
         <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={(event) => event.preventDefault()}>
           <SearchIcon size={17} aria-hidden="true" />
-          <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
+          <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
           <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
         </form>
         {searchOpen && <div className="portal-search-backdrop" aria-hidden="true" />}

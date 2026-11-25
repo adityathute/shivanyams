@@ -24,9 +24,9 @@ export const sidebarTranslations = {
     guides: "मार्गदर्शन",
     videos: "व्हिडिओ",
     tools: "टूल्स",
-    saved: "जतन केलेले",
+    saved: "सेव्ह",
     tags: "टॅग",
-    admin: "प्रशासन",
+    admin: "Admin",
     contact: "संपर्क",
   },
   hi: {
@@ -39,9 +39,9 @@ export const sidebarTranslations = {
     guides: "मार्गदर्शन",
     videos: "वीडियो",
     tools: "टूल्स",
-    saved: "सहेजे गए",
+    saved: "सेव",
     tags: "टैग",
-    admin: "प्रशासन",
+    admin: "Admin",
     contact: "संपर्क",
   },
 } as const;

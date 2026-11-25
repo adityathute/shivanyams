@@ -72,3 +72,15 @@
     animation: none;
   }
 }
+
+
+/* Tablet: show four ticker items at a time. */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .portal .ticker .ticker-item {
+    flex-basis: 25%;
+  }
+
+  .portal .ticker .ticker-slides {
+    transform: translateX(calc(var(--ticker-index, 0) * -25%)) !important;
+  }
+}

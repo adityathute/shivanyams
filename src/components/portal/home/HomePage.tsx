@@ -121,7 +121,7 @@ export function HomePage() {
                 );
             }
             ) : data.loading ? (
-              Array.from({ length: visibleTickerCount }, (_, index) => (
+              Array.from({ length: 8 }, (_, index) => (
                 <span
                   key={`ticker-skeleton-${index}`}
                   className="ticker-item ticker-skeleton"

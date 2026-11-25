@@ -1,0 +1,15 @@
+/* Footer category icons reuse the canonical category configuration. */
+.footer-category-icon {
+  display: inline-flex;
+  flex: 0 0 16px;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.footer-category-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}

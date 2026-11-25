@@ -1,0 +1,487 @@
+.portal-post-engagement-actions {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.portal-post-reaction-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+.portal-post-reaction-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 28px;
+  min-height: 32px;
+  padding: 4px 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.portal-post-reaction-actions button {
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.portal-post-reaction-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.portal-post-reaction-actions .portal-action-like.is-active { color: #2563eb; }
+
+.portal-post-reaction-actions .portal-action-dislike.is-active { color: #ef4444; }
+
+.portal-post-reaction-actions .portal-action-bookmark.is-active { color: #f97316; }
+
+
+.portal-post-reaction-actions button strong {
+  color: inherit;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.portal-engagement-message {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 9px);
+  right: 0;
+  max-width: min(280px, calc(100vw - 32px));
+  margin: 0;
+  padding: 9px 13px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #26364b);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+  box-shadow: 0 8px 24px #00000018;
+  animation: portal-share-message-in 160ms ease-out;
+  pointer-events: none;
+}
+
+@keyframes portal-share-message-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  .portal-post-engagement-actions,
+  .portal-post-reaction-actions {
+    width: auto;
+  }
+
+  .portal-post-engagement-actions {
+    justify-content: flex-start;
+  }
+
+  .portal-post-reaction-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .portal-post-reaction-actions {
+    gap: 10px;
+  }
+}
+
+
+
+.portal-action-share-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.portal-share-menu {
+  position: absolute;
+  z-index: 35;
+  top: calc(100% + 10px);
+  left: 0;
+  right: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  width: min(286px, calc(100vw - 28px));
+  padding: 9px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  box-shadow: 0 16px 40px #0f172a20, 0 3px 10px #0f172a0d;
+  animation: portal-share-menu-in 150ms ease-out;
+  transform-origin: top left;
+}
+
+.portal-share-menu::before {
+  position: absolute;
+  top: -5px;
+  left: 19px;
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  border-left: 1px solid var(--border-color, #e2e8f0);
+  background: var(--surface, #fff);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.portal-share-menu button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 39px;
+  padding: 9px 11px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-primary, #26364b);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.portal-share-menu button:hover {
+  transform: none;
+}
+
+.portal-share-menu button span {
+  color: inherit;
+  transition: color 150ms ease;
+}
+
+/* Brand-tinted hover states apply to the complete share option. */
+.portal-share-menu button.portal-share-copy:hover,
+.portal-share-menu button.portal-share-more:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.24);
+}
+
+.portal-share-menu button.portal-share-whatsapp:hover {
+  color: #25d366;
+  background: rgba(37, 211, 102, 0.09);
+  border-color: rgba(37, 211, 102, 0.26);
+}
+
+.portal-share-menu button.portal-share-facebook:hover {
+  color: #1877f2;
+  background: rgba(24, 119, 242, 0.08);
+  border-color: rgba(24, 119, 242, 0.24);
+}
+
+.portal-share-menu button.portal-share-telegram:hover {
+  color: #229ed9;
+  background: rgba(34, 158, 217, 0.09);
+  border-color: rgba(34, 158, 217, 0.25);
+}
+
+.portal-share-menu button.portal-share-x:hover,
+.portal-share-menu button.portal-share-threads:hover {
+  color: #111827;
+  background: rgba(17, 24, 39, 0.06);
+  border-color: rgba(17, 24, 39, 0.18);
+}
+
+.portal-share-menu button.portal-share-instagram:hover {
+  color: #e1306c;
+  background: rgba(225, 48, 108, 0.08);
+  border-color: rgba(225, 48, 108, 0.24);
+}
+
+.portal-share-menu button.portal-share-linkedin:hover {
+  color: #0a66c2;
+  background: rgba(10, 102, 194, 0.08);
+  border-color: rgba(10, 102, 194, 0.24);
+}
+
+.portal-share-menu button.portal-share-email:hover {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.09);
+  border-color: rgba(249, 115, 22, 0.26);
+}
+
+.portal-share-menu button svg {
+  flex: 0 0 auto;
+  color: var(--text-secondary, #64748b);
+  transition: color 150ms ease, filter 150ms ease;
+}
+
+/*
+ * The shared icon components can render SVG paths with their own fixed
+ * fill/stroke values. CSS color alone therefore does not recolor them.
+ * Apply the hover tint to the complete SVG so every icon responds reliably.
+ */
+.portal-share-menu button.portal-share-copy:hover svg,
+.portal-share-menu button.portal-share-more:hover svg {
+  filter: invert(34%) sepia(98%) saturate(1645%) hue-rotate(202deg) brightness(98%) contrast(96%);
+}
+
+.portal-share-menu button.portal-share-whatsapp:hover svg {
+  filter: invert(61%) sepia(91%) saturate(388%) hue-rotate(88deg) brightness(96%) contrast(93%);
+}
+
+.portal-share-menu button.portal-share-facebook:hover svg {
+  filter: invert(34%) sepia(98%) saturate(1645%) hue-rotate(202deg) brightness(98%) contrast(96%);
+}
+
+.portal-share-menu button.portal-share-telegram:hover svg {
+  filter: invert(55%) sepia(84%) saturate(1000%) hue-rotate(164deg) brightness(92%) contrast(91%);
+}
+
+.portal-share-menu button.portal-share-x:hover svg,
+.portal-share-menu button.portal-share-threads:hover svg {
+  filter: brightness(0);
+}
+
+.portal-share-menu button.portal-share-instagram:hover svg {
+  filter: invert(38%) sepia(79%) saturate(2500%) hue-rotate(318deg) brightness(94%) contrast(93%);
+}
+
+.portal-share-menu button.portal-share-linkedin:hover svg {
+  filter: invert(27%) sepia(94%) saturate(1476%) hue-rotate(184deg) brightness(94%) contrast(91%);
+}
+
+.portal-share-menu button.portal-share-email:hover svg {
+  filter: brightness(0) saturate(100%) invert(43%) sepia(96%) saturate(1800%) hue-rotate(2deg) brightness(88%) contrast(105%);
+}
+
+.portal-share-menu button:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
+}
+
+@keyframes portal-share-menu-in {
+  from { opacity: 0; transform: translateY(-5px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 420px) {
+  .portal-share-menu {
+    width: min(250px, calc(100vw - 96px));
+    min-width: min(220px, calc(100vw - 96px));
+  }
+}
+
+
+/* The compact header keeps only the saved-state bookmark. */
+.portal-post-engagement-actions.is-header .portal-post-reaction-actions > button:not(.portal-action-bookmark),
+.portal-post-engagement-actions.is-header .portal-action-share-wrap,
+.portal-post-engagement-actions.is-header .portal-share-menu,
+.portal-post-engagement-actions.is-header .portal-engagement-message {
+  display: none;
+}
+
+.portal-post-engagement-actions.is-header {
+  flex: 0 0 auto;
+}
+
+.portal-post-engagement-actions.is-header .portal-post-reaction-actions {
+  gap: 0;
+}
+
+.portal-post-engagement-actions.is-header .portal-action-bookmark {
+  min-width: 30px;
+  min-height: 30px;
+}
+
+
+/* Footer keeps the four engagement actions together and Report at the far right. */
+.portal-post-card-footer .portal-post-engagement-actions.is-footer {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.portal-post-card-footer .portal-post-engagement-actions.is-footer .portal-post-reaction-actions {
+  justify-content: flex-start;
+}
+
+.portal-post-engagement-actions > .portal-action-report {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 32px;
+  padding: 4px 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: color 150ms ease, transform 150ms ease;
+}
+
+.portal-post-engagement-actions > .portal-action-report:hover,
+.portal-post-engagement-actions > .portal-action-report:focus-visible {
+  color: var(--text-secondary, #64748b);
+  transform: none;
+}
+
+.portal-post-engagement-actions > .portal-action-report {
+  gap: 6px;
+  min-width: auto;
+  padding: 5px 0 5px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.portal-post-engagement-actions > .portal-action-report span {
+  color: var(--text-secondary, #64748b);
+  transition: none;
+}
+
+.portal-post-engagement-actions > .portal-action-report:hover svg,
+.portal-post-engagement-actions > .portal-action-report:focus-visible svg {
+  filter: invert(75%) sepia(91%) saturate(1065%) hue-rotate(359deg) brightness(103%) contrast(104%);
+}
+
+.portal-post-engagement-actions > .portal-action-report:focus-visible {
+  outline: 2px solid var(--accent, #eab308);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.portal-post-report-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgb(15 23 42 / 58%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: portal-post-report-fade 160ms ease-out;
+}
+
+.portal-post-report-modal-panel {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 440px);
+  max-height: min(80vh, 560px);
+  overflow-y: auto;
+  padding: 17px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #1f2937);
+  box-shadow: 0 18px 55px rgb(0 0 0 / 24%);
+  animation: portal-post-report-pop 180ms ease-out;
+}
+
+.portal-post-report-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.portal-post-report-modal-header > div {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.portal-post-report-modal-header strong {
+  color: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.portal-post-report-modal-header span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.portal-post-report-modal-close {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.portal-post-report-modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.portal-post-report-modal-reason {
+  display: grid;
+  gap: 6px;
+}
+
+.portal-post-report-modal-reason label {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.portal-post-report-modal-panel textarea {
+  width: 100%;
+  min-height: 104px;
+}
+
+.portal-post-report-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.portal-post-report-modal-footer > span {
+  margin-right: auto;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.74rem;
+}
+
+@keyframes portal-post-report-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes portal-post-report-pop {
+  from { opacity: 0; transform: translateY(5px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

@@ -428,6 +428,13 @@ type FormState = typeof EMPTY;
 type ContentLanguage = "en" | "mr" | "hi";
 type PostInfoFieldGroup = "title" | "summary" | "body";
 
+function normalizeAdminCategorySlug(slug: string) {
+  const normalized = slug.trim().toLowerCase().replace(/[_\\s]+/g, "-");
+  if (normalized === "examination" || normalized === "exam") return "exams";
+  if (normalized === "articles-guides" || normalized === "article-guide") return "guides";
+  return normalized;
+}
+
 function detailKeyFor(api: string) {
   return KINDS.find((item) => item.api === api)?.detailKey ?? "job_details";
 }
@@ -627,7 +634,7 @@ export default function PostEditor({
   const [expandedImportantLinkActionLanguages, setExpandedImportantLinkActionLanguages] = useState<string[]>([]);
 
   const activeCategory = useMemo(
-    () => categories.find((item) => item.slug === kind.slug),
+    () => categories.find((item) => normalizeAdminCategorySlug(item.slug) === normalizeAdminCategorySlug(kind.slug)),
     [categories, kind],
   );
 
@@ -1638,7 +1645,7 @@ export default function PostEditor({
                 disabled={editing}
                 fullWidth
                 size="sm"
-                options={KINDS.filter((item) => categories.some((category) => category.slug === item.slug)).map((item) => ({
+                options={KINDS.filter((item) => categories.some((category) => normalizeAdminCategorySlug(category.slug) === normalizeAdminCategorySlug(item.slug))).map((item) => ({
                   value: item.api,
                   label: item.label,
                 }))}

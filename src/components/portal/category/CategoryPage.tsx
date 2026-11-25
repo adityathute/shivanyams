@@ -14,7 +14,9 @@ import {
   getCategoryTitle,
   type Category,
   type Language,
+  STATIC_PORTAL_CATEGORIES,
 } from "./CategoryGrid";
+import { PortalEmptyState } from "./PortalEmptyState";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
@@ -167,7 +169,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
   const copy = pageCopy[language];
 
   const [query, setQuery] = useState("");
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const { data } = usePortalData();
@@ -359,9 +361,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
                 </a>
               ))
             ) : (
-              <div className="empty-state">
-                {data.error || copy.empty}
-              </div>
+              <PortalEmptyState title={data.error || copy.empty} description={language === "en" ? "Check back soon — new information is added regularly." : language === "mr" ? "नवीन माहिती नियमितपणे जोडली जाते. कृपया पुन्हा भेट द्या." : "नई जानकारी नियमित रूप से जोड़ी जाती है। कृपया फिर देखें।"} icon="✦" />
             )}
           </div>
         </section>

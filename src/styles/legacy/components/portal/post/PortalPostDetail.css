@@ -1551,3 +1551,70 @@
   width: auto;
   justify-content: flex-start;
 }
+
+
+/* Keep the post category at the left and publication/update date at the right. */
+.portal-post-compact-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.portal-post-compact-header .portal-post-meta-compact {
+  min-width: 0;
+  margin: 0;
+}
+
+.portal-post-header-meta-right {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  min-width: 0;
+  margin-left: auto;
+  text-align: right;
+}
+
+.portal-post-header-updated {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px 7px;
+  color: var(--text-secondary, #64748b);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.portal-post-header-updated .portal-post-date-label {
+  color: var(--text-secondary, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.portal-post-header-updated time {
+  color: var(--text-secondary, #64748b);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .portal-post-compact-header {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .portal-post-header-meta-right {
+    max-width: 55%;
+  }
+
+  .portal-post-header-updated {
+    font-size: 11px;
+  }
+
+  .portal-post-header-updated .portal-post-date-label {
+    font-size: 11px;
+  }
+}

@@ -836,7 +836,7 @@
     position: relative;
   }
 
-  .portal-header-search-actions > .portal-topbar-search { display: none; }
+  .portal-header-search-actions > .portal-topbar-search-desktop { display: none; }
 
   .portal-topbar-search-toggle {
     display: inline-flex;

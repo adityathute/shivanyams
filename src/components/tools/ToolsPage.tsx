@@ -141,7 +141,7 @@ export function ToolsPage() {
                 <div className="empty-state empty-tool">
                   Loading...
                 </div>
-              ) : data.error ? (
+              ) : data.failedTypes?.includes("tool") && data.error ? (
                 <div className="empty-state empty-tool">
                   {data.error}
                 </div>

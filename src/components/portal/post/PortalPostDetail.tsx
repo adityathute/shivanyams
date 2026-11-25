@@ -13,7 +13,6 @@ import {
   CategoryBadge,
   getPortalApiUrl,
   getCategoryTitle,
-  categoryConfig,
   type Category,
   type Language as CategoryLanguage,
 } from "../category/CategoryGrid";

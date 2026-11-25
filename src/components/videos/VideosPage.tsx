@@ -8,6 +8,7 @@ import { VideosCharacters } from "./VideosCharacters";
 import { SearchIcon, VideoIcon } from "shivanya-ui";
 import { usePortalData } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
+import { CategoryBadge, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
@@ -138,6 +139,7 @@ export function VideosPage() {
           {!data.loading && !data.error && videos.length > 0 && (
             <div className="videos-grid">
               {videos.map((video) => {
+                const videoItem = data.items.find((item) => item.id === video.id);
                 const youtubeEmbedUrl = getYouTubeEmbedUrl(video.url);
 
                 return (
@@ -174,8 +176,19 @@ export function VideosPage() {
 
                     <div className="videos-card-content">
                       <div className="videos-card-tags">
-                        <span>{video.language}</span>
-                        <span>{t("guide")}</span>
+                        <CategoryBadge
+                          category="videos"
+                          label={
+                            videoItem
+                              ? getLocalizedCategoryLabel(videoItem, language)
+                              : language === "mr"
+                                ? "व्हिडिओ"
+                                : language === "hi"
+                                  ? "वीडियो"
+                                  : "Videos"
+                          }
+                        />
+                        {video.language && <span>{video.language}</span>}
                       </div>
 
                       <h3>

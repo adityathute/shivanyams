@@ -1,10 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import {
   createContext,
+  useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -843,93 +845,29 @@ function hasSamePortalContent(left: PortalData, right: PortalData) {
 }
 
 export function PortalDataProvider({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
   const [data, setData] = useState<PortalData>(emptyData);
+  const activeLoadRef = useRef<Promise<PortalData> | null>(null);
 
-  useLayoutEffect(() => {
-    const cachedData = readPortalDataCache();
-    const hasCachedData = cachedData !== null;
-
-    if (cachedData) {
-      setData((current) => {
-        const cachedSnapshot: PortalData = {
-          items: cachedData.items,
-          videos: cachedData.videos,
-          loading: false,
-          error: "",
-        };
-
-        return hasSamePortalContent(current, cachedSnapshot)
-          ? { ...current, loading: false, error: "" }
-          : cachedSnapshot;
-      });
-
-      // Render the cached snapshot immediately, but always revalidate after
-      // navigation so newly published posts appear without a manual refresh.
-    }
+  // Share an in-flight request between the initial page load and a category
+  // page's explicit refresh so navigation never creates competing snapshots.
+  const fetchFreshPortalData = useCallback(() => {
+    if (activeLoadRef.current) return activeLoadRef.current;
 
     const controller = new AbortController();
+    const request = loadPortalData(controller.signal).finally(() => {
+      if (activeLoadRef.current === request) activeLoadRef.current = null;
+    });
+    activeLoadRef.current = request;
+    return request;
+  }, []);
 
-    loadPortalData(controller.signal)
-      .then((nextData) => {
-        if (controller.signal.aborted) return;
-
-        // Do not replace a complete cached snapshot with a partial response.
-        if (!nextData.error) writePortalDataCache(nextData);
-
-        setData((current) => {
-          if (nextData.error && hasCachedData) {
-            return {
-              ...current,
-              loading: false,
-              error: nextData.error,
-            };
-          }
-
-          // Keep the existing data reference and UI intact when nothing changed.
-          if (hasSamePortalContent(current, nextData)) {
-            return {
-              ...current,
-              loading: false,
-              error: nextData.error,
-            };
-          }
-
-          return nextData;
-        });
-      })
-      .catch((error: unknown) => {
-        if (!controller.signal.aborted) {
-          setData((current) => ({
-            ...current,
-            loading: false,
-            error:
-              error instanceof Error
-                ? error.message
-                : "Unable to load portal content.",
-          }));
-        }
-      });
-
-    return () => controller.abort();
-  }, [pathname]);
-
-  async function refresh() {
-    const controller = new AbortController();
-    setData((current) => ({
-      ...current,
-      loading: current.items.length === 0 && current.videos.length === 0,
-      error: "",
-    }));
-
+  const applyFreshData = useCallback(async () => {
     try {
-      const nextData = await loadPortalData(controller.signal);
+      const nextData = await fetchFreshPortalData();
       if (!nextData.error) writePortalDataCache(nextData);
+
       setData((current) => {
-        if (
-          nextData.error &&
-          (current.items.length > 0 || current.videos.length > 0)
-        ) {
+        if (nextData.error && (current.items.length > 0 || current.videos.length > 0)) {
           return { ...current, loading: false, error: nextData.error };
         }
 
@@ -941,13 +879,32 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
       setData((current) => ({
         ...current,
         loading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unable to load portal content.",
+        error: error instanceof Error ? error.message : "Unable to load portal content.",
       }));
     }
-  }
+  }, [fetchFreshPortalData]);
+
+  useLayoutEffect(() => {
+    const cachedData = readPortalDataCache();
+    if (cachedData) {
+      setData({
+        items: cachedData.items,
+        videos: cachedData.videos,
+        loading: false,
+        error: "",
+      });
+    }
+    void applyFreshData();
+  }, [applyFreshData]);
+
+  const refresh = useCallback(async () => {
+    setData((current) => ({
+      ...current,
+      loading: current.items.length === 0 && current.videos.length === 0,
+      error: "",
+    }));
+    await applyFreshData();
+  }, [applyFreshData]);
 
   return (
     <PortalDataContext.Provider value={{ data, refresh }}>
@@ -962,4 +919,16 @@ export function usePortalData() {
     throw new Error("usePortalData must be used inside PortalDataProvider");
   }
   return context;
+}
+
+
+/**
+ * Category pages revalidate when entered, even when the shared provider stays
+ * mounted during client-side navigation. The initial request is de-duplicated.
+ */
+export function useRefreshPortalDataOnMount() {
+  const { refresh } = usePortalData();
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 }

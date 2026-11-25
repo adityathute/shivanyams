@@ -10,6 +10,7 @@ import { PortalContentNotFound } from "./PortalContentNotFound";
 import "./../../../styles/legacy/components/portal/post/PortalPostDetail.css";
 import {
   CategoryGrid,
+  CategoryBadge,
   getPortalApiUrl,
   getCategoryTitle,
   categoryConfig,

@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type React from "react";
 import { Button } from "shivanya-ui";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +14,7 @@ import {
   type Category,
   type Language,
 } from "../../category/CategoryGrid";
+import { PORTAL_CATEGORY_ORDER } from "../../../../data/portal/categories";
 import { getBaseText } from "../../../../i18n/dictionaries/base";
 
 import { usePortalLanguage } from "../../context/PortalLanguageContext";
@@ -30,14 +30,6 @@ import {
   MapPinIcon,
   MailIcon,
   ThreadsIcon,
-  GovernmentJobIcon,
-  GovernmentSchemeIcon,
-  ResultIcon,
-  AdmitCardIcon,
-  GuideIcon,
-  VideoIcon,
-  ExaminationIcon,
-  ToolsIcon,
   LinkIcon,
 } from "shivanya-ui";
 
@@ -82,31 +74,17 @@ export function PortalFooter() {
     return () => controller.abort();
   }, []);
 
-  const categoryOrder: Record<string, number> = {
-    jobs: 1,
-    schemes: 2,
-    "articles-guides": 3,
-    "admit-cards": 4,
-    examination: 5,
-    results: 6,
-    videos: 7,
-    tools: 8,
-  };
-
-  const categoryIcons: Record<
-    string,
-    React.ComponentType<{ size?: number }>
-  > = {
-    jobs: GovernmentJobIcon,
-    schemes: GovernmentSchemeIcon,
-    examination: ExaminationIcon,
-    results: ResultIcon,
-    "admit-cards": AdmitCardIcon,
-    "articles-guides": GuideIcon,
-    guides: GuideIcon,
-    videos: VideoIcon,
-    tools: ToolsIcon,
-  };
+  const sortedCategories = categories
+    .map((category) => ({
+      ...category,
+      slug: normalizeCategorySlug(category.slug),
+    }))
+    .filter((category) => Boolean(categoryConfig[category.slug]))
+    .sort(
+      (a, b) =>
+        PORTAL_CATEGORY_ORDER.indexOf(a.slug) -
+        PORTAL_CATEGORY_ORDER.indexOf(b.slug),
+    );
 
   return (
     <div className="portal-footer-area">
@@ -201,36 +179,24 @@ export function PortalFooter() {
           <div className="footer-category-col">
             <h3>{getBaseText("importantSections", language)}</h3>
 
-            {[...categories]
-              .filter(
-                (category) => category.is_active ?? category.active ?? false,
-              )
-              .map((category) => ({
-                ...category,
-                slug: normalizeCategorySlug(category.slug),
-              }))
-              .filter((category) => categoryConfig[category.slug])
-              .sort(
-                (a, b) =>
-                  (categoryOrder[a.slug] ?? 99) - (categoryOrder[b.slug] ?? 99),
-              )
-              .map((category) => {
-                const config = categoryConfig[category.slug];
-                const Icon = categoryIcons[category.slug];
+            {sortedCategories.map((category) => {
+              const config = categoryConfig[category.slug];
 
-                return (
-                  <Link
-                    key={category.id}
-                    href={config.href}
-                    className="footer-category-link"
-                  >
-                    {Icon && <Icon size={16} />}
-                    <span>
-                      {getCategoryTitle(category, language as Language)}
-                    </span>
-                  </Link>
-                );
-              })}
+              return (
+                <Link
+                  key={category.id}
+                  href={config.href}
+                  className="footer-category-link"
+                >
+                  <span className="footer-category-icon" aria-hidden="true">
+                    {config.icon}
+                  </span>
+                  <span>
+                    {getCategoryTitle(category, language as Language)}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="footer-useful-links-col">

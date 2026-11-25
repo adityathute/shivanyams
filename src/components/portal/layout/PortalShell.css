@@ -965,9 +965,8 @@
 }
 
 
-/* Mobile search: keep the blur local to a small floating panel. */
+/* Mobile search: full-width glass strip with a separate inset search field. */
 @media (max-width: 767px) {
-  /* Keep the backdrop element for outside-click handling, but do not dim or blur the page. */
   .portal-search-backdrop {
     display: none;
   }
@@ -978,36 +977,99 @@
   }
 
   .portal-topbar-search-mobile-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    top: 100%;
+    left: 0;
+    right: 0;
     z-index: 32;
-    padding: 6px 7px 6px 14px;
-    border-radius: 14px;
-    background: color-mix(in srgb, var(--shivanya-color-surface, #fff) 84%, transparent);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+    box-sizing: border-box;
+    width: 100%;
+    height: 68px;
+    padding: 12px 14px;
+    border: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.68);
+    color: var(--shivanya-color-text-secondary, #64748b);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-7px);
+    transform-origin: top center;
+    transition: opacity 180ms ease, transform 220ms ease, visibility 180ms ease;
   }
 
-  /* A little translucent breathing room around the search panel only. */
   .portal-topbar-search-mobile-panel::before {
     content: "";
     position: absolute;
-    inset: -6px;
+    inset: 10px 14px;
     z-index: -1;
-    border: 1px solid rgba(148, 163, 184, 0.12);
-    border-radius: 19px;
-    background: rgba(255, 255, 255, 0.18);
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
+    border: 1px solid var(--shivanya-color-border, #dce3ec);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--shivanya-color-surface, #fff) 90%, transparent);
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
     pointer-events: none;
   }
 
+  .portal-topbar-search-mobile-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .portal-topbar-search-mobile-panel > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .portal-topbar-search-mobile-panel svg { flex-shrink: 0; }
+
+  .portal-topbar-search-mobile-panel input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--shivanya-color-text-primary, #172943);
+    font: inherit;
+    font-size: 13px;
+    flex: 1;
+  }
+
+  .portal-topbar-search-mobile-panel input::placeholder {
+    color: var(--shivanya-color-text-secondary, #94a3b8);
+  }
+
+  .portal-topbar-search-mobile-panel button {
+    position: relative;
+    z-index: 1;
+  }
+
   [data-theme="dark"] .portal-topbar-search-mobile-panel {
-    background: color-mix(in srgb, var(--shivanya-color-surface, #151b23) 84%, transparent);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+    background: rgba(15, 23, 32, 0.76);
+    border-bottom-color: rgba(148, 163, 184, 0.22);
   }
 
   [data-theme="dark"] .portal-topbar-search-mobile-panel::before {
-    background: rgba(21, 27, 35, 0.28);
-    border-color: rgba(148, 163, 184, 0.1);
+    background: color-mix(in srgb, var(--shivanya-color-surface, #151b23) 90%, transparent);
+    border-color: var(--shivanya-color-border, #293544);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  [data-theme="dark"] .portal-topbar-search-mobile-panel input {
+    color: var(--shivanya-color-text-primary, #e6edf3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-topbar-search-mobile-panel {
+    transition: none;
   }
 }

@@ -222,7 +222,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section className="updates-panel panelin" id="updates">
+    <section className={`updates-panel updates-panel-language-${language} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 

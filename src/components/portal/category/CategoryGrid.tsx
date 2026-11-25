@@ -111,7 +111,7 @@ export function getCategoryDescription(category: Category, language: Language = 
 }
 
 export function normalizeCategorySlug(slug: string) {
-  return normalizePortalCategorySlug(slug.trim().toLowerCase().replace(/[_\s]+/g, "-"));
+).replace(/\/+$/, "");
 }
 
 const configuredPortalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
@@ -130,7 +130,7 @@ export function getPortalApiUrl(path: string) {
     );
   }
 
-  return `${API_URL}/${path.replace(/^\\/+/, "")}`;
+  return `${API_URL}/${path.replace(/^\/+/, "")}`;
 }
 
 // Stable navigation categories are sourced locally; no category API request is needed.

@@ -4,9 +4,11 @@ import { cookies } from "next/headers";
 import type { Language } from "shivanya-i18n";
 
 import { PortalLayout } from "../components/portal/layout/PortalLayout";
+import { CSS_MODE } from "../styles/css.config";
 import "./../styles/legacy/app/globals.css";
 import "shivanya-ui/styles";
 import "./../styles/legacy/app/portal-base.css";
+import "./../styles/organized/index.css";
 
 export const metadata: Metadata = {
   title: "ShivanyaMS | Public Updates",
@@ -37,6 +39,7 @@ export default async function RootLayout({
     <html
       lang={initialLanguage}
       data-theme={initialTheme}
+      data-css-mode={CSS_MODE}
       data-scroll-behavior="smooth"
       style={{ colorScheme: initialTheme }}
       suppressHydrationWarning

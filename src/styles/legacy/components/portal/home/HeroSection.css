@@ -99,7 +99,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .ticker-dot {

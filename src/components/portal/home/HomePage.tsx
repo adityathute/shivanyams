@@ -6,7 +6,7 @@ import { CategoryGrid, categoryConfig, getCategorySlugForType } from "../categor
 import { UpdatesSection } from "./UpdatesSection";
 import { VideosSection } from "../../videos/VideosSection";
 import type { Item, ItemType } from "../data/portal-data";
-import { usePortalData } from "../data/portal-data";
+import { usePortalData, useRefreshPortalDataOnMount } from "../data/portal-data";
 import { PortalFooter } from "../layout/footer/PortalFooter";
 import { MailIcon } from "shivanya-ui";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
@@ -18,6 +18,7 @@ import { createPostSlug } from "../post/PortalPostDetail";
 import { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
 
 export function HomePage() {
+  useRefreshPortalDataOnMount();
   const { language: selectedLanguage } = usePortalLanguage();
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");

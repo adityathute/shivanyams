@@ -306,7 +306,13 @@ export function CategoryPage({ type }: { type: ItemType }) {
         <section className="updates-panel panel" id="updates">
           <div className="section-heading">
             <h2>
-              {title} – {copy.updates}
+              {type === "examination"
+                ? language === "en"
+                  ? "Latest Examination Updates"
+                  : language === "mr"
+                    ? "नवीनतम परीक्षा अपडेट्स"
+                    : "नवीनतम परीक्षा अपडेट"
+                : `${title} – ${copy.updates}`}
             </h2>
 
             <span>

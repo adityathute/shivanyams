@@ -10,9 +10,9 @@ import { PortalContentNotFound } from "./PortalContentNotFound";
 import "./PortalPostDetail.css";
 import {
   CategoryGrid,
-  CategoryBadge,
   getPortalApiUrl,
   getCategoryTitle,
+  categoryConfig,
   type Category,
   type Language as CategoryLanguage,
 } from "../category/CategoryGrid";
@@ -825,10 +825,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 <article className="portal-post-card">
                   <div className="portal-post-compact-header">
                     <div className="portal-post-meta portal-post-meta-compact">
-                      <CategoryBadge
-                        category={category === "guides" ? "articles-guides" : category}
-                        label={category === "guides" ? "Articles" : post.category || label}
-                      />
+                      <span className={`portal-post-category-badge portal-post-category-badge-${category}`}>
+                        <span className="portal-post-category-icon" aria-hidden="true">
+                          {categoryConfig[category === "guides" ? "articles-guides" : category]?.icon}
+                        </span>
+                        <span>{category === "guides" ? "Articles" : post.category || label}</span>
+                      </span>
                     </div>
                     <div className="portal-post-header-meta-right">
                       {updatedPostDate ? (

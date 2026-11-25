@@ -19,7 +19,6 @@ import {
   getPortalCategoryDefinition,
   normalizePortalCategorySlug,
   PORTAL_CATEGORIES,
-  PORTAL_CATEGORY_ORDER,
 } from "../../../data/portal/categories";
 
 export type Language = "en" | "mr" | "hi";

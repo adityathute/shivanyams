@@ -123,9 +123,15 @@ export function ExaminationPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
+               ) : data.loading ? (
+                <div className="empty-state empty-exam">Loading...</div>
+              ) : data.error ? (
+                <div className="empty-state empty-exam">{data.error}</div>
               ) : (
-                <div className="empty-state empty-exam">{t("noExaminationUpdates")}</div>
-              )}
+                <div className="empty-state empty-exam">
+                   {t("noExaminationUpdates")}
+                </div>
+              )
             </div>
           </section>
         </main>

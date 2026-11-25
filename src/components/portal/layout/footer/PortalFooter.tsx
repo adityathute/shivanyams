@@ -125,7 +125,7 @@ export function PortalFooter() {
 
               <span>
                 <strong>ShivanyaMS</strong>
-                <small>Govt Jobs, Schemes &amp; Updates</small>
+                <small>Public Updates</small>
               </span>
             </Link>
             <p className="footer-brand-desc">

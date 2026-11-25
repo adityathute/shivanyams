@@ -659,7 +659,12 @@ async function fetchList<T>(url: string, signal: AbortSignal): Promise<T[]> {
     }
     visited.add(nextUrl);
 
-    const response: Response = await authenticatedFetch(nextUrl, { signal });
+    const response: Response = await authenticatedFetch(nextUrl, {
+      signal,
+      // Published content must be fetched fresh when navigating between portal
+      // routes; the tab cache is only an instant-render snapshot, not authority.
+      cache: "no-store",
+    });
     if (!response.ok) {
       throw new Error(`Request failed (${response.status}): ${nextUrl}`);
     }

@@ -1,9 +1,7 @@
 
 "use client";
 
-import "./../../../styles/legacy/components/portal/category/CategoryGrid.css";
-
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -100,16 +98,12 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     href: "/videos",
   },
   tools: {
-  type: "tool" as ItemType,
-  color: "gray",
-  icon: <ToolsIcon />,
-  href: "/tools",
-},
+    type: "tool",
+    color: "gray",
+    icon: <ToolsIcon />,
+    href: "/tools",
+  },
 };
-
-
-
-
 
 const configuredPortalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
 
@@ -118,7 +112,7 @@ export const API_URL = (
   (process.env.NODE_ENV === "development"
     ? "http://localhost:8001/api/v1/portal"
     : "")
-).replace(/\/+$/, "");
+).replace(/\\/+$/, "");
 
 export function getPortalApiUrl(path: string) {
   if (!API_URL) {
@@ -127,7 +121,7 @@ export function getPortalApiUrl(path: string) {
     );
   }
 
-  return `${API_URL}/${path.replace(/^\/+/, "")}`;
+  return `${API_URL}/${path.replace(/^\\/+/, "")}`;
 }
 
 export function getCategoryTitle(
@@ -204,10 +198,76 @@ export function normalizeCategorySlug(slug: string) {
   const normalized = slug
     .trim()
     .toLowerCase()
-    .replace(/[_\s]+/g, "-");
+    .replace(/[_\\s]+/g, "-");
 
   return normalizePortalCategorySlug(normalized);
 }
+
+const CATEGORY_CACHE_KEY = "shivanyams-portal-categories";
+const CATEGORY_CACHE_VERSION = 1;
+const CATEGORY_CACHE_TTL = 60_000;
+
+interface CachedCategories {
+  version: number;
+  savedAt: number;
+  categories: Category[];
+}
+
+function readCategoryCache(): CachedCategories | null {
+  try {
+    const raw = window.sessionStorage.getItem(CATEGORY_CACHE_KEY);
+    if (!raw) return null;
+
+    const cached = JSON.parse(raw) as Partial<CachedCategories>;
+    if (
+      cached.version !== CATEGORY_CACHE_VERSION ||
+      !Array.isArray(cached.categories) ||
+      typeof cached.savedAt !== "number" ||
+      !Number.isFinite(cached.savedAt)
+    ) {
+      return null;
+    }
+
+    return {
+      version: CATEGORY_CACHE_VERSION,
+      savedAt: cached.savedAt,
+      categories: cached.categories as Category[],
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeCategoryCache(categories: Category[]) {
+  try {
+    window.sessionStorage.setItem(
+      CATEGORY_CACHE_KEY,
+      JSON.stringify({
+        version: CATEGORY_CACHE_VERSION,
+        savedAt: Date.now(),
+        categories,
+      } satisfies CachedCategories),
+    );
+  } catch {
+    // Storage failures must not prevent category loading.
+  }
+}
+
+function normalizeActiveCategories(data: Category[]) {
+  return data
+    .filter((category) => category.is_active ?? category.active ?? false)
+    .map((category) => ({
+      ...category,
+      slug: normalizeCategorySlug(category.slug),
+    }))
+    .filter((category) => Boolean(categoryConfig[category.slug]))
+    .sort(
+      (a, b) =>
+        PORTAL_CATEGORY_ORDER.indexOf(a.slug) -
+        PORTAL_CATEGORY_ORDER.indexOf(b.slug),
+    );
+}
+
 
 export function CategoryGrid({
   language = "mr",
@@ -215,11 +275,22 @@ export function CategoryGrid({
   language?: Language;
 }) {
   const router = useRouter();
-
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const cached = readCategoryCache();
+
+    if (cached) {
+      setCategories(cached.categories);
+      setLoading(false);
+
+      // Reuse a fresh tab snapshot without another API request.
+      if (Date.now() - cached.savedAt < CATEGORY_CACHE_TTL) {
+        return;
+      }
+    }
+
     const controller = new AbortController();
 
     async function fetchCategories() {
@@ -229,40 +300,26 @@ export function CategoryGrid({
         });
 
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch categories: ${response.status}`,
-          );
+          throw new Error(`Failed to fetch categories: ${response.status}`);
         }
 
-        const payload: Category[] | CategoryApiResponse =
-          await response.json();
+        const payload: Category[] | CategoryApiResponse = await response.json();
+        const data = Array.isArray(payload) ? payload : payload.results ?? [];
+        const nextCategories = normalizeActiveCategories(data);
 
-        const data = Array.isArray(payload)
-          ? payload
-          : payload.results ?? [];
-
-        const activeCategories = data
-          .filter((category) => category.is_active ?? category.active ?? false)
-          .map((category) => ({
-            ...category,
-            slug: normalizeCategorySlug(category.slug),
-          }))
-          .filter((category) =>
-            Boolean(categoryConfig[category.slug]),
+        if (!controller.signal.aborted) {
+          writeCategoryCache(nextCategories);
+          setCategories((current) =>
+            JSON.stringify(current) === JSON.stringify(nextCategories)
+              ? current
+              : nextCategories,
           );
-
-        // Always follow the defined category sequence
-        const sortedCategories = [...activeCategories].sort(
-          (a, b) =>
-            PORTAL_CATEGORY_ORDER.indexOf(a.slug) -
-            PORTAL_CATEGORY_ORDER.indexOf(b.slug),
-        );
-
-        setCategories(sortedCategories);
+        }
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Category loading failed:", error);
-          setCategories([]);
+          // Keep the cached cards visible if revalidation fails.
+          if (!cached) setCategories([]);
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -272,37 +329,50 @@ export function CategoryGrid({
     }
 
     fetchCategories();
-
     return () => controller.abort();
   }, []);
 
   return (
     <section className="category-grid" aria-busy={loading}>
-      {categories.map((category) => {
-        const config = categoryConfig[category.slug];
+      {loading
+        ? Array.from({ length: 8 }, (_, index) => (
+            <div
+              key={`category-skeleton-${index}`}
+              className="category-card category-skeleton"
+              aria-hidden="true"
+            >
+              <span className="category-icon category-skeleton-icon" />
+              <span className="category-content category-skeleton-content">
+                <span className="category-skeleton-title" />
+                <span className="category-skeleton-subtitle" />
+              </span>
+            </div>
+          ))
+        : categories.map((category) => {
+            const config = categoryConfig[category.slug];
 
-        return (
-          <button
-            key={category.slug}
-            className={`category-card ${config.color}`}
-            onClick={() => router.push(config.href)}
-          >
-            <span className="category-icon">
-              {config.icon}
-            </span>
+            return (
+              <button
+                key={category.slug}
+                className={`category-card ${config.color}`}
+                onClick={() => router.push(config.href)}
+              >
+                <span className="category-icon">
+                  {config.icon}
+                </span>
 
-            <span className="category-content">
-              <strong>
-                {getCategoryTitle(category, language)}
-              </strong>
+                <span className="category-content">
+                  <strong>
+                    {getCategoryTitle(category, language)}
+                  </strong>
 
-              <small>
-                {getCategorySubtitle(category, language)}
-              </small>
-            </span>
-          </button>
-        );
-      })}
+                  <small>
+                    {getCategorySubtitle(category, language)}
+                  </small>
+                </span>
+              </button>
+            );
+          })}
     </section>
   );
 }

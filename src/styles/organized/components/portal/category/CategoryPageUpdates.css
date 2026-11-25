@@ -8,7 +8,7 @@
 /* Marathi and Hindi labels use a compact homepage badge column. */
 .updates-panel-language-mr .update-row,
 .updates-panel-language-hi .update-row {
-  grid-template-columns: 90px minmax(0, 1fr) 100px 42px;
+  grid-template-columns: 96px minmax(0, 1fr) 100px 42px;
 }
 
 /* Category pages retain their content-sized badge columns. */
@@ -97,7 +97,7 @@
 
   .updates-panel-language-mr .update-row,
   .updates-panel-language-hi .update-row {
-    grid-template-columns: 84px minmax(0, 1fr) 78px 35px;
+    grid-template-columns: 88px minmax(0, 1fr) 78px 35px;
   }
 
   .jobs-updates .update-row,

@@ -17,6 +17,8 @@ export function SchemesCharacters() {
         width={1600}
         height={1024}
         priority
+        unoptimized
+        decoding="sync"
         className="schemes-characters-image"
       />
 

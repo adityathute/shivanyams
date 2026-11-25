@@ -429,7 +429,7 @@ type ContentLanguage = "en" | "mr" | "hi";
 type PostInfoFieldGroup = "title" | "summary" | "body";
 
 function normalizeAdminCategorySlug(slug: string) {
-  const normalized = slug.trim().toLowerCase().replace(/[_\\s]+/g, "-");
+  const normalized = slug.trim().toLowerCase().replace(/[_\s]+/g, "-");
   if (normalized === "examination" || normalized === "exam") return "exams";
   if (normalized === "articles-guides" || normalized === "article-guide") return "guides";
   return normalized;

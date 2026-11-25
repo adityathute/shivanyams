@@ -38,3 +38,9 @@ html[data-css-mode="organized"][data-theme="dark"] {
   --shivanya-shadow-sm: 0 1px 3px rgb(0 0 0 / 18%);
   --shivanya-shadow-md: 0 4px 14px rgb(0 0 0 / 22%);
 }
+
+/* Devanagari pages use Hind consistently for both Latin and Devanagari glyphs. */
+html[data-css-mode="organized"][lang="mr"],
+html[data-css-mode="organized"][lang="hi"] {
+  --shivanya-font-sans: "Hind", sans-serif;
+}

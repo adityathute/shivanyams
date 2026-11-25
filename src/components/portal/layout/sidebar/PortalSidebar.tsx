@@ -34,19 +34,19 @@ export function getPortalNavigation(
       icon: <HomeIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "governmentJobs"),
+      label: translate(language, sidebarTranslations, "jobs"),
       href: "/jobs",
       icon: <GovernmentJobIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "governmentSchemes"),
+      label: translate(language, sidebarTranslations, "schemes"),
       href: "/schemes",
       icon: <GovernmentSchemeIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "articlesGuides"),
-      href: "/guides",
-      icon: <GuideIcon />,
+      label: translate(language, sidebarTranslations, "exams"),
+      href: "/examination",
+      icon: <ExaminationIcon />,
     },
     {
       label: translate(language, sidebarTranslations, "admitCards"),
@@ -54,14 +54,14 @@ export function getPortalNavigation(
       icon: <AdmitCardIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "examinations"),
-      href: "/examination",
-      icon: <ExaminationIcon />,
-    },
-    {
       label: translate(language, sidebarTranslations, "results"),
       href: "/results",
       icon: <ResultIcon />,
+    },
+    {
+      label: translate(language, sidebarTranslations, "guides"),
+      href: "/guides",
+      icon: <GuideIcon />,
     },
     {
       label: translate(language, sidebarTranslations, "videos"),

@@ -123,9 +123,15 @@ export function GuidesPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
+               ) : data.loading ? (
+                <div className="empty-state empty-guide">Loading...</div>
+              ) : data.error ? (
+                <div className="empty-state empty-guide">{data.error}</div>
               ) : (
-                <div className="empty-state empty-guide">{t("noGuidesAvailable")}</div>
-              )}
+                <div className="empty-state empty-guide">
+                   {t("noGuidesAvailable")}
+                </div>
+              )
             </div>
           </section>
         </main>

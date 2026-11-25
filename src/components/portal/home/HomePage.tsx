@@ -160,11 +160,13 @@ export function HomePage() {
                     }
                     className="ticker-item"
                   >
-                    <span className="ticker-dot" aria-hidden="true">
-                      {categoryIcon}
-                    </span>
                     <span className="ticker-item-title">
-                      <span className="ticker-title-text">{getPostTitle(item)}</span>
+                      <span className="ticker-title-content">
+                        <span className="ticker-dot" aria-hidden="true">
+                          {categoryIcon}
+                        </span>
+                        <span className="ticker-title-text">{getPostTitle(item)}</span>
+                      </span>
                     </span>
                   </a>
                 );

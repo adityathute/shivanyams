@@ -150,10 +150,15 @@ export function getCategorySlugForType(type: string) {
 
 export function CategoryBadge({ category, label }: { category: string; label: string }) {
   const slug = normalizeCategorySlug(category);
-  const config = categoryConfig[slug];
+  const badgeSlug =
+    slug === "exams" ? "examination" :
+    slug === "articles-guides" ? "guides" :
+    slug;
+  const configSlug = badgeSlug === "examination" ? "exams" : badgeSlug;
+  const config = categoryConfig[configSlug];
 
   return (
-    <span className={`portal-post-category-badge portal-post-category-badge-${slug}`}>
+    <span className={`portal-post-category-badge portal-post-category-badge-${badgeSlug}`}>
       {config?.icon ? (
         <span className="portal-post-category-icon" aria-hidden="true">
           {config.icon}

@@ -87,7 +87,7 @@
 }
 
 .ticker-item-title[data-overflow="true"] .ticker-title-text {
-  animation: ticker-title-scroll var(--ticker-scroll-duration) linear infinite alternate;
+  animation: ticker-title-scroll var(--ticker-scroll-duration) linear infinite;
 }
 
 .ticker-item:hover .ticker-title-text,
@@ -96,8 +96,8 @@
 }
 
 @keyframes ticker-title-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(calc(-1 * var(--ticker-scroll-distance))); }
+  0%, 12% { transform: translateX(0); }
+  88%, 100% { transform: translateX(calc(-1 * var(--ticker-scroll-distance))); }
 }
 
 @media (prefers-reduced-motion: reduce) {

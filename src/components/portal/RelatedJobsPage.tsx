@@ -174,7 +174,7 @@ export function RelatedJobsPage() {
           <div className="related-tag-list">
             {suggestedTags.map(([tagSlug, tag]) => (
               <Link className="related-tag-chip" href={`/tags/${tagSlug}`} key={tagSlug}>
-                <span>{tag.label}</span>
+                <span className="related-tag-label">{tag.label}</span>
                 <small>{tag.count}</small>
               </Link>
             ))}
@@ -184,7 +184,7 @@ export function RelatedJobsPage() {
 
       <section ref={resultsPanelRef} className="saved-panel">
         <div className="saved-section-heading">
-          <h2>{heading}</h2>
+          <h2>{filterType === "tag" ? `# ${heading}` : heading}</h2>
           <span>{visibleItems.length} {labels.count}</span>
         </div>
 

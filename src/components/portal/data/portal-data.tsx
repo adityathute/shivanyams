@@ -769,25 +769,107 @@ type PortalDataContextValue = {
 
 const PortalDataContext = createContext<PortalDataContextValue | null>(null);
 
+const PORTAL_DATA_CACHE_VERSION = 1;
+
+type CachedPortalData = {
+  version: number;
+  savedAt: number;
+  items: Item[];
+  videos: Video[];
+};
+
+/**
+ * Public portal content is safe to keep for the lifetime of the current tab.
+ * On a reload, render this snapshot immediately and revalidate it from Django.
+ */
+function readPortalDataCache(): Pick<PortalData, "items" | "videos"> | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+
+    const cached = JSON.parse(raw) as Partial<CachedPortalData>;
+    if (
+      cached.version !== PORTAL_DATA_CACHE_VERSION ||
+      !Array.isArray(cached.items) ||
+      !Array.isArray(cached.videos)
+    ) {
+      return null;
+    }
+
+    return {
+      items: cached.items as Item[],
+      videos: cached.videos as Video[],
+    };
+  } catch {
+    // Storage may be unavailable, full, or contain invalid JSON. Network
+    // loading remains the source of truth and must continue normally.
+    return null;
+  }
+}
+
+function writePortalDataCache(data: PortalData) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const cached: CachedPortalData = {
+      version: PORTAL_DATA_CACHE_VERSION,
+      savedAt: Date.now(),
+      items: data.items,
+      videos: data.videos,
+    };
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cached));
+  } catch {
+    // A storage quota/private-mode failure must never break portal rendering.
+  }
+}
+
 export function PortalDataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<PortalData>(emptyData);
 
   useEffect(() => {
+    const cachedData = readPortalDataCache();
+    const hasCachedData = cachedData !== null;
+
+    if (cachedData) {
+      setData({
+        ...cachedData,
+        loading: false,
+        error: "",
+      });
+    }
+
     const controller = new AbortController();
 
     loadPortalData(controller.signal)
-      .then(setData)
+      .then((nextData) => {
+        if (controller.signal.aborted) return;
+
+        // Do not replace a complete cached snapshot with a partial response.
+        if (!nextData.error) writePortalDataCache(nextData);
+
+        setData((current) => {
+          if (nextData.error && hasCachedData) {
+            return {
+              ...current,
+              loading: false,
+              error: nextData.error,
+            };
+          }
+          return nextData;
+        });
+      })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
-          setData({
-            items: [],
-            videos: [],
+          setData((current) => ({
+            ...current,
             loading: false,
             error:
               error instanceof Error
                 ? error.message
                 : "Unable to load portal content.",
-          });
+          }));
         }
       });
 
@@ -796,10 +878,20 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
 
   async function refresh() {
     const controller = new AbortController();
-    setData((current) => ({ ...current, loading: true, error: "" }));
+    setData((current) => ({
+      ...current,
+      loading: current.items.length === 0 && current.videos.length === 0,
+      error: "",
+    }));
 
     try {
-      setData(await loadPortalData(controller.signal));
+      const nextData = await loadPortalData(controller.signal);
+      if (!nextData.error) writePortalDataCache(nextData);
+      setData((current) =>
+        nextData.error && (current.items.length > 0 || current.videos.length > 0)
+          ? { ...current, loading: false, error: nextData.error }
+          : nextData,
+      );
     } catch (error) {
       setData((current) => ({
         ...current,

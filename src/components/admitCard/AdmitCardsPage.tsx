@@ -131,7 +131,7 @@ export function AdmitCardsPage() {
                 <div className="empty-state empty-admit">
                    {t("noAdmitCardsAvailable")}
                 </div>
-              )
+              )}
             </div>
           </section>
         </main>

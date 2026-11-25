@@ -2,19 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Button } from "shivanya-ui";
 import { useRouter } from "next/navigation";
 
 import {
-  getPortalApiUrl,
+  STATIC_PORTAL_CATEGORIES,
   categoryConfig,
   getCategoryTitle,
   normalizeCategorySlug,
   type Category,
   type Language,
 } from "../../category/CategoryGrid";
-import { PORTAL_CATEGORY_ORDER } from "../../../../data/portal/categories";
 import { getBaseText } from "../../../../i18n/dictionaries/base";
 
 import { usePortalLanguage } from "../../context/PortalLanguageContext";
@@ -36,55 +34,9 @@ import {
 export function PortalFooter() {
   const { language } = usePortalLanguage();
   const { links, getLinkTitle } = useImportantLinks();
-  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchCategories() {
-      try {
-        const response = await fetch(getPortalApiUrl("categories/"), {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-
-        const payload: Category[] | { results?: Category[] } =
-          await response.json();
-
-        const data = Array.isArray(payload) ? payload : (payload.results ?? []);
-
-        setCategories(
-          data.filter(
-            (category) => category.is_active ?? category.active ?? false,
-          ),
-        );
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error("Footer categories loading failed:", error);
-        }
-      }
-    }
-
-    fetchCategories();
-
-    return () => controller.abort();
-  }, []);
-
-  const sortedCategories = categories
-    .map((category) => ({
-      ...category,
-      slug: normalizeCategorySlug(category.slug),
-    }))
-    .filter((category) => Boolean(categoryConfig[category.slug]))
-    .sort(
-      (a, b) =>
-        PORTAL_CATEGORY_ORDER.indexOf(a.slug) -
-        PORTAL_CATEGORY_ORDER.indexOf(b.slug),
-    );
+  const sortedCategories = STATIC_PORTAL_CATEGORIES;
 
   return (
     <div className="portal-footer-area">
@@ -184,7 +136,7 @@ export function PortalFooter() {
 
               return (
                 <Link
-                  key={category.id}
+                  key={category.slug}
                   href={config.href}
                   className="footer-category-link"
                 >

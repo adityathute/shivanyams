@@ -56,4 +56,24 @@
     padding: 0 16px 0 4px;
     font-size: 11px;
   }
+
+  /* Keep the custom closed label clear of the SDK's native select arrow. */
+  .language-select-display-mobile .language-select-closed-label {
+    inset-inline-end: 26px;
+  }
+
+  .language-dropdown-mobile .shivanya-select-control {
+    position: relative;
+  }
+
+  .language-dropdown-mobile .shivanya-select-arrow {
+    display: block;
+    z-index: 2;
+    right: 10px;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--shivanya-color-text-secondary, currentColor);
+    border-bottom: 2px solid var(--shivanya-color-text-secondary, currentColor);
+    pointer-events: none;
+  }
 }

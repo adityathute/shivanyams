@@ -125,7 +125,7 @@ export function GuidesPage() {
                 ))
                ) : data.loading ? (
                 <div className="empty-state empty-guide">Loading...</div>
-              ) : data.error ? (
+              ) : data.failedTypes?.includes("guide") && data.error ? (
                 <div className="empty-state empty-guide">{data.error}</div>
               ) : (
                 <div className="empty-state empty-guide">

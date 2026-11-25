@@ -1,5 +1,11 @@
 /* Shared category update rows — fit badges to their labels on home and category pages. */
-.updates-panel .update-row,
+/* Homepage Latest Updates: use one equal-width badge column sized for the Scheme label. */
+.updates-panel .update-row {
+  grid-template-columns: 100px minmax(0, 1fr) 100px 42px;
+  min-width: 0;
+}
+
+/* Category pages retain their content-sized badge columns. */
 .jobs-updates .update-row,
 .schemes-updates .update-row,
 .admit-updates .update-row,
@@ -10,7 +16,15 @@
   min-width: 0;
 }
 
-.updates-panel .update-row > .portal-post-category-badge,
+.updates-panel .update-row > .portal-post-category-badge {
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  justify-content: center;
+}
+
 .jobs-updates .update-row > .portal-post-category-badge,
 .schemes-updates .update-row > .portal-post-category-badge,
 .admit-updates .update-row > .portal-post-category-badge,
@@ -70,7 +84,11 @@
 }
 
 @media (max-width: 1100px) {
-  .updates-panel .update-row,
+  .updates-panel .update-row {
+    grid-template-columns: 92px minmax(0, 1fr) 78px 35px;
+    gap: 8px;
+  }
+
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,
@@ -83,7 +101,11 @@
 }
 
 @media (max-width: 760px) {
-  .updates-panel .update-row,
+  .updates-panel .update-row {
+    grid-template-columns: 82px minmax(0, 1fr) 36px;
+    gap: 7px;
+  }
+
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,
@@ -96,7 +118,11 @@
 }
 
 @media (max-width: 390px) {
-  .updates-panel .update-row,
+  .updates-panel .update-row {
+    grid-template-columns: 76px minmax(0, 1fr) 31px;
+    gap: 5px;
+  }
+
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,

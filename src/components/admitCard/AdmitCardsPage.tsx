@@ -123,9 +123,15 @@ export function AdmitCardsPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
+               ) : data.loading ? (
+                <div className="empty-state empty-admit">Loading...</div>
+              ) : data.error ? (
+                <div className="empty-state empty-admit">{data.error}</div>
               ) : (
-                <div className="empty-state empty-admit">{t("noAdmitCardsAvailable")}</div>
-              )}
+                <div className="empty-state empty-admit">
+                   {t("noAdmitCardsAvailable")}
+                </div>
+              )
             </div>
           </section>
         </main>

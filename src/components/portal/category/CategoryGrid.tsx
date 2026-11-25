@@ -20,6 +20,11 @@ import {
 
 import type { ItemType } from "../data/portal-data";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import {
+  getPortalCategoryDefinition,
+  normalizePortalCategorySlug,
+  PORTAL_CATEGORY_ORDER,
+} from "../../../data/portal/categories";
 
 export type Language = "en" | "mr" | "hi";
 
@@ -40,7 +45,8 @@ export function getCategorySubtitle(
   category: Category,
   language: Language,
 ) {
-  return language === "en" ? category.name_mr : category.name_en;
+  const definition = getPortalCategoryDefinition(category.slug);
+  return definition?.translations[language].name || category.name_en;
 }
 
 interface CategoryConfig {
@@ -63,7 +69,7 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     icon: <GovernmentSchemeIcon />,
     href: "/schemes",
   },
-  examination: {
+  exams: {
     type: "examination",
     color: "indigo",
     icon: <ExaminationIcon />,
@@ -81,7 +87,7 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     icon: <AdmitCardIcon />,
     href: "/admit-cards",
   },
-  "articles-guides": {
+  guides: {
     type: "guide",
     color: "orange",
     icon: <GuideIcon />,
@@ -101,35 +107,9 @@ export const categoryConfig: Record<string, CategoryConfig> = {
 },
 };
 
-const CATEGORY_ORDER = [
-  "jobs",
-  "schemes",
-  "articles-guides",
-  "admit-cards",
-  "examination",
-  "results",
-  "videos",
-    "tools",
-];
 
-const categorySlugAliases: Record<string, string> = {
-  job: "jobs",
-  "government-jobs": "jobs",
-  scheme: "schemes",
-  "government-schemes": "schemes",
-  result: "results",
-  admit: "admit-cards",
-  "admit-card": "admit-cards",
-  admitcards: "admit-cards",
-  guide: "articles-guides",
-  guides: "articles-guides",
-  article: "articles-guides",
-  articles: "articles-guides",
-  "article-guide": "articles-guides",
-  "article-guides": "articles-guides",
-  "articles-guide": "articles-guides",
-  video: "videos",
-};
+
+
 
 const configuredPortalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
 
@@ -154,17 +134,15 @@ export function getCategoryTitle(
   category: Category,
   language: Language = "mr",
 ) {
-  return {
-    en: category.name_en,
-    mr: category.name_mr,
-    hi: category.name_hi,
-  }[language];
+  const definition = getPortalCategoryDefinition(category.slug);
+  const fallback = definition?.translations[language].name || category.name_en;
+  return ({ en: category.name_en, mr: category.name_mr, hi: category.name_hi }[language] || fallback);
 }
 
 export function getCategorySlugForType(type: string) {
   const slugs: Record<string, string> = {
-    job: "jobs", scheme: "schemes", examination: "examination", exam: "examination",
-    result: "results", admit: "admit-cards", guide: "articles-guides",
+    job: "jobs", scheme: "schemes", examination: "exams", exam: "exams",
+    result: "results", admit: "admit-cards", guide: "guides",
     video: "videos", tool: "tools",
   };
   return slugs[type] || normalizeCategorySlug(type);
@@ -185,11 +163,9 @@ export function getCategoryDescription(
   category: Category,
   language: Language = "mr",
 ) {
-  return {
-    en: category.description_en,
-    mr: category.description_mr,
-    hi: category.description_hi,
-  }[language];
+  const definition = getPortalCategoryDefinition(category.slug);
+  const fallback = definition?.translations[language].description || "";
+  return ({ en: category.description_en, mr: category.description_mr, hi: category.description_hi }[language] || fallback);
 }
 
 interface CategoryApiResponse {
@@ -202,7 +178,7 @@ export function normalizeCategorySlug(slug: string) {
     .toLowerCase()
     .replace(/[_\s]+/g, "-");
 
-  return categorySlugAliases[normalized] ?? normalized;
+  return normalizePortalCategorySlug(normalized);
 }
 
 export function CategoryGrid({
@@ -250,8 +226,8 @@ export function CategoryGrid({
         // Always follow the defined category sequence
         const sortedCategories = [...activeCategories].sort(
           (a, b) =>
-            CATEGORY_ORDER.indexOf(a.slug) -
-            CATEGORY_ORDER.indexOf(b.slug),
+            PORTAL_CATEGORY_ORDER.indexOf(a.slug) -
+            PORTAL_CATEGORY_ORDER.indexOf(b.slug),
         );
 
         setCategories(sortedCategories);

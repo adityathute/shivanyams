@@ -923,7 +923,9 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     setData((current) => ({
       ...current,
-      loading: current.items.length === 0 && current.videos.length === 0,
+      // Mark the category revalidation as active even when another category
+      // already has cached posts; empty category pages should not flash "empty".
+      loading: true,
       error: "",
     }));
     await applyFreshData();

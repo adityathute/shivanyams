@@ -76,10 +76,34 @@
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 13px;
   font-weight: 500;
+}
+
+.ticker-title-text {
+  display: inline-block;
+  min-width: max-content;
+}
+
+.ticker-item-title[data-overflow="true"] .ticker-title-text {
+  animation: ticker-title-scroll var(--ticker-scroll-duration) linear infinite alternate;
+}
+
+.ticker-item:hover .ticker-title-text,
+.ticker-item:focus-visible .ticker-title-text {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-title-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-1 * var(--ticker-scroll-distance))); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-item-title[data-overflow="true"] .ticker-title-text {
+    animation: none;
+  }
 }
 
 .ticker-dot {

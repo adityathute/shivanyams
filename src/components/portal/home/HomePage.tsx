@@ -36,7 +36,7 @@ export function HomePage() {
     const ultraWideQuery = window.matchMedia("(min-width: 1920px)");
     const updateVisibleCount = () => {
       setVisibleTickerCount(
-        tabletQuery.matches ? 4 : ultraWideQuery.matches ? 8 : 6,
+        tabletQuery.matches ? 4 : 6,
       );
       setTickerIndex(0);
     };

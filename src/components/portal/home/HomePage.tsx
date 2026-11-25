@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { HeroSection } from "./HeroSection";
-import { CategoryGrid } from "../category/CategoryGrid";
+import { CategoryGrid, categoryConfig, getCategorySlugForType } from "../category/CategoryGrid";
 import { UpdatesSection } from "./UpdatesSection";
 import { VideosSection } from "../../videos/VideosSection";
 import type { Item, ItemType } from "../data/portal-data";
@@ -68,32 +68,39 @@ export function HomePage() {
                 transform: `translateX(-${tickerIndex * 20}%)`,
               }}
             >
-              {tickerItems.map((item) => (
-                <a
-                  key={item.id}
-                  href={
-                    item.type === "job"
-                      ? `/jobs/${item.slug || createPostSlug(item.title)}`
-                      : item.type === "scheme"
-                        ? `/schemes/${item.slug || createPostSlug(item.title)}`
-                        : item.type === "result"
-                          ? `/results/${item.slug || createPostSlug(item.title)}`
-                          : item.type === "admit"
-                            ? `/admit-card/${item.slug || createPostSlug(item.title)}`
-                            : item.type === "video"
-                              ? `/videos/${item.slug || createPostSlug(item.title)}`
-                              : item.type === "guide"
-                                ? `/articles/${item.slug || createPostSlug(item.title)}`
-                                : `/examinations/${item.slug || createPostSlug(item.title)}`
-                  }
-                  className="ticker-item"
-                >
-                  <span className="ticker-dot">•</span>
-                  <span className="ticker-item-title">
-                    {getPostTitle(item)}
-                  </span>
-                </a>
-              ))}
+              {tickerItems.map((item) => {
+                const categorySlug = getCategorySlugForType(item.type);
+                const categoryIcon = categoryConfig[categorySlug]?.icon;
+
+                return (
+                  <a
+                    key={item.id}
+                    href={
+                      item.type === "job"
+                        ? `/jobs/${item.slug || createPostSlug(item.title)}`
+                        : item.type === "scheme"
+                          ? `/schemes/${item.slug || createPostSlug(item.title)}`
+                          : item.type === "result"
+                            ? `/results/${item.slug || createPostSlug(item.title)}`
+                            : item.type === "admit"
+                              ? `/admit-card/${item.slug || createPostSlug(item.title)}`
+                              : item.type === "video"
+                                ? `/videos/${item.slug || createPostSlug(item.title)}`
+                                : item.type === "guide"
+                                  ? `/articles/${item.slug || createPostSlug(item.title)}`
+                                  : `/examinations/${item.slug || createPostSlug(item.title)}`
+                    }
+                    className="ticker-item"
+                  >
+                    <span className="ticker-dot" aria-hidden="true">
+                      {categoryIcon}
+                    </span>
+                    <span className="ticker-item-title">
+                      {getPostTitle(item)}
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </div>
 

@@ -125,7 +125,7 @@ export function ExaminationPage() {
                 ))
                ) : data.loading ? (
                 <div className="empty-state empty-exam">Loading...</div>
-              ) : data.error ? (
+              ) : data.failedTypes?.includes("examination") && data.error ? (
                 <div className="empty-state empty-exam">{data.error}</div>
               ) : (
                 <div className="empty-state empty-exam">

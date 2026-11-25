@@ -111,7 +111,7 @@ export function getCategoryDescription(category: Category, language: Language = 
 }
 
 export function normalizeCategorySlug(slug: string) {
-).replace(/\/+$/, "");
+  return normalizePortalCategorySlug(slug.trim().toLowerCase().replace(/[_\s]+/g, "-"));
 }
 
 const configuredPortalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
@@ -121,7 +121,7 @@ export const API_URL = (
   (process.env.NODE_ENV === "development"
     ? "http://localhost:8001/api/v1/portal"
     : "")
-).replace(/\\/+$/, "");
+).replace(/\/+$/, "");
 
 export function getPortalApiUrl(path: string) {
   if (!API_URL) {

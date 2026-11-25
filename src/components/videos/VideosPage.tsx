@@ -12,6 +12,7 @@ import { CategoryBadge, getLocalizedCategoryLabel } from "../portal/category/Cat
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
+import { PortalEmptyState } from "../portal/category/PortalEmptyState";
 
 import "./../../styles/legacy/components/videos/VideosPage.css";
 
@@ -125,9 +126,16 @@ export function VideosPage() {
             </span>
           </header>
 
-          {data.loading && (
-            <div className="videos-empty">
-              Loading...
+          {data.loading && videos.length === 0 && (
+            <div className="videos-grid videos-skeleton-grid" aria-label="Loading videos" aria-busy="true">
+              {Array.from({ length: 4 }, (_, index) => (
+                <div className="videos-skeleton-card" key={index} aria-hidden="true">
+                  <span className="videos-skeleton-thumbnail" />
+                  <span className="videos-skeleton-line videos-skeleton-tag" />
+                  <span className="videos-skeleton-line videos-skeleton-title" />
+                  <span className="videos-skeleton-line videos-skeleton-title-short" />
+                </div>
+              ))}
             </div>
           )}
 
@@ -207,16 +215,7 @@ export function VideosPage() {
           )}
 
           {!data.loading && videos.length === 0 && !data.failedTypes?.includes("video") && (
-            <div className="videos-empty">
-              {hasVideos ? (
-                <>
-                  <h3>{t("noVideosFound")}</h3>
-                  <p>{t("tryAnotherSearch")}</p>
-                </>
-              ) : (
-                <h3>No videos available</h3>
-              )}
-            </div>
+            <PortalEmptyState title={hasVideos ? t("noVideosFound") : (language === "mr" ? "व्हिडिओ उपलब्ध नाहीत" : language === "hi" ? "अभी वीडियो उपलब्ध नहीं हैं" : "No videos available")} description={hasVideos ? t("tryAnotherSearch") : (language === "mr" ? "नवीन व्हिडिओ प्रकाशित झाल्यावर येथे दिसतील." : language === "hi" ? "नए वीडियो प्रकाशित होते ही यहाँ दिखाई देंगे।" : "New videos will appear here as soon as they are published.")} icon="▶" />
           )}
         </section>
       </main>

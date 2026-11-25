@@ -22,9 +22,13 @@ export function PortalHeader() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (searchOpen) {
-      searchInputRef.current?.focus();
-    }
+    if (!searchOpen) return;
+
+    const input = searchInputRef.current;
+    if (!input) return;
+
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
   }, [searchOpen]);
 
   return (

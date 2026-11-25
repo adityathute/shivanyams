@@ -1,0 +1,24 @@
+/* Tablet navigation: replace the fixed sidebar with the shell's existing drawer. */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .shivanya-dashboard-shell .shivanya-shell-desktop-sidebar {
+    display: none;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-menu {
+    display: flex;
+    align-items: center;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-mobile-layer {
+    display: flex;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-header-inner {
+    gap: 10px;
+    padding-inline: 16px;
+  }
+
+  .shivanya-dashboard-shell .shivanya-shell-header-start {
+    gap: 8px;
+  }
+}

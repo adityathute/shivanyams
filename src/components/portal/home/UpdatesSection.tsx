@@ -1,7 +1,6 @@
 "use client";
 
 import "./../../../styles/legacy/components/portal/home/UpdatesSection.css";
-import "./../../../styles/legacy/components/portal/category/CategoryBadge.css";
 
 import { useEffect, useMemo, useState } from "react";
 

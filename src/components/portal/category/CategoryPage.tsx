@@ -4,9 +4,11 @@
 import "./../../../styles/legacy/components/portal/category/CategoryPage.css";
 
 import { useEffect, useMemo, useState } from "react";
-import { usePortalData, type ItemType } from "../data/portal-data";
+import { usePortalData, type Item, type ItemType } from "../data/portal-data";
 import {
   getPortalApiUrl,
+  CategoryBadge,
+  getCategorySlugForType,
   normalizeCategorySlug,
   getCategoryDescription,
   getCategoryTitle,
@@ -97,6 +99,48 @@ const pageCopy: Record<
     searchButton: "⌕ खोजें",
   },
 };
+
+function getLocalizedValue(
+  language: Language,
+  en?: string,
+  mr?: string,
+  hi?: string,
+) {
+  const values: Record<Language, string> = {
+    en: en?.trim() || "",
+    mr: mr?.trim() || "",
+    hi: hi?.trim() || "",
+  };
+
+  return values[language] || values.en || values.mr || values.hi || "";
+}
+
+function getItemCategory(item: Item, language: Language) {
+  return getLocalizedValue(
+    language,
+    item.category_en,
+    item.category_mr,
+    item.category_hi,
+  ) || item.category;
+}
+
+function getItemTitle(item: Item, language: Language) {
+  return getLocalizedValue(
+    language,
+    item.title_en,
+    item.title_mr,
+    item.title_hi,
+  ) || item.title;
+}
+
+function getItemDescription(item: Item, language: Language) {
+  return getLocalizedValue(
+    language,
+    item.summary_en,
+    item.summary_mr,
+    item.summary_hi,
+  ) || item.description;
+}
 
 function getDescription(category: Category, language: Language) {
   return getCategoryDescription(category, language);
@@ -216,9 +260,11 @@ export function CategoryPage({ type }: { type: ItemType }) {
 
         return (
           !term ||
-          [item.title, item.category, item.description].some((value) =>
-            value.toLowerCase().includes(term),
-          )
+          [
+            getItemTitle(item, language),
+            getItemCategory(item, language),
+            getItemDescription(item, language),
+          ].some((value) => value.toLowerCase().includes(term))
         );
       })
       .sort(
@@ -226,7 +272,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
           new Date(b.date || "").getTime() -
           new Date(a.date || "").getTime(),
       );
-  }, [data.items, query, type]);
+  }, [data.items, query, type, language]);
 
   return (
     <div className="portal">
@@ -281,13 +327,16 @@ export function CategoryPage({ type }: { type: ItemType }) {
                   target={item.link ? "_blank" : undefined}
                   rel={item.link ? "noreferrer" : undefined}
                 >
-                  <span className={`update-badge ${item.type}`}>
-                    {item.category}
-                  </span>
+                  <CategoryBadge
+                    category={getCategorySlugForType(item.type)}
+                    label={getItemCategory(item, language)}
+                  />
 
                   <span className="update-title">
-                    {item.title}
-                    <small>{item.description}</small>
+                    {getItemTitle(item, language)}
+                    {getItemDescription(item, language) && (
+                      <small>{getItemDescription(item, language)}</small>
+                    )}
                   </span>
 
                   <time>

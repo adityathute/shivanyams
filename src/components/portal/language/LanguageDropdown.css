@@ -9,22 +9,35 @@
 
   .language-dropdown-mobile {
     display: block;
+    flex: 0 0 36px;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+  }
+
+  .language-dropdown-mobile .shivanya-select-field {
+    width: 36px;
+    max-width: 36px;
+    min-width: 36px;
   }
 
   .language-dropdown-mobile .language-select-mobile {
     box-sizing: border-box;
-    width: 76px;
-    min-width: 76px;
+    width: 36px;
+    min-width: 36px;
     height: 36px;
-    padding: 0 7px;
-    border-radius: 50px;
-    font-size: 12px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 11px;
     line-height: 1;
     text-align: center;
+    text-align-last: center;
   }
 
   .language-dropdown-mobile .shivanya-select-control {
     position: relative;
+    width: 36px;
+    height: 36px;
   }
 
   .language-dropdown-mobile .shivanya-select-arrow {

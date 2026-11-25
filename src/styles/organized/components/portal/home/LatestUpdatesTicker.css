@@ -1,10 +1,10 @@
 /* Homepage latest updates ticker refinements (light mode). */
-.ticker-item {
-  flex-basis: 16.666667%;
+.portal .ticker .ticker-item {
+  flex: 0 0 16.666667%;
 }
 
-.ticker .ticker-item .ticker-dot,
-.ticker .ticker-item:hover .ticker-dot {
+.portal .ticker .ticker-item .ticker-dot,
+.portal .ticker .ticker-item:hover .ticker-dot {
   color: #6b7280;
   font-size: 10px;
   line-height: 1;

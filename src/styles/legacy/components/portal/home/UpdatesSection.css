@@ -419,14 +419,3 @@
 [data-theme="dark"] .subscribe-content p {
   color: #c0ccda;
 }
-
-/* Tablet layout: use the full content width and hide the right sidebar. */
-@media (min-width: 761px) and (max-width: 1100px) {
-  .content-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .content-layout > .right-column {
-    display: none;
-  }
-}

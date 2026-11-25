@@ -68,6 +68,9 @@
 
 .portal-post-card,
 .portal-post-not-found {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
   padding: 16px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 20px;
@@ -190,7 +193,23 @@
 
   .portal-post-card,
   .portal-post-not-found {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     border-radius: 15px;
+  }
+
+  .portal-post-card > .portal-post-compact-header,
+  .portal-post-card > .portal-post-card-footer {
+    box-sizing: border-box;
+    max-width: calc(100% + 32px);
+  }
+
+  .portal-post-compact-header,
+  .portal-post-header-meta-right,
+  .portal-post-card-footer,
+  .portal-post-card-footer .portal-post-engagement-actions {
+    min-width: 0;
   }
 }
 

@@ -15,7 +15,7 @@ import {
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";
-import { sidebarTranslations } from "@/i18n/dictionaries/sidebar";
+import { sidebarTranslations } from "@/i18n/organized/dictionaries/sidebar";
 
 type PortalUser = {
   roles?: string[];
@@ -34,17 +34,17 @@ export function getPortalNavigation(
       icon: <HomeIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "jobs"),
+      label: translate(language, sidebarTranslations, "governmentJobs"),
       href: "/jobs",
       icon: <GovernmentJobIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "schemes"),
+      label: translate(language, sidebarTranslations, "governmentSchemes"),
       href: "/schemes",
       icon: <GovernmentSchemeIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "guides"),
+      label: translate(language, sidebarTranslations, "articlesGuides"),
       href: "/guides",
       icon: <GuideIcon />,
     },
@@ -54,7 +54,7 @@ export function getPortalNavigation(
       icon: <AdmitCardIcon />,
     },
     {
-      label: translate(language, sidebarTranslations, "examination"),
+      label: translate(language, sidebarTranslations, "examinations"),
       href: "/examination",
       icon: <ExaminationIcon />,
     },
@@ -91,7 +91,7 @@ export function getPortalNavigation(
     ...(isAdmin
       ? [
           {
-            label: "Admin",
+            label: translate(language, sidebarTranslations, "admin"),
             href: "/admin",
             icon: <ShieldCheckIcon />,
           },

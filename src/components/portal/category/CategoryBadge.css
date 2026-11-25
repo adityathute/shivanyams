@@ -1,7 +1,8 @@
 /* Shared category badge used by the home page, update lists and post details. */
 .portal-category-badge{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;gap:6px;min-height:30px;max-width:100%;box-sizing:border-box;padding:5px 11px;border:1px solid #bfdbfe;border-radius:999px;color:#0969da;background:#eff6ff;font-family:"Outfit","Hind",sans-serif;font-size:12px;font-weight:650;line-height:1.25;text-align:center;white-space:nowrap;user-select:none}
 .portal-category-badge-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 15px;width:15px;height:15px}
-.portal-category-badge-icon svg{display:block;width:15px;height:15px;flex:0 0 auto}
+ .portal-category-badge-icon svg{display:block;width:15px;height:15px;flex:0 0 auto}
+.portal-category-badge > span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .portal-category-badge--schemes{color:#15803d;background:#f0fdf4;border-color:#bbf7d0}
 .portal-category-badge--examination{color:#4338ca;background:#eef2ff;border-color:#c7d2fe}
 .portal-category-badge--results{color:#7e22ce;background:#faf5ff;border-color:#e9d5ff}

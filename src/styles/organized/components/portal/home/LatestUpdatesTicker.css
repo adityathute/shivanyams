@@ -6,6 +6,6 @@
 .ticker .ticker-item .ticker-dot,
 .ticker .ticker-item:hover .ticker-dot {
   color: #6b7280;
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1;
 }

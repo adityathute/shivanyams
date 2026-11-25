@@ -2598,19 +2598,15 @@ class AdminDashboardStats(APIView):
             )
             return Response({"total": total, "results": rows, "reaction_type": reaction_filter})
 
-        # Portal does not own the Auth user table; count distinct authenticated
-        # identities recorded through Portal ownership or user activity.
-        user_ids = set()
-        identity_queries = (
-            Post.objects.exclude(owner_auth_id="").values_list("owner_auth_id", flat=True),
-            Comment.objects.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
-            PostReaction.objects.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
-            SavedPost.objects.exclude(user_auth_id="").values_list("user_auth_id", flat=True),
-            PostVisitor.objects.exclude(auth_user_id="").values_list("auth_user_id", flat=True),
-            PostView.objects.exclude(auth_user_id="").values_list("auth_user_id", flat=True),
+        # Keep the dashboard Portal users metric consistent with the
+        # authenticated-users analytics table. Both are based on distinct
+        # authenticated identities observed by the website visitor tracker.
+        users_count = (
+            WebsiteVisitor.objects.exclude(auth_user_id="")
+            .values("auth_user_id")
+            .distinct()
+            .count()
         )
-        for identities in identity_queries:
-            user_ids.update(identities)
         published_version_number = PostVersion.objects.filter(
             post_id=OuterRef("pk"), is_published=True
         ).order_by("-version_number").values("version_number")[:1]
@@ -2622,7 +2618,7 @@ class AdminDashboardStats(APIView):
 
         return Response({
             "edited_posts_count": edited_posts_count,
-            "users_count": len(user_ids),
+            "users_count": users_count,
             "website_views_count": WebsiteView.objects.count(),
             "website_visitors_count": WebsiteVisitor.objects.count(),
             "questions_count": PostQuestion.objects.count(),

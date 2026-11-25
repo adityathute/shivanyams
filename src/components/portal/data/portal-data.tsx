@@ -847,13 +847,18 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
     const hasCachedData = cachedData !== null;
 
     if (cachedData) {
-      setData((current) => ({
-        ...current,
-        items: cachedData.items,
-        videos: cachedData.videos,
-        loading: false,
-        error: "",
-      }));
+      setData((current) => {
+        const cachedSnapshot: PortalData = {
+          items: cachedData.items,
+          videos: cachedData.videos,
+          loading: false,
+          error: "",
+        };
+
+        return hasSamePortalContent(current, cachedSnapshot)
+          ? { ...current, loading: false, error: "" }
+          : cachedSnapshot;
+      });
 
       // Avoid another API round trip while this tab's snapshot is fresh.
       if (Date.now() - cachedData.savedAt < PORTAL_DATA_CACHE_TTL) {

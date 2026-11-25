@@ -1042,3 +1042,40 @@
     transition: none;
   }
 }
+
+
+/* Keep the mobile navigation drawer usable when its menu is taller than the screen. */
+@media (max-width: 767px) {
+  .shivanya-shell-mobile-layer {
+    touch-action: pan-y;
+  }
+
+  .shivanya-shell-mobile-panel {
+    overflow: hidden;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+  }
+
+  .shivanya-shell-mobile-sidebar {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    scrollbar-width: thin;
+  }
+
+  .shivanya-shell-mobile-sidebar .shivanya-shell-nav {
+    flex: 0 0 auto;
+    min-height: max-content;
+    overflow: visible;
+    touch-action: pan-y;
+  }
+
+  .shivanya-shell-mobile-sidebar .shivanya-shell-sidebar-footer {
+    flex: 0 0 auto;
+  }
+}

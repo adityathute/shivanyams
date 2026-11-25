@@ -22,6 +22,55 @@
   user-select: none;
 }
 
+/* Keep category colors stronger than the legacy generic post-meta span rule. */
+.portal-post-meta > .portal-post-category-badge {
+  padding: 5px 11px;
+  border: 1px solid #bfdbfe;
+  color: #0969da;
+  background: #eff6ff;
+}
+
+.portal-post-meta > .portal-post-category-badge-jobs {
+  color: #0969da;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+.portal-post-meta > .portal-post-category-badge-schemes {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.portal-post-meta > .portal-post-category-badge-examination {
+  color: #4338ca;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+.portal-post-meta > .portal-post-category-badge-results {
+  color: #7e22ce;
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+.portal-post-meta > .portal-post-category-badge-admit-cards {
+  color: #0e7490;
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+.portal-post-meta > .portal-post-category-badge-guides {
+  color: #c2410c;
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+.portal-post-meta > .portal-post-category-badge-videos {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.portal-post-meta > .portal-post-category-badge-tools {
+  color: #475569;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
 .portal-post-category-icon {
   display: inline-flex;
   align-items: center;

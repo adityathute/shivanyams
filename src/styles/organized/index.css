@@ -1,8 +1,2 @@
-/*
- * Organized global stylesheet entry point.
- *
- * Intentionally empty for now. The existing global design remains active
- * in both modes until each organized replacement is implemented and tested.
- *
- * Add organized foundation/component imports here incrementally.
- */
+/* Organized global stylesheet entry point. */
+@import "./components/portal/category/CategoryBadge.css";

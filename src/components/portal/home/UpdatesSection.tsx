@@ -270,7 +270,7 @@ export function UpdatesSection({
       <div className="update-list">
         {data.loading && filtered.length === 0 ? (
           <div className="update-skeleton-list" aria-label="Loading updates" aria-busy="true">
-            {Array.from({ length: 2 }, (_, index) => (
+            {Array.from({ length: 5 }, (_, index) => (
               <div className="update-skeleton-row" key={index} aria-hidden="true">
                 <span className="update-skeleton-badge" />
                 <span className="update-skeleton-copy">

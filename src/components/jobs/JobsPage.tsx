@@ -3,7 +3,7 @@
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/jobs/JobsPage.css";
 import { useMemo, useState } from "react";
-import { usePortalData } from "../portal/data/portal-data";
+import { usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { SearchIcon } from "shivanya-ui";
@@ -14,6 +14,7 @@ import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 import { JobsCharacters } from "./JobsCharacters";
 
 export function JobsPage() {
+  useRefreshPortalDataOnMount();
   const [query, setQuery] = useState("");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();

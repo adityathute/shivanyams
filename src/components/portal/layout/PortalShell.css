@@ -929,3 +929,37 @@
   .portal-topbar-search-toggle,
   .portal-topbar-search { transition: none; }
 }
+
+
+/* Keep the account action visually stable while authentication resolves. */
+.portal-user-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--shivanya-color-border, #dce3ec);
+  border-radius: 50%;
+  background: var(--shivanya-color-surface, #fff);
+  color: var(--shivanya-color-text-secondary, #64748b);
+  cursor: default;
+}
+
+.portal-user-loading svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+[data-theme="dark"] .portal-user-loading {
+  background: var(--shivanya-color-surface, #151b23);
+  border-color: var(--shivanya-color-border, #293544);
+  color: var(--shivanya-color-text-primary, #e6edf3);
+}

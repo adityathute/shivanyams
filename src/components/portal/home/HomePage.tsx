@@ -36,9 +36,7 @@ export function HomePage() {
     const tabletQuery = window.matchMedia("(min-width: 761px) and (max-width: 1100px)");
     const ultraWideQuery = window.matchMedia("(min-width: 1920px)");
     const updateVisibleCount = () => {
-      setVisibleTickerCount(
-        tabletQuery.matches ? 4 : 6,
-      );
+      setVisibleTickerCount(tabletQuery.matches ? 4 : 6);
       setTickerIndex(0);
     };
 
@@ -50,6 +48,22 @@ export function HomePage() {
       ultraWideQuery.removeEventListener("change", updateVisibleCount);
     };
   }, []);
+
+  useEffect(() => {
+    if (tickerItems.length <= visibleTickerCount) {
+      setTickerIndex(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setTickerIndex((current) => {
+        const lastIndex = tickerItems.length - visibleTickerCount;
+        return current >= lastIndex ? 0 : current + 1;
+      });
+    }, 10000);
+
+    return () => window.clearInterval(interval);
+  }, [tickerItems.length, visibleTickerCount]);
 
   const getPostTitle = (item: Item): string => {
     const titles: Record<string, string | undefined> = {

@@ -828,8 +828,12 @@
   .portal-topbar-search-desktop { display: none; }
 
   .portal-header-search-actions {
-    position: relative;
+    position: static;
     gap: 6px;
+  }
+
+  .portal-header {
+    position: relative;
   }
 
   .portal-header-search-actions > .portal-topbar-search { display: none; }
@@ -864,11 +868,12 @@
     align-items: center;
     gap: 9px;
     top: calc(100% + 9px);
-    right: 0;
+    left: 10px;
+    right: 10px;
     z-index: 30;
-    width: min(340px, calc(100vw - 28px));
+    width: auto;
     height: 44px;
-    padding: 5px 13px;
+    padding: 5px 6px 5px 14px;
     border: 1px solid var(--shivanya-color-border, #dce3ec);
     border-radius: 12px;
     background: var(--shivanya-color-surface, #fff);
@@ -878,7 +883,7 @@
     visibility: hidden;
     pointer-events: none;
     transform: translateY(-8px) scale(.98);
-    transform-origin: top right;
+    transform-origin: top center;
     transition: opacity 180ms ease, transform 220ms ease, visibility 180ms ease;
   }
 

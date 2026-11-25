@@ -963,3 +963,42 @@
   border-color: var(--shivanya-color-border, #293544);
   color: var(--shivanya-color-text-primary, #e6edf3);
 }
+
+
+/* Mobile search backdrop: softly separates the open search panel from page content. */
+@media (max-width: 767px) {
+  .portal-search-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(15, 23, 42, 0.14);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    animation: portal-search-backdrop-in 180ms ease both;
+  }
+
+  .portal-topbar-search-toggle {
+    position: relative;
+    z-index: 31;
+  }
+
+  .portal-topbar-search-mobile-panel {
+    z-index: 32;
+    background: color-mix(in srgb, var(--shivanya-color-surface, #fff) 88%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  [data-theme="dark"] .portal-topbar-search-mobile-panel {
+    background: color-mix(in srgb, var(--shivanya-color-surface, #151b23) 88%, transparent);
+  }
+}
+
+@keyframes portal-search-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-search-backdrop { animation: none; }
+}

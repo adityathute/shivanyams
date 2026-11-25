@@ -125,7 +125,7 @@ export function ResultsPage() {
                 ))
                ) : data.loading ? (
                 <div className="empty-state empty-result">Loading...</div>
-              ) : data.error ? (
+              ) : data.failedTypes?.includes("result") && data.error ? (
                 <div className="empty-state empty-result">{data.error}</div>
               ) : (
                 <div className="empty-state empty-result">

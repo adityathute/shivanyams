@@ -171,24 +171,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
   const [query, setQuery] = useState("");
   const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
-  const [categoryContentLoading, setCategoryContentLoading] = useState(true);
-
-  const { data, refresh } = usePortalData();
-
-  // Revalidate this category whenever its page is opened. Keep a local loading
-  // state so cached content from other categories does not hide its skeleton.
-  useEffect(() => {
-    let active = true;
-    setCategoryContentLoading(true);
-
-    void refresh().finally(() => {
-      if (active) setCategoryContentLoading(false);
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [refresh]);
+  const { data } = usePortalData();
 
   const categorySlug = categorySlugByType[type] ?? type;
 
@@ -332,7 +315,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
           </div>
 
           <div className="update-list">
-            {(categoryContentLoading || data.loading) && filtered.length === 0 ? (
+            {data.loading && filtered.length === 0 ? (
               <div className="update-skeleton-list" aria-label="Loading updates" aria-busy="true">
                 {Array.from({ length: 2 }, (_, index) => (
                   <div className="update-skeleton-row" key={index} aria-hidden="true">

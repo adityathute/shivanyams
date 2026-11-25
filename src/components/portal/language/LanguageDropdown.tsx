@@ -25,8 +25,8 @@ const desktopLanguages: { value: Language; label: string }[] = [
 
 const mobileLanguages: { value: Language; label: string; short: string }[] = [
   { value: "en", label: "English", short: "EN" },
-  { value: "mr", label: "मराठी", short: "मर" },
-  { value: "hi", label: "हिंदी", short: "हि" },
+  { value: "mr", label: "मराठी", short: "म" },
+  { value: "hi", label: "हिंदी", short: "हिं" },
 ];
 
 export function LanguageDropdown() {

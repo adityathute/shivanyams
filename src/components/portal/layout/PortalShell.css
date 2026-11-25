@@ -965,16 +965,11 @@
 }
 
 
-/* Mobile search backdrop: softly separates the open search panel from page content. */
+/* Mobile search: keep the blur local to a small floating panel. */
 @media (max-width: 767px) {
+  /* Keep the backdrop element for outside-click handling, but do not dim or blur the page. */
   .portal-search-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    background: rgba(15, 23, 42, 0.14);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
-    animation: portal-search-backdrop-in 180ms ease both;
+    display: none;
   }
 
   .portal-topbar-search-toggle {
@@ -984,21 +979,35 @@
 
   .portal-topbar-search-mobile-panel {
     z-index: 32;
-    background: color-mix(in srgb, var(--shivanya-color-surface, #fff) 88%, transparent);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    padding: 6px 7px 6px 14px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--shivanya-color-surface, #fff) 84%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+  }
+
+  /* A little translucent breathing room around the search panel only. */
+  .portal-topbar-search-mobile-panel::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    z-index: -1;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 19px;
+    background: rgba(255, 255, 255, 0.18);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    pointer-events: none;
   }
 
   [data-theme="dark"] .portal-topbar-search-mobile-panel {
-    background: color-mix(in srgb, var(--shivanya-color-surface, #151b23) 88%, transparent);
+    background: color-mix(in srgb, var(--shivanya-color-surface, #151b23) 84%, transparent);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
   }
-}
 
-@keyframes portal-search-backdrop-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .portal-search-backdrop { animation: none; }
+  [data-theme="dark"] .portal-topbar-search-mobile-panel::before {
+    background: rgba(21, 27, 35, 0.28);
+    border-color: rgba(148, 163, 184, 0.1);
+  }
 }

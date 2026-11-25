@@ -30,9 +30,10 @@ export function PortalHeader() {
         <button type="button" className="portal-topbar-search-toggle" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>
           <SearchIcon size={17} aria-hidden="true" />
         </button>
-        <form className={`portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={(event) => event.preventDefault()}>
+        <form className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={(event) => event.preventDefault()}>
           <SearchIcon size={17} aria-hidden="true" />
           <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
+          <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
         </form>
         <LanguageDropdown />
         <UserDropdown onLogin={() => openLogin()} onRegister={openRegister} onNavigate={(view) => setAccountView(view)} />

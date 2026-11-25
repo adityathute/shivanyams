@@ -81,9 +81,9 @@
   }
 }
 
-/* 4K / large desktop: show eight ticker items at a time. */
+/* 4K / large desktop: keep six ticker items visible, matching desktop. */
 @media (min-width: 1920px) {
   .portal .ticker .ticker-item {
-    flex: 0 0 12.5%;
+    flex: 0 0 16.666667%;
   }
 }

@@ -1387,7 +1387,7 @@ export default function AdminPage() {
           const statItems: {
             label: string;
             value: number;
-            analytics?: "views" | "visitors" | "users" | "posts" | "drafts" | "edited" | "review";
+            analytics?: "views" | "visitors" | "users" | "posts" | "drafts" | "edited" | "review" | "questions";
             group: "users" | "website" | "posts" | "content";
           }[] = [
             {

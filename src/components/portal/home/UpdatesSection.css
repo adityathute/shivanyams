@@ -120,47 +120,6 @@
   border-bottom: 0;
 }
 
-.update-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  color: #fff;
-  font-family: "Outfit", "Hind", sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  padding: 4px 5px;
-}
-
-.update-badge.job {
-  background: #2563eb; /* Blue */
-}
-
-.update-badge.scheme {
-  background: #059669; /* Green */
-}
-
-.update-badge.exam,
-.update-badge.examination {
-  background: #4f46e5; /* Indigo */
-}
-
-.update-badge.result {
-  background: #7c3aed; /* Purple */
-}
-
-.update-badge.admit {
-  background: #0891b2; /* Cyan/Teal */
-}
-
-.update-badge.guide {
-  background: #d97706; /* Amber */
-}
-
-.update-badge.video {
-  background: #dc2626; /* Red */
-}
-
 .update-title {
   font-family: "Outfit", "Hind", sans-serif;
   font-size: 14px;
@@ -385,9 +344,6 @@
   .update-title small,
   .update-row time {
     display: none;
-  }
-  .update-badge {
-    font-size: 11px;
   }
   
   .subscribe-content h3 {

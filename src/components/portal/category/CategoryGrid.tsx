@@ -148,6 +148,24 @@ export function getCategorySlugForType(type: string) {
   return slugs[type] || normalizeCategorySlug(type);
 }
 
+export function getLocalizedCategoryLabel(
+  item: {
+    category?: string;
+    category_en?: string;
+    category_mr?: string;
+    category_hi?: string;
+  },
+  language: Language,
+) {
+  const labels: Record<Language, string> = {
+    en: item.category_en?.trim() || "",
+    mr: item.category_mr?.trim() || "",
+    hi: item.category_hi?.trim() || "",
+  };
+
+  return labels[language] || labels.en || labels.mr || labels.hi || item.category || "";
+}
+
 export function CategoryBadge({ category, label }: { category: string; label: string }) {
   const slug = normalizeCategorySlug(category);
   const badgeSlug =

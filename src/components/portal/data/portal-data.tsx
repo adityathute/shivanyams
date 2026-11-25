@@ -771,7 +771,6 @@ type PortalDataContextValue = {
 const PortalDataContext = createContext<PortalDataContextValue | null>(null);
 
 const PORTAL_DATA_CACHE_VERSION = 1;
-const PORTAL_DATA_CACHE_TTL = 60_000;
 
 type CachedPortalData = {
   version: number;
@@ -860,10 +859,8 @@ export function PortalDataProvider({ children }: { children: ReactNode }) {
           : cachedSnapshot;
       });
 
-      // Avoid another API round trip while this tab's snapshot is fresh.
-      if (Date.now() - cachedData.savedAt < PORTAL_DATA_CACHE_TTL) {
-        return;
-      }
+      // Render the cached snapshot immediately, but always revalidate after
+      // navigation so newly published posts appear without a manual refresh.
     }
 
     const controller = new AbortController();

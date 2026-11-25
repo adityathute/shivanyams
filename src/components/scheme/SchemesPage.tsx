@@ -132,11 +132,15 @@ export function SchemesPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
+               ) : data.loading ? (
+                <div className="empty-state empty-scheme">Loading...</div>
+              ) : data.error ? (
+                <div className="empty-state empty-scheme">{data.error}</div>
               ) : (
                 <div className="empty-state empty-scheme">
-                  {t("noSchemesAvailable")}
+                   {t("noSchemesAvailable")}
                 </div>
-              )}
+              )
             </div>
           </section>
         </main>

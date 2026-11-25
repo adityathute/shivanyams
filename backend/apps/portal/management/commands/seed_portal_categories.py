@@ -18,7 +18,9 @@ class Command(BaseCommand):
         created_count = 0
         updated_count = 0
 
-        for definition in PORTAL_CATEGORIES:
+        for category_data in PORTAL_CATEGORIES:
+            # The approved base categories should always be available after seeding.
+            definition = {**category_data, "is_active": True}
             slug = definition["slug"]
             legacy_slug = LEGACY_CATEGORY_SLUGS.get(slug)
 

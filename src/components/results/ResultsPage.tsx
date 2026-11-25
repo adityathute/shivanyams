@@ -123,9 +123,15 @@ export function ResultsPage() {
                     <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
+               ) : data.loading ? (
+                <div className="empty-state empty-result">Loading...</div>
+              ) : data.error ? (
+                <div className="empty-state empty-result">{data.error}</div>
               ) : (
-                <div className="empty-state empty-result">{t("noResultsAvailable")}</div>
-              )}
+                <div className="empty-state empty-result">
+                   {t("noResultsAvailable")}
+                </div>
+              )
             </div>
           </section>
         </main>

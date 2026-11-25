@@ -858,16 +858,65 @@
 
   .portal-topbar-search-toggle:active { transform: scale(0.97); }
 
+  .portal-topbar-search-mobile-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    top: calc(100% + 9px);
+    right: 0;
+    z-index: 30;
+    width: min(340px, calc(100vw - 28px));
+    height: 44px;
+    padding: 5px 13px;
+    border: 1px solid var(--shivanya-color-border, #dce3ec);
+    border-radius: 12px;
+    background: var(--shivanya-color-surface, #fff);
+    color: var(--shivanya-color-text-secondary, #64748b);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px) scale(.98);
+    transform-origin: top right;
+    transition: opacity 180ms ease, transform 220ms ease, visibility 180ms ease;
+  }
+
+  .portal-topbar-search-mobile-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  .portal-topbar-search-mobile-panel svg { flex-shrink: 0; }
+
+  .portal-topbar-search-mobile-panel input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--shivanya-color-text-primary, #172943);
+    font: inherit;
+    font-size: 13px;
+  }
+
+  .portal-topbar-search-mobile-panel input::placeholder {
+    color: var(--shivanya-color-text-secondary, #94a3b8);
+  }
 }
 
 [data-theme="dark"] .portal-topbar-search,
-[data-theme="dark"] .portal-topbar-search-toggle {
+[data-theme="dark"] .portal-topbar-search-toggle,
+[data-theme="dark"] .portal-topbar-search-mobile-panel {
   background: var(--shivanya-color-surface, #151b23);
   border-color: var(--shivanya-color-border, #293544);
   color: var(--shivanya-color-text-primary, #e6edf3);
 }
 
-[data-theme="dark"] .portal-topbar-search input {
+[data-theme="dark"] .portal-topbar-search input,
+[data-theme="dark"] .portal-topbar-search-mobile-panel input {
   color: var(--shivanya-color-text-primary, #e6edf3);
 }
 

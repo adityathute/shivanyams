@@ -49,6 +49,10 @@ export function LanguageDropdown() {
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) =>
     void handleChange(event.target.value as Language);
 
+  // Show the language users can switch to while the control is closed.
+  // The native select retains the actual language value and selected option.
+  const closedLabel = language === "en" ? "मराठी" : "English";
+
   return (
     <>
       <div className="language-dropdown-desktop">

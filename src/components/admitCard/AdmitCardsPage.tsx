@@ -8,6 +8,7 @@ import type { Language } from "shivanya-i18n";
 import { AdmitCardsCharacters } from "./AdmitCardsCharacters";
 import { usePortalData } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
+import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 
 import { SearchIcon } from "shivanya-ui";
@@ -95,9 +96,10 @@ export function AdmitCardsPage() {
                     key={item.id}
                     href={`/admit-cards/${item.slug || createPostSlug(item.title)}`}
                   >
-                    <span className={`update-badge ${item.type}`}>
-                      {item.category}
-                    </span>
+                    <CategoryBadge
+                      category={getCategorySlugForType(item.type)}
+                      label={getLocalizedCategoryLabel(item, language)}
+                    />
 
                     <span className="update-title">
                       {item.title}

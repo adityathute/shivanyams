@@ -824,7 +824,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 <article className="portal-post-card">
                   <div className="portal-post-compact-header">
                     <div className="portal-post-meta portal-post-meta-compact">
-                      <span className="portal-post-category-badge">
+                      <span className={`portal-post-category-badge portal-post-category-badge-${category}`}>
                         <TagIcon size={14} aria-hidden="true" />
                         <span>{post.category || label}</span>
                       </span>

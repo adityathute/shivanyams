@@ -9,8 +9,6 @@ import {
   STATIC_PORTAL_CATEGORIES,
   categoryConfig,
   getCategoryTitle,
-  normalizeCategorySlug,
-  type Category,
   type Language,
 } from "../../category/CategoryGrid";
 import { getBaseText } from "../../../../i18n/dictionaries/base";

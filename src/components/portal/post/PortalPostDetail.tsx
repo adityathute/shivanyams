@@ -590,6 +590,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       new Date(post.updatedAt).getTime() > new Date(post.createdAt).getTime(),
   );
   const updatedPostDate = hasPostBeenUpdated ? post?.updatedAt || "" : "";
+  const headerPostDate = updatedPostDate || post?.date || post?.createdAt || "";
+  const headerPostDateLabel = updatedPostDate ? "lastUpdated" : "posted";
 
   const trackedPostIdRef = useRef<number | null>(null);
 
@@ -836,10 +838,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       />
                     </div>
                     <div className="portal-post-header-meta-right">
-                      {updatedPostDate ? (
+                      {headerPostDate ? (
                         <div className="portal-post-header-updated">
-                          <span className="portal-post-date-label">{getDetailLabel("lastUpdated", language)}</span>
-                          <time dateTime={updatedPostDate}>{formatPostHeaderDate(updatedPostDate, language)}</time>
+                          <span className="portal-post-date-label">{getDetailLabel(headerPostDateLabel, language)}</span>
+                          <time dateTime={headerPostDate}>{formatPostHeaderDate(headerPostDate, language)}</time>
                         </div>
                       ) : null}
                     </div>

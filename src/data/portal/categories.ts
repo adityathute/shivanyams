@@ -105,7 +105,7 @@ export const PORTAL_CATEGORIES: PortalCategoryDefinition[] = [
     translations: {
       en: {
         name: "Admit Cards",
-        badge: "Admit Card",
+        badge: "Admit Cards",
         description: "Find admit card announcements, release dates, download instructions and official hall ticket links.",
       },
       mr: {

@@ -349,19 +349,24 @@
   font-weight: 650;
   line-height: 1.25;
   text-decoration: none;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .portal-post-taxonomy .portal-organization-tag {
-  color: #0969da;
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  color: #596579;
+  background: #f1f3f6;
+  border-color: #e2e6ec;
 }
 
 .portal-post-taxonomy .portal-organization-tag:hover {
-  color: #fff;
-  background: #1677e8;
-  border-color: #1677e8;
+  color: #0969da;
+  background: #eff6ff;
+  border-color: #bfdbfe;
   box-shadow: 0 3px 10px rgba(22, 119, 232, 0.2);
   transform: translateY(-1px);
 }
@@ -415,7 +420,6 @@
   }
 }
 
-
 /* Structured Important Dates */
 .portal-important-dates {
   margin: 18px 0;
@@ -454,7 +458,6 @@
 :root[data-theme="dark"] .portal-important-date-value strong {
   color: var(--text-primary, #f8fafc);
 }
-
 
 /* Job information summary grid */
 .portal-job-info-grid {
@@ -653,7 +656,6 @@
   }
 }
 
-
 /* Important Dates - Clean List Layout */
 
 .portal-important-dates {
@@ -746,8 +748,7 @@
   font-weight: 400;
 }
 
-.portal-important-date-item.is-revised
-.portal-important-date-value strong {
+.portal-important-date-item.is-revised .portal-important-date-value strong {
   color: #dc2626;
   font-weight: 900;
 }
@@ -771,8 +772,10 @@
   color: var(--text-primary, #f8fafc);
 }
 
-:root[data-theme="dark"] .portal-important-date-item.is-revised
-.portal-important-date-value strong {
+:root[data-theme="dark"]
+  .portal-important-date-item.is-revised
+  .portal-important-date-value
+  strong {
   color: #f87171;
 }
 
@@ -836,7 +839,6 @@
 :root[data-theme="dark"] .portal-important-date-value.is-deadline strong {
   color: #f87171;
 }
-
 
 /* Educational qualifications */
 .portal-education-details {
@@ -1072,9 +1074,6 @@
   }
 }
 
-
-
-
 /* Important Links: grouped titles with a flexible set of destination actions. */
 .portal-important-links {
   margin: 26px 0;
@@ -1158,7 +1157,10 @@
   text-transform: capitalize;
   text-decoration: none;
   overflow-wrap: anywhere;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
 }
 
 .portal-important-link-action:hover {
@@ -1260,7 +1262,6 @@
   }
 }
 
-
 /* Category recommendations shown beside missing post pages. */
 .portal-post-detail .not-found-recommendations {
   padding: 12px;
@@ -1320,7 +1321,6 @@
   font-weight: 500;
 }
 
-
 /* A 404 without recommendations must span the complete content area. */
 .portal-post-detail .content-layout.no-sidebar {
   grid-template-columns: minmax(0, 1fr);
@@ -1341,7 +1341,6 @@
   background: #8d3de0;
   color: #fff;
 }
-
 
 /* Private unpublished-content preview notice. */
 .portal-post-detail .portal-preview-banner {
@@ -1364,7 +1363,6 @@
 .portal-post-detail .portal-preview-banner span {
   color: var(--text-secondary, #64748b);
 }
-
 
 /* Compact post heading: category badge followed by the update date. */
 .portal-post-compact-header {
@@ -1466,49 +1464,65 @@
   border-color: #cbd5e1;
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge {
   color: #93c5fd;
   background: rgba(37, 99, 235, 0.16);
   border-color: rgba(96, 165, 250, 0.3);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-schemes {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-schemes {
   color: #86efac;
   background: rgba(22, 163, 74, 0.16);
   border-color: rgba(74, 222, 128, 0.3);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-examination {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-examination {
   color: #a5b4fc;
   background: rgba(79, 70, 229, 0.18);
   border-color: rgba(129, 140, 248, 0.32);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-results {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-results {
   color: #d8b4fe;
   background: rgba(147, 51, 234, 0.17);
   border-color: rgba(192, 132, 252, 0.3);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-admit-cards {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-admit-cards {
   color: #67e8f9;
   background: rgba(8, 145, 178, 0.17);
   border-color: rgba(34, 211, 238, 0.3);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-guides {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-guides {
   color: #fdba74;
   background: rgba(234, 88, 12, 0.16);
   border-color: rgba(251, 146, 60, 0.3);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-videos {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-videos {
   color: #fca5a5;
   background: rgba(220, 38, 38, 0.16);
   border-color: rgba(248, 113, 113, 0.3);
 }
 
-:root[data-theme="dark"] .portal-post-meta-compact > .portal-post-category-badge-tools {
+:root[data-theme="dark"]
+  .portal-post-meta-compact
+  > .portal-post-category-badge-tools {
   color: #cbd5e1;
   background: rgba(100, 116, 139, 0.17);
   border-color: rgba(148, 163, 184, 0.3);
@@ -1673,9 +1687,6 @@
   }
 }
 
-
-
-
 /* Full-width footer divider with no horizontal inset. */
 .portal-post-card > .portal-post-card-footer {
   justify-content: space-between;
@@ -1691,7 +1702,9 @@
   justify-content: space-between;
 }
 
-.portal-post-card-footer .portal-post-engagement-actions.is-footer .portal-post-reaction-actions {
+.portal-post-card-footer
+  .portal-post-engagement-actions.is-footer
+  .portal-post-reaction-actions {
   width: auto;
   justify-content: flex-start;
 }

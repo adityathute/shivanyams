@@ -131,7 +131,7 @@ export function ResultsPage() {
                 <div className="empty-state empty-result">
                    {t("noResultsAvailable")}
                 </div>
-              )
+              )}
             </div>
           </section>
         </main>

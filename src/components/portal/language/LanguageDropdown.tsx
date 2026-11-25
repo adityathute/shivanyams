@@ -49,26 +49,40 @@ export function LanguageDropdown() {
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) =>
     void handleChange(event.target.value as Language);
 
+  // The closed control advertises the alternate language; the native menu
+  // still uses the real selected value so its checked option stays accurate.
+  const closedLabel = language === "en" ? "मराठी" : "English";
+
   return (
     <>
       <div className="language-dropdown-desktop">
-        <Select
-          value={language}
-          options={desktopLanguages}
-          onChange={handleSelect}
-          aria-label="Select language"
-        />
+        <div className="language-select-display">
+          <Select
+            value={language}
+            options={desktopLanguages}
+            onChange={handleSelect}
+            aria-label="Select language"
+          />
+          <span className="language-select-closed-label" aria-hidden="true">
+            {closedLabel}
+          </span>
+        </div>
       </div>
 
       <div className="language-dropdown-mobile">
-        <Select
-          size="sm"
-          className="language-select-mobile"
-          value={language}
-          options={mobileLanguages}
-          onChange={handleSelect}
-          aria-label="Select language"
-        />
+        <div className="language-select-display language-select-display-mobile">
+          <Select
+            size="sm"
+            className="language-select-mobile"
+            value={language}
+            options={mobileLanguages}
+            onChange={handleSelect}
+            aria-label="Select language"
+          />
+          <span className="language-select-closed-label" aria-hidden="true">
+            {closedLabel}
+          </span>
+        </div>
       </div>
     </>
   );

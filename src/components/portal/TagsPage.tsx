@@ -121,7 +121,7 @@ export function TagsPage() {
           <div className="related-tag-list">
             {visibleTags.map(([slug, tag]) => (
               <Link className="related-tag-chip" href={`/tags/${slug}`} key={slug}>
-                <span>{tag.label}</span>
+                <span className="related-tag-label">{tag.label}</span>
                 <small>{tag.count}</small>
               </Link>
             ))}

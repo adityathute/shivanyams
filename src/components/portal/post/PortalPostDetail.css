@@ -371,6 +371,11 @@
   transform: translateY(-1px);
 }
 
+.portal-post-taxonomy .portal-custom-tag::before {
+  content: "#";
+  margin-right: 2px;
+}
+
 .portal-post-taxonomy .portal-custom-tag {
   color: #596579;
   background: #f1f3f6;

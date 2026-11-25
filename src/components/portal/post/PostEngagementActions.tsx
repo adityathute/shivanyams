@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "shivanya-auth";
-import { BookmarkIcon, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, ShareIcon, TelegramIcon, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkedInIcon } from "shivanya-ui";
+import { BookmarkIcon, Button, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, Select, ShareIcon, TelegramIcon, Textarea, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkedInIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";
@@ -25,6 +25,10 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
   const [dislikes, setDislikes] = useState(0);
   const [saved, setSaved] = useState(false);
   const [userReportCount, setUserReportCount] = useState(0);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("Incorrect information");
+  const [reportDetails, setReportDetails] = useState("");
+  const [reporting, setReporting] = useState(false);
   const [message, setMessage] = useState("");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const shareMenuRef = useRef<HTMLElement | null>(null);
@@ -141,36 +145,63 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
     void sendSavedToggle();
   }
 
-  async function reportPost() {
-    const reason = window.prompt(
-      "Why are you reporting this post? (Incorrect information, outdated information, inappropriate content, broken links)",
-      "Incorrect information",
-    );
-    if (!reason?.trim()) return;
+  function closeReport() {
+    if (reporting) return;
+    setReportOpen(false);
+    setReportDetails("");
+  }
 
-    const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reports/`), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reason: reason.trim() }),
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      setMessage(payload.detail || "Unable to submit your report.");
-      return;
+  async function submitPostReport() {
+    if (!reportReason.trim() || reporting) return;
+    setReporting(true);
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl(`content/${postId}/reports/`), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reason: reportReason.trim(),
+          details: reportDetails.trim(),
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        showMessage(payload.detail || "Unable to submit your report.");
+        return;
+      }
+      setUserReportCount(Number(payload.user_report_count) || 0);
+      setReportOpen(false);
+      setReportDetails("");
+      showMessage(payload.report_limit_reached
+        ? "You have used all 3 reports for this post."
+        : "Thank you. Your report has been submitted.");
+    } catch {
+      showMessage("Unable to submit your report. Please try again.");
+    } finally {
+      setReporting(false);
     }
-    setUserReportCount(Number(payload.user_report_count) || 0);
-    setMessage(payload.report_limit_reached
-      ? "You have used all 3 reports for this post."
-      : "Thank you. Your report has been submitted.");
   }
 
   function requestReport() {
+    const openReportForm = () => {
+      setReportReason("Incorrect information");
+      setReportDetails("");
+      setReportOpen(true);
+    };
     if (!user) {
-      openLogin(() => { void reportPost(); });
+      openLogin(openReportForm);
       return;
     }
-    void reportPost();
+    openReportForm();
   }
+
+  useEffect(() => {
+    if (!reportOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeReport();
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [reportOpen, reporting]);
 
   async function recordShare(channel: string) {
     let visitorId = "";
@@ -328,6 +359,70 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
         </button>
       ) : null}
       {message ? <p className="portal-engagement-message" role="status" aria-live="polite">{message}</p> : null}
+      {placement === "footer" && reportOpen ? (
+        <div
+          className="portal-post-report-modal"
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeReport();
+          }}
+        >
+          <div
+            className="portal-post-report-modal-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="portal-post-report-modal-title"
+          >
+            <div className="portal-post-report-modal-header">
+              <div>
+                <strong id="portal-post-report-modal-title">Report post</strong>
+                <span>{title}</span>
+              </div>
+              <button
+                type="button"
+                className="portal-post-report-modal-close"
+                onClick={closeReport}
+                disabled={reporting}
+                aria-label="Close report"
+              >
+                ×
+              </button>
+            </div>
+            <div className="portal-post-report-modal-reason">
+              <label htmlFor="portal-post-report-reason">Reason for reporting</label>
+              <Select
+                aria-label="Report reason"
+                size="sm"
+                fullWidth
+                options={[
+                  { label: "Incorrect information", value: "Incorrect information" },
+                  { label: "Outdated information", value: "Outdated information" },
+                  { label: "Inappropriate content", value: "Inappropriate content" },
+                  { label: "Broken link", value: "Broken link" },
+                  { label: "Other", value: "Other" },
+                ]}
+                value={reportReason}
+                onChange={(event) => setReportReason(event.target.value)}
+              />
+            </div>
+            <Textarea
+              value={reportDetails}
+              onChange={(event) => setReportDetails(event.target.value)}
+              placeholder="Additional details (optional)"
+              rows={4}
+              maxLength={500}
+              fullWidth
+              size="sm"
+              autoFocus
+            />
+            <div className="portal-post-report-modal-footer">
+              <span>{reportDetails.length}/500</span>
+              <Button type="button" size="sm" variant="outline" disabled={reporting} onClick={closeReport}>Cancel</Button>
+              <Button type="button" size="sm" variant="primary" disabled={reporting} onClick={() => void submitPostReport()}>{reporting ? "Sending..." : "Submit report"}</Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

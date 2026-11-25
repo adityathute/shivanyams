@@ -335,11 +335,11 @@
   transition: color 150ms ease, transform 150ms ease;
 }
 
-.portal-post-engagement-actions > .portal-action-report:hover {
-  color: #eab308;
-  transform: translateY(-1px);
+.portal-post-engagement-actions > .portal-action-report:hover,
+.portal-post-engagement-actions > .portal-action-report:focus-visible {
+  color: var(--text-secondary, #64748b);
+  transform: none;
 }
-
 
 .portal-post-engagement-actions > .portal-action-report {
   gap: 6px;
@@ -352,5 +352,136 @@
 }
 
 .portal-post-engagement-actions > .portal-action-report span {
+  color: var(--text-secondary, #64748b);
+  transition: none;
+}
+
+.portal-post-engagement-actions > .portal-action-report:hover svg,
+.portal-post-engagement-actions > .portal-action-report:focus-visible svg {
+  filter: invert(75%) sepia(91%) saturate(1065%) hue-rotate(359deg) brightness(103%) contrast(104%);
+}
+
+.portal-post-engagement-actions > .portal-action-report:focus-visible {
+  outline: 2px solid var(--accent, #eab308);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.portal-post-report-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgb(15 23 42 / 58%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: portal-post-report-fade 160ms ease-out;
+}
+
+.portal-post-report-modal-panel {
+  display: grid;
+  gap: 14px;
+  width: min(100%, 440px);
+  max-height: min(80vh, 560px);
+  overflow-y: auto;
+  padding: 17px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  color: var(--text-primary, #1f2937);
+  box-shadow: 0 18px 55px rgb(0 0 0 / 24%);
+  animation: portal-post-report-pop 180ms ease-out;
+}
+
+.portal-post-report-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.portal-post-report-modal-header > div {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.portal-post-report-modal-header strong {
   color: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.portal-post-report-modal-header span {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.portal-post-report-modal-close {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.portal-post-report-modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.portal-post-report-modal-reason {
+  display: grid;
+  gap: 6px;
+}
+
+.portal-post-report-modal-reason label {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.portal-post-report-modal-panel textarea {
+  width: 100%;
+  min-height: 104px;
+}
+
+.portal-post-report-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.portal-post-report-modal-footer > span {
+  margin-right: auto;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 0.74rem;
+}
+
+@keyframes portal-post-report-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes portal-post-report-pop {
+  from { opacity: 0; transform: translateY(5px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }

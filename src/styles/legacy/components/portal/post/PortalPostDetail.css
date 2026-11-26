@@ -1807,7 +1807,7 @@
   height: 24px;
   padding: 3px;
   gap: 0;
-  border-radius: 7px;
+  border-radius: 50%;
 }
 
 .post-sidebar-category-link > .portal-post-category-badge > span:not(.portal-post-category-icon) {

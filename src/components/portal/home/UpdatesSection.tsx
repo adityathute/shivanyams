@@ -84,6 +84,41 @@ function getItemCategory(item: Item, language: Language): string {
   );
 }
 
+function getJobApplicationDeadline(item: Item): string {
+  const applicationEnd = item.important_dates?.find(
+    (entry) => entry.date_type === "application_end",
+  );
+
+  if (applicationEnd) {
+    if (applicationEnd.date_format === "revised" || applicationEnd.date_format === "revised_with_time") {
+      return applicationEnd.new_date || applicationEnd.date || applicationEnd.end_date || "";
+    }
+    if (applicationEnd.date_format === "range") {
+      return applicationEnd.end_date || applicationEnd.date || "";
+    }
+    return applicationEnd.date || applicationEnd.end_date || "";
+  }
+
+  return item.end_date || "";
+}
+
+function getDeadlineStatus(dateValue: string): "urgent" | "soon" | "open" {
+  const [year, month, day] = dateValue.slice(0, 10).split("-").map(Number);
+  const deadline = new Date(year, month - 1, day);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const daysRemaining = Math.ceil((deadline.getTime() - today.getTime()) / 86400000);
+
+  if (daysRemaining <= 3) return "urgent";
+  if (daysRemaining <= 7) return "soon";
+  return "open";
+}
+
+function formatApplicationDeadline(dateValue: string): string {
+  const [year, month, day] = dateValue.slice(0, 10).split("-");
+  return [day, month, year].join("/");
+}
+
 function getPostHref(item: Item): string {
   const slug = item.slug || createPostSlug(item.title);
 
@@ -279,10 +314,29 @@ export function UpdatesSection({
                   <span className="update-skeleton-title" />
                   <span className="update-skeleton-summary" />
                 </span>
-                {showDateAndNewBadge && <>
-                  <span className="update-skeleton-date" />
-                  <span className="update-skeleton-pill" />
-                </>}
+                {applicationDeadline ? (
+                  <time className={`update-application-deadline deadline-${deadlineStatus}`}>
+                    {formatApplicationDeadline(applicationDeadline)}
+                  </time>
+                ) : showDateAndNewBadge ? (
+                  <>
+                    <time>
+                      {item.date
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                            dateLocale,
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
+                        : getPortalText("new", language)}
+                    </time>
+                    <span className="new-pill">
+                      {getPortalText("new", language)}
+                    </span>
+                  </>
+                ) : null}
               </div>
             ))}
           </div>
@@ -291,9 +345,18 @@ export function UpdatesSection({
             const itemTitle = getItemTitle(item, language);
             const itemDescription = getItemDescription(item, language);
             const itemCategory = getItemCategory(item, language);
+            const applicationDeadline =
+              item.type === "job" ? getJobApplicationDeadline(item) : "";
+            const deadlineStatus = applicationDeadline
+              ? getDeadlineStatus(applicationDeadline)
+              : "";
 
             return (
-              <a className="update-row" key={item.id} href={getPostHref(item)}>
+              <a
+                className={`update-row${applicationDeadline ? " update-row-has-deadline" : ""}`}
+                key={item.id}
+                href={getPostHref(item)}
+              >
                 <CategoryBadge category={getCategorySlugForType(item.type)} label={itemCategory} />
 
                 <span className="update-title">

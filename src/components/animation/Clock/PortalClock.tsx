@@ -43,9 +43,9 @@ export function PortalClock() {
   const time = `${hoursText}:${minutesText}:${secondsText} ${period}`;
 
   const date = new Intl.DateTimeFormat(locale, {
-    weekday: "long",
+    weekday: language === "en" ? "short" : "long",
     day: "numeric",
-    month: "long",
+    month: language === "en" ? "short" : "long",
     year: "numeric",
   }).format(now);
 

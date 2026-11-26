@@ -346,7 +346,9 @@ export function UpdatesSection({
             const itemDescription = getItemDescription(item, language);
             const itemCategory = getItemCategory(item, language);
             const applicationDeadline =
-              item.type === "job" ? getJobApplicationDeadline(item) : "";
+              !showDateAndNewBadge && item.type === "job"
+                ? getJobApplicationDeadline(item)
+                : "";
             const deadlineStatus = applicationDeadline
               ? getDeadlineStatus(applicationDeadline)
               : "";

@@ -436,12 +436,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 3px 6px;
+  padding: 5px 10px;
   border: 1px solid #fed7aa;
-  border-radius: 4px;
+  border-radius: 999px;
   background: #fff7ed;
   color: #c2410c;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: 800;
   line-height: 1.2;
   white-space: nowrap;

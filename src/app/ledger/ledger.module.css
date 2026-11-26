@@ -431,3 +431,22 @@ button.dashboardCard:hover { border-color: #9bb9ee; transform: translateY(-2px);
   .accountPageFoot { flex-direction: column; }
 }
 @media (max-width: 360px) { .accountsPageGrid { grid-template-columns: 1fr; } }
+
+.transactionTotals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.transactionTotals article { display: flex; min-width: 0; flex-direction: column; gap: 9px; border: 1px solid var(--shivanya-color-border, #e5e9ef); border-radius: 13px; padding: 14px 16px; background: var(--shivanya-color-surface, #fff); }
+.transactionTotals article span { color: var(--shivanya-color-text-secondary, #7b8491); font-size: 11px; font-weight: 650; }
+.transactionTotals article strong { overflow-wrap: anywhere; font-size: clamp(17px, 2.3vw, 23px); font-weight: 780; }
+.transactionFilters { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; border-bottom: 1px solid var(--shivanya-color-border, #edf0f4); padding: 15px 17px; }
+.transactionFilters label { display: flex; min-width: 130px; flex: 1; flex-direction: column; gap: 5px; }
+.transactionFilters label span { color: var(--shivanya-color-text-secondary, #7b8491); font-size: 10px; font-weight: 700; }
+.transactionFilters input, .transactionFilters select { width: 100%; min-height: 39px; border: 1px solid var(--shivanya-color-border, #e1e6ed); border-radius: 9px; padding: 0 10px; background: var(--shivanya-color-background, #fff); color: var(--shivanya-color-text-primary, #202938); font-size: 12px; }
+.clearFiltersButton { min-height: 39px; border: 1px solid var(--shivanya-color-border, #e1e6ed); border-radius: 9px; padding: 0 12px; background: transparent; color: var(--shivanya-color-text-secondary, #667085); font-size: 11px; font-weight: 650; cursor: pointer; }
+@media (max-width: 760px) {
+  .transactionTotals { gap: 7px; }
+  .transactionTotals article { padding: 11px 9px; gap: 7px; }
+  .transactionTotals article span { font-size: 9px; }
+  .transactionTotals article strong { font-size: clamp(14px, 4vw, 18px); }
+  .transactionFilters { display: grid; grid-template-columns: 1fr 1fr; padding: 12px; }
+  .transactionFilters label { min-width: 0; }
+  .clearFiltersButton { grid-column: 1 / -1; }
+}

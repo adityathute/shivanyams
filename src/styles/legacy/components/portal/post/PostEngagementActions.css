@@ -143,6 +143,21 @@
   transform: rotate(45deg);
 }
 
+.portal-share-feedback {
+  grid-column: 1 / -1;
+  margin: 0 0 3px;
+  padding: 7px 9px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  background: var(--surface-secondary, #f8fafc);
+  color: var(--text-primary, #26364b);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  animation: portal-share-message-in 160ms ease-out;
+}
+
 .portal-share-menu button {
   position: relative;
   display: flex;

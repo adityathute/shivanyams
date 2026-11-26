@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import styles from "../ledger.module.css";
@@ -22,7 +22,7 @@ const accounts = [
   ["personal-one", "Personal Account 1"], ["personal-two", "Personal Account 2"], ["phonepe-business", "PhonePe Business"],
 ];
 const totalFunds = (s: Setup) => Number(s.brotherCapital || 0) + Number(s.ownerCapital || 0) + Number(s.loanReceived || 0);
-const inputStyle: React.CSSProperties = { width: "100%", minHeight: 42, border: "1px solid var(--shivanya-color-border, #e1e6ed)", borderRadius: 10, padding: "0 11px", background: "var(--shivanya-color-background, #fff)", color: "var(--shivanya-color-text-primary, #202938)" };
+const inputStyle: CSSProperties = { width: "100%", minHeight: 42, border: "1px solid var(--shivanya-color-border, #e1e6ed)", borderRadius: 10, padding: "0 11px", background: "var(--shivanya-color-background, #fff)", color: "var(--shivanya-color-text-primary, #202938)" };
 const labelStyle: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 6, fontSize: 12, fontWeight: 650, color: "var(--shivanya-color-text-secondary, #667085)" };
 const cardStyle: React.CSSProperties = { border: "1px solid var(--shivanya-color-border, #e5e9ef)", borderRadius: 15, padding: 16, background: "var(--shivanya-color-surface, #fff)", marginBottom: 12 };
 

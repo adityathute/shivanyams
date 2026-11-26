@@ -227,3 +227,69 @@
 .updates-panel-home .update-skeleton-pill {
   display: none;
 }
+
+/* Homepage job rows show the application deadline instead of the published date. */
+.updates-panel-home .update-row-has-deadline {
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+}
+
+.updates-panel-home .update-application-deadline {
+  justify-self: end;
+  white-space: nowrap;
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.updates-panel-home .update-application-deadline.deadline-urgent {
+  color: #dc2626;
+}
+
+.updates-panel-home .update-application-deadline.deadline-soon {
+  color: #ea580c;
+}
+
+.updates-panel-home .update-application-deadline.deadline-open {
+  color: #16a34a;
+}
+
+@media (max-width: 1100px) {
+  .updates-panel-home .update-row-has-deadline {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+  }
+}
+
+@media (max-width: 760px) {
+  .updates-panel-home .update-row-has-deadline {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+  }
+
+  .updates-panel-home .update-application-deadline {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 390px) {
+  .updates-panel-home .update-row-has-deadline {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 5px;
+  }
+
+  .updates-panel-home .update-application-deadline {
+    font-size: 15px;
+  }
+}
+
+[data-theme="dark"] .updates-panel-home .update-application-deadline.deadline-urgent {
+  color: #f87171;
+}
+
+[data-theme="dark"] .updates-panel-home .update-application-deadline.deadline-soon {
+  color: #fb923c;
+}
+
+[data-theme="dark"] .updates-panel-home .update-application-deadline.deadline-open {
+  color: #4ade80;
+}

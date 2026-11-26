@@ -1469,7 +1469,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                 </section>
                 {sidebarCategorySections.map((section) => (
-                  <section className="panelin post-sidebar-category" key={section.slug}>
+                  <section className={`panelin post-sidebar-category post-sidebar-category-${section.slug}`} key={section.slug}>
                     <div className="post-sidebar-category-heading">
                       <CategoryBadge category={section.slug} label={section.title} />
                       <span className="post-sidebar-category-count">

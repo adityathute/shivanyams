@@ -97,8 +97,8 @@ export function getPortalNavigation(
             icon: <ShieldCheckIcon />,
           },
           {
-            label: "Shop Hisab",
-            href: "/shop-hisab",
+            label: "Ledger",
+            href: "/ledger",
             icon: <ReportIcon />,
           },
         ]

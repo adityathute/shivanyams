@@ -123,6 +123,16 @@
   margin-top: 16px;
 }
 
+/* Jobs rows contain three columns: category, title, and the application deadline. */
+.jobs-updates .update-row {
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+}
+
+.jobs-updates .update-deadline-group {
+  width: max-content;
+  max-width: 100%;
+}
+
 @media (max-width: 900px) {
   .jobs-hero-visual {
     transform: scale(0.85);
@@ -132,6 +142,17 @@
 }
 
 @media (max-width: 760px) {
+  .jobs-updates .update-row {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 7px;
+  }
+
+  .jobs-updates .update-deadline-group {
+    grid-column: 3;
+    width: max-content;
+    max-width: 100%;
+  }
+
   .jobs-hero {
     min-height: auto;
     padding: 24px 20px;
@@ -151,6 +172,15 @@
 }
 
 @media (max-width: 390px) {
+  .jobs-updates .update-row {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 5px;
+  }
+
+  .jobs-updates .update-deadline-group {
+    grid-column: 3;
+  }
+
   .jobs-hero {
     padding: 20px 14px;
   }

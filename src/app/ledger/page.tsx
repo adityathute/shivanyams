@@ -44,7 +44,8 @@ export default function LedgerPage() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed.entries)) setEntries(parsed.entries);
-        if (Array.isArray(parsed.accounts) && parsed.accounts.length) setAccounts(parsed.accounts);\n        if (parsed.openingSetup?.balances) setAccounts((current) => current.map((account) => ({ ...account, openingBalance: Number(parsed.openingSetup.balances[account.id] ?? account.openingBalance) })));
+        if (Array.isArray(parsed.accounts) && parsed.accounts.length) setAccounts(parsed.accounts);
+        if (parsed.openingSetup?.balances) setAccounts((current) => current.map((account) => ({ ...account, openingBalance: Number(parsed.openingSetup.balances[account.id] ?? account.openingBalance) })));
       }
     } catch { /* Ignore invalid local preview data. */ }
     setReady(true);

@@ -212,6 +212,7 @@ export function HomePage() {
             query={search}
             onQueryChange={setSearch}
             onTypeChange={setActive}
+            showDateAndNewBadge={false}
           />
 
           <aside className="right-column">

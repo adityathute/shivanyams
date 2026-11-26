@@ -48,11 +48,6 @@
   box-sizing: border-box;
 }
 
-html[lang="mr"],
-html[lang="hi"] {
-  --shivanya-font-sans: "Hind", sans-serif;
-}
-
 html {
   scroll-behavior: smooth;
   background: #f8fafc;

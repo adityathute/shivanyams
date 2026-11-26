@@ -263,6 +263,7 @@ export function HomePage() {
                       href={`/${section.slug}/${item.slug || createPostSlug(item.title)}`}
                       key={item.id}
                     >
+                      <CategoryBadge category={section.slug} label="" />
                       <span>{getPostTitle(item)}</span>
                       {item.type === "job" && getJobApplicationDeadline(item) ? (
                         <time className={`post-sidebar-job-deadline deadline-${getJobDeadlineStatus(getJobApplicationDeadline(item))}`}>

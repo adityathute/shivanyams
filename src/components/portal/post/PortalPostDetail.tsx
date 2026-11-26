@@ -1474,6 +1474,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           href={`/${section.slug}/${item.slug || createPostSlug(item.title)}`}
                           key={item.id}
                         >
+                          <CategoryBadge category={section.slug} label="" />
                           <span>{getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) || item.title}</span>
                           {item.type === "job" && getJobApplicationDeadline(item) ? (
                             <time className={`post-sidebar-job-deadline deadline-${getJobDeadlineStatus(getJobApplicationDeadline(item))}`}>

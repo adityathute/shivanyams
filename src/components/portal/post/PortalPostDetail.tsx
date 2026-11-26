@@ -32,6 +32,7 @@ import { PostCommentsSection } from "./PostCommentsSection";
 import { PostFAQSection } from "./PostFAQSection";
 import { PostEngagementActions } from "./PostEngagementActions";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
+import { POST_DETAIL_SIDEBAR_CATEGORY_ORDER } from "./post-sidebar-config";
 
 export type CategorySlug =
   | "jobs"
@@ -650,19 +651,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     : "";
 
   const sidebarCategorySections = useMemo(() => {
-    const categoryOrder: Exclude<CategorySlug, "videos">[] = [
-      "jobs",
-      "schemes",
-      "examination",
-      "results",
-      "admit-cards",
-      "guides",
-      "tools",
-    ];
-    if (category !== "videos") {
-      categoryOrder.splice(categoryOrder.indexOf(category), 1);
-      categoryOrder.unshift(category);
-    }
+    const orderKey = category === "videos" ? "jobs" : category;
+    const categoryOrder = POST_DETAIL_SIDEBAR_CATEGORY_ORDER[orderKey];
 
     return categoryOrder.map((entry) => {
       const type = categoryItemTypes[entry];

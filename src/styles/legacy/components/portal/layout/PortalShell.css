@@ -752,6 +752,16 @@
 }
 
 
+/* Tablet brand logo: match the mobile logo size without changing desktop. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .shivanya-shell-brand-content img {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    object-fit: contain;
+  }
+}
+
 /* Topbar search */
 .portal-header-search-actions {
   display: flex;

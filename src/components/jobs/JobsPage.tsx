@@ -154,7 +154,7 @@ export function JobsPage() {
 
                   return (
                   <a
-                    className={`update-row${applicationDeadline ? " update-row-has-deadline" : ""}`
+                    className={`update-row${applicationDeadline ? " update-row-has-deadline" : ""}`}
                     key={item.id}
                     href={`/jobs/${item.slug || createPostSlug(item.title)}`}
                   >

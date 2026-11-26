@@ -1725,7 +1725,7 @@
   display: flex;
   min-height: 53px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   padding: 8px 16px;
   border-bottom: 1px solid var(--line, #edf1f6);
@@ -1747,23 +1747,12 @@
   overflow-wrap: anywhere;
 }
 
-.portal-post-detail .post-sidebar-category-link b {
-  flex: 0 0 auto;
-  color: #8b9ab0;
-  font-size: 21px;
-  font-weight: 400;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
 
 .portal-post-detail .post-sidebar-category-link:hover {
   background: #f7faff;
   color: var(--blue, var(--primary, #2563eb));
 }
 
-.portal-post-detail .post-sidebar-category-link:hover b {
-  color: var(--blue, #075be8);
-  transform: translateX(2px);
-}
 
 :root[data-theme="dark"] .portal-post-detail .post-sidebar-category {
   background: #151b23;
@@ -1781,9 +1770,6 @@
   color: #e6edf3;
 }
 
-:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-link:hover b {
-  color: #8db8ff;
-}
 
 @media (max-width: 760px) {
   .portal-post-detail .post-sidebar-category-link {

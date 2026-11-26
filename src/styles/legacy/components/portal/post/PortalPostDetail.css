@@ -1701,35 +1701,41 @@
 }
 
 
-/* Related category posts in the post-detail sidebar */
+/* Related category cards follow the Latest Updates panel and row styling. */
 .portal-post-detail .post-sidebar-category {
   min-width: 0;
-  padding: 14px;
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line, var(--border-color, #e5e7eb));
+  border-radius: 10px;
   background: var(--surface, #fff);
+  box-shadow: 0 2px 8px #1e3c6409;
 }
 
 .portal-post-detail .post-sidebar-category .section-heading {
-  margin-bottom: 9px;
+  margin-bottom: 0;
 }
 
 .portal-post-detail .post-sidebar-category-list {
   display: grid;
-  gap: 2px;
+  gap: 0;
 }
 
 .portal-post-detail .post-sidebar-category-link {
   display: flex;
-  align-items: flex-start;
+  min-height: 53px;
+  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 8px 2px;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--line, #edf1f6);
   color: var(--text-primary, #1f2937);
-  border-bottom: 1px solid var(--border-color, #edf0f3);
-  font-size: 13px;
+  font-family: "Outfit", "Hind", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1.45;
   text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .portal-post-detail .post-sidebar-category-link:last-child {
@@ -1738,23 +1744,51 @@
 
 .portal-post-detail .post-sidebar-category-link span {
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .portal-post-detail .post-sidebar-category-link b {
   flex: 0 0 auto;
-  color: var(--text-secondary, #64748b);
+  color: #8b9ab0;
+  font-size: 21px;
+  font-weight: 400;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .portal-post-detail .post-sidebar-category-link:hover {
-  color: var(--primary, #2563eb);
+  background: #f7faff;
+  color: var(--blue, var(--primary, #2563eb));
+}
+
+.portal-post-detail .post-sidebar-category-link:hover b {
+  color: var(--blue, #075be8);
+  transform: translateX(2px);
 }
 
 :root[data-theme="dark"] .portal-post-detail .post-sidebar-category {
-  background: var(--surface, #171c28);
-  border-color: var(--border-color, #303746);
+  background: #151b23;
+  border-color: #293544;
+  color: #e6edf3;
 }
 
 :root[data-theme="dark"] .portal-post-detail .post-sidebar-category-link {
-  color: var(--text-primary, #e5e7eb);
-  border-bottom-color: var(--border-color, #303746);
+  color: #e6edf3;
+  border-bottom-color: #293544;
+}
+
+:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-link:hover {
+  background: #1c2633;
+  color: #e6edf3;
+}
+
+:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-link:hover b {
+  color: #8db8ff;
+}
+
+@media (max-width: 760px) {
+  .portal-post-detail .post-sidebar-category-link {
+    min-height: 53px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
 }

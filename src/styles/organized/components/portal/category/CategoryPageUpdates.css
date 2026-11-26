@@ -100,7 +100,7 @@
   .guides-updates .update-row,
   .tools-updates .update-row {
     grid-template-columns: max-content minmax(0, 1fr) 31px;
-    gap: 5px;
+    gap: 12px;
   }
 }
 
@@ -274,7 +274,7 @@
 @media (max-width: 390px) {
   .updates-panel-home .update-row-has-deadline {
     grid-template-columns: max-content minmax(0, 1fr) max-content;
-    gap: 5px;
+    gap: 12px;
   }
 
   .updates-panel-home .update-application-deadline {

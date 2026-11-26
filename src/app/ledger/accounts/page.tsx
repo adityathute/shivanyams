@@ -35,7 +35,8 @@ export default function LedgerAccountsPage() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const data = JSON.parse(raw);
-        if (Array.isArray(data.accounts) && data.accounts.length) setAccounts(data.accounts);\n        if (data.openingSetup?.balances) setAccounts((current) => current.map((account) => ({ ...account, openingBalance: Number(data.openingSetup.balances[account.id] ?? account.openingBalance) })));
+        if (Array.isArray(data.accounts) && data.accounts.length) setAccounts(data.accounts);
+        if (data.openingSetup?.balances) setAccounts((current) => current.map((account) => ({ ...account, openingBalance: Number(data.openingSetup.balances[account.id] ?? account.openingBalance) })));
         if (Array.isArray(data.entries)) setEntries(data.entries);
       }
     } catch { /* Keep defaults when local preview data is invalid. */ }
@@ -53,7 +54,8 @@ export default function LedgerAccountsPage() {
     const account: LedgerAccount = { id: crypto.randomUUID?.() || String(Date.now()), name, kind: draft.kind, note: draft.note.trim(), openingBalance: Number(draft.openingBalance) || 0, active: true };
     const nextAccounts = [...accounts, account];
     setAccounts(nextAccounts);
-    const previous = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");\n    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...previous, accounts: nextAccounts, entries }));
+    const previous = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...previous, accounts: nextAccounts, entries }));
     setDraft({ name: "", kind: "bank", note: "", openingBalance: "0" });
     setShowForm(false);
   };

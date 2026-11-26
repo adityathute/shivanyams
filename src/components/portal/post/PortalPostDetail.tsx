@@ -818,11 +818,28 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
         ) : null}
         <div className="portal-post-detail-inner">
           <div
-            className={`content-layout ${!data.loading && (post || recommendedPosts.length > 0) ? "has-sidebar" : "no-sidebar"}`}
+            className={`content-layout ${data.loading || post || recommendedPosts.length > 0 ? "has-sidebar" : "no-sidebar"}`}
           >
             <div className="post-detail-main">
               {data.loading ? (
-                <div className="portal-post-loading">Loading...</div>
+                <div className="portal-post-skeleton" role="status" aria-label="Loading post">
+                  <span className="portal-post-skeleton-line portal-post-skeleton-meta" />
+                  <span className="portal-post-skeleton-line portal-post-skeleton-title" />
+                  <span className="portal-post-skeleton-line portal-post-skeleton-title-short" />
+                  <span className="portal-post-skeleton-line portal-post-skeleton-summary" />
+                  <span className="portal-post-skeleton-line portal-post-skeleton-summary-short" />
+                  <div className="portal-post-skeleton-block">
+                    <span className="portal-post-skeleton-line" />
+                    <span className="portal-post-skeleton-line" />
+                    <span className="portal-post-skeleton-line" />
+                    <span className="portal-post-skeleton-line portal-post-skeleton-line-short" />
+                  </div>
+                  <div className="portal-post-skeleton-block">
+                    <span className="portal-post-skeleton-line" />
+                    <span className="portal-post-skeleton-line" />
+                    <span className="portal-post-skeleton-line portal-post-skeleton-line-short" />
+                  </div>
+                </div>
               ) : post ? (
                 <>
                 <article className="portal-post-card">
@@ -1408,8 +1425,12 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             {/* Right sidebar: useful links for a post, or category recommendations for a 404. */}
             {!data.loading && (post || recommendedPosts.length > 0) && (
               <aside className="right-column">
-                {post ? (
+                {data.loading || post ? (
                 <>
+                <section className="subscribe-panel">
+                  <div className="subscribe-icon"><MailIcon /></div>
+                  <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
+                </section>
                 <section className="panelin important-panel">
                   <div className="section-heading">
                     <h2>{t("usefulLinks")}</h2>
@@ -1429,14 +1450,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       <b>›</b>
                     </a>
                   ))}
-                </section>
-
-                <section className="subscribe-panel">
-                  <div className="subscribe-icon">
-                    <MailIcon />
-                  </div>
-
-                  <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                 </section>
                 </>
                 ) : (

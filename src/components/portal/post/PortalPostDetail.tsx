@@ -14,6 +14,7 @@ import {
   getPortalApiUrl,
   getCategoryTitle,
   categoryConfig,
+  STATIC_PORTAL_CATEGORIES,
   type Category,
   type Language as CategoryLanguage,
 } from "../category/CategoryGrid";
@@ -669,28 +670,21 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             ? [currentItem]
             : []
       ).slice(0, 5);
-      const categorySlug = entry === "guides" ? "articles-guides" : entry;
-      const record = categories.find((item) => item.slug === categorySlug);
-      const fallbackNames: Record<Exclude<CategorySlug, "videos">, string> = {
-        jobs: "Jobs",
-        schemes: "Schemes",
-        examination: "Examinations",
-        results: "Results",
-        "admit-cards": "Admit Cards",
-        guides: "Guides",
-        tools: "Tools",
-      };
+      const categorySlug = entry === "examination" ? "exams" : entry;
+      const categoryDefinition = STATIC_PORTAL_CATEGORIES.find(
+        (item) => item.slug === categorySlug,
+      );
 
       return {
         slug: entry,
-        title: record
-          ? getCategoryTitle(record, language as CategoryLanguage)
-          : fallbackNames[entry],
+        title: categoryDefinition
+          ? getCategoryTitle(categoryDefinition, language as CategoryLanguage)
+          : entry,
         posts,
         totalPosts: data.items.filter((item) => item.type === type).length,
       };
     }).filter((section) => section.posts.length > 0);
-  }, [category, categories, data.items, language, post?.postId, previewItem]);
+  }, [category, data.items, language, post?.postId, previewItem]);
 
   const categoryPosts = useMemo(() => {
     if (category === "videos") {

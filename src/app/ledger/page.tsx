@@ -33,6 +33,7 @@ export default function LedgerPage() {
   const [accounts, setAccounts] = useState<LedgerAccount[]>(defaultAccounts);
   const [ready, setReady] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formError, setFormError] = useState("");
   const [form, setForm] = useState({ type: "income" as EntryType, counter: "main" as Counter, amount: "", category: "Service", note: "", paymentMode: "cash" as "cash" | "upi" | "bank" | "other", accountId: "main-cash", date: today() });
@@ -62,6 +63,17 @@ export default function LedgerPage() {
     return total + account.openingBalance + movement;
   }, 0), [accounts, entries]);
   const recentEntries = useMemo(() => [...entries].sort((a, b) => b.createdAt - a.createdAt).slice(0, 5), [entries]);
+  const allIncome = useMemo(() => entries.filter((entry) => entry.type === "income").reduce((sum, entry) => sum + entry.amount, 0), [entries]);
+  const allExpenses = useMemo(() => entries.filter((entry) => entry.type === "expense").reduce((sum, entry) => sum + entry.amount, 0), [entries]);
+  const counterStats = useMemo(() => (["main", "csp", "shared"] as Counter[]).map((key) => {
+    const rows = entries.filter((entry) => entry.counter === key);
+    return { key, count: rows.length, income: rows.filter((entry) => entry.type === "income").reduce((sum, entry) => sum + entry.amount, 0), expenses: rows.filter((entry) => entry.type === "expense").reduce((sum, entry) => sum + entry.amount, 0) };
+  }), [entries]);
+  const categoryStats = useMemo(() => {
+    const totals = new Map<string, number>();
+    entries.filter((entry) => entry.type === "expense").forEach((entry) => totals.set(entry.category, (totals.get(entry.category) || 0) + entry.amount));
+    return [...totals.entries()].sort((a, b) => b[1] - a[1]);
+  }, [entries]);
 
   const openNewEntry = (type: EntryType = "income") => {
     setEditingId(null);
@@ -94,7 +106,7 @@ export default function LedgerPage() {
     <main className={styles.page}>
       <div className={styles.topbar}>
         <div className={styles.heading}><div className={styles.eyebrow}>SHIVANYA MULTISERVICES</div><h1>Ledger</h1><p>Your business money, at a glance.</p></div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button className={styles.backButton} onClick={() => router.push("/ledger/setup")}>Opening setup</button><button className={styles.primaryButton} onClick={() => openNewEntry()}><span aria-hidden="true">＋</span> Add entry</button></div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button className={styles.backButton} onClick={() => router.push("/ledger/setup")}>Opening setup</button><button className={styles.backButton} aria-expanded={showStatistics} onClick={() => setShowStatistics((value) => !value)}>{showStatistics ? "Hide statistics" : "Statistics"}</button><button className={styles.primaryButton} onClick={() => openNewEntry()}><span aria-hidden="true">＋</span> Add entry</button></div>
       </div>
 
       <section className={styles.dashboardCards} aria-label="Ledger overview">
@@ -118,6 +130,20 @@ export default function LedgerPage() {
         </article>
       </section>
 
+      {showStatistics && <section className={styles.workspace} aria-label="Ledger statistics">
+        <div className={styles.listHeader}><div><h2>All statistics</h2><p>Calculated from every transaction recorded in this browser.</p></div></div>
+        <section className={styles.transactionTotals}>
+          <article><span>Total income</span><strong className={styles.incomeValue}>{money(allIncome)}</strong></article>
+          <article><span>Total expenses</span><strong className={styles.expenseValue}>{money(allExpenses)}</strong></article>
+          <article><span>Overall net</span><strong>{money(allIncome - allExpenses)}</strong></article>
+        </section>
+        <div className={styles.accountsPageHeading}><div><h2>Transaction summary</h2><p>{entries.length} total entries · {entries.filter((entry) => entry.type === "income").length} income · {entries.filter((entry) => entry.type === "expense").length} expenses</p></div></div>
+        <div className={styles.accountsPageGrid}>{counterStats.map((item) => <article className={styles.accountPageCard} key={item.key}><span className={styles.accountKind}>{counterLabels[item.key]}</span><h3>{item.count} transactions</h3><strong>{money(item.income - item.expenses)}</strong><p>Income {money(item.income)} · Expenses {money(item.expenses)}</p></article>)}</div>
+        <div className={styles.accountsPageHeading} style={{ marginTop: 18 }}><div><h2>Account balances</h2><p>Current balance by money account</p></div></div>
+        <div className={styles.accountsPageGrid}>{accounts.filter((account) => account.active).map((account) => { const movement = entries.filter((entry) => entry.accountId === account.id).reduce((sum, entry) => sum + (entry.type === "income" ? entry.amount : -entry.amount), 0); return <article className={styles.accountPageCard} key={account.id}><h3>{account.name}</h3><strong>{money(account.openingBalance + movement)}</strong><p>{entries.filter((entry) => entry.accountId === account.id).length} transactions</p></article>; })}</div>
+        <div className={styles.accountsPageHeading} style={{ marginTop: 18 }}><div><h2>Expense categories</h2><p>Highest spending categories across all recorded entries</p></div></div>
+        {categoryStats.length ? <div className={styles.entryList}>{categoryStats.map(([name, amount]) => <article className={styles.entry} key={name}><div className={styles.entryDetails}><strong>{name}</strong></div><strong className={styles.entryAmount + " " + styles.expenseValue}>{money(amount)}</strong></article>)}</div> : <p className={styles.localNotice}>No expense statistics yet. Add an expense to see category totals.</p>}
+      </section>}
       <section className={styles.quickActions}>
         <div><h2>Quick entry</h2><p>Record money as it comes in or goes out.</p></div>
         <div className={styles.quickActionButtons}><button className={styles.incomeButton} onClick={() => openNewEntry("income")}>＋ Income</button><button className={styles.expenseButton} onClick={() => openNewEntry("expense")}>− Expense</button></div>

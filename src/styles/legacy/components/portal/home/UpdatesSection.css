@@ -428,7 +428,7 @@
   align-items: center;
   justify-self: end;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -447,6 +447,15 @@
   white-space: nowrap;
 }
 
+
+.updates-panel-language-en .update-row .update-deadline-extended {
+  font-size: 12px;
+}
+
+.updates-panel-language-mr .update-row .update-deadline-extended,
+.updates-panel-language-hi .update-row .update-deadline-extended {
+  font-size: 13px;
+}
 
 .update-row .update-application-deadline {
   display: block;

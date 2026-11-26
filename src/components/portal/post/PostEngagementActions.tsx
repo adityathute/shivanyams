@@ -31,9 +31,20 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
   const [reportDetails, setReportDetails] = useState("");
   const [reporting, setReporting] = useState(false);
   const [message, setMessage] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const shareMenuRef = useRef<HTMLElement | null>(null);
   const messageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shareMessageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showShareMessage = useCallback((nextMessage: string) => {
+    if (shareMessageTimerRef.current) clearTimeout(shareMessageTimerRef.current);
+    setShareMessage(nextMessage);
+    shareMessageTimerRef.current = setTimeout(() => {
+      setShareMessage("");
+      shareMessageTimerRef.current = null;
+    }, 5000);
+  }, []);
 
   const showMessage = useCallback((nextMessage: string) => {
     if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
@@ -46,6 +57,7 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
 
   useEffect(() => () => {
     if (messageTimerRef.current) clearTimeout(messageTimerRef.current);
+    if (shareMessageTimerRef.current) clearTimeout(shareMessageTimerRef.current);
   }, []);
 
   const loadPostReaction = useCallback(async () => {
@@ -220,10 +232,9 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
 
   async function shareTo(channel: string) {
     const url = window.location.href;
-    setShareMenuOpen(false);
 
     if (channel === "native") {
-      showMessage("Opening share options...");
+      showShareMessage("Opening share options...");
       // Count the user's share intent immediately, including when the native
       // share sheet is dismissed without choosing a destination.
       void recordShare("native");
@@ -236,9 +247,9 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
       } else if (navigator.clipboard?.writeText) {
         try {
           await navigator.clipboard.writeText(url);
-          showMessage("Post link copied.");
+          showShareMessage("Post link copied.");
         } catch {
-          showMessage("Unable to copy the post link.");
+          showShareMessage("Unable to copy the post link.");
         }
       }
       return;
@@ -248,9 +259,9 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
       try {
         await navigator.clipboard.writeText(url);
         void recordShare("copy");
-        showMessage("Post link copied.");
+        showShareMessage("Post link copied.");
       } catch {
-        showMessage("Unable to copy the post link.");
+        showShareMessage("Unable to copy the post link.");
       }
       return;
     }
@@ -271,16 +282,16 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
       try {
         await navigator.clipboard.writeText(url);
         void recordShare("instagram");
-        showMessage("Post link copied. Paste it into Instagram to share.");
+        showShareMessage("Post link copied. Paste it into Instagram to share.");
         window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
       } catch {
-        showMessage("Unable to copy the post link for Instagram.");
+        showShareMessage("Unable to copy the post link for Instagram.");
       }
       return;
     }
     if (!destination) return;
     const labels: Record<string, string> = { whatsapp: "WhatsApp", facebook: "Facebook", telegram: "Telegram", x: "X/Twitter", threads: "Threads", linkedin: "LinkedIn", email: "Email" };
-    showMessage(`Opening ${labels[channel] || "share"}...`);
+    showShareMessage(`Opening ${labels[channel] || "share"}...`);
     void recordShare(channel);
     window.open(destination, "_blank", "noopener,noreferrer");
   }
@@ -334,6 +345,7 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
           </button>
           {shareMenuOpen ? (
             <div className="portal-share-menu" role="menu" aria-label="Share this post">
+              {shareMessage ? <p className="portal-share-feedback" role="status" aria-live="polite">{shareMessage}</p> : null}
               <button type="button" role="menuitem" onClick={() => void shareTo("copy")} className="portal-share-copy"><CopyIcon size={17} /><span>Copy link</span></button>
               <button type="button" role="menuitem" onClick={() => void shareTo("whatsapp")} className="portal-share-whatsapp"><WhatsappIcon size={17} /><span>WhatsApp</span></button>
               <button type="button" role="menuitem" onClick={() => void shareTo("facebook")} className="portal-share-facebook"><FacebookIcon size={17} /><span>Facebook</span></button>

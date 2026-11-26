@@ -488,3 +488,22 @@
   from { opacity: 0; transform: translateY(5px) scale(.985); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+@media (max-width: 600px) {
+  .portal-action-share-wrap {
+    position: static;
+  }
+
+  .portal-share-menu {
+    top: calc(100% + 8px);
+    right: auto;
+    left: 0;
+    width: min(286px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .portal-share-menu::before {
+    left: 91px;
+  }
+}

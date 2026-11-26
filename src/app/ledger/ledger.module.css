@@ -364,3 +364,38 @@
   .accountForm { grid-template-columns: 1fr; }
   .accountForm .saveButton { grid-column: auto; }
 }
+
+
+/* Ledger dashboard */
+.dashboardCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin: 4px 0 17px; }
+.dashboardCard { display: flex; min-width: 0; min-height: 158px; flex-direction: column; align-items: stretch; gap: 9px; border: 1px solid var(--shivanya-color-border, #e5e9ef); border-radius: 17px; padding: 17px 18px; background: var(--shivanya-color-surface, #fff); color: var(--shivanya-color-text-primary, #202938); text-align: left; cursor: pointer; box-shadow: 0 2px 8px rgba(20,35,60,.025); transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
+button.dashboardCard:hover { border-color: #9bb9ee; transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,35,60,.07); }
+.dashboardCardTop { display: flex; align-items: center; justify-content: space-between; }
+.dashboardIcon { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 11px; background: #edf3ff; color: #2866c7; font-size: 17px; font-weight: 800; }
+.dashboardArrow { color: #8b95a4; font-size: 17px; }
+.dashboardPill { border-radius: 99px; padding: 4px 8px; background: #eef3fb; color: #60718b; font-size: 10px; font-weight: 700; }
+.dashboardLabel { margin-top: 2px; color: var(--shivanya-color-text-secondary, #77808d); font-size: 12px; font-weight: 650; }
+.dashboardCard > strong { overflow-wrap: anywhere; font-size: clamp(22px, 2.6vw, 29px); font-weight: 800; letter-spacing: -.045em; }
+.dashboardCard > small { color: var(--shivanya-color-text-secondary, #9098a4); font-size: 11px; line-height: 1.4; }
+.balanceDashboardCard { background: linear-gradient(145deg, #f7faff, var(--shivanya-color-surface, #fff) 72%); }
+.balanceDashboardCard .dashboardIcon { background: #e8f1ff; }
+.netDashboardCard .dashboardIcon { background: #e8f7ef; color: #168654; }
+.quickActions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 0 0 17px; border: 1px solid var(--shivanya-color-border, #e6e9ef); border-radius: 15px; padding: 15px 18px; background: var(--shivanya-color-surface, #fff); }
+.quickActions h2 { margin: 0 0 3px; font-size: 14px; font-weight: 750; }
+.quickActions p { margin: 0; color: var(--shivanya-color-text-secondary, #7b8491); font-size: 11px; }
+.quickActionButtons { display: flex; gap: 8px; }
+.quickActionButtons .incomeButton, .quickActionButtons .expenseButton { min-height: 39px; }
+.viewAllButton { min-height: 35px; border: 1px solid var(--shivanya-color-border, #e3e8ef); border-radius: 9px; padding: 0 11px; background: transparent; color: #2866c7; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.viewAllButton span { margin-left: 5px; }
+@media (max-width: 760px) {
+  .dashboardCards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 0; }
+  .dashboardCard { min-height: 139px; border-radius: 13px; padding: 13px 12px; gap: 7px; }
+  .dashboardCard > strong { font-size: clamp(19px, 5vw, 24px); }
+  .dashboardLabel { font-size: 10px; }
+  .dashboardCard > small { font-size: 9px; }
+  .dashboardIcon { width: 30px; height: 30px; }
+  .netDashboardCard { grid-column: 1 / -1; min-height: 112px; }
+  .quickActions { align-items: flex-start; flex-direction: column; padding: 14px; }
+  .quickActionButtons { width: 100%; }
+  .quickActionButtons button { flex: 1; }
+}

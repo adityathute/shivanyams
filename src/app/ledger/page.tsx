@@ -8,6 +8,8 @@ import styles from "./ledger.module.css";
 type EntryType = "income" | "expense";
 type Counter = "main" | "csp" | "shared";
 type PaymentMode = "cash" | "upi" | "bank" | "other";
+type AccountKind = "cash" | "bank" | "upi";
+type LedgerAccount = { id: string; name: string; kind: AccountKind; note: string; openingBalance: number; active: boolean };
 
 type LedgerEntry = {
   id: string;
@@ -45,7 +47,7 @@ const counterLabels: Record<Counter, string> = {
   shared: "Shared",
 };
 
-const paymentLabels: Record<PaymentMode, string> = {
+const defaultAccounts: LedgerAccount[] = [\n  { id: "main-cash", name: "Main Shop Cash", kind: "cash", note: "Main counter cash drawer", openingBalance: 0, active: true },\n  { id: "csp-cash", name: "SBI CSP Cash", kind: "cash", note: "SBI CSP counter cash drawer", openingBalance: 0, active: true },\n  { id: "business-current", name: "Business Current Account", kind: "bank", note: "Shivanya business bank account", openingBalance: 0, active: true },\n  { id: "personal-one", name: "Personal Account 1", kind: "bank", note: "Business funds may be held here", openingBalance: 0, active: true },\n  { id: "personal-two", name: "Personal Account 2", kind: "bank", note: "Business funds may be held here", openingBalance: 0, active: true },\n  { id: "phonepe-business", name: "PhonePe Business", kind: "upi", note: "Business UPI collections", openingBalance: 0, active: true },\n];\n\nconst paymentLabels: Record<PaymentMode, string> = {
   cash: "Cash",
   upi: "UPI",
   bank: "Bank",
@@ -57,7 +59,7 @@ export default function LedgerPage() {
   const { user, loading } = useAuth();
   const isAdmin = user?.roles?.includes("admin") === true;
 
-  const [entries, setEntries] = useState<LedgerEntry[]>([]);
+  const [entries, setEntries] = useState<LedgerEntry[]>([]);\n  const [accounts, setAccounts] = useState<LedgerAccount[]>(defaultAccounts);\n  const [showAccounts, setShowAccounts] = useState(false);\n  const [showAccountForm, setShowAccountForm] = useState(false);\n  const [accountDraft, setAccountDraft] = useState({ name: "", kind: "bank" as AccountKind, note: "" });
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filterDate, setFilterDate] = useState(today());
@@ -174,7 +176,7 @@ export default function LedgerPage() {
     setEditingId(null);
   };
 
-  const deleteEntry = (id: string) => {
+  const accountBalances = useMemo(() => accounts.map((account) => {\n    const movement = entries.filter((entry) => entry.accountId === account.id).reduce((sum, entry) => sum + (entry.type === "income" ? entry.amount : -entry.amount), 0);\n    return { ...account, balance: account.openingBalance + movement };\n  }), [accounts, entries]);\n\n  const saveAccount = (event: React.FormEvent<HTMLFormElement>) => {\n    event.preventDefault();\n    const name = accountDraft.name.trim();\n    if (!name) return;\n    const account: LedgerAccount = { id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Date.now()), name, kind: accountDraft.kind, note: accountDraft.note.trim(), openingBalance: 0, active: true };\n    setAccounts((current) => [...current, account]);\n    setAccountDraft({ name: "", kind: "bank", note: "" });\n    setShowAccountForm(false);\n  };\n\n  const deleteEntry = (id: string) => {
     if (window.confirm("Delete this transaction?")) {
       setEntries((current) => current.filter((entry) => entry.id !== id));
     }
@@ -201,7 +203,7 @@ export default function LedgerPage() {
         </button>
       </div>
 
-      <div className={styles.counterStrip} aria-label="Choose counter">
+      <div className={styles.pageActions}>\n        <button className={styles.manageAccountsButton} onClick={() => setShowAccounts((value) => !value)}>▣ {showAccounts ? "Hide accounts" : "Manage accounts"} <span>{accounts.length}</span></button>\n      </div>\n\n      {showAccounts && (\n        <section className={styles.accountsPanel}>\n          <div className={styles.accountsHeading}><div><h2>Money accounts</h2><p>Track where business money is kept, including money held in personal accounts.</p></div><button className={styles.addAccountButton} onClick={() => setShowAccountForm((value) => !value)}>＋ Add account</button></div>\n          <div className={styles.accountsGrid}>\n            {accountBalances.map((account) => (\n              <article className={styles.accountCard} key={account.id}>\n                <div className={styles.accountCardTop}><span className={styles.accountKind}>{account.kind === "cash" ? "CASH" : account.kind === "upi" ? "UPI" : "BANK"}</span><span className={styles.accountStatus}>Active</span></div>\n                <strong>{account.name}</strong><b>{money(account.balance)}</b><small>{account.note || "Business account"}</small>\n              </article>\n            ))}\n          </div>\n          {showAccountForm && <form className={styles.accountForm} onSubmit={saveAccount}><label>Account name<input value={accountDraft.name} onChange={(event) => setAccountDraft({ ...accountDraft, name: event.target.value })} placeholder="e.g. Savings account" required /></label><label>Account type<select value={accountDraft.kind} onChange={(event) => setAccountDraft({ ...accountDraft, kind: event.target.value as AccountKind })}><option value="cash">Cash</option><option value="bank">Bank</option><option value="upi">UPI / Wallet</option></select></label><label>Note<input value={accountDraft.note} onChange={(event) => setAccountDraft({ ...accountDraft, note: event.target.value })} placeholder="Optional details" /></label><button type="submit" className={styles.saveButton}>Save account</button></form>}\n        </section>\n      )}\n\n      <div className={styles.counterStrip} aria-label="Choose counter">
         <button className={counterFilter === "all" ? styles.counterActive : styles.counterButton} onClick={() => setCounterFilter("all")}>
           <span className={styles.counterDot} /> All counters
         </button>
@@ -275,7 +277,7 @@ export default function LedgerPage() {
                 </div>
                 <div className={styles.entryDetails}>
                   <strong>{entry.category}</strong>
-                  <span>{entry.note || counterLabels[entry.counter]} · {paymentLabels[entry.paymentMode]}</span>
+                  <span>{entry.note || counterLabels[entry.counter]} · {paymentLabels[entry.paymentMode]} · {accounts.find((account) => account.id === entry.accountId)?.name || "Account"}</span>
                   <small>{counterLabels[entry.counter]} · {entry.date}</small>
                 </div>
                 <strong className={styles.entryAmount + " " + (entry.type === "income" ? styles.incomeValue : styles.expenseValue)}>
@@ -354,7 +356,7 @@ export default function LedgerPage() {
                 <button type="button" className={styles.cancelButton} onClick={() => setShowForm(false)}>Cancel</button>
                 <button type="submit" className={styles.saveButton}>{editingId ? "Save changes" : "Save entry"}</button>
               </div>
-              <p className={styles.localNotice}>Frontend preview: entries are temporary and will clear when this page reloads. Database saving will be connected in the backend phase.</p>
+              <p className={styles.localNotice}>Frontend preview: accounts and entries are temporary and will clear when this page reloads. Database saving will be connected in the backend phase.</p>
             </form>
           </section>
         </div>

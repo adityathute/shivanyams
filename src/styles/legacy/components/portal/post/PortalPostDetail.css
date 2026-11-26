@@ -1702,7 +1702,7 @@
 
 
 /* Related category cards follow the Latest Updates panel and row styling. */
-.portal-post-detail .post-sidebar-category {
+.post-sidebar-category {
   min-width: 0;
   padding: 0;
   overflow: hidden;
@@ -1712,16 +1712,16 @@
   box-shadow: 0 2px 8px #1e3c6409;
 }
 
-.portal-post-detail .post-sidebar-category .section-heading {
+.post-sidebar-category .section-heading {
   margin-bottom: 0;
 }
 
-.portal-post-detail .post-sidebar-category-list {
+.post-sidebar-category-list {
   display: grid;
   gap: 0;
 }
 
-.portal-post-detail .post-sidebar-category-link {
+.post-sidebar-category-link {
   display: flex;
   min-height: 53px;
   align-items: center;
@@ -1738,11 +1738,11 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.portal-post-detail .post-sidebar-category-link:last-child {
+.post-sidebar-category-link:last-child {
   border-bottom: 0;
 }
 
-.portal-post-detail .post-sidebar-category-link span {
+.post-sidebar-category-link span {
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -1779,13 +1779,13 @@
 }
 
 
-:root[data-theme="dark"] .portal-post-detail .post-sidebar-category {
+:root[data-theme="dark"] .post-sidebar-category {
   background: #151b23;
   border-color: #293544;
   color: #e6edf3;
 }
 
-:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-link {
+:root[data-theme="dark"] .post-sidebar-category-link {
   color: #e6edf3;
   border-bottom-color: #293544;
 }
@@ -1821,7 +1821,7 @@
 
 
 @media (max-width: 760px) {
-  .portal-post-detail .post-sidebar-category-link {
+  .post-sidebar-category-link {
     min-height: 53px;
     padding-right: 12px;
     padding-left: 12px;
@@ -1830,7 +1830,7 @@
 
 
 /* Compact category badge and total-post count in related-category headers. */
-.portal-post-detail .post-sidebar-category-heading {
+.post-sidebar-category-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1841,12 +1841,12 @@
   background: var(--surface, #fff);
 }
 
-.portal-post-detail .post-sidebar-category-heading .category-badge {
+.post-sidebar-category-heading .category-badge {
   min-width: 0;
   max-width: 70%;
 }
 
-.portal-post-detail .post-sidebar-category-count {
+.post-sidebar-category-count {
   flex: 0 0 auto;
   color: var(--text-secondary, #64748b);
   font-size: 12px;
@@ -1855,17 +1855,17 @@
   white-space: nowrap;
 }
 
-:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-heading {
+:root[data-theme="dark"] .post-sidebar-category-heading {
   border-bottom-color: #293544;
   background: #151b23;
 }
 
-:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-count {
+:root[data-theme="dark"] .post-sidebar-category-count {
   color: #aab8c8;
 }
 
 @media (max-width: 760px) {
-  .portal-post-detail .post-sidebar-category-heading {
+  .post-sidebar-category-heading {
     padding: 11px 12px;
   }
 }

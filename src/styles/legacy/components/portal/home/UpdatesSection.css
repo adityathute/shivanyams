@@ -109,7 +109,7 @@
 .update-row {
   min-height: 53px;
   display: grid;
-  grid-template-columns: 83px minmax(0, 1fr) 100px 42px;
+  grid-template-columns: max-content minmax(0, 1fr) 100px 42px;
   gap: 12px;
   align-items: center;
   border-bottom: 1px solid #edf1f6;
@@ -305,7 +305,7 @@
     grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.8fr);
   }
   .update-row {
-    grid-template-columns: 75px minmax(0, 1fr) 78px 35px;
+    grid-template-columns: max-content minmax(0, 1fr) 78px 35px;
     gap: 8px;
   }
 }
@@ -334,7 +334,7 @@
     padding: 0;
   }
   .update-row {
-    grid-template-columns: 65px minmax(0, 1fr) 36px;
+    grid-template-columns: max-content minmax(0, 1fr) 36px;
     gap: 7px;
     min-height: 57px;
     padding-right: 10px;
@@ -363,7 +363,7 @@
 
 @media (max-width: 390px) {
   .update-row {
-    grid-template-columns: 58px minmax(0, 1fr) 31px;
+    grid-template-columns: max-content minmax(0, 1fr) 31px;
     gap: 5px;
   }
   .update-title {

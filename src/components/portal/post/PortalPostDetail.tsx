@@ -687,6 +687,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
           ? getCategoryTitle(record, language as CategoryLanguage)
           : fallbackNames[entry],
         posts,
+        totalPosts: data.items.filter((item) => item.type === type).length,
       };
     }).filter((section) => section.posts.length > 0);
   }, [category, categories, data.items, language, post?.postId, previewItem]);
@@ -1475,9 +1476,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 </section>
                 {sidebarCategorySections.map((section) => (
                   <section className="panelin post-sidebar-category" key={section.slug}>
-                    <div className="section-heading">
-                      <h2>{section.title}</h2>
-                      <span>{section.title}</span>
+                    <div className="post-sidebar-category-heading">
+                      <CategoryBadge category={section.slug} label={section.title} />
+                      <span className="post-sidebar-category-count">
+                        {section.totalPosts} {language === "mr" ? "जागा" : language === "hi" ? "पोस्ट" : "Posts"}
+                      </span>
                     </div>
                     <div className="post-sidebar-category-list">
                       {section.posts.map((item) => (

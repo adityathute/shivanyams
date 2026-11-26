@@ -1794,6 +1794,36 @@
 }
 
 
+/* Show a compact category icon immediately before each related post title. */
+.post-sidebar-category-link {
+  gap: 8px;
+}
+
+.post-sidebar-category-link > .portal-post-category-badge {
+  flex: 0 0 24px;
+  width: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  height: 24px;
+  padding: 3px;
+  gap: 0;
+  border-radius: 7px;
+}
+
+.post-sidebar-category-link > .portal-post-category-badge > span:not(.portal-post-category-icon) {
+  display: none;
+}
+
+.post-sidebar-category-link > .portal-post-category-badge .portal-post-category-icon,
+.post-sidebar-category-link > .portal-post-category-badge .portal-post-category-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.post-sidebar-category-link > span:not(.portal-post-category-badge) {
+  flex: 1 1 auto;
+}
+
 /* Match each category's own accent color on sidebar row hover. */
 .post-sidebar-category-jobs .post-sidebar-category-link:hover {
   background: #eff6ff;

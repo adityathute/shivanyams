@@ -421,3 +421,47 @@
 [data-theme="dark"] .subscribe-content p {
   color: #c0ccda;
 }
+
+/* Homepage job application deadline status */
+.update-row .update-application-deadline {
+  display: block;
+  justify-self: end;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.update-row .update-application-deadline.deadline-urgent {
+  color: #dc2626;
+}
+
+.update-row .update-application-deadline.deadline-soon {
+  color: #ea580c;
+}
+
+.update-row .update-application-deadline.deadline-open {
+  color: #16a34a;
+}
+
+.update-row .update-application-deadline.deadline-expired {
+  color: #718096;
+}
+
+[data-theme="dark"] .update-row .update-application-deadline.deadline-urgent {
+  color: #f87171;
+}
+
+[data-theme="dark"] .update-row .update-application-deadline.deadline-soon {
+  color: #fb923c;
+}
+
+[data-theme="dark"] .update-row .update-application-deadline.deadline-open {
+  color: #4ade80;
+}
+
+[data-theme="dark"] .update-row .update-application-deadline.deadline-expired {
+  color: #a9b7c8;
+}
+

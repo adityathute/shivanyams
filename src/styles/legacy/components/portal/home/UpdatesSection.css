@@ -521,8 +521,8 @@
 .update-row .update-application-deadline.deadline-expired {
   color: #718096;
   text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+  text-decoration-color: #cbd5e1;
 }
 
 [data-theme="dark"] .update-row .update-deadline-extended {
@@ -545,5 +545,6 @@
 
 [data-theme="dark"] .update-row .update-application-deadline.deadline-expired {
   color: #a9b7c8;
+  text-decoration-color: #64748b;
 }
 

@@ -42,17 +42,26 @@ export function PortalClock() {
 
   const time = `${hoursText}:${minutesText}:${secondsText} ${period}`;
 
-  const date = new Intl.DateTimeFormat(locale, {
-    weekday: language === "en" ? "short" : "long",
+  const dateOptions: Intl.DateTimeFormatOptions = {
     day: "numeric",
-    month: language === "en" ? "short" : "long",
     year: "numeric",
+  };
+  const fullDate = new Intl.DateTimeFormat(locale, {
+    ...dateOptions,
+    weekday: "long",
+    month: "long",
+  }).format(now);
+  const shortDate = new Intl.DateTimeFormat(locale, {
+    ...dateOptions,
+    weekday: language === "en" ? "short" : "long",
+    month: language === "en" ? "short" : "long",
   }).format(now);
 
   return (
     <div className="portal-clock">
       <div className="portal-clock-time">{time}</div>
-      <div className="portal-clock-date">{date}</div>
+      <div className="portal-clock-date portal-clock-date-desktop">{fullDate}</div>
+      <div className="portal-clock-date portal-clock-date-mobile">{shortDate}</div>
     </div>
   );
 }

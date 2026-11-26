@@ -307,7 +307,7 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
   }, [shareMenuOpen, postId]);
 
   return (
-    <section ref={shareMenuRef} className={`portal-post-engagement-actions ${placement === "header" ? "is-header" : "is-footer"}`} aria-label="Post actions">
+    <section className={`portal-post-engagement-actions ${placement === "header" ? "is-header" : "is-footer"}`} aria-label="Post actions">
       <div className="portal-post-reaction-actions">
         <button
           type="button"
@@ -328,7 +328,7 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
         >
           <DislikeIcon size={19} />
         </button>
-        <div className="portal-action-share-wrap">
+        <div className="portal-action-share-wrap" ref={shareMenuRef}>
           <button type="button" className="portal-action-share" onClick={() => { if (shareMenuOpen) { setShareMenuOpen(false); void recordShare("dismissed"); } else { setShareMenuOpen(true); } }} title="Share" aria-label="Share post" aria-expanded={shareMenuOpen}>
             <ShareIcon size={19} />
           </button>

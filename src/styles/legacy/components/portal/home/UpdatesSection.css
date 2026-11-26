@@ -334,18 +334,57 @@
     padding: 0;
   }
   .update-row {
-    grid-template-columns: max-content minmax(0, 1fr) 36px;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
     gap: 7px;
     min-height: 57px;
     padding-right: 10px;
     padding-left: 10px;
   }
+
+  /* On mobile, keep category badges compact and show their icon only. */
+  .update-row .portal-post-category-badge > span:not(.portal-post-category-icon) {
+    display: none;
+  }
+
+  .update-row .portal-post-category-badge {
+    justify-content: center;
+    min-width: 30px;
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
   .update-title {
     font-size: 13px;
   }
+
   .update-title small,
   .update-row time {
     display: none;
+  }
+
+  /* Keep the job deadline visible at the right; place its extension badge below it. */
+  .update-row .update-deadline-group {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .update-row .update-application-deadline {
+    display: block;
+    font-size: 13px;
+  }
+
+  .update-row .update-deadline-extended {
+    padding: 3px 7px;
+    font-size: 10px;
+  }
+
+  .updates-panel-language-mr .update-row .update-deadline-extended,
+  .updates-panel-language-hi .update-row .update-deadline-extended {
+    font-size: 10px;
   }
 
   .subscribe-content h3 {

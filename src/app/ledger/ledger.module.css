@@ -399,3 +399,35 @@ button.dashboardCard:hover { border-color: #9bb9ee; transform: translateY(-2px);
   .quickActionButtons { width: 100%; }
   .quickActionButtons button { flex: 1; }
 }
+
+/* Ledger sub-pages */
+.subPageTop { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+.backButton { min-height: 38px; border: 1px solid var(--shivanya-color-border, #e2e7ee); border-radius: 9px; padding: 0 12px; background: var(--shivanya-color-surface, #fff); color: var(--shivanya-color-text-secondary, #657084); font-size: 12px; font-weight: 650; cursor: pointer; }
+.subPageHeading { margin-bottom: 20px; }
+.subPageHeading h1 { margin: 5px 0 3px; font-size: clamp(27px, 4vw, 35px); font-weight: 780; letter-spacing: -.045em; }
+.subPageHeading p { margin: 0; color: var(--shivanya-color-text-secondary, #777f8c); font-size: 13px; }
+.accountsTotalCard { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 22px; border: 1px solid #d9e6fb; border-radius: 17px; padding: 22px; background: linear-gradient(120deg, #f0f6ff, var(--shivanya-color-surface, #fff)); }
+.accountsTotalCard > div { display: flex; flex-direction: column; gap: 6px; }
+.accountsTotalCard span:first-child { color: #64748b; font-size: 12px; font-weight: 700; }
+.accountsTotalCard strong { color: #1e4f9b; font-size: clamp(27px, 4vw, 36px); font-weight: 800; letter-spacing: -.045em; }
+.accountsTotalCard small { color: #8190a5; font-size: 11px; }
+.totalBalanceIcon { display: grid; width: 53px; height: 53px; place-items: center; border-radius: 16px; background: #e1edff; color: #2866c7; font-size: 26px; font-weight: 800; }
+.accountsPageHeading { margin-bottom: 12px; }
+.accountsPageHeading h2 { margin: 0 0 3px; font-size: 17px; }
+.accountsPageHeading p { margin: 0; color: var(--shivanya-color-text-secondary, #828b99); font-size: 11px; }
+.accountsPageGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+.accountPageCard { display: flex; min-width: 0; flex-direction: column; gap: 9px; border: 1px solid var(--shivanya-color-border, #e5e9ef); border-radius: 14px; padding: 16px; background: var(--shivanya-color-surface, #fff); }
+.accountPageCard h3 { overflow-wrap: anywhere; margin: 0; font-size: 13px; font-weight: 750; }
+.accountPageCard > strong { overflow-wrap: anywhere; font-size: 22px; font-weight: 800; letter-spacing: -.035em; }
+.accountPageCard > p { min-height: 28px; margin: 0; color: var(--shivanya-color-text-secondary, #8a93a0); font-size: 10px; line-height: 1.45; }
+.accountPageFoot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; border-top: 1px solid var(--shivanya-color-border, #edf0f4); padding-top: 10px; color: var(--shivanya-color-text-secondary, #8992a0); font-size: 9px; }
+.accountInactive { color: #bd7b2a; font-size: 9px; font-weight: 700; }
+@media (max-width: 760px) {
+  .subPageTop { margin-bottom: 18px; }
+  .accountsTotalCard { border-radius: 14px; padding: 17px; }
+  .accountsPageGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .accountPageCard { padding: 12px; }
+  .accountPageCard > strong { font-size: 18px; }
+  .accountPageFoot { flex-direction: column; }
+}
+@media (max-width: 360px) { .accountsPageGrid { grid-template-columns: 1fr; } }

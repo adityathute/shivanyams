@@ -314,29 +314,10 @@ export function UpdatesSection({
                   <span className="update-skeleton-title" />
                   <span className="update-skeleton-summary" />
                 </span>
-                {applicationDeadline ? (
-                  <time className={`update-application-deadline deadline-${deadlineStatus}`}>
-                    {formatApplicationDeadline(applicationDeadline)}
-                  </time>
-                ) : showDateAndNewBadge ? (
-                  <>
-                    <time>
-                      {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            dateLocale,
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : getPortalText("new", language)}
-                    </time>
-                    <span className="new-pill">
-                      {getPortalText("new", language)}
-                    </span>
-                  </>
-                ) : null}
+                {showDateAndNewBadge && <>
+                  <span className="update-skeleton-date" />
+                  <span className="update-skeleton-pill" />
+                </>}
               </div>
             ))}
           </div>
@@ -366,24 +347,29 @@ export function UpdatesSection({
                   {itemDescription && <small>{itemDescription}</small>}
                 </span>
 
-                {showDateAndNewBadge && <>
-                  <time>
-                    {item.date
-                      ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                          dateLocale,
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          },
-                        )
-                      : getPortalText("new", language)}
+                {applicationDeadline ? (
+                  <time className={`update-application-deadline deadline-${deadlineStatus}`}>
+                    {formatApplicationDeadline(applicationDeadline)}
                   </time>
-  
-                  <span className="new-pill">
-                    {getPortalText("new", language)}
-                  </span>
-                </>}
+                ) : showDateAndNewBadge ? (
+                  <>
+                    <time>
+                      {item.date
+                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                            dateLocale,
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
+                        : getPortalText("new", language)}
+                    </time>
+                    <span className="new-pill">
+                      {getPortalText("new", language)}
+                    </span>
+                  </>
+                ) : null}
               </a>
             );
           })

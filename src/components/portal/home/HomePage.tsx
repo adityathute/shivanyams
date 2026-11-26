@@ -17,6 +17,7 @@ import { HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-co
 import { createPostSlug } from "../post/PortalPostDetail";
 import { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
 import { POST_DETAIL_SIDEBAR_CATEGORY_ORDER } from "../post/post-sidebar-config";
+import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 import "./../../../styles/legacy/components/portal/post/PortalPostDetail.css";
 
 export function HomePage() {
@@ -263,6 +264,11 @@ export function HomePage() {
                       key={item.id}
                     >
                       <span>{getPostTitle(item)}</span>
+                      {item.type === "job" && getJobApplicationDeadline(item) ? (
+                        <time className={`post-sidebar-job-deadline deadline-${getJobDeadlineStatus(getJobApplicationDeadline(item))}`}>
+                          {formatJobApplicationDeadline(getJobApplicationDeadline(item))}
+                        </time>
+                      ) : null}
                     </a>
                   ))}
                 </div>

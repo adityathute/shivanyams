@@ -1,36 +1,11 @@
 /* Shared category update rows — fit badges to their labels on home and category pages. */
-/* Homepage Latest Updates: use one equal-width badge column sized for the Scheme label. */
+/* Homepage and category listings: size the badge column from its localized label. */
 .updates-panel .update-row {
-  grid-template-columns: 118px minmax(0, 1fr) 100px 42px;
-  min-width: 0;
-}
-
-/* Marathi and Hindi labels use a compact homepage badge column. */
-.updates-panel-language-mr .update-row,
-.updates-panel-language-hi .update-row {
-  grid-template-columns: 100px minmax(0, 1fr) 100px 42px;
-}
-
-/* Category pages retain their content-sized badge columns. */
-.jobs-updates .update-row,
-.schemes-updates .update-row,
-.admit-updates .update-row,
-.results-updates .update-row,
-.guides-updates .update-row,
-.tools-updates .update-row {
   grid-template-columns: max-content minmax(0, 1fr) 100px 42px;
   min-width: 0;
 }
 
-.updates-panel .update-row > .portal-post-category-badge {
-  justify-self: stretch;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  white-space: nowrap;
-  justify-content: center;
-}
-
+.updates-panel .update-row > .portal-post-category-badge,
 .jobs-updates .update-row > .portal-post-category-badge,
 .schemes-updates .update-row > .portal-post-category-badge,
 .admit-updates .update-row > .portal-post-category-badge,
@@ -39,9 +14,10 @@
 .tools-updates .update-row > .portal-post-category-badge {
   justify-self: start;
   width: max-content;
-  min-width: 0;
+  min-width: max-content;
   max-width: 100%;
   white-space: nowrap;
+  justify-content: center;
 }
 
 /* Category-tinted backgrounds only: preserve each row's existing text color and border. */
@@ -90,16 +66,7 @@
 }
 
 @media (max-width: 1100px) {
-  .updates-panel .update-row {
-    grid-template-columns: 110px minmax(0, 1fr) 78px 35px;
-    gap: 8px;
-  }
-
-  .updates-panel-language-mr .update-row,
-  .updates-panel-language-hi .update-row {
-    grid-template-columns: 92px minmax(0, 1fr) 78px 35px;
-  }
-
+  .updates-panel .update-row,
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,
@@ -112,15 +79,7 @@
 }
 
 @media (max-width: 760px) {
-  .updates-panel .update-row {
-    grid-template-columns: 100px minmax(0, 1fr) 36px;
-    gap: 7px;
-  }
-
-  .updates-panel-language-mr .update-row {
-    grid-template-columns: 92px minmax(0, 1fr) 36px;
-  }
-
+  .updates-panel .update-row,
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,
@@ -133,15 +92,7 @@
 }
 
 @media (max-width: 390px) {
-  .updates-panel .update-row {
-    grid-template-columns: 94px minmax(0, 1fr) 31px;
-    gap: 5px;
-  }
-
-  .updates-panel-language-mr .update-row {
-    grid-template-columns: 86px minmax(0, 1fr) 31px;
-  }
-
+  .updates-panel .update-row,
   .jobs-updates .update-row,
   .schemes-updates .update-row,
   .admit-updates .update-row,

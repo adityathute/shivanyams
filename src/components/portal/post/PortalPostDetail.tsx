@@ -649,6 +649,41 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     ? getCategoryTitle(categoryRecord, language as CategoryLanguage)
     : "";
 
+  const sidebarCategorySections = useMemo(() => {
+    const categoryOrder: CategorySlug[] = [
+      category,
+      ...(["jobs", "schemes", "examination", "results", "admit-cards", "guides", "tools"] as CategorySlug[])
+        .filter((entry) => entry !== category),
+    ].filter((entry) => entry !== "videos");
+
+    return categoryOrder.map((entry) => {
+      const type = categoryItemTypes[entry];
+      const posts = data.items
+        .filter((item) => item.type === type && String(item.id) !== String(post?.postId))
+        .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+        .slice(0, 5);
+      const categorySlug = entry === "guides" ? "articles-guides" : entry;
+      const record = categories.find((item) => item.slug === categorySlug);
+      const fallbackNames: Record<Exclude<CategorySlug, "videos">, string> = {
+        jobs: "Jobs",
+        schemes: "Schemes",
+        examination: "Examinations",
+        results: "Results",
+        "admit-cards": "Admit Cards",
+        guides: "Guides",
+        tools: "Tools",
+      };
+
+      return {
+        slug: entry,
+        title: record
+          ? getCategoryTitle(record, language as CategoryLanguage)
+          : fallbackNames[entry],
+        posts,
+      };
+    }).filter((section) => section.posts.length > 0);
+  }, [category, categories, data.items, language, post?.postId]);
+
   const categoryPosts = useMemo(() => {
     if (category === "videos") {
       return data.videos.map((video) => ({
@@ -1431,6 +1466,27 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   <div className="subscribe-icon"><MailIcon /></div>
                   <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                 </section>
+                {sidebarCategorySections.map((section) => (
+                  <section className="panelin post-sidebar-category" key={section.slug}>
+                    <div className="section-heading">
+                      <h2>{section.title}</h2>
+                      <span>{section.title}</span>
+                    </div>
+                    <div className="post-sidebar-category-list">
+                      {section.posts.map((item) => (
+                        <Link
+                          className="post-sidebar-category-link"
+                          href={`/${section.slug}/${item.slug || createPostSlug(item.title)}`}
+                          key={item.id}
+                        >
+                          <span>{getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) || item.title}</span>
+                          <b aria-hidden="true">›</b>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+
                 <section className="panelin important-panel">
                   <div className="section-heading">
                     <h2>{t("usefulLinks")}</h2>

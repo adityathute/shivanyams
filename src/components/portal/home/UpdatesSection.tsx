@@ -32,6 +32,7 @@ type Props = {
   onQueryChange?: (value: string) => void;
   onTypeChange?: (value: ItemType | "all") => void;
   showFilters?: boolean;
+  showDateAndNewBadge?: boolean;
 };
 
 interface CategoryApiResponse {
@@ -125,6 +126,7 @@ export function UpdatesSection({
   onQueryChange,
   onTypeChange,
   showFilters = true,
+  showDateAndNewBadge = true,
 }: Props) {
   const { data } = usePortalData();
 
@@ -222,7 +224,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section className={`updates-panel updates-panel-language-${language} panelin`} id="updates">
+    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge ? "" : " updates-panel-home"} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 
@@ -277,8 +279,10 @@ export function UpdatesSection({
                   <span className="update-skeleton-title" />
                   <span className="update-skeleton-summary" />
                 </span>
-                <span className="update-skeleton-date" />
-                <span className="update-skeleton-pill" />
+                {showDateAndNewBadge && <>
+                  <span className="update-skeleton-date" />
+                  <span className="update-skeleton-pill" />
+                </>}
               </div>
             ))}
           </div>
@@ -297,22 +301,24 @@ export function UpdatesSection({
                   {itemDescription && <small>{itemDescription}</small>}
                 </span>
 
-                <time>
-                  {item.date
-                    ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                        dateLocale,
-                        {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        },
-                      )
-                    : getPortalText("new", language)}
-                </time>
-
-                <span className="new-pill">
-                  {getPortalText("new", language)}
-                </span>
+                {showDateAndNewBadge && <>
+                  <time>
+                    {item.date
+                      ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                          dateLocale,
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )
+                      : getPortalText("new", language)}
+                  </time>
+  
+                  <span className="new-pill">
+                    {getPortalText("new", language)}
+                  </span>
+                </>}
               </a>
             );
           })

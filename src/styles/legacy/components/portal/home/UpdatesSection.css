@@ -447,6 +447,9 @@
 
 .update-row .update-application-deadline.deadline-expired {
   color: #718096;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: currentColor;
 }
 
 [data-theme="dark"] .update-row .update-application-deadline.deadline-urgent {

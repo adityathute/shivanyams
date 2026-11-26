@@ -34,6 +34,7 @@ import { PostFAQSection } from "./PostFAQSection";
 import { PostEngagementActions } from "./PostEngagementActions";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
 import { POST_DETAIL_SIDEBAR_CATEGORY_ORDER } from "./post-sidebar-config";
+import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 
 export type CategorySlug =
   | "jobs"
@@ -1474,6 +1475,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           key={item.id}
                         >
                           <span>{getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) || item.title}</span>
+                          {item.type === "job" && getJobApplicationDeadline(item) ? (
+                            <time className={`post-sidebar-job-deadline deadline-${getJobDeadlineStatus(getJobApplicationDeadline(item))}`}>
+                              {formatJobApplicationDeadline(getJobApplicationDeadline(item))}
+                            </time>
+                          ) : null}
                         </Link>
                       ))}
                     </div>

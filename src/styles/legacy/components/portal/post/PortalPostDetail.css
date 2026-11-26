@@ -1800,11 +1800,11 @@
 }
 
 .post-sidebar-category-link > .portal-post-category-badge {
-  flex: 0 0 30px;
-  width: 30px;
-  min-width: 30px;
-  min-height: 30px;
-  height: 30px;
+  flex: 0 0 24px;
+  width: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  height: 24px;
   padding: 3px;
   gap: 0;
   border-radius: 50%;
@@ -1816,8 +1816,8 @@
 
 .post-sidebar-category-link > .portal-post-category-badge .portal-post-category-icon,
 .post-sidebar-category-link > .portal-post-category-badge .portal-post-category-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
 }
 
 .post-sidebar-category-link > span:not(.portal-post-category-badge) {

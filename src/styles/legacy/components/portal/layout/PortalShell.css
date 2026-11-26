@@ -723,7 +723,7 @@
 /* Mobile topbar: larger menu target with tighter logo spacing */
 @media (max-width: 767px) {
   .shivanya-shell-header-inner {
-    gap: 8px;
+        gap: 15px !important;
     padding-inline: 10px;
   }
 
@@ -738,11 +738,11 @@
   }
 
   .shivanya-shell-mobile-menu .shivanya-button {
-    width: 28px;
-    min-width: 28px;
+    width: 22px;
+    min-width: 22px;
     height: 42px;
     padding: 0;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 1;
   }
 

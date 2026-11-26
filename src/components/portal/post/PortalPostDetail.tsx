@@ -653,13 +653,22 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const sidebarCategorySections = useMemo(() => {
     const orderKey = category === "videos" ? "jobs" : category;
     const categoryOrder = POST_DETAIL_SIDEBAR_CATEGORY_ORDER[orderKey];
+    const currentItem =
+      previewItem ||
+      data.items.find((item) => String(item.id) === String(post?.postId));
 
     return categoryOrder.map((entry) => {
       const type = categoryItemTypes[entry];
-      const posts = data.items
+      const relatedPosts = data.items
         .filter((item) => item.type === type && String(item.id) !== String(post?.postId))
-        .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
-        .slice(0, 5);
+        .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+      const posts = (
+        relatedPosts.length
+          ? relatedPosts
+          : currentItem?.type === type
+            ? [currentItem]
+            : []
+      ).slice(0, 5);
       const categorySlug = entry === "guides" ? "articles-guides" : entry;
       const record = categories.find((item) => item.slug === categorySlug);
       const fallbackNames: Record<Exclude<CategorySlug, "videos">, string> = {
@@ -680,7 +689,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
         posts,
       };
     }).filter((section) => section.posts.length > 0);
-  }, [category, categories, data.items, language, post?.postId]);
+  }, [category, categories, data.items, language, post?.postId, previewItem]);
 
   const categoryPosts = useMemo(() => {
     if (category === "videos") {

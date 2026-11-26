@@ -102,16 +102,32 @@ function getJobApplicationDeadline(item: Item): string {
   return item.end_date || "";
 }
 
-function getDeadlineStatus(dateValue: string): "urgent" | "soon" | "open" {
+function getDeadlineStatus(
+  dateValue: string,
+): "urgent" | "soon" | "open" | "expired" {
   const [year, month, day] = dateValue.slice(0, 10).split("-").map(Number);
+
+  if (!year || !month || !day) return "expired";
+
   const deadline = new Date(year, month - 1, day);
+  if (
+    deadline.getFullYear() !== year ||
+    deadline.getMonth() !== month - 1 ||
+    deadline.getDate() !== day
+  ) {
+    return "expired";
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const daysRemaining = Math.ceil((deadline.getTime() - today.getTime()) / 86400000);
+  const daysRemaining = Math.round(
+    (deadline.getTime() - today.getTime()) / 86400000,
+  );
 
-  if (daysRemaining <= 3) return "urgent";
-  if (daysRemaining <= 7) return "soon";
-  return "open";
+  if (daysRemaining === 0) return "urgent";
+  if (daysRemaining >= 1 && daysRemaining <= 3) return "soon";
+  if (daysRemaining >= 4) return "open";
+  return "expired";
 }
 
 function formatApplicationDeadline(dateValue: string): string {

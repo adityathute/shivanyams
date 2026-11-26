@@ -1792,3 +1792,45 @@
     padding-left: 12px;
   }
 }
+
+
+/* Compact category badge and total-post count in related-category headers. */
+.portal-post-detail .post-sidebar-category-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line, #edf1f6);
+  background: var(--surface, #fff);
+}
+
+.portal-post-detail .post-sidebar-category-heading .category-badge {
+  min-width: 0;
+  max-width: 70%;
+}
+
+.portal-post-detail .post-sidebar-category-count {
+  flex: 0 0 auto;
+  color: var(--text-secondary, #64748b);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-heading {
+  border-bottom-color: #293544;
+  background: #151b23;
+}
+
+:root[data-theme="dark"] .portal-post-detail .post-sidebar-category-count {
+  color: #aab8c8;
+}
+
+@media (max-width: 760px) {
+  .portal-post-detail .post-sidebar-category-heading {
+    padding: 11px 12px;
+  }
+}

@@ -115,7 +115,7 @@
   position: absolute;
   z-index: 35;
   top: calc(100% + 10px);
-  left: 0;
+  left: -10;
   right: auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -102,6 +102,23 @@ function getJobApplicationDeadline(item: Item): string {
   return item.end_date || "";
 }
 
+function isJobDeadlineRevised(item: Item): boolean {
+  const applicationEnd = item.important_dates?.find(
+    (entry) => entry.date_type === "application_end",
+  );
+
+  return (
+    applicationEnd?.date_format === "revised" ||
+    applicationEnd?.date_format === "revised_with_time"
+  );
+}
+
+function getExtendedDeadlineLabel(language: Language): string {
+  if (language === "mr") return "मुदतवाढ";
+  if (language === "hi") return "तिथि बढ़ाई गई";
+  return "Date Extended";
+}
+
 function getDeadlineStatus(
   dateValue: string,
 ): "urgent" | "soon" | "open" | "expired" {
@@ -349,6 +366,8 @@ export function UpdatesSection({
             const deadlineStatus = applicationDeadline
               ? getDeadlineStatus(applicationDeadline)
               : "";
+            const deadlineRevised =
+              applicationDeadline && isJobDeadlineRevised(item);
 
             return (
               <a
@@ -364,9 +383,16 @@ export function UpdatesSection({
                 </span>
 
                 {applicationDeadline ? (
-                  <time className={`update-application-deadline deadline-${deadlineStatus}`}>
-                    {formatApplicationDeadline(applicationDeadline)}
-                  </time>
+                  <span className="update-deadline-group">
+                    {deadlineRevised && (
+                      <span className="update-deadline-extended">
+                        {getExtendedDeadlineLabel(language)}
+                      </span>
+                    )}
+                    <time className={`update-application-deadline deadline-${deadlineStatus}`}>
+                      {formatApplicationDeadline(applicationDeadline)}
+                    </time>
+                  </span>
                 ) : showDateAndNewBadge ? (
                   <>
                     <time>

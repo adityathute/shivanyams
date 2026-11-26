@@ -209,21 +209,6 @@ export default function LedgerPage() {
     setShowAccountForm(false);
   };
 
-  const accountBalances = useMemo(() => accounts.map((account) => {
-    const movement = entries.filter((entry) => entry.accountId === account.id).reduce((sum, entry) => sum + (entry.type === "income" ? entry.amount : -entry.amount), 0);
-    return { ...account, balance: account.openingBalance + movement };
-  }), [accounts, entries]);
-
-  const saveAccount = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const name = accountDraft.name.trim();
-    if (!name) return;
-    const account: LedgerAccount = { id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Date.now()), name, kind: accountDraft.kind, note: accountDraft.note.trim(), openingBalance: 0, active: true };
-    setAccounts((current) => [...current, account]);
-    setAccountDraft({ name: "", kind: "bank", note: "" });
-    setShowAccountForm(false);
-  };
-
   const deleteEntry = (id: string) => {
     if (window.confirm("Delete this transaction?")) {
       setEntries((current) => current.filter((entry) => entry.id !== id));

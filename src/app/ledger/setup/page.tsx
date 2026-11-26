@@ -13,8 +13,8 @@ type Setup = {
   rent: string; deposit: string; agreementMonths: string; agreementStart: string; extraPlanned: string; balances: Record<string, string>; assets: Asset[];
 };
 const initial: Setup = {
-  setupDate: new Date().toISOString().slice(0, 10), brotherCapital: "5000", ownerCapital: "5000", loanSanctioned: "35000", loanReceived: "30000", repaymentTotal: "40000", installments: "10", installmentsPaid: "0",
-  rent: "5000", deposit: "10000", agreementMonths: "11", agreementStart: "", extraPlanned: "10000",
+  setupDate: new Date().toISOString().slice(0, 10), brotherCapital: "", ownerCapital: "", loanSanctioned: "", loanReceived: "", repaymentTotal: "", installments: "", installmentsPaid: "",
+  rent: "", deposit: "", agreementMonths: "", agreementStart: "", extraPlanned: "",
   balances: { "main-cash": "", "csp-cash": "", "business-current": "", "personal-one": "", "personal-two": "", "phonepe-business": "" }, assets: [],
 };
 const accounts = [
@@ -45,7 +45,7 @@ export default function LedgerOpeningSetupPage() {
   const addAsset = () => setData(current => ({ ...current, assets: [...current.assets, { id: crypto.randomUUID(), name: "", purchaseCost: "", currentValue: "", note: "" }] }));
   const updateAsset = (id: string, key: keyof Asset, value: string) => { setData(current => ({ ...current, assets: current.assets.map(asset => asset.id === id ? { ...asset, [key]: value } : asset) })); setSaved(false); };
   const save = () => {
-    if (Math.abs(balanceSum - funds) > 0.005) { setError(`Account balance allocation must total ${money(funds)}. Currently allocated: ${money(balanceSum)}.`); return; }
+    if ((funds > 0 || balanceSum > 0) && Math.abs(balanceSum - funds) > 0.005) { setError(`Account balance allocation must total ${money(funds)}. Currently allocated: ${money(balanceSum)}.`); return; }
     const previous = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...previous, openingSetup: data }));
     setError(""); setSaved(true);
@@ -55,7 +55,7 @@ export default function LedgerOpeningSetupPage() {
     <div className={styles.subPageTop}><button className={styles.backButton} onClick={() => router.push("/ledger")}>← Ledger</button><span className={styles.eyebrow}>ONE-TIME SETUP</span></div>
     <div className={styles.subPageHeading}><div className={styles.eyebrow}>LEDGER · STARTING POSITION</div><h1>Opening setup</h1><p>Enter what you have arranged so far. You can edit this later.</p></div>
     <section style={cardStyle}>
-      <h2 style={{ margin: "0 0 5px", fontSize: 17 }}>Starting funds</h2><p style={{ margin: "0 0 15px", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>The current funding plan is ₹40,000 arranged, with ₹10,000 more planned.</p>
+      <h2 style={{ margin: "0 0 5px", fontSize: 17 }}>Starting funds</h2><p style={{ margin: "0 0 15px", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Enter your actual figures here. Nothing is pre-filled; you control every amount.</p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 10 }}>
         <label style={labelStyle}>Brother's contribution<input style={inputStyle} type="number" min="0" value={data.brotherCapital} onChange={e => set("brotherCapital", e.target.value)} /></label>
         <label style={labelStyle}>Your contribution<input style={inputStyle} type="number" min="0" value={data.ownerCapital} onChange={e => set("ownerCapital", e.target.value)} /></label>
@@ -65,7 +65,7 @@ export default function LedgerOpeningSetupPage() {
       <div style={{ marginTop: 14, borderRadius: 12, background: "var(--shivanya-color-background, #f5f7fa)", padding: 13, display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}><span>Currently arranged</span><strong>{money(funds)}</strong><span>Including planned funds: <b>{money(funds + Number(data.extraPlanned || 0))}</b></span></div>
     </section>
     <section style={cardStyle}>
-      <h2 style={{ margin: "0 0 5px", fontSize: 17 }}>Where the money is now</h2><p style={{ margin: "0 0 12px", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Enter actual balances. All accounts must add up to the arranged amount. Personal accounts can include business money.</p>
+      <h2 style={{ margin: "0 0 5px", fontSize: 17 }}>Where the money is now</h2><p style={{ margin: "0 0 12px", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Enter actual balances. Enter the actual money currently held in each account. Personal accounts can include business money.</p>
       <div style={{ display: "grid", gap: 10 }}>{accounts.map(([id, name]) => <label key={id} style={labelStyle}>{name}<input style={inputStyle} type="number" min="0" placeholder="0" value={data.balances[id] || ""} onChange={e => setData(current => ({ ...current, balances: { ...current.balances, [id]: e.target.value } }))} /></label>)}</div>
       <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontSize: 13 }}><span>Allocated total</span><strong>{money(balanceSum)} / {money(funds)}</strong></div>
     </section>
@@ -78,7 +78,7 @@ export default function LedgerOpeningSetupPage() {
         <label style={labelStyle}>Installments (months)<input style={inputStyle} type="number" min="1" value={data.installments} onChange={e => set("installments", e.target.value)} /></label>
         <label style={labelStyle}>Installments already paid<input style={inputStyle} type="number" min="0" value={data.installmentsPaid} onChange={e => set("installmentsPaid", e.target.value)} /></label>
       </div>
-      <p style={{ margin: "12px 0 0", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Planned EMI: {money(Number(data.repaymentTotal || 0) / Math.max(1, Number(data.installments || 1)))} · Difference between sanctioned and received is left for clarification, not auto-classified.</p>
+      <p style={{ margin: "12px 0 0", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Estimated EMI: {money(Number(data.repaymentTotal || 0) / Math.max(1, Number(data.installments || 1)))} · Difference between sanctioned and received is left for clarification, not auto-classified.</p>
     </section>
     <section style={cardStyle}>
       <h2 style={{ margin: "0 0 12px", fontSize: 17 }}>Shop rent & agreement</h2>
@@ -88,7 +88,7 @@ export default function LedgerOpeningSetupPage() {
         <label style={labelStyle}>Agreement duration (months)<input style={inputStyle} type="number" min="1" value={data.agreementMonths} onChange={e => set("agreementMonths", e.target.value)} /></label>
         <label style={labelStyle}>Agreement start date<input style={inputStyle} type="date" value={data.agreementStart} onChange={e => set("agreementStart", e.target.value)} /></label>
       </div>
-      <p style={{ margin: "12px 0 0", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Agreement end date and renewal reminder will be calculated when the start date is entered. Each renewal should be kept as a separate record.</p>
+      <p style={{ margin: "12px 0 0", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Add the agreement dates and terms when you are ready. Each renewal should be kept as a separate record.</p>
     </section>
     <section style={cardStyle}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}><h2 style={{ margin: 0, fontSize: 17 }}>Existing equipment</h2><button className={styles.addAccountButton} onClick={addAsset}>＋ Add asset</button></div>

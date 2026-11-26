@@ -44,7 +44,7 @@ export default function LedgerPage() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed.entries)) setEntries(parsed.entries);
-        if (Array.isArray(parsed.accounts) && parsed.accounts.length) setAccounts(parsed.accounts);
+        if (Array.isArray(parsed.accounts) && parsed.accounts.length) setAccounts(parsed.accounts);\n        if (parsed.openingSetup?.balances) setAccounts((current) => current.map((account) => ({ ...account, openingBalance: Number(parsed.openingSetup.balances[account.id] ?? account.openingBalance) })));
       }
     } catch { /* Ignore invalid local preview data. */ }
     setReady(true);
@@ -93,7 +93,7 @@ export default function LedgerPage() {
     <main className={styles.page}>
       <div className={styles.topbar}>
         <div className={styles.heading}><div className={styles.eyebrow}>SHIVANYA MULTISERVICES</div><h1>Ledger</h1><p>Your business money, at a glance.</p></div>
-        <button className={styles.primaryButton} onClick={() => openNewEntry()}><span aria-hidden="true">＋</span> Add entry</button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button className={styles.backButton} onClick={() => router.push("/ledger/setup")}>Opening setup</button><button className={styles.primaryButton} onClick={() => openNewEntry()}><span aria-hidden="true">＋</span> Add entry</button></div>
       </div>
 
       <section className={styles.dashboardCards} aria-label="Ledger overview">

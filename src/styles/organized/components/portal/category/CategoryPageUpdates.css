@@ -213,3 +213,17 @@
 .videos-skeleton-title-short { width: 58%; margin-top: 8px; }
 @media (max-width: 600px) { .videos-skeleton-grid { padding: 0 12px 12px; } }
 @media (prefers-reduced-motion: reduce) { .videos-skeleton-thumbnail, .videos-skeleton-line { animation: none; } }
+
+/* Homepage latest updates use only the category badge and post content. */
+.updates-panel-home .update-row {
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+
+.updates-panel-home .update-skeleton-row {
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+
+.updates-panel-home .update-skeleton-date,
+.updates-panel-home .update-skeleton-pill {
+  display: none;
+}

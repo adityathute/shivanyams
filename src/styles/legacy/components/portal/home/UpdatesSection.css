@@ -423,6 +423,31 @@
 }
 
 /* Homepage job application deadline status */
+.update-row .update-deadline-group {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+.update-row .update-deadline-extended {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  border: 1px solid #fed7aa;
+  border-radius: 4px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+
 .update-row .update-application-deadline {
   display: block;
   justify-self: end;
@@ -450,6 +475,12 @@
   text-decoration: line-through;
   text-decoration-thickness: 1.5px;
   text-decoration-color: currentColor;
+}
+
+[data-theme="dark"] .update-row .update-deadline-extended {
+  border-color: #7c2d12;
+  background: #431407;
+  color: #fdba74;
 }
 
 [data-theme="dark"] .update-row .update-application-deadline.deadline-urgent {

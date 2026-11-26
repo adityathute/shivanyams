@@ -12,6 +12,7 @@ import {
   ToolsIcon,
   BookmarkIcon,
   TagIcon,
+  ReportIcon,
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";
@@ -94,6 +95,11 @@ export function getPortalNavigation(
             label: translate(language, sidebarTranslations, "admin"),
             href: "/admin",
             icon: <ShieldCheckIcon />,
+          },
+          {
+            label: "Shop Hisab",
+            href: "/shop-hisab",
+            icon: <ReportIcon />,
           },
         ]
       : []),

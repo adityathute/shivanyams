@@ -50,7 +50,7 @@ export default function LedgerPage() {
     setReady(true);
   }, []);
   useEffect(() => {
-    if (ready) localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries, accounts }));
+    if (ready) { const previous = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...previous, entries, accounts })); }
   }, [ready, entries, accounts]);
 
   const todayEntries = useMemo(() => entries.filter((entry) => entry.date === today()), [entries]);

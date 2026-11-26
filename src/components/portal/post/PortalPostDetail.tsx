@@ -1484,7 +1484,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           key={item.id}
                         >
                           <span>{getLocalizedText(language, item.title_en, item.title_mr, item.title_hi) || item.title}</span>
-                          <b aria-hidden="true">›</b>
                         </Link>
                       ))}
                     </div>

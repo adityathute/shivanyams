@@ -1747,6 +1747,52 @@
   overflow-wrap: anywhere;
 }
 
+/* Compact application dates shown beside job links in both sidebars. */
+.post-sidebar-category-link .post-sidebar-job-deadline {
+  flex: 0 0 auto;
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-sidebar-job-deadline.deadline-urgent {
+  color: #dc2626;
+}
+
+.post-sidebar-job-deadline.deadline-soon {
+  color: #ea580c;
+}
+
+.post-sidebar-job-deadline.deadline-open {
+  color: #16a34a;
+}
+
+.post-sidebar-job-deadline.deadline-expired {
+  color: #718096;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: currentColor;
+}
+
+[data-theme="dark"] .post-sidebar-job-deadline.deadline-urgent {
+  color: #f87171;
+}
+
+[data-theme="dark"] .post-sidebar-job-deadline.deadline-soon {
+  color: #fb923c;
+}
+
+[data-theme="dark"] .post-sidebar-job-deadline.deadline-open {
+  color: #4ade80;
+}
+
+[data-theme="dark"] .post-sidebar-job-deadline.deadline-expired {
+  color: #a9b7c8;
+}
+
 
 /* Match each category's own accent color on sidebar row hover. */
 .post-sidebar-category-jobs .post-sidebar-category-link:hover {

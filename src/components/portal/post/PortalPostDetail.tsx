@@ -1423,7 +1423,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             </div>
 
             {/* Right sidebar: useful links for a post, or category recommendations for a 404. */}
-            {!data.loading && (post || recommendedPosts.length > 0) && (
+            {(data.loading || post || recommendedPosts.length > 0) && (
               <aside className="right-column">
                 {data.loading || post ? (
                 <>

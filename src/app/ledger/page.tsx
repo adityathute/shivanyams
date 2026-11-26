@@ -73,7 +73,7 @@ export default function LedgerPage() {
   const [accounts, setAccounts] = useState<LedgerAccount[]>(defaultAccounts);
   const [showAccounts, setShowAccounts] = useState(false);
   const [showAccountForm, setShowAccountForm] = useState(false);
-  const [accountDraft, setAccountDraft] = useState({ name: "", kind: "bank" as AccountKind, note: "" });
+  const [accountDraft, setAccountDraft] = useState({ name: "", kind: "bank" as AccountKind, note: "", openingBalance: "0" });
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filterDate, setFilterDate] = useState(today());
@@ -203,9 +203,9 @@ export default function LedgerPage() {
     event.preventDefault();
     const name = accountDraft.name.trim();
     if (!name) return;
-    const account: LedgerAccount = { id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Date.now()), name, kind: accountDraft.kind, note: accountDraft.note.trim(), openingBalance: 0, active: true };
+    const account: LedgerAccount = { id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Date.now()), name, kind: accountDraft.kind, note: accountDraft.note.trim(), openingBalance: Number(accountDraft.openingBalance) || 0, active: true };
     setAccounts((current) => [...current, account]);
-    setAccountDraft({ name: "", kind: "bank", note: "" });
+    setAccountDraft({ name: "", kind: "bank", note: "", openingBalance: "0" });
     setShowAccountForm(false);
   };
 
@@ -251,7 +251,7 @@ export default function LedgerPage() {
               </article>
             ))}
           </div>
-          {showAccountForm && <form className={styles.accountForm} onSubmit={saveAccount}><label>Account name<input value={accountDraft.name} onChange={(event) => setAccountDraft({ ...accountDraft, name: event.target.value })} placeholder="e.g. Savings account" required /></label><label>Account type<select value={accountDraft.kind} onChange={(event) => setAccountDraft({ ...accountDraft, kind: event.target.value as AccountKind })}><option value="cash">Cash</option><option value="bank">Bank</option><option value="upi">UPI / Wallet</option></select></label><label>Note<input value={accountDraft.note} onChange={(event) => setAccountDraft({ ...accountDraft, note: event.target.value })} placeholder="Optional details" /></label><button type="submit" className={styles.saveButton}>Save account</button></form>}
+          {showAccountForm && <form className={styles.accountForm} onSubmit={saveAccount}><label>Account name<input value={accountDraft.name} onChange={(event) => setAccountDraft({ ...accountDraft, name: event.target.value })} placeholder="e.g. Savings account" required /></label><label>Account type<select value={accountDraft.kind} onChange={(event) => setAccountDraft({ ...accountDraft, kind: event.target.value as AccountKind })}><option value="cash">Cash</option><option value="bank">Bank</option><option value="upi">UPI / Wallet</option></select></label><label>Opening balance<input type="number" min="0" step="0.01" inputMode="decimal" value={accountDraft.openingBalance} onChange={(event) => setAccountDraft({ ...accountDraft, openingBalance: event.target.value })} placeholder="0" /></label><label>Note<input value={accountDraft.note} onChange={(event) => setAccountDraft({ ...accountDraft, note: event.target.value })} placeholder="Optional details" /></label><button type="submit" className={styles.saveButton}>Save account</button></form>}
         </section>
       )}
 

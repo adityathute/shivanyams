@@ -650,11 +650,19 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     : "";
 
   const sidebarCategorySections = useMemo(() => {
-    const categoryOrder: CategorySlug[] = [
-      category,
-      ...(["jobs", "schemes", "examination", "results", "admit-cards", "guides", "tools"] as CategorySlug[])
-        .filter((entry) => entry !== category),
-    ].filter((entry) => entry !== "videos");
+    const categoryOrder: Exclude<CategorySlug, "videos">[] = [
+      "jobs",
+      "schemes",
+      "examination",
+      "results",
+      "admit-cards",
+      "guides",
+      "tools",
+    ];
+    if (category !== "videos") {
+      categoryOrder.splice(categoryOrder.indexOf(category), 1);
+      categoryOrder.unshift(category);
+    }
 
     return categoryOrder.map((entry) => {
       const type = categoryItemTypes[entry];

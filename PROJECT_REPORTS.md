@@ -4,7 +4,7 @@ Reference Repositories:
   shivanya-sdk v1.0.0 (branch sdk-v2)
   shivanya-auth v1.0.0 (branch auth-v2)
 
-Repository Commit: 45e88a56ae164b802a064be8047a61e70116600f
+Repository Commit: 620b378aac855cefca5739e6c50d82f2d9b8ab57
 Both repositories are read-only references.
 Cleanup Status: Clean
 Cleanup Info: Concise project identity, exact live inventory metrics, review-phase progress, reference versions, pending priorities and latest three implementation commits. Full file register is maintained in PROJECT_STRUCTURE.md.
@@ -23,7 +23,7 @@ Cleanup Info: Concise project identity, exact live inventory metrics, review-pha
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last audited branch snapshot | `45e88a56ae164b802a064be8047a61e70116600f` |
+| Last audited branch snapshot | `620b378aac855cefca5739e6c50d82f2d9b8ab57` |
 
 Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; it is not the product major version.
 
@@ -32,13 +32,13 @@ Product/repository identity is ShivanyaMS V2. The npm package metadata remains `
 | Metric | Count |
 |---|---:|
 | Total tracked files | 311 |
-| Clean | 77 |
-| Cleanup Pending | 219 |
-| Not Reviewed | 15 |
-| Reviewed files | 296 |
-| Review completion | 95.2% |
-| Organized | 77 |
-| Legacy | 234 |
+| Clean | 81 |
+| Cleanup Pending | 221 |
+| Not Reviewed | 9 |
+| Reviewed files | 302 |
+| Review completion | 97.1% |
+| Organized | 81 |
+| Legacy | 230 |
 
 ## Reference metadata standardization
 
@@ -54,13 +54,15 @@ All 231 eligible source, stylesheet, configuration and project-document files no
 
 ## Review phase
 
-- Review batches completed: **45**.
+- Review batches completed: **46**.
 - Maximum target: 10 files per review batch.
 - Review-phase batch totals will not be estimated or increased from projected cleanup work. Finish reviewing every tracked file first.
 - After the review phase, implementation/cleanup work will start as a separate phase with its own batch numbering. No implementation-batch estimate is recorded before that phase begins.
 - Complete per-file status and structure classifications are maintained in `PROJECT_STRUCTURE.md`.
 
 ## Recent review updates
+
+**Batch 46:** Audited the four Hind font binaries by parsing their OpenType name and glyph tables: all identify the Hind family with the expected Regular, Medium, SemiBold and Bold styles (1,006 glyphs each). Confirmed the four weights are declared through `@font-face` in `src/app/portal-base.css`, with `font-display: swap`; Regular and Bold are preloaded by the root layout. The included `OFL-Hind.txt` provides the SIL Open Font License 1.1 notice. These four font assets are Clean / Organized. Reviewed the two logo assets and their repository references: `/logo.png` is used by the Portal layout, About page and footer; `shivanya-logo-light.png` has no code references. Both remain Cleanup Pending / Legacy pending a broader branding, asset optimization and removal/retention decision. Four other unreviewed category images could not be retrieved as binary image data through the available GitHub connector and remain Not Reviewed; no unsupported visual-quality claim was made. No application code or binary assets were modified.
 
 **Batch 45:** Reviewed the Portal migration package marker, migrations `0044`–`0050`, and the root npm lockfile. The empty migration `__init__.py` is a normal package marker. Migrations `0044`–`0050` form a sequential PostQuestion/ToolDetails schema chain; the visibility data migration maps existing false visibility values to private before removing the interim boolean field. The helpful-vote migrations add visitor uniqueness and a conditional per-user uniqueness constraint. Their field definitions align with the current `models.py`. The lockfile root metadata and dependency/devDependency declarations exactly match `package.json`. No static inconsistency justified editing generated migrations or the lockfile. Migration execution, rollback, fresh/existing database compatibility and `npm ci` were not run. Seven migrations remain Cleanup Pending / Legacy; `__init__.py` and `package-lock.json` are Clean / Organized.
 

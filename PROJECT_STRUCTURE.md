@@ -4,7 +4,7 @@ Reference Repositories:
   shivanya-sdk v1.0.0 (branch sdk-v2)
   shivanya-auth v1.0.0 (branch auth-v2)
 
-Repository Commit: 45e88a56ae164b802a064be8047a61e70116600f
+Repository Commit: 620b378aac855cefca5739e6c50d82f2d9b8ab57
 Both repositories are read-only references.
 Cleanup Status: Clean
 Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organized/Legacy is classified from actual file quality, never directory location.
@@ -13,7 +13,7 @@ Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organize
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `45e88a56ae164b802a064be8047a61e70116600f`  
+**Source snapshot:** `620b378aac855cefca5739e6c50d82f2d9b8ab57`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -21,12 +21,12 @@ Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organize
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 311 |
-| Clean | 77 |
-| Cleanup Pending | 219 |
-| Not Reviewed | 15 |
-| Organized | 77 |
-| Legacy | 234 |
-| Audited before this structure update | 296 |
+| Clean | 81 |
+| Cleanup Pending | 221 |
+| Not Reviewed | 9 |
+| Organized | 81 |
+| Legacy | 230 |
+| Audited before this structure update | 302 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -43,6 +43,12 @@ Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organize
 | **Total completed** | **231 / 231** |
 
 Reference headers are standardized across all 231 eligible files. The four batches changed metadata only; Cleanup Status and Structure Status were not changed by this work. Final-batch source snapshot: `45e88a56ae164b802a064be8047a61e70116600f`.
+
+## Batch 46 review notes
+
+- Hind font family files were inspected and verified against their CSS `@font-face` declarations and included OFL license. All four weights are Clean / Organized.
+- `public/logo.png` is referenced by three UI components; `public/shivanya-logo-light.png` is currently unreferenced. Both remain Cleanup Pending / Legacy pending asset optimization and branding review.
+- Four category images remain Not Reviewed because binary image inspection was unavailable through the GitHub connector.
 
 ## Complete tracked-file register
 | 1 | `shivanyams/.env.local.example` | Clean | Organized |
@@ -136,10 +142,10 @@ Reference headers are standardized across all 231 eligible files. The four batch
 | 89 | `shivanyams/package.json` | Cleanup Pending | Legacy |
 | 90 | `shivanyams/PROJECT_REPORTS.md` | Clean | Organized |
 | 91 | `shivanyams/PROJECT_STRUCTURE.md` | Clean | Organized |
-| 92 | `shivanyams/public/fonts/Hind-Bold.ttf` | Not Reviewed | Legacy |
-| 93 | `shivanyams/public/fonts/Hind-Medium.ttf` | Not Reviewed | Legacy |
-| 94 | `shivanyams/public/fonts/Hind-Regular.ttf` | Not Reviewed | Legacy |
-| 95 | `shivanyams/public/fonts/Hind-SemiBold.ttf` | Not Reviewed | Legacy |
+| 92 | `shivanyams/public/fonts/Hind-Bold.ttf` | Clean | Organized |
+| 93 | `shivanyams/public/fonts/Hind-Medium.ttf` | Clean | Organized |
+| 94 | `shivanyams/public/fonts/Hind-Regular.ttf` | Clean | Organized |
+| 95 | `shivanyams/public/fonts/Hind-SemiBold.ttf` | Clean | Organized |
 | 96 | `shivanyams/public/fonts/OFL-Hind.txt` | Clean | Organized |
 | 97 | `shivanyams/public/images/404-img.png` | Cleanup Pending | Legacy |
 | 98 | `shivanyams/public/images/admits-image007.png` | Cleanup Pending | Legacy |
@@ -150,8 +156,8 @@ Reference headers are standardized across all 231 eligible files. The four batch
 | 103 | `shivanyams/public/images/scheme-image.png` | Not Reviewed | Legacy |
 | 104 | `shivanyams/public/images/tools-image.png` | Not Reviewed | Legacy |
 | 105 | `shivanyams/public/images/videos-image.png` | Not Reviewed | Legacy |
-| 106 | `shivanyams/public/logo.png` | Not Reviewed | Legacy |
-| 107 | `shivanyams/public/shivanya-logo-light.png` | Not Reviewed | Legacy |
+| 106 | `shivanyams/public/logo.png` | Cleanup Pending | Legacy |
+| 107 | `shivanyams/public/shivanya-logo-light.png` | Cleanup Pending | Legacy |
 | 108 | `shivanyams/public/theme-init.js` | Clean | Organized |
 | 109 | `shivanyams/README.md` | Clean | Organized |
 | 110 | `shivanyams/src/app/about/page.tsx` | Clean | Organized |

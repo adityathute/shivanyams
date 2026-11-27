@@ -22,7 +22,7 @@
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-After Batch 43, unfinished cleanup scope is 236 files (202 Cleanup Pending + 34 Not Reviewed), giving an estimated 24 remaining batches and 67 batches overall, including the 43 completed batches. Recalculate after each batch.
+After Batch 44, unfinished cleanup scope is 236 files (212 Cleanup Pending + 24 Not Reviewed), giving an estimated 24 remaining batches and 68 batches overall, including the 44 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@ After Batch 43, unfinished cleanup scope is 236 files (202 Cleanup Pending + 34 
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 202 |
-| Not Reviewed | 34 |
-| Reviewed files after Batch 43 | 277 |
+| Cleanup Pending | 212 |
+| Not Reviewed | 24 |
+| Reviewed files after Batch 44 | 287 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,19 +43,21 @@ After Batch 43, unfinished cleanup scope is 236 files (202 Cleanup Pending + 34 
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 277 |
-| Review completion | 89.1% |
+| Files reviewed to date | 287 |
+| Review completion | 92.3% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 202 |
-| Files not yet reviewed | 34 |
+| Reviewed files still pending cleanup | 212 |
+| Files not yet reviewed | 24 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 43 |
+| Completed batches | 44 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 67 |
+| Estimated total batches | 68 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
 **Batch 43 review:** Audited ten Portal migrations (`0024`–`0032`), including both `0024` branches, merge points, report constraints, and guarded legacy-column cleanup. Dependency paths converge through `0025`/`0028`; `0029` removes constraints created in the preceding branches; `0030`/`0031` guard legacy-column nullability changes. No additional safe migration edit was justified from static inspection alone. The ten files moved from Not Reviewed to Cleanup Pending / Legacy. Fresh-database and existing-database migration execution remains unverified.
+
+**Batch 44 review:** Audited ten Portal migrations (`0033`–`0041` and `0043`). `0033`/`0034` remove database columns outside explicit allowlists; `0035` creates `PostVersion`; `0036`–`0040` remove legacy JobDetails columns; `0041` compares five job-related tables against historical migration state and removes unexpected columns; `0043` merges the PostVersion and newsletter migration branches. Several operations are intentionally irreversible (`reverse_sql=noop` / no-op reverse code), and `0041` performs dynamic schema cleanup. No safe source edit was justified without validating the actual historical schema and running migrations against representative fresh and existing databases. These ten files moved from Not Reviewed to Cleanup Pending / Legacy. Migration execution, rollback behavior and existing-database compatibility remain unverified.
 
 ## Reference repositories
 
@@ -75,7 +77,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 34 Not Reviewed files.
+1. Continue detailed cleanup audits for the remaining 24 Not Reviewed files.
 2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.

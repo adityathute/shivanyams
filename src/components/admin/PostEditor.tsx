@@ -2268,43 +2268,45 @@ export default function PostEditor({
                   </div>
                 </div>
 
-                <div className="post-editor-grid post-editor-single-column">
-                  <Input
-                    label="Application Fee"
-                    value={String(details.application_fee ?? "")}
-                    onChange={(event) => updateDetail("application_fee", event.target.value)}
-                    placeholder="e.g. General: ₹500, SC/ST: ₹250"
-                    fullWidth
-                    size="sm"
-                  />
-                </div>
-
-                <div className="post-editor-age-note-section">
-                  <div className="post-editor-translation-heading">
-                    <span>Application Fee Note</span>
-                    <button
-                      type="button"
-                      className="post-editor-show-translations"
-                      aria-expanded={expandedApplicationFeeLanguages}
-                      onClick={() => setExpandedApplicationFeeLanguages((current) => !current)}
-                    >
-                      {expandedApplicationFeeLanguages ? "− Hide other languages" : "+ Show other languages"}
-                    </button>
+                <div className="post-editor-common-fee-fields">
+                  <div className="post-editor-fee-amount">
+                    <Input
+                      label="Application Fee"
+                      value={String(details.application_fee ?? "")}
+                      onChange={(event) => updateDetail("application_fee", event.target.value)}
+                      placeholder="e.g. 394"
+                      fullWidth
+                      size="sm"
+                    />
                   </div>
-                  <div className="post-editor-grid post-editor-single-column">
-                    {([form.default_language as ContentLanguage, ...(expandedApplicationFeeLanguages
-                      ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== form.default_language)
-                      : [])] as ContentLanguage[]).map((lang) => (
-                      <Textarea
-                        key={lang}
-                        label={`Application Fee Note (${lang.toUpperCase()})`}
-                        rows={2}
-                        value={String(details[`application_fee_note_${lang}`] ?? "")}
-                        onChange={(event) => updateDetail(`application_fee_note_${lang}`, event.target.value)}
-                        fullWidth
-                        size="sm"
-                      />
-                    ))}
+
+                  <div className="post-editor-age-note-section post-editor-common-fee-note">
+                    <div className="post-editor-translation-heading">
+                      <span>Application Fee Note</span>
+                      <button
+                        type="button"
+                        className="post-editor-show-translations"
+                        aria-expanded={expandedApplicationFeeLanguages}
+                        onClick={() => setExpandedApplicationFeeLanguages((current) => !current)}
+                      >
+                        {expandedApplicationFeeLanguages ? "− Hide other languages" : "+ Show other languages"}
+                      </button>
+                    </div>
+                    <div className="post-editor-grid post-editor-single-column">
+                      {([form.default_language as ContentLanguage, ...(expandedApplicationFeeLanguages
+                        ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== form.default_language)
+                        : [])] as ContentLanguage[]).map((lang) => (
+                        <Textarea
+                          key={lang}
+                          label={`Application Fee Note (${lang.toUpperCase()})`}
+                          rows={2}
+                          value={String(details[`application_fee_note_${lang}`] ?? "")}
+                          onChange={(event) => updateDetail(`application_fee_note_${lang}`, event.target.value)}
+                          fullWidth
+                          size="sm"
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </section>

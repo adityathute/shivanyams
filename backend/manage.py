@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # File Location: shivanyams/backend/manage.py
-# Reference Repositories: shivanya-sdk v1.0.0 (Master; no Django entrypoint dependency); shivanya-auth (private, version not verified)
+# References:
+#   shivanya-sdk v1.0.0 (branch sdk-v2)
+#   shivanya-auth v1.0.0 (branch auth-v2)
+# Repository Commit: feb778ec5c752dbb3a47b56dec4caf79b64ebb01
+# Both repositories are read-only references.
 # Cleanup Status: Clean
 # Cleanup Info: Standardized Django management entrypoint imports and formatting; preserved command dispatch behavior. No UI/CSS applies.
 

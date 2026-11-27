@@ -1265,10 +1265,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const showDepartment = rows.some((row) => row.department);
                             const showAge =
                               jobDetails.age_mode === "per_post" &&
-                              rows.some((row) => row.ageValue);
+                              !rows.some((row) => row.ageValue);
                             const showAgeNote =
                               jobDetails.age_mode === "per_post" &&
-                              rows.some((row) => row.ageNote);
+                              !rows.some((row) => row.ageNote);
                             const hasCommonFee = Boolean(
                               jobDetails.application_fee != null &&
                               String(jobDetails.application_fee).trim(),

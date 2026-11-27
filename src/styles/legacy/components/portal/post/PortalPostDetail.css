@@ -464,12 +464,13 @@
   color: var(--text-primary, #f8fafc);
 }
 
-/* Job information summary grid */
+/* Job information summary layout.
+   Each field gets a measured preferred width, then flex-wrap packs fields
+   into the available row space without letting one long value widen every cell. */
 .portal-job-info-grid {
-  display: grid;
-  /* One shared grid lets primary details and fee/age details use the same
-     available row space instead of forcing the fee onto a separate row. */
-  grid-template-columns: repeat(var(--job-info-columns, 1), minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   width: 100%;
   max-width: 100%;
   margin: 18px 0;
@@ -481,19 +482,18 @@
 }
 
 .portal-job-info-primary-grid {
-  /* Keep the existing data grouping, but let its cells participate in the
-     parent grid so all populated fields can be placed together. */
   display: contents;
 }
 
-
 .portal-job-info-item {
   display: flex;
+  flex: 1 1 var(--job-info-item-width, 180px);
   flex-direction: column;
   justify-content: flex-start;
   gap: 7px;
+  box-sizing: border-box;
   min-width: 0;
-  max-width: 360px;
+  max-width: none;
   min-height: 0;
   padding: 13px 14px;
   background: var(--surface, #fff);
@@ -514,7 +514,7 @@
   font-weight: 600;
   line-height: 1.5;
   overflow-wrap: anywhere;
-  word-break: break-word;
+  word-break: normal;
 }
 
 :root[data-theme="dark"] .portal-job-info-grid {
@@ -532,106 +532,58 @@
 
 @media (max-width: 900px) {
   .portal-job-info-grid {
-    grid-template-columns: repeat(var(--job-info-columns, 1), minmax(0, 1fr));
+    width: 100%;
   }
 
-  .portal-job-info-item {
-    max-width: none;
+  .portal-job-info-item-age-full {
+    flex-basis: 100%;
   }
 }
 
 @media (max-width: 600px) {
   .portal-job-info-grid {
-    grid-template-columns: repeat(var(--job-info-columns, 1), minmax(0, 1fr));
-    width: 100%;
     margin: 14px 0;
     border-radius: 10px;
   }
 
   .portal-job-info-item {
-    max-width: none;
-  }
-  .portal-job-info-item {
-    min-height: 76px;
     padding: 11px 10px;
     gap: 6px;
   }
+
   .portal-job-info-label {
     font-size: 11px;
     line-height: 1.4;
   }
+
   .portal-job-info-value {
     font-size: 13px;
     line-height: 1.45;
   }
+
+  /* Notes that need explanation retain a full row; ordinary fields pack
+     side by side whenever their measured widths fit. */
+  .portal-job-info-item-age-note,
+  .portal-job-info-item-fee-full {
+    flex-basis: 100%;
+  }
 }
 
 @media (max-width: 360px) {
-  .portal-job-info-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .portal-job-info-item {
-    min-height: auto;
     padding: 11px 12px;
   }
 }
 
-/* Age cells use space based on how many age values are available. */
+/* Preserve the existing semantic grouping without imposing fixed columns. */
 .portal-job-info-item-age-full,
 .portal-job-info-item-age-half,
-.portal-job-info-item-age-quarter {
-  grid-column: auto;
-}
-
-@media (max-width: 900px) {
-  .portal-job-info-item-age-full {
-    grid-column: 1 / -1;
-  }
-}
-
-.portal-job-info-item-age-note {
-  grid-column: auto;
-}
-
-@media (max-width: 600px) {
-  .portal-job-info-item-age-full {
-    grid-column: 1 / -1;
-  }
-
-  .portal-job-info-item-age-half {
-    grid-column: span 1;
-  }
-
-  .portal-job-info-item-age-quarter {
-    grid-column: span 1;
-  }
-
-  /* Only Age Criteria Note gets full width on mobile */
-  .portal-job-info-item-age-note {
-    grid-column: 1 / -1;
-  }
-}
-
-/* Fee occupies 1 of 4 columns */
+.portal-job-info-item-age-quarter,
+.portal-job-info-item-age-note,
 .portal-job-info-item-fee,
 .portal-job-info-item-fee-note,
 .portal-job-info-item-fee-full {
-  grid-column: auto;
-}
-
-@media (max-width: 600px) {
-  .portal-job-info-item-fee {
-    grid-column: span 1;
-  }
-
-  .portal-job-info-item-fee-note {
-    grid-column: span 1;
-  }
-
-  .portal-job-info-item-fee-full {
-    grid-column: 1 / -1;
-  }
+  min-width: 0;
 }
 
 /* Important Dates - Clean List Layout */

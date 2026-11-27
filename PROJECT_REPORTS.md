@@ -67,7 +67,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| BATCH42_COMMIT | `fix(migrations): order post version field migration after model creation batch 42` | Corrected the dependency of `0020_postversion_updated_at.py` to `0035_postversion`, ensuring the PostVersion model exists before its updated_at field/data migration is applied. |
+| 976c53332fc063529af28a33ef1cccffe044025b | `fix(migrations): order post version field migration after model creation batch 42` | Corrected the dependency of `0020_postversion_updated_at.py` to `0035_postversion`, ensuring the PostVersion model exists before its updated_at field/data migration is applied. |
 | a48c7224adb6f3aef9f13fd91b5b2024c7a2cce0 | `fix(admin): apply immutable activity admin permissions batch 40` | Added a shared read-only admin base for PostReaction, CommentReaction, PostShare, PostVisitor and PostView. Disables add/change/delete and marks concrete model fields read-only while retaining Django's default view-permission checks. |
 | f8271d54886b9bd972af555d7fb9638c809a3d33 | `perf(portal): batch admin tag updates in chunks batch 39` | Updated AdminTags rename/delete operations to stream locked Post records and bulk-update changed SEO keyword arrays in bounded batches of 500, retaining deduplication and updated_at updates while reducing per-row write queries. |
 

@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/organized/components/portal/category/CategoryBadge.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 31 selector groups counted as individual selectors; UI components: 0 (stylesheet only). Canonical category badge styling; duplicate cascade variants and consumer mapping still need a complete audit.
+ */
 /* Canonical category badge — shared by post headers, home updates and category pages. */
 .portal-post-category-badge {
   display: inline-flex;
@@ -128,3 +133,9 @@
 .videos-card-tags .portal-post-category-badge-guides { color:#c2410c; background:#fff7ed; border-color:#fed7aa; }
 .videos-card-tags .portal-post-category-badge-videos { color:#b91c1c; background:#fef2f2; border-color:#fecaca; }
 .videos-card-tags .portal-post-category-badge-tools { color:#475569; background:#f8fafc; border-color:#cbd5e1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-post-category-badge {
+    transition: none;
+  }
+}

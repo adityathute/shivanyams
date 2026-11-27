@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/organized/components/portal/category/CategoryPageUpdates.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 107 selector groups counted as individual selectors; UI components: 0 (stylesheet only). Update rows, skeletons, empty states and deadline states; many selectors share global names and require consumer/cascade mapping before completion.
+ */
 /* Shared category update rows — fit badges to their labels on home and category pages. */
 /* Homepage and category listings: size the badge column from its localized label. */
 .updates-panel .update-row {

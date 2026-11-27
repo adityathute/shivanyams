@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/organized/components/portal/home/HomeResponsive.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 2 selector groups counted as individual selectors; UI components: 0 (stylesheet only). Tablet homepage layout override; depends on Portal shell markup and needs full breakpoint integration review.
+ */
 /* Tablet homepage layout (light mode). */
 @media (min-width: 761px) and (max-width: 1100px) {
   .portal .content-layout {

@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/post/comment-moderation.ts
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Clean
+ * Cleanup Info: Batch 13 audit. Logic Audit: 1 JSON word-list import; 0 UI components; 0 CSS selectors. Precomputed blocked-term prefixes to avoid repeatedly scanning the full blocked-term set while preserving matching behavior.
+ */
 import moderationWords from "../../../config/comment-moderation-words.json";
 
 const ALLOWED_HOST = "shivanyams.com";
@@ -16,6 +21,12 @@ const BLOCKED_TERMS = new Set(
     .flat()
     .map(normalizeWord)
     .filter(Boolean),
+);
+
+const BLOCKED_TERM_PREFIXES = new Set(
+  [...BLOCKED_TERMS].flatMap((term) =>
+    Array.from({ length: term.length }, (_, index) => term.slice(0, index + 1)),
+  ),
 );
 
 const URL_PATTERN =
@@ -49,7 +60,7 @@ function containsBlockedLanguage(value: string) {
     for (const token of tokens.slice(start, start + 8)) {
       combined += normalizeWord(token);
       if (BLOCKED_TERMS.has(combined)) return true;
-      if (![...BLOCKED_TERMS].some((term) => term.startsWith(combined))) break;
+      if (!BLOCKED_TERM_PREFIXES.has(combined)) break;
     }
   }
   return false;

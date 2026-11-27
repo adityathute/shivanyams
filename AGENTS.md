@@ -1,7 +1,7 @@
 <!-- File Location: shivanyams/AGENTS.md -->
 <!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
 <!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Master rules 1–56 retained; AI-only cleanup workflow now targets 10 files per batch, with smaller batches for complex files. -->
+<!-- Cleanup Info: Master rules 1–56 retained; Batch 12 onward targets 10 files; Rule 56 now defines Organized as corrected/modernized code and Legacy as old/unmodernized code, independent of folder path. -->
 
 # ShivanyaMS V2 — Repository Rulebook
 
@@ -241,12 +241,11 @@
 
 56. **Project Reports आणि संपूर्ण Project Structure व्यवस्थापन**
 
-    Repository च्या Root मध्ये PROJECT_REPORTS.md आणि PROJECT_STRUCTURE.md या दोन स्वतंत्र Files ठेवाव्यात. PROJECT_REPORTS.md मध्ये Project चे नाव व Version (V2), Repository/Branch, Package Version, तपासलेला Commit, एकूण Tracked Files, Clean, Cleanup Pending आणि Not Reviewed यांची अचूक मोजणी, Organized व Legacy Files ची संख्या, Reference Repositories आणि पुढील काम नोंदवावे. Commit History मध्ये फक्त शेवटचे तीन Commits आणि त्यांच्या महत्त्वाच्या बदलांचा संक्षिप्त सारांश ठेवावा. जुने Batch-wise तपशील, प्रत्येक Batch चे मोठे Tables किंवा जुना इतिहास PROJECT_REPORTS.md मध्ये पुन्हा पुन्हा जोडू नये; तीनपेक्षा जुने Commit तपशील काढून टाकावेत.
+    Repository च्या Root मध्ये PROJECT_REPORTS.md आणि PROJECT_STRUCTURE.md या दोन स्वतंत्र Files ठेवाव्यात. PROJECT_REPORTS.md मध्ये Project चे नाव व Version (V2), Repository/Branch, Package Version, तपासलेला Commit, एकूण Tracked Files, Clean, Cleanup Pending आणि Not Reviewed यांची अचूक मोजणी, Organized व Legacy Files ची संख्या, Reference Repositories आणि पुढील काम नोंदवावे. Commit History मध्ये फक्त शेवटचे तीन Implementation Commits आणि त्यांच्या महत्त्वाच्या बदलांचा संक्षिप्त सारांश ठेवावा. जुने Batch-wise तपशील किंवा मोठे इतिहास Tables जोडू नयेत.
 
-    PROJECT_STRUCTURE.md मध्ये Git Tree मधील प्रत्येक Tracked File ची स्वतंत्र नोंद असावी. प्रत्येक नोंदीत Repository Root पासूनचा पूर्ण Path, Cleanup Status (Clean, Cleanup Pending किंवा Not Reviewed) आणि Structure Status (Organized किंवा Legacy) नमूद करावा. एकूण Files, प्रत्येक Cleanup Status ची संख्या, Organized Files आणि Legacy Files यांची बेरीज Git Tree शी तंतोतंत जुळली पाहिजे. Generated Files, Comment न स्वीकारणाऱ्या Files आणि इतर अपवाद लपवू नयेत; योग्य Status देऊन स्पष्ट करावेत. नवीन File तयार झाल्यावर, File हलवल्यावर, हटवल्यावर किंवा Cleanup Status/Structure Status बदलल्यावर PROJECT_STRUCTURE.md अद्ययावत करावा.
+    PROJECT_STRUCTURE.md मध्ये Git Tree मधील प्रत्येक Tracked File ची स्वतंत्र नोंद असावी. प्रत्येक नोंदीत Repository Root पासूनचा पूर्ण Path, Cleanup Status (Clean, Cleanup Pending किंवा Not Reviewed) आणि Structure Status (Organized किंवा Legacy) नमूद करावा. Organized म्हणजे File चा Code प्रत्यक्ष तपासून सुधारलेला, स्वच्छ केलेला आणि सध्याच्या Project Standards नुसार व्यवस्थित केलेला आहे. Legacy म्हणजे जुना, अपूर्णपणे सुधारलेला किंवा अजून Modernize/Migrate न केलेला Code. Not Reviewed Files ची प्रत्यक्ष तपासणी होईपर्यंत त्यांना तात्पुरते Legacy समजावे; तपासणीनंतरच योग्य Structure Status द्यावा. File कोणत्या Folder मध्ये आहे यावरून Organized किंवा Legacy ठरवू नये. Clean/Organized आणि Cleanup Pending/Legacy हे वेगळे पण एकमेकांशी संबंधित मोजमाप आहेत; दोन्हींची मोजणी स्वतंत्रपणे Git Tree मधील सर्व Files शी जुळली पाहिजे.
 
-    दोन्ही Reports प्रत्येक Cleanup Batch किंवा Structure Update नंतर अद्ययावत करावेत. PROJECT_REPORTS.md हा संक्षिप्त Summary आणि शेवटच्या तीन Commits चा Report असेल; PROJECT_STRUCTURE.md हा सर्व Files चा पूर्ण Master Register असेल. एकाच Batch चा तपशील दोन्ही Files मध्ये अनावश्यकपणे पुन्हा लिहू नये. संख्या प्रत्यक्ष Git Tree आणि तपासलेल्या Files वरूनच मोजावी; अंदाज, चुकीची एकूण संख्या किंवा न तपासलेल्या File ला Clean Status देऊ नये.
-
+    Generated Files, Comment न स्वीकारणाऱ्या Files आणि इतर अपवाद लपवू नयेत; योग्य Status देऊन स्पष्ट करावेत. नवीन File तयार झाल्यावर, File हलवल्यावर, हटवल्यावर किंवा Cleanup Status/Structure Status बदलल्यावर PROJECT_STRUCTURE.md अद्ययावत करावा. दोन्ही Reports प्रत्येक Cleanup Batch किंवा Structure Update नंतर अद्ययावत करावेत. PROJECT_REPORTS.md हा संक्षिप्त Summary आणि शेवटच्या तीन Implementation Commits चा Report असेल; PROJECT_STRUCTURE.md हा सर्व Files चा पूर्ण Master Register असेल. संख्या प्रत्यक्ष Git Tree आणि तपासलेल्या Files वरूनच मोजावी; अंदाज वापरू नयेत.
 ---
 
 ## AI ONLY — Instructions for AI agents

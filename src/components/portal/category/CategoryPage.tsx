@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/category/CategoryPage.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 13 audit. UI Audit: CategoryBadge from the shared CategoryGrid module and app-local PortalEmptyState. CSS mapping: CategoryPage.css. Invalid dates now fall back to localized “New” text; legacy CSS, category fetch fallback and search submit semantics require follow-up.
+ */
 
 "use client";
 
@@ -157,7 +162,10 @@ function formatDate(date: string, language: Language) {
     hi: "hi-IN",
   }[language];
 
-  return new Date(`${date}T12:00:00`).toLocaleDateString(locale, {
+  const parsedDate = new Date(`${date.slice(0, 10)}T12:00:00`);
+  if (Number.isNaN(parsedDate.getTime())) return pageCopy[language].newest;
+
+  return parsedDate.toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",

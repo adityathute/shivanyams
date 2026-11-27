@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/RelatedJobsPage.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 13 audit. UI Audit: Next.js Link plus semantic/UI elements; 0 shivanya-ui imports. Reuses shared portal data/language contexts; CSS mapping reuses SavedPostsPage.css. Responsive pagination and tag recommendations reviewed; shared slugify extraction and legacy CSS migration pending.
+ */
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";

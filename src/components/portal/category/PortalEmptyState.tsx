@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/category/PortalEmptyState.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Clean
+ * Cleanup Info: Batch 13 audit. UI Audit: 0 SDK components; 1 app-local presentational PortalEmptyState component. 0 CSS imports; selector styles are provided by caller. Props and status semantics reviewed.
+ */
 "use client";
 
 export function PortalEmptyState({

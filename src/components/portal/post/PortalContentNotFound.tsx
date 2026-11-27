@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/post/PortalContentNotFound.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Clean
+ * Cleanup Info: Batch 13 audit. UI Audit: Next.js Image and Link; no shivanya-ui component needed for this simple 404 panel. CSS mapping: PortalContentNotFound.css; component/asset usage reviewed.
+ */
 
 "use client";
 

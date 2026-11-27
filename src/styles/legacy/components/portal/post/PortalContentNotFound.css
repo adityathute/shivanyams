@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/post/PortalContentNotFound.css
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Clean
+ * Cleanup Info: Batch 13 audit. CSS Audit: 20 selector blocks after removing 3 unused tag selectors; mapped to PortalContentNotFound.tsx. Removed unused .portal-not-found-tags rules and obsolete dark-theme tag styling; responsive, dark-theme and reduced-motion rules retained.
+ */
 
 .portal-not-found {
   min-height: 365px;
@@ -92,21 +97,6 @@
 
 /* Tags */
 
-.portal-not-found-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 15px;
-}
-
-.portal-not-found-tags span {
-  font-size: 10px;
-  color: #7040a1;
-  background: #eadcff;
-  padding: 5px 9px;
-  border-radius: 4px;
-}
-
 /* Illustration */
 
 .portal-not-found-visual {
@@ -200,10 +190,6 @@
   color: #c2b2d5;
 }
 
-[data-theme="dark"] .portal-not-found-tags span {
-  background: #352448;
-  color: #e9d5ff;
-}
 
 /* Reduced motion */
 

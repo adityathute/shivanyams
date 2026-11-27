@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/category/CategoryGrid.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 13 audit. UI Audit: 8 shivanya-ui category icon components (GovernmentJobIcon, GovernmentSchemeIcon, ResultIcon, AdmitCardIcon, GuideIcon, VideoIcon, ExaminationIcon, ToolsIcon); CategoryGrid is app-local. CategoryBadge is reused by CategoryPage. Large mixed config/helper/component module and CSS modernization pending.
+ */
 "use client";
 
 import { useRouter } from "next/navigation";

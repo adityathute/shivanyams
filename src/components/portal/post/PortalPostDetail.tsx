@@ -1295,8 +1295,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                     <tr>
                                       <th>{getDetailLabel("postNumber", language)}</th>
                                       <th>{getDetailLabel("postName", language)}</th>
-                                      <th>{getDetailLabel("vacancies", language)}</th>
                                       {showDepartment ? <th>{getDetailLabel("department", language)}</th> : null}
+                                      <th>{getDetailLabel("vacancies", language)}</th>
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
@@ -1307,8 +1307,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       <tr key={row.entry.id || `${row.entry.post_number}-${index}`}>
                                         <td>{row.entry.post_number ?? index + 1}</td>
                                         <td className="portal-post-wise-name">{row.postName}</td>
-                                        <td>{row.entry.vacancies != null ? Number(row.entry.vacancies).toLocaleString("en-IN") : "—"}</td>
                                         {showDepartment ? <td>{row.department || "—"}</td> : null}
+                                        <td>{row.entry.vacancies != null ? Number(row.entry.vacancies).toLocaleString("en-IN") : "—"}</td>
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
@@ -1319,8 +1319,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                     <tr>
                                       <td></td>
                                       <th>{getDetailLabel("total", language)}</th>
-                                      <th>{totalVacancies.toLocaleString("en-IN")}</th>
                                       {showDepartment ? <td></td> : null}
+                                      <th>{totalVacancies.toLocaleString("en-IN")}</th>
                                       {showAge ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}

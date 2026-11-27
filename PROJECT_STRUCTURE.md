@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `a9e1596e58aa575570a9829163753e4ac66a7ae5`  
+**Source snapshot:** `93be3ab8e3fea7c3e0e96bbc99020ba29da96d74`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -15,16 +15,16 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 310 |
-| Clean | 36 |
-| Cleanup Pending | 20 |
-| Not Reviewed | 254 |
-| Organized | 254 |
-| Legacy | 56 |
-| Audited before this structure update | 55 |
+| Clean | 60 |
+| Cleanup Pending | 38 |
+| Not Reviewed | 212 |
+| Organized | 60 |
+| Legacy | 250 |
+| Audited before this structure update | 98 |
 
-**Classification note:** `Legacy` is assigned to files under `src/styles/legacy/`. Other files are classified as `Organized` based on their current repository placement. This is a folder-structure classification, not a claim that every Not Reviewed file has been code-audited. Cleanup Status and Structure Status are independent.
+**Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
-**Generated-file exception:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated and says it should not be edited. Do not add a custom header to it.
+**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit.
 
 ## Complete tracked-file register
 
@@ -43,16 +43,16 @@
 | 11 | `shivanyams/backend/apps/__init__.py` | Clean | Organized |
 | 12 | `shivanyams/backend/apps/portal/__init__.py` | Clean | Organized |
 | 13 | `shivanyams/backend/apps/portal/admin.py` | Cleanup Pending | Legacy |
-| 14 | `shivanyams/backend/apps/portal/apps.py` | Not Reviewed | Legacy |
-| 15 | `shivanyams/backend/apps/portal/authentication.py` | Not Reviewed | Legacy |
-| 16 | `shivanyams/backend/apps/portal/comment_moderation.py` | Not Reviewed | Legacy |
-| 17 | `shivanyams/backend/apps/portal/data/__init__.py` | Not Reviewed | Legacy |
-| 18 | `shivanyams/backend/apps/portal/data/categories.py` | Not Reviewed | Legacy |
-| 19 | `shivanyams/backend/apps/portal/management/__init__.py` | Not Reviewed | Legacy |
-| 20 | `shivanyams/backend/apps/portal/management/commands/__init__.py` | Not Reviewed | Legacy |
-| 21 | `shivanyams/backend/apps/portal/management/commands/seed_portal_categories.py` | Not Reviewed | Legacy |
-| 22 | `shivanyams/backend/apps/portal/migrations/0001_initial.py` | Not Reviewed | Legacy |
-| 23 | `shivanyams/backend/apps/portal/migrations/0002_rename_description_category_description_en_and_more.py` | Not Reviewed | Legacy |
+| 14 | `shivanyams/backend/apps/portal/apps.py` | Clean | Organized |
+| 15 | `shivanyams/backend/apps/portal/authentication.py` | Clean | Organized |
+| 16 | `shivanyams/backend/apps/portal/comment_moderation.py` | Clean | Organized |
+| 17 | `shivanyams/backend/apps/portal/data/__init__.py` | Clean | Organized |
+| 18 | `shivanyams/backend/apps/portal/data/categories.py` | Clean | Organized |
+| 19 | `shivanyams/backend/apps/portal/management/__init__.py` | Clean | Organized |
+| 20 | `shivanyams/backend/apps/portal/management/commands/__init__.py` | Clean | Organized |
+| 21 | `shivanyams/backend/apps/portal/management/commands/seed_portal_categories.py` | Clean | Organized |
+| 22 | `shivanyams/backend/apps/portal/migrations/0001_initial.py` | Cleanup Pending | Legacy |
+| 23 | `shivanyams/backend/apps/portal/migrations/0002_rename_description_category_description_en_and_more.py` | Cleanup Pending | Legacy |
 | 24 | `shivanyams/backend/apps/portal/migrations/0003_importantlink.py` | Not Reviewed | Legacy |
 | 25 | `shivanyams/backend/apps/portal/migrations/0004_job_advertisement_fields.py` | Not Reviewed | Legacy |
 | 26 | `shivanyams/backend/apps/portal/migrations/0005_admitcarddetails_articleguidedetails_comment_and_more.py` | Not Reviewed | Legacy |

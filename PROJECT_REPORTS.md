@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `ed6f88ae280fa0707922497e311fe9cec3427da6` (Batch 12 base) |
+| Last source snapshot audited | `97c5acc9b70a7d18a65d23169829e6a061ea5bb4` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 12, unfinished cleanup scope is 274 files (30 Cleanup Pending + 244 Not Reviewed), giving an estimated 28 remaining batches and 39 batches overall, including the 12 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 12, unfinished cleanup scope is 274 files (30 Cleanup Pending + 244 Not Reviewed), giving an estimated 28 remaining batches and 40 batches overall, including the 12 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -50,7 +50,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| a9e1596e58aa575570a9829163753e4ac66a7ae5 | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
+| 97c5acc9b70a7d18a65d23169829e6a061ea5bb4 | `chore(portal): audit post detail UI and styles batch 12` | Audited 10 Post UI/CSS files; consolidated duplicate date formatter; corrected invalid disabled cursor; updated Rule 51 metadata and file register |\n| a9e1596e58aa575570a9829163753e4ac66a7ae5 | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
 | `4410f33f7ab29af39c4b34337e5a4fcc18330005` | `chore(routes): audit terms tools videos batch 10` | Added Rule 51 metadata to Terms, Tools and Videos route wrappers |
 | `b0d7e47c33d263151b7c18a20d2bad783a4cb606` | `chore(routes): audit schemes and tags cleanup batch 9` | Added Rule 51 metadata to Schemes and Tags route wrappers; documented generated `next-env.d.ts` exception |
 

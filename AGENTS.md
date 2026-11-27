@@ -212,6 +212,10 @@
 
     नवीन File तयार करताना किंवा विद्यमान File संपादित करताना, त्या File च्या सुरुवातीला संबंधित भाषेच्या Comment Syntax मध्ये File Location म्हणजे Repository मधील पूर्ण Relative Path, Cleanup Status आणि Cleanup Information नमूद करावी. Cleanup Status साठी Clean, Cleanup Pending किंवा Not Reviewed यापैकी योग्य स्थिती वापरावी. Legacy Code, Duplicate Code, अनावश्यक Imports, CSS किंवा इतर साफसफाई बाकी असल्यास त्याची थोडक्यात नोंद द्यावी. File पूर्णपणे तपासून स्वच्छ केल्यानंतरच Clean Status द्यावा. File संपादित करताना ही माहिती अद्ययावत करावी. JSON आणि Lock Files सारख्या Comment समर्थित नसलेल्या Files मध्ये Comments जबरदस्तीने जोडू नयेत; त्यांची माहिती स्वतंत्र Cleanup Report मध्ये ठेवावी. संपूर्ण Project मधील Files टप्प्याटप्प्याने तपासून Clean, Cleanup Pending आणि Not Reviewed Files ची यादी तयार करावी.
 
+
+52. **Cleanup Progress Report**
+
+    संपूर्ण Repository मधील Files ची Cleanup प्रक्रिया सुरू असताना प्रत्येक Batch पूर्ण झाल्यानंतर मास्टर यांना थोडक्यात Progress Report द्यावा. या Report मध्ये एकूण Files पैकी किती Files Clean आहेत, किती Cleanup Pending आहेत, किती Not Reviewed आहेत आणि अजून किती Files तपासणे बाकी आहेत हे स्पष्टपणे नमूद करावे. प्रत्येक नवीन Batch नंतर आधीच्या आकडेवारीनुसार एकूण संख्या अद्ययावत करावी. एखाद्या File ची स्थिती बदलल्यास त्यानुसार मोजणी दुरुस्त करावी. तपासणी न केलेल्या Files ना Clean समजू नये आणि प्रत्यक्ष तपासणीपेक्षा जास्त प्रगती झाल्याचा दावा करू नये. Report लहान, स्पष्ट आणि नियमित असावा.
 ---
 
 ## AI ONLY — Instructions for AI agents

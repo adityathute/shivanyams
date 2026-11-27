@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `cc04469f319256cb50ab9b5be52798402b86a233` |
+| Last source snapshot audited | `f8271d54886b9bd972af555d7fb9638c809a3d33` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 38, unfinished cleanup scope is 236 files (172 Cleanup Pending + 64 Not Reviewed), giving an estimated 24 remaining batches and 62 batches overall, including the 38 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 39, unfinished cleanup scope is 236 files (172 Cleanup Pending + 64 Not Reviewed), giving an estimated 24 remaining batches and 63 batches overall, including the 39 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -34,7 +34,7 @@
 | Clean | 75 |
 | Cleanup Pending | 172 |
 | Not Reviewed | 64 |
-| Reviewed files after Batch 38 | 247 |
+| Reviewed files after Batch 39 | 247 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -42,16 +42,16 @@
 
 | Metric | Count |
 |---|---:|
-| Total files in cleanup inventory | 312 |
+| Total files in cleanup inventory | 311 |
 | Files reviewed to date | 247 |
 | Review completion | 79.4% |
 | Files fully clean / organized | 75 |
 | Reviewed files still pending cleanup | 172 |
 | Files not yet reviewed | 64 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 38 |
+| Completed batches | 39 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 62 |
+| Estimated total batches | 63 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,9 +67,9 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| f8271d54886b9bd972af555d7fb9638c809a3d33 | `perf(portal): batch admin tag updates in chunks batch 39` | Updated AdminTags rename/delete operations to stream locked Post records and bulk-update changed SEO keyword arrays in bounded batches of 500, retaining deduplication and updated_at updates while reducing per-row write queries. |
 | cc04469f319256cb50ab9b5be52798402b86a233 | `fix(migrations): remove redundant report constraint migration` | Removed the unnecessary 0051 migration after confirming 0029_allow_three_reports_per_user.py already removes unique_user_comment_report. Prevents a second RemoveConstraint operation against a constraint already removed earlier in the migration chain. |
 | 56238f1bb1b1e569491353c903791398b2395678 | `perf(migrations): batch legacy organization type backfill batch 36` | Updated the 0007 Post organization-type data migration to select only posts with an organization and bulk-update copied organization types in batches of 500 instead of saving each row individually. |
-| f1e92a9d8ebbee29a9fe6cd6d12357b7618ba8f3 | `perf(migrations): stream newsletter event backfill in batches batch 35` | Changed the initial newsletter event backfill to iterate and bulk-create events in batches of 1,000, avoiding an unbounded in-memory list while preserving event values and timestamps. |
 
 ## Current pending priorities
 
@@ -82,12 +82,14 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 7. Complete root package.json/package-lock consistency review and inspect public image assets for visual suitability, dimensions and optimization.
 8. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
 9. Complete PortalHeader search submission and review the Hero scene tester exposure.
-10. Complete the known Pending work in Admin, Ledger, Next.js configuration and the remaining historical Django migration chain checks.
+10. Complete the known Pending work in Admin, Ledger, Next.js configuration and the remaining historical Django migration chain checks. Batch 39 AdminTags bulk-write behavior still needs endpoint tests and concurrency/database verification.
 11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 12. Verify the private `shivanya-auth` reference version when repository access permits.
 
 **Batch 37–38 correction:** A follow-up migration audit found that `0029_allow_three_reports_per_user.py` already removes `unique_user_comment_report` and adds the reporter/time index. Therefore the Batch 37 `0051` migration would attempt to remove a constraint already removed by migration 0029. Removed the redundant migration in Batch 38 and restored the inventory to 311 tracked files. No database schema operation remains from Batch 37. Django migration execution and the application-level three-report limit were not tested; verify both in the target environment.
 
+
+**Batch 39:** AdminTags tag rename/delete now streams locked Post records and uses bounded bulk_update batches of 500. Per-record updated_at values are explicitly refreshed because bulk_update bypasses auto_now. No Python test files were present in the repository; endpoint behavior, row locking and timestamp equivalence were not run. The file remains Cleanup Pending / Legacy until verification.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

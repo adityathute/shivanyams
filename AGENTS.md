@@ -1,5 +1,5 @@
 <!-- File Location: shivanyams/AGENTS.md -->
-<!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
+<!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
 <!-- Cleanup Status: Clean -->
 <!-- Cleanup Info: Master rules 1–56 retained; Batch 12 onward targets 10 files; Rule 56 now defines Organized as corrected/modernized code and Legacy as old/unmodernized code, independent of folder path. -->
 

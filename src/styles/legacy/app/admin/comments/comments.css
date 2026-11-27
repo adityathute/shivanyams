@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/app/admin/comments/comments.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 27 audit; selector-to-component mapping and full runtime/theme compatibility verification remain pending. */
+
 .admin-comments-panel {
   margin-top: 22px;
 }
@@ -769,5 +774,18 @@
 
   .admin-comments-page .admin-comments-total span {
     white-space: normal;
+  }
+}
+
+
+/* Respect reduced-motion preferences for animated and transitioning comment controls. */
+@media (prefers-reduced-motion: reduce) {
+  .admin-comments-page *,
+  .admin-comments-page *::before,
+  .admin-comments-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

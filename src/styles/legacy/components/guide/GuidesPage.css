@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/guide/GuidesPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 27 audit; selector-to-component mapping and full runtime/theme compatibility verification remain pending. */
+
 .guides-page {
   margin-top: 14px;
   color: var(--text, #172b45);

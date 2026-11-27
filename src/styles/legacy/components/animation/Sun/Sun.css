@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/animation/Sun/Sun.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 27 audit; selector-to-component mapping and full runtime/theme compatibility verification remain pending. */
+
 .sun-orbit {
   position: absolute;
   width: 55%;
@@ -147,4 +152,9 @@
   .scene-sunset .sun {
     transform: none !important;
   }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .sun-orbit, .sun-rays, .sun { animation: none; transition: none; }
 }

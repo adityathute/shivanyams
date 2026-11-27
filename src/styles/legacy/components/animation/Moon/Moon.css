@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/animation/Moon/Moon.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 27 audit; selector-to-component mapping and full runtime/theme compatibility verification remain pending. */
+
 .moon {
   position: absolute;
   width: 75px;
@@ -98,4 +103,9 @@
   .scene-night .moon {
     transform: translateY(0) !important;
   }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .moon { transition: none; }
 }

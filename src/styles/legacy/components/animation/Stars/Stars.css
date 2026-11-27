@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/animation/Stars/Stars.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 27 audit; selector-to-component mapping and full runtime/theme compatibility verification remain pending. */
+
 .stars {
   position: absolute;
   inset: 0;
@@ -222,4 +227,9 @@
   .stars {
     display: none !important;
   }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .stars, .star, .shooting-star { animation: none; transition: none; }
 }

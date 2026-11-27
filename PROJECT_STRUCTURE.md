@@ -1,5 +1,5 @@
 <!-- File Location: shivanyams/PROJECT_STRUCTURE.md -->
-<!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
+<!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
 <!-- Cleanup Status: Clean -->
 <!-- Cleanup Info: Complete Git-tree inventory with per-file cleanup status and directory-based Legacy/Organized classification; generated and unreviewed files remain explicitly identified. -->
 
@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `9349bc8acfed6e990db4bf814bdd5b58ed648e38`  
+**Source snapshot:** `BATCH27_IMPLEMENTATION_COMMIT`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -267,16 +267,16 @@
 | 236 | `shivanyams/src/lib/format-number.ts` | Cleanup Pending | Legacy |
 | 237 | `shivanyams/src/styles/css.config.ts` | Not Reviewed | Legacy |
 | 238 | `shivanyams/src/styles/legacy/app/admin/add-post/AddPostPage.css` | Cleanup Pending | Legacy |
-| 239 | `shivanyams/src/styles/legacy/app/admin/admin.css` | Not Reviewed | Legacy |
-| 240 | `shivanyams/src/styles/legacy/app/admin/comments/comments.css` | Not Reviewed | Legacy |
+| 239 | `shivanyams/src/styles/legacy/app/admin/admin.css` | Cleanup Pending | Legacy |
+| 240 | `shivanyams/src/styles/legacy/app/admin/comments/comments.css` | Cleanup Pending | Legacy |
 | 241 | `shivanyams/src/styles/legacy/app/admin/engagement/[postId]/engagement.css` | Cleanup Pending | Legacy |
 | 242 | `shivanyams/src/styles/legacy/app/admin/questions/questions.css` | Cleanup Pending | Legacy |
 | 243 | `shivanyams/src/styles/legacy/app/admin/reports/reports.css` | Cleanup Pending | Legacy |
 | 244 | `shivanyams/src/styles/legacy/app/admin/tags/tags.css` | Cleanup Pending | Legacy |
 | 245 | `shivanyams/src/styles/legacy/app/globals.css` | Cleanup Pending | Legacy |
 | 246 | `shivanyams/src/styles/legacy/app/portal-base.css` | Cleanup Pending | Legacy |
-| 247 | `shivanyams/src/styles/legacy/components/admin/PostEditor.css` | Not Reviewed | Legacy |
-| 248 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsCharacters.css` | Not Reviewed | Legacy |
+| 247 | `shivanyams/src/styles/legacy/components/admin/PostEditor.css` | Cleanup Pending | Legacy |
+| 248 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsCharacters.css` | Cleanup Pending | Legacy |
 | 249 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css` | Cleanup Pending | Legacy |
 | 250 | `shivanyams/src/styles/legacy/components/animation/BanyanTree/BanyanTree.css` | Cleanup Pending | Legacy |
 | 251 | `shivanyams/src/styles/legacy/components/animation/Clock/PortalClock.css` | Cleanup Pending | Legacy |
@@ -284,12 +284,12 @@
 | 253 | `shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css` | Cleanup Pending | Legacy |
 | 254 | `shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css` | Cleanup Pending | Legacy |
 | 255 | `shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css` | Cleanup Pending | Legacy |
-| 256 | `shivanyams/src/styles/legacy/components/animation/Moon/Moon.css` | Not Reviewed | Legacy |
-| 257 | `shivanyams/src/styles/legacy/components/animation/Stars/Stars.css` | Not Reviewed | Legacy |
-| 258 | `shivanyams/src/styles/legacy/components/animation/Sun/Sun.css` | Not Reviewed | Legacy |
-| 259 | `shivanyams/src/styles/legacy/components/examination/ExaminationCharacters.css` | Not Reviewed | Legacy |
-| 260 | `shivanyams/src/styles/legacy/components/guide/GuidesCharacters.css` | Not Reviewed | Legacy |
-| 261 | `shivanyams/src/styles/legacy/components/guide/GuidesPage.css` | Not Reviewed | Legacy |
+| 256 | `shivanyams/src/styles/legacy/components/animation/Moon/Moon.css` | Cleanup Pending | Legacy |
+| 257 | `shivanyams/src/styles/legacy/components/animation/Stars/Stars.css` | Cleanup Pending | Legacy |
+| 258 | `shivanyams/src/styles/legacy/components/animation/Sun/Sun.css` | Cleanup Pending | Legacy |
+| 259 | `shivanyams/src/styles/legacy/components/examination/ExaminationCharacters.css` | Cleanup Pending | Legacy |
+| 260 | `shivanyams/src/styles/legacy/components/guide/GuidesCharacters.css` | Cleanup Pending | Legacy |
+| 261 | `shivanyams/src/styles/legacy/components/guide/GuidesPage.css` | Cleanup Pending | Legacy |
 | 262 | `shivanyams/src/styles/legacy/components/jobs/JobsCharacters.css` | Not Reviewed | Legacy |
 | 263 | `shivanyams/src/styles/legacy/components/jobs/JobsPage.css` | Not Reviewed | Legacy |
 | 264 | `shivanyams/src/styles/legacy/components/portal/RelatedJobsPage.css` | Not Reviewed | Legacy |

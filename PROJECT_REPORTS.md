@@ -18,23 +18,23 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `93be3ab8e3fea7c3e0e96bbc99020ba29da96d74` |
+| Last source snapshot audited | `44739e5a1a7bc41679392d2842443236c6151856` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 16, unfinished cleanup scope is 245 files (43 Cleanup Pending + 202 Not Reviewed), giving an estimated 25 remaining batches and 41 batches overall, including the 16 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 17, unfinished cleanup scope is 241 files (49 Cleanup Pending + 192 Not Reviewed), giving an estimated 25 remaining batches and 42 batches overall, including the 17 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
 | Metric | Count |
 |---|---:|
 | Total tracked files after current update | 310 |
-| Clean | 65 |
-| Cleanup Pending | 43 |
-| Not Reviewed | 202 |
-| Reviewed files after Batch 16 | 108 |
-| Organized | 65 |
-| Legacy | 245 |
+| Clean | 69 |
+| Cleanup Pending | 49 |
+| Not Reviewed | 192 |
+| Reviewed files after Batch 17 | 118 |
+| Organized | 69 |
+| Legacy | 241 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -50,6 +50,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| 44739e5a1a7bc41679392d2842443236c6151856 | `chore(repo): clean backend and eslint setup batch 17` | Audited 10 setup/assets files; standardized Django management entrypoint; documented bounded backend dependencies; audited ESLint flat config and Hind font license; flagged image optimization and package-lock sync for follow-up |
 | ac70eb608b79f9f8629830b324350cd4d1f14850 | `chore(backend): clean portal permissions and django entrypoints batch 16` | Audited 10 backend files; standardized ASGI/WSGI entrypoints; clarified root health endpoint and permission classes; documented complex model, serializer, view, URL and settings follow-up audits |
 | 93be3ab8e3fea7c3e0e96bbc99020ba29da96d74 | `chore(portal): audit authentication and category data batch 15` | Audited 10 backend files; clarified cookie CSRF safe-method handling; hardened malformed Auth payload handling; precomputed blocked-term prefixes; reduced category seed lookup queries; documented generated migration exceptions |
 | 0704e17f6f2fc6eb2fd368633f0743b8be85e515 | `chore(repo): audit repository setup and backend admin batch 14` | Audited 10 repository/backend setup files; corrected CI branch triggers; replaced starter README; clarified Django migration workflow; updated ignore rules and file metadata |
@@ -58,6 +59,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 ## Current pending priorities
 
 1. Continue detailed cleanup audits for the remaining Not Reviewed files.
+2. Complete root package.json/package-lock consistency review and inspect public image assets for visual suitability, dimensions and optimization.
 2. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
 3. Complete PortalHeader search submission and review the Hero scene tester exposure.
 4. Complete the known Pending work in Admin, Ledger, Next.js configuration and the reviewed historical Django migration chain.

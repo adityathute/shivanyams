@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `ac70eb608b79f9f8629830b324350cd4d1f14850`  
+**Source snapshot:** `44739e5a1a7bc41679392d2842443236c6151856`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -15,16 +15,16 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 310 |
-| Clean | 65 |
-| Cleanup Pending | 43 |
-| Not Reviewed | 202 |
-| Organized | 65 |
-| Legacy | 245 |
-| Audited before this structure update | 108 |
+| Clean | 69 |
+| Cleanup Pending | 49 |
+| Not Reviewed | 192 |
+| Organized | 69 |
+| Legacy | 241 |
+| Audited before this structure update | 118 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
-**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task.
+**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits.
 
 ## Complete tracked-file register
 
@@ -115,23 +115,23 @@
 | 83 | `shivanyams/backend/config/settings.py` | Cleanup Pending | Legacy |
 | 84 | `shivanyams/backend/config/urls.py` | Clean | Organized |
 | 85 | `shivanyams/backend/config/wsgi.py` | Clean | Organized |
-| 86 | `shivanyams/backend/manage.py` | Not Reviewed | Legacy |
-| 87 | `shivanyams/backend/requirements.txt` | Not Reviewed | Legacy |
-| 88 | `shivanyams/eslint.config.mjs` | Not Reviewed | Legacy |
+| 86 | `shivanyams/backend/manage.py` | Clean | Organized |
+| 87 | `shivanyams/backend/requirements.txt` | Clean | Organized |
+| 88 | `shivanyams/eslint.config.mjs` | Clean | Organized |
 | 89 | `shivanyams/next-env.d.ts` | Cleanup Pending | Legacy |
 | 90 | `shivanyams/next.config.ts` | Cleanup Pending | Legacy |
 | 91 | `shivanyams/package-lock.json` | Not Reviewed | Legacy |
-| 92 | `shivanyams/package.json` | Not Reviewed | Legacy |
+| 92 | `shivanyams/package.json` | Cleanup Pending | Legacy |
 | 93 | `shivanyams/public/fonts/Hind-Bold.ttf` | Not Reviewed | Legacy |
 | 94 | `shivanyams/public/fonts/Hind-Medium.ttf` | Not Reviewed | Legacy |
 | 95 | `shivanyams/public/fonts/Hind-Regular.ttf` | Not Reviewed | Legacy |
 | 96 | `shivanyams/public/fonts/Hind-SemiBold.ttf` | Not Reviewed | Legacy |
-| 97 | `shivanyams/public/fonts/OFL-Hind.txt` | Not Reviewed | Legacy |
-| 98 | `shivanyams/public/images/404-img.png` | Not Reviewed | Legacy |
-| 99 | `shivanyams/public/images/admits-image007.png` | Not Reviewed | Legacy |
-| 100 | `shivanyams/public/images/exam-image.png` | Not Reviewed | Legacy |
-| 101 | `shivanyams/public/images/guides-image.png` | Not Reviewed | Legacy |
-| 102 | `shivanyams/public/images/jobs-image.png` | Not Reviewed | Legacy |
+| 97 | `shivanyams/public/fonts/OFL-Hind.txt` | Clean | Organized |
+| 98 | `shivanyams/public/images/404-img.png` | Cleanup Pending | Legacy |
+| 99 | `shivanyams/public/images/admits-image007.png` | Cleanup Pending | Legacy |
+| 100 | `shivanyams/public/images/exam-image.png` | Cleanup Pending | Legacy |
+| 101 | `shivanyams/public/images/guides-image.png` | Cleanup Pending | Legacy |
+| 102 | `shivanyams/public/images/jobs-image.png` | Cleanup Pending | Legacy |
 | 103 | `shivanyams/public/images/result-image.png` | Not Reviewed | Legacy |
 | 104 | `shivanyams/public/images/scheme-image.png` | Not Reviewed | Legacy |
 | 105 | `shivanyams/public/images/tools-image.png` | Not Reviewed | Legacy |

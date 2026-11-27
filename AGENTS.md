@@ -17,6 +17,10 @@
    
    **मराठी:** Master यांनी एखादा नियम जोडण्यास किंवा बदलण्यास सांगितल्यास, त्यांनी दिलेला नियम क्रमांकच वापरावा. हा Master विभागात त्याच क्रमांकाचा नियम जोडावा किंवा संपादित करावा. प्रत्येक नियम आधी इंग्रजीत आणि त्यानंतर मराठीत लिहावा; भाषेची नावे किंवा लेबल लावू नयेत. कोडमध्ये बदल करण्यास सांगताना Master यांनी एखाद्या नियम क्रमांकाचा उल्लेख केल्यास, त्या नियमानुसार संबंधित बदल करावेत. इतर Master नियमांचे क्रमांक बदलू नयेत, ते बदलू नयेत किंवा त्यांच्या जागी दुसरे नियम लिहू नयेत.
 
+3. **EN:** Gradually remove outdated legacy code throughout the frontend and move or rebuild functionality in the appropriate organized code structure wherever practical. Before moving or deleting anything, inspect its usage, dependencies, routes, imports, and behavior. Keep legacy code only while it is still required for active functionality or compatibility; remove it when it is genuinely unused and safe to delete. Prefer the organized structure for new and updated frontend work, avoid creating more legacy code, and perform this cleanup incrementally during relevant tasks without breaking existing features.
+   
+   **मराठी:** संपूर्ण फ्रंटएंडमधील जुना (Legacy) कोड टप्प्याटप्प्याने कमी करावा आणि शक्य असेल तिथे त्यातील कार्यक्षमता योग्यरित्या व्यवस्थित (Organized) कोड संरचनेत हलवावी किंवा पुन्हा तयार करावी. कोणताही कोड हलवण्यापूर्वी किंवा हटवण्यापूर्वी त्याचा वापर, अवलंबित्व (Dependencies), रूट्स, इम्पोर्ट्स आणि कार्यपद्धती तपासावी. सक्रिय फीचर्स किंवा सुसंगततेसाठी आवश्यक असेपर्यंतच Legacy कोड ठेवावा; तो खरोखर वापरात नसल्याची आणि सुरक्षितपणे हटवता येण्याची खात्री झाल्यावरच काढून टाकावा. नवीन आणि अपडेट केलेल्या फ्रंटएंड कामासाठी शक्यतो Organized संरचनेचा वापर करावा, नवीन Legacy कोड तयार करू नये आणि संबंधित काम करताना विद्यमान फीचर्स न मोडता ही साफसफाई टप्प्याटप्प्याने करावी.
+
 ---
 
 ## AI ONLY — Instructions for AI agents
@@ -33,7 +37,7 @@ The following rules are for AI agents. The Master may edit them, and AI agents m
 
 1. Understand the request and inspect the existing implementation, related components, styles, utilities, routes, and data flow before making changes.
 2. Reuse existing components, helpers, CSS classes, utilities, and established patterns where appropriate. Do not create duplicates.
-3. Identify the smallest set of files required for the requested change. Edit only those files; do not make unrelated changes.
+3. Identify the smallest set of files required for the requested change and avoid unrelated edits.
 4. If the Master asks for an explanation or confirmation before coding, explain the intended behavior and wait for approval.
 5. Otherwise, implement the requested functionality directly. Do not replace implementation with documentation-only changes.
 6. Preserve existing behavior and features unless the Master explicitly requests otherwise.

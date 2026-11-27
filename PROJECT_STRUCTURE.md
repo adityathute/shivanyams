@@ -1,7 +1,7 @@
 <!-- File Location: shivanyams/PROJECT_STRUCTURE.md -->
 <!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
 <!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Complete Git-tree inventory with per-file cleanup status and directory-based Legacy/Organized classification; generated and unreviewed files remain explicitly identified. -->
+<!-- Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organized/Legacy is classified from actual file quality, never directory location. -->
 
 # ShivanyaMS V2 — Complete Project Structure
 

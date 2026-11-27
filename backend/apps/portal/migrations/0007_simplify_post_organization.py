@@ -4,11 +4,33 @@ from django.db import migrations, models
 def copy_organization_types(apps, schema_editor):
     Post = apps.get_model("portal", "Post")
     database = schema_editor.connection.alias
+    batch = []
 
-    for post in Post.objects.using(database).select_related("organization").iterator():
-        if post.organization_id and post.organization:
-            post.organization_type = post.organization.organization_type
-            post.save(update_fields=["organization_type"])
+    posts = (
+        Post.objects.using(database)
+        .select_related("organization")
+        .filter(organization__isnull=False)
+        .iterator(chunk_size=500)
+    )
+
+    for post in posts:
+        post.organization_type = post.organization.organization_type
+        batch.append(post)
+
+        if len(batch) >= 500:
+            Post.objects.using(database).bulk_update(
+                batch,
+                ["organization_type"],
+                batch_size=500,
+            )
+            batch.clear()
+
+    if batch:
+        Post.objects.using(database).bulk_update(
+            batch,
+            ["organization_type"],
+            batch_size=500,
+        )
 
 
 class Migration(migrations.Migration):

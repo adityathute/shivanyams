@@ -15,12 +15,12 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 310 |
-| Clean | 35 |
-| Cleanup Pending | 16 |
-| Not Reviewed | 259 |
+| Clean | 36 |
+| Cleanup Pending | 20 |
+| Not Reviewed | 254 |
 | Organized | 254 |
 | Legacy | 56 |
-| Audited before this structure update | 50 |
+| Audited before this structure update | 55 |
 
 **Classification note:** `Legacy` is assigned to files under `src/styles/legacy/`. Other files are classified as `Organized` based on their current repository placement. This is a folder-structure classification, not a claim that every Not Reviewed file has been code-audited. Cleanup Status and Structure Status are independent.
 
@@ -213,14 +213,14 @@
 | 181 | `shivanyams/src/components/portal/context/PortalAuthContext.tsx` | Not Reviewed | Organized |
 | 182 | `shivanyams/src/components/portal/context/PortalLanguageContext.tsx` | Not Reviewed | Organized |
 | 183 | `shivanyams/src/components/portal/data/portal-data.tsx` | Not Reviewed | Organized |
-| 184 | `shivanyams/src/components/portal/home/HeroSection.tsx` | Not Reviewed | Organized |
-| 185 | `shivanyams/src/components/portal/home/HomePage.tsx` | Not Reviewed | Organized |
-| 186 | `shivanyams/src/components/portal/home/UpdatesSection.tsx` | Not Reviewed | Organized |
+| 184 | `shivanyams/src/components/portal/home/HeroSection.tsx` | Cleanup Pending | Organized |
+| 185 | `shivanyams/src/components/portal/home/HomePage.tsx` | Cleanup Pending | Organized |
+| 186 | `shivanyams/src/components/portal/home/UpdatesSection.tsx` | Clean | Organized |
 | 187 | `shivanyams/src/components/portal/language/LanguageDropdown.tsx` | Not Reviewed | Organized |
-| 188 | `shivanyams/src/components/portal/layout/PortalLayout.tsx` | Not Reviewed | Organized |
+| 188 | `shivanyams/src/components/portal/layout/PortalLayout.tsx` | Cleanup Pending | Organized |
 | 189 | `shivanyams/src/components/portal/layout/footer/PortalFooter.tsx` | Not Reviewed | Organized |
 | 190 | `shivanyams/src/components/portal/layout/footer/SiteMobileFooter.tsx` | Not Reviewed | Organized |
-| 191 | `shivanyams/src/components/portal/layout/header/PortalHeader.tsx` | Not Reviewed | Organized |
+| 191 | `shivanyams/src/components/portal/layout/header/PortalHeader.tsx` | Cleanup Pending | Organized |
 | 192 | `shivanyams/src/components/portal/layout/header/PortalUserDropdown.tsx` | Not Reviewed | Organized |
 | 193 | `shivanyams/src/components/portal/layout/sidebar/PortalSidebar.tsx` | Not Reviewed | Organized |
 | 194 | `shivanyams/src/components/portal/post/NewsletterSubscribeButton.tsx` | Not Reviewed | Organized |

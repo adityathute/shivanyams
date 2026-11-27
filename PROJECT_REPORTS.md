@@ -27,10 +27,10 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after current update | 310 |
-| Clean | 35 |
-| Cleanup Pending | 16 |
-| Not Reviewed | 259 |
-| Reviewed files before this structure update | 50 |
+| Clean | 36 |
+| Cleanup Pending | 20 |
+| Not Reviewed | 254 |
+| Reviewed files before this structure update | 55 |
 | Organized | 254 |
 | Legacy | 56 |
 
@@ -44,19 +44,21 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 | `shivanya-auth` | Private; version/branch/commit not verified | Read-only reference; do not guess version |
 | Local SDK packages in package.json | `shivanya-core 1.1.0`, `shivanya-ai 0.1.2`, `shivanya-ui 1.1.1`, `shivanya-shell 1.1.1`, `shivanya-auth 1.0.1`, `shivanya-i18n 1.0.0` | Local tarball dependencies; these package versions are distinct from the SDK repository's checked package version |
 
-## Latest three commits
+## Latest three implementation changes
 
 | Commit | Message | Changes |
 |---|---|---|
-| `4410f33f7ab29af39c4b34337e5a4fcc18330005` | `chore(routes): audit terms tools videos batch 10` | Added Rule 51 metadata to Terms, Tools and Videos route wrappers; updated prior report |
+| CURRENT_BATCH_11_COMMIT | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
+| `4410f33f7ab29af39c4b34337e5a4fcc18330005` | `chore(routes): audit terms tools videos batch 10` | Added Rule 51 metadata to Terms, Tools and Videos route wrappers |
 | `b0d7e47c33d263151b7c18a20d2bad783a4cb606` | `chore(routes): audit schemes and tags cleanup batch 9` | Added Rule 51 metadata to Schemes and Tags route wrappers; documented generated `next-env.d.ts` exception |
-| `13d8ff822d57a2a23e2d034ab967bd993d9b1035` | `chore(portal): audit route wrappers cleanup batch 8` | Added Rule 51 metadata to Home, Privacy, Results and Saved route wrappers |
 
-Older batch history is intentionally not repeated here. The three-commit window is replaced after each new commit.
+Older batch history is intentionally not repeated here. The table tracks the latest three implementation changes; report-only synchronization commits are recorded as the current repository HEAD in GitHub and do not create repeated audit history.
 
 ## Current pending priorities
 
 1. Continue detailed cleanup audits for the remaining Not Reviewed files.
+2. Migrate the Portal home and shell legacy stylesheets only after selector-by-selector compatibility checks.
+3. Complete PortalHeader search submission and review the Hero scene tester exposure.
 2. Complete the known Pending work in Admin, Ledger and Next.js configuration.
 3. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 4. Verify the private `shivanya-auth` reference version when repository access permits.

@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/portal/layout/PortalLayout.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Cleanup Pending. Portal layout reuses SDK DashboardShell, AuthProvider and shared portal providers. Session refresh, language persistence, analytics tracking and nested auth-provider behavior require integration verification; legacy PortalShell CSS has extensive historical overrides.
+
 "use client";
 
 import "./../../../styles/legacy/components/portal/layout/PortalShell.css";

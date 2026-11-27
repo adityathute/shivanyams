@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/portal/home/HeroSection.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Cleanup Pending. Hero scene animation composes existing animation components and PortalClock. A developer scene tester is enabled in production-facing UI; decide intended exposure, accessibility and legacy stylesheet migration before marking clean.
+
 "use client";
 
 import "./../../../styles/legacy/components/portal/home/HeroSection.css";

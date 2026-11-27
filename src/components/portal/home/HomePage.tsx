@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/portal/home/HomePage.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Cleanup Pending. Home page composes ticker, categories, updates, useful links, sidebar category lists and videos. Reuses shivanya-ui icons and shared portal utilities; deeper data-flow, navigation consistency and legacy CSS migration remain to audit.
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";

@@ -10,7 +10,7 @@ def preserve_version_creation_time(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("portal", "0019_postlink_group_key"),
+        ("portal", "0035_postversion"),
     ]
 
     operations = [

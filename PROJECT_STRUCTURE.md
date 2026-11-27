@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `c705c3a59fd4fef2fd31ac72a119534db6a8fc02`  
+**Source snapshot:** `a9a2586443fb7dd72d888be25fa3bac619849583`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 159 |
-| Not Reviewed | 77 |
+| Cleanup Pending | 164 |
+| Not Reviewed | 72 |
 | Organized | 75 |
 | Legacy | 236 |
-| Audited before this structure update | 234 |
+| Audited before this structure update | 239 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -317,11 +317,11 @@
 | 286 | `shivanyams/src/styles/legacy/components/static-pages/Feedback/FeedbackPage.css` | Cleanup Pending | Legacy |
 | 287 | `shivanyams/src/styles/legacy/components/static-pages/Privacy/PrivacyPage.css` | Cleanup Pending | Legacy |
 | 288 | `shivanyams/src/styles/legacy/components/static-pages/Terms/TermsPage.css` | Cleanup Pending | Legacy |
-| 289 | `shivanyams/src/styles/legacy/components/tools/ToolsCharacters.css` | Not Reviewed | Legacy |
-| 290 | `shivanyams/src/styles/legacy/components/tools/ToolsPage.css` | Not Reviewed | Legacy |
-| 291 | `shivanyams/src/styles/legacy/components/videos/VideosCharacters.css` | Not Reviewed | Legacy |
-| 292 | `shivanyams/src/styles/legacy/components/videos/VideosPage.css` | Not Reviewed | Legacy |
-| 293 | `shivanyams/src/styles/legacy/components/videos/VideosSection.css` | Not Reviewed | Legacy |
+| 289 | `shivanyams/src/styles/legacy/components/tools/ToolsCharacters.css` | Cleanup Pending | Legacy |
+| 290 | `shivanyams/src/styles/legacy/components/tools/ToolsPage.css` | Cleanup Pending | Legacy |
+| 291 | `shivanyams/src/styles/legacy/components/videos/VideosCharacters.css` | Cleanup Pending | Legacy |
+| 292 | `shivanyams/src/styles/legacy/components/videos/VideosPage.css` | Cleanup Pending | Legacy |
+| 293 | `shivanyams/src/styles/legacy/components/videos/VideosSection.css` | Cleanup Pending | Legacy |
 | 294 | `shivanyams/src/styles/organized/AI-GUIDE.md` | Not Reviewed | Legacy |
 | 295 | `shivanyams/src/styles/organized/admin/.gitkeep` | Not Reviewed | Legacy |
 | 296 | `shivanyams/src/styles/organized/components/.gitkeep` | Not Reviewed | Legacy |

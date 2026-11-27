@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `c705c3a59fd4fef2fd31ac72a119534db6a8fc02` |
+| Last source snapshot audited | `a9a2586443fb7dd72d888be25fa3bac619849583` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 29, unfinished cleanup scope is 236 files (159 Cleanup Pending + 77 Not Reviewed), giving an estimated 24 remaining batches and 53 batches overall, including the 29 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 30, unfinished cleanup scope is 236 files (164 Cleanup Pending + 72 Not Reviewed), giving an estimated 24 remaining batches and 54 batches overall, including the 30 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 159 |
-| Not Reviewed | 77 |
-| Reviewed files after Batch 29 | 234 |
+| Cleanup Pending | 164 |
+| Not Reviewed | 72 |
+| Reviewed files after Batch 30 | 239 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 234 |
-| Review completion | 75.2% |
+| Files reviewed to date | 239 |
+| Review completion | 76.8% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 159 |
-| Files not yet reviewed | 77 |
+| Reviewed files still pending cleanup | 164 |
+| Files not yet reviewed | 72 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 29 |
+| Completed batches | 30 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 53 |
+| Estimated total batches | 54 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,14 +67,14 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| c705c3a59fd4fef2fd31ac72a119534db6a8fc02 | `chore(styles): audit public pages and portal shell batch 29` | Audited ten jobs, portal shell, schemes and static-page stylesheets; added keyboard-visible focus indicators and reduced-motion handling where applicable; preserved existing motion preference behavior for the jobs illustration. |
+| a9a2586443fb7dd72d888be25fa3bac619849583 | `chore(styles): improve tools and videos accessibility batch 30` | Audited five Tools and Videos stylesheets against paired component imports/class usage; added keyboard-visible search/card focus, dark-theme focus contrast and reduced-motion handling where applicable. |
+| c705c3a59fd4fef2fd31ac72a119534db6a8fc02 | `chore(styles): audit public pages and portal shell batch 29` | Audited ten jobs, portal shell, schemes and static-page stylesheets; added keyboard-visible focus indicators and reduced-motion handling where applicable. |
 | 6ab72f6ef5994525bc7853ec69dcb789945082a1 | `chore(styles): improve jobs and portal accessibility batch 28` | Audited ten CSS/config files; improved keyboard focus and reduced-motion behavior across jobs and portal styles. |
-| 5975ceb7cc129d843f4248f9dbb2892120877eab | `chore(styles): audit admin and illustration styles batch 27` | Audited ten admin, editor, guide and decorative illustration stylesheets; added reduced-motion handling and per-file selector audits. |
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 77 Not Reviewed files.
-2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets; all remain Cleanup Pending / Legacy until verified.
+1. Continue detailed cleanup audits for the remaining 72 Not Reviewed files.
+2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
 5. Migrate Batch 19 page and illustration styles out of legacy CSS paths; review Next.js image optimization and skeleton consistency.
@@ -86,7 +86,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 12. Verify the private `shivanya-auth` reference version when repository access permits.
 
-**Batch 29 validation:** Git tree and structure inventory reconcile at 311 files. Ten public-page and portal CSS files were updated with Rule 51 metadata; keyboard focus indicators and reduced-motion handling were added where applicable. Detailed selector-to-component mapping, responsive/theme compatibility and runtime verification remain pending. No automated test files or dedicated test runner were identified in the tracked tree; tests, lint and build were not run.
+**Batch 30 validation:** Git tree and structure inventory reconcile at 311 files. Five Tools/Videos stylesheets were updated with Rule 51 metadata after reviewing their paired TSX imports and class usage. Keyboard-visible search/card focus and dark-theme focus contrast were added; existing reduced-motion handling was audited. Full selector mapping, responsive/theme compatibility and runtime verification remain pending. Tests, lint and build were not run.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

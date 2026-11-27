@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `a78aa996a5a997aa2663d847c655c326ac461701`  
+**Source snapshot:** `0371bd96ffc8977851c7757d1e46997b24735041`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,8 +16,8 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 168 |
-| Not Reviewed | 68 |
+| Cleanup Pending | 169 |
+| Not Reviewed | 67 |
 | Organized | 75 |
 | Legacy | 236 |
 | Audited before this structure update | 242 |
@@ -55,7 +55,7 @@
 | 24 | `shivanyams/backend/apps/portal/migrations/0003_importantlink.py` | Not Reviewed | Legacy |
 | 25 | `shivanyams/backend/apps/portal/migrations/0004_job_advertisement_fields.py` | Not Reviewed | Legacy |
 | 26 | `shivanyams/backend/apps/portal/migrations/0005_admitcarddetails_articleguidedetails_comment_and_more.py` | Not Reviewed | Legacy |
-| 27 | `shivanyams/backend/apps/portal/migrations/0006_importantlink.py` | Not Reviewed | Legacy |
+| 27 | `shivanyams/backend/apps/portal/migrations/0006_importantlink.py` | Cleanup Pending | Legacy |
 | 28 | `shivanyams/backend/apps/portal/migrations/0007_simplify_post_organization.py` | Not Reviewed | Legacy |
 | 29 | `shivanyams/backend/apps/portal/migrations/0008_remove_post_portal_post_organiz_7ede86_idx_and_more.py` | Not Reviewed | Legacy |
 | 30 | `shivanyams/backend/apps/portal/migrations/0009_postdate_date_format_postdate_end_date_and_more.py` | Not Reviewed | Legacy |

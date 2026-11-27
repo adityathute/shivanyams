@@ -469,7 +469,7 @@
   display: grid;
   /* One shared grid lets primary details and fee/age details use the same
      available row space instead of forcing the fee onto a separate row. */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
+  grid-template-columns: repeat(var(--job-info-columns, 1), minmax(0, 1fr));
   width: 100%;
   max-width: 100%;
   margin: 18px 0;
@@ -532,7 +532,7 @@
 
 @media (max-width: 900px) {
   .portal-job-info-grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+    grid-template-columns: repeat(var(--job-info-columns, 1), minmax(0, 1fr));
   }
 
   .portal-job-info-item {
@@ -542,7 +542,7 @@
 
 @media (max-width: 600px) {
   .portal-job-info-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--job-info-columns, 1), minmax(0, 1fr));
     width: 100%;
     margin: 14px 0;
     border-radius: 10px;

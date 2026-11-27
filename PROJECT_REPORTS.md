@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `5975ceb7cc129d843f4248f9dbb2892120877eab` |
+| Last source snapshot audited | `6ab72f6ef5994525bc7853ec69dcb789945082a1` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 27, unfinished cleanup scope is 236 files (139 Cleanup Pending + 97 Not Reviewed), giving an estimated 24 remaining batches and 51 batches overall, including the 27 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 28, unfinished cleanup scope is 236 files (149 Cleanup Pending + 87 Not Reviewed), giving an estimated 24 remaining batches and 52 batches overall, including the 28 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 139 |
-| Not Reviewed | 97 |
-| Reviewed files after Batch 27 | 214 |
+| Cleanup Pending | 149 |
+| Not Reviewed | 87 |
+| Reviewed files after Batch 28 | 224 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 214 |
-| Review completion | 68.8% |
+| Files reviewed to date | 224 |
+| Review completion | 72.0% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 139 |
-| Files not yet reviewed | 97 |
+| Reviewed files still pending cleanup | 149 |
+| Files not yet reviewed | 87 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 27 |
+| Completed batches | 28 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 51 |
+| Estimated total batches | 52 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,9 +67,9 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| 6ab72f6ef5994525bc7853ec69dcb789945082a1 | `chore(styles): improve jobs and portal accessibility batch 28` | Audited ten CSS/config files; added keyboard focus indicators to jobs search, related-job cards, category cards, hero scene controls, update filters and saved-post controls; added reduced-motion handling to related jobs, category cards and saved-post styles; retained existing motion preferences in illustration styles. |
 | 5975ceb7cc129d843f4248f9dbb2892120877eab | `chore(styles): audit admin and illustration styles batch 27` | Audited ten admin, editor, guide and decorative illustration stylesheets; added reduced-motion handling to comments, moon, stars and sun styles; recorded per-file selector counts and source-component mappings. |
 | 9349bc8acfed6e990db4bf814bdd5b58ed648e38 | `chore(styles): improve legacy page accessibility batch 26` | Added keyboard-visible focus states to admin and public page styles; added reduced-motion handling for add-post, engagement, portal, admit-card, terrain and results styles; recorded per-file CSS selector audits. |
-| 1da01707b79ca2ee2625148a30133cae38c71389 | `chore(styles): audit organized portal styles and clarify status rules batch 25` | Audited nine Portal stylesheets; added keyboard focus parity and reduced-motion handling; clarified Rule 56 that Organized/Legacy is determined by actual file quality, never folder path. |
 ## Current pending priorities
 
 1. Continue detailed cleanup audits for the remaining 97 Not Reviewed files.
@@ -85,7 +85,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 12. Verify the private `shivanya-auth` reference version when repository access permits.
 
-**Batch 27 validation:** Git tree and structure inventory reconcile at 311 files. Ten stylesheets audited; reduced-motion support was added to admin comments, moon, stars and sun styles. Selector counts and direct TSX stylesheet imports were checked. No automated test files or dedicated test runner were identified in the tracked tree; tests, lint and build were not run.
+**Batch 28 validation:** Git tree and structure inventory reconcile at 311 files. Ten CSS/config files audited; keyboard focus indicators were added to interactive jobs, portal and saved-post controls, and reduced-motion behavior was added where transitions were present. Direct component stylesheet imports and class mappings were checked where available. No automated test files or dedicated test runner were identified in the tracked tree; tests, lint and build were not run.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

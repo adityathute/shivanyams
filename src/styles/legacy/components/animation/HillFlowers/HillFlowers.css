@@ -1,10 +1,14 @@
 /*
  * File Location: shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css
- * Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 45e88a56ae164b802a064be8047a61e70116600f
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Paired component: shivanyams/src/components/animation/HillFlowers/HillFlowers.tsx. CSS audit: 12 selector/rule blocks; custom feature stylesheet, no SDK stylesheet match. Legacy migration and visual regression checks remain pending.
  */
-
 .hill-flowers {
   position: absolute;
   top: -12px;

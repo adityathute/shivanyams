@@ -1,5 +1,11 @@
-/* File Location: shivanyams/src/styles/legacy/components/portal/post/PostCommentsSection.css
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+/*
+ * File Location: shivanyams/src/styles/legacy/components/portal/post/PostCommentsSection.css
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 45e88a56ae164b802a064be8047a61e70116600f
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Batch 12 post-detail audit. CSS Audit: 199 selector blocks; 161 unique; 32 repeated selector names / 38 repeated occurrences. Mapped to PostCommentsSection.tsx; controls use shivanya-ui SDK. Legacy stylesheet; cascade consolidation pending.
  */

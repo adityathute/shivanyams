@@ -1,13 +1,19 @@
-<!-- File Location: shivanyams/PROJECT_STRUCTURE.md -->
-<!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
-<!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organized/Legacy is classified from actual file quality, never directory location. -->
+<!--
+File Location: shivanyams/PROJECT_STRUCTURE.md
+Reference Repositories:
+  shivanya-sdk v1.0.0 (branch sdk-v2)
+  shivanya-auth v1.0.0 (branch auth-v2)
 
+Repository Commit: 45e88a56ae164b802a064be8047a61e70116600f
+Both repositories are read-only references.
+Cleanup Status: Clean
+Cleanup Info: Complete Git-tree inventory with per-file cleanup status; Organized/Legacy is classified from actual file quality, never directory location.
+-->
 # ShivanyaMS V2 — Complete Project Structure
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `7138c2bfcc32456f34364342d6a1844314c2d775`  
+**Source snapshot:** `45e88a56ae164b802a064be8047a61e70116600f`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -25,6 +31,18 @@
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
 **Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. Portal migrations through `0050` have now been statically reviewed; migration execution and fresh/existing-database compatibility remain pending. Remaining Not Reviewed files are listed individually in the register. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 introduced separate current and total cleanup metrics; both are refreshed after every batch. Batch 39 optimized AdminTags rename/delete writes using bounded 500-record bulk updates; runtime behavior and database concurrency remain unverified. Batch 40 made recorded Post/Comment reactions, shares, visitors and views read-only in Django admin; permission behavior requires verification.
+
+## Reference metadata standardization
+
+| Batch | Files updated |
+|---|---:|
+| Batch 1 | 50 |
+| Batch 2 | 55 |
+| Batch 3 | 55 |
+| Batch 4 | 71 |
+| **Total completed** | **231 / 231** |
+
+Reference headers are standardized across all 231 eligible files. The four batches changed metadata only; Cleanup Status and Structure Status were not changed by this work. Final-batch source snapshot: `45e88a56ae164b802a064be8047a61e70116600f`.
 
 ## Complete tracked-file register
 | 1 | `shivanyams/.env.local.example` | Clean | Organized |

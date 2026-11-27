@@ -1,8 +1,14 @@
-<!-- File Location: shivanyams/src/styles/organized/AI-GUIDE.md -->
-<!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
-<!-- Cleanup Status: Cleanup Pending -->
-<!-- Cleanup Info: Batch 31 documentation audit; staged migration guidance updated. Verify guidance against actual root imports and CSS mode switching before marking Organized. -->
+<!--
+File Location: shivanyams/src/styles/organized/AI-GUIDE.md
+Reference Repositories:
+  shivanya-sdk v1.0.0 (branch sdk-v2)
+  shivanya-auth v1.0.0 (branch auth-v2)
 
+Repository Commit: 45e88a56ae164b802a064be8047a61e70116600f
+Both repositories are read-only references.
+Cleanup Status: Cleanup Pending
+Cleanup Info: Batch 31 documentation audit; staged migration guidance updated. Verify guidance against actual root imports and CSS mode switching before marking Organized.
+-->
 # CSS Organization Guide (AI)
 
 Read this file before creating or changing CSS.

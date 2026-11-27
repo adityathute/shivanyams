@@ -1,3 +1,10 @@
+/**
+ * File Location: shivanyams/src/components/scheme/SchemesCharacters.tsx
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+ * Checked Repository: adityathute/shivanyams @ shiv-v2
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 20 audit; review complete, follow-up work remains tracked in PROJECT_STRUCTURE.md.
+ */
 "use client";
 
 import Image from "next/image";
@@ -17,8 +24,6 @@ export function SchemesCharacters() {
         width={1600}
         height={1024}
         priority
-        unoptimized
-        decoding="sync"
         className="schemes-characters-image"
       />
 

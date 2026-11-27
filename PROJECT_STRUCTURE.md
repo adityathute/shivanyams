@@ -7,20 +7,20 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `9798bacbe5c7a254523f8918e31e3957d106810b`  
+**Source snapshot:** `b6b879efd67e3a19f838a1b384223b69706e4fed`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
 
 | Metric | Count |
 |---|---:|
-| Total tracked files after this inventory update | 310 |
-| Clean | 74 |
-| Cleanup Pending | 104 |
-| Not Reviewed | 132 |
-| Organized | 74 |
+| Total tracked files after this inventory update | 311 |
+| Clean | 75 |
+| Cleanup Pending | 110 |
+| Not Reviewed | 126 |
+| Organized | 75 |
 | Legacy | 236 |
-| Audited before this structure update | 178 |
+| Audited before this structure update | 185 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -29,7 +29,6 @@
 ## Complete tracked-file register
 
 | # | Full repository-root path | Cleanup Status | Structure |
-|---:|---|---|---|
 | 1 | `shivanyams/.env.local.example` | Clean | Organized |
 | 2 | `shivanyams/.github/workflows/ci.yml` | Clean | Organized |
 | 3 | `shivanyams/.gitignore` | Clean | Organized |
@@ -260,86 +259,87 @@
 | 228 | `shivanyams/src/i18n/dictionaries/FeedbackPageDictionary.ts` | Cleanup Pending | Legacy |
 | 229 | `shivanyams/src/i18n/dictionaries/PrivacyPageDictionary.ts` | Cleanup Pending | Legacy |
 | 230 | `shivanyams/src/i18n/dictionaries/TermsPageDictionary.ts` | Cleanup Pending | Legacy |
-| 231 | `shivanyams/src/i18n/dictionaries/base.ts` | Not Reviewed | Legacy |
-| 232 | `shivanyams/src/i18n/dictionaries/portal-dictionary.ts` | Not Reviewed | Legacy |
-| 233 | `shivanyams/src/i18n/organized/dictionaries/sidebar.ts` | Not Reviewed | Legacy |
-| 234 | `shivanyams/src/lib/authenticated-fetch.ts` | Not Reviewed | Legacy |
-| 235 | `shivanyams/src/lib/format-number.ts` | Not Reviewed | Legacy |
-| 236 | `shivanyams/src/styles/css.config.ts` | Not Reviewed | Legacy |
-| 237 | `shivanyams/src/styles/legacy/app/admin/add-post/AddPostPage.css` | Not Reviewed | Legacy |
-| 238 | `shivanyams/src/styles/legacy/app/admin/admin.css` | Not Reviewed | Legacy |
-| 239 | `shivanyams/src/styles/legacy/app/admin/comments/comments.css` | Not Reviewed | Legacy |
-| 240 | `shivanyams/src/styles/legacy/app/admin/engagement/[postId]/engagement.css` | Not Reviewed | Legacy |
-| 241 | `shivanyams/src/styles/legacy/app/admin/questions/questions.css` | Not Reviewed | Legacy |
-| 242 | `shivanyams/src/styles/legacy/app/admin/reports/reports.css` | Not Reviewed | Legacy |
-| 243 | `shivanyams/src/styles/legacy/app/admin/tags/tags.css` | Not Reviewed | Legacy |
-| 244 | `shivanyams/src/styles/legacy/app/globals.css` | Not Reviewed | Legacy |
-| 245 | `shivanyams/src/styles/legacy/app/portal-base.css` | Not Reviewed | Legacy |
-| 246 | `shivanyams/src/styles/legacy/components/admin/PostEditor.css` | Not Reviewed | Legacy |
-| 247 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsCharacters.css` | Not Reviewed | Legacy |
-| 248 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css` | Not Reviewed | Legacy |
-| 249 | `shivanyams/src/styles/legacy/components/animation/BanyanTree/BanyanTree.css` | Cleanup Pending | Legacy |
-| 250 | `shivanyams/src/styles/legacy/components/animation/Clock/PortalClock.css` | Cleanup Pending | Legacy |
-| 251 | `shivanyams/src/styles/legacy/components/animation/Clouds/Clouds.css` | Cleanup Pending | Legacy |
-| 252 | `shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css` | Cleanup Pending | Legacy |
-| 253 | `shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css` | Cleanup Pending | Legacy |
-| 254 | `shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css` | Not Reviewed | Legacy |
-| 255 | `shivanyams/src/styles/legacy/components/animation/Moon/Moon.css` | Not Reviewed | Legacy |
-| 256 | `shivanyams/src/styles/legacy/components/animation/Stars/Stars.css` | Not Reviewed | Legacy |
-| 257 | `shivanyams/src/styles/legacy/components/animation/Sun/Sun.css` | Not Reviewed | Legacy |
-| 258 | `shivanyams/src/styles/legacy/components/examination/ExaminationCharacters.css` | Not Reviewed | Legacy |
-| 259 | `shivanyams/src/styles/legacy/components/guide/GuidesCharacters.css` | Not Reviewed | Legacy |
-| 260 | `shivanyams/src/styles/legacy/components/guide/GuidesPage.css` | Not Reviewed | Legacy |
-| 261 | `shivanyams/src/styles/legacy/components/jobs/JobsCharacters.css` | Not Reviewed | Legacy |
-| 262 | `shivanyams/src/styles/legacy/components/jobs/JobsPage.css` | Not Reviewed | Legacy |
-| 263 | `shivanyams/src/styles/legacy/components/portal/RelatedJobsPage.css` | Not Reviewed | Legacy |
-| 264 | `shivanyams/src/styles/legacy/components/portal/category/CategoryGrid.css` | Not Reviewed | Legacy |
-| 265 | `shivanyams/src/styles/legacy/components/portal/category/CategoryPage.css` | Not Reviewed | Legacy |
-| 266 | `shivanyams/src/styles/legacy/components/portal/home/HeroSection.css` | Not Reviewed | Legacy |
-| 267 | `shivanyams/src/styles/legacy/components/portal/home/UpdatesSection.css` | Not Reviewed | Legacy |
-| 268 | `shivanyams/src/styles/legacy/components/portal/language/LanguageDropdown.css` | Not Reviewed | Legacy |
-| 269 | `shivanyams/src/styles/legacy/components/portal/layout/PortalShell.css` | Not Reviewed | Legacy |
-| 270 | `shivanyams/src/styles/legacy/components/portal/layout/footer/SiteMobileFooter.css` | Not Reviewed | Legacy |
-| 271 | `shivanyams/src/styles/legacy/components/portal/post/NewsletterSubscribeButton.css` | Cleanup Pending | Legacy |
-| 272 | `shivanyams/src/styles/legacy/components/portal/post/PortalContentNotFound.css` | Cleanup Pending | Legacy |
-| 273 | `shivanyams/src/styles/legacy/components/portal/post/PortalPostDetail.css` | Cleanup Pending | Legacy |
-| 274 | `shivanyams/src/styles/legacy/components/portal/post/PostCommentsSection.css` | Cleanup Pending | Legacy |
-| 275 | `shivanyams/src/styles/legacy/components/portal/post/PostEngagementActions.css` | Cleanup Pending | Legacy |
-| 276 | `shivanyams/src/styles/legacy/components/portal/post/PostFAQSection.css` | Cleanup Pending | Legacy |
-| 277 | `shivanyams/src/styles/legacy/components/portal/saved/SavedPostsPage.css` | Not Reviewed | Legacy |
-| 278 | `shivanyams/src/styles/legacy/components/results/ResultsCharacters.css` | Not Reviewed | Legacy |
-| 279 | `shivanyams/src/styles/legacy/components/results/ResultsPage.css` | Not Reviewed | Legacy |
-| 280 | `shivanyams/src/styles/legacy/components/scheme/SchemesCharacters.css` | Not Reviewed | Legacy |
-| 281 | `shivanyams/src/styles/legacy/components/scheme/SchemesPage.css` | Not Reviewed | Legacy |
-| 282 | `shivanyams/src/styles/legacy/components/static-pages/About/AboutPage.css` | Not Reviewed | Legacy |
-| 283 | `shivanyams/src/styles/legacy/components/static-pages/Contact/ContactPage.css` | Not Reviewed | Legacy |
-| 284 | `shivanyams/src/styles/legacy/components/static-pages/Disclaimer/DisclaimerPage.css` | Not Reviewed | Legacy |
-| 285 | `shivanyams/src/styles/legacy/components/static-pages/Feedback/FeedbackPage.css` | Not Reviewed | Legacy |
-| 286 | `shivanyams/src/styles/legacy/components/static-pages/Privacy/PrivacyPage.css` | Not Reviewed | Legacy |
-| 287 | `shivanyams/src/styles/legacy/components/static-pages/Terms/TermsPage.css` | Not Reviewed | Legacy |
-| 288 | `shivanyams/src/styles/legacy/components/tools/ToolsCharacters.css` | Not Reviewed | Legacy |
-| 289 | `shivanyams/src/styles/legacy/components/tools/ToolsPage.css` | Not Reviewed | Legacy |
-| 290 | `shivanyams/src/styles/legacy/components/videos/VideosCharacters.css` | Not Reviewed | Legacy |
-| 291 | `shivanyams/src/styles/legacy/components/videos/VideosPage.css` | Not Reviewed | Legacy |
-| 292 | `shivanyams/src/styles/legacy/components/videos/VideosSection.css` | Not Reviewed | Legacy |
-| 293 | `shivanyams/src/styles/organized/AI-GUIDE.md` | Not Reviewed | Legacy |
-| 294 | `shivanyams/src/styles/organized/admin/.gitkeep` | Not Reviewed | Legacy |
-| 295 | `shivanyams/src/styles/organized/components/.gitkeep` | Not Reviewed | Legacy |
-| 296 | `shivanyams/src/styles/organized/components/portal/category/CategoryBadge.css` | Not Reviewed | Legacy |
-| 297 | `shivanyams/src/styles/organized/components/portal/category/CategoryGrid.css` | Not Reviewed | Legacy |
-| 298 | `shivanyams/src/styles/organized/components/portal/category/CategoryPageUpdates.css` | Not Reviewed | Legacy |
-| 299 | `shivanyams/src/styles/organized/components/portal/home/HomeResponsive.css` | Not Reviewed | Legacy |
-| 300 | `shivanyams/src/styles/organized/components/portal/home/LatestUpdatesTicker.css` | Not Reviewed | Legacy |
-| 301 | `shivanyams/src/styles/organized/components/portal/layout/PortalFooter.css` | Not Reviewed | Legacy |
-| 302 | `shivanyams/src/styles/organized/components/portal/layout/PortalTabletNavigation.css` | Not Reviewed | Legacy |
-| 303 | `shivanyams/src/styles/organized/foundations/reset.css` | Not Reviewed | Legacy |
-| 304 | `shivanyams/src/styles/organized/foundations/tokens.css` | Not Reviewed | Legacy |
-| 305 | `shivanyams/src/styles/organized/foundations/typography.css` | Not Reviewed | Legacy |
-| 306 | `shivanyams/src/styles/organized/globals/.gitkeep` | Not Reviewed | Legacy |
-| 307 | `shivanyams/src/styles/organized/index.css` | Not Reviewed | Legacy |
-| 308 | `shivanyams/src/styles/organized/pages/.gitkeep` | Not Reviewed | Legacy |
-| 309 | `shivanyams/src/styles/organized/portal/.gitkeep` | Not Reviewed | Legacy |
-| 310 | `shivanyams/tsconfig.json` | Not Reviewed | Legacy |
+| 231 | `shivanyams/src/i18n/dictionaries/base.ts` | Cleanup Pending | Legacy |
+| 232 | `shivanyams/src/i18n/dictionaries/portal-dictionary.ts` | Cleanup Pending | Legacy |
+| 233 | `shivanyams/src/i18n/organized/dictionaries/sidebar.ts` | Cleanup Pending | Legacy |
+| 234 | `shivanyams/src/i18n/types.ts` | Clean | Organized |
+| 235 | `shivanyams/src/lib/authenticated-fetch.ts` | Cleanup Pending | Legacy |
+| 236 | `shivanyams/src/lib/format-number.ts` | Cleanup Pending | Legacy |
+| 237 | `shivanyams/src/styles/css.config.ts` | Not Reviewed | Legacy |
+| 238 | `shivanyams/src/styles/legacy/app/admin/add-post/AddPostPage.css` | Not Reviewed | Legacy |
+| 239 | `shivanyams/src/styles/legacy/app/admin/admin.css` | Not Reviewed | Legacy |
+| 240 | `shivanyams/src/styles/legacy/app/admin/comments/comments.css` | Not Reviewed | Legacy |
+| 241 | `shivanyams/src/styles/legacy/app/admin/engagement/[postId]/engagement.css` | Not Reviewed | Legacy |
+| 242 | `shivanyams/src/styles/legacy/app/admin/questions/questions.css` | Not Reviewed | Legacy |
+| 243 | `shivanyams/src/styles/legacy/app/admin/reports/reports.css` | Not Reviewed | Legacy |
+| 244 | `shivanyams/src/styles/legacy/app/admin/tags/tags.css` | Not Reviewed | Legacy |
+| 245 | `shivanyams/src/styles/legacy/app/globals.css` | Not Reviewed | Legacy |
+| 246 | `shivanyams/src/styles/legacy/app/portal-base.css` | Not Reviewed | Legacy |
+| 247 | `shivanyams/src/styles/legacy/components/admin/PostEditor.css` | Not Reviewed | Legacy |
+| 248 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsCharacters.css` | Not Reviewed | Legacy |
+| 249 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css` | Not Reviewed | Legacy |
+| 250 | `shivanyams/src/styles/legacy/components/animation/BanyanTree/BanyanTree.css` | Cleanup Pending | Legacy |
+| 251 | `shivanyams/src/styles/legacy/components/animation/Clock/PortalClock.css` | Cleanup Pending | Legacy |
+| 252 | `shivanyams/src/styles/legacy/components/animation/Clouds/Clouds.css` | Cleanup Pending | Legacy |
+| 253 | `shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css` | Cleanup Pending | Legacy |
+| 254 | `shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css` | Cleanup Pending | Legacy |
+| 255 | `shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css` | Not Reviewed | Legacy |
+| 256 | `shivanyams/src/styles/legacy/components/animation/Moon/Moon.css` | Not Reviewed | Legacy |
+| 257 | `shivanyams/src/styles/legacy/components/animation/Stars/Stars.css` | Not Reviewed | Legacy |
+| 258 | `shivanyams/src/styles/legacy/components/animation/Sun/Sun.css` | Not Reviewed | Legacy |
+| 259 | `shivanyams/src/styles/legacy/components/examination/ExaminationCharacters.css` | Not Reviewed | Legacy |
+| 260 | `shivanyams/src/styles/legacy/components/guide/GuidesCharacters.css` | Not Reviewed | Legacy |
+| 261 | `shivanyams/src/styles/legacy/components/guide/GuidesPage.css` | Not Reviewed | Legacy |
+| 262 | `shivanyams/src/styles/legacy/components/jobs/JobsCharacters.css` | Not Reviewed | Legacy |
+| 263 | `shivanyams/src/styles/legacy/components/jobs/JobsPage.css` | Not Reviewed | Legacy |
+| 264 | `shivanyams/src/styles/legacy/components/portal/RelatedJobsPage.css` | Not Reviewed | Legacy |
+| 265 | `shivanyams/src/styles/legacy/components/portal/category/CategoryGrid.css` | Not Reviewed | Legacy |
+| 266 | `shivanyams/src/styles/legacy/components/portal/category/CategoryPage.css` | Not Reviewed | Legacy |
+| 267 | `shivanyams/src/styles/legacy/components/portal/home/HeroSection.css` | Not Reviewed | Legacy |
+| 268 | `shivanyams/src/styles/legacy/components/portal/home/UpdatesSection.css` | Not Reviewed | Legacy |
+| 269 | `shivanyams/src/styles/legacy/components/portal/language/LanguageDropdown.css` | Not Reviewed | Legacy |
+| 270 | `shivanyams/src/styles/legacy/components/portal/layout/PortalShell.css` | Not Reviewed | Legacy |
+| 271 | `shivanyams/src/styles/legacy/components/portal/layout/footer/SiteMobileFooter.css` | Not Reviewed | Legacy |
+| 272 | `shivanyams/src/styles/legacy/components/portal/post/NewsletterSubscribeButton.css` | Cleanup Pending | Legacy |
+| 273 | `shivanyams/src/styles/legacy/components/portal/post/PortalContentNotFound.css` | Cleanup Pending | Legacy |
+| 274 | `shivanyams/src/styles/legacy/components/portal/post/PortalPostDetail.css` | Cleanup Pending | Legacy |
+| 275 | `shivanyams/src/styles/legacy/components/portal/post/PostCommentsSection.css` | Cleanup Pending | Legacy |
+| 276 | `shivanyams/src/styles/legacy/components/portal/post/PostEngagementActions.css` | Cleanup Pending | Legacy |
+| 277 | `shivanyams/src/styles/legacy/components/portal/post/PostFAQSection.css` | Cleanup Pending | Legacy |
+| 278 | `shivanyams/src/styles/legacy/components/portal/saved/SavedPostsPage.css` | Not Reviewed | Legacy |
+| 279 | `shivanyams/src/styles/legacy/components/results/ResultsCharacters.css` | Not Reviewed | Legacy |
+| 280 | `shivanyams/src/styles/legacy/components/results/ResultsPage.css` | Not Reviewed | Legacy |
+| 281 | `shivanyams/src/styles/legacy/components/scheme/SchemesCharacters.css` | Not Reviewed | Legacy |
+| 282 | `shivanyams/src/styles/legacy/components/scheme/SchemesPage.css` | Not Reviewed | Legacy |
+| 283 | `shivanyams/src/styles/legacy/components/static-pages/About/AboutPage.css` | Not Reviewed | Legacy |
+| 284 | `shivanyams/src/styles/legacy/components/static-pages/Contact/ContactPage.css` | Not Reviewed | Legacy |
+| 285 | `shivanyams/src/styles/legacy/components/static-pages/Disclaimer/DisclaimerPage.css` | Not Reviewed | Legacy |
+| 286 | `shivanyams/src/styles/legacy/components/static-pages/Feedback/FeedbackPage.css` | Not Reviewed | Legacy |
+| 287 | `shivanyams/src/styles/legacy/components/static-pages/Privacy/PrivacyPage.css` | Not Reviewed | Legacy |
+| 288 | `shivanyams/src/styles/legacy/components/static-pages/Terms/TermsPage.css` | Not Reviewed | Legacy |
+| 289 | `shivanyams/src/styles/legacy/components/tools/ToolsCharacters.css` | Not Reviewed | Legacy |
+| 290 | `shivanyams/src/styles/legacy/components/tools/ToolsPage.css` | Not Reviewed | Legacy |
+| 291 | `shivanyams/src/styles/legacy/components/videos/VideosCharacters.css` | Not Reviewed | Legacy |
+| 292 | `shivanyams/src/styles/legacy/components/videos/VideosPage.css` | Not Reviewed | Legacy |
+| 293 | `shivanyams/src/styles/legacy/components/videos/VideosSection.css` | Not Reviewed | Legacy |
+| 294 | `shivanyams/src/styles/organized/AI-GUIDE.md` | Not Reviewed | Legacy |
+| 295 | `shivanyams/src/styles/organized/admin/.gitkeep` | Not Reviewed | Legacy |
+| 296 | `shivanyams/src/styles/organized/components/.gitkeep` | Not Reviewed | Legacy |
+| 297 | `shivanyams/src/styles/organized/components/portal/category/CategoryBadge.css` | Not Reviewed | Legacy |
+| 298 | `shivanyams/src/styles/organized/components/portal/category/CategoryGrid.css` | Not Reviewed | Legacy |
+| 299 | `shivanyams/src/styles/organized/components/portal/category/CategoryPageUpdates.css` | Not Reviewed | Legacy |
+| 300 | `shivanyams/src/styles/organized/components/portal/home/HomeResponsive.css` | Not Reviewed | Legacy |
+| 301 | `shivanyams/src/styles/organized/components/portal/home/LatestUpdatesTicker.css` | Not Reviewed | Legacy |
+| 302 | `shivanyams/src/styles/organized/components/portal/layout/PortalFooter.css` | Not Reviewed | Legacy |
+| 303 | `shivanyams/src/styles/organized/components/portal/layout/PortalTabletNavigation.css` | Not Reviewed | Legacy |
+| 304 | `shivanyams/src/styles/organized/foundations/reset.css` | Cleanup Pending | Legacy |
+| 305 | `shivanyams/src/styles/organized/foundations/tokens.css` | Not Reviewed | Legacy |
+| 306 | `shivanyams/src/styles/organized/foundations/typography.css` | Not Reviewed | Legacy |
+| 307 | `shivanyams/src/styles/organized/globals/.gitkeep` | Not Reviewed | Legacy |
+| 308 | `shivanyams/src/styles/organized/index.css` | Not Reviewed | Legacy |
+| 309 | `shivanyams/src/styles/organized/pages/.gitkeep` | Not Reviewed | Legacy |
+| 310 | `shivanyams/src/styles/organized/portal/.gitkeep` | Not Reviewed | Legacy |
+| 311 | `shivanyams/tsconfig.json` | Not Reviewed | Legacy |
 
 ## Status definitions
 

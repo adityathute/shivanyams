@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `2b18cdacb87eb2cf89df69ae17edd915bc8fd964` |
+| Last source snapshot audited | `b6b879efd67e3a19f838a1b384223b69706e4fed` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 23, unfinished cleanup scope is 236 files (104 Cleanup Pending + 132 Not Reviewed), giving an estimated 24 remaining batches and 47 batches overall, including the 23 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 24, unfinished cleanup scope is 236 files (110 Cleanup Pending + 126 Not Reviewed), giving an estimated 24 remaining batches and 48 batches overall, including the 24 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -30,28 +30,28 @@
 
 | Metric | Count |
 |---|---:|
-| Total tracked files after current update | 310 |
-| Clean | 74 |
-| Cleanup Pending | 104 |
-| Not Reviewed | 132 |
-| Reviewed files after Batch 23 | 178 |
-| Organized | 74 |
+| Total tracked files after current update | 311 |
+| Clean | 75 |
+| Cleanup Pending | 110 |
+| Not Reviewed | 126 |
+| Reviewed files after Batch 24 | 185 |
+| Organized | 75 |
 | Legacy | 236 |
 
 ### Total Cleanup Metrics
 
 | Metric | Count |
 |---|---:|
-| Total files in cleanup inventory | 310 |
-| Files reviewed to date | 178 |
-| Review completion | 57.4% |
-| Files fully clean / organized | 74 |
-| Reviewed files still pending cleanup | 104 |
-| Files not yet reviewed | 132 |
+| Total files in cleanup inventory | 311 |
+| Files reviewed to date | 185 |
+| Review completion | 59.5% |
+| Files fully clean / organized | 75 |
+| Reviewed files still pending cleanup | 110 |
+| Files not yet reviewed | 126 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 23 |
+| Completed batches | 24 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 47 |
+| Estimated total batches | 48 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,21 +67,25 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| 9798bacbe5c7a254523f8918e31e3957d106810b | `chore(portal): audit admin animation and utilities batch 23` | Audited PostEditor, five animation components, deadline/link utilities and privacy/terms dictionaries; improved decorative accessibility, strict date validation and timezone-safe deadline calculation; hardened important-link response handling |
-| 2b18cdacb87eb2cf89df69ae17edd915bc8fd964 | `chore(portal): audit animation components and styles batch 22; add rule 58` | Audited five Portal animation components and five paired stylesheets; added semantic time markup, reduced-motion support for clouds/flowers, corrected the GovernmentBuilding offset and added Rule 58 automated test coverage |
-| d4363c77bbbbe335153d4ff622af53df26d72ed1 | `chore(portal): audit videos and dictionaries batch 21; add rule 57` | Audited 10 video, configuration, category and dictionary files; enabled Next.js image optimization for video artwork; validated YouTube IDs before iframe embedding; added Rule 57 for proactive rule suggestions with approval required |
+| b6b879efd67e3a19f838a1b384223b69706e4fed | `chore(i18n): centralize locale types and harden shared utilities batch 24` | Added a shared Language type and retained CategoryGrid's type export; typed sidebar locales; made cookie parsing whitespace-independent; handled non-finite compact-number inputs; honored reduced-motion preferences in organized-mode scrolling. |
+| 9798bacbe5c7a254523f8918e31e3957d106810b | `chore(portal): audit admin animation and utilities batch 23` | Audited PostEditor, five animation components, deadline/link utilities and privacy/terms dictionaries; improved decorative accessibility, strict date validation and timezone-safe deadline calculation; hardened important-link response handling. |
+| 2b18cdacb87eb2cf89df69ae17edd915bc8fd964 | `chore(portal): audit animation components and styles batch 22; add rule 58` | Audited five Portal animation components and five paired stylesheets; added semantic time markup, reduced-motion support for clouds/flowers, corrected the GovernmentBuilding offset and added Rule 58 automated test coverage. |
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining Not Reviewed files.
-2. Migrate Batch 19 page and illustration styles out of legacy CSS paths; review Next.js image optimization and skeleton consistency.
-2. Finish Batch 18 pending PortalLanguageDropdown, footer links, user menu accessibility, saved-post retry behavior and portal data mapping review.
-2. Complete root package.json/package-lock consistency review and inspect public image assets for visual suitability, dimensions and optimization.
-2. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
-3. Complete PortalHeader search submission and review the Hero scene tester exposure.
-4. Complete the known Pending work in Admin, Ledger, Next.js configuration and the reviewed historical Django migration chain.
-5. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
-6. Verify the private `shivanya-auth` reference version when repository access permits.
+1. Continue detailed cleanup audits for the remaining 126 Not Reviewed files.
+2. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
+3. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
+4. Migrate Batch 19 page and illustration styles out of legacy CSS paths; review Next.js image optimization and skeleton consistency.
+5. Finish Batch 18 pending PortalLanguageDropdown, footer links, user menu accessibility, saved-post retry behavior and portal data mapping review.
+6. Complete root package.json/package-lock consistency review and inspect public image assets for visual suitability, dimensions and optimization.
+7. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
+8. Complete PortalHeader search submission and review the Hero scene tester exposure.
+9. Complete the known Pending work in Admin, Ledger, Next.js configuration and the reviewed historical Django migration chain.
+10. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
+11. Verify the private `shivanya-auth` reference version when repository access permits.
+
+**Batch 24 validation:** Git tree and structure inventory reconcile at 311 files. No automated test files or dedicated test runner were identified in the tracked tree; repository CI defines lint/build checks. Tests, lint and build were not run for this batch.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

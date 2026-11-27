@@ -1,7 +1,7 @@
 <!-- File Location: shivanyams/PROJECT_REPORTS.md -->
 <!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
 <!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Concise project summary, exact inventory metrics, 10-file target from Batch 12, reference versions and last three implementation commits only. Full file register is maintained in PROJECT_STRUCTURE.md. -->
+<!-- Cleanup Info: Concise project summary, exact inventory metrics, 10-file target from Batch 12 onward, Organized/Legacy definitions and latest three implementation commits only. Full file register is maintained in PROJECT_STRUCTURE.md. -->
 
 # ShivanyaMS V2 — Project Reports
 
@@ -18,23 +18,23 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `97c5acc9b70a7d18a65d23169829e6a061ea5bb4` |
+| Last source snapshot audited | `08e5c71dd7738fcc252c355fde05e35082cead57` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 12, unfinished cleanup scope is 274 files (30 Cleanup Pending + 244 Not Reviewed), giving an estimated 28 remaining batches and 40 batches overall, including the 12 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 13, unfinished cleanup scope is 269 files (35 Cleanup Pending + 234 Not Reviewed), giving an estimated 27 remaining batches and 40 batches overall, including the 13 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
 | Metric | Count |
 |---|---:|
 | Total tracked files after current update | 310 |
-| Clean | 36 |
-| Cleanup Pending | 30 |
-| Not Reviewed | 244 |
-| Reviewed files after Batch 12 | 66 |
-| Organized | 254 |
-| Legacy | 56 |
+| Clean | 41 |
+| Cleanup Pending | 35 |
+| Not Reviewed | 234 |
+| Reviewed files after Batch 13 | 76 |
+| Organized | 41 |
+| Legacy | 269 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. `next-env.d.ts` remains Cleanup Pending as a generated-file exception.
 
@@ -50,11 +50,9 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| 97c5acc9b70a7d18a65d23169829e6a061ea5bb4 | `chore(portal): audit post detail UI and styles batch 12` | Audited 10 Post UI/CSS files; consolidated duplicate date formatter; corrected invalid disabled cursor; updated Rule 51 metadata and file register |\n| a9e1596e58aa575570a9829163753e4ac66a7ae5 | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
-| `4410f33f7ab29af39c4b34337e5a4fcc18330005` | `chore(routes): audit terms tools videos batch 10` | Added Rule 51 metadata to Terms, Tools and Videos route wrappers |
-| `b0d7e47c33d263151b7c18a20d2bad783a4cb606` | `chore(routes): audit schemes and tags cleanup batch 9` | Added Rule 51 metadata to Schemes and Tags route wrappers; documented generated `next-env.d.ts` exception |
-
-Older batch history is intentionally not repeated here. The table tracks the latest three implementation changes; report-only synchronization commits are recorded as the current repository HEAD in GitHub and do not create repeated audit history.
+| 08e5c71dd7738fcc252c355fde05e35082cead57 | `chore(portal): audit category and post helpers batch 13` | Audited 10 Portal/category/post files; optimized comment moderation prefix lookup; removed unused 404 styles; hardened invalid date fallback; clarified Organized/Legacy rule and refreshed full inventory |
+| 97c5acc9b70a7d18a65d23169829e6a061ea5bb4 | `chore(portal): audit post detail UI and styles batch 12` | Audited 10 Post UI/CSS files; consolidated duplicate date formatter; corrected invalid disabled cursor; updated per-file audits and file register |
+| a9e1596e58aa575570a9829163753e4ac66a7ae5 | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
 
 ## Current pending priorities
 

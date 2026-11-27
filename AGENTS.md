@@ -208,6 +208,10 @@
 
     नवीन Code, Components, Functions, Hooks, Variables किंवा Files तयार करताना Project मध्ये आधीपासून वापरल्या जाणाऱ्या Naming Conventions आणि Coding Patterns चे पालन करावे. एकाच प्रकारच्या Functionality साठी वेगवेगळी Naming Style वापरू नये. नवीन पद्धत सुरू करण्यापूर्वी तिची गरज तपासावी आणि विद्यमान Code शी सुसंगतता राखावी.
 
+51. **प्रत्येक File च्या सुरुवातीला Location आणि Cleanup Status**
+
+    नवीन File तयार करताना किंवा विद्यमान File संपादित करताना, त्या File च्या सुरुवातीला संबंधित भाषेच्या Comment Syntax मध्ये File Location म्हणजे Repository मधील पूर्ण Relative Path, Cleanup Status आणि Cleanup Information नमूद करावी. Cleanup Status साठी Clean, Cleanup Pending किंवा Not Reviewed यापैकी योग्य स्थिती वापरावी. Legacy Code, Duplicate Code, अनावश्यक Imports, CSS किंवा इतर साफसफाई बाकी असल्यास त्याची थोडक्यात नोंद द्यावी. File पूर्णपणे तपासून स्वच्छ केल्यानंतरच Clean Status द्यावा. File संपादित करताना ही माहिती अद्ययावत करावी. JSON आणि Lock Files सारख्या Comment समर्थित नसलेल्या Files मध्ये Comments जबरदस्तीने जोडू नयेत; त्यांची माहिती स्वतंत्र Cleanup Report मध्ये ठेवावी. संपूर्ण Project मधील Files टप्प्याटप्प्याने तपासून Clean, Cleanup Pending आणि Not Reviewed Files ची यादी तयार करावी.
+
 ---
 
 ## AI ONLY — Instructions for AI agents

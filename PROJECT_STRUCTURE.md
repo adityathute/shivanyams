@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `beb543f77a2f087aecab7fec0a6160993196bd2e`  
+**Source snapshot:** `f1e92a9d8ebbee29a9fe6cd6d12357b7618ba8f3`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,8 +16,8 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 170 |
-| Not Reviewed | 66 |
+| Cleanup Pending | 171 |
+| Not Reviewed | 65 |
 | Organized | 75 |
 | Legacy | 236 |
 | Audited before this structure update | 242 |
@@ -94,7 +94,7 @@
 | 63 | `shivanyams/backend/apps/portal/migrations/0039_remove_legacy_job_grade_pay.py` | Not Reviewed | Legacy |
 | 64 | `shivanyams/backend/apps/portal/migrations/0040_remove_legacy_job_employment_terms.py` | Not Reviewed | Legacy |
 | 65 | `shivanyams/backend/apps/portal/migrations/0041_cleanup_legacy_job_schema_drift.py` | Not Reviewed | Legacy |
-| 66 | `shivanyams/backend/apps/portal/migrations/0042_global_newsletter_subscriptions.py` | Not Reviewed | Legacy |
+| 66 | `shivanyams/backend/apps/portal/migrations/0042_global_newsletter_subscriptions.py` | Cleanup Pending | Legacy |
 | 67 | `shivanyams/backend/apps/portal/migrations/0043_merge_postversion_timestamp_and_newsletter.py` | Not Reviewed | Legacy |
 | 68 | `shivanyams/backend/apps/portal/migrations/0044_postquestion.py` | Not Reviewed | Legacy |
 | 69 | `shivanyams/backend/apps/portal/migrations/0045_postquestion_answer_visibility.py` | Not Reviewed | Legacy |

@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `beb543f77a2f087aecab7fec0a6160993196bd2e` |
+| Last source snapshot audited | `f1e92a9d8ebbee29a9fe6cd6d12357b7618ba8f3` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 34, unfinished cleanup scope is 236 files (170 Cleanup Pending + 66 Not Reviewed), giving an estimated 24 remaining batches and 58 batches overall, including the 34 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 35, unfinished cleanup scope is 236 files (171 Cleanup Pending + 65 Not Reviewed), giving an estimated 24 remaining batches and 59 batches overall, including the 35 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 170 |
-| Not Reviewed | 66 |
-| Reviewed files after Batch 34 | 245 |
+| Cleanup Pending | 171 |
+| Not Reviewed | 65 |
+| Reviewed files after Batch 35 | 246 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 245 |
-| Review completion | 78.8% |
+| Files reviewed to date | 246 |
+| Review completion | 79.1% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 170 |
-| Files not yet reviewed | 66 |
+| Reviewed files still pending cleanup | 171 |
+| Files not yet reviewed | 65 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 34 |
+| Completed batches | 35 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 58 |
+| Estimated total batches | 59 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,13 +67,13 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| f1e92a9d8ebbee29a9fe6cd6d12357b7618ba8f3 | `perf(migrations): stream newsletter event backfill in batches batch 35` | Changed the initial newsletter event backfill to iterate and bulk-create events in batches of 1,000, avoiding an unbounded in-memory list while preserving event values and timestamps. |
 | beb543f77a2f087aecab7fec0a6160993196bd2e | `perf(migrations): batch legacy PostLink group updates batch 34` | Optimized the historical PostLink group-key data migration to update rows in batches of 500 instead of issuing one save query per row; preserves the deterministic legacy key format. |
 | 0371bd96ffc8977851c7757d1e46997b24735041 | `fix(migrations): avoid duplicate ImportantLink creation batch 33` | Corrected the Portal migration chain: 0003 already creates ImportantLink, so 0006 is retained as a no-op dependency migration instead of trying to create the same table a second time on fresh databases. |
-| a78aa996a5a997aa2663d847c655c326ac461701 | `chore(config): enforce consistent TypeScript import casing batch 32` | Audited the root TypeScript configuration and enabled `forceConsistentCasingInFileNames` to catch import path casing mismatches across development and case-sensitive deployment environments. |
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 66 Not Reviewed files.
+1. Continue detailed cleanup audits for the remaining 65 Not Reviewed files.
 2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
@@ -86,7 +86,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 12. Verify the private `shivanya-auth` reference version when repository access permits.
 
-**Batch 34 validation:** Git tree and structure inventory reconcile at 311 files. Audited Portal migrations 0012–0020. Optimized 0019's legacy PostLink group-key backfill to use iterator chunks and bulk updates of 500 rows, retaining the same `legacy-{pk}` values and migration dependency. Migration execution and database-level performance/compatibility checks were not run. Historical migrations remain Cleanup Pending / Legacy pending full migration-chain verification.
+**Batch 35 validation:** Git tree and structure inventory reconcile at 311 files. Audited Portal migrations 0021–0049, including merge dependencies and schema-cleanup operations. Updated 0042's newsletter event seed to stream subscriptions in chunks of 1,000 and bulk-create each event batch, retaining the same event type, user ID and original creation timestamp. Migration execution, data equivalence and memory/performance checks were not run. The per-old-subscription consent-preserving reconciliation remains unchanged. Historical migrations remain Cleanup Pending / Legacy pending full migration-chain verification.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

@@ -1,3 +1,7 @@
+// File Location: src/app/layout.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Information: Root layout combines legacy and organized stylesheets; CSS loading order and cookie-based theme/language behavior need integration review.
+
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";

@@ -1,3 +1,7 @@
+// File Location: src/app/admin/tags/AdminTagsPage.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Information: Legacy admin CSS imports remain; AnimatedNumber logic is duplicated across admin pages and tag API payload contracts need review.
+
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";

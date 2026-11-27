@@ -1,3 +1,7 @@
+// File Location: src/app/jobs/related/[filterType]/[slug]/page.tsx
+// Cleanup Status: Clean
+// Cleanup Information: Reviewed async route params and tag redirect; no redundant logic found in this wrapper.
+
 import { redirect } from "next/navigation";
 import { RelatedJobsPage } from "../../../../../components/portal/RelatedJobsPage";
 

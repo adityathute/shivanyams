@@ -9,8 +9,8 @@
 | Repository URL | https://github.com/adityathute/shivanyams |
 | Active branch | `shiv-v2` |
 | Report scope | Tracked files on `shiv-v2` |
-| Last audited branch head before this report update | `3e91aaee364a584be97dc0de6dae260b3dcab7cd` |
-| Current update | Cleanup Batch 7 audited five Ledger files, added Rule 51 metadata, fixed stale opening-setup saved state, and refreshed UI/CSS audit details |
+| Last audited branch head before this report update | `3503c5843394fa07b183650968362905c736d164` |
+| Current update | Cleanup Batch 8 audited five Portal route wrappers and reconciled the live tracked-file count |
 
 ## 2. Reference repositories and versions
 
@@ -24,18 +24,18 @@
 
 ## 3. Repository-wide cleanup progress
 
-Last verified tracked-file count: **308**.
+Last verified tracked-file count: **309**.
 
 | Status | Files | Meaning |
 |---|---:|---|
-| Clean | 20 | Reviewed and currently marked Clean |
+| Clean | 25 | Reviewed and currently marked Clean |
 | Cleanup Pending | 15 | Reviewed, but follow-up cleanup/type/SDK/config work remains |
-| Not Reviewed | 273 | Not yet inspected |
-| **Total tracked files** | **308** | Clean + Cleanup Pending + Not Reviewed |
+| Not Reviewed | 269 | Not yet inspected |
+| **Total tracked files** | **309** | Clean + Cleanup Pending + Not Reviewed |
 
-- Files reviewed so far: **35**
-- Files still not inspected: **273**
-- Known cleanup work remaining: **288 files** (15 Cleanup Pending + 273 Not Reviewed)
+- Files reviewed so far: **40**
+- Files still not inspected: **269**
+- Known cleanup work remaining: **284 files** (15 Cleanup Pending + 269 Not Reviewed)
 - Progress must be recalculated from the live Git tree and per-file status comments after every batch. Do not treat a pending file as clean.
 
 ## 4. First 20 files — full root paths and status
@@ -78,23 +78,6 @@ Last verified tracked-file count: **308**.
 | 29 | `shivanyams/src/app/jobs/related/[filterType]/[slug]/page.tsx` | Clean |
 | 30 | `shivanyams/src/app/layout.tsx` | Cleanup Pending |
 
-## 7. Pending work and next actions
-
-1. Review and decide the required Next.js configuration before changing the placeholder in `next.config.ts`.
-2. Complete API payload typing and category mapping review in the admin preview route.
-3. Review SDK component reuse and legacy stylesheet migration for the Add Content page; its current status is Cleanup Pending.
-4. Continue inspecting the remaining 273 files in small batches and update this report after each batch.
-5. When the private `shivanya-auth` repository can be inspected, record its actual branch, version, and commit. Until then, retain the explicit “version not verified” status.
-6. For CSS/SCSS audits, report exact selector counts only after inspecting the actual stylesheet. Keep stylesheet path and component-to-selector mapping in the relevant source-file Cleanup Info.
-
-## 8. Reporting rules
-
-- The source of truth for the tracked-file total is the current Git tree on `shiv-v2`.
-- The source of truth for file status is the actual per-file Cleanup Status plus the audit register.
-- Reconcile totals after any status change; counts must add up to the total tracked files.
-- Record the date/commit for each progress update when the report is next refreshed.
-- Never claim a build, test, or browser check unless it was actually run.
-
 ## 6. Cleanup Batch 7 — Ledger module audit
 
 | # | Repository-root path | Status | Audit summary |
@@ -110,3 +93,33 @@ Last verified tracked-file count: **308**.
 **CSS mapping:** All four Ledger TSX pages import `src/app/ledger/ledger.module.css`. The stylesheet contains 222 rule blocks and 167 unique selector strings, including responsive overrides. No selector consolidation was attempted in this batch because repeated selectors may encode breakpoint-specific behavior.
 
 **Remaining Ledger work:** Evaluate safe SDK component reuse; review repeated responsive CSS; harden localStorage parsing/writes; design backend persistence before claiming durable multi-device financial records. Ledger data remains browser-local preview data.
+
+## 7. Cleanup Batch 8 — Portal route wrapper audit
+
+| # | Repository-root path | Status | Audit summary |
+|---:|---|---|---|
+| 36 | `shivanyams/src/app/page.tsx` | Clean | Thin route wrapper to `components/portal/home/HomePage.tsx`; no duplicate logic or local CSS; UI audit belongs to shared implementation component |
+| 37 | `shivanyams/src/app/privacy/page.tsx` | Clean | Thin route wrapper to `components/static-pages/Privacy/PrivacyPage.tsx`; shared component uses `shivanya-ui` Typography and legacy CSS |
+| 38 | `shivanyams/src/app/results/[slug]/page.tsx` | Clean | Thin dynamic route wrapper to `components/portal/post/PortalPostDetail.tsx` with results category; no duplicate UI/data logic |
+| 39 | `shivanyams/src/app/results/page.tsx` | Clean | Thin route wrapper to `components/results/ResultsPage.tsx`; UI and legacy styling remain in the shared implementation component |
+| 40 | `shivanyams/src/app/saved/page.tsx` | Clean | Thin route wrapper to `components/portal/saved/SavedPostsPage.tsx`; auth/data/UI behavior remains in the shared implementation component |
+
+**Batch 8 audit:** All five selected route files are minimal Next.js wrappers and contain no independent UI, CSS selectors, or business logic. Their top-level comments now record full repository paths, reference repository versions, cleanup status and linked implementation ownership. No SDK migration was needed in these wrappers; the underlying components own the UI and relevant SDK/legacy CSS usage.
+
+## 8. Pending work and next actions
+
+1. Review and decide the required Next.js configuration before changing the placeholder in `next.config.ts`.
+2. Complete API payload typing and category mapping review in the admin preview route.
+3. Review SDK component reuse and legacy stylesheet migration for the Add Content page; its current status is Cleanup Pending.
+4. Continue inspecting the remaining 269 files in small batches and update this report after each batch.
+5. When the private `shivanya-auth` repository can be inspected, record its actual branch, version, and commit. Until then, retain the explicit “version not verified” status.
+6. For CSS/SCSS audits, report exact selector counts only after inspecting the actual stylesheet. Keep stylesheet path and component-to-selector mapping in the relevant source-file Cleanup Info.
+
+## 9. Reporting rules
+
+- The source of truth for the tracked-file total is the current Git tree on `shiv-v2`.
+- The source of truth for file status is the actual per-file Cleanup Status plus the audit register.
+- Reconcile totals after any status change; counts must add up to the total tracked files.
+- Record the date/commit for each progress update when the report is next refreshed.
+- Never claim a build, test, or browser check unless it was actually run.
+

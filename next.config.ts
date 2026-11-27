@@ -1,4 +1,5 @@
-// File: next.config.ts
+// File Location: shivanyams/next.config.ts
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Next.js configuration is currently an empty placeholder; review required settings before adding or removing options.
 // UI Components: 0

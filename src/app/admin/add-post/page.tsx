@@ -1,4 +1,5 @@
-// File: src/app/admin/add-post/page.tsx
+// File Location: shivanyams/src/app/admin/add-post/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
 // Cleanup Status: Clean
 // Cleanup Info: Admin guard and route rendering reviewed; no safe simplification needed.
 // UI Components: 1 JSX component (PostEditor, app-local)

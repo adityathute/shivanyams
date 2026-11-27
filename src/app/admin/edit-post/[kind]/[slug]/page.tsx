@@ -1,4 +1,5 @@
-// File: src/app/admin/edit-post/[kind]/[slug]/page.tsx
+// File Location: shivanyams/src/app/admin/edit-post/[kind]/[slug]/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
 // Cleanup Status: Clean
 // Cleanup Info: Route authorization and editor parameter forwarding reviewed; no redundant code found.
 // UI Components: 1 JSX component (PostEditor, app-local)

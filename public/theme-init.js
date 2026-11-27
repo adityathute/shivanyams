@@ -1,4 +1,5 @@
-// File: public/theme-init.js
+// File Location: shivanyams/public/theme-init.js
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
 // Cleanup Status: Clean
 // Cleanup Info: Theme initialization reviewed; storage access is guarded and fallback behavior is retained.
 // UI Components: 0

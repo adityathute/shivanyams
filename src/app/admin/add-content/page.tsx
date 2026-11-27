@@ -1,12 +1,13 @@
-// File: src/app/admin/add-content/page.tsx
-// Cleanup Status: Clean
+// File Location: shivanyams/src/app/admin/add-content/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
 // Cleanup Info: Form state, JSON validation, admin authorization, and request lifecycle reviewed; existing behavior retained.
 // UI Components: 1 page component; 1 form with 6 unique native control types (label, select, option, input, textarea, button)
 // SDK UI Components available for review: Button, Input, Select, Textarea, Label, FormField
 // SDK UI Components currently used: 0; native controls remain in legacy AddPostPage.css styling
 // Custom UI Components: 0 reusable component definitions; native JSX controls are inline
 // CSS Selectors: 34 selector groups / 39 individual selectors in src/styles/legacy/app/admin/add-post/AddPostPage.css (label: 1, input: 3, textarea: 4, select: 3, button: 4, layout/content/other: 24)
-// Cleanup: SDK control reuse and legacy stylesheet migration remain pending.
+// Cleanup: SDK control reuse and legacy stylesheet migration remain pending; see PROJECT_REPORTS.md.
 
 "use client";
 

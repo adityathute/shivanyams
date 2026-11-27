@@ -210,7 +210,7 @@
 
 51. **प्रत्येक File च्या सुरुवातीला Location आणि Cleanup Status**
 
-    नवीन File तयार करताना किंवा विद्यमान File संपादित करताना, त्या File च्या सुरुवातीला संबंधित भाषेच्या Comment Syntax मध्ये File Location म्हणजे Repository मधील पूर्ण Relative Path, Cleanup Status आणि Cleanup Information नमूद करावी. Cleanup Status साठी Clean, Cleanup Pending किंवा Not Reviewed यापैकी योग्य स्थिती वापरावी. Legacy Code, Duplicate Code, अनावश्यक Imports, CSS किंवा इतर साफसफाई बाकी असल्यास त्याची थोडक्यात नोंद द्यावी. File पूर्णपणे तपासून स्वच्छ केल्यानंतरच Clean Status द्यावा. File संपादित करताना ही माहिती अद्ययावत करावी. JSON आणि Lock Files सारख्या Comment समर्थित नसलेल्या Files मध्ये Comments जबरदस्तीने जोडू नयेत; त्यांची माहिती स्वतंत्र Cleanup Report मध्ये ठेवावी. संपूर्ण Project मधील Files टप्प्याटप्प्याने तपासून Clean, Cleanup Pending आणि Not Reviewed Files ची यादी तयार करावी.
+    नवीन File तयार करताना किंवा विद्यमान File संपादित करताना, त्या File च्या सुरुवातीला संबंधित भाषेच्या Comment Syntax मध्ये File Location म्हणजे Repository Root च्या नावासह पूर्ण Path (उदा. shivanyams/src/app/page.tsx), Reference Repositories, त्यांची तपासलेली Version/Branch माहिती, Cleanup Status आणि Cleanup Information नमूद करावी. Cleanup Status साठी Clean, Cleanup Pending किंवा Not Reviewed यापैकी योग्य स्थिती वापरावी. Legacy Code, Duplicate Code, अनावश्यक Imports, CSS किंवा इतर साफसफाई बाकी असल्यास त्याची थोडक्यात नोंद द्यावी. File पूर्णपणे तपासून स्वच्छ केल्यानंतरच Clean Status द्यावा. File संपादित करताना ही माहिती अद्ययावत करावी. JSON आणि Lock Files सारख्या Comment समर्थित नसलेल्या Files मध्ये Comments जबरदस्तीने जोडू नयेत; त्यांची माहिती स्वतंत्र Cleanup Report मध्ये ठेवावी. संपूर्ण Project मधील Files टप्प्याटप्प्याने तपासून Clean, Cleanup Pending आणि Not Reviewed Files ची यादी तयार करावी.
 
 
 52. **Cleanup Progress Report**
@@ -224,6 +224,15 @@
     प्रत्येक UI Audit करण्यापूर्वी shivanya-sdk Repository मधील अधिकृत UI Component Inventory आणि आवश्यकतेनुसार संबंधित Component Implementation तपासावी. सध्याच्या कामाशी जुळणारे आणि प्रत्यक्ष वापरता येणारे SDK Components ओळखून त्यांची नावे नमूद करावीत. योग्य SDK Component उपलब्ध असल्यास shivanyams मध्ये त्याचा पुनर्वापर करावा; मात्र केवळ आकडेवारी पूर्ण करण्यासाठी Component जबरदस्तीने वापरू नये. SDK Repository मध्ये कोणताही बदल करू नये.
 
     Cleanup Info मध्ये किमान पुढील माहिती द्यावी: एकूण UI Components, SDK Components उपलब्ध/वापरलेले, App-local किंवा Custom Components, एकूण CSS Selectors व प्रकारनिहाय संख्या, Duplicate Items आणि Cleanup Pending Items. ज्या File मध्ये UI किंवा CSS लागू होत नाही, तेथे शून्य असल्याचे स्पष्ट नमूद करावे. CSS दुसऱ्या File मध्ये असल्यास त्याचा Path नमूद करावा आणि त्या CSS चे Selector Count प्रत्यक्ष तपासल्याशिवाय लिहू नये. अंदाजे किंवा न तपासलेली संख्या देऊ नये. File संपादित केल्यानंतर हा Report अद्ययावत करावा.
+
+54. **Project Reports आणि Cleanup Master Register**
+
+    Repository च्या Root मध्ये PROJECT_REPORTS.md ही कायमस्वरूपी Report File ठेवावी. त्यामध्ये Project/Repository चे नाव, GitHub Repository, सध्याची Branch आणि तपासलेला Commit, एकूण Tracked Files, तपासलेल्या Files, Clean, Cleanup Pending आणि Not Reviewed Files ची अचूक संख्या, तपासलेल्या Files ची यादी व Status, उर्वरित तपासणी आणि पुढील Cleanup काम नोंदवावे. Reference Repositories ची नावे, URL, तपासलेली Version/Branch/Commit, उपलब्ध Component Inventory आणि Version पडताळता न आल्यास त्याचे कारण नमूद करावे. प्रत्येक Cleanup Batch किंवा Reference Repository Update नंतर Report अद्ययावत करावा. आकडे Git Tree आणि प्रत्यक्ष तपासलेल्या Files शी जुळले पाहिजेत; अंदाजे आकडे वापरू नयेत.
+
+55. **Reference Repository Version आणि Change Tracking**
+
+    shivanya-sdk, shivanya-auth किंवा Project मध्ये वापरल्या जाणाऱ्या इतर Reference Repositories मध्ये नवीन Version, Commit, Component, Feature किंवा API जोडला/बदलला गेल्यास संबंधित Repository ची अधिकृत माहिती पुन्हा तपासावी. बदललेल्या Component/API शी संबंधित shivanyams Files ओळखून त्या Files मधील Reference Repositories नोंद, Component Audit, SDK Reuse Mapping आणि Cleanup Info अद्ययावत करावे. प्रत्येक लागू File मध्ये Reference Repository चे नाव आणि तपासलेली Version/Branch नमूद करावी. PROJECT_REPORTS.md मध्ये जुनी व नवीन Version/Commit, बदलाचा सारांश, परिणाम झालेल्या Files आणि Pending Actions नोंदवाव्यात. Private किंवा inaccessible Repository ची Version पडताळता येत नसेल तर तसे स्पष्ट लिहावे; अंदाजाने Version देऊ नये. Reference Repository read-only असल्यास त्यात बदल किंवा Commit करू नये.
+
 ---
 
 ## AI ONLY — Instructions for AI agents

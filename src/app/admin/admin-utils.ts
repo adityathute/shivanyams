@@ -1,4 +1,5 @@
-// File: src/app/admin/admin-utils.ts
+// File Location: shivanyams/src/app/admin/admin-utils.ts
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
 // Cleanup Status: Clean
 // Cleanup Info: Utility functions reviewed; removed redundant blank lines and retained shared authenticated fetch export.
 // UI Components: 0

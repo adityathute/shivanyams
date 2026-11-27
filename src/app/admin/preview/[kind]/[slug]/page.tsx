@@ -1,4 +1,5 @@
-// File: src/app/admin/preview/[kind]/[slug]/page.tsx
+// File Location: shivanyams/src/app/admin/preview/[kind]/[slug]/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Route and abort handling reviewed; API payload casts and preview category mapping need a wider type-contract review.
 // UI Components: 1 shared component (PortalPostDetail) plus native main/div/button/span elements

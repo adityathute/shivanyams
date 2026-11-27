@@ -1,3 +1,7 @@
+// File: src/app/admin/add-content/page.tsx
+// Cleanup Status: Clean
+// Cleanup Info: Form state, JSON validation, admin authorization, and request lifecycle reviewed; existing behavior retained.
+
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";

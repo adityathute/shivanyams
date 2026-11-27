@@ -1,3 +1,7 @@
+// File: src/app/admin/preview/[kind]/[slug]/page.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Route and abort handling reviewed; API payload casts and preview category mapping need a wider type-contract review.
+
 "use client";
 
 import { useEffect, useState } from "react";

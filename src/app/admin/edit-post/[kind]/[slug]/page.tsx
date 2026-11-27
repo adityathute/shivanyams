@@ -1,3 +1,7 @@
+// File: src/app/admin/edit-post/[kind]/[slug]/page.tsx
+// Cleanup Status: Clean
+// Cleanup Info: Route authorization and editor parameter forwarding reviewed; no redundant code found.
+
 "use client";
 
 import { useEffect } from "react";

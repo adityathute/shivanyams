@@ -1,7 +1,7 @@
 <!-- File Location: shivanyams/PROJECT_REPORTS.md -->
 <!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
 <!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Concise project summary, exact inventory metrics, 10-file target from Batch 12 onward, Organized/Legacy definitions and latest three implementation commits only. Full file register is maintained in PROJECT_STRUCTURE.md. -->
+<!-- Cleanup Info: Concise project identity, exact live inventory metrics, review-phase progress, reference versions, pending priorities and latest three implementation commits. Full file register is maintained in PROJECT_STRUCTURE.md. -->
 
 # ShivanyaMS V2 — Project Reports
 
@@ -13,95 +13,75 @@
 | Project Version | **V2** |
 | Repository | `adityathute/shivanyams` |
 | Branch | `shiv-v2` |
-| Repository URL | https://github.com/adityathute/shivanyams |
 | Package name | `shivanyams` |
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `976c53332fc063529af28a33ef1cccffe044025b` |
+| Last audited branch snapshot | `7138c2bfcc32456f34364342d6a1844314c2d775` |
 
-**Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
-
-After Batch 44, unfinished cleanup scope is 236 files (212 Cleanup Pending + 24 Not Reviewed), giving an estimated 24 remaining batches and 68 batches overall, including the 44 completed batches. Recalculate after each batch.
+Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; it is not the product major version.
 
 ## Current repository metrics
 
-### Current Repository Metrics
-
 | Metric | Count |
 |---|---:|
-| Total tracked files after current update | 311 |
-| Clean | 75 |
-| Cleanup Pending | 212 |
-| Not Reviewed | 24 |
-| Reviewed files after Batch 44 | 287 |
-| Organized | 75 |
-| Legacy | 236 |
+| Total tracked files | 311 |
+| Clean | 77 |
+| Cleanup Pending | 219 |
+| Not Reviewed | 15 |
+| Reviewed files | 296 |
+| Review completion | 95.2% |
+| Organized | 77 |
+| Legacy | 234 |
 
-### Total Cleanup Metrics
+## Review phase
 
-| Metric | Count |
-|---|---:|
-| Total files in cleanup inventory | 311 |
-| Files reviewed to date | 287 |
-| Review completion | 92.3% |
-| Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 212 |
-| Files not yet reviewed | 24 |
-| Total remaining cleanup scope | 236 |
-| Completed batches | 44 |
-| Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 68 |
+- Review batches completed: **45**.
+- Maximum target: 10 files per review batch.
+- Review-phase batch totals will not be estimated or increased from projected cleanup work. Finish reviewing every tracked file first.
+- After the review phase, implementation/cleanup work will start as a separate phase with its own batch numbering. No implementation-batch estimate is recorded before that phase begins.
+- Complete per-file status and structure classifications are maintained in `PROJECT_STRUCTURE.md`.
 
-All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
+## Recent review updates
 
-**Batch 43 review:** Audited ten Portal migrations (`0024`–`0032`), including both `0024` branches, merge points, report constraints, and guarded legacy-column cleanup. Dependency paths converge through `0025`/`0028`; `0029` removes constraints created in the preceding branches; `0030`/`0031` guard legacy-column nullability changes. No additional safe migration edit was justified from static inspection alone. The ten files moved from Not Reviewed to Cleanup Pending / Legacy. Fresh-database and existing-database migration execution remains unverified.
+**Batch 45:** Reviewed the Portal migration package marker, migrations `0044`–`0050`, and the root npm lockfile. The empty migration `__init__.py` is a normal package marker. Migrations `0044`–`0050` form a sequential PostQuestion/ToolDetails schema chain; the visibility data migration maps existing false visibility values to private before removing the interim boolean field. The helpful-vote migrations add visitor uniqueness and a conditional per-user uniqueness constraint. Their field definitions align with the current `models.py`. The lockfile root metadata and dependency/devDependency declarations exactly match `package.json`. No static inconsistency justified editing generated migrations or the lockfile. Migration execution, rollback, fresh/existing database compatibility and `npm ci` were not run. Seven migrations remain Cleanup Pending / Legacy; `__init__.py` and `package-lock.json` are Clean / Organized.
 
-**Batch 44 review:** Audited ten Portal migrations (`0033`–`0041` and `0043`). `0033`/`0034` remove database columns outside explicit allowlists; `0035` creates `PostVersion`; `0036`–`0040` remove legacy JobDetails columns; `0041` compares five job-related tables against historical migration state and removes unexpected columns; `0043` merges the PostVersion and newsletter migration branches. Several operations are intentionally irreversible (`reverse_sql=noop` / no-op reverse code), and `0041` performs dynamic schema cleanup. No safe source edit was justified without validating the actual historical schema and running migrations against representative fresh and existing databases. These ten files moved from Not Reviewed to Cleanup Pending / Legacy. Migration execution, rollback behavior and existing-database compatibility remain unverified.
+**Batch 44:** Audited Portal migrations `0033`–`0041` and `0043`. Several operations remove legacy columns, including dynamic schema cleanup in `0041`; some operations are intentionally irreversible. No safe migration edit was justified without representative database verification. All ten files remain Cleanup Pending / Legacy.
+
+**Batch 43:** Audited Portal migrations `0024`–`0032`, including duplicate-number branches, merge points and guarded legacy-column cleanup. No further safe source edit was justified from static inspection alone. All ten files remain Cleanup Pending / Legacy.
 
 ## Reference repositories
 
 | Repository | Version / branch checked | Status |
 |---|---|---|
-| `shivanya-sdk` | Package version `1.0.0`, branch `sdk-v2`, commit `d6d510a30686efea6a19842d6f671d4949bcc646` | Read-only reference; branch independently verified |
-| `shivanya-auth` | Version `1.0.0`, branch `auth-v2` (provided by project owner; commit not independently verified) | Read-only private reference; commit not independently verified |
-| Local SDK packages in package.json | `shivanya-core 1.1.0`, `shivanya-ai 0.1.2`, `shivanya-ui 1.1.1`, `shivanya-shell 1.1.1`, `shivanya-auth 1.0.1`, `shivanya-i18n 1.0.0` | Local tarball dependencies; these package versions are distinct from the SDK repository's checked package version |
+| `shivanya-sdk` | Package version `1.0.0`, branch `sdk-v2`, commit `d6d510a30686efea6a19842d6f671d4949bcc646` | Read-only reference |
+| `shivanya-auth` | Version `1.0.0`, branch `auth-v2` (provided by project owner; commit not independently verified) | Read-only private reference |
+
+Local SDK package versions in `package.json`: `shivanya-core 1.1.0`, `shivanya-ai 0.1.2`, `shivanya-ui 1.1.1`, `shivanya-shell 1.1.1`, `shivanya-auth 1.0.1`, and `shivanya-i18n 1.0.0`. These are distinct from the checked SDK repository version.
 
 ## Latest three implementation changes
 
 | Commit | Message | Changes |
 |---|---|---|
-| 976c53332fc063529af28a33ef1cccffe044025b | `fix(migrations): order post version field migration after model creation batch 42` | Corrected the dependency of `0020_postversion_updated_at.py` to `0035_postversion`, ensuring the PostVersion model exists before its updated_at field/data migration is applied. |
-| a48c7224adb6f3aef9f13fd91b5b2024c7a2cce0 | `fix(admin): apply immutable activity admin permissions batch 40` | Added a shared read-only admin base for PostReaction, CommentReaction, PostShare, PostVisitor and PostView. Disables add/change/delete and marks concrete model fields read-only while retaining Django's default view-permission checks. |
-| f8271d54886b9bd972af555d7fb9638c809a3d33 | `perf(portal): batch admin tag updates in chunks batch 39` | Updated AdminTags rename/delete operations to stream locked Post records and bulk-update changed SEO keyword arrays in bounded batches of 500, retaining deduplication and updated_at updates while reducing per-row write queries. |
+| `976c53332fc063529af28a33ef1cccffe044025b` | `fix(migrations): order post version field migration after model creation batch 42` | Corrected the dependency of `0020_postversion_updated_at.py` to `0035_postversion`, ensuring the model exists before its field migration. |
+| `a48c7224adb6f3aef9f13fd91b5b2024c7a2cce0` | `fix(admin): apply immutable activity admin permissions batch 40` | Added read-only Django admin behavior for PostReaction, CommentReaction, PostShare, PostVisitor and PostView. |
+| `f8271d54886b9bd972af555d7fb9638c809a3d33` | `perf(portal): batch admin tag updates in chunks batch 39` | Changed AdminTags rename/delete operations to stream locked Post records and bulk-update in bounded batches of 500. |
 
-## Current pending priorities
+## Pending priorities
 
-1. Continue detailed cleanup audits for the remaining 24 Not Reviewed files.
-2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
-3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
-4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
-5. Migrate Batch 19 page and illustration styles out of legacy CSS paths; review Next.js image optimization and skeleton consistency.
-6. Finish Batch 18 pending PortalLanguageDropdown, footer links, user menu accessibility, saved-post retry behavior and portal data mapping review.
-7. Complete root package.json/package-lock consistency review and inspect public image assets for visual suitability, dimensions and optimization.
-8. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
-9. Complete PortalHeader search submission and review the Hero scene tester exposure.
-10. Complete the known Pending work in Admin, Ledger, Next.js configuration and the remaining historical Django migration chain checks. Batch 39 AdminTags bulk-write behavior still needs endpoint tests and concurrency/database verification.
-11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
-12. Verify the private `shivanya-auth` reference version when repository access permits.
-
-**Batch 37–38 correction:** A follow-up migration audit found that `0029_allow_three_reports_per_user.py` already removes `unique_user_comment_report` and adds the reporter/time index. Therefore the Batch 37 `0051` migration would attempt to remove a constraint already removed by migration 0029. Removed the redundant migration in Batch 38 and restored the inventory to 311 tracked files. No database schema operation remains from Batch 37. Django migration execution and the application-level three-report limit were not tested; verify both in the target environment.
-
-
-**Batch 39:** AdminTags tag rename/delete now streams locked Post records and uses bounded bulk_update batches of 500. Per-record updated_at values are explicitly refreshed because bulk_update bypasses auto_now. No Python test files were present in the repository; endpoint behavior, row locking and timestamp equivalence were not run. The file remains Cleanup Pending / Legacy until verification.
-
-**Batch 41:** Audited ten previously Not Reviewed Portal migration files (`0003`–`0013`, including both `0011` branches). Dependencies and schema operations were inspected against the surrounding migration chain and current Portal models. No safe source migration edit was justified without executing the chain against a disposable database; all ten are now reviewed but remain Cleanup Pending / Legacy pending fresh-database and existing-database migration verification. Generated migration history was left unchanged. No migration tests were run.\n\n**Batch 42:** Fixed the Portal migration graph: `0020_postversion_updated_at.py` now depends on `0035_postversion`, which creates `PostVersion`. Previously the field migration was reachable before its model-creation migration, risking a fresh-database migration failure. Audited nine adjacent Portal migrations in the `0014`–`0023` range for operation ordering, field/model consistency and branch dependencies. Ten files moved from Not Reviewed to Cleanup Pending / Legacy; generated migration files were not given manual metadata headers. Django migration execution and fresh/existing database verification were not run.\n\n**Batch 40:** Added `ReadOnlyActivityAdmin` for PostReaction, CommentReaction, PostShare, PostVisitor and PostView. It disables admin add/change/delete and marks concrete model fields read-only, without overriding Django's normal view-permission check. Admin permission behavior and regression tests were not executed; `admin.py` remains Cleanup Pending / Legacy.
-
-**Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
+1. Finish reviewing the remaining 15 Not Reviewed files; do not begin implementation-phase batch estimates before review completion.
+2. Verify the complete Django migration chain against fresh and representative existing databases, including irreversible data operations and rollback expectations.
+3. Run `npm ci` against the committed lockfile and verify dependency installation in the supported environment.
+4. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for pending Portal/admin/public stylesheets.
+5. Add and run regression tests for authenticated cookie refresh/CSRF replay, AdminTags bulk updates and Django admin permissions.
+6. Complete English, Marathi and Hindi dictionary parity and terminology review.
+7. Finish pending Admin, Ledger, Next.js configuration, Portal component and legacy stylesheet modernization.
+8. Inspect remaining public image/font assets for visual suitability, dimensions, licensing and optimization.
+9. Verify the private `shivanya-auth` reference version when repository access permits.
 
 ## Reporting rules
 
-- Keep this file concise: project identity, versions, exact counts, references, pending priorities and only the latest three commits.
-- Keep the complete per-file inventory in `PROJECT_STRUCTURE.md`; do not append batch-by-batch history here.
-- Never claim tests/build/browser checks unless actually performed.
+- Keep the full 311-file inventory in `PROJECT_STRUCTURE.md`; recalculate all counts from the live Git tree after each update.
+- Keep review-phase batches separate from later implementation/cleanup batches.
+- Never claim tests, builds, browser checks, dependency installation or migrations unless actually performed.
 - Modify only `adityathute/shivanyams` on `shiv-v2`; reference repositories remain read-only.

@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `a48c7224adb6f3aef9f13fd91b5b2024c7a2cce0`  
+**Source snapshot:** `7138c2bfcc32456f34364342d6a1844314c2d775`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -15,16 +15,16 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 311 |
-| Clean | 75 |
-| Cleanup Pending | 172 |
-| Not Reviewed | 64 |
-| Organized | 75 |
-| Legacy | 236 |
-| Audited before this structure update | 247 |
+| Clean | 77 |
+| Cleanup Pending | 219 |
+| Not Reviewed | 15 |
+| Organized | 77 |
+| Legacy | 234 |
+| Audited before this structure update | 296 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
-**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 introduced separate current and total cleanup metrics; both are refreshed after every batch. Batch 39 optimized AdminTags rename/delete writes using bounded 500-record bulk updates; runtime behavior and database concurrency remain unverified. Batch 40 made recorded Post/Comment reactions, shares, visitors and views read-only in Django admin; permission behavior requires verification.
+**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. Portal migrations through `0050` have now been statically reviewed; migration execution and fresh/existing-database compatibility remain pending. Remaining Not Reviewed files are listed individually in the register. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 introduced separate current and total cleanup metrics; both are refreshed after every batch. Batch 39 optimized AdminTags rename/delete writes using bounded 500-record bulk updates; runtime behavior and database concurrency remain unverified. Batch 40 made recorded Post/Comment reactions, shares, visitors and views read-only in Django admin; permission behavior requires verification.
 
 ## Complete tracked-file register
 | 1 | `shivanyams/.env.local.example` | Clean | Organized |
@@ -44,7 +44,7 @@
 | 15 | `shivanyams/backend/apps/portal/management/__init__.py` | Clean | Organized |
 | 16 | `shivanyams/backend/apps/portal/management/commands/__init__.py` | Clean | Organized |
 | 17 | `shivanyams/backend/apps/portal/management/commands/seed_portal_categories.py` | Clean | Organized |
-| 18 | `shivanyams/backend/apps/portal/migrations/__init__.py` | Not Reviewed | Legacy |
+| 18 | `shivanyams/backend/apps/portal/migrations/__init__.py` | Clean | Organized |
 | 19 | `shivanyams/backend/apps/portal/migrations/0001_initial.py` | Cleanup Pending | Legacy |
 | 20 | `shivanyams/backend/apps/portal/migrations/0002_rename_description_category_description_en_and_more.py` | Cleanup Pending | Legacy |
 | 21 | `shivanyams/backend/apps/portal/migrations/0003_importantlink.py` | Cleanup Pending | Legacy |
@@ -91,13 +91,13 @@
 | 62 | `shivanyams/backend/apps/portal/migrations/0041_cleanup_legacy_job_schema_drift.py` | Cleanup Pending | Legacy |
 | 63 | `shivanyams/backend/apps/portal/migrations/0042_global_newsletter_subscriptions.py` | Cleanup Pending | Legacy |
 | 64 | `shivanyams/backend/apps/portal/migrations/0043_merge_postversion_timestamp_and_newsletter.py` | Cleanup Pending | Legacy |
-| 65 | `shivanyams/backend/apps/portal/migrations/0044_postquestion.py` | Not Reviewed | Legacy |
-| 66 | `shivanyams/backend/apps/portal/migrations/0045_postquestion_answer_visibility.py` | Not Reviewed | Legacy |
-| 67 | `shivanyams/backend/apps/portal/migrations/0046_postquestion_answer_visibility_choices.py` | Not Reviewed | Legacy |
-| 68 | `shivanyams/backend/apps/portal/migrations/0047_postquestion_helpful_vote.py` | Not Reviewed | Legacy |
-| 69 | `shivanyams/backend/apps/portal/migrations/0048_unique_post_question_helpful_user.py` | Not Reviewed | Legacy |
-| 70 | `shivanyams/backend/apps/portal/migrations/0049_postquestion_status.py` | Not Reviewed | Legacy |
-| 71 | `shivanyams/backend/apps/portal/migrations/0050_tooldetails_tool_key_optional.py` | Not Reviewed | Legacy |
+| 65 | `shivanyams/backend/apps/portal/migrations/0044_postquestion.py` | Cleanup Pending | Legacy |
+| 66 | `shivanyams/backend/apps/portal/migrations/0045_postquestion_answer_visibility.py` | Cleanup Pending | Legacy |
+| 67 | `shivanyams/backend/apps/portal/migrations/0046_postquestion_answer_visibility_choices.py` | Cleanup Pending | Legacy |
+| 68 | `shivanyams/backend/apps/portal/migrations/0047_postquestion_helpful_vote.py` | Cleanup Pending | Legacy |
+| 69 | `shivanyams/backend/apps/portal/migrations/0048_unique_post_question_helpful_user.py` | Cleanup Pending | Legacy |
+| 70 | `shivanyams/backend/apps/portal/migrations/0049_postquestion_status.py` | Cleanup Pending | Legacy |
+| 71 | `shivanyams/backend/apps/portal/migrations/0050_tooldetails_tool_key_optional.py` | Cleanup Pending | Legacy |
 | 72 | `shivanyams/backend/apps/portal/models.py` | Cleanup Pending | Legacy |
 | 73 | `shivanyams/backend/apps/portal/permissions.py` | Clean | Organized |
 | 74 | `shivanyams/backend/apps/portal/serializers.py` | Cleanup Pending | Legacy |
@@ -114,7 +114,7 @@
 | 85 | `shivanyams/eslint.config.mjs` | Clean | Organized |
 | 86 | `shivanyams/next-env.d.ts` | Cleanup Pending | Legacy |
 | 87 | `shivanyams/next.config.ts` | Cleanup Pending | Legacy |
-| 88 | `shivanyams/package-lock.json` | Not Reviewed | Legacy |
+| 88 | `shivanyams/package-lock.json` | Clean | Organized |
 | 89 | `shivanyams/package.json` | Cleanup Pending | Legacy |
 | 90 | `shivanyams/PROJECT_REPORTS.md` | Clean | Organized |
 | 91 | `shivanyams/PROJECT_STRUCTURE.md` | Clean | Organized |

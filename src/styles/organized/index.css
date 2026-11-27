@@ -1,4 +1,10 @@
+/* File Location: shivanyams/src/styles/organized/index.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 31 audit. Staged organized stylesheet entry point; imports are limited to reviewed portal components. Foundation imports and complete mode scoping/import-order verification remain pending. */
+
 /* Organized global stylesheet entry point. */
+/* Keep this list explicit; add foundations only after mode-scope and import-order audits. */
 @import "./components/portal/category/CategoryGrid.css";
 @import "./components/portal/category/CategoryBadge.css";
 @import "./components/portal/category/CategoryPageUpdates.css";

@@ -1,2 +1,7 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/category/CategoryPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 31 audit. This legacy compatibility entry point imports HeroSection and UpdatesSection styles; retain until all consumers are mapped and organized-mode parity is browser-verified. */
+
 @import "./../home/HeroSection.css";
 @import "./../home/UpdatesSection.css";

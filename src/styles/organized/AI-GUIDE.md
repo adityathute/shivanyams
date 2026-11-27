@@ -1,3 +1,8 @@
+<!-- File Location: shivanyams/src/styles/organized/AI-GUIDE.md -->
+<!-- Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) -->
+<!-- Cleanup Status: Cleanup Pending -->
+<!-- Cleanup Info: Batch 31 documentation audit; staged migration guidance updated. Verify guidance against actual root imports and CSS mode switching before marking Organized. -->
+
 # CSS Organization Guide (AI)
 
 Read this file before creating or changing CSS.
@@ -49,6 +54,13 @@ The legacy and organized global stylesheets may both be imported by the root lay
 5. Search all references before removing legacy CSS.
 6. Test the page in organized-only mode before declaring migration complete.
 7. Report changed files and whether build/tests were run.
+
+## Legacy compatibility entry points
+
+- A legacy stylesheet that only imports other legacy stylesheets is still a legacy dependency, not an organized stylesheet.
+- Do not import legacy compatibility entry points from `organized/index.css`.
+- Before removing an import-only legacy file, search all imports and consumers, then verify the replacement in organized-only mode.
+- Do not add foundation imports to `organized/index.css` until each foundation stylesheet has been checked for correct `data-css-mode="organized"` scoping and import-order dependencies.
 
 ## Completion rule
 

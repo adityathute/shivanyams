@@ -5,7 +5,7 @@
 // SDK UI Components available for review: Button, Input, Select, Textarea, Label, FormField
 // SDK UI Components currently used: 0; native controls remain in legacy AddPostPage.css styling
 // Custom UI Components: 0 reusable component definitions; native JSX controls are inline
-// CSS Selectors: external legacy stylesheet imported; selector totals require separate stylesheet audit
+// CSS Selectors: 34 selector groups / 39 individual selectors in src/styles/legacy/app/admin/add-post/AddPostPage.css (label: 1, input: 3, textarea: 4, select: 3, button: 4, layout/content/other: 24)
 // Cleanup: SDK control reuse and legacy stylesheet migration remain pending.
 
 "use client";

@@ -485,19 +485,8 @@
   background: var(--border-color, #e5e7eb);
 }
 
-.portal-job-info-primary-grid-count-1 {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.portal-job-info-primary-grid-count-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.portal-job-info-primary-grid-count-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.portal-job-info-primary-grid-count-4 {
+/* Keep the primary job fields evenly sized at every screen width. */
+.portal-job-info-primary-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
@@ -551,6 +540,10 @@
   .portal-job-info-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .portal-job-info-primary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 600px) {
@@ -558,6 +551,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 14px 0;
     border-radius: 10px;
+  }
+
+  .portal-job-info-primary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .portal-job-info-item {
     min-height: 76px;
@@ -576,6 +573,10 @@
 
 @media (max-width: 360px) {
   .portal-job-info-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portal-job-info-primary-grid {
     grid-template-columns: minmax(0, 1fr);
   }
   .portal-job-info-item {

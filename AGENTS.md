@@ -1,36 +1,188 @@
 # ShivanyaMS V2 — Repository Rulebook
 
-## MASTER ONLY — Reserved for the repository owner
-## फक्त MASTER साठी — केवळ रेपॉझिटरीच्या मालकासाठी राखीव
+## फक्त मास्टरसाठी
 
-> **EN:** This section belongs exclusively to the Master (repository owner). Only the Master may add, edit, or remove rules in this section. AI agents and other developers must never modify, delete, reformat, or move this section. They must read and follow every rule written here. The Master may update this section at any time; the AI-only rules below must then be adjusted when necessary to comply with the Master's instructions, without changing this section.
->
-> **मराठी:** हा विभाग केवळ Master (रेपॉझिटरीचा मालक) यांच्यासाठी आहे. या विभागात नियम जोडणे, बदलणे किंवा काढून टाकणे हे फक्त Master करू शकतात. AI एजंट्स आणि इतर डेव्हलपर्सनी हा विभाग कधीही बदलू, हटवू, पुन्हा फॉरमॅट करू किंवा दुसरीकडे हलवू नये. त्यांनी येथे दिलेले प्रत्येक नियम वाचून पाळावेत. Master कधीही या विभागातील नियम अपडेट करू शकतात. अशा वेळी Master यांच्या सूचनांशी जुळवून घेण्यासाठी आवश्यक असल्यास खालील AI-only नियम बदलता येतील; मात्र हा Master विभाग बदलायचा नाही.
+हा विभाग केवळ मास्टरच्या नियंत्रणाखाली आहे. या विभागात नियम जोडणे, बदलणे किंवा काढून टाकणे हे फक्त मास्टर करू शकतात. मास्टर यांच्या स्पष्ट सूचनेशिवाय कोणत्याही AI Agent किंवा Developer ने हा विभाग बदलू, हटवू, पुन्हा मांडू किंवा दुसरीकडे हलवू नये. प्रत्येक AI Agent ने येथील सर्व नियम वाचून त्यांचे पालन करावे. मास्टर यांच्या सूचनांशी सुसंगत राहण्यासाठी आवश्यक असल्यास खालील AI ONLY विभागात बदल करता येतील; मात्र या मास्टर विभागात स्वतःहून बदल करू नयेत.
 
-### Master rules / Master चे नियम
+### नियमावली
 
-1. **EN:** The Master personally maintains this section. AI agents must leave it untouched and follow the instructions written here.
-   
-   **मराठी:** हा विभाग Master स्वतः सांभाळतील. AI एजंट्सनी या विभागात कोणताही बदल करू नये आणि येथे लिहिलेल्या सूचनांचे पालन करावे.
+1. **मास्टरचा अधिकार**
 
-2. **EN:** Whenever the Master asks to add or update a rule, use the rule number specified by the Master. Add or edit that exact numbered rule in this Master section. Write each rule first in English and then in Marathi, without adding language labels. When the Master refers to a rule number while requesting code changes, apply that rule to the requested implementation. Do not renumber, overwrite, or change other Master rules.
-   
-   **मराठी:** Master यांनी एखादा नियम जोडण्यास किंवा बदलण्यास सांगितल्यास, त्यांनी दिलेला नियम क्रमांकच वापरावा. हा Master विभागात त्याच क्रमांकाचा नियम जोडावा किंवा संपादित करावा. प्रत्येक नियम आधी इंग्रजीत आणि त्यानंतर मराठीत लिहावा; भाषेची नावे किंवा लेबल लावू नयेत. कोडमध्ये बदल करण्यास सांगताना Master यांनी एखाद्या नियम क्रमांकाचा उल्लेख केल्यास, त्या नियमानुसार संबंधित बदल करावेत. इतर Master नियमांचे क्रमांक बदलू नयेत, ते बदलू नयेत किंवा त्यांच्या जागी दुसरे नियम लिहू नयेत.
+   हा नियमावली विभाग फक्त मास्टरच्या नियंत्रणाखाली असेल. मास्टर यांच्या स्पष्ट परवानगीशिवाय कोणत्याही AI Agent ने या विभागातील नियम बदलू, हटवू किंवा पुनर्रचित करू नयेत.
 
-3. **EN:** Gradually remove outdated legacy code throughout the frontend and move or rebuild functionality in the appropriate organized code structure wherever practical. Before moving or deleting anything, inspect its usage, dependencies, routes, imports, and behavior. Keep legacy code only while it is still required for active functionality or compatibility; remove it when it is genuinely unused and safe to delete. Prefer the organized structure for new and updated frontend work, avoid creating more legacy code, and perform this cleanup incrementally during relevant tasks without breaking existing features.
-   
-   **मराठी:** संपूर्ण फ्रंटएंडमधील जुना (Legacy) कोड टप्प्याटप्प्याने कमी करावा आणि शक्य असेल तिथे त्यातील कार्यक्षमता योग्यरित्या व्यवस्थित (Organized) कोड संरचनेत हलवावी किंवा पुन्हा तयार करावी. कोणताही कोड हलवण्यापूर्वी किंवा हटवण्यापूर्वी त्याचा वापर, अवलंबित्व (Dependencies), रूट्स, इम्पोर्ट्स आणि कार्यपद्धती तपासावी. सक्रिय फीचर्स किंवा सुसंगततेसाठी आवश्यक असेपर्यंतच Legacy कोड ठेवावा; तो खरोखर वापरात नसल्याची आणि सुरक्षितपणे हटवता येण्याची खात्री झाल्यावरच काढून टाकावा. नवीन आणि अपडेट केलेल्या फ्रंटएंड कामासाठी शक्यतो Organized संरचनेचा वापर करावा, नवीन Legacy कोड तयार करू नये आणि संबंधित काम करताना विद्यमान फीचर्स न मोडता ही साफसफाई टप्प्याटप्प्याने करावी.
+2. **नियमांचे पालन**
+
+   प्रत्येक AI Agent ने या विभागातील सर्व नियम काळजीपूर्वक वाचावेत आणि प्रत्येक काम करताना त्यांचे पालन करावे. कोणताही नियम दुर्लक्षित करू नये किंवा स्वतःच्या सोयीनुसार त्याचा अर्थ बदलू नये.
+
+3. **नियमांमध्ये बदल करण्याची पद्धत**
+
+   मास्टर यांनी नवीन नियम जोडण्यास किंवा विद्यमान नियम बदलण्यास सांगितल्यास त्यांनी दिलेला नियम क्रमांकच वापरावा. इतर नियमांचे क्रमांक किंवा मजकूर बदलू नये. नवीन नियम जोडताना आधीपासून असलेल्या नियमांची पुनरावृत्ती होणार नाही याची काळजी घ्यावी.
+
+4. **नियमांची भाषा**
+
+   या विभागातील सर्व नियम मराठी भाषेत लिहावेत. नियमांचा इंग्रजी अनुवाद किंवा भाषेची लेबले जोडू नयेत.
+
+5. **कामामध्ये नियमांचा वापर आणि तांत्रिक भाषेचा वापर**
+
+   मास्टर यांनी एखाद्या कामासाठी विशिष्ट नियम क्रमांक सांगितल्यास त्या नियमानुसार संबंधित काम पूर्ण करावे. सामान्य सूचना मराठीत समजावून सांगाव्यात; मात्र शक्य असेल तिथे CSS, TSX, JavaScript, React, Import, Component, Function, API आणि इतर Technical Terms इंग्रजीतच वापरावेत. तांत्रिक शब्दांचे अनावश्यक मराठी भाषांतर करू नये.
+
+6. **जुन्या कोडची तपासणी**
+
+   संपूर्ण Frontend मधील Legacy Code टप्प्याटप्प्याने तपासावा. कोणताही कोड बदलण्यापूर्वी किंवा हटवण्यापूर्वी त्याचा वापर, Dependencies, Routes, Imports आणि कार्यपद्धती तपासावी. कोणता कोड अजून आवश्यक आहे आणि कोणता वापरात नाही हे निश्चित करावे.
+
+7. **जुन्या कोडचे व्यवस्थित संरचनेत स्थलांतर**
+
+   Legacy Code मधील आवश्यक Functionality शक्य असेल तिथे योग्य Organized Folder आणि File Structure मध्ये हलवावी किंवा पुन्हा तयार करावी. नवीन Code लिहिताना शक्यतो Organized Structure चाच वापर करावा आणि नवीन Legacy Code तयार करणे टाळावे.
+
+8. **अनावश्यक Legacy Code हटवणे**
+
+   संपूर्ण Frontend मधील वापरात नसलेला, अनावश्यक आणि सुरक्षितपणे हटवता येणारा Legacy Code टप्प्याटप्प्याने काढून टाकावा. मात्र सक्रिय Features, आवश्यक Functionality किंवा Compatibility साठी वापरला जाणारा Code तपासल्याशिवाय हटवू नये. Code हटवल्यानंतर त्याच्याशी संबंधित अनावश्यक Imports, CSS आणि इतर References देखील साफ करावेत.
+
+9. **नवीन Code ची रचना**
+
+   नवीन Feature तयार करताना किंवा विद्यमान Feature अपडेट करताना शक्यतो योग्य Organized Folder आणि File Structure चा वापर करावा. संबंधित Code योग्य ठिकाणी ठेवावा, विद्यमान Shared Components आणि Utilities पुन्हा वापरावेत आणि एकाच Functionality साठी अनावश्यक वेगवेगळ्या Files तयार करू नयेत.
+
+10. **नवीन Features ओळखणे**
+
+    प्रत्येक काम करताना Project मध्ये कोणती उपयुक्त नवीन Features, सुधारणा किंवा आवश्यक Functionality जोडता येईल याचा विचार करावा. विद्यमान Features अधिक चांगल्या, सोप्या आणि उपयोगी कशा करता येतील हेही तपासावे.
+
+11. **नवीन Features सुचवणे**
+
+    कामादरम्यान नवीन उपयुक्त Features किंवा सुधारणा आढळल्यास त्या मास्टर यांना सुचवाव्यात. प्रत्येक सूचनेसोबत त्या Feature चा उपयोग, फायदा आणि Project मध्ये ती कुठे लागू होऊ शकते हे थोडक्यात स्पष्ट करावे.
+
+12. **नवीन Features ची अंमलबजावणी**
+
+    मास्टर यांनी मंजूर केलेल्या किंवा सध्याच्या कामाचा स्पष्ट भाग असलेल्या नवीन Features ची अंमलबजावणी करावी. नवीन Feature जोडताना विद्यमान Functionality, Design, Performance आणि User Experience यावर वाईट परिणाम होणार नाही याची काळजी घ्यावी. असंबंधित Features स्वतःहून जोडू नयेत.
+
+13. **Code स्वच्छ आणि संक्षिप्त ठेवणे**
+
+    सर्व TSX, TS आणि CSS Files मधील Code स्वच्छ, संक्षिप्त, वाचनीय आणि कार्यक्षम ठेवावा. अनावश्यक Code, Duplicate Logic, Repeated CSS आणि गरज नसलेली Abstraction टाळावी. शक्यतो कमी Code मध्ये योग्य Functionality तयार करावी; मात्र Code ची गुणवत्ता आणि समजण्यास सोपेपणा कमी होऊ देऊ नये.
+
+14. **Class Names आणि CSS ची एकसमानता**
+
+    प्रत्येक Feature साठी स्पष्ट, स्वतंत्र आणि योग्य Class Names वापरावेत. वेगवेगळ्या Features मध्ये एकाच Class Name ची अनावश्यक पुनरावृत्ती करू नये. Duplicate CSS Selectors, Repeated Properties आणि अनावश्यक Overrides टाळावेत. विद्यमान CSS Structure आणि Design System चा वापर करून संबंधित Styles योग्य ठिकाणी व्यवस्थित ठेवावेत.
+
+15. **Legacy Code ची स्थिती दर्शवणारी टिप्पणी**
+
+    एखाद्या File मध्ये Legacy Code अजूनही आवश्यक असल्यामुळे ठेवला असेल, तर त्या File मध्ये जास्तीत जास्त एक छोटी Comment देऊन Legacy Code अजून कार्यरत आहे आणि त्याची साफसफाई बाकी आहे हे नमूद करावे. Legacy Code पूर्णपणे काढून टाकल्यानंतर ती Comment देखील काढून टाकावी. अनावश्यक Comments जोडू नयेत.
+
+16. **कामापूर्वी तपासणी आणि नियोजन**
+
+    कोणतेही नवीन काम, Feature किंवा Code बदल सुरू करण्यापूर्वी संबंधित Files, Folders, Components, CSS, Utilities, Routes आणि Data Flow तपासावा. कोणत्या Files मध्ये बदल आवश्यक आहेत, कोणता Code पुन्हा वापरता येईल आणि कोणत्या ठिकाणी सुधारणा करावी लागेल याचे योग्य नियोजन करावे. त्यानंतरच प्रत्यक्ष अंमलबजावणी सुरू करावी.
+
+17. **कामानंतर तपासणी आणि चाचणी**
+
+    कोणतेही Code Changes किंवा नवीन Feature पूर्ण केल्यानंतर संबंधित Code पुन्हा तपासावा. आवश्यकतेनुसार Build, Tests आणि संबंधित Functionality तपासावी. नवीन बदलांमुळे विद्यमान Features, Responsive Design किंवा इतर Components मध्ये समस्या निर्माण झालेली नाही याची खात्री करावी. कोणतीही चाचणी केली नसल्यास ती केल्याचा दावा करू नये.
+
+18. **विद्यमान Functionality सुरक्षित ठेवणे**
+
+    नवीन Feature जोडताना, Code सुधारताना किंवा Legacy Code हटवताना विद्यमान Functionality विनाकारण बदलू किंवा बंद करू नये. संबंधित API, Components, Routes, Authentication, Permissions आणि इतर Dependencies योग्य प्रकारे कार्यरत राहतील याची काळजी घ्यावी. आवश्यक बदलांमुळे विद्यमान वर्तन बदलत असल्यास त्याचा परिणाम आधी तपासावा.
+
+19. **Responsive Design आणि Layout**
+
+    प्रत्येक नवीन Feature किंवा UI बदल करताना Mobile, Tablet आणि Desktop या सर्व Screen Sizes वर Layout योग्य प्रकारे कार्यरत राहील याची काळजी घ्यावी. Container ची उपलब्ध Width, Content Size आणि इतर Components ची जागा लक्षात घेऊन Layout तयार करावा. Text Overflow, अनावश्यक रिकामी जागा, Horizontal Scrolling आणि Components एकमेकांवर येण्याच्या समस्या टाळाव्यात. विद्यमान Design System आणि Responsive Patterns चा वापर करावा.
+
+20. **UI Design ची एकसमानता**
+
+    संपूर्ण Project मध्ये UI Design एकसमान, व्यावसायिक आणि वापरण्यास सोपा ठेवावा. Colors, Typography, Spacing, Borders, Shadows, Buttons, Cards, Modals आणि इतर UI Elements साठी विद्यमान Design System आणि Shared Components चा वापर करावा. नवीन Design तयार करताना इतर Pages आणि Features च्या Design शी सुसंगतता राखावी.
+
+21. **Shared Components आणि Code Reusability**
+
+    Project मध्ये आधीपासून उपलब्ध असलेले Shared Components, Hooks, Utilities आणि Functions तपासून त्यांचा योग्य ठिकाणी पुन्हा वापर करावा. एकाच प्रकारची Functionality वेगवेगळ्या ठिकाणी पुन्हा तयार करू नये. मात्र गरज नसताना प्रत्येक छोट्या Code साठी नवीन Shared Component तयार करू नये.
+
+22. **Loading, Empty आणि Error States**
+
+    प्रत्येक Feature तयार करताना किंवा अपडेट करताना आवश्यकतेनुसार Loading, Empty, Success आणि Error States व्यवस्थित हाताळाव्यात. Data उपलब्ध नसताना योग्य Empty State दाखवावी, प्रक्रिया सुरू असताना योग्य Loading Indicator दाखवावा आणि त्रुटी आल्यास वापरकर्त्याला समजेल असा Error Message दाखवावा. विद्यमान UI Design शी सुसंगतता राखावी.
+
+23. **Data Validation आणि Security**
+
+    Frontend आणि Backend मधील Data योग्य प्रकारे Validate करावा. User Input, API Requests, Authentication, Authorization आणि Permissions यांची योग्य तपासणी करावी. संवेदनशील माहिती सुरक्षित ठेवावी आणि अनधिकृत वापरकर्त्यांना प्रतिबंधित Data किंवा Functionality उपलब्ध होणार नाही याची खात्री करावी. Security साठी फक्त Frontend Validation वर अवलंबून राहू नये; आवश्यक तपासणी Backend वरही करावी.
+
+24. **Performance आणि Optimization**
+
+    नवीन Features तयार करताना आणि विद्यमान Code सुधारताना Project ची Performance चांगली राहील याची काळजी घ्यावी. अनावश्यक API Calls, Duplicate Requests, अतिरिक्त Rendering, मोठ्या Files आणि गरज नसलेले Dependencies टाळावेत. योग्य ठिकाणी Caching, Lazy Loading आणि Code Splitting यांचा वापर करावा. Optimization करताना Functionality किंवा Code Readability कमी होऊ देऊ नये.
+
+25. **Dependencies आणि Packages व्यवस्थापन**
+
+    नवीन Package किंवा Dependency जोडण्यापूर्वी Project मध्ये त्याच कामासाठी आधीपासून उपलब्ध पर्याय आहेत का हे तपासावे. अनावश्यक Packages जोडू नयेत. नवीन Dependency आवश्यक असल्यास तिचा उपयोग, Compatibility, Maintenance आणि Project च्या विद्यमान तंत्रज्ञानाशी सुसंगतता तपासावी. वापरात नसलेल्या Dependencies सुरक्षितपणे काढून टाकाव्यात.
+
+26. **Git आणि Version Control व्यवस्थापन**
+
+    कोणतेही Code Changes करण्यापूर्वी सध्याची Git स्थिती आणि संबंधित Branch तपासावी. काम पूर्ण झाल्यानंतर केलेले सर्व बदल आणि त्यांचा Diff तपासावा. अनावश्यक Files, वैयक्तिक बदल किंवा संवेदनशील माहिती Commit मध्ये समाविष्ट करू नये. Commit करताना बदलांशी संबंधित स्पष्ट आणि योग्य Commit Message वापरावा. मास्टरच्या परवानगीशिवाय अनधिकृत Repository किंवा Branch मध्ये बदल करू नयेत.
+
+27. **Project Architecture आणि Coding Standards**
+
+    Project मध्ये आधीपासून वापरली जाणारी Architecture, Folder Structure, Naming Conventions आणि Coding Patterns तपासून त्यांचे पालन करावे. नवीन Code लिहिताना विद्यमान पद्धतीशी सुसंगतता ठेवावी. कोणताही मोठा Architecture बदल किंवा संपूर्ण Folder Structure ची पुनर्रचना करण्यापूर्वी त्याची गरज तपासावी आणि मास्टर यांना माहिती द्यावी.
+
+28. **Documentation आणि Code समजण्यास सुलभ ठेवणे**
+
+    नवीन Feature किंवा महत्त्वाचा Logic तयार करताना आवश्यक तेथे स्पष्ट आणि संक्षिप्त Documentation द्यावे. Function, Component, API आणि महत्त्वाच्या प्रक्रियांची नावे त्यांच्या कामाशी संबंधित व समजण्यास सोपी असावीत. Code स्वतःच समजण्यासारखा ठेवावा आणि अनावश्यक Comments किंवा मोठे Documentation टाळावे.
+
+29. **Error Handling आणि Debugging**
+
+    Frontend आणि Backend मधील Errors योग्य प्रकारे हाताळावेत. कोणतीही समस्या आल्यास तिचे मूळ कारण शोधून दुरुस्ती करावी. फक्त Error Message लपवून किंवा तात्पुरता उपाय करून समस्या सोडवल्याचा दावा करू नये. Debugging करताना अनावश्यक Console Logs, Temporary Code आणि Debugging Statements अंतिम Code मधून काढून टाकावेत.
+
+30. **कामाची व्याप्ती आणि अनावश्यक बदल टाळणे**
+
+    मास्टर यांनी दिलेल्या कामाच्या उद्देशावर लक्ष केंद्रित करावे. संबंधित काम पूर्ण करण्यासाठी आवश्यक असलेल्या Files आणि Components मध्येच बदल करावेत. विनाकारण संपूर्ण Code पुन्हा लिहू नये, विद्यमान Design किंवा Functionality बदलू नये आणि असंबंधित Files मध्ये बदल करू नयेत. अतिरिक्त सुधारणा आवश्यक वाटल्यास त्या मास्टर यांना सुचवाव्यात.
+
+31. **Accessibility आणि वापरण्यास सुलभता**
+
+    प्रत्येक नवीन Feature आणि UI तयार करताना सर्व वापरकर्त्यांना ते सहज वापरता येईल याची काळजी घ्यावी. Buttons, Inputs, Forms आणि इतर Interactive Elements योग्य प्रकारे कार्यरत असावेत. आवश्यकतेनुसार Keyboard Navigation, Focus States, योग्य Labels, Semantic HTML आणि पुरेसा Color Contrast वापरावा. केवळ दिसायला चांगले UI न बनवता ते वापरण्यासही सोपे असावे.
+
+32. **Browser Compatibility**
+
+    नवीन Features आणि UI तयार करताना Project मध्ये समर्थित असलेल्या प्रमुख Browsers मध्ये ते योग्य प्रकारे कार्यरत राहतील याची काळजी घ्यावी. आधुनिक Browser Features वापरताना Compatibility तपासावी आणि आवश्यक असल्यास योग्य पर्यायी पद्धती वापराव्यात. एका Browser मधील बदलांमुळे इतर समर्थित Browsers मधील Functionality किंवा Design बिघडू देऊ नये.
+
+33. **Database आणि Migration व्यवस्थापन**
+
+    Database Models, Tables, Fields किंवा Relationships मध्ये बदल करण्यापूर्वी त्यांचा विद्यमान Data आणि संबंधित Functionality वर होणारा परिणाम तपासावा. आवश्यकतेनुसार योग्य Database Migration तयार करावी आणि ती सुरक्षितपणे लागू होईल याची खात्री करावी. विद्यमान Data विनाकारण Delete किंवा Modify करू नये. Backend आणि Frontend मधील Data Structure सुसंगत ठेवावी.
+
+34. **API आणि Frontend-Backend सुसंगतता**
+
+    Frontend आणि Backend यांच्यातील API Communication योग्य आणि सुसंगत ठेवावे. नवीन API तयार करण्यापूर्वी विद्यमान API तपासावेत. Request Methods, Parameters, Response Structure, Status Codes आणि Error Responses योग्य प्रकारे हाताळावेत. API मध्ये बदल करताना त्यावर अवलंबून असलेल्या सर्व Components आणि Features तपासाव्यात, जेणेकरून विद्यमान Functionality बिघडणार नाही.
+
+35. **Authentication आणि Session व्यवस्थापन**
+
+    Login, Logout, Registration, Token, Cookies, Session आणि User Permissions यांच्याशी संबंधित Code बदलण्यापूर्वी विद्यमान Authentication Flow पूर्णपणे समजून घ्यावा. नवीन बदलांमुळे इतर Applications, Subdomains किंवा Shared Authentication यंत्रणेवर परिणाम होणार नाही याची काळजी घ्यावी. संवेदनशील Authentication Data सुरक्षित ठेवावे आणि अनावश्यक Login किंवा API Requests टाळाव्यात.
+
+36. **Shared Configuration आणि Environment Variables**
+
+    Project मधील Environment Variables, Configuration Files आणि Shared Settings यांचा वापर योग्य प्रकारे करावा. नवीन Configuration जोडण्यापूर्वी विद्यमान Configuration तपासावे. संवेदनशील माहिती थेट Source Code मध्ये लिहू नये. Development, Testing आणि Production Environment मधील सेटिंग्ज योग्य प्रकारे वेगळ्या ठेवाव्यात. Configuration बदलताना त्यावर अवलंबून असलेल्या सर्व Applications तपासाव्यात.
+
+37. **Build आणि Deployment सुरक्षितता**
+
+    Project मध्ये Build, Deployment किंवा Production Configuration संबंधित बदल करण्यापूर्वी त्यांची विद्यमान कार्यपद्धती तपासावी. नवीन बदलांमुळे Build प्रक्रिया, चालू Applications, Domains, Subdomains किंवा Production Services प्रभावित होणार नाहीत याची काळजी घ्यावी. आवश्यक तपासण्या पूर्ण केल्याशिवाय Production मध्ये बदल लागू करू नयेत. Deployment दरम्यान समस्या उद्भवल्यास त्या योग्य प्रकारे दुरुस्त कराव्यात.
+
+38. **Backup आणि Data Recovery**
+
+    महत्त्वाच्या Files, Database किंवा User Data मध्ये मोठे बदल करण्यापूर्वी आवश्यकतेनुसार Backup आणि Recovery ची व्यवस्था तपासावी. Data Delete, Migration किंवा मोठ्या प्रमाणात Update करताना Data सुरक्षित राहील याची काळजी घ्यावी. चुकून Data गमावला जाण्याची शक्यता असल्यास आधी सुरक्षित पर्याय तयार करावा. Backup उपलब्ध नसताना धोकादायक बदल करू नयेत.
+
+39. **User Experience आणि वापरकर्त्यांच्या कृती**
+
+    प्रत्येक Feature तयार करताना वापरकर्ता ते कसे वापरेल, कोणत्या कृती करेल आणि त्याला कोणता प्रतिसाद मिळेल याचा विचार करावा. Buttons, Forms, Modals, Navigation आणि इतर Interactive Elements यांचे वर्तन स्पष्ट आणि अपेक्षेप्रमाणे असावे. एखादी कृती पूर्ण झाल्यावर योग्य Feedback द्यावा आणि अनावश्यक Steps किंवा गोंधळ निर्माण करणारी प्रक्रिया टाळावी.
+
+40. **Authentication Repository मधील समस्या दुरुस्ती**
+
+    Authentication संबंधित समस्या आढळल्यास Authentication Repository मधील Code तपासून समस्येचे मूळ कारण शोधावे. मात्र Authentication Repository मधील कोणतीही File, Code किंवा Configuration AI Agent ने बदलू नये. आवश्यक दुरुस्ती shivanyams Repository मध्येच करावी. तेथे दुरुस्ती शक्य नसल्यास मास्टर यांना समस्येचे कारण आणि आवश्यक बदल सुचवावेत.
+
+41. **SDK, UI Components आणि CSS व्यवस्थापन**
+
+    SDK Repository मधील उपलब्ध UI Components, त्यांची यादी, Code आणि कार्यपद्धती तपासून आवश्यकतेनुसार shivanyams Repository मध्ये त्यांचा पुनर्वापर करावा. नवीन UI तयार करण्यापूर्वी संबंधित SDK Component उपलब्ध आहे का हे तपासावे. User ज्या Feature, Page किंवा Field वर काम करत असेल, त्या ठिकाणी संबंधित SDK Component उपलब्ध आणि योग्य असल्यास त्याचाच वापर करावा. गरज नसताना नवीन किंवा Duplicate Component तयार करू नये.
+
+    SDK Repository मधील कोणतीही File, Component, CSS किंवा Configuration AI Agent ने बदलू नये. SDK मध्ये बदल करण्याऐवजी आवश्यक Application-specific सुधारणा shivanyams Repository मध्ये कराव्यात. CSS Override आवश्यक असल्यास तेथेच योग्य Override करावा. SDK मध्ये आवश्यक बदल आढळल्यास त्याचे कारण मास्टर यांना सुचवावे. SDK मधील बदलांमुळे इतर Applications किंवा Components वर होणारा परिणाम तपासावा.
 
 ---
 
 ## AI ONLY — Instructions for AI agents
 
-The following rules are for AI agents. The Master may edit them, and AI agents may improve or update this AI-only section when instructed by the Master or when necessary to bring it into line with the Master rules above. Never change the MASTER ONLY section.
+The following rules are for AI agents. The Master may edit them, and AI agents may improve or update this AI-only section when instructed by the Master or when necessary to bring it into line with the Master rules above. Never change the MASTER ONLY section without the Master's explicit instruction.
 
 ### Repository and branch scope
 
-- Work only in `adityathute/shivanyams` on branch `shiv-v2`, unless the Master explicitly changes this rule.
-- Treat `shivanya-sdk` and `shivanya-auth` as read-only reference repositories if provided.
+- Make code changes only in adityathute/shivanyams on branch shiv-v2, unless the Master explicitly changes this instruction.
+- Treat shivanya-sdk and shivanya-auth as read-only reference repositories. Never write to, commit to, or push changes to either repository.
+- Use the SDK and Authentication repositories only to inspect existing implementations, identify root causes, and reuse/reference available patterns. Apply permitted fixes in shivanyams; if a fix cannot safely be made there, explain the limitation and suggest the required change to the Master.
 - Do not switch branches or modify other repositories unless explicitly authorized by the Master.
 
 ### FEATURES ONLY
@@ -38,6 +190,7 @@ The following rules are for AI agents. The Master may edit them, and AI agents m
 - Look for small, genuinely useful feature improvements related to the task. Suggest them clearly; implement them when they fit the request, existing product direction, and available scope. Do not silently expand the task or add unrelated features.
 - Build features in the organized feature/component structure. Prefer concise, readable code and existing shared components, hooks, utilities, and styles; avoid unnecessary files, abstractions, dependencies, and duplicate logic.
 - Clean and organize both TSX/TS and CSS files as part of relevant frontend work. Inspect each file's role and dependencies first; move code to the correct organized location and remove legacy code only after confirming it is unused or safely replaced.
+- Before creating UI, inspect the SDK's available UI component inventory and relevant component implementations. Reuse a suitable existing SDK component in shivanyams when it fits the feature, page, or field being worked on. Do not force component reuse where it does not fit, and do not modify the SDK repository.
 - Keep CSS class names feature-scoped and distinctive. Do not define the same class selector repeatedly across files or create duplicate styles; reuse a class definition when appropriate. Do not force an artificial one-class-per-file structure.
 - When a touched file still contains required legacy behavior, add at most one short status comment at the end of that file identifying that legacy behavior is still active and cleanup remains pending. Use the correct comment syntax for the file. Do not add status comments to files with no remaining legacy code, and remove or update the comment once the legacy code is fully cleaned.
 - Before structural cleanup, inspect and plan the organized destination so existing behavior is preserved. After the change, summarize the final organized files and clearly identify any legacy code that remains; never claim cleanup is complete when it is not.
@@ -82,8 +235,8 @@ The following rules are for AI agents. The Master may edit them, and AI agents m
 
 ### Git and delivery
 
-- Commit completed changes to the approved repository and `shiv-v2` branch when repository write access is available.
+- Commit completed changes only to adityathute/shivanyams on shiv-v2 when repository write access is available.
 - Use a clear, specific commit message.
-- After committing/pushing, provide the exact command the Master needs to pull the changes, normally `git pull origin shiv-v2`.
+- After committing, provide the exact command the Master needs to pull the changes, normally git pull origin shiv-v2.
 - State which files were changed and summarize the result briefly.
 - Do not start the next task until the Master gives the next instruction.

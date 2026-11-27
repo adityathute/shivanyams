@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/videos/VideosPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 30 CSS audit; approximately 90 rule blocks inspected against paired component imports and class usage. Full selector mapping, responsive/theme verification and runtime checks remain pending. */
+
 .videos-page {
   padding: 14px;
   padding-bottom: 0;
@@ -585,4 +590,22 @@ a.videos-card {
   .videos-hero-art {
     display: none;
   }
+}
+
+/* Batch 30 accessibility: visible keyboard focus for search and linked video cards. */
+.videos-search:focus-within {
+  border-color: #d93652;
+  outline: 2px solid #d93652;
+  outline-offset: 2px;
+}
+.videos-search button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+.videos-card:focus-visible {
+  outline: 3px solid #d93652;
+  outline-offset: 3px;
+}
+[data-theme="dark"] .videos-card:focus-visible {
+  outline-color: #f0b6c3;
 }

@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/videos/VideosCharacters.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 30 CSS audit; approximately 32 rule blocks inspected against paired component imports and class usage. Full selector mapping, responsive/theme verification and runtime checks remain pending. */
+
 .videos-characters {
   position: relative;
   width: 445px;
@@ -209,3 +214,5 @@
     animation: none;
   }
 }
+
+/* Batch 30 audit: decorative illustration is hidden from assistive technology by its parent; existing reduced-motion rules disable its animation. */

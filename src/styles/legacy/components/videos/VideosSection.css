@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/videos/VideosSection.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 30 CSS audit; approximately 18 rule blocks inspected against paired component imports and class usage. Full selector mapping, responsive/theme verification and runtime checks remain pending. */
+
 .video-section {
   margin-top: 15px;
 }
@@ -113,4 +118,14 @@
 .video-tags span {
   font-size: 9px;
 }
+}
+
+/* Batch 30: maintain visible focus and hover contrast in dark theme. */
+.video-card:focus-visible {
+  outline: 2px solid var(--primary, #2563eb);
+  outline-offset: 3px;
+}
+[data-theme="dark"] .video-card:hover,
+[data-theme="dark"] .video-card:focus-visible {
+  background-color: #252b36;
 }

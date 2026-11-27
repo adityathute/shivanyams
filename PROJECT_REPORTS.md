@@ -30,9 +30,9 @@
 |---|---:|
 | Total tracked files after current update | 310 |
 | Clean | 36 |
-| Cleanup Pending | 20 |
-| Not Reviewed | 254 |
-| Reviewed files after Batch 12 | 65 |
+| Cleanup Pending | 30 |
+| Not Reviewed | 244 |
+| Reviewed files after Batch 12 | 66 |
 | Organized | 254 |
 | Legacy | 56 |
 

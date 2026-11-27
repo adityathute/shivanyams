@@ -1,3 +1,10 @@
+/* File Location: shivanyams/src/i18n/organized/dictionaries/sidebar.ts
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Sidebar labels only; UI Components: 0; CSS Selectors: 0. Enforces supported locale keys with the shared i18n Language type. Translation quality review remains pending.
+ */
+import type { Language } from "../../types";
+
 export const sidebarTranslations = {
   en: {
     home: "Home",
@@ -44,6 +51,6 @@ export const sidebarTranslations = {
     admin: "Admin",
     contact: "संपर्क",
   },
-} as const;
+} satisfies Record<Language, Record<string, string>>;
 
 export type SidebarTranslationKey = keyof typeof sidebarTranslations.en;

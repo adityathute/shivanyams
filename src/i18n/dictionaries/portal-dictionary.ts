@@ -1,4 +1,9 @@
-import type { Language } from "../../components/portal/category/CategoryGrid";
+/* File Location: shivanyams/src/i18n/dictionaries/portal-dictionary.ts
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Portal translation data and typed getter; UI Components: 0; CSS Selectors: 0. Uses the shared i18n Language type. Locale wording review remains pending.
+ */
+import type { Language } from "../types";
 
 export const portalDictionary = {
   updatesTitle: {

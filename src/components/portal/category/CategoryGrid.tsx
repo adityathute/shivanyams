@@ -1,12 +1,13 @@
 /* File Location: shivanyams/src/components/portal/category/CategoryGrid.tsx
  * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
  * Cleanup Status: Cleanup Pending
- * Cleanup Info: Batch 13 audit. UI Audit: 8 shivanya-ui category icon components (GovernmentJobIcon, GovernmentSchemeIcon, ResultIcon, AdmitCardIcon, GuideIcon, VideoIcon, ExaminationIcon, ToolsIcon); CategoryGrid is app-local. CategoryBadge is reused by CategoryPage. Large mixed config/helper/component module and CSS modernization pending.
+ * Cleanup Info: Batch 13 and 24 audit. UI Audit: 8 SDK category icon components (GovernmentJobIcon, GovernmentSchemeIcon, ResultIcon, AdmitCardIcon, GuideIcon, VideoIcon, ExaminationIcon, ToolsIcon); CategoryGrid and CategoryBadge are app-local. Language type moved to src/i18n/types.ts and re-exported for compatibility. Large mixed config/helper/component module and paired CSS modernization remain pending.
  */
 "use client";
 
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
+import type { Language } from "../../../i18n/types";
 
 import {
   GovernmentJobIcon,
@@ -26,7 +27,7 @@ import {
   PORTAL_CATEGORIES,
 } from "../../../data/portal/categories";
 
-export type Language = "en" | "mr" | "hi";
+export type { Language } from "../../../i18n/types";
 
 export interface Category {
   id: number;

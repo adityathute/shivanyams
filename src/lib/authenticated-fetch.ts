@@ -1,10 +1,8 @@
-/**
- * One cookie-based API client shared by public website features and admin.
- *
- * When an API request receives 401, refresh the HttpOnly session cookie once
- * and replay the original request. Concurrent 401 responses share one refresh.
+/* File Location: shivanyams/src/lib/authenticated-fetch.ts
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Cookie-based fetch utility; UI Components: 0; CSS Selectors: 0. Cookie parsing now tolerates browser cookie separators without spaces; request retry and CSRF integration still require runtime tests.
  */
-
 let refreshInFlight: Promise<boolean> | null = null;
 
 function readCookie(name: string): string | null {
@@ -12,7 +10,8 @@ function readCookie(name: string): string | null {
 
   const prefix = `${encodeURIComponent(name)}=`;
   const entry = document.cookie
-    .split("; ")
+    .split(";")
+    .map((cookie) => cookie.trim())
     .find((cookie) => cookie.startsWith(prefix));
 
   if (!entry) return null;
@@ -33,11 +32,6 @@ function getAuthBaseUrl() {
 
 async function refreshSession(): Promise<boolean> {
   const authBaseUrl = getAuthBaseUrl();
-  if (!authBaseUrl) {
-    console.error("Authentication refresh failed: NEXT_PUBLIC_AUTH_BASE_URL is not configured.");
-    return false;
-  }
-
   const csrfToken = readCookie("csrftoken");
   const headers = new Headers({ "Content-Type": "application/json" });
   if (csrfToken) headers.set("X-CSRFToken", csrfToken);

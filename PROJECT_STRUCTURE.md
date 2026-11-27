@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `93be3ab8e3fea7c3e0e96bbc99020ba29da96d74`  
+**Source snapshot:** `ac70eb608b79f9f8629830b324350cd4d1f14850`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -15,16 +15,16 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 310 |
-| Clean | 60 |
-| Cleanup Pending | 38 |
-| Not Reviewed | 212 |
-| Organized | 60 |
-| Legacy | 250 |
-| Audited before this structure update | 98 |
+| Clean | 65 |
+| Cleanup Pending | 43 |
+| Not Reviewed | 202 |
+| Organized | 65 |
+| Legacy | 245 |
+| Audited before this structure update | 108 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
-**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit.
+**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task.
 
 ## Complete tracked-file register
 
@@ -105,16 +105,16 @@
 | 73 | `shivanyams/backend/apps/portal/migrations/0049_postquestion_status.py` | Not Reviewed | Legacy |
 | 74 | `shivanyams/backend/apps/portal/migrations/0050_tooldetails_tool_key_optional.py` | Not Reviewed | Legacy |
 | 75 | `shivanyams/backend/apps/portal/migrations/__init__.py` | Not Reviewed | Legacy |
-| 76 | `shivanyams/backend/apps/portal/models.py` | Not Reviewed | Legacy |
-| 77 | `shivanyams/backend/apps/portal/permissions.py` | Not Reviewed | Legacy |
-| 78 | `shivanyams/backend/apps/portal/serializers.py` | Not Reviewed | Legacy |
-| 79 | `shivanyams/backend/apps/portal/urls.py` | Not Reviewed | Legacy |
-| 80 | `shivanyams/backend/apps/portal/views.py` | Not Reviewed | Legacy |
-| 81 | `shivanyams/backend/config/__init__.py` | Not Reviewed | Legacy |
-| 82 | `shivanyams/backend/config/asgi.py` | Not Reviewed | Legacy |
-| 83 | `shivanyams/backend/config/settings.py` | Not Reviewed | Legacy |
-| 84 | `shivanyams/backend/config/urls.py` | Not Reviewed | Legacy |
-| 85 | `shivanyams/backend/config/wsgi.py` | Not Reviewed | Legacy |
+| 76 | `shivanyams/backend/apps/portal/models.py` | Cleanup Pending | Legacy |
+| 77 | `shivanyams/backend/apps/portal/permissions.py` | Clean | Organized |
+| 78 | `shivanyams/backend/apps/portal/serializers.py` | Cleanup Pending | Legacy |
+| 79 | `shivanyams/backend/apps/portal/urls.py` | Cleanup Pending | Legacy |
+| 80 | `shivanyams/backend/apps/portal/views.py` | Cleanup Pending | Legacy |
+| 81 | `shivanyams/backend/config/__init__.py` | Clean | Organized |
+| 82 | `shivanyams/backend/config/asgi.py` | Clean | Organized |
+| 83 | `shivanyams/backend/config/settings.py` | Cleanup Pending | Legacy |
+| 84 | `shivanyams/backend/config/urls.py` | Clean | Organized |
+| 85 | `shivanyams/backend/config/wsgi.py` | Clean | Organized |
 | 86 | `shivanyams/backend/manage.py` | Not Reviewed | Legacy |
 | 87 | `shivanyams/backend/requirements.txt` | Not Reviewed | Legacy |
 | 88 | `shivanyams/eslint.config.mjs` | Not Reviewed | Legacy |
@@ -346,7 +346,7 @@
 - **Clean:** Inspected and no known cleanup work remains for the file's reviewed scope.
 - **Cleanup Pending:** Inspected but known cleanup, migration, verification, or generated-file exception remains.
 - **Not Reviewed:** No detailed cleanup audit has been completed yet.
-- **Organized:** File is placed in the current organized project structure.
-- **Legacy:** File is located in the explicitly retained legacy stylesheet tree and requires migration/review when in scope.
+- **Organized:** File has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label.
+- **Legacy:** File is older, incomplete, unmodernized or unmigrated. Not Reviewed files remain provisionally Legacy until inspected.
 
 Update this register from the live Git tree after every file creation, deletion, move, or cleanup status change. Counts must reconcile exactly.

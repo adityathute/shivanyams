@@ -22,19 +22,19 @@
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 15, unfinished cleanup scope is 250 files (38 Cleanup Pending + 212 Not Reviewed), giving an estimated 25 remaining batches and 40 batches overall, including the 15 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 16, unfinished cleanup scope is 245 files (43 Cleanup Pending + 202 Not Reviewed), giving an estimated 25 remaining batches and 41 batches overall, including the 16 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
 | Metric | Count |
 |---|---:|
 | Total tracked files after current update | 310 |
-| Clean | 60 |
-| Cleanup Pending | 38 |
-| Not Reviewed | 212 |
-| Reviewed files after Batch 15 | 98 |
-| Organized | 60 |
-| Legacy | 250 |
+| Clean | 65 |
+| Cleanup Pending | 43 |
+| Not Reviewed | 202 |
+| Reviewed files after Batch 16 | 108 |
+| Organized | 65 |
+| Legacy | 245 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -50,6 +50,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| ac70eb608b79f9f8629830b324350cd4d1f14850 | `chore(backend): clean portal permissions and django entrypoints batch 16` | Audited 10 backend files; standardized ASGI/WSGI entrypoints; clarified root health endpoint and permission classes; documented complex model, serializer, view, URL and settings follow-up audits |
 | 93be3ab8e3fea7c3e0e96bbc99020ba29da96d74 | `chore(portal): audit authentication and category data batch 15` | Audited 10 backend files; clarified cookie CSRF safe-method handling; hardened malformed Auth payload handling; precomputed blocked-term prefixes; reduced category seed lookup queries; documented generated migration exceptions |
 | 0704e17f6f2fc6eb2fd368633f0743b8be85e515 | `chore(repo): audit repository setup and backend admin batch 14` | Audited 10 repository/backend setup files; corrected CI branch triggers; replaced starter README; clarified Django migration workflow; updated ignore rules and file metadata |
 | 08e5c71dd7738fcc252c355fde05e35082cead57 | `chore(portal): audit category and post helpers batch 13` | Audited 10 Portal/category/post files; optimized comment moderation prefix lookup; removed unused 404 styles; hardened invalid date fallback; clarified Organized/Legacy rule and refreshed full inventory |

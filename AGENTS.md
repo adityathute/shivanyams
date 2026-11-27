@@ -172,6 +172,10 @@
 
     SDK Repository मधील कोणतीही File, Component, CSS किंवा Configuration AI Agent ने बदलू नये. SDK मध्ये बदल करण्याऐवजी आवश्यक Application-specific सुधारणा shivanyams Repository मध्ये कराव्यात. CSS Override आवश्यक असल्यास तेथेच योग्य Override करावा. SDK मध्ये आवश्यक बदल आढळल्यास त्याचे कारण मास्टर यांना सुचवावे. SDK मधील बदलांमुळे इतर Applications किंवा Components वर होणारा परिणाम तपासावा.
 
+42. **Constants आणि Hardcoded Values व्यवस्थापन**
+
+    Project मध्ये वारंवार वापरली जाणारी Values, Configuration, Labels, API Paths आणि इतर समान माहिती अनावश्यकपणे वेगवेगळ्या Files मध्ये Hardcode करू नये. नवीन Value जोडण्यापूर्वी विद्यमान Constants आणि Configuration तपासावे. पुन्हा वापरल्या जाणाऱ्या Values योग्य Shared File किंवा संबंधित Feature च्या Constants File मध्ये ठेवाव्यात. मात्र एकदाच वापरल्या जाणाऱ्या साध्या Values साठी अनावश्यक नवीन Files किंवा Abstractions तयार करू नयेत.
+
 ---
 
 ## AI ONLY — Instructions for AI agents

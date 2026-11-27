@@ -1,5 +1,12 @@
 // File Location: shivanyams/src/components/animation/GovernmentBuilding/GovernmentBuilding.tsx
-// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+/*
+ * Reference Repositories:
+ * shivanya-sdk v1.0.0 (branch sdk-v2)
+ * shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: e449bbc50dcf4b464c2ae1f7aa23890e4bc9da1d
+ * Both repositories are read-only references.
+ */
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: UI audit: custom inline SVG illustration without interactive controls; no matching SDK component. Paired CSS has feature selectors and responsive/scene variants. Paired CSS offset corrected; legacy stylesheet migration remains pending.
 

@@ -1,5 +1,12 @@
 // File Location: shivanyams/src/components/portal/layout/header/PortalHeader.tsx
-// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+/*
+ * Reference Repositories:
+ * shivanya-sdk v1.0.0 (branch sdk-v2)
+ * shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: e449bbc50dcf4b464c2ae1f7aa23890e4bc9da1d
+ * Both repositories are read-only references.
+ */
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Cleanup Pending. Header reuses SDK AccountModal and UI icons. Desktop and mobile search forms currently prevent submit without executing search; search integration and keyboard/accessibility behavior require follow-up.
 

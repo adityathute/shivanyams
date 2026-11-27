@@ -1,5 +1,12 @@
 // File Location: shivanyams/src/app/ledger/setup/page.tsx
-// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+/*
+ * Reference Repositories:
+ * shivanya-sdk v1.0.0 (branch sdk-v2)
+ * shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: e449bbc50dcf4b464c2ae1f7aa23890e4bc9da1d
+ * Both repositories are read-only references.
+ */
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: UI: opening-funds, account-balance, loan, rent and asset forms; native form controls with inline CSSProperties. SDK candidates Input, Select, Card, Button not integrated. Browser-local storage/backend persistence pending; fixed stale saved indicator when editing balances/assets.
 

@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/post/PostCommentsSection.css
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 12 post-detail audit. CSS Audit: 199 selector blocks; 161 unique; 32 repeated selector names / 38 repeated occurrences. Mapped to PostCommentsSection.tsx; controls use shivanya-ui SDK. Legacy stylesheet; cascade consolidation pending.
+ */
 .portal-comments-section {
   box-sizing: border-box;
   width: 100%;

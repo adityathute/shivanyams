@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/post/PortalPostDetail.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 12 post-detail audit. UI Audit: 11 JSX UI components; SDK: LinkIcon, MailIcon (2); app-local/shared: CategoryGrid, CategoryBadge, PortalFooter, PortalContentNotFound, PostEngagementActions, PostCommentsSection, PostFAQSection, NewsletterSubscribeButton; Next.js Link (1). CSS mapping: PortalPostDetail.css + UpdatesSection.css (portal-post-category-badge/icon). Duplicate date formatter consolidated; remaining large component/data-flow and legacy CSS review pending.
+ */
 "use client";
 
 import { useParams } from "next/navigation";
@@ -110,20 +115,6 @@ function getAnalyticsVisitorId() {
   } catch {
     return `visitor-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
-}
-
-function formatPostHeaderDate(value: string, language: string) {
-  if (!value) return "";
-  const locale =
-    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
-  const date = new Date(`${value.slice(0, 10)}T12:00:00`);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : date.toLocaleDateString(locale, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
 }
 
 function formatDate(value: string, language: string) {
@@ -973,7 +964,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       {headerPostDate ? (
                         <div className="portal-post-header-updated">
                           <span className="portal-post-date-label">{getDetailLabel(headerPostDateLabel, language)}</span>
-                          <time dateTime={headerPostDate}>{formatPostHeaderDate(headerPostDate, language)}</time>
+                          <time dateTime={headerPostDate}>{formatDate(headerPostDate, language)}</time>
                         </div>
                       ) : null}
                     </div>

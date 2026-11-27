@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/post/PostFAQSection.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 12 post-detail audit. UI Audit: 5 SDK components: CloseIcon, ConfirmDialog, DeleteIcon, LikeIcon, QuestionMarkCircleIcon. CSS mapping: PostFAQSection.css (116 selector blocks; 95 unique; 19 repeated selector names / 21 repeated occurrences). Legacy CSS cascade, modal accessibility and moderation-flow verification pending.
+ */
 "use client";
 
 import { useEffect, useState } from "react";

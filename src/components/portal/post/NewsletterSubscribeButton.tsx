@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/post/NewsletterSubscribeButton.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 12 post-detail audit. UI Audit: 2 SDK components: IconButton, CloseIcon. CSS mapping: NewsletterSubscribeButton.css (36 selector blocks; 34 unique; 2 repeated selector names / 2 repeated occurrences). Invalid disabled cursor value corrected; remaining duplicate selectors and legacy modal styling pending.
+ */
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";

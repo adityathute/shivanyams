@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `a9e1596e58aa575570a9829163753e4ac66a7ae5` |
+| Last source snapshot audited | `ed6f88ae280fa0707922497e311fe9cec3427da6` (Batch 12 base) |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). Current unfinished cleanup scope is 274 files (20 Cleanup Pending + 254 Not Reviewed), giving an estimated 28 remaining batches and 39 batches overall, including the 11 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 12, unfinished cleanup scope is 274 files (30 Cleanup Pending + 244 Not Reviewed), giving an estimated 28 remaining batches and 39 batches overall, including the 12 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,7 +32,7 @@
 | Clean | 36 |
 | Cleanup Pending | 20 |
 | Not Reviewed | 254 |
-| Reviewed files before this structure update | 55 |
+| Reviewed files after Batch 12 | 65 |
 | Organized | 254 |
 | Legacy | 56 |
 
@@ -59,11 +59,11 @@ Older batch history is intentionally not repeated here. The table tracks the lat
 ## Current pending priorities
 
 1. Continue detailed cleanup audits for the remaining Not Reviewed files.
-2. Migrate the Portal home and shell legacy stylesheets only after selector-by-selector compatibility checks.
+2. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
 3. Complete PortalHeader search submission and review the Hero scene tester exposure.
-2. Complete the known Pending work in Admin, Ledger and Next.js configuration.
-3. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
-4. Verify the private `shivanya-auth` reference version when repository access permits.
+4. Complete the known Pending work in Admin, Ledger and Next.js configuration.
+5. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
+6. Verify the private `shivanya-auth` reference version when repository access permits.
 
 ## Reporting rules
 

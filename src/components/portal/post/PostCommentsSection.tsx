@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/components/portal/post/PostCommentsSection.tsx
+ * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Batch 12 post-detail audit. UI Audit: 15 components; SDK: Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportIcon, Select, Textarea, ArrowDownIcon, ArrowUpIcon (13); app-local: CommentThread, CommentItem (2). CSS mapping: PostCommentsSection.css (199 selector blocks; 161 unique; 32 repeated selector names / 38 repeated occurrences). Accessibility, nested-thread and legacy-style cleanup pending.
+ */
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

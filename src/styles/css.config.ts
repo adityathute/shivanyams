@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/styles/css.config.ts
+// Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Batch 28 audit; organized stylesheet migration and full integration verification remain pending.
+
 /**
  * Global CSS mode switch.
  *

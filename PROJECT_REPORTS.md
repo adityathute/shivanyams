@@ -18,25 +18,25 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `0704e17f6f2fc6eb2fd368633f0743b8be85e515` |
+| Last source snapshot audited | `93be3ab8e3fea7c3e0e96bbc99020ba29da96d74` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 14, unfinished cleanup scope is 258 files (36 Cleanup Pending + 222 Not Reviewed), giving an estimated 26 remaining batches and 40 batches overall, including the 14 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 15, unfinished cleanup scope is 250 files (38 Cleanup Pending + 212 Not Reviewed), giving an estimated 25 remaining batches and 40 batches overall, including the 15 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
 | Metric | Count |
 |---|---:|
 | Total tracked files after current update | 310 |
-| Clean | 52 |
-| Cleanup Pending | 36 |
-| Not Reviewed | 222 |
-| Reviewed files after Batch 14 | 86 |
-| Organized | 52 |
-| Legacy | 258 |
+| Clean | 60 |
+| Cleanup Pending | 38 |
+| Not Reviewed | 212 |
+| Reviewed files after Batch 15 | 98 |
+| Organized | 60 |
+| Legacy | 250 |
 
-All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. `next-env.d.ts` remains Cleanup Pending as a generated-file exception.
+All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
 ## Reference repositories
 
@@ -50,16 +50,16 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| 93be3ab8e3fea7c3e0e96bbc99020ba29da96d74 | `chore(portal): audit authentication and category data batch 15` | Audited 10 backend files; clarified cookie CSRF safe-method handling; hardened malformed Auth payload handling; precomputed blocked-term prefixes; reduced category seed lookup queries; documented generated migration exceptions |
 | 0704e17f6f2fc6eb2fd368633f0743b8be85e515 | `chore(repo): audit repository setup and backend admin batch 14` | Audited 10 repository/backend setup files; corrected CI branch triggers; replaced starter README; clarified Django migration workflow; updated ignore rules and file metadata |
 | 08e5c71dd7738fcc252c355fde05e35082cead57 | `chore(portal): audit category and post helpers batch 13` | Audited 10 Portal/category/post files; optimized comment moderation prefix lookup; removed unused 404 styles; hardened invalid date fallback; clarified Organized/Legacy rule and refreshed full inventory |
-| 97c5acc9b70a7d18a65d23169829e6a061ea5bb4 | `chore(portal): audit post detail UI and styles batch 12` | Audited 10 Post UI/CSS files; consolidated duplicate date formatter; corrected invalid disabled cursor; updated per-file audits and file register |
 
 ## Current pending priorities
 
 1. Continue detailed cleanup audits for the remaining Not Reviewed files.
 2. Migrate Portal home, shell and post legacy stylesheets only after selector-by-selector compatibility checks.
 3. Complete PortalHeader search submission and review the Hero scene tester exposure.
-4. Complete the known Pending work in Admin, Ledger and Next.js configuration.
+4. Complete the known Pending work in Admin, Ledger, Next.js configuration and the reviewed historical Django migration chain.
 5. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 6. Verify the private `shivanya-auth` reference version when repository access permits.
 

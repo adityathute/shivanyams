@@ -888,9 +888,6 @@ class NewsletterSubscriptionEventAdmin(admin.ModelAdmin):
     search_fields = ("subscription__email", "user_auth_id")
     readonly_fields = ("subscription", "event_type", "user_auth_id", "created_at")
 
-    def has_view_permission(self, request, obj=None):
-        return True
-
     def has_add_permission(self, request):
         return False
 

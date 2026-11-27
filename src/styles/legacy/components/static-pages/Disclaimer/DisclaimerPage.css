@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/static-pages/Disclaimer/DisclaimerPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 29 audit; approximately 23 CSS rule blocks reviewed. Component mapping, responsive/theme compatibility and runtime verification remain pending. */
+
 .disclaimer-content {
   display: flex;
   flex-direction: column;
@@ -153,3 +158,15 @@
   }
 }
 
+/* Batch 29: visible keyboard focus and reduced-motion support. */
+.disclaimer-content a:focus-visible,
+.disclaimer-content button:focus-visible {
+  outline: 2px solid var(--primary, #2563eb);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .disclaimer-contact-link {
+    transition: none;
+  }
+}

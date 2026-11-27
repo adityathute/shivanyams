@@ -1,3 +1,8 @@
+# File Location: shivanyams/backend/requirements.txt
+# Reference Repositories: shivanya-sdk v1.0.0 (Master; no backend dependency); shivanya-auth (private, version not verified)
+# Cleanup Status: Clean
+# Cleanup Info: Audited direct Django API dependencies and bounded major-version ranges; retained current compatibility ranges without introducing unverified pins. No UI/CSS applies.
+
 Django>=5.1,<6.1
 djangorestframework>=3.15,<4
 djangorestframework-simplejwt>=5.3,<6

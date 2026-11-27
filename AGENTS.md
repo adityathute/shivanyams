@@ -1,3 +1,8 @@
+<!-- File Location: shivanyams/AGENTS.md -->
+<!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
+<!-- Cleanup Status: Clean -->
+<!-- Cleanup Info: Master rules 1–56 and AI-only workflow instructions reviewed for this rulebook update. -->
+
 # ShivanyaMS V2 — Repository Rulebook
 
 ## फक्त मास्टरसाठी
@@ -232,6 +237,15 @@
 55. **Reference Repository Version आणि Change Tracking**
 
     shivanya-sdk, shivanya-auth किंवा Project मध्ये वापरल्या जाणाऱ्या इतर Reference Repositories मध्ये नवीन Version, Commit, Component, Feature किंवा API जोडला/बदलला गेल्यास संबंधित Repository ची अधिकृत माहिती पुन्हा तपासावी. बदललेल्या Component/API शी संबंधित shivanyams Files ओळखून त्या Files मधील Reference Repositories नोंद, Component Audit, SDK Reuse Mapping आणि Cleanup Info अद्ययावत करावे. प्रत्येक लागू File मध्ये Reference Repository चे नाव आणि तपासलेली Version/Branch नमूद करावी. PROJECT_REPORTS.md मध्ये जुनी व नवीन Version/Commit, बदलाचा सारांश, परिणाम झालेल्या Files आणि Pending Actions नोंदवाव्यात. Private किंवा inaccessible Repository ची Version पडताळता येत नसेल तर तसे स्पष्ट लिहावे; अंदाजाने Version देऊ नये. Reference Repository read-only असल्यास त्यात बदल किंवा Commit करू नये.
+
+
+56. **Project Reports आणि संपूर्ण Project Structure व्यवस्थापन**
+
+    Repository च्या Root मध्ये PROJECT_REPORTS.md आणि PROJECT_STRUCTURE.md या दोन स्वतंत्र Files ठेवाव्यात. PROJECT_REPORTS.md मध्ये Project चे नाव व Version (V2), Repository/Branch, Package Version, तपासलेला Commit, एकूण Tracked Files, Clean, Cleanup Pending आणि Not Reviewed यांची अचूक मोजणी, Organized व Legacy Files ची संख्या, Reference Repositories आणि पुढील काम नोंदवावे. Commit History मध्ये फक्त शेवटचे तीन Commits आणि त्यांच्या महत्त्वाच्या बदलांचा संक्षिप्त सारांश ठेवावा. जुने Batch-wise तपशील, प्रत्येक Batch चे मोठे Tables किंवा जुना इतिहास PROJECT_REPORTS.md मध्ये पुन्हा पुन्हा जोडू नये; तीनपेक्षा जुने Commit तपशील काढून टाकावेत.
+
+    PROJECT_STRUCTURE.md मध्ये Git Tree मधील प्रत्येक Tracked File ची स्वतंत्र नोंद असावी. प्रत्येक नोंदीत Repository Root पासूनचा पूर्ण Path, Cleanup Status (Clean, Cleanup Pending किंवा Not Reviewed) आणि Structure Status (Organized किंवा Legacy) नमूद करावा. एकूण Files, प्रत्येक Cleanup Status ची संख्या, Organized Files आणि Legacy Files यांची बेरीज Git Tree शी तंतोतंत जुळली पाहिजे. Generated Files, Comment न स्वीकारणाऱ्या Files आणि इतर अपवाद लपवू नयेत; योग्य Status देऊन स्पष्ट करावेत. नवीन File तयार झाल्यावर, File हलवल्यावर, हटवल्यावर किंवा Cleanup Status/Structure Status बदलल्यावर PROJECT_STRUCTURE.md अद्ययावत करावा.
+
+    दोन्ही Reports प्रत्येक Cleanup Batch किंवा Structure Update नंतर अद्ययावत करावेत. PROJECT_REPORTS.md हा संक्षिप्त Summary आणि शेवटच्या तीन Commits चा Report असेल; PROJECT_STRUCTURE.md हा सर्व Files चा पूर्ण Master Register असेल. एकाच Batch चा तपशील दोन्ही Files मध्ये अनावश्यकपणे पुन्हा लिहू नये. संख्या प्रत्यक्ष Git Tree आणि तपासलेल्या Files वरूनच मोजावी; अंदाज, चुकीची एकूण संख्या किंवा न तपासलेल्या File ला Clean Status देऊ नये.
 
 ---
 

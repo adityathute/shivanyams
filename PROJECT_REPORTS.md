@@ -18,23 +18,23 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `08e5c71dd7738fcc252c355fde05e35082cead57` |
+| Last source snapshot audited | `0704e17f6f2fc6eb2fd368633f0743b8be85e515` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 13, unfinished cleanup scope is 269 files (35 Cleanup Pending + 234 Not Reviewed), giving an estimated 27 remaining batches and 40 batches overall, including the 13 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 14, unfinished cleanup scope is 258 files (36 Cleanup Pending + 222 Not Reviewed), giving an estimated 26 remaining batches and 40 batches overall, including the 14 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
 | Metric | Count |
 |---|---:|
 | Total tracked files after current update | 310 |
-| Clean | 41 |
-| Cleanup Pending | 35 |
-| Not Reviewed | 234 |
-| Reviewed files after Batch 13 | 76 |
-| Organized | 41 |
-| Legacy | 269 |
+| Clean | 52 |
+| Cleanup Pending | 36 |
+| Not Reviewed | 222 |
+| Reviewed files after Batch 14 | 86 |
+| Organized | 52 |
+| Legacy | 258 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. `next-env.d.ts` remains Cleanup Pending as a generated-file exception.
 
@@ -50,9 +50,9 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| 0704e17f6f2fc6eb2fd368633f0743b8be85e515 | `chore(repo): audit repository setup and backend admin batch 14` | Audited 10 repository/backend setup files; corrected CI branch triggers; replaced starter README; clarified Django migration workflow; updated ignore rules and file metadata |
 | 08e5c71dd7738fcc252c355fde05e35082cead57 | `chore(portal): audit category and post helpers batch 13` | Audited 10 Portal/category/post files; optimized comment moderation prefix lookup; removed unused 404 styles; hardened invalid date fallback; clarified Organized/Legacy rule and refreshed full inventory |
 | 97c5acc9b70a7d18a65d23169829e6a061ea5bb4 | `chore(portal): audit post detail UI and styles batch 12` | Audited 10 Post UI/CSS files; consolidated duplicate date formatter; corrected invalid disabled cursor; updated per-file audits and file register |
-| a9e1596e58aa575570a9829163753e4ac66a7ae5 | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
 
 ## Current pending priorities
 

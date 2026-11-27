@@ -1,5 +1,12 @@
 "use client";
 
+// File Location: shivanyams/src/components/jobs/JobsPage.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master; shivanya-ui icons and shivanya-i18n types reused where applicable); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Reused shared job deadline utilities instead of duplicating deadline extraction, status and formatting logic; audited filtering and loading/error/empty states. Remaining page/illustration styles are still under legacy stylesheet paths and require dedicated CSS migration before this file can be marked Clean.
+
+
+
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/jobs/JobsPage.css";
 import { useMemo, useState } from "react";
@@ -12,49 +19,21 @@ import type { Language } from "shivanya-i18n";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 import { JobsCharacters } from "./JobsCharacters";
+import {
+  formatJobApplicationDeadline,
+  getJobApplicationDeadline,
+  getJobDeadlineStatus,
+} from "../portal/utils/job-deadline";
 import { PortalEmptyState } from "../portal/category/PortalEmptyState";
 
-function getJobApplicationDeadline(item: import("../portal/data/portal-data").Item): string {
-  const applicationEnd = item.important_dates?.find((entry) => entry.date_type === "application_end");
-
-  if (applicationEnd) {
-    if (applicationEnd.date_format === "revised" || applicationEnd.date_format === "revised_with_time") {
-      return applicationEnd.new_date || applicationEnd.date || applicationEnd.end_date || "";
-    }
-    if (applicationEnd.date_format === "range") {
-      return applicationEnd.end_date || applicationEnd.date || "";
-    }
-    return applicationEnd.date || applicationEnd.end_date || "";
-  }
-
-  return item.end_date || "";
-}
-
 function isJobDeadlineRevised(item: import("../portal/data/portal-data").Item): boolean {
-  const applicationEnd = item.important_dates?.find((entry) => entry.date_type === "application_end");
-  return applicationEnd?.date_format === "revised" || applicationEnd?.date_format === "revised_with_time";
-}
-
-function getDeadlineStatus(dateValue: string): "urgent" | "soon" | "open" | "expired" {
-  const [year, month, day] = dateValue.slice(0, 10).split("-").map(Number);
-  if (!year || !month || !day) return "expired";
-
-  const deadline = new Date(year, month - 1, day);
-  if (deadline.getFullYear() !== year || deadline.getMonth() !== month - 1 || deadline.getDate() !== day) return "expired";
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysRemaining = Math.round((deadline.getTime() - today.getTime()) / 86400000);
-
-  if (daysRemaining === 0) return "urgent";
-  if (daysRemaining >= 1 && daysRemaining <= 3) return "soon";
-  if (daysRemaining >= 4) return "open";
-  return "expired";
-}
-
-function formatApplicationDeadline(dateValue: string): string {
-  const [year, month, day] = dateValue.slice(0, 10).split("-");
-  return [day, month, year].join("/");
+  const applicationEnd = item.important_dates?.find(
+    (entry) => entry.date_type === "application_end",
+  );
+  return (
+    applicationEnd?.date_format === "revised" ||
+    applicationEnd?.date_format === "revised_with_time"
+  );
 }
 
 function getExtendedDeadlineLabel(language: string): string {
@@ -149,7 +128,7 @@ export function JobsPage() {
               {jobs.length ? (
                 jobs.map((item) => {
                   const applicationDeadline = getJobApplicationDeadline(item);
-                  const deadlineStatus = applicationDeadline ? getDeadlineStatus(applicationDeadline) : "";
+                  const deadlineStatus = applicationDeadline ? getJobDeadlineStatus(applicationDeadline) : "";
                   const deadlineRevised = applicationDeadline && isJobDeadlineRevised(item);
 
                   return (
@@ -176,7 +155,7 @@ export function JobsPage() {
                           </span>
                         )}
                         <time className={`update-application-deadline deadline-${deadlineStatus}`}>
-                          {formatApplicationDeadline(applicationDeadline)}
+                          {formatJobApplicationDeadline(applicationDeadline)}
                         </time>
                       </span>
                     ) : null}

@@ -1,5 +1,12 @@
 "use client";
 
+// File Location: shivanyams/src/components/guide/GuidesPage.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master; shivanya-ui icons and shivanya-i18n types reused where applicable); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Audited localized filtering, loading/error/empty states, category badges, navigation and shared portal data dependencies. Remaining page/illustration styles are still under legacy stylesheet paths and require dedicated CSS migration before this file can be marked Clean.
+
+
+
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/guide/GuidesPage.css";
 

@@ -10,16 +10,29 @@ def seed_existing_subscriptions(apps, schema_editor):
 
     # Record the existing global newsletter subscription rows as their
     # initial subscription event so future resubscriptions can be counted.
-    events = [
-        NewsletterSubscriptionEvent(
-            subscription_id=subscription.pk,
-            event_type="subscribed",
-            user_auth_id=subscription.user_auth_id,
-            created_at=subscription.created_at,
+    event_batch = []
+    for subscription in NewsletterSubscription.objects.all().iterator(chunk_size=1000):
+        event_batch.append(
+            NewsletterSubscriptionEvent(
+                subscription_id=subscription.pk,
+                event_type="subscribed",
+                user_auth_id=subscription.user_auth_id,
+                created_at=subscription.created_at,
+            )
         )
-        for subscription in NewsletterSubscription.objects.all().iterator()
-    ]
-    NewsletterSubscriptionEvent.objects.bulk_create(events, batch_size=1000)
+
+        if len(event_batch) >= 1000:
+            NewsletterSubscriptionEvent.objects.bulk_create(
+                event_batch,
+                batch_size=1000,
+            )
+            event_batch.clear()
+
+    if event_batch:
+        NewsletterSubscriptionEvent.objects.bulk_create(
+            event_batch,
+            batch_size=1000,
+        )
 
     # Keep old post-only email addresses as inactive global records. A
     # post-specific opt-in is not silently expanded into site-wide consent.

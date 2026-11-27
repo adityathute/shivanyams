@@ -1,12 +1,17 @@
 # ShivanyaMS V2 — Repository Rulebook
 
 ## MASTER ONLY — Reserved for the repository owner
+## फक्त MASTER साठी — केवळ रेपॉझिटरीच्या मालकासाठी राखीव
 
-> This section belongs exclusively to the Master (repository owner). Only the Master may add, edit, or remove rules in this section. AI agents and other developers must never modify, delete, reformat, or move this section. They must read and follow every rule written here. The Master may update this section at any time; the AI-only rules below must then be adjusted when necessary to comply with the Master's instructions, without changing this section.
+> **EN:** This section belongs exclusively to the Master (repository owner). Only the Master may add, edit, or remove rules in this section. AI agents and other developers must never modify, delete, reformat, or move this section. They must read and follow every rule written here. The Master may update this section at any time; the AI-only rules below must then be adjusted when necessary to comply with the Master's instructions, without changing this section.
+>
+> **मराठी:** हा विभाग केवळ Master (रेपॉझिटरीचा मालक) यांच्यासाठी आहे. या विभागात नियम जोडणे, बदलणे किंवा काढून टाकणे हे फक्त Master करू शकतात. AI एजंट्स आणि इतर डेव्हलपर्सनी हा विभाग कधीही बदलू, हटवू, पुन्हा फॉरमॅट करू किंवा दुसरीकडे हलवू नये. त्यांनी येथे दिलेले प्रत्येक नियम वाचून पाळावेत. Master कधीही या विभागातील नियम अपडेट करू शकतात. अशा वेळी Master यांच्या सूचनांशी जुळवून घेण्यासाठी आवश्यक असल्यास खालील AI-only नियम बदलता येतील; मात्र हा Master विभाग बदलायचा नाही.
 
-### Master rules
+### Master rules / Master चे नियम
 
-1. The Master personally maintains this section. AI agents must leave it untouched and follow the instructions written here.
+1. **EN:** The Master personally maintains this section. AI agents must leave it untouched and follow the instructions written here.
+   
+   **मराठी:** हा विभाग Master स्वतः सांभाळतील. AI एजंट्सनी या विभागात कोणताही बदल करू नये आणि येथे लिहिलेल्या सूचनांचे पालन करावे.
 
 ---
 

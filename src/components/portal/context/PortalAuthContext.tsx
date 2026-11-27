@@ -1,10 +1,16 @@
 "use client";
 
+// File Location: shivanyams/src/components/portal/context/PortalAuthContext.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Clean
+// Cleanup Info: Audited portal authentication modal lifecycle and memoized provider value to avoid needless context updates; retained deferred post-login action behavior. SDK AuthModal/useAuth reused; no CSS required.
+
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -45,8 +51,13 @@ export function PortalAuthProvider({ children }: { children: ReactNode }) {
     setAuthView("register");
   }, []);
 
+  const value = useMemo(
+    () => ({ openLogin, openRegister }),
+    [openLogin, openRegister],
+  );
+
   return (
-    <PortalAuthContext.Provider value={{ openLogin, openRegister }}>
+    <PortalAuthContext.Provider value={value}>
       {children}
       <AuthModal
         open={authView !== null}

@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/portal/layout/sidebar/PortalSidebar.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master; all navigation icons and i18n translation utilities reused); shivanya-auth (private, version not verified)
+// Cleanup Status: Clean
+// Cleanup Info: Audited navigation destinations, admin-only entries, authenticated saved-post visibility, translations and SDK icon reuse; extracted the navigation item shape for a stable documented return contract. No local CSS in this module.
+
 import {
   HomeIcon,
   GovernmentJobIcon,
@@ -22,10 +27,17 @@ type PortalUser = {
   roles?: string[];
 } | null;
 
+type PortalNavigationItem = {
+  label: string;
+  href?: string;
+  icon?: React.ReactNode;
+  divider?: boolean;
+};
+
 export function getPortalNavigation(
   language: Language,
   user: PortalUser = null,
-) {
+): PortalNavigationItem[] {
   const isAdmin = user?.roles?.includes("admin") === true;
 
   return [

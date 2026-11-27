@@ -1,10 +1,16 @@
 "use client";
 
+// File Location: shivanyams/src/components/portal/context/PortalLanguageContext.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master; shivanya-i18n Language type); shivanya-auth (private, version not verified)
+// Cleanup Status: Clean
+// Cleanup Info: Memoized the language context value to prevent unrelated provider consumers from receiving a new object on every render; preserved document language synchronization and SDK Language typing. No CSS required.
+
 import {
   createContext,
   useContext,
   useState,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import type { Language } from "shivanya-i18n";
@@ -30,8 +36,13 @@ export function PortalLanguageProvider({
     document.documentElement.lang = language;
   }, [language]);
 
+  const value = useMemo(
+    () => ({ language, setLanguage }),
+    [language],
+  );
+
   return (
-    <PortalLanguageContext.Provider value={{ language, setLanguage }}>
+    <PortalLanguageContext.Provider value={value}>
       {children}
     </PortalLanguageContext.Provider>
   );

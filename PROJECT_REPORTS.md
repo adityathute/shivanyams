@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `d4363c77bbbbe335153d4ff622af53df26d72ed1` |
+| Last source snapshot audited | `2b18cdacb87eb2cf89df69ae17edd915bc8fd964` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 21, unfinished cleanup scope is 236 files (84 Cleanup Pending + 152 Not Reviewed), giving an estimated 24 remaining batches and 45 batches overall, including the 21 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 22, unfinished cleanup scope is 236 files (89 Cleanup Pending + 147 Not Reviewed), giving an estimated 24 remaining batches and 46 batches overall, including the 22 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 84 |
-| Not Reviewed | 152 |
-| Reviewed files after Batch 21 | 158 |
+| Cleanup Pending | 89 |
+| Not Reviewed | 147 |
+| Reviewed files after Batch 22 | 163 |
 | Organized | 74 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 310 |
-| Files reviewed to date | 158 |
-| Review completion | 51.0% |
+| Files reviewed to date | 163 |
+| Review completion | 52.6% |
 | Files fully clean / organized | 74 |
-| Reviewed files still pending cleanup | 84 |
-| Files not yet reviewed | 152 |
+| Reviewed files still pending cleanup | 89 |
+| Files not yet reviewed | 147 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 21 |
+| Completed batches | 22 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 45 |
+| Estimated total batches | 46 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,9 +67,9 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| 2b18cdacb87eb2cf89df69ae17edd915bc8fd964 | `chore(portal): audit animation components and styles batch 22; add rule 58` | Audited five Portal animation components and five paired stylesheets; added semantic time markup, reduced-motion support for clouds/flowers, corrected the GovernmentBuilding offset and added Rule 58 automated test coverage |
 | d4363c77bbbbe335153d4ff622af53df26d72ed1 | `chore(portal): audit videos and dictionaries batch 21; add rule 57` | Audited 10 video, configuration, category and dictionary files; enabled Next.js image optimization for video artwork; validated YouTube IDs before iframe embedding; added Rule 57 for proactive rule suggestions with approval required |
 | b98d84422cfc7edeac3f64ae28f1e9d7c52b57c2 | `chore(portal): audit scheme and static content pages batch 20` | Audited 10 scheme, tools and static-page components; enabled Next.js optimization for two local hero illustrations; added Rule 51 metadata; detailed legacy CSS, form and content audits remain pending |
-| 21e5c57cff809e5a923e91069dc022f9bab99e50 | `chore(portal): audit context navigation and footer batch 18` | Audited 10 Portal files; memoized auth/language context values; clarified sidebar navigation return type and mobile footer brand; reviewed SDK reuse; kept complex data, dropdown and saved-post follow-ups pending |
 
 ## Current pending priorities
 
@@ -83,7 +83,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 5. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 6. Verify the private `shivanya-auth` reference version when repository access permits.
 
-**Rulebook update:** Rule 57 requires the assistant to suggest a relevant new or updated project rule during conversations when useful, explain its benefit, and wait for explicit approval before changing the rulebook.
+**Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 
 ## Reporting rules
 

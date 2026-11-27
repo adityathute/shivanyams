@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `b98d84422cfc7edeac3f64ae28f1e9d7c52b57c2`  
+**Source snapshot:** `2b18cdacb87eb2cf89df69ae17edd915bc8fd964`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 74 |
-| Not Reviewed | 162 |
+| Cleanup Pending | 89 |
+| Not Reviewed | 147 |
 | Organized | 74 |
 | Legacy | 236 |
-| Audited before this structure update | 148 |
+| Audited before this structure update | 163 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -189,12 +189,12 @@
 | 157 | `shivanyams/src/components/admin/PostEditor.tsx` | Not Reviewed | Legacy |
 | 158 | `shivanyams/src/components/admitCard/AdmitCardsCharacters.tsx` | Cleanup Pending | Legacy |
 | 159 | `shivanyams/src/components/admitCard/AdmitCardsPage.tsx` | Cleanup Pending | Legacy |
-| 160 | `shivanyams/src/components/animation/BanyanTree/BanyanTree.tsx` | Not Reviewed | Legacy |
+| 160 | `shivanyams/src/components/animation/BanyanTree/BanyanTree.tsx` | Cleanup Pending | Legacy |
 | 161 | `shivanyams/src/components/animation/Birds/Birds.tsx` | Not Reviewed | Legacy |
-| 162 | `shivanyams/src/components/animation/Clock/PortalClock.tsx` | Not Reviewed | Legacy |
-| 163 | `shivanyams/src/components/animation/Clouds/Clouds.tsx` | Not Reviewed | Legacy |
-| 164 | `shivanyams/src/components/animation/GovernmentBuilding/GovernmentBuilding.tsx` | Not Reviewed | Legacy |
-| 165 | `shivanyams/src/components/animation/HillFlowers/HillFlowers.tsx` | Not Reviewed | Legacy |
+| 162 | `shivanyams/src/components/animation/Clock/PortalClock.tsx` | Cleanup Pending | Legacy |
+| 163 | `shivanyams/src/components/animation/Clouds/Clouds.tsx` | Cleanup Pending | Legacy |
+| 164 | `shivanyams/src/components/animation/GovernmentBuilding/GovernmentBuilding.tsx` | Cleanup Pending | Legacy |
+| 165 | `shivanyams/src/components/animation/HillFlowers/HillFlowers.tsx` | Cleanup Pending | Legacy |
 | 166 | `shivanyams/src/components/animation/LandscapeTerrain/LandscapeTerrain.tsx` | Not Reviewed | Legacy |
 | 167 | `shivanyams/src/components/animation/Moon/Moon.tsx` | Not Reviewed | Legacy |
 | 168 | `shivanyams/src/components/animation/Stars/Stars.tsx` | Not Reviewed | Legacy |
@@ -278,11 +278,11 @@
 | 246 | `shivanyams/src/styles/legacy/components/admin/PostEditor.css` | Not Reviewed | Legacy |
 | 247 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsCharacters.css` | Not Reviewed | Legacy |
 | 248 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css` | Not Reviewed | Legacy |
-| 249 | `shivanyams/src/styles/legacy/components/animation/BanyanTree/BanyanTree.css` | Not Reviewed | Legacy |
-| 250 | `shivanyams/src/styles/legacy/components/animation/Clock/PortalClock.css` | Not Reviewed | Legacy |
-| 251 | `shivanyams/src/styles/legacy/components/animation/Clouds/Clouds.css` | Not Reviewed | Legacy |
-| 252 | `shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css` | Not Reviewed | Legacy |
-| 253 | `shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css` | Not Reviewed | Legacy |
+| 249 | `shivanyams/src/styles/legacy/components/animation/BanyanTree/BanyanTree.css` | Cleanup Pending | Legacy |
+| 250 | `shivanyams/src/styles/legacy/components/animation/Clock/PortalClock.css` | Cleanup Pending | Legacy |
+| 251 | `shivanyams/src/styles/legacy/components/animation/Clouds/Clouds.css` | Cleanup Pending | Legacy |
+| 252 | `shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css` | Cleanup Pending | Legacy |
+| 253 | `shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css` | Cleanup Pending | Legacy |
 | 254 | `shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css` | Not Reviewed | Legacy |
 | 255 | `shivanyams/src/styles/legacy/components/animation/Moon/Moon.css` | Not Reviewed | Legacy |
 | 256 | `shivanyams/src/styles/legacy/components/animation/Stars/Stars.css` | Not Reviewed | Legacy |

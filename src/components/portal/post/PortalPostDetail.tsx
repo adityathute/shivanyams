@@ -504,7 +504,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     const observer = new ResizeObserver(updateColumns);
     observer.observe(grid);
     return () => observer.disconnect();
-  }, [post?.postId, language]);
+  }, [data.items, language, previewItem]);
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);

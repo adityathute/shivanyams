@@ -1,6 +1,12 @@
 // File: src/app/admin/preview/[kind]/[slug]/page.tsx
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Route and abort handling reviewed; API payload casts and preview category mapping need a wider type-contract review.
+// UI Components: 1 shared component (PortalPostDetail) plus native main/div/button/span elements
+// SDK UI Components available for review: Button
+// SDK UI Components currently used: 0 direct; preview banner uses native button
+// Custom UI Components: 1 shared app component reference (PortalPostDetail)
+// CSS Selectors: 0 defined; 3 existing class hooks referenced (portal-post-detail, portal-post-loading, admin-version-preview-banner)
+// Cleanup: API payload casts and category mapping pending type-contract review; SDK button reuse can be assessed during UI refactor.
 
 "use client";
 

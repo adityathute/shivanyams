@@ -1,6 +1,11 @@
 // File: src/app/admin/edit-post/[kind]/[slug]/page.tsx
 // Cleanup Status: Clean
 // Cleanup Info: Route authorization and editor parameter forwarding reviewed; no redundant code found.
+// UI Components: 1 JSX component (PostEditor, app-local)
+// SDK UI Components used: 0 direct
+// Custom UI Components: 1 (PostEditor reference)
+// CSS Selectors: 0 in this file
+// Cleanup: Existing editor reuse and route authorization retained; no duplicate editor UI.
 
 "use client";
 

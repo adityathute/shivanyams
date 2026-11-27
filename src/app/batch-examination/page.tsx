@@ -1,6 +1,11 @@
 // File: src/app/batch-examination/page.tsx
 // Cleanup Status: Clean
 // Cleanup Info: Thin route wrapper reviewed; shared page component is reused without duplicate route logic.
+// UI Components: 1 (CategoryPage, app-local shared page)
+// SDK UI Components used: 0 direct
+// Custom UI Components: 1 shared page reference
+// CSS Selectors: 0 in route file
+// Cleanup: Shared CategoryPage reused with exam type; no duplicate route UI.
 
 import { CategoryPage } from "../../components/portal/category/CategoryPage";
 

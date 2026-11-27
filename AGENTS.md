@@ -216,6 +216,14 @@
 52. **Cleanup Progress Report**
 
     संपूर्ण Repository मधील Files ची Cleanup प्रक्रिया सुरू असताना प्रत्येक Batch पूर्ण झाल्यानंतर मास्टर यांना थोडक्यात Progress Report द्यावा. या Report मध्ये एकूण Files पैकी किती Files Clean आहेत, किती Cleanup Pending आहेत, किती Not Reviewed आहेत आणि अजून किती Files तपासणे बाकी आहेत हे स्पष्टपणे नमूद करावे. प्रत्येक नवीन Batch नंतर आधीच्या आकडेवारीनुसार एकूण संख्या अद्ययावत करावी. एखाद्या File ची स्थिती बदलल्यास त्यानुसार मोजणी दुरुस्त करावी. तपासणी न केलेल्या Files ना Clean समजू नये आणि प्रत्यक्ष तपासणीपेक्षा जास्त प्रगती झाल्याचा दावा करू नये. Report लहान, स्पष्ट आणि नियमित असावा.
+
+53. **प्रत्येक File साठी UI, CSS आणि SDK Component Audit Report**
+
+    नवीन File तयार करताना किंवा विद्यमान File संपादित करताना Rule 51 मधील Cleanup Info मध्ये त्या File चा प्रत्यक्ष तपासलेला UI आणि CSS Audit Report देखील द्यावा. TSX/JSX Files मध्ये वापरलेले UI Components, त्यांची नावे, एकूण संख्या, App-local किंवा Custom Components आणि SDK Components यांची स्वतंत्र नोंद करावी. CSS/SCSS Files मध्ये उपलब्ध HTML Element प्रकार आणि CSS Selectors (उदा. button, input, select, textarea, label, modal, card) यांची नावे व अचूक संख्या नमूद करावी. संबंधित TSX/JSX आणि CSS Files यांमधील Components व Selectors यांचे Mapping तपासावे; Duplicate Selectors, Duplicate UI, अनावश्यक Custom UI आणि Cleanup Pending बाबी नमूद कराव्यात.
+
+    प्रत्येक UI Audit करण्यापूर्वी shivanya-sdk Repository मधील अधिकृत UI Component Inventory आणि आवश्यकतेनुसार संबंधित Component Implementation तपासावी. सध्याच्या कामाशी जुळणारे आणि प्रत्यक्ष वापरता येणारे SDK Components ओळखून त्यांची नावे नमूद करावीत. योग्य SDK Component उपलब्ध असल्यास shivanyams मध्ये त्याचा पुनर्वापर करावा; मात्र केवळ आकडेवारी पूर्ण करण्यासाठी Component जबरदस्तीने वापरू नये. SDK Repository मध्ये कोणताही बदल करू नये.
+
+    Cleanup Info मध्ये किमान पुढील माहिती द्यावी: एकूण UI Components, SDK Components उपलब्ध/वापरलेले, App-local किंवा Custom Components, एकूण CSS Selectors व प्रकारनिहाय संख्या, Duplicate Items आणि Cleanup Pending Items. ज्या File मध्ये UI किंवा CSS लागू होत नाही, तेथे शून्य असल्याचे स्पष्ट नमूद करावे. CSS दुसऱ्या File मध्ये असल्यास त्याचा Path नमूद करावा आणि त्या CSS चे Selector Count प्रत्यक्ष तपासल्याशिवाय लिहू नये. अंदाजे किंवा न तपासलेली संख्या देऊ नये. File संपादित केल्यानंतर हा Report अद्ययावत करावा.
 ---
 
 ## AI ONLY — Instructions for AI agents

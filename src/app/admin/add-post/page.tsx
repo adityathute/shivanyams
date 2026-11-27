@@ -1,6 +1,11 @@
 // File: src/app/admin/add-post/page.tsx
 // Cleanup Status: Clean
 // Cleanup Info: Admin guard and route rendering reviewed; no safe simplification needed.
+// UI Components: 1 JSX component (PostEditor, app-local)
+// SDK UI Components used: 0 direct
+// Custom UI Components: 1 (PostEditor reference)
+// CSS Selectors: 0 in this file
+// Cleanup: Admin guard and route rendering retained; SDK UI inventory checked, no route-level control UI to replace.
 
 "use client";
 

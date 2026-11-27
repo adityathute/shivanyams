@@ -1,6 +1,11 @@
 // File: src/app/admin/admin-utils.ts
 // Cleanup Status: Clean
 // Cleanup Info: Utility functions reviewed; removed redundant blank lines and retained shared authenticated fetch export.
+// UI Components: 0
+// SDK UI Components: 0
+// Custom UI Components: 0
+// CSS Selectors: 0
+// Cleanup: Utility-only file; shared authenticated fetch and formatting helpers retained.
 
 export function slugify(value: string) {
   return value

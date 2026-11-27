@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `0371bd96ffc8977851c7757d1e46997b24735041`  
+**Source snapshot:** `beb543f77a2f087aecab7fec0a6160993196bd2e`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,8 +16,8 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 169 |
-| Not Reviewed | 67 |
+| Cleanup Pending | 170 |
+| Not Reviewed | 66 |
 | Organized | 75 |
 | Legacy | 236 |
 | Audited before this structure update | 242 |
@@ -69,7 +69,7 @@
 | 38 | `shivanyams/backend/apps/portal/migrations/0016_jobdetails_shared_detail_modes.py` | Not Reviewed | Legacy |
 | 39 | `shivanyams/backend/apps/portal/migrations/0017_jobposteducation.py` | Not Reviewed | Legacy |
 | 40 | `shivanyams/backend/apps/portal/migrations/0018_postlink_action_texts.py` | Not Reviewed | Legacy |
-| 41 | `shivanyams/backend/apps/portal/migrations/0019_postlink_group_key.py` | Not Reviewed | Legacy |
+| 41 | `shivanyams/backend/apps/portal/migrations/0019_postlink_group_key.py` | Cleanup Pending | Legacy |
 | 42 | `shivanyams/backend/apps/portal/migrations/0020_postfaq.py` | Not Reviewed | Legacy |
 | 43 | `shivanyams/backend/apps/portal/migrations/0020_postversion_updated_at.py` | Not Reviewed | Legacy |
 | 44 | `shivanyams/backend/apps/portal/migrations/0021_rename_portal_faq_post_act_idx_portal_post_post_id_16f132_idx_and_more.py` | Not Reviewed | Legacy |

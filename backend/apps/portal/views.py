@@ -201,6 +201,7 @@ class AdminTags(APIView):
     """Manage shared SEO tags across every portal content type."""
 
     permission_classes = [IsPortalAdmin]
+    UPDATE_BATCH_SIZE = 500
 
     @staticmethod
     def get_tag_rows():
@@ -224,6 +225,16 @@ class AdminTags(APIView):
                 rows[key]["count"] += 1
         return sorted(rows.values(), key=lambda item: (-item["count"], item["name"].casefold()))
 
+    @staticmethod
+    def bulk_update_tag_batch(posts):
+        if posts:
+            Post.objects.bulk_update(
+                posts,
+                fields=["meta_keywords", "updated_at"],
+                batch_size=AdminTags.UPDATE_BATCH_SIZE,
+            )
+            posts.clear()
+
     def get(self, request):
         return Response(self.get_tag_rows())
 
@@ -236,37 +247,62 @@ class AdminTags(APIView):
             raise ValidationError({"new_name": "Tag names must be 100 characters or fewer."})
         if old_name.casefold() == new_name.casefold() and old_name == new_name:
             return Response({"detail": "No changes were made."})
+
+        old_key = old_name.casefold()
+        updated_posts = []
         with transaction.atomic():
-            posts = Post.objects.select_for_update().only("id", "meta_keywords")
-            for post in posts.iterator():
+            posts = Post.objects.select_for_update().only("id", "meta_keywords", "updated_at")
+            for post in posts.iterator(chunk_size=self.UPDATE_BATCH_SIZE):
                 keywords = post.meta_keywords if isinstance(post.meta_keywords, list) else []
-                if not any(isinstance(tag, str) and tag.strip().casefold() == old_name.casefold() for tag in keywords):
+                if not any(isinstance(tag, str) and tag.strip().casefold() == old_key for tag in keywords):
                     continue
+
                 updated, seen = [], set()
                 for tag in keywords:
-                    value = new_name if isinstance(tag, str) and tag.strip().casefold() == old_name.casefold() else tag
+                    value = new_name if isinstance(tag, str) and tag.strip().casefold() == old_key else tag
                     key = value.strip().casefold() if isinstance(value, str) else None
                     if key and key not in seen:
                         updated.append(value.strip())
                         seen.add(key)
                     elif not key:
                         updated.append(value)
+
                 post.meta_keywords = updated
-                post.save(update_fields=["meta_keywords", "updated_at"])
+                post.updated_at = timezone.now()
+                updated_posts.append(post)
+                if len(updated_posts) >= self.UPDATE_BATCH_SIZE:
+                    self.bulk_update_tag_batch(updated_posts)
+
+            self.bulk_update_tag_batch(updated_posts)
+
         return Response({"tags": self.get_tag_rows()})
 
     def delete(self, request):
         name = str(request.data.get("name", "")).strip()
         if not name:
             raise ValidationError({"name": "A tag name is required."})
+
+        name_key = name.casefold()
+        updated_posts = []
         with transaction.atomic():
-            posts = Post.objects.select_for_update().only("id", "meta_keywords")
-            for post in posts.iterator():
+            posts = Post.objects.select_for_update().only("id", "meta_keywords", "updated_at")
+            for post in posts.iterator(chunk_size=self.UPDATE_BATCH_SIZE):
                 keywords = post.meta_keywords if isinstance(post.meta_keywords, list) else []
-                updated = [tag for tag in keywords if not (isinstance(tag, str) and tag.strip().casefold() == name.casefold())]
-                if updated != keywords:
-                    post.meta_keywords = updated
-                    post.save(update_fields=["meta_keywords", "updated_at"])
+                updated = [
+                    tag for tag in keywords
+                    if not (isinstance(tag, str) and tag.strip().casefold() == name_key)
+                ]
+                if updated == keywords:
+                    continue
+
+                post.meta_keywords = updated
+                post.updated_at = timezone.now()
+                updated_posts.append(post)
+                if len(updated_posts) >= self.UPDATE_BATCH_SIZE:
+                    self.bulk_update_tag_batch(updated_posts)
+
+            self.bulk_update_tag_batch(updated_posts)
+
         return Response({"tags": self.get_tag_rows()})
 
 

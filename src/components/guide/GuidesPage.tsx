@@ -1,7 +1,13 @@
+/* File Location: shivanyams/src/components/guide/GuidesPage.tsx
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 73e6818f3dbf916f0b5ecd3301c6df771fa88a6d
+ * Both repositories are read-only references.
+ */
 "use client";
 
-// File Location: shivanyams/src/components/guide/GuidesPage.tsx
-// Reference Repositories: shivanya-sdk v1.0.0 (Master; shivanya-ui icons and shivanya-i18n types reused where applicable); shivanya-auth (private, version not verified)
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Audited localized filtering, loading/error/empty states, category badges, navigation and shared portal data dependencies. Remaining page/illustration styles are still under legacy stylesheet paths and require dedicated CSS migration before this file can be marked Clean.
 

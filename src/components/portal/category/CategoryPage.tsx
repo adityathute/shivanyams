@@ -1,9 +1,13 @@
 /* File Location: shivanyams/src/components/portal/category/CategoryPage.tsx
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 73e6818f3dbf916f0b5ecd3301c6df771fa88a6d
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Batch 13 audit. UI Audit: CategoryBadge from the shared CategoryGrid module and app-local PortalEmptyState. CSS mapping: CategoryPage.css. Invalid dates now fall back to localized “New” text; legacy CSS, category fetch fallback and search submit semantics require follow-up.
  */
-
 "use client";
 
 import "./../../../styles/legacy/components/portal/category/CategoryPage.css";

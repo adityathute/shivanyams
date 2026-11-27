@@ -1,5 +1,10 @@
 /* File Location: shivanyams/src/components/portal/category/CategoryGrid.tsx
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 73e6818f3dbf916f0b5ecd3301c6df771fa88a6d
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Batch 13 and 24 audit. UI Audit: 8 SDK category icon components (GovernmentJobIcon, GovernmentSchemeIcon, ResultIcon, AdmitCardIcon, GuideIcon, VideoIcon, ExaminationIcon, ToolsIcon); CategoryGrid and CategoryBadge are app-local. Language type moved to src/i18n/types.ts and re-exported for compatibility. Large mixed config/helper/component module and paired CSS modernization remain pending.
  */

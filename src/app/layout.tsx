@@ -1,4 +1,11 @@
-// File Location: src/app/layout.tsx
+/* File Location: shivanyams/src/app/layout.tsx
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 73e6818f3dbf916f0b5ecd3301c6df771fa88a6d
+ * Both repositories are read-only references.
+ */
 // Cleanup Status: Cleanup Pending
 // Cleanup Information: Root layout combines legacy and organized stylesheets; CSS loading order and cookie-based theme/language behavior need integration review.
 

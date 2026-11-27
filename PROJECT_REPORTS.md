@@ -18,7 +18,7 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `BATCH27_IMPLEMENTATION_COMMIT` |
+| Last source snapshot audited | `5975ceb7cc129d843f4248f9dbb2892120877eab` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
@@ -67,7 +67,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| BATCH27_IMPLEMENTATION_COMMIT | `chore(styles): audit admin and illustration styles batch 27` | Audited ten admin, editor, guide and decorative illustration stylesheets; added reduced-motion handling to comments, moon, stars and sun styles; recorded per-file selector counts and source-component mappings. |
+| 5975ceb7cc129d843f4248f9dbb2892120877eab | `chore(styles): audit admin and illustration styles batch 27` | Audited ten admin, editor, guide and decorative illustration stylesheets; added reduced-motion handling to comments, moon, stars and sun styles; recorded per-file selector counts and source-component mappings. |
 | 9349bc8acfed6e990db4bf814bdd5b58ed648e38 | `chore(styles): improve legacy page accessibility batch 26` | Added keyboard-visible focus states to admin and public page styles; added reduced-motion handling for add-post, engagement, portal, admit-card, terrain and results styles; recorded per-file CSS selector audits. |
 | 1da01707b79ca2ee2625148a30133cae38c71389 | `chore(styles): audit organized portal styles and clarify status rules batch 25` | Audited nine Portal stylesheets; added keyboard focus parity and reduced-motion handling; clarified Rule 56 that Organized/Legacy is determined by actual file quality, never folder path. |
 ## Current pending priorities

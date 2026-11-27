@@ -471,8 +471,10 @@
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
+  box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   margin: 18px 0;
   gap: 1px;
   overflow: hidden;
@@ -481,21 +483,28 @@
   background: var(--border-color, #e5e7eb);
 }
 
-.portal-job-info-primary-grid {
+/* Logical groups are measurement-only; their fields share one visual flow. */
+.portal-job-info-group {
+  display: contents;
+}
+
+.portal-job-info-primary-grid,
+.portal-job-info-secondary-grid {
   display: contents;
 }
 
 .portal-job-info-item {
   display: flex;
-  flex: 1 1 var(--job-info-item-width, 180px);
+  flex: 0 1 var(--job-info-item-width, 180px);
   flex-direction: column;
   justify-content: flex-start;
   gap: 7px;
   box-sizing: border-box;
   min-width: 0;
-  max-width: none;
+  max-width: 100%;
   min-height: 0;
   padding: 13px 14px;
+  overflow-wrap: anywhere;
   background: var(--surface, #fff);
 }
 

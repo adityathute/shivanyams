@@ -931,7 +931,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       <div className="portal-job-info-grid">
                         {primarySummaryRows.length > 0 ? (
                           <div
-                            className={`portal-job-info-primary-grid portal-job-info-primary-grid-count-${primarySummaryRows.length}`}
+                            className="portal-job-info-primary-grid"
                           >
                             {primarySummaryRows.map(([name, value]) => {
                               const shouldCapitalize =

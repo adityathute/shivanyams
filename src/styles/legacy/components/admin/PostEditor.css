@@ -97,7 +97,12 @@
 .post-editor-form textarea:not(.shivanya-textarea):focus,
 .post-editor-form select:not(.shivanya-select):focus {
   border-color: #6da0ff;
-  box-shadow: 0 0 0 3px #075be814;
+  box-shadow: none;
+}
+
+/* Keep the editor's focus state clean without stacking a second focus ring. */
+.post-editor-form .shivanya-input-container:focus-within {
+  box-shadow: none;
 }
 .post-editor-form textarea:not(.shivanya-textarea) {
   resize: vertical;

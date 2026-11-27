@@ -1,7 +1,7 @@
 <!-- File Location: shivanyams/PROJECT_REPORTS.md -->
 <!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
 <!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Concise project summary, exact inventory metrics, reference versions and last three commits only. Full file register is maintained in PROJECT_STRUCTURE.md. -->
+<!-- Cleanup Info: Concise project summary, exact inventory metrics, 10-file target from Batch 12, reference versions and last three implementation commits only. Full file register is maintained in PROJECT_STRUCTURE.md. -->
 
 # ShivanyaMS V2 — Project Reports
 
@@ -21,6 +21,8 @@
 | Last source snapshot audited | `a9e1596e58aa575570a9829163753e4ac66a7ae5` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
+
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). Current unfinished cleanup scope is 274 files (20 Cleanup Pending + 254 Not Reviewed), giving an estimated 28 remaining batches and 39 batches overall, including the 11 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 

@@ -1,7 +1,7 @@
 <!-- File Location: shivanyams/AGENTS.md -->
 <!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
 <!-- Cleanup Status: Clean -->
-<!-- Cleanup Info: Master rules 1–56 and AI-only workflow instructions reviewed for this rulebook update. -->
+<!-- Cleanup Info: Master rules 1–56 retained; AI-only cleanup workflow now targets 10 files per batch, with smaller batches for complex files. -->
 
 # ShivanyaMS V2 — Repository Rulebook
 
@@ -269,6 +269,13 @@ The following rules are for AI agents. The Master may edit them, and AI agents m
 - Keep CSS class names feature-scoped and distinctive. Do not define the same class selector repeatedly across files or create duplicate styles; reuse a class definition when appropriate. Do not force an artificial one-class-per-file structure.
 - When a touched file still contains required legacy behavior, add at most one short status comment at the end of that file identifying that legacy behavior is still active and cleanup remains pending. Use the correct comment syntax for the file. Do not add status comments to files with no remaining legacy code, and remove or update the comment once the legacy code is fully cleaned.
 - Before structural cleanup, inspect and plan the organized destination so existing behavior is preserved. After the change, summarize the final organized files and clearly identify any legacy code that remains; never claim cleanup is complete when it is not.
+
+### Cleanup batch sizing
+
+- Starting with Batch 12, target **10 files per cleanup batch**. A batch may contain fewer files when the remaining work is unusually complex, tightly coupled, or unsafe to split; do not exceed 10 files without the Master's explicit approval.
+- Each batch must still include real file inspection and implementation where safely possible, Rule 51 file metadata, Rule 53 UI/CSS/SDK audits, and synchronized PROJECT_REPORTS.md / PROJECT_STRUCTURE.md updates when statuses or inventory change. Documentation-only work does not count as a completed code-cleanup batch.
+- Group related files where practical. Do not mark a file Clean until its known cleanup and required verification are complete; preserve Cleanup Pending and Not Reviewed distinctions.
+- Recalculate the remaining workload from the live Git tree and per-file statuses after each batch. Treat any projected batch count as an estimate, not a completion claim.
 
 ### Workflow for every task
 

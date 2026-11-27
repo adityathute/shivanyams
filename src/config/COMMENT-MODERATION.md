@@ -1,8 +1,13 @@
-<!-- File Location: shivanyams/src/config/COMMENT-MODERATION.md -->
-<!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
-<!-- Cleanup Status: Cleanup Pending -->
-<!-- Cleanup Info: Batch 21 audit; documentation review completed, related implementation verification remains pending. -->
+<!--
+File Location: shivanyams/src/config/COMMENT-MODERATION.md
+Reference Repositories:
+  shivanya-sdk v1.0.0 (branch sdk-v2)
+  shivanya-auth v1.0.0 (branch auth-v2)
 
+Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
+Both repositories are read-only references.
+-->
+<!-- Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified) -->
 # Comment moderation word list
 
 The shared dictionary is:

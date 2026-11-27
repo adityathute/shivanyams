@@ -1,5 +1,11 @@
-/* File Location: shivanyams/src/components/portal/post/PostEngagementActions.tsx
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+/*
+ * File Location: shivanyams/src/components/portal/post/PostEngagementActions.tsx
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Batch 12 post-detail audit. UI Audit: 18 SDK components: BookmarkIcon, Button, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, Select, ShareIcon, TelegramIcon, Textarea, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkedInIcon. CSS mapping: PostEngagementActions.css (86 selector blocks; 68 unique; 10 repeated selector names / 18 repeated occurrences). Legacy CSS cascade and interaction verification pending.
  */

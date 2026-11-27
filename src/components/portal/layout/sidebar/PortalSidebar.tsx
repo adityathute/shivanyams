@@ -1,7 +1,15 @@
-// File Location: shivanyams/src/components/portal/layout/sidebar/PortalSidebar.tsx
+/*
+ * File Location: shivanyams/src/components/portal/layout/sidebar/PortalSidebar.tsx
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
+ * Both repositories are read-only references.
+ * Cleanup Status: Clean
+ * Cleanup Info: Audited navigation destinations, admin-only entries, authenticated saved-post visibility, translations and SDK icon reuse; extracted the navigation item shape for a stable documented return contract. No local CSS in this module.
+ */
 // Reference Repositories: shivanya-sdk v1.0.0 (Master; all navigation icons and i18n translation utilities reused); shivanya-auth (private, version not verified)
-// Cleanup Status: Clean
-// Cleanup Info: Audited navigation destinations, admin-only entries, authenticated saved-post visibility, translations and SDK icon reuse; extracted the navigation item shape for a stable documented return contract. No local CSS in this module.
 
 import {
   HomeIcon,

@@ -1,5 +1,11 @@
-/* File Location: shivanyams/src/components/portal/post/comment-moderation.ts
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+/*
+ * File Location: shivanyams/src/components/portal/post/comment-moderation.ts
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
+ * Both repositories are read-only references.
  * Cleanup Status: Clean
  * Cleanup Info: Batch 13 audit. Logic Audit: 1 JSON word-list import; 0 UI components; 0 CSS selectors. Precomputed blocked-term prefixes to avoid repeatedly scanning the full blocked-term set while preserving matching behavior.
  */

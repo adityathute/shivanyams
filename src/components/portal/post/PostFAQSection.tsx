@@ -1,5 +1,11 @@
-/* File Location: shivanyams/src/components/portal/post/PostFAQSection.tsx
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+/*
+ * File Location: shivanyams/src/components/portal/post/PostFAQSection.tsx
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Batch 12 post-detail audit. UI Audit: 5 SDK components: CloseIcon, ConfirmDialog, DeleteIcon, LikeIcon, QuestionMarkCircleIcon. CSS mapping: PostFAQSection.css (116 selector blocks; 95 unique; 19 repeated selector names / 21 repeated occurrences). Legacy CSS cascade, modal accessibility and moderation-flow verification pending.
  */

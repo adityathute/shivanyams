@@ -1,5 +1,11 @@
-/* File Location: shivanyams/src/lib/authenticated-fetch.ts
- * References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+/*
+ * File Location: shivanyams/src/lib/authenticated-fetch.ts
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
+ * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
  * Cleanup Info: Cookie-based fetch utility; UI Components: 0; CSS Selectors: 0. Cookie parsing now tolerates browser cookie separators without spaces; request retry and CSRF integration still require runtime tests.
  */

@@ -1,15 +1,14 @@
-// File Location: shivanyams/src/components/portal/layout/header/PortalHeader.tsx
 /*
+ * File Location: shivanyams/src/components/portal/layout/header/PortalHeader.tsx
  * Reference Repositories:
- * shivanya-sdk v1.0.0 (branch sdk-v2)
- * shivanya-auth v1.0.0 (branch auth-v2)
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
  *
- * Repository Commit: e449bbc50dcf4b464c2ae1f7aa23890e4bc9da1d
+ * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
  * Both repositories are read-only references.
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Cleanup Pending. Header reuses SDK AccountModal and UI icons. Desktop and mobile search forms currently prevent submit without executing search; search integration and keyboard/accessibility behavior require follow-up.
  */
-// Cleanup Status: Cleanup Pending
-// Cleanup Info: Cleanup Pending. Header reuses SDK AccountModal and UI icons. Desktop and mobile search forms currently prevent submit without executing search; search integration and keyboard/accessibility behavior require follow-up.
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";

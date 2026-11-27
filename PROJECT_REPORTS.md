@@ -18,7 +18,7 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `4410f33f7ab29af39c4b34337e5a4fcc18330005` |
+| Last source snapshot audited | `a9e1596e58aa575570a9829163753e4ac66a7ae5` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
@@ -48,7 +48,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| CURRENT_BATCH_11_COMMIT | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
+| a9e1596e58aa575570a9829163753e4ac66a7ae5 | `chore(portal): audit core homepage and shell components batch 11` | Reviewed 5 shared components; deduplicated job-deadline helpers in UpdatesSection; updated per-file audits and full structure register |
 | `4410f33f7ab29af39c4b34337e5a4fcc18330005` | `chore(routes): audit terms tools videos batch 10` | Added Rule 51 metadata to Terms, Tools and Videos route wrappers |
 | `b0d7e47c33d263151b7c18a20d2bad783a4cb606` | `chore(routes): audit schemes and tags cleanup batch 9` | Added Rule 51 metadata to Schemes and Tags route wrappers; documented generated `next-env.d.ts` exception |
 

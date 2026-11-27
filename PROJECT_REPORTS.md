@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `e752717f26305a1259082e3001305bdd54cf8628` |
+| Last source snapshot audited | `976c53332fc063529af28a33ef1cccffe044025b` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 42, unfinished cleanup scope is 236 files (192 Cleanup Pending + 44 Not Reviewed), giving an estimated 24 remaining batches and 64 batches overall, including the 40 completed batches. Recalculate after each batch.
+After Batch 43, unfinished cleanup scope is 236 files (202 Cleanup Pending + 34 Not Reviewed), giving an estimated 24 remaining batches and 67 batches overall, including the 43 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 192 |
-| Not Reviewed | 44 |
-| Reviewed files after Batch 42 | 267 |
+| Cleanup Pending | 202 |
+| Not Reviewed | 34 |
+| Reviewed files after Batch 43 | 277 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,17 +43,19 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 267 |
-| Review completion | 85.9% |
+| Files reviewed to date | 277 |
+| Review completion | 89.1% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 192 |
-| Files not yet reviewed | 44 |
+| Reviewed files still pending cleanup | 202 |
+| Files not yet reviewed | 34 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 42 |
+| Completed batches | 43 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 66 |
+| Estimated total batches | 67 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
+
+**Batch 43 review:** Audited ten Portal migrations (`0024`–`0032`), including both `0024` branches, merge points, report constraints, and guarded legacy-column cleanup. Dependency paths converge through `0025`/`0028`; `0029` removes constraints created in the preceding branches; `0030`/`0031` guard legacy-column nullability changes. No additional safe migration edit was justified from static inspection alone. The ten files moved from Not Reviewed to Cleanup Pending / Legacy. Fresh-database and existing-database migration execution remains unverified.
 
 ## Reference repositories
 
@@ -73,7 +75,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 44 Not Reviewed files.
+1. Continue detailed cleanup audits for the remaining 34 Not Reviewed files.
 2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.

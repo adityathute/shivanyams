@@ -1,3 +1,7 @@
+// File Location: src/app/admin/comments/page.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Information: Legacy admin CSS imports remain; AnimatedNumber logic is duplicated with the reports page and needs shared-component/API review.
+
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";

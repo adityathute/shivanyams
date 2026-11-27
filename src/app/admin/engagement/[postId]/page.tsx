@@ -1,3 +1,7 @@
+// File Location: src/app/admin/engagement/[postId]/page.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Information: Legacy admin CSS imports remain; engagement payload detail rows use broad unknown-record typing and need API contract review.
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";

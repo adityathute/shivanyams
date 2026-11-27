@@ -1,3 +1,7 @@
+// File Location: src/app/admin/page.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Information: Large legacy admin dashboard (154 KB) and legacy CSS import require a dedicated dependency, component, and stylesheet cleanup pass.
+
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

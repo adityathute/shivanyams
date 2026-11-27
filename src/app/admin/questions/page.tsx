@@ -1,3 +1,7 @@
+// File Location: src/app/admin/questions/page.tsx
+// Cleanup Status: Cleanup Pending
+// Cleanup Information: Legacy admin/question CSS imports remain; question API payload and mutation contract need verification before marking clean.
+
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";

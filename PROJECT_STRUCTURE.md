@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 89 |
-| Not Reviewed | 147 |
+| Cleanup Pending | 94 |
+| Not Reviewed | 142 |
 | Organized | 74 |
 | Legacy | 236 |
-| Audited before this structure update | 163 |
+| Audited before this structure update | 168 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 

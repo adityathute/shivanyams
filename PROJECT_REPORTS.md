@@ -22,7 +22,7 @@
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 22, unfinished cleanup scope is 236 files (89 Cleanup Pending + 147 Not Reviewed), giving an estimated 24 remaining batches and 46 batches overall, including the 22 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 22, unfinished cleanup scope is 236 files (94 Cleanup Pending + 142 Not Reviewed), giving an estimated 24 remaining batches and 46 batches overall, including the 22 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 89 |
-| Not Reviewed | 147 |
-| Reviewed files after Batch 22 | 163 |
+| Cleanup Pending | 94 |
+| Not Reviewed | 142 |
+| Reviewed files after Batch 22 | 168 |
 | Organized | 74 |
 | Legacy | 236 |
 
@@ -43,11 +43,11 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 310 |
-| Files reviewed to date | 163 |
-| Review completion | 52.6% |
+| Files reviewed to date | 168 |
+| Review completion | 54.2% |
 | Files fully clean / organized | 74 |
-| Reviewed files still pending cleanup | 89 |
-| Files not yet reviewed | 147 |
+| Reviewed files still pending cleanup | 94 |
+| Files not yet reviewed | 142 |
 | Total remaining cleanup scope | 236 |
 | Completed batches | 22 |
 | Estimated remaining batches (10-file target) | 24 |

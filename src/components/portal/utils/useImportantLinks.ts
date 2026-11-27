@@ -1,11 +1,6 @@
-// File Location: shivanyams/src/components/portal/utils/useImportantLinks.ts
-// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
-// Cleanup Status: Cleanup Pending
-// Cleanup Info: Important-links data hook uses authenticatedFetch with AbortController cleanup and active-link filtering. Added malformed-response guards and stable memoized title resolver. Hook integration tests remain pending.
-
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Language } from "../category/CategoryGrid";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -44,12 +39,8 @@ export function useImportantLinks() {
         const payload: ImportantLink[] | ImportantLinksResponse =
           await response.json();
 
-        const data = Array.isArray(payload)
-          ? payload
-          : Array.isArray(payload.results)
-            ? payload.results
-            : [];
-        setLinks(data.filter((link) => link && (link.is_active ?? link.active ?? false)));
+        const data = Array.isArray(payload) ? payload : (payload.results ?? []);
+        setLinks(data.filter((link) => link.is_active ?? link.active ?? false));
       } catch (error) {
         if (!controller.signal.aborted) {
           console.error("Important links loading failed:", error);
@@ -62,11 +53,13 @@ export function useImportantLinks() {
     return () => controller.abort();
   }, []);
 
-  const getLinkTitle = useCallback((link: ImportantLink, language: Language) => ({
-    en: link.name_en,
-    mr: link.name_mr,
-    hi: link.name_hi,
-  })[language], []);
+  function getLinkTitle(link: ImportantLink, language: Language) {
+    return {
+      en: link.name_en,
+      mr: link.name_mr,
+      hi: link.name_hi,
+    }[language];
+  }
 
   return { links, getLinkTitle };
 }

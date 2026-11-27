@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `2b18cdacb87eb2cf89df69ae17edd915bc8fd964`  
+**Source snapshot:** `9798bacbe5c7a254523f8918e31e3957d106810b`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 94 |
-| Not Reviewed | 142 |
+| Cleanup Pending | 104 |
+| Not Reviewed | 132 |
 | Organized | 74 |
 | Legacy | 236 |
-| Audited before this structure update | 168 |
+| Audited before this structure update | 178 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -186,19 +186,19 @@
 | 154 | `shivanyams/src/app/tools/page.tsx` | Clean | Organized |
 | 155 | `shivanyams/src/app/videos/[slug]/page.tsx` | Clean | Organized |
 | 156 | `shivanyams/src/app/videos/page.tsx` | Clean | Organized |
-| 157 | `shivanyams/src/components/admin/PostEditor.tsx` | Not Reviewed | Legacy |
+| 157 | `shivanyams/src/components/admin/PostEditor.tsx` | Cleanup Pending | Legacy |
 | 158 | `shivanyams/src/components/admitCard/AdmitCardsCharacters.tsx` | Cleanup Pending | Legacy |
 | 159 | `shivanyams/src/components/admitCard/AdmitCardsPage.tsx` | Cleanup Pending | Legacy |
 | 160 | `shivanyams/src/components/animation/BanyanTree/BanyanTree.tsx` | Cleanup Pending | Legacy |
-| 161 | `shivanyams/src/components/animation/Birds/Birds.tsx` | Not Reviewed | Legacy |
+| 161 | `shivanyams/src/components/animation/Birds/Birds.tsx` | Cleanup Pending | Legacy |
 | 162 | `shivanyams/src/components/animation/Clock/PortalClock.tsx` | Cleanup Pending | Legacy |
 | 163 | `shivanyams/src/components/animation/Clouds/Clouds.tsx` | Cleanup Pending | Legacy |
 | 164 | `shivanyams/src/components/animation/GovernmentBuilding/GovernmentBuilding.tsx` | Cleanup Pending | Legacy |
 | 165 | `shivanyams/src/components/animation/HillFlowers/HillFlowers.tsx` | Cleanup Pending | Legacy |
-| 166 | `shivanyams/src/components/animation/LandscapeTerrain/LandscapeTerrain.tsx` | Not Reviewed | Legacy |
-| 167 | `shivanyams/src/components/animation/Moon/Moon.tsx` | Not Reviewed | Legacy |
-| 168 | `shivanyams/src/components/animation/Stars/Stars.tsx` | Not Reviewed | Legacy |
-| 169 | `shivanyams/src/components/animation/Sun/Sun.tsx` | Not Reviewed | Legacy |
+| 166 | `shivanyams/src/components/animation/LandscapeTerrain/LandscapeTerrain.tsx` | Cleanup Pending | Legacy |
+| 167 | `shivanyams/src/components/animation/Moon/Moon.tsx` | Cleanup Pending | Legacy |
+| 168 | `shivanyams/src/components/animation/Stars/Stars.tsx` | Cleanup Pending | Legacy |
+| 169 | `shivanyams/src/components/animation/Sun/Sun.tsx` | Cleanup Pending | Legacy |
 | 170 | `shivanyams/src/components/examination/ExaminationCharacters.tsx` | Cleanup Pending | Legacy |
 | 171 | `shivanyams/src/components/examination/ExaminationPage.tsx` | Cleanup Pending | Legacy |
 | 172 | `shivanyams/src/components/guide/GuidesCharacters.tsx` | Cleanup Pending | Legacy |
@@ -234,8 +234,8 @@
 | 202 | `shivanyams/src/components/portal/post/post-sidebar-config.ts` | Clean | Organized |
 | 203 | `shivanyams/src/components/portal/saved/SavedPostsPage.tsx` | Cleanup Pending | Legacy |
 | 204 | `shivanyams/src/components/portal/utils/important-links-config.ts` | Clean | Organized |
-| 205 | `shivanyams/src/components/portal/utils/job-deadline.ts` | Not Reviewed | Legacy |
-| 206 | `shivanyams/src/components/portal/utils/useImportantLinks.ts` | Not Reviewed | Legacy |
+| 205 | `shivanyams/src/components/portal/utils/job-deadline.ts` | Cleanup Pending | Legacy |
+| 206 | `shivanyams/src/components/portal/utils/useImportantLinks.ts` | Cleanup Pending | Legacy |
 | 207 | `shivanyams/src/components/results/ResultsCharacters.tsx` | Cleanup Pending | Legacy |
 | 208 | `shivanyams/src/components/results/ResultsPage.tsx` | Cleanup Pending | Legacy |
 | 209 | `shivanyams/src/components/scheme/SchemesCharacters.tsx` | Cleanup Pending | Legacy |
@@ -258,8 +258,8 @@
 | 226 | `shivanyams/src/i18n/dictionaries/ContactPageDictionary.ts` | Cleanup Pending | Legacy |
 | 227 | `shivanyams/src/i18n/dictionaries/DisclaimerPageDictionary.ts` | Cleanup Pending | Legacy |
 | 228 | `shivanyams/src/i18n/dictionaries/FeedbackPageDictionary.ts` | Cleanup Pending | Legacy |
-| 229 | `shivanyams/src/i18n/dictionaries/PrivacyPageDictionary.ts` | Not Reviewed | Legacy |
-| 230 | `shivanyams/src/i18n/dictionaries/TermsPageDictionary.ts` | Not Reviewed | Legacy |
+| 229 | `shivanyams/src/i18n/dictionaries/PrivacyPageDictionary.ts` | Cleanup Pending | Legacy |
+| 230 | `shivanyams/src/i18n/dictionaries/TermsPageDictionary.ts` | Cleanup Pending | Legacy |
 | 231 | `shivanyams/src/i18n/dictionaries/base.ts` | Not Reviewed | Legacy |
 | 232 | `shivanyams/src/i18n/dictionaries/portal-dictionary.ts` | Not Reviewed | Legacy |
 | 233 | `shivanyams/src/i18n/organized/dictionaries/sidebar.ts` | Not Reviewed | Legacy |

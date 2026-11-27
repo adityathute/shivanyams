@@ -1,8 +1,3 @@
-// File Location: shivanyams/src/components/animation/Birds/Birds.tsx
-// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
-// Cleanup Status: Cleanup Pending
-// Cleanup Info: Decorative scene-only bird artwork; parent is already aria-hidden. No matching SDK scene illustration. Paired styles are part of the legacy animation layer; reduced-motion and visual regression review remain pending. Automated test coverage is not yet added for this file; visual/accessibility verification remains pending.
-
 "use client";
 
 import Image from "next/image";

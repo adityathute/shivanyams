@@ -1,8 +1,3 @@
-// File Location: shivanyams/src/i18n/dictionaries/PrivacyPageDictionary.ts
-// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
-// Cleanup Status: Cleanup Pending
-// Cleanup Info: English/Marathi/Hindi privacy-policy dictionary uses typed Language keys. Content/legal accuracy and translation review remain pending; no unsupported legal claims changed.
-
 import type { Language } from "shivanya-i18n";
 
 export const privacyPageDictionary = {

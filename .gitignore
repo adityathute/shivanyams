@@ -1,20 +1,19 @@
-# Dependencies
+# File Location: shivanyams/.gitignore
+# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Cleanup Status: Clean
+# Cleanup Info: Batch 14 audit. Covers Node/Next output, local env files, editor/OS files, caches, tests and temporary files.
 node_modules/
 
-# Next.js
 .next/
 out/
-
-# Production
 build/
 dist/
 
 # Environment variables
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+!.env.local.example
 
 # Logs
 *.log
@@ -35,14 +34,17 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 
-# Testing / Coverage
+# Testing and coverage
 coverage/
+.nyc_output/
+.coverage
+htmlcov/
 
 # Cache
 .cache/
 .turbo/
 
-# Local packages / tarballs
+# Local packages
 *.tgz
 
 # Temporary files

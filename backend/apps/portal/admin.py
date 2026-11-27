@@ -1,3 +1,8 @@
+# File Location: shivanyams/backend/apps/portal/admin.py
+# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Cleanup Status: Cleanup Pending
+# Cleanup Info: Batch 14 audit. Reviewed model registrations, list/search/filter configuration, inline relationships and readonly protections. The large admin module still needs a dedicated model-by-model permission and maintainability audit; no behavior changes made.
+
 from django.contrib import admin
 
 from .models import (

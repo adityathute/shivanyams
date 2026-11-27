@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<!-- File Location: shivanyams/README.md -->
+<!-- References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified). -->
+<!-- Cleanup Status: Clean -->
+<!-- Cleanup Info: Batch 14 audit. Replaced create-next-app boilerplate with accurate local setup for the Next.js Portal and separate Django API; documents sibling SDK tarball prerequisite and current branch workflow. -->
 
-## Getting Started
+# ShivanyaMS V2 — Job Portal
 
-First, run the development server:
+ShivanyaMS is a Next.js frontend with a separate Django REST API. Authentication is delegated to the shared Shivanya Auth service; the Portal backend stores Portal business data only.
 
-```bash
+## Requirements
+- Node.js 24
+- npm (the repository uses package-lock.json)
+- pnpm 11.9.0 for building local Shivanya SDK packages
+- Python 3.10+ and PostgreSQL for the Django API
+- The read-only shivanya-sdk repository checked out beside this repository as ../shivanya-sdk
+
+## Frontend setup
+
+The frontend dependencies reference SDK package tarballs in the sibling shivanya-sdk directory. Build and pack the SDK packages first, using the pinned SDK revision from .github/workflows/ci.yml, then install the Portal dependencies.
+
+```powershell
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create .env.local from .env.local.example and set NEXT_PUBLIC_PORTAL_API_URL to the Portal API base URL reachable by the browser. The default local value is http://localhost:8001/api/v1/portal.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Useful commands:
+```powershell
+npm run lint
+npm run build
+npm run start
+```
 
-## Learn More
+## Backend setup
 
-To learn more about Next.js, take a look at the following resources:
+See backend/README.md for Django API setup, environment variables, database configuration and authentication flow.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Repository workflow
+- Active working branch: shiv-v2
+- CI runs on pushes and pull requests targeting shiv-v2.
+- shivanya-sdk and shivanya-auth are reference dependencies; do not modify them as part of this repository's work.

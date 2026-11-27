@@ -335,6 +335,22 @@ class PostAdmin(admin.ModelAdmin):
     )
 
 
+class ReadOnlyActivityAdmin(admin.ModelAdmin):
+    """Keep recorded engagement and analytics events immutable in Django admin."""
+
+    def get_readonly_fields(self, request, obj=None):
+        return tuple(field.name for field in self.model._meta.concrete_fields)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 class PostDetailAdmin(admin.ModelAdmin):
     list_display = ("post", "created_at", "updated_at")
     search_fields = ("post__title_en", "post__slug")
@@ -813,7 +829,7 @@ class PostRelationAdmin(admin.ModelAdmin):
 
 
 @admin.register(PostReaction)
-class PostReactionAdmin(admin.ModelAdmin):
+class PostReactionAdmin(ReadOnlyActivityAdmin):
     list_display = ("post", "user_auth_id", "reaction", "created_at")
     list_filter = ("reaction", "created_at")
     search_fields = ("post__title_en", "user_auth_id")
@@ -853,7 +869,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 @admin.register(CommentReaction)
-class CommentReactionAdmin(admin.ModelAdmin):
+class CommentReactionAdmin(ReadOnlyActivityAdmin):
     list_display = ("comment", "user_auth_id", "reaction", "created_at")
     list_filter = ("reaction", "created_at")
     search_fields = ("comment__content", "user_auth_id", "comment__post__title_en")
@@ -899,7 +915,7 @@ class NewsletterSubscriptionEventAdmin(admin.ModelAdmin):
 
 
 @admin.register(PostShare)
-class PostShareAdmin(admin.ModelAdmin):
+class PostShareAdmin(ReadOnlyActivityAdmin):
     list_display = ("post", "channel", "user_auth_id", "visitor_id", "created_at")
     list_filter = ("channel", "created_at")
     search_fields = ("post__title_en", "user_auth_id", "visitor_id")
@@ -908,7 +924,7 @@ class PostShareAdmin(admin.ModelAdmin):
 
 
 @admin.register(PostVisitor)
-class PostVisitorAdmin(admin.ModelAdmin):
+class PostVisitorAdmin(ReadOnlyActivityAdmin):
     list_display = (
         "post",
         "visitor_id",
@@ -930,7 +946,7 @@ class PostVisitorAdmin(admin.ModelAdmin):
 
 
 @admin.register(PostView)
-class PostViewAdmin(admin.ModelAdmin):
+class PostViewAdmin(ReadOnlyActivityAdmin):
     list_display = (
         "post",
         "visitor",

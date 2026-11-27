@@ -246,6 +246,11 @@
     PROJECT_STRUCTURE.md मध्ये Git Tree मधील प्रत्येक Tracked File ची स्वतंत्र नोंद असावी. प्रत्येक नोंदीत Repository Root पासूनचा पूर्ण Path, Cleanup Status (Clean, Cleanup Pending किंवा Not Reviewed) आणि Structure Status (Organized किंवा Legacy) नमूद करावा. Organized म्हणजे File चा Code प्रत्यक्ष तपासून सुधारलेला, स्वच्छ केलेला आणि सध्याच्या Project Standards नुसार व्यवस्थित केलेला आहे. Legacy म्हणजे जुना, अपूर्णपणे सुधारलेला किंवा अजून Modernize/Migrate न केलेला Code. Not Reviewed Files ची प्रत्यक्ष तपासणी होईपर्यंत त्यांना तात्पुरते Legacy समजावे; तपासणीनंतरच योग्य Structure Status द्यावा. File कोणत्या Folder मध्ये आहे यावरून Organized किंवा Legacy ठरवू नये. Clean/Organized आणि Cleanup Pending/Legacy हे वेगळे पण एकमेकांशी संबंधित मोजमाप आहेत; दोन्हींची मोजणी स्वतंत्रपणे Git Tree मधील सर्व Files शी जुळली पाहिजे.
 
     Generated Files, Comment न स्वीकारणाऱ्या Files आणि इतर अपवाद लपवू नयेत; योग्य Status देऊन स्पष्ट करावेत. नवीन File तयार झाल्यावर, File हलवल्यावर, हटवल्यावर किंवा Cleanup Status/Structure Status बदलल्यावर PROJECT_STRUCTURE.md अद्ययावत करावा. दोन्ही Reports प्रत्येक Cleanup Batch किंवा Structure Update नंतर अद्ययावत करावेत. PROJECT_REPORTS.md हा संक्षिप्त Summary आणि शेवटच्या तीन Implementation Commits चा Report असेल; PROJECT_STRUCTURE.md हा सर्व Files चा पूर्ण Master Register असेल. संख्या प्रत्यक्ष Git Tree आणि तपासलेल्या Files वरूनच मोजावी; अंदाज वापरू नयेत.
+
+57. **नवीन नियम आणि विद्यमान नियम सुधारणा सुचवणे**
+
+    प्रत्येक संभाषणात किंवा कामाच्या टप्प्यावर Project च्या सुरक्षिततेसाठी, Code Quality, Architecture, Documentation, Testing, Security, Performance किंवा Workflow साठी उपयुक्त असा नवीन नियम जोडण्याची किंवा विद्यमान नियम अद्ययावत करण्याची संधी आहे का हे तपासावे. योग्य संधी आढळल्यास मास्टर यांना एका स्पष्ट आणि संबंधित सूचनेद्वारे नियम क्रमांक, सुचवलेला बदल, त्यामागील कारण आणि अपेक्षित फायदा सांगावा. योग्य सुधारणा नसल्यास अनावश्यक सूचना तयार करू नये. मास्टर यांची स्पष्ट मंजुरी मिळाल्याशिवाय कोणताही नवीन नियम जोडू नये किंवा विद्यमान नियम बदलू नये. मास्टर यांनी स्पष्टपणे नियम जोडण्यास किंवा बदलण्यास सांगितल्यास दिलेल्या क्रमांकानुसारच अंमलबजावणी करावी आणि Rulebook मधील इतर नियम अबाधित ठेवावेत.
+
 ---
 
 ## AI ONLY — Instructions for AI agents

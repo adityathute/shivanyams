@@ -432,8 +432,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const { links, getLinkTitle } = useImportantLinks();
   const jobInfoGridRef = useRef<HTMLDivElement | null>(null);
 
-  // Count populated fields and characters, then measure their rendered text.
-  // The measured content width determines how many columns comfortably fit.
+  // Measure each populated field independently. Flex wrapping then packs as many
+  // fields as their real label/value widths allow on every screen size.
   useEffect(() => {
     const grid = jobInfoGridRef.current;
     if (!grid) return;
@@ -443,66 +443,69 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
         grid.querySelectorAll<HTMLElement>(".portal-job-info-item"),
       );
       const populatedItems = items.filter((item) => {
-        const label = item.querySelector<HTMLElement>(".portal-job-info-label")?.textContent?.trim() ?? "";
-        const value = item.querySelector<HTMLElement>(".portal-job-info-value")?.textContent?.trim() ?? "";
+        const label =
+          item.querySelector<HTMLElement>(".portal-job-info-label")?.textContent?.trim() ?? "";
+        const value =
+          item.querySelector<HTMLElement>(".portal-job-info-value")?.textContent?.trim() ?? "";
         return Boolean(label || value);
       });
 
       const fieldCount = populatedItems.length;
       const totalCharacters = populatedItems.reduce((total, item) => {
-        const label = item.querySelector(".portal-job-info-label")?.textContent?.trim() ?? "";
-        const value = item.querySelector(".portal-job-info-value")?.textContent?.trim() ?? "";
+        const label =
+          item.querySelector(".portal-job-info-label")?.textContent?.trim() ?? "";
+        const value =
+          item.querySelector(".portal-job-info-value")?.textContent?.trim() ?? "";
         return total + label.length + value.length;
       }, 0);
 
       grid.dataset.fieldCount = String(fieldCount);
       grid.dataset.totalCharacters = String(totalCharacters);
 
-      if (!fieldCount) {
-        grid.style.removeProperty("--job-info-columns");
-        return;
-      }
+      if (!fieldCount) return;
 
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
-      let widestContent = 0;
 
       populatedItems.forEach((item) => {
         const label = item.querySelector<HTMLElement>(".portal-job-info-label");
         const value = item.querySelector<HTMLElement>(".portal-job-info-value");
-        const labelStyle = label ? window.getComputedStyle(label) : null;
-        const valueStyle = value ? window.getComputedStyle(value) : null;
+        const itemStyle = window.getComputedStyle(item);
+        const horizontalPadding =
+          (Number.parseFloat(itemStyle.paddingLeft) || 0) +
+          (Number.parseFloat(itemStyle.paddingRight) || 0);
+        let widestText = 0;
 
-        if (context && label && labelStyle) {
-          context.font = labelStyle.font;
-          widestContent = Math.max(widestContent, context.measureText(label.textContent ?? "").width);
+        if (context && label) {
+          context.font = window.getComputedStyle(label).font;
+          widestText = Math.max(
+            widestText,
+            context.measureText(label.textContent?.trim() ?? "").width,
+          );
         }
-        if (context && value && valueStyle) {
-          context.font = valueStyle.font;
-          widestContent = Math.max(widestContent, context.measureText(value.textContent ?? "").width);
+
+        if (context && value) {
+          context.font = window.getComputedStyle(value).font;
+          widestText = Math.max(
+            widestText,
+            context.measureText(value.textContent?.trim() ?? "").width,
+          );
         }
+
+        // Keep a small safety allowance for font rendering and borders.
+        const preferredWidth = Math.max(
+          150,
+          Math.ceil(widestText + horizontalPadding + 4),
+        );
+        item.style.setProperty("--job-info-item-width", `${preferredWidth}px`);
       });
-
-      const averageCharacters = totalCharacters / fieldCount;
-      const estimatedCharacterWidth = averageCharacters * 6.2;
-      const minimumCellWidth = Math.min(
-        360,
-        Math.max(180, widestContent + 30, estimatedCharacterWidth + 30),
-      );
-      const availableWidth = grid.clientWidth;
-      const gap = 1;
-      const fittingColumns = Math.max(
-        1,
-        Math.floor((availableWidth + gap) / (minimumCellWidth + gap)),
-      );
-      const columns = Math.min(fieldCount, fittingColumns);
-
-      grid.style.setProperty("--job-info-columns", String(columns));
     };
 
     updateColumns();
     const observer = new ResizeObserver(updateColumns);
     observer.observe(grid);
+    document.fonts?.ready.then(updateColumns);
+
     return () => observer.disconnect();
   }, [data.items, language, previewItem]);
 

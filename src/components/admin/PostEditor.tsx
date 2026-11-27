@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/admin/PostEditor.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: Large client-side multilingual content editor with typed post/detail structures, autosave, draft/publish actions and custom CSS. Existing shivanya-ui Checkbox/Input/Select/Textarea are reused. Deep validation, autosave race tests and editor accessibility audit remain pending.
+
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";

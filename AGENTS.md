@@ -13,6 +13,10 @@
    
    **मराठी:** हा विभाग Master स्वतः सांभाळतील. AI एजंट्सनी या विभागात कोणताही बदल करू नये आणि येथे लिहिलेल्या सूचनांचे पालन करावे.
 
+2. **EN:** Whenever the Master asks to add or update a rule, use the rule number specified by the Master. Add or edit that exact numbered rule in this Master section. Write each rule first in English and then in Marathi, without adding language labels. When the Master refers to a rule number while requesting code changes, apply that rule to the requested implementation. Do not renumber, overwrite, or change other Master rules.
+   
+   **मराठी:** Master यांनी एखादा नियम जोडण्यास किंवा बदलण्यास सांगितल्यास, त्यांनी दिलेला नियम क्रमांकच वापरावा. हा Master विभागात त्याच क्रमांकाचा नियम जोडावा किंवा संपादित करावा. प्रत्येक नियम आधी इंग्रजीत आणि त्यानंतर मराठीत लिहावा; भाषेची नावे किंवा लेबल लावू नयेत. कोडमध्ये बदल करण्यास सांगताना Master यांनी एखाद्या नियम क्रमांकाचा उल्लेख केल्यास, त्या नियमानुसार संबंधित बदल करावेत. इतर Master नियमांचे क्रमांक बदलू नयेत, ते बदलू नयेत किंवा त्यांच्या जागी दुसरे नियम लिहू नयेत.
+
 ---
 
 ## AI ONLY — Instructions for AI agents

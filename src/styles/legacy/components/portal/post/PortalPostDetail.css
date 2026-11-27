@@ -634,12 +634,6 @@
   }
 }
 
-@media (max-width: 600px) {
-  .portal-job-info-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 /* Important Dates - Clean List Layout */
 
 .portal-important-dates {

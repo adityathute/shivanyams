@@ -1,5 +1,11 @@
-<!-- File Location: shivanyams/backend/README.md -->
-<!-- References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified). -->
+<!-- File Location: shivanyams/backend/README.md
+Reference Repositories:
+  shivanya-sdk v1.0.0 (branch sdk-v2)
+  shivanya-auth v1.0.0 (branch auth-v2)
+
+Repository Commit: 312c7c24b5ab1211f534ce9c2f871004d0441398
+Both repositories are read-only references.
+-->
 <!-- Cleanup Status: Clean -->
 <!-- Cleanup Info: Batch 14 audit. Clarified migration workflow; apply existing migrations normally and create migrations only after intentional model changes. -->
 

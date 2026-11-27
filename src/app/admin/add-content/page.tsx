@@ -1,14 +1,14 @@
-// File Location: shivanyams/src/app/admin/add-content/page.tsx
-/*
+/* File Location: shivanyams/src/app/admin/add-content/page.tsx
  * Reference Repositories:
- * shivanya-sdk v1.0.0 (branch sdk-v2)
- * shivanya-auth v1.0.0 (branch auth-v2)
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
  *
- * Repository Commit: e449bbc50dcf4b464c2ae1f7aa23890e4bc9da1d
+ * Repository Commit: 312c7c24b5ab1211f534ce9c2f871004d0441398
  * Both repositories are read-only references.
  */
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Form state, JSON validation, admin authorization, and request lifecycle reviewed; existing behavior retained.
+
 // UI Components: 1 page component; 1 form with 6 unique native control types (label, select, option, input, textarea, button)
 // SDK UI Components available for review: Button, Input, Select, Textarea, Label, FormField
 // SDK UI Components currently used: 0; native controls remain in legacy AddPostPage.css styling

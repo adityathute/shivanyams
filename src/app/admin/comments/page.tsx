@@ -1,5 +1,13 @@
-// File Location: src/app/admin/comments/page.tsx
+/* File Location: shivanyams/src/app/admin/comments/page.tsx
+ * Reference Repositories:
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
+ *
+ * Repository Commit: 312c7c24b5ab1211f534ce9c2f871004d0441398
+ * Both repositories are read-only references.
+ */
 // Cleanup Status: Cleanup Pending
+
 // Cleanup Information: Legacy admin CSS imports remain; AnimatedNumber logic is duplicated with the reports page and needs shared-component/API review.
 
 "use client";

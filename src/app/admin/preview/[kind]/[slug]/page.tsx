@@ -1,14 +1,14 @@
-// File Location: shivanyams/src/app/admin/preview/[kind]/[slug]/page.tsx
-/*
+/* File Location: shivanyams/src/app/admin/preview/[kind]/[slug]/page.tsx
  * Reference Repositories:
- * shivanya-sdk v1.0.0 (branch sdk-v2)
- * shivanya-auth v1.0.0 (branch auth-v2)
+ *   shivanya-sdk v1.0.0 (branch sdk-v2)
+ *   shivanya-auth v1.0.0 (branch auth-v2)
  *
- * Repository Commit: e449bbc50dcf4b464c2ae1f7aa23890e4bc9da1d
+ * Repository Commit: 312c7c24b5ab1211f534ce9c2f871004d0441398
  * Both repositories are read-only references.
  */
 // Cleanup Status: Cleanup Pending
 // Cleanup Info: Route and abort handling reviewed; API payload casts and preview category mapping need a wider type-contract review.
+
 // UI Components: 1 shared component (PortalPostDetail) plus native main/div/button/span elements
 // SDK UI Components available for review: Button
 // SDK UI Components currently used: 0 direct; preview banner uses native button

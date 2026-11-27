@@ -631,6 +631,7 @@ export default function PostEditor({
   const [postInfoLanguages, setPostInfoLanguages] = useState<Record<PostInfoFieldGroup, ContentLanguage[]>>({ title: ["en"], summary: ["en"], body: ["en"] });
   const [commonEducationLanguages, setCommonEducationLanguages] = useState<ContentLanguage[]>(["en"]);
   const [expandedPostLanguages, setExpandedPostLanguages] = useState<number[]>([]);
+  const [expandedDepartmentLanguages, setExpandedDepartmentLanguages] = useState<number[]>([]);
   const [expandedEducationLanguages, setExpandedEducationLanguages] = useState<string[]>([]);
   const [expandedAgeLanguages, setExpandedAgeLanguages] = useState<number[]>([]);
   const [expandedApplicationFeeLanguages, setExpandedApplicationFeeLanguages] = useState(false);
@@ -2001,6 +2002,38 @@ export default function PostEditor({
                             required={lang === "en"}
                             value={String(post[`post_name_${lang}`] ?? "")}
                             onChange={(event) => updateJobPost(postIndex, `post_name_${lang}`, event.target.value)}
+                            fullWidth
+                            size="sm"
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="post-editor-post-title-section">
+                      <div className="post-editor-translation-heading">
+                        <span>Department</span>
+                        <button
+                          type="button"
+                          className="post-editor-show-translations"
+                          aria-expanded={expandedDepartmentLanguages.includes(postIndex)}
+                          onClick={() => setExpandedDepartmentLanguages((current) =>
+                            current.includes(postIndex)
+                              ? current.filter((index) => index !== postIndex)
+                              : [...current, postIndex]
+                          )}
+                        >
+                          {expandedDepartmentLanguages.includes(postIndex) ? "− Hide other languages" : "+ Show other languages"}
+                        </button>
+                      </div>
+                      <div className="post-editor-grid post-editor-single-column">
+                        {([activeLanguage, ...(expandedDepartmentLanguages.includes(postIndex)
+                          ? (["en", "mr", "hi"] as ContentLanguage[]).filter((language) => language !== activeLanguage)
+                          : [])] as ContentLanguage[]).map((lang) => (
+                          <Input
+                            key={lang}
+                            label={`Department (${lang.toUpperCase()})`}
+                            value={String(post[`department_${lang}`] ?? "")}
+                            onChange={(event) => updateJobPost(postIndex, `department_${lang}`, event.target.value)}
                             fullWidth
                             size="sm"
                           />

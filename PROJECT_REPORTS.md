@@ -72,7 +72,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 | 9349bc8acfed6e990db4bf814bdd5b58ed648e38 | `chore(styles): improve legacy page accessibility batch 26` | Added keyboard-visible focus states to admin and public page styles; added reduced-motion handling for add-post, engagement, portal, admit-card, terrain and results styles; recorded per-file CSS selector audits. |
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 97 Not Reviewed files.
+1. Continue detailed cleanup audits for the remaining 87 Not Reviewed files.
 2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 19 audited Portal/admin/public stylesheets; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.

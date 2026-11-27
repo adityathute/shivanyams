@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `44739e5a1a7bc41679392d2842443236c6151856`  
+**Source snapshot:** `21e5c57cff809e5a923e91069dc022f9bab99e50`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -15,16 +15,16 @@
 | Metric | Count |
 |---|---:|
 | Total tracked files after this inventory update | 310 |
-| Clean | 69 |
-| Cleanup Pending | 49 |
-| Not Reviewed | 192 |
-| Organized | 69 |
-| Legacy | 241 |
-| Audited before this structure update | 118 |
+| Clean | 74 |
+| Cleanup Pending | 54 |
+| Not Reviewed | 182 |
+| Organized | 74 |
+| Legacy | 236 |
+| Audited before this structure update | 128 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
-**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits.
+**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 also retained a two-view metric summary: current repository state and cumulative cleanup progress.
 
 ## Complete tracked-file register
 
@@ -210,19 +210,19 @@
 | 178 | `shivanyams/src/components/portal/category/CategoryGrid.tsx` | Cleanup Pending | Legacy |
 | 179 | `shivanyams/src/components/portal/category/CategoryPage.tsx` | Cleanup Pending | Legacy |
 | 180 | `shivanyams/src/components/portal/category/PortalEmptyState.tsx` | Clean | Organized |
-| 181 | `shivanyams/src/components/portal/context/PortalAuthContext.tsx` | Not Reviewed | Legacy |
-| 182 | `shivanyams/src/components/portal/context/PortalLanguageContext.tsx` | Not Reviewed | Legacy |
-| 183 | `shivanyams/src/components/portal/data/portal-data.tsx` | Not Reviewed | Legacy |
+| 181 | `shivanyams/src/components/portal/context/PortalAuthContext.tsx` | Clean | Organized |
+| 182 | `shivanyams/src/components/portal/context/PortalLanguageContext.tsx` | Clean | Organized |
+| 183 | `shivanyams/src/components/portal/data/portal-data.tsx` | Cleanup Pending | Legacy |
 | 184 | `shivanyams/src/components/portal/home/HeroSection.tsx` | Cleanup Pending | Legacy |
 | 185 | `shivanyams/src/components/portal/home/HomePage.tsx` | Cleanup Pending | Legacy |
 | 186 | `shivanyams/src/components/portal/home/UpdatesSection.tsx` | Clean | Organized |
-| 187 | `shivanyams/src/components/portal/language/LanguageDropdown.tsx` | Not Reviewed | Legacy |
+| 187 | `shivanyams/src/components/portal/language/LanguageDropdown.tsx` | Cleanup Pending | Legacy |
 | 188 | `shivanyams/src/components/portal/layout/PortalLayout.tsx` | Cleanup Pending | Legacy |
-| 189 | `shivanyams/src/components/portal/layout/footer/PortalFooter.tsx` | Not Reviewed | Legacy |
-| 190 | `shivanyams/src/components/portal/layout/footer/SiteMobileFooter.tsx` | Not Reviewed | Legacy |
+| 189 | `shivanyams/src/components/portal/layout/footer/PortalFooter.tsx` | Cleanup Pending | Legacy |
+| 190 | `shivanyams/src/components/portal/layout/footer/SiteMobileFooter.tsx` | Clean | Organized |
 | 191 | `shivanyams/src/components/portal/layout/header/PortalHeader.tsx` | Cleanup Pending | Legacy |
-| 192 | `shivanyams/src/components/portal/layout/header/PortalUserDropdown.tsx` | Not Reviewed | Legacy |
-| 193 | `shivanyams/src/components/portal/layout/sidebar/PortalSidebar.tsx` | Not Reviewed | Legacy |
+| 192 | `shivanyams/src/components/portal/layout/header/PortalUserDropdown.tsx` | Cleanup Pending | Legacy |
+| 193 | `shivanyams/src/components/portal/layout/sidebar/PortalSidebar.tsx` | Clean | Organized |
 | 194 | `shivanyams/src/components/portal/post/NewsletterSubscribeButton.tsx` | Cleanup Pending | Legacy |
 | 195 | `shivanyams/src/components/portal/post/PortalContentNotFound.tsx` | Clean | Organized |
 | 196 | `shivanyams/src/components/portal/post/PortalPostDetail.tsx` | Cleanup Pending | Legacy |
@@ -232,8 +232,8 @@
 | 200 | `shivanyams/src/components/portal/post/comment-moderation.ts` | Clean | Organized |
 | 201 | `shivanyams/src/components/portal/post/not-found-recommendations-config.ts` | Clean | Organized |
 | 202 | `shivanyams/src/components/portal/post/post-sidebar-config.ts` | Clean | Organized |
-| 203 | `shivanyams/src/components/portal/saved/SavedPostsPage.tsx` | Not Reviewed | Legacy |
-| 204 | `shivanyams/src/components/portal/utils/important-links-config.ts` | Not Reviewed | Legacy |
+| 203 | `shivanyams/src/components/portal/saved/SavedPostsPage.tsx` | Cleanup Pending | Legacy |
+| 204 | `shivanyams/src/components/portal/utils/important-links-config.ts` | Clean | Organized |
 | 205 | `shivanyams/src/components/portal/utils/job-deadline.ts` | Not Reviewed | Legacy |
 | 206 | `shivanyams/src/components/portal/utils/useImportantLinks.ts` | Not Reviewed | Legacy |
 | 207 | `shivanyams/src/components/results/ResultsCharacters.tsx` | Not Reviewed | Legacy |

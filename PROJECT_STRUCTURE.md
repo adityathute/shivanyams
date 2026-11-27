@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `21e5c57cff809e5a923e91069dc022f9bab99e50`  
+**Source snapshot:** `caf7e692afa26dfa6a478846058341726c256826`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,15 +16,15 @@
 |---|---:|
 | Total tracked files after this inventory update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 54 |
-| Not Reviewed | 182 |
+| Cleanup Pending | 64 |
+| Not Reviewed | 172 |
 | Organized | 74 |
 | Legacy | 236 |
-| Audited before this structure update | 128 |
+| Audited before this structure update | 138 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
-**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 also retained a two-view metric summary: current repository state and cumulative cleanup progress.
+**Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 introduced separate current and total cleanup metrics; both are refreshed after every batch.
 
 ## Complete tracked-file register
 
@@ -187,8 +187,8 @@
 | 155 | `shivanyams/src/app/videos/[slug]/page.tsx` | Clean | Organized |
 | 156 | `shivanyams/src/app/videos/page.tsx` | Clean | Organized |
 | 157 | `shivanyams/src/components/admin/PostEditor.tsx` | Not Reviewed | Legacy |
-| 158 | `shivanyams/src/components/admitCard/AdmitCardsCharacters.tsx` | Not Reviewed | Legacy |
-| 159 | `shivanyams/src/components/admitCard/AdmitCardsPage.tsx` | Not Reviewed | Legacy |
+| 158 | `shivanyams/src/components/admitCard/AdmitCardsCharacters.tsx` | Cleanup Pending | Legacy |
+| 159 | `shivanyams/src/components/admitCard/AdmitCardsPage.tsx` | Cleanup Pending | Legacy |
 | 160 | `shivanyams/src/components/animation/BanyanTree/BanyanTree.tsx` | Not Reviewed | Legacy |
 | 161 | `shivanyams/src/components/animation/Birds/Birds.tsx` | Not Reviewed | Legacy |
 | 162 | `shivanyams/src/components/animation/Clock/PortalClock.tsx` | Not Reviewed | Legacy |
@@ -199,12 +199,12 @@
 | 167 | `shivanyams/src/components/animation/Moon/Moon.tsx` | Not Reviewed | Legacy |
 | 168 | `shivanyams/src/components/animation/Stars/Stars.tsx` | Not Reviewed | Legacy |
 | 169 | `shivanyams/src/components/animation/Sun/Sun.tsx` | Not Reviewed | Legacy |
-| 170 | `shivanyams/src/components/examination/ExaminationCharacters.tsx` | Not Reviewed | Legacy |
-| 171 | `shivanyams/src/components/examination/ExaminationPage.tsx` | Not Reviewed | Legacy |
-| 172 | `shivanyams/src/components/guide/GuidesCharacters.tsx` | Not Reviewed | Legacy |
-| 173 | `shivanyams/src/components/guide/GuidesPage.tsx` | Not Reviewed | Legacy |
-| 174 | `shivanyams/src/components/jobs/JobsCharacters.tsx` | Not Reviewed | Legacy |
-| 175 | `shivanyams/src/components/jobs/JobsPage.tsx` | Not Reviewed | Legacy |
+| 170 | `shivanyams/src/components/examination/ExaminationCharacters.tsx` | Cleanup Pending | Legacy |
+| 171 | `shivanyams/src/components/examination/ExaminationPage.tsx` | Cleanup Pending | Legacy |
+| 172 | `shivanyams/src/components/guide/GuidesCharacters.tsx` | Cleanup Pending | Legacy |
+| 173 | `shivanyams/src/components/guide/GuidesPage.tsx` | Cleanup Pending | Legacy |
+| 174 | `shivanyams/src/components/jobs/JobsCharacters.tsx` | Cleanup Pending | Legacy |
+| 175 | `shivanyams/src/components/jobs/JobsPage.tsx` | Cleanup Pending | Legacy |
 | 176 | `shivanyams/src/components/portal/RelatedJobsPage.tsx` | Cleanup Pending | Legacy |
 | 177 | `shivanyams/src/components/portal/TagsPage.tsx` | Cleanup Pending | Legacy |
 | 178 | `shivanyams/src/components/portal/category/CategoryGrid.tsx` | Cleanup Pending | Legacy |
@@ -236,8 +236,8 @@
 | 204 | `shivanyams/src/components/portal/utils/important-links-config.ts` | Clean | Organized |
 | 205 | `shivanyams/src/components/portal/utils/job-deadline.ts` | Not Reviewed | Legacy |
 | 206 | `shivanyams/src/components/portal/utils/useImportantLinks.ts` | Not Reviewed | Legacy |
-| 207 | `shivanyams/src/components/results/ResultsCharacters.tsx` | Not Reviewed | Legacy |
-| 208 | `shivanyams/src/components/results/ResultsPage.tsx` | Not Reviewed | Legacy |
+| 207 | `shivanyams/src/components/results/ResultsCharacters.tsx` | Cleanup Pending | Legacy |
+| 208 | `shivanyams/src/components/results/ResultsPage.tsx` | Cleanup Pending | Legacy |
 | 209 | `shivanyams/src/components/scheme/SchemesCharacters.tsx` | Not Reviewed | Legacy |
 | 210 | `shivanyams/src/components/scheme/SchemesPage.tsx` | Not Reviewed | Legacy |
 | 211 | `shivanyams/src/components/static-pages/About/AboutPage.tsx` | Not Reviewed | Legacy |

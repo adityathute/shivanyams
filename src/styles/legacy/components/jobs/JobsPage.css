@@ -174,7 +174,7 @@
 @media (max-width: 390px) {
   .jobs-updates .update-row {
     grid-template-columns: max-content minmax(0, 1fr) max-content;
-    gap: 5px;
+    gap: 12px;
   }
 
   .jobs-updates .update-deadline-group {

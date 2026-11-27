@@ -476,8 +476,9 @@
 }
 
 /* Job information summary layout.
-   Each field gets a measured preferred width, then flex-wrap packs fields
-   into the available row space without letting one long value widen every cell. */
+   Each field keeps its measured preferred width as a starting point, then grows
+   to use the full available row width. This also fills the final row at every
+   viewport size without forcing long content to widen neighboring fields. */
 .portal-job-info-grid {
   display: flex;
   flex-wrap: wrap;
@@ -506,7 +507,7 @@
 
 .portal-job-info-item {
   display: flex;
-  flex: 0 1 var(--job-info-item-width, 180px);
+  flex: 1 1 var(--job-info-item-width, 180px);
   flex-direction: column;
   justify-content: flex-start;
   gap: 7px;

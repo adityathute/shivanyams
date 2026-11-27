@@ -73,8 +73,8 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 117 Not Reviewed files.
-2. Complete selector-to-component mapping and dark/light theme verification for the nine reviewed Portal stylesheets; they remain Cleanup Pending / Legacy until fully verified.
+1. Continue detailed cleanup audits for the remaining 107 Not Reviewed files.
+2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 19 audited Portal/admin/public stylesheets; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
 5. Migrate Batch 19 page and illustration styles out of legacy CSS paths; review Next.js image optimization and skeleton consistency.
@@ -86,7 +86,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 12. Verify the private `shivanya-auth` reference version when repository access permits.
 
-**Batch 25 validation:** Git tree and structure inventory reconcile at 311 files. Nine stylesheets remain Cleanup Pending / Legacy because selector-to-component mapping and full visual compatibility have not been completed. No automated test files or dedicated test runner were identified in the tracked tree; repository CI defines lint/build checks. Tests, lint and build were not run for this batch.
+**Batch 26 validation:** Git tree and structure inventory reconcile at 311 files. Ten CSS files remain Cleanup Pending / Legacy because selector-to-component mapping and full visual compatibility have not been completed. No automated test files or dedicated test runner were identified in the tracked tree; repository CI defines lint/build checks. Tests, lint and build were not run for this batch.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

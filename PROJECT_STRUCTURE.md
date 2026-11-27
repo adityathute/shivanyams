@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `1da01707b79ca2ee2625148a30133cae38c71389`  
+**Source snapshot:** `9349bc8acfed6e990db4bf814bdd5b58ed648e38`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 119 |
-| Not Reviewed | 117 |
+| Cleanup Pending | 129 |
+| Not Reviewed | 107 |
 | Organized | 75 |
 | Legacy | 236 |
-| Audited before this structure update | 194 |
+| Audited before this structure update | 204 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -266,24 +266,24 @@
 | 235 | `shivanyams/src/lib/authenticated-fetch.ts` | Cleanup Pending | Legacy |
 | 236 | `shivanyams/src/lib/format-number.ts` | Cleanup Pending | Legacy |
 | 237 | `shivanyams/src/styles/css.config.ts` | Not Reviewed | Legacy |
-| 238 | `shivanyams/src/styles/legacy/app/admin/add-post/AddPostPage.css` | Not Reviewed | Legacy |
+| 238 | `shivanyams/src/styles/legacy/app/admin/add-post/AddPostPage.css` | Cleanup Pending | Legacy |
 | 239 | `shivanyams/src/styles/legacy/app/admin/admin.css` | Not Reviewed | Legacy |
 | 240 | `shivanyams/src/styles/legacy/app/admin/comments/comments.css` | Not Reviewed | Legacy |
-| 241 | `shivanyams/src/styles/legacy/app/admin/engagement/[postId]/engagement.css` | Not Reviewed | Legacy |
-| 242 | `shivanyams/src/styles/legacy/app/admin/questions/questions.css` | Not Reviewed | Legacy |
-| 243 | `shivanyams/src/styles/legacy/app/admin/reports/reports.css` | Not Reviewed | Legacy |
-| 244 | `shivanyams/src/styles/legacy/app/admin/tags/tags.css` | Not Reviewed | Legacy |
-| 245 | `shivanyams/src/styles/legacy/app/globals.css` | Not Reviewed | Legacy |
-| 246 | `shivanyams/src/styles/legacy/app/portal-base.css` | Not Reviewed | Legacy |
+| 241 | `shivanyams/src/styles/legacy/app/admin/engagement/[postId]/engagement.css` | Cleanup Pending | Legacy |
+| 242 | `shivanyams/src/styles/legacy/app/admin/questions/questions.css` | Cleanup Pending | Legacy |
+| 243 | `shivanyams/src/styles/legacy/app/admin/reports/reports.css` | Cleanup Pending | Legacy |
+| 244 | `shivanyams/src/styles/legacy/app/admin/tags/tags.css` | Cleanup Pending | Legacy |
+| 245 | `shivanyams/src/styles/legacy/app/globals.css` | Cleanup Pending | Legacy |
+| 246 | `shivanyams/src/styles/legacy/app/portal-base.css` | Cleanup Pending | Legacy |
 | 247 | `shivanyams/src/styles/legacy/components/admin/PostEditor.css` | Not Reviewed | Legacy |
 | 248 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsCharacters.css` | Not Reviewed | Legacy |
-| 249 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css` | Not Reviewed | Legacy |
+| 249 | `shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css` | Cleanup Pending | Legacy |
 | 250 | `shivanyams/src/styles/legacy/components/animation/BanyanTree/BanyanTree.css` | Cleanup Pending | Legacy |
 | 251 | `shivanyams/src/styles/legacy/components/animation/Clock/PortalClock.css` | Cleanup Pending | Legacy |
 | 252 | `shivanyams/src/styles/legacy/components/animation/Clouds/Clouds.css` | Cleanup Pending | Legacy |
 | 253 | `shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css` | Cleanup Pending | Legacy |
 | 254 | `shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css` | Cleanup Pending | Legacy |
-| 255 | `shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css` | Not Reviewed | Legacy |
+| 255 | `shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css` | Cleanup Pending | Legacy |
 | 256 | `shivanyams/src/styles/legacy/components/animation/Moon/Moon.css` | Not Reviewed | Legacy |
 | 257 | `shivanyams/src/styles/legacy/components/animation/Stars/Stars.css` | Not Reviewed | Legacy |
 | 258 | `shivanyams/src/styles/legacy/components/animation/Sun/Sun.css` | Not Reviewed | Legacy |
@@ -308,7 +308,7 @@
 | 277 | `shivanyams/src/styles/legacy/components/portal/post/PostFAQSection.css` | Cleanup Pending | Legacy |
 | 278 | `shivanyams/src/styles/legacy/components/portal/saved/SavedPostsPage.css` | Not Reviewed | Legacy |
 | 279 | `shivanyams/src/styles/legacy/components/results/ResultsCharacters.css` | Not Reviewed | Legacy |
-| 280 | `shivanyams/src/styles/legacy/components/results/ResultsPage.css` | Not Reviewed | Legacy |
+| 280 | `shivanyams/src/styles/legacy/components/results/ResultsPage.css` | Cleanup Pending | Legacy |
 | 281 | `shivanyams/src/styles/legacy/components/scheme/SchemesCharacters.css` | Not Reviewed | Legacy |
 | 282 | `shivanyams/src/styles/legacy/components/scheme/SchemesPage.css` | Not Reviewed | Legacy |
 | 283 | `shivanyams/src/styles/legacy/components/static-pages/About/AboutPage.css` | Not Reviewed | Legacy |

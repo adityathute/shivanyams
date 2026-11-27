@@ -2138,3 +2138,27 @@ padding-right: 24px;
 .admin-version-preview-banner { position: relative; z-index: 5; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 10px 16px; border-bottom: 1px solid #dbe3ed; background: #eff6ff; color: #1e40af; font-size: 13px; font-weight: 700; }
 .admin-version-preview-banner button { border: 1px solid #93c5fd; border-radius: 7px; padding: 5px 10px; background: #fff; color: #1d4ed8; font: inherit; cursor: pointer; }
 
+
+
+/* Prevent global focus-visible outlines from stacking with the shared UI control focus styles. */
+.post-editor-form .shivanya-input-container:focus-within {
+  border-color: var(--shivanya-color-border-focus, #6da0ff);
+  box-shadow: none;
+}
+
+.post-editor-form .shivanya-input:focus-visible,
+.post-editor-form .shivanya-textarea:focus-visible,
+.post-editor-form .shivanya-select:focus-visible,
+.post-editor-form input:not(.shivanya-input):focus-visible,
+.post-editor-form textarea:not(.shivanya-textarea):focus-visible,
+.post-editor-form select:not(.shivanya-select):focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.post-editor-form .shivanya-textarea:focus,
+.post-editor-form .shivanya-select:focus,
+.post-editor-form textarea:not(.shivanya-textarea):focus,
+.post-editor-form select:not(.shivanya-select):focus {
+  box-shadow: none;
+}

@@ -67,9 +67,9 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| 9349bc8acfed6e990db4bf814bdd5b58ed648e38 | `chore(styles): improve legacy page accessibility batch 26` | Added keyboard-visible focus states to admin and public page styles; added reduced-motion handling for add-post, engagement, portal, admit-card, terrain and results styles; recorded per-file CSS selector audits. |
 | 1da01707b79ca2ee2625148a30133cae38c71389 | `chore(styles): audit organized portal styles and clarify status rules batch 25` | Audited nine Portal organized-mode stylesheets; added keyboard focus parity and reduced-motion handling to category cards; added per-file selector audits; clarified Rule 56 that Organized/Legacy is determined by actual file quality, never folder path. |
 | b6b879efd67e3a19f838a1b384223b69706e4fed | `chore(i18n): centralize locale types and harden shared utilities batch 24` | Added a shared Language type and retained CategoryGrid's type export; typed sidebar locales; made cookie parsing whitespace-independent; handled non-finite compact-number inputs; honored reduced-motion preferences in organized-mode scrolling. |
-| 9798bacbe5c7a254523f8918e31e3957d106810b | `chore(portal): audit admin animation and utilities batch 23` | Audited PostEditor, five animation components, deadline/link utilities and privacy/terms dictionaries; improved decorative accessibility, strict date validation and timezone-safe deadline calculation; hardened important-link response handling. |
 
 ## Current pending priorities
 

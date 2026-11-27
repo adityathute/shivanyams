@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `caf7e692afa26dfa6a478846058341726c256826`  
+**Source snapshot:** `b98d84422cfc7edeac3f64ae28f1e9d7c52b57c2`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 64 |
-| Not Reviewed | 172 |
+| Cleanup Pending | 74 |
+| Not Reviewed | 162 |
 | Organized | 74 |
 | Legacy | 236 |
-| Audited before this structure update | 138 |
+| Audited before this structure update | 148 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -238,16 +238,16 @@
 | 206 | `shivanyams/src/components/portal/utils/useImportantLinks.ts` | Not Reviewed | Legacy |
 | 207 | `shivanyams/src/components/results/ResultsCharacters.tsx` | Cleanup Pending | Legacy |
 | 208 | `shivanyams/src/components/results/ResultsPage.tsx` | Cleanup Pending | Legacy |
-| 209 | `shivanyams/src/components/scheme/SchemesCharacters.tsx` | Not Reviewed | Legacy |
-| 210 | `shivanyams/src/components/scheme/SchemesPage.tsx` | Not Reviewed | Legacy |
-| 211 | `shivanyams/src/components/static-pages/About/AboutPage.tsx` | Not Reviewed | Legacy |
-| 212 | `shivanyams/src/components/static-pages/Contact/ContactPage.tsx` | Not Reviewed | Legacy |
-| 213 | `shivanyams/src/components/static-pages/Disclaimer/DisclaimerPage.tsx` | Not Reviewed | Legacy |
-| 214 | `shivanyams/src/components/static-pages/Feedback/FeedbackPage.tsx` | Not Reviewed | Legacy |
-| 215 | `shivanyams/src/components/static-pages/Privacy/PrivacyPage.tsx` | Not Reviewed | Legacy |
-| 216 | `shivanyams/src/components/static-pages/Terms/TermsPage.tsx` | Not Reviewed | Legacy |
-| 217 | `shivanyams/src/components/tools/ToolsCharacters.tsx` | Not Reviewed | Legacy |
-| 218 | `shivanyams/src/components/tools/ToolsPage.tsx` | Not Reviewed | Legacy |
+| 209 | `shivanyams/src/components/scheme/SchemesCharacters.tsx` | Cleanup Pending | Legacy |
+| 210 | `shivanyams/src/components/scheme/SchemesPage.tsx` | Cleanup Pending | Legacy |
+| 211 | `shivanyams/src/components/static-pages/About/AboutPage.tsx` | Cleanup Pending | Legacy |
+| 212 | `shivanyams/src/components/static-pages/Contact/ContactPage.tsx` | Cleanup Pending | Legacy |
+| 213 | `shivanyams/src/components/static-pages/Disclaimer/DisclaimerPage.tsx` | Cleanup Pending | Legacy |
+| 214 | `shivanyams/src/components/static-pages/Feedback/FeedbackPage.tsx` | Cleanup Pending | Legacy |
+| 215 | `shivanyams/src/components/static-pages/Privacy/PrivacyPage.tsx` | Cleanup Pending | Legacy |
+| 216 | `shivanyams/src/components/static-pages/Terms/TermsPage.tsx` | Cleanup Pending | Legacy |
+| 217 | `shivanyams/src/components/tools/ToolsCharacters.tsx` | Cleanup Pending | Legacy |
+| 218 | `shivanyams/src/components/tools/ToolsPage.tsx` | Cleanup Pending | Legacy |
 | 219 | `shivanyams/src/components/videos/VideosCharacters.tsx` | Not Reviewed | Legacy |
 | 220 | `shivanyams/src/components/videos/VideosPage.tsx` | Not Reviewed | Legacy |
 | 221 | `shivanyams/src/components/videos/VideosSection.tsx` | Not Reviewed | Legacy |

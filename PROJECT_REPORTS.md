@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `caf7e692afa26dfa6a478846058341726c256826` |
+| Last source snapshot audited | `b98d84422cfc7edeac3f64ae28f1e9d7c52b57c2` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 19, unfinished cleanup scope is 236 files (64 Cleanup Pending + 172 Not Reviewed), giving an estimated 24 remaining batches and 43 batches overall, including the 19 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 20, unfinished cleanup scope is 236 files (74 Cleanup Pending + 162 Not Reviewed), giving an estimated 24 remaining batches and 44 batches overall, including the 20 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 310 |
 | Clean | 74 |
-| Cleanup Pending | 64 |
-| Not Reviewed | 172 |
-| Reviewed files after Batch 19 | 138 |
+| Cleanup Pending | 74 |
+| Not Reviewed | 162 |
+| Reviewed files after Batch 20 | 148 |
 | Organized | 74 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 310 |
-| Files reviewed to date | 138 |
-| Review completion | 44.5% |
+| Files reviewed to date | 148 |
+| Review completion | 47.7% |
 | Files fully clean / organized | 74 |
-| Reviewed files still pending cleanup | 64 |
-| Files not yet reviewed | 172 |
+| Reviewed files still pending cleanup | 74 |
+| Files not yet reviewed | 162 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 19 |
+| Completed batches | 20 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 43 |
+| Estimated total batches | 44 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,7 +67,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
-| caf7e692afa26dfa6a478846058341726c256826 | `chore(portal): audit category pages and illustrations batch 19` | Audited 10 Portal page/illustration files; JobsPage now uses shared deadline utilities; removed obsolete commented JSX; documented SDK icon reuse and legacy CSS migration work |
+| b98d84422cfc7edeac3f64ae28f1e9d7c52b57c2 | `chore(portal): audit scheme and static content pages batch 20` | Audited 10 scheme, tools and static-page components; enabled Next.js optimization for two local hero illustrations; added Rule 51 metadata; detailed legacy CSS, form and content audits remain pending |
 | 21e5c57cff809e5a923e91069dc022f9bab99e50 | `chore(portal): audit context navigation and footer batch 18` | Audited 10 Portal files; memoized auth/language context values; clarified sidebar navigation return type and mobile footer brand; reviewed SDK reuse; kept complex data, dropdown and saved-post follow-ups pending |
 | 44739e5a1a7bc41679392d2842443236c6151856 | `chore(repo): clean backend and eslint setup batch 17` | Audited 10 setup/assets files; standardized Django management entrypoint; documented bounded backend dependencies; audited ESLint flat config and Hind font license; flagged image optimization and package-lock sync for follow-up |
 

@@ -26,7 +26,7 @@
 
 **Generated-file exceptions:** `shivanyams/next-env.d.ts` is Cleanup Pending because Next.js marks it as generated; do not edit or add a custom header. Django migration files under `shivanyams/backend/apps/portal/migrations/` are generated historical schema records and must not receive manual formatting or metadata edits. The first two migrations were reviewed in Batch 15 and remain Cleanup Pending pending a dedicated migration-chain compatibility audit. The remaining Portal migration history is Not Reviewed and will be audited as a separate migration-chain task. Package manifests and image assets without safe inline metadata are tracked for dedicated dependency-sync and visual/optimization audits. Batch 18 introduced separate current and total cleanup metrics; both are refreshed after every batch.
 
-## Complete tracked-file register## Complete tracked-file register
+## Complete tracked-file register
 | 1 | `shivanyams/.env.local.example` | Clean | Organized |
 | 2 | `shivanyams/.github/workflows/ci.yml` | Clean | Organized |
 | 3 | `shivanyams/.gitignore` | Clean | Organized |

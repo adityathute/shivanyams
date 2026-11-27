@@ -432,80 +432,89 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const { links, getLinkTitle } = useImportantLinks();
   const jobInfoGridRef = useRef<HTMLDivElement | null>(null);
 
-  // Measure each populated field independently. Flex wrapping then packs as many
-  // fields as their real label/value widths allow on every screen size.
+  // Measure populated fields and both logical groups, then pack every field
+  // inside the information table's existing available width.
   useEffect(() => {
     const grid = jobInfoGridRef.current;
     if (!grid) return;
 
-    const updateColumns = () => {
-      const items = Array.from(
-        grid.querySelectorAll<HTMLElement>(".portal-job-info-item"),
-      );
-      const populatedItems = items.filter((item) => {
-        const label =
-          item.querySelector<HTMLElement>(".portal-job-info-label")?.textContent?.trim() ?? "";
-        const value =
-          item.querySelector<HTMLElement>(".portal-job-info-value")?.textContent?.trim() ?? "";
-        return Boolean(label || value);
-      });
-
-      const fieldCount = populatedItems.length;
-      const totalCharacters = populatedItems.reduce((total, item) => {
-        const label =
-          item.querySelector(".portal-job-info-label")?.textContent?.trim() ?? "";
-        const value =
-          item.querySelector(".portal-job-info-value")?.textContent?.trim() ?? "";
-        return total + label.length + value.length;
-      }, 0);
-
-      grid.dataset.fieldCount = String(fieldCount);
-      grid.dataset.totalCharacters = String(totalCharacters);
-
-      if (!fieldCount) return;
-
+    const updateLayout = () => {
+      const groups = Array.from(grid.querySelectorAll<HTMLElement>(".portal-job-info-group"));
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
+      const gridWidth = grid.clientWidth;
+      let totalFields = 0;
+      let totalLabelCharacters = 0;
+      let totalValueCharacters = 0;
 
-      populatedItems.forEach((item) => {
-        const label = item.querySelector<HTMLElement>(".portal-job-info-label");
-        const value = item.querySelector<HTMLElement>(".portal-job-info-value");
-        const itemStyle = window.getComputedStyle(item);
-        const horizontalPadding =
-          (Number.parseFloat(itemStyle.paddingLeft) || 0) +
-          (Number.parseFloat(itemStyle.paddingRight) || 0);
-        let widestText = 0;
+      groups.forEach((group) => {
+        const items = Array.from(group.querySelectorAll<HTMLElement>(".portal-job-info-item"));
+        const populatedItems = items.filter((item) => {
+          const label = item.querySelector<HTMLElement>(".portal-job-info-label")?.textContent?.trim() ?? "";
+          const value = item.querySelector<HTMLElement>(".portal-job-info-value")?.textContent?.trim() ?? "";
+          return Boolean(label || value);
+        });
+        let groupLabelCharacters = 0;
+        let groupValueCharacters = 0;
 
-        if (context && label) {
-          context.font = window.getComputedStyle(label).font;
-          widestText = Math.max(
-            widestText,
-            context.measureText(label.textContent?.trim() ?? "").width,
+        populatedItems.forEach((item) => {
+          const label = item.querySelector<HTMLElement>(".portal-job-info-label");
+          const value = item.querySelector<HTMLElement>(".portal-job-info-value");
+          const labelText = label?.textContent?.trim() ?? "";
+          const valueText = value?.textContent?.trim() ?? "";
+          const itemStyle = window.getComputedStyle(item);
+          const horizontalPadding =
+            (Number.parseFloat(itemStyle.paddingLeft) || 0) +
+            (Number.parseFloat(itemStyle.paddingRight) || 0);
+          const borderWidth =
+            (Number.parseFloat(itemStyle.borderLeftWidth) || 0) +
+            (Number.parseFloat(itemStyle.borderRightWidth) || 0);
+          let labelWidth = 0;
+          let valueWidth = 0;
+
+          if (context && label) {
+            context.font = window.getComputedStyle(label).font;
+            labelWidth = context.measureText(labelText).width;
+          }
+          if (context && value) {
+            context.font = window.getComputedStyle(value).font;
+            valueWidth = context.measureText(valueText).width;
+          }
+
+          const preferredWidth = Math.ceil(
+            Math.max(labelWidth, valueWidth) + horizontalPadding + borderWidth + 4,
           );
-        }
-
-        if (context && value) {
-          context.font = window.getComputedStyle(value).font;
-          widestText = Math.max(
-            widestText,
-            context.measureText(value.textContent?.trim() ?? "").width,
+          item.style.setProperty(
+            "--job-info-item-width",
+            `${Math.max(1, Math.min(preferredWidth, gridWidth || preferredWidth))}px`,
           );
-        }
+          item.dataset.labelCharacters = String(labelText.length);
+          item.dataset.valueCharacters = String(valueText.length);
+          item.dataset.preferredWidth = String(preferredWidth);
+          groupLabelCharacters += labelText.length;
+          groupValueCharacters += valueText.length;
+        });
 
-        // Keep a small safety allowance for font rendering and borders.
-        const preferredWidth = Math.max(
-          150,
-          Math.ceil(widestText + horizontalPadding + 4),
-        );
-        item.style.setProperty("--job-info-item-width", `${preferredWidth}px`);
+        group.dataset.fieldCount = String(populatedItems.length);
+        group.dataset.labelCharacters = String(groupLabelCharacters);
+        group.dataset.valueCharacters = String(groupValueCharacters);
+        group.dataset.totalCharacters = String(groupLabelCharacters + groupValueCharacters);
+        totalFields += populatedItems.length;
+        totalLabelCharacters += groupLabelCharacters;
+        totalValueCharacters += groupValueCharacters;
       });
+
+      grid.dataset.groupCount = String(groups.filter((group) => Number(group.dataset.fieldCount) > 0).length);
+      grid.dataset.fieldCount = String(totalFields);
+      grid.dataset.labelCharacters = String(totalLabelCharacters);
+      grid.dataset.valueCharacters = String(totalValueCharacters);
+      grid.dataset.totalCharacters = String(totalLabelCharacters + totalValueCharacters);
     };
 
-    updateColumns();
-    const observer = new ResizeObserver(updateColumns);
+    updateLayout();
+    const observer = new ResizeObserver(updateLayout);
     observer.observe(grid);
-    document.fonts?.ready.then(updateColumns);
-
+    document.fonts?.ready.then(updateLayout);
     return () => observer.disconnect();
   }, [data.items, language, previewItem]);
 
@@ -1009,7 +1018,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       <div className="portal-job-info-grid" ref={jobInfoGridRef}>
                         {primarySummaryRows.length > 0 ? (
                           <div
-                            className="portal-job-info-primary-grid"
+                            className="portal-job-info-group portal-job-info-primary-grid"
                           >
                             {primarySummaryRows.map(([name, value]) => {
                               const shouldCapitalize =
@@ -1031,6 +1040,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             })}
                           </div>
                         ) : null}
+                        <div className="portal-job-info-group portal-job-info-secondary-grid">
                         {[
                           ...ageInfoRows,
 
@@ -1125,6 +1135,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                               </div>
                             );
                           })}
+                        </div>
                       </div>
 
                       {/* {[

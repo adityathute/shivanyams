@@ -5,6 +5,7 @@
 #
 # Repository Commit: 312c7c24b5ab1211f534ce9c2f871004d0441398
 # Both repositories are read-only references.
+#
 # Cleanup Status: Clean
 # Cleanup Info: Audited both DRF permission classes; no UI/CSS applies. Preserved authentication and admin-role behavior; rejected malformed role payloads safely.
 

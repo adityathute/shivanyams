@@ -543,10 +543,6 @@
   .portal-job-info-grid {
     width: 100%;
   }
-
-  .portal-job-info-item-age-full {
-    flex-basis: 100%;
-  }
 }
 
 @media (max-width: 600px) {
@@ -570,12 +566,6 @@
     line-height: 1.45;
   }
 
-  /* Notes that need explanation retain a full row; ordinary fields pack
-     side by side whenever their measured widths fit. */
-  .portal-job-info-item-age-note,
-  .portal-job-info-item-fee-full {
-    flex-basis: 100%;
-  }
 }
 
 @media (max-width: 360px) {

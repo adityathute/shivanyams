@@ -1,3 +1,8 @@
+# File Location: shivanyams/backend/apps/portal/comment_moderation.py
+# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Cleanup Status: Clean
+# Cleanup Info: Batch 15 audit. Precomputes normalized blocked-term prefixes to avoid rescanning the complete term set for each token prefix.
+
 """Shared validation for public comment and reply text."""
 
 import html
@@ -43,6 +48,11 @@ def _load_blocked_terms():
 
 
 BLOCKED_TERMS = _load_blocked_terms()
+BLOCKED_TERM_PREFIXES = {
+    term[:length]
+    for term in BLOCKED_TERMS
+    for length in range(1, len(term) + 1)
+}
 TOKEN_RE = re.compile(r"[\w\u0900-\u097f]+", re.UNICODE)
 URL_CANDIDATE_RE = re.compile(
     r"(?<![\w@])(?:https?://|ftp://|www\.)[^\s<>]+|"
@@ -94,7 +104,7 @@ def _contains_blocked_language(value):
             combined += _normalize_word(token)
             if combined in BLOCKED_TERMS:
                 return True
-            if not any(term.startswith(combined) for term in BLOCKED_TERMS):
+            if combined not in BLOCKED_TERM_PREFIXES:
                 break
     return False
 

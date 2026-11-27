@@ -1,3 +1,8 @@
+# File Location: shivanyams/backend/apps/portal/management/commands/seed_portal_categories.py
+# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Cleanup Status: Clean
+# Cleanup Info: Batch 15 audit. Preserves atomic, non-destructive seeding and primary keys; limits category lookup to two rows in one query to detect duplicate current/legacy slugs efficiently.
+
 """Create or update the canonical portal categories without deleting data."""
 
 from django.core.management.base import BaseCommand, CommandError
@@ -24,15 +29,19 @@ class Command(BaseCommand):
             slug = definition["slug"]
             legacy_slug = LEGACY_CATEGORY_SLUGS.get(slug)
 
-            matches = Category.objects.filter(slug__in=[slug, legacy_slug] if legacy_slug else [slug])
-            if matches.count() > 1:
+            matches = list(
+                Category.objects.filter(
+                    slug__in=[slug, legacy_slug] if legacy_slug else [slug]
+                ).order_by("pk")[:2]
+            )
+            if len(matches) > 1:
                 raise CommandError(
                     f"Both the new slug '{slug}' and legacy slug "
                     f"'{legacy_slug}' already exist. Resolve the duplicate "
                     "category records before running this command."
                 )
 
-            category = matches.first()
+            category = matches[0] if matches else None
             if category is None:
                 Category.objects.create(**definition)
                 created_count += 1

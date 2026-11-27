@@ -1,3 +1,7 @@
+# File Location: shivanyams/backend/apps/portal/authentication.py
+# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Cleanup Status: Clean
+# Cleanup Info: Batch 15 audit. Preserves Auth-service token validation and cookie CSRF policy; extracted safe HTTP methods and clarified the write-request guard.
 import json
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -5,7 +9,10 @@ from urllib.request import Request, urlopen
 from django.conf import settings
 from django.middleware.csrf import CsrfViewMiddleware
 from rest_framework.authentication import BaseAuthentication
-from rest_framework.exceptions import AuthenticationFailed, APIException, PermissionDenied
+from rest_framework.exceptions import APIException, AuthenticationFailed, PermissionDenied
+
+
+SAFE_HTTP_METHODS = frozenset({"GET", "HEAD", "OPTIONS", "TRACE"})
 
 
 class AuthServiceUnavailable(APIException):
@@ -20,10 +27,7 @@ class CSRFCheck(CsrfViewMiddleware):
 
 
 def enforce_csrf(request):
-    """
-    Apply Django's normal CSRF checks to cookie-authenticated API writes.
-    DRF APIView endpoints are otherwise exempt from CsrfViewMiddleware.
-    """
+    """Apply Django CSRF checks to cookie-authenticated API writes."""
     check = CSRFCheck(lambda _request: None)
     check.process_request(request)
     reason = check.process_view(request, lambda _request: None, (), {})
@@ -43,14 +47,11 @@ class ExternalAuthUser:
 
 class ShivanyaAuthAuthentication(BaseAuthentication):
     enforce_cookie_csrf = True
-    """
-    Validate access tokens through Shivanya Auth itself.
+    """Validate access tokens through Shivanya Auth itself.
 
-    Accepts either an Authorization Bearer token (legacy/token mode) or the
-    HttpOnly access cookie (cookie mode). Auth remains responsible for JWT
-    signature, expiry, and session revocation.
+    Accepts an Authorization Bearer token or the HttpOnly access cookie.
+    Auth remains responsible for JWT signature, expiry and session revocation.
     """
-
     def authenticate(self, request):
         authorization = request.headers.get("Authorization", "")
         used_cookie = False
@@ -66,7 +67,8 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
             if not access_token:
                 return None
 
-        if self.enforce_cookie_csrf and used_cookie and request.method not in ("GET", "HEAD", "OPTIONS", "TRACE"):
+        is_write_request = request.method not in SAFE_HTTP_METHODS
+        if self.enforce_cookie_csrf and used_cookie and is_write_request:
             enforce_csrf(request._request)
 
         auth_request = Request(
@@ -78,10 +80,7 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
         )
 
         try:
-            with urlopen(
-                auth_request,
-                timeout=settings.AUTH_REQUEST_TIMEOUT,
-            ) as response:
+            with urlopen(auth_request, timeout=settings.AUTH_REQUEST_TIMEOUT) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except HTTPError as exc:
             if exc.code in (401, 403):
@@ -96,7 +95,7 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
                 "Authentication service returned an invalid response."
             )
 
-        if not payload.get("success"):
+        if not isinstance(payload, dict) or not payload.get("success"):
             raise AuthenticationFailed("Invalid or expired access token.")
 
         user_data = payload.get("data")
@@ -118,12 +117,9 @@ class ShivanyaAuthAuthentication(BaseAuthentication):
 
 
 class ShivanyaAuthNoCSRFAuthentication(ShivanyaAuthAuthentication):
-    """
-    Cookie authentication for the public FAQ helpful endpoint.
+    """Skip cookie CSRF only for the public FAQ helpful vote endpoint.
 
-    This endpoint records a low-risk public vote and uses its own
-    visitor/account uniqueness constraints. All other API writes continue
-    to enforce the normal cookie-authenticated CSRF check.
+    That endpoint uses visitor/account uniqueness constraints. Other API
+    writes retain normal cookie-authenticated CSRF validation.
     """
-
     enforce_cookie_csrf = False

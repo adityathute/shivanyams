@@ -1,3 +1,8 @@
+# File Location: shivanyams/backend/apps/portal/data/categories.py
+# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Cleanup Status: Clean
+# Cleanup Info: Batch 15 audit. Verified canonical English/Marathi/Hindi category labels, stable slugs, ordering and legacy-slug migration mapping; data remains centralized.
+
 """Canonical multilingual category definitions for the public portal.
 
 Keep category names, descriptions, order and canonical slugs here.

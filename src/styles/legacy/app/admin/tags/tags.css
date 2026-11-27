@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/app/admin/tags/tags.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 78 individual selectors counted; UI Components: 0 (stylesheet-only file). Tag table, filters and edit-modal selectors; app-local admin styles. Added keyboard focus visibility; shared dashboard cascade and complete component mapping remain pending.
+ */
 .admin-tags-panel {
   overflow: hidden;
 }
@@ -386,4 +391,10 @@
 
 [data-theme="dark"] .admin-tags-panel-heading .admin-tags-total {
   border-color: #344154;
+}
+
+
+.admin-tags-page :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--primary, #8b5cf6);
+  outline-offset: 2px;
 }

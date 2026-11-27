@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/animation/LandscapeTerrain/LandscapeTerrain.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 9 individual selectors counted; UI Components: 0 (stylesheet-only file). Decorative mountain/hill scene; no interactive UI component. Added reduced-motion handling for the hill color transition; visual comparison against its animation component remains pending.
+ */
 /* ------------------------------
    Mountains
 ------------------------------ */
@@ -73,5 +78,12 @@
   .hill-front {
     display: block !important;
     z-index: 4;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .hill {
+    transition: none;
   }
 }

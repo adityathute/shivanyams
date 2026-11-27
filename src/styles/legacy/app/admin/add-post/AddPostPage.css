@@ -1,4 +1,8 @@
-
+/* File Location: shivanyams/src/styles/legacy/app/admin/add-post/AddPostPage.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 39 individual selectors counted; UI Components: 0 (stylesheet-only file). Add-post form and dynamic-heading styles; app-local selectors, SDK input/control usage and responsive layout pairing still need full verification.
+ */
 .add-post-page {
 min-height: calc(100vh - 65px);
   display: flex;
@@ -240,4 +244,22 @@ min-height: calc(100vh - 65px);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+}
+
+
+.add-post-page :is(a, button, input, textarea, select):focus-visible,
+.add-post-dynamic-heading button:focus-visible {
+  outline: 3px solid #075be8;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add-post-page *,
+  .add-post-page *::before,
+  .add-post-page *::after {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
 }

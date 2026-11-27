@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/app/globals.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 7 individual selectors counted; UI Components: 0 (stylesheet-only file). Global reset used across CSS modes. Added site-wide keyboard focus visibility and reduced-motion safeguards; interaction regression testing across all routes remains pending.
+ */
 /*
  * Existing global reset.
  *
@@ -28,4 +33,21 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--shivanya-color-primary, #075be8);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

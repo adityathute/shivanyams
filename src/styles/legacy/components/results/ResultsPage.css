@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/results/ResultsPage.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 48 individual selectors counted; UI Components: 0 (stylesheet-only file). Results hero and search selectors; app-local page styling. Added keyboard focus visibility and reduced-motion safeguards; dark-theme contrast and component mapping remain pending.
+ */
 .results-page {
   margin-top: 14px;
   color: var(--text, #172b45);
@@ -310,5 +315,21 @@
 @media (max-width: 760px) {
   .results-hero-visual {
     display: none;
+  }
+}
+
+.results-page :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #8d3de0;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .results-page *,
+  .results-page *::before,
+  .results-page *::after {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
   }
 }

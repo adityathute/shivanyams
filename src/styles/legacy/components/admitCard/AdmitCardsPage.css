@@ -1,4 +1,8 @@
-
+/* File Location: shivanyams/src/styles/legacy/components/admitCard/AdmitCardsPage.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 33 individual selectors counted; UI Components: 0 (stylesheet-only file). Admit-card hero and search selectors; app-local page styling. Added keyboard focus visibility and reduced-motion safeguards; dark-theme contrast and component mapping remain pending.
+ */
 .admit-page {
   margin-top: 14px;
   color: var(--text, #172b45);
@@ -222,4 +226,21 @@
 
 [data-theme="dark"] .admit-search input {
   color: #e6edf3;
+}
+
+
+.admit-page :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #0891b2;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admit-page *,
+  .admit-page *::before,
+  .admit-page *::after {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
 }

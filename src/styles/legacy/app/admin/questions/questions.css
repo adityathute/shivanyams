@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/app/admin/questions/questions.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: CSS selectors: 65 individual selectors counted; UI Components: 0 (stylesheet-only file). Question moderation/list/modal selectors; app-local admin styles. Added visible keyboard focus for page and modal controls; dark/light contrast and complete component mapping remain pending.
+ */
 .admin-questions-panel { margin-top: 22px; overflow: hidden; }
 .admin-questions-header-actions { align-items: center; gap: 10px; }
 .admin-questions-header-actions .admin-secondary-button {
@@ -73,4 +78,11 @@
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+
+.admin-questions-page :is(a, button, input, select, textarea):focus-visible,
+.admin-questions-modal :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--primary, #3973c8);
+  outline-offset: 2px;
 }

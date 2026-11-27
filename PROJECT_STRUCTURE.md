@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `a9a2586443fb7dd72d888be25fa3bac619849583`  
+**Source snapshot:** `c87fdb81ea4490176ceb73484c14a3cbb7aaeac0`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,11 +16,11 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 164 |
-| Not Reviewed | 72 |
+| Cleanup Pending | 167 |
+| Not Reviewed | 69 |
 | Organized | 75 |
 | Legacy | 236 |
-| Audited before this structure update | 239 |
+| Audited before this structure update | 242 |
 
 **Classification note:** `Organized` means the file has been inspected, corrected and brought in line with current project standards; folder location alone does not determine this label. `Legacy` means older, incomplete, unmodernized or unmigrated code. `Not Reviewed` files remain provisionally `Legacy` until their audit. Cleanup Status and Structure Status are related but separately tracked.
 
@@ -294,7 +294,7 @@
 | 263 | `shivanyams/src/styles/legacy/components/jobs/JobsPage.css` | Cleanup Pending | Legacy |
 | 264 | `shivanyams/src/styles/legacy/components/portal/RelatedJobsPage.css` | Cleanup Pending | Legacy |
 | 265 | `shivanyams/src/styles/legacy/components/portal/category/CategoryGrid.css` | Cleanup Pending | Legacy |
-| 266 | `shivanyams/src/styles/legacy/components/portal/category/CategoryPage.css` | Not Reviewed | Legacy |
+| 266 | `shivanyams/src/styles/legacy/components/portal/category/CategoryPage.css` | Cleanup Pending | Legacy |
 | 267 | `shivanyams/src/styles/legacy/components/portal/home/HeroSection.css` | Cleanup Pending | Legacy |
 | 268 | `shivanyams/src/styles/legacy/components/portal/home/UpdatesSection.css` | Cleanup Pending | Legacy |
 | 269 | `shivanyams/src/styles/legacy/components/portal/language/LanguageDropdown.css` | Cleanup Pending | Legacy |
@@ -322,7 +322,7 @@
 | 291 | `shivanyams/src/styles/legacy/components/videos/VideosCharacters.css` | Cleanup Pending | Legacy |
 | 292 | `shivanyams/src/styles/legacy/components/videos/VideosPage.css` | Cleanup Pending | Legacy |
 | 293 | `shivanyams/src/styles/legacy/components/videos/VideosSection.css` | Cleanup Pending | Legacy |
-| 294 | `shivanyams/src/styles/organized/AI-GUIDE.md` | Not Reviewed | Legacy |
+| 294 | `shivanyams/src/styles/organized/AI-GUIDE.md` | Cleanup Pending | Legacy |
 | 295 | `shivanyams/src/styles/organized/admin/.gitkeep` | Not Reviewed | Legacy |
 | 296 | `shivanyams/src/styles/organized/components/.gitkeep` | Not Reviewed | Legacy |
 | 297 | `shivanyams/src/styles/organized/components/portal/category/CategoryBadge.css` | Cleanup Pending | Legacy |
@@ -336,7 +336,7 @@
 | 305 | `shivanyams/src/styles/organized/foundations/tokens.css` | Cleanup Pending | Legacy |
 | 306 | `shivanyams/src/styles/organized/foundations/typography.css` | Cleanup Pending | Legacy |
 | 307 | `shivanyams/src/styles/organized/globals/.gitkeep` | Not Reviewed | Legacy |
-| 308 | `shivanyams/src/styles/organized/index.css` | Not Reviewed | Legacy |
+| 308 | `shivanyams/src/styles/organized/index.css` | Cleanup Pending | Legacy |
 | 309 | `shivanyams/src/styles/organized/pages/.gitkeep` | Not Reviewed | Legacy |
 | 310 | `shivanyams/src/styles/organized/portal/.gitkeep` | Not Reviewed | Legacy |
 | 311 | `shivanyams/tsconfig.json` | Not Reviewed | Legacy |

@@ -89,7 +89,7 @@ Local SDK package versions in `package.json`: `shivanya-core 1.1.0`, `shivanya-a
 
 ## Pending priorities
 
-1. Finish reviewing the remaining 15 Not Reviewed files; do not begin implementation-phase batch estimates before review completion.
+1. Finish reviewing the remaining 9 Not Reviewed files; do not begin implementation-phase batch estimates before review completion.
 2. Verify the complete Django migration chain against fresh and representative existing databases, including irreversible data operations and rollback expectations.
 3. Run `npm ci` against the committed lockfile and verify dependency installation in the supported environment.
 4. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for pending Portal/admin/public stylesheets.

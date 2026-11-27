@@ -7,7 +7,7 @@
 
 **Repository:** `adityathute/shivanyams`  
 **Branch:** `shiv-v2`  
-**Source snapshot:** `c87fdb81ea4490176ceb73484c14a3cbb7aaeac0`  
+**Source snapshot:** `a78aa996a5a997aa2663d847c655c326ac461701`  
 **Inventory rule:** Every tracked file in the source snapshot plus this inventory file itself is listed below. New or moved files must be added/updated in the next report refresh.
 
 ## Summary
@@ -16,8 +16,8 @@
 |---|---:|
 | Total tracked files after this inventory update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 167 |
-| Not Reviewed | 69 |
+| Cleanup Pending | 168 |
+| Not Reviewed | 68 |
 | Organized | 75 |
 | Legacy | 236 |
 | Audited before this structure update | 242 |
@@ -339,7 +339,7 @@
 | 308 | `shivanyams/src/styles/organized/index.css` | Cleanup Pending | Legacy |
 | 309 | `shivanyams/src/styles/organized/pages/.gitkeep` | Not Reviewed | Legacy |
 | 310 | `shivanyams/src/styles/organized/portal/.gitkeep` | Not Reviewed | Legacy |
-| 311 | `shivanyams/tsconfig.json` | Not Reviewed | Legacy |
+| 311 | `shivanyams/tsconfig.json` | Cleanup Pending | Legacy |
 
 ## Status definitions
 

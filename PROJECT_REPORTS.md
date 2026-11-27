@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `c87fdb81ea4490176ceb73484c14a3cbb7aaeac0` |
+| Last source snapshot audited | `a78aa996a5a997aa2663d847c655c326ac461701` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 31, unfinished cleanup scope is 236 files (167 Cleanup Pending + 69 Not Reviewed), giving an estimated 24 remaining batches and 55 batches overall, including the 31 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 32, unfinished cleanup scope is 236 files (168 Cleanup Pending + 68 Not Reviewed), giving an estimated 24 remaining batches and 56 batches overall, including the 32 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 167 |
-| Not Reviewed | 69 |
-| Reviewed files after Batch 31 | 242 |
+| Cleanup Pending | 168 |
+| Not Reviewed | 68 |
+| Reviewed files after Batch 32 | 243 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 242 |
-| Review completion | 77.8% |
+| Files reviewed to date | 243 |
+| Review completion | 78.1% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 167 |
-| Files not yet reviewed | 69 |
+| Reviewed files still pending cleanup | 168 |
+| Files not yet reviewed | 68 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 31 |
+| Completed batches | 32 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 55 |
+| Estimated total batches | 56 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -67,13 +67,13 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 | Commit | Message | Changes |
 |---|---|---|
+| a78aa996a5a997aa2663d847c655c326ac461701 | `chore(config): enforce consistent TypeScript import casing batch 32` | Audited the root TypeScript configuration and enabled `forceConsistentCasingInFileNames` to catch import path casing mismatches across development and case-sensitive deployment environments. |
 | c87fdb81ea4490176ceb73484c14a3cbb7aaeac0 | `chore(styles): document organized CSS migration boundaries batch 31` | Audited the category legacy import-only entry point and organized stylesheet entry point; clarified migration boundaries, foundation import prerequisites and legacy compatibility handling in the AI CSS guide. |
 | a9a2586443fb7dd72d888be25fa3bac619849583 | `chore(styles): improve tools and videos accessibility batch 30` | Audited five Tools and Videos stylesheets against paired component imports/class usage; added keyboard-visible search/card focus, dark-theme focus contrast and reduced-motion handling where applicable. |
-| c705c3a59fd4fef2fd31ac72a119534db6a8fc02 | `chore(styles): audit public pages and portal shell batch 29` | Audited ten jobs, portal shell, schemes and static-page stylesheets; added keyboard-visible focus indicators and reduced-motion handling where applicable. |
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 69 Not Reviewed files.
+1. Continue detailed cleanup audits for the remaining 68 Not Reviewed files.
 2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
@@ -86,7 +86,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 11. Audit the implementation components delegated by the clean route wrappers, including their UI, SDK reuse and CSS mapping.
 12. Verify the private `shivanya-auth` reference version when repository access permits.
 
-**Batch 31 validation:** Git tree and structure inventory reconcile at 311 files. Three CSS organization files were reviewed. The legacy category import-only stylesheet is explicitly documented as a compatibility dependency; the organized stylesheet entry point and AI guide now state the requirements for safe foundation imports and legacy migration. These files remain Cleanup Pending / Legacy pending full mode-scope, consumer and browser verification. Tests, lint and build were not run.
+**Batch 32 validation:** Git tree and structure inventory reconcile at 311 files. The root TypeScript configuration was reviewed against the Next.js 16 setup and package scripts. Enabled `forceConsistentCasingInFileNames` to surface import casing errors across case-sensitive environments. The file remains Cleanup Pending / Legacy until typecheck and production build verification. Tests, lint and build were not run.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

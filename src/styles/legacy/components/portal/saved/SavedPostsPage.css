@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/saved/SavedPostsPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 28 audit; selector-to-component mapping and full theme/runtime verification remain pending. */
+
 @import "../home/UpdatesSection.css";
 
 .saved-page {
@@ -563,5 +568,24 @@
   .related-content-pagination-controls {
     width: 100%;
     justify-content: space-between;
+  }
+}
+
+
+/* Keyboard focus for category filters, saved links and remove actions. */
+.saved-category-tabs button:focus-visible,
+.saved-post-link:focus-visible,
+.saved-remove-button:focus-visible,
+.saved-page a:focus-visible {
+  outline: 2px solid var(--blue, #2563eb);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saved-page *,
+  .saved-page *::before,
+  .saved-page *::after {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/home/HeroSection.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 28 audit; selector-to-component mapping and full theme/runtime verification remain pending. */
+
 
 /* =========================================
    LATEST UPDATES TICKER
@@ -810,4 +815,13 @@
 /* Disable outside night */
 .hero:not(.scene-night) .shooting-star {
   display: none;
+}
+
+
+/* Keyboard focus for the interactive scene controls. */
+.scene-tester button:focus-visible,
+.scene-tester select:focus-visible,
+.scene-tester input:focus-visible {
+  outline: 2px solid var(--shivanya-color-primary, #2563eb);
+  outline-offset: 3px;
 }

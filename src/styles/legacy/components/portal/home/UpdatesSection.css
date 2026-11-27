@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/home/UpdatesSection.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 28 audit; selector-to-component mapping and full theme/runtime verification remain pending. */
+
 .content-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.95fr) minmax(270px, 0.85fr);
@@ -547,3 +552,14 @@
   color: #a9b7c8;
 }
 
+
+
+/* Preserve a visible keyboard indicator on filters and update links. */
+.filter-row button:focus-visible,
+.section-heading > a:focus-visible,
+.section-heading > button:focus-visible,
+.important-link:focus-visible,
+.subscribe-button:focus-visible {
+  outline: 2px solid var(--blue, #2563eb);
+  outline-offset: 3px;
+}

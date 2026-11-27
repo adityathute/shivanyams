@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/jobs/JobsPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 28 audit; selector-to-component mapping and full theme/runtime verification remain pending. */
+
 .jobs-page {
   margin-top: 14px;
   color: var(--text, #172b45);
@@ -218,3 +223,16 @@
   color: #e6edf3;
 }
 
+
+
+/* Keep keyboard focus visible on the search field and submit action. */
+.jobs-search:focus-within {
+  border-color: #2563eb;
+  outline: 2px solid color-mix(in srgb, #2563eb 24%, transparent);
+  outline-offset: 2px;
+}
+
+.jobs-search button:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 3px;
+}

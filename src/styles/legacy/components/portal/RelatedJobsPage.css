@@ -1,3 +1,8 @@
+/* File Location: shivanyams/src/styles/legacy/components/portal/RelatedJobsPage.css */
+/* Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2); shivanya-auth v1.0.0 (branch auth-v2) */
+/* Cleanup Status: Cleanup Pending */
+/* Cleanup Info: Batch 28 audit; selector-to-component mapping and full theme/runtime verification remain pending. */
+
 .related-jobs-page {
   padding: 28px 16px 48px;
 }
@@ -185,5 +190,23 @@
     white-space: nowrap;
     padding-top: 2px;
     font-size: 11px;
+  }
+}
+
+
+/* Make linked job cards and the return link reachable by keyboard. */
+.related-job-card:focus-visible,
+.related-jobs-back:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .related-job-card {
+    transition: none;
+  }
+
+  .related-job-card:hover {
+    transform: none;
   }
 }

@@ -33,6 +33,15 @@ The following rules are for AI agents. The Master may edit them, and AI agents m
 - Treat `shivanya-sdk` and `shivanya-auth` as read-only reference repositories if provided.
 - Do not switch branches or modify other repositories unless explicitly authorized by the Master.
 
+### FEATURES ONLY
+
+- Look for small, genuinely useful feature improvements related to the task. Suggest them clearly; implement them when they fit the request, existing product direction, and available scope. Do not silently expand the task or add unrelated features.
+- Build features in the organized feature/component structure. Prefer concise, readable code and existing shared components, hooks, utilities, and styles; avoid unnecessary files, abstractions, dependencies, and duplicate logic.
+- Clean and organize both TSX/TS and CSS files as part of relevant frontend work. Inspect each file's role and dependencies first; move code to the correct organized location and remove legacy code only after confirming it is unused or safely replaced.
+- Keep CSS class names feature-scoped and distinctive. Do not define the same class selector repeatedly across files or create duplicate styles; reuse a class definition when appropriate. Do not force an artificial one-class-per-file structure.
+- When a touched file still contains required legacy behavior, add at most one short status comment at the end of that file identifying that legacy behavior is still active and cleanup remains pending. Use the correct comment syntax for the file. Do not add status comments to files with no remaining legacy code, and remove or update the comment once the legacy code is fully cleaned.
+- Before structural cleanup, inspect and plan the organized destination so existing behavior is preserved. After the change, summarize the final organized files and clearly identify any legacy code that remains; never claim cleanup is complete when it is not.
+
 ### Workflow for every task
 
 1. Understand the request and inspect the existing implementation, related components, styles, utilities, routes, and data flow before making changes.

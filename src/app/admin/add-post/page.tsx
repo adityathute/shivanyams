@@ -1,3 +1,7 @@
+// File: src/app/admin/add-post/page.tsx
+// Cleanup Status: Clean
+// Cleanup Info: Admin guard and route rendering reviewed; no safe simplification needed.
+
 "use client";
 
 import { useEffect } from "react";

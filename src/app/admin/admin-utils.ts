@@ -1,3 +1,7 @@
+// File: src/app/admin/admin-utils.ts
+// Cleanup Status: Clean
+// Cleanup Info: Utility functions reviewed; removed redundant blank lines and retained shared authenticated fetch export.
+
 export function slugify(value: string) {
   return value
     .normalize("NFKD")
@@ -8,7 +12,6 @@ export function slugify(value: string) {
 }
 
 export { authenticatedFetch as adminFetch } from "../../lib/authenticated-fetch";
-
 
 const compactNumberFormat = new Intl.NumberFormat("en", {
   notation: "compact",

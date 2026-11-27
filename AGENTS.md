@@ -326,3 +326,10 @@ The following rules are for AI agents. The Master may edit them, and AI agents m
 - After committing, provide the exact command the Master needs to pull the changes, normally git pull origin shiv-v2.
 - State which files were changed and summarize the result briefly.
 - Do not start the next task until the Master gives the next instruction.
+
+
+### Rule 58 — Automated Testing Coverage
+
+- प्रत्येक नवीन किंवा बदललेल्या functionality साठी संबंधित Unit Tests, Integration Tests किंवा उपलब्ध Automated Tests तपासणे.
+- संबंधित tests अस्तित्वात नसल्यास आवश्यक tests नोंदवणे आणि शक्य असल्यास ते जोडणे.
+- Tests चालवले नसल्यास किंवा environment मुळे चालवता न आल्यास स्पष्ट नोंद करणे; tests न चालवता functionality verified असल्याचा दावा करू नये.

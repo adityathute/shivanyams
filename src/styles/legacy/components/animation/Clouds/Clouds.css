@@ -1,3 +1,10 @@
+/*
+ * File Location: shivanyams/src/styles/legacy/components/animation/Clouds/Clouds.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Paired component: shivanyams/src/components/animation/Clouds/Clouds.tsx. CSS audit: 15 selector/rule blocks; custom feature stylesheet, no SDK stylesheet match. Legacy migration and visual regression checks remain pending.
+ */
+
 .cloud {
   position: absolute;
   width: 120px;
@@ -80,5 +87,12 @@
 @media (max-width: 760px) {
   .cloud {
     display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    animation: none;
+    transition: none;
   }
 }

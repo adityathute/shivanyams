@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/animation/GovernmentBuilding/GovernmentBuilding.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: UI audit: custom inline SVG illustration without interactive controls; no matching SDK component. Paired CSS has feature selectors and responsive/scene variants. Paired CSS offset corrected; legacy stylesheet migration remains pending.
+
 import "./../../../styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css";
 
 export function GovernmentBuilding() {

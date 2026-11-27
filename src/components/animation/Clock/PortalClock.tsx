@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/animation/Clock/PortalClock.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: UI audit: custom live clock using React state/effect and PortalLanguageContext; no suitable SDK clock component. Paired CSS has responsive desktop/mobile date selectors. Added semantic time element; browser interval/locale verification remains pending.
+
 "use client";
 
 import "./../../../styles/legacy/components/animation/Clock/PortalClock.css";
@@ -59,7 +64,7 @@ export function PortalClock() {
 
   return (
     <div className="portal-clock">
-      <div className="portal-clock-time">{time}</div>
+      <time className="portal-clock-time" dateTime={now.toISOString()} aria-label={time}>{time}</time>
       <div className="portal-clock-date portal-clock-date-desktop">{fullDate}</div>
       <div className="portal-clock-date portal-clock-date-mobile">{shortDate}</div>
     </div>

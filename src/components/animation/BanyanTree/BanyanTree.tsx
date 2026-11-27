@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/components/animation/BanyanTree/BanyanTree.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: UI audit: one custom labelled SVG illustration; no suitable SDK illustration component. Paired legacy CSS includes canopy/root/lantern/chick animations and reduced-motion handling. SVG and stylesheet migration remain pending.
+
 "use client";
 
 import "./../../../styles/legacy/components/animation/BanyanTree/BanyanTree.css";

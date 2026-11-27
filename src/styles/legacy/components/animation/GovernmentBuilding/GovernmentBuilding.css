@@ -1,10 +1,17 @@
+/*
+ * File Location: shivanyams/src/styles/legacy/components/animation/GovernmentBuilding/GovernmentBuilding.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Paired component: shivanyams/src/components/animation/GovernmentBuilding/GovernmentBuilding.tsx. CSS audit: 12 selector/rule blocks; custom feature stylesheet, no SDK stylesheet match. Legacy migration and visual regression checks remain pending.
+ */
+
 /* Government building */
 .building-realistic {
   position: absolute;
   width: 320px;
   height: 205px;
   right: 4%;
-  bottom: -24;
+  bottom: -24px;
   z-index: 5;
   overflow: visible;
   transform: none;

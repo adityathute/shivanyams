@@ -1,3 +1,10 @@
+/*
+ * File Location: shivanyams/src/styles/legacy/components/animation/HillFlowers/HillFlowers.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Paired component: shivanyams/src/components/animation/HillFlowers/HillFlowers.tsx. CSS audit: 12 selector/rule blocks; custom feature stylesheet, no SDK stylesheet match. Legacy migration and visual regression checks remain pending.
+ */
+
 .hill-flowers {
   position: absolute;
   top: -12px;
@@ -112,5 +119,12 @@
 
   .flower-2 {
     left: 35%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hill-flower,
+  .hill-flower::before {
+    transition: none;
   }
 }

@@ -430,6 +430,81 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
   const { links, getLinkTitle } = useImportantLinks();
+  const jobInfoGridRef = useRef<HTMLDivElement | null>(null);
+
+  // Count populated fields and characters, then measure their rendered text.
+  // The measured content width determines how many columns comfortably fit.
+  useEffect(() => {
+    const grid = jobInfoGridRef.current;
+    if (!grid) return;
+
+    const updateColumns = () => {
+      const items = Array.from(
+        grid.querySelectorAll<HTMLElement>(".portal-job-info-item"),
+      );
+      const populatedItems = items.filter((item) => {
+        const label = item.querySelector<HTMLElement>(".portal-job-info-label")?.textContent?.trim() ?? "";
+        const value = item.querySelector<HTMLElement>(".portal-job-info-value")?.textContent?.trim() ?? "";
+        return Boolean(label || value);
+      });
+
+      const fieldCount = populatedItems.length;
+      const totalCharacters = populatedItems.reduce((total, item) => {
+        const label = item.querySelector(".portal-job-info-label")?.textContent?.trim() ?? "";
+        const value = item.querySelector(".portal-job-info-value")?.textContent?.trim() ?? "";
+        return total + label.length + value.length;
+      }, 0);
+
+      grid.dataset.fieldCount = String(fieldCount);
+      grid.dataset.totalCharacters = String(totalCharacters);
+
+      if (!fieldCount) {
+        grid.style.removeProperty("--job-info-columns");
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      let widestContent = 0;
+
+      populatedItems.forEach((item) => {
+        const label = item.querySelector<HTMLElement>(".portal-job-info-label");
+        const value = item.querySelector<HTMLElement>(".portal-job-info-value");
+        const labelStyle = label ? window.getComputedStyle(label) : null;
+        const valueStyle = value ? window.getComputedStyle(value) : null;
+
+        if (context && label && labelStyle) {
+          context.font = labelStyle.font;
+          widestContent = Math.max(widestContent, context.measureText(label.textContent ?? "").width);
+        }
+        if (context && value && valueStyle) {
+          context.font = valueStyle.font;
+          widestContent = Math.max(widestContent, context.measureText(value.textContent ?? "").width);
+        }
+      });
+
+      const averageCharacters = totalCharacters / fieldCount;
+      const estimatedCharacterWidth = averageCharacters * 6.2;
+      const minimumCellWidth = Math.min(
+        360,
+        Math.max(180, widestContent + 30, estimatedCharacterWidth + 30),
+      );
+      const availableWidth = grid.clientWidth;
+      const gap = 1;
+      const fittingColumns = Math.max(
+        1,
+        Math.floor((availableWidth + gap) / (minimumCellWidth + gap)),
+      );
+      const columns = Math.min(fieldCount, fittingColumns);
+
+      grid.style.setProperty("--job-info-columns", String(columns));
+    };
+
+    updateColumns();
+    const observer = new ResizeObserver(updateColumns);
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, [post?.postId, language]);
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);
@@ -928,7 +1003,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
 
                   {post.jobDetails ? (
                     <section className="portal-job-details">
-                      <div className="portal-job-info-grid">
+                      <div className="portal-job-info-grid" ref={jobInfoGridRef}>
                         {primarySummaryRows.length > 0 ? (
                           <div
                             className="portal-job-info-primary-grid"

@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/app/ledger/setup/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: UI: opening-funds, account-balance, loan, rent and asset forms; native form controls with inline CSSProperties. SDK candidates Input, Select, Card, Button not integrated. Browser-local storage/backend persistence pending; fixed stale saved indicator when editing balances/assets.
+
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
@@ -42,7 +47,7 @@ export default function LedgerOpeningSetupPage() {
   const set = (key: keyof Setup, value: string) => { setData(current => ({ ...current, [key]: value })); setSaved(false); };
   const funds = totalFunds(data);
   const balanceSum = Object.values(data.balances).reduce((sum, value) => sum + Number(value || 0), 0);
-  const addAsset = () => setData(current => ({ ...current, assets: [...current.assets, { id: crypto.randomUUID(), name: "", purchaseCost: "", currentValue: "", note: "" }] }));
+  const addAsset = () => { setData(current => ({ ...current, assets: [...current.assets, { id: crypto.randomUUID(), name: "", purchaseCost: "", currentValue: "", note: "" }] })); setSaved(false); };
   const updateAsset = (id: string, key: keyof Asset, value: string) => { setData(current => ({ ...current, assets: current.assets.map(asset => asset.id === id ? { ...asset, [key]: value } : asset) })); setSaved(false); };
   const save = () => {
     if ((funds > 0 || balanceSum > 0) && Math.abs(balanceSum - funds) > 0.005) { setError(`Account balance allocation must total ${money(funds)}. Currently allocated: ${money(balanceSum)}.`); return; }
@@ -66,7 +71,7 @@ export default function LedgerOpeningSetupPage() {
     </section>
     <section style={cardStyle}>
       <h2 style={{ margin: "0 0 5px", fontSize: 17 }}>Where the money is now</h2><p style={{ margin: "0 0 12px", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Enter actual balances. Enter the actual money currently held in each account. Personal accounts can include business money.</p>
-      <div style={{ display: "grid", gap: 10 }}>{accounts.map(([id, name]) => <label key={id} style={labelStyle}>{name}<input style={inputStyle} type="number" min="0" placeholder="0" value={data.balances[id] || ""} onChange={e => setData(current => ({ ...current, balances: { ...current.balances, [id]: e.target.value } }))} /></label>)}</div>
+      <div style={{ display: "grid", gap: 10 }}>{accounts.map(([id, name]) => <label key={id} style={labelStyle}>{name}<input style={inputStyle} type="number" min="0" placeholder="0" value={data.balances[id] || ""} onChange={e => { setData(current => ({ ...current, balances: { ...current.balances, [id]: e.target.value } })); setSaved(false); }} /></label>)}</div>
       <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontSize: 13 }}><span>Allocated total</span><strong>{money(balanceSum)} / {money(funds)}</strong></div>
     </section>
     <section style={cardStyle}>
@@ -97,7 +102,7 @@ export default function LedgerOpeningSetupPage() {
         <label style={labelStyle}>Asset name<input style={inputStyle} value={asset.name} placeholder="e.g. Laser printer" onChange={e => updateAsset(asset.id, "name", e.target.value)} /></label>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}><label style={labelStyle}>Original purchase cost<input style={inputStyle} type="number" value={asset.purchaseCost} onChange={e => updateAsset(asset.id, "purchaseCost", e.target.value)} /></label><label style={labelStyle}>Current estimated value<input style={inputStyle} type="number" value={asset.currentValue} onChange={e => updateAsset(asset.id, "currentValue", e.target.value)} /></label></div>
         <label style={labelStyle}>Note<input style={inputStyle} value={asset.note} onChange={e => updateAsset(asset.id, "note", e.target.value)} placeholder="Year, condition, counter" /></label>
-        <button type="button" className={styles.clearFiltersButton} onClick={() => setData(current => ({ ...current, assets: current.assets.filter(item => item.id !== asset.id) }))}>Remove asset</button>
+        <button type="button" className={styles.clearFiltersButton} onClick={() => { setData(current => ({ ...current, assets: current.assets.filter(item => item.id !== asset.id) })); setSaved(false); }}>Remove asset</button>
       </div>)}
       {!data.assets.length && <p style={{ color: "var(--shivanya-color-text-secondary, #7b8491)", fontSize: 12 }}>No equipment added yet.</p>}
     </section>

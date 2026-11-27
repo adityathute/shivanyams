@@ -9,8 +9,8 @@
 | Repository URL | https://github.com/adityathute/shivanyams |
 | Active branch | `shiv-v2` |
 | Report scope | Tracked files on `shiv-v2` |
-| Last audited branch head before this report update | `279c322626964be667c322c0a9924ba30e971c23` |
-| Current update | Full root paths and reference repository metadata added to the original 20 audited files; Rule 51 updated; Rules 54–55 added |
+| Last audited branch head before this report update | `3e91aaee364a584be97dc0de6dae260b3dcab7cd` |
+| Current update | Cleanup Batch 7 audited five Ledger files, added Rule 51 metadata, fixed stale opening-setup saved state, and refreshed UI/CSS audit details |
 
 ## 2. Reference repositories and versions
 
@@ -29,13 +29,13 @@ Last verified tracked-file count: **308**.
 | Status | Files | Meaning |
 |---|---:|---|
 | Clean | 20 | Reviewed and currently marked Clean |
-| Cleanup Pending | 10 | Reviewed, but follow-up cleanup/type/SDK/config work remains |
-| Not Reviewed | 278 | Not yet inspected |
+| Cleanup Pending | 15 | Reviewed, but follow-up cleanup/type/SDK/config work remains |
+| Not Reviewed | 273 | Not yet inspected |
 | **Total tracked files** | **308** | Clean + Cleanup Pending + Not Reviewed |
 
-- Files reviewed so far: **30**
-- Files still not inspected: **278**
-- Known cleanup work remaining: **288 files** (10 Cleanup Pending + 278 Not Reviewed)
+- Files reviewed so far: **35**
+- Files still not inspected: **273**
+- Known cleanup work remaining: **288 files** (15 Cleanup Pending + 273 Not Reviewed)
 - Progress must be recalculated from the live Git tree and per-file status comments after every batch. Do not treat a pending file as clean.
 
 ## 4. First 20 files — full root paths and status
@@ -78,19 +78,35 @@ Last verified tracked-file count: **308**.
 | 29 | `shivanyams/src/app/jobs/related/[filterType]/[slug]/page.tsx` | Clean |
 | 30 | `shivanyams/src/app/layout.tsx` | Cleanup Pending |
 
-## 6. Pending work and next actions
+## 7. Pending work and next actions
 
 1. Review and decide the required Next.js configuration before changing the placeholder in `next.config.ts`.
 2. Complete API payload typing and category mapping review in the admin preview route.
 3. Review SDK component reuse and legacy stylesheet migration for the Add Content page; its current status is Cleanup Pending.
-4. Continue inspecting the remaining 278 files in small batches and update this report after each batch.
+4. Continue inspecting the remaining 273 files in small batches and update this report after each batch.
 5. When the private `shivanya-auth` repository can be inspected, record its actual branch, version, and commit. Until then, retain the explicit “version not verified” status.
 6. For CSS/SCSS audits, report exact selector counts only after inspecting the actual stylesheet. Keep stylesheet path and component-to-selector mapping in the relevant source-file Cleanup Info.
 
-## 7. Reporting rules
+## 8. Reporting rules
 
 - The source of truth for the tracked-file total is the current Git tree on `shiv-v2`.
 - The source of truth for file status is the actual per-file Cleanup Status plus the audit register.
 - Reconcile totals after any status change; counts must add up to the total tracked files.
 - Record the date/commit for each progress update when the report is next refreshed.
 - Never claim a build, test, or browser check unless it was actually run.
+
+## 6. Cleanup Batch 7 — Ledger module audit
+
+| # | Repository-root path | Status | Audit summary |
+|---:|---|---|---|
+| 31 | `shivanyams/src/app/ledger/accounts/page.tsx` | Cleanup Pending | Account cards and add-account form reviewed; 25 distinct shared CSS class references; native controls remain; browser-local persistence and SDK reuse review pending |
+| 32 | `shivanyams/src/app/ledger/ledger.module.css` | Cleanup Pending | 222 selector rule blocks, 167 unique selector strings and 9 media-query blocks; repeated selectors include responsive overrides and need consolidation review |
+| 33 | `shivanyams/src/app/ledger/page.tsx` | Cleanup Pending | Dashboard, statistics, transaction list and entry modal reviewed; browser-local persistence and SDK reuse review pending |
+| 34 | `shivanyams/src/app/ledger/setup/page.tsx` | Cleanup Pending | Opening funds, account balances, loan, rent and asset forms reviewed; stale saved indicator now resets when balances/assets are edited |
+| 35 | `shivanyams/src/app/ledger/transactions/page.tsx` | Cleanup Pending | Transaction totals, filters and entry list reviewed; browser-local persistence and SDK reuse review pending |
+
+**SDK audit:** `shivanya-sdk` v1.0.0 (`Master`, commit `ce45f9f875056b0578da2438b9bfaaf3fb6622b9`) contains candidate UI primitives including Button, Input, Select, Modal and Card. The Ledger pages currently use native controls and shared CSS; migration is not assumed safe without checking prop/API compatibility and styling behavior. SDK remains read-only.
+
+**CSS mapping:** All four Ledger TSX pages import `src/app/ledger/ledger.module.css`. The stylesheet contains 222 rule blocks and 167 unique selector strings, including responsive overrides. No selector consolidation was attempted in this batch because repeated selectors may encode breakpoint-specific behavior.
+
+**Remaining Ledger work:** Evaluate safe SDK component reuse; review repeated responsive CSS; harden localStorage parsing/writes; design backend persistence before claiming durable multi-device financial records. Ledger data remains browser-local preview data.

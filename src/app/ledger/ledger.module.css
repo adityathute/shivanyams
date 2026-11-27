@@ -1,3 +1,9 @@
+/* File Location: shivanyams/src/app/ledger/ledger.module.css
+ * Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+ * Cleanup Status: Cleanup Pending
+ * Cleanup Info: Shared ledger stylesheet; 222 selector rule blocks across base and responsive sections, 167 unique selector strings, 9 media-query blocks; repeated selectors include responsive overrides and need consolidation review. Styles map to the five ledger routes; SDK visual primitives not integrated.
+ */
+
 .page {
   width: 100%;
   min-height: 100%;

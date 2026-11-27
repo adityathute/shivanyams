@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/app/ledger/accounts/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: UI: account list/cards, summary, add-account dialog and native form controls; SDK candidates Button, Input, Select, Modal, Card not integrated. Uses 25 unique ledger.module.css class references. Data remains browser-local; storage validation/persistence and shared SDK migration pending.
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";

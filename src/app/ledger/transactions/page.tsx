@@ -1,3 +1,8 @@
+// File Location: shivanyams/src/app/ledger/transactions/page.tsx
+// Reference Repositories: shivanya-sdk v1.0.0 (Master); shivanya-auth (private, version not verified)
+// Cleanup Status: Cleanup Pending
+// Cleanup Info: UI: transaction totals, date/counter/type filters and entry list; native buttons/inputs/selects. SDK candidates Button, Input, Select, Card not integrated. Uses shared ledger.module.css; browser-local data and backend persistence pending.
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";

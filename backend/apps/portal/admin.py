@@ -1,5 +1,5 @@
 # File Location: shivanyams/backend/apps/portal/admin.py
-# References: shivanya-sdk v1.0.0 (Master, ce45f9f875056b0578da2438b9bfaaf3fb6622b9; read-only); shivanya-auth private (version/commit not verified).
+# Reference Repositories: shivanya-sdk v1.0.0 (branch sdk-v2, commit d6d510a30686efea6a19842d6f671d4949bcc646; read-only); shivanya-auth v1.0.0 (branch auth-v2, commit d234510f2ca93e574bde1dadd623779241e96dbc; read-only).
 # Cleanup Status: Cleanup Pending
 # Cleanup Info: Batch 14 audit. Reviewed model registrations, list/search/filter configuration, inline relationships and readonly protections. The large admin module still needs a dedicated model-by-model permission and maintainability audit; no behavior changes made.
 

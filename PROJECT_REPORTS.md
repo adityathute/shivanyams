@@ -18,11 +18,11 @@
 | package.json version | `0.1.0` |
 | Framework | Next.js `16.3.8` |
 | React | `19.2.8` |
-| Last source snapshot audited | `a48c7224adb6f3aef9f13fd91b5b2024c7a2cce0` |
+| Last source snapshot audited | `e752717f26305a1259082e3001305bdd54cf8628` |
 
 **Version clarification:** Product/repository identity is ShivanyaMS V2. The npm package metadata remains `0.1.0`; do not treat the package version as the project major version.
 
-**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 40, unfinished cleanup scope is 236 files (172 Cleanup Pending + 64 Not Reviewed), giving an estimated 24 remaining batches and 64 batches overall, including the 40 completed batches. Recalculate after each batch.
+**Cleanup batch plan:** Batches 1–11 were completed with the previous 5-file target. From Batch 12 onward, the target is 10 files per batch (fewer when complexity requires). After Batch 41, unfinished cleanup scope is 236 files (182 Cleanup Pending + 54 Not Reviewed), giving an estimated 24 remaining batches and 64 batches overall, including the 40 completed batches. Recalculate after each batch.
 
 ## Current repository metrics
 
@@ -32,9 +32,9 @@
 |---|---:|
 | Total tracked files after current update | 311 |
 | Clean | 75 |
-| Cleanup Pending | 172 |
-| Not Reviewed | 64 |
-| Reviewed files after Batch 39 | 247 |
+| Cleanup Pending | 182 |
+| Not Reviewed | 54 |
+| Reviewed files after Batch 41 | 257 |
 | Organized | 75 |
 | Legacy | 236 |
 
@@ -43,15 +43,15 @@
 | Metric | Count |
 |---|---:|
 | Total files in cleanup inventory | 311 |
-| Files reviewed to date | 247 |
-| Review completion | 79.4% |
+| Files reviewed to date | 257 |
+| Review completion | 82.6% |
 | Files fully clean / organized | 75 |
-| Reviewed files still pending cleanup | 172 |
-| Files not yet reviewed | 64 |
+| Reviewed files still pending cleanup | 182 |
+| Files not yet reviewed | 54 |
 | Total remaining cleanup scope | 236 |
-| Completed batches | 40 |
+| Completed batches | 41 |
 | Estimated remaining batches (10-file target) | 24 |
-| Estimated total batches | 64 |
+| Estimated total batches | 65 |
 
 All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Counts must be recalculated from the live Git tree after each update. Generated-file exceptions: `next-env.d.ts` and Django migration history files under `backend/apps/portal/migrations/` are not to receive manual metadata/formatting edits; the first two Portal migrations remain Cleanup Pending pending migration-chain compatibility review.
 
@@ -73,7 +73,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 ## Current pending priorities
 
-1. Continue detailed cleanup audits for the remaining 64 Not Reviewed files.
+1. Continue detailed cleanup audits for the remaining 54 Not Reviewed files.
 2. Complete CSS-to-component selector mapping, responsive checks and theme compatibility for the 29 audited Portal/admin/public stylesheets and the five Tools/Videos stylesheets from Batch 30; all remain Cleanup Pending / Legacy until verified.
 3. Add runtime tests for authenticated cookie refresh/CSRF replay and verify compact-number output across actual consumers.
 4. Complete editorial review of English, Marathi and Hindi dictionary parity and terminology.
@@ -91,7 +91,7 @@ All per-file paths and statuses are maintained in **PROJECT_STRUCTURE.md**. Coun
 
 **Batch 39:** AdminTags tag rename/delete now streams locked Post records and uses bounded bulk_update batches of 500. Per-record updated_at values are explicitly refreshed because bulk_update bypasses auto_now. No Python test files were present in the repository; endpoint behavior, row locking and timestamp equivalence were not run. The file remains Cleanup Pending / Legacy until verification.
 
-**Batch 40:** Added `ReadOnlyActivityAdmin` for PostReaction, CommentReaction, PostShare, PostVisitor and PostView. It disables admin add/change/delete and marks concrete model fields read-only, without overriding Django's normal view-permission check. Admin permission behavior and regression tests were not executed; `admin.py` remains Cleanup Pending / Legacy.
+**Batch 41:** Audited ten previously Not Reviewed Portal migration files (`0003`–`0013`, including both `0011` branches). Dependencies and schema operations were inspected against the surrounding migration chain and current Portal models. No safe source migration edit was justified without executing the chain against a disposable database; all ten are now reviewed but remain Cleanup Pending / Legacy pending fresh-database and existing-database migration verification. Generated migration history was left unchanged. No migration tests were run.\n\n**Batch 40:** Added `ReadOnlyActivityAdmin` for PostReaction, CommentReaction, PostShare, PostVisitor and PostView. It disables admin add/change/delete and marks concrete model fields read-only, without overriding Django's normal view-permission check. Admin permission behavior and regression tests were not executed; `admin.py` remains Cleanup Pending / Legacy.
 
 **Rulebook updates:** Rule 57 requires relevant rule suggestions to be approved before rulebook changes. Rule 58 requires suitable automated tests for changed functionality and transparent reporting when tests cannot be run.
 

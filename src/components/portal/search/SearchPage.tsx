@@ -9,6 +9,7 @@ import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactCount, getSearchablePostText, matchesPostSearch, normalizeSearchText } from "./search-utils";
+import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../../config/features";
 import "../../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 import "./SearchPage.css";
 
@@ -114,7 +115,7 @@ export function SearchPage() {
   }, [query]);
 
   const matchedItems = useMemo(
-    () => query ? data.items.filter((item) => matchesPostSearch(item, query)) : [],
+    () => query ? data.items.filter((item) => isPortalCategoryEnabled(getPortalCategoryForType(item.type)) && matchesPostSearch(item, query)) : [],
     [data.items, query],
   );
   const showNoResults = Boolean(query) && !data.loading && matchedItems.length === 0;

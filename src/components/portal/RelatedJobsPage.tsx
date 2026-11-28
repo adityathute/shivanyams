@@ -169,7 +169,7 @@ export function RelatedJobsPage() {
   }, [filterType, relatedItems, language, slug]);
 
   return (
-    <div className="tags-directory-page related-saved-page">
+    <div className="saved-page tags-directory-page related-saved-page">
       <header className="portal-page-heading saved-page-heading">
         <span className="saved-eyebrow">{labels.eyebrow}</span>
         <h1>{labels.title}</h1>

@@ -61,7 +61,7 @@ interface CategoryConfig {
 export const categoryConfig: Record<string, CategoryConfig> = {
   jobs: { type: "job", color: "blue", icon: <GovernmentJobIcon />, href: "/jobs" },
   schemes: { type: "scheme", color: "green", icon: <GovernmentSchemeIcon />, href: "/schemes" },
-  exams: { type: "examination", color: "indigo", icon: <ExaminationIcon />, href: "/examination" },
+  exams: { type: "examination", color: "indigo", icon: <ExaminationIcon />, href: "/exams" },
   results: { type: "result", color: "purple", icon: <ResultIcon />, href: "/results" },
   "admit-cards": { type: "admit", color: "cyan", icon: <AdmitCardIcon />, href: "/admit-cards" },
   guides: { type: "guide", color: "orange", icon: <GuideIcon />, href: "/guides" },

@@ -7,7 +7,7 @@
  * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
  * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
- * Cleanup Info: Cleanup Pending. Header reuses SDK AccountModal and UI icons. Desktop and mobile search forms currently prevent submit without executing search; search integration and keyboard/accessibility behavior require follow-up.
+ * Cleanup Info: Header reuses SDK AccountModal and UI icons. Desktop and mobile search forms submit to the shared public search results route while preserving the existing responsive header controls.
  */
 "use client";
 

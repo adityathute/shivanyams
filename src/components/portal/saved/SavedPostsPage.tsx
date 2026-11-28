@@ -145,20 +145,6 @@ function getLocalized(
   );
 }
 
-function formatDate(value: string, language: Language) {
-  if (!value) return "";
-  const locale =
-    language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";
-  const date = new Date(`${value.slice(0, 10)}T12:00:00`);
-  return Number.isNaN(date.getTime())
-    ? ""
-    : date.toLocaleDateString(locale, {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-}
-
 export function SavedPostsPage() {
   const { user, loading: authLoading } = useAuth();
   const { openLogin } = usePortalAuth();

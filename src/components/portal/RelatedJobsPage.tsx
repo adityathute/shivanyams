@@ -169,11 +169,11 @@ export function RelatedJobsPage() {
   }, [filterType, relatedItems, language, slug]);
 
   return (
-    <div className="saved-page tags-directory-page related-saved-page">
+    <div className="saved-page related-saved-page">
       <header className="portal-page-heading saved-page-heading">
         <span className="saved-eyebrow">{labels.eyebrow}</span>
         <h1>{labels.title}</h1>
-        <p>{labels.description}</p>
+        <p>{filterType === "organization" ? (language === "mr" ? `${heading} मधील नोकऱ्या आणि अपडेट्स पहा.` : language === "hi" ? `${heading} की नौकरियाँ और अपडेट देखें।` : `Explore jobs and updates from ${heading}.`) : labels.description}</p>
       </header>
 
       {filterType === "tag" && suggestedTags.length > 0 && (
@@ -194,7 +194,7 @@ export function RelatedJobsPage() {
       )}
 
       <section ref={resultsPanelRef} className="updates-panel panel jobs-updates">
-        <div className="saved-section-heading">
+        <div className="section-heading">
           <h2>{filterType === "tag" ? `# ${heading}` : heading}</h2>
           <span>{visibleItems.length} {labels.count}</span>
         </div>

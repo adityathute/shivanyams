@@ -805,13 +805,21 @@ class PostSerializer(serializers.ModelSerializer):
         return question_rows + static_rows
 
     def get_related_posts(self, obj):
+        request = self.context.get("request")
+        auth_data = getattr(getattr(request, "user", None), "auth_data", {})
+        roles = auth_data.get("roles", []) if isinstance(auth_data, dict) else []
+        if isinstance(roles, str):
+            roles = [roles]
         relations = obj.outgoing_relations.select_related(
             "target_post", "target_post__category"
-        ).filter(
-            target_post__is_active=True,
-            target_post__status=Post.Status.PUBLISHED,
-            target_post__published_at__isnull=False,
-        )
+        ).filter(target_post__is_active=True)
+        # Admin editors must be able to reload links to draft videos too.
+        # Public visitors only see related content after its target is published.
+        if not (isinstance(roles, list) and "admin" in roles):
+            relations = relations.filter(
+                target_post__status=Post.Status.PUBLISHED,
+                target_post__published_at__isnull=False,
+            )
         return [
             {
                 "relation_type": relation.relation_type,

@@ -464,7 +464,7 @@ export function UpdatesSection({
         )}
       </div>
 
-      {paginate && filtered.length > pageSize && (
+      {paginate && (
         <div className="updates-admin-pagination admin-table-footer">
           <span>
             Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {formatCompactCount(filtered.length)}

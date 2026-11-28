@@ -4,9 +4,9 @@ function normalizeWord(value: string): string {
   return value
     .normalize("NFKC")
     .toLocaleLowerCase()
-    .replace(/[\\u200b-\\u200d\\ufeff]/gu, "")
-    .replace(/[^\\w\\u0900-\\u097f]/gu, "")
-    .replace(/(.)\\1+/gu, "$1");
+    .replace(/[\u200b-\u200d\ufeff]/gu, "")
+    .replace(/[^\w\u0900-\u097f]/gu, "")
+    .replace(/(.)\1+/gu, "$1");
 }
 
 const dictionaries = [
@@ -33,9 +33,9 @@ for (const dictionary of dictionaries) {
 export function containsAbusiveLanguage(value: string): boolean {
   const normalizedText = value
     .normalize("NFKC")
-    .replace(/[\\u200b-\\u200d\\ufeff]/gu, "")
+    .replace(/[\u200b-\u200d\ufeff]/gu, "")
     .toLocaleLowerCase();
-  const tokens = normalizedText.match(/[\\w\\u0900-\\u097f]+/gu) ?? [];
+  const tokens = normalizedText.match(/[\w\u0900-\u097f]+/gu) ?? [];
 
   for (let start = 0; start < tokens.length; start += 1) {
     let combined = "";

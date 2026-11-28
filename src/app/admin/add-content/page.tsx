@@ -110,7 +110,7 @@ export default function AddContentPage() {
         <div className="add-post-intro">
           <span>CONTENT MANAGEMENT</span>
           <h1>Add New Content</h1>
-          <p>Create and publish schemes, examinations, results, admit cards, guides and videos.</p>
+          <p>Create and publish Schemes, Exams, Results, Admit Cards, Guides and Videos.</p>
         </div>
         <section className="add-post-card">
           {notice && <div className="add-post-notice">{notice}</div>}

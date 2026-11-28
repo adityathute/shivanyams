@@ -53,6 +53,7 @@ from .models import (
     WebsiteView,
     SavedPost,
     PostOrganizationType,
+    SearchHistory,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
 from .comment_moderation import validate_comment_content
@@ -143,6 +144,128 @@ def public_posts_for_kind(kind):
             ),
         )
     )
+
+
+class SearchSuggestions(APIView):
+    """Return search suggestions derived directly from published database content."""
+
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        query = str(request.query_params.get("q", "")).strip()[:100]
+        if len(query) < 2:
+            return Response({"suggestions": []})
+
+        matching_posts = (
+            Post.objects.filter(
+                status=Post.Status.PUBLISHED,
+                is_active=True,
+                published_at__isnull=False,
+            )
+            .filter(
+                Q(title_en__icontains=query)
+                | Q(title_mr__icontains=query)
+                | Q(title_hi__icontains=query)
+                | Q(summary_en__icontains=query)
+                | Q(summary_mr__icontains=query)
+                | Q(summary_hi__icontains=query)
+                | Q(body_en__icontains=query)
+                | Q(body_mr__icontains=query)
+                | Q(body_hi__icontains=query)
+                | Q(slug__icontains=query)
+                | Q(meta_keywords__icontains=query)
+                | Q(meta_title_en__icontains=query)
+                | Q(meta_title_mr__icontains=query)
+                | Q(meta_title_hi__icontains=query)
+                | Q(meta_description_en__icontains=query)
+                | Q(meta_description_mr__icontains=query)
+                | Q(meta_description_hi__icontains=query)
+                | Q(location__icontains=query)
+                | Q(state__icontains=query)
+                | Q(category__name_en__icontains=query)
+                | Q(category__name_mr__icontains=query)
+                | Q(category__name_hi__icontains=query)
+                | Q(job_details__department__icontains=query)
+                | Q(job_details__designation__icontains=query)
+                | Q(job_details__post_details__icontains=query)
+            )
+            .select_related("category", "job_details")
+            .order_by("-published_at", "-id")
+            .distinct()[:60]
+        )
+
+        normalized = query.casefold()
+        suggestions = []
+        seen = set()
+
+        def add(value):
+            label = str(value or "").strip()
+            key = " ".join(label.casefold().split())
+            if not label or key == normalized or key in seen:
+                return
+            seen.add(key)
+            suggestions.append(label)
+
+        # Titles and tags are the most useful complete search phrases.
+        for post in matching_posts:
+            add(post.title_en)
+            add(post.title_mr)
+            add(post.title_hi)
+            keywords = post.meta_keywords if isinstance(post.meta_keywords, list) else []
+            for keyword in keywords:
+                if isinstance(keyword, str) and normalized in keyword.casefold():
+                    add(keyword)
+            add(post.category.name_en if post.category_id else "")
+            if post.job_details_id:
+                add(post.job_details.department)
+                add(post.job_details.designation)
+
+            if len(suggestions) >= 10:
+                break
+
+        return Response({"suggestions": suggestions[:8]})
+
+
+class SearchHistoryView(APIView):
+    """Read, save and delete the current user's recent search phrases."""
+
+    permission_classes = [IsPortalIdentity]
+
+    def get(self, request):
+        rows = SearchHistory.objects.filter(
+            user_auth_id=str(request.user.id)
+        ).order_by("-updated_at", "-id")[:5]
+        return Response([
+            {"id": row.id, "query": row.query, "updated_at": row.updated_at}
+            for row in rows
+        ])
+
+    def post(self, request):
+        query = str(request.data.get("query", "")).strip()
+        if not query:
+            raise ValidationError({"query": "A search phrase is required."})
+        if len(query) > 200:
+            raise ValidationError({"query": "Search phrases must be 200 characters or fewer."})
+
+        normalized = " ".join(query.casefold().split())
+        row, _ = SearchHistory.objects.update_or_create(
+            user_auth_id=str(request.user.id),
+            normalized_query=normalized,
+            defaults={"query": query, "updated_at": timezone.now()},
+        )
+        return Response({"id": row.id, "query": row.query}, status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        history_id = request.query_params.get("id")
+        if not history_id:
+            raise ValidationError({"id": "A search history ID is required."})
+        deleted, _ = SearchHistory.objects.filter(
+            id=history_id,
+            user_auth_id=str(request.user.id),
+        ).delete()
+        if not deleted:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class Categories(generics.ListAPIView):
     serializer_class = CategorySerializer

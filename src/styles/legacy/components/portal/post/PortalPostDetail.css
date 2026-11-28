@@ -1949,3 +1949,35 @@
     display: inline;
   }
 }
+
+
+/* Show post number, post name, and vacancy count in per-post qualifications. */
+.portal-education-post-heading .portal-education-post-number-label {
+  color: var(--text-secondary, #778397);
+  font-weight: 600;
+}
+
+.portal-education-post-heading .portal-education-post-number {
+  color: var(--text-secondary, #778397);
+  font-variant-numeric: tabular-nums;
+}
+
+.portal-education-post-heading .portal-education-post-name {
+  color: var(--text-primary, #172033);
+}
+
+.portal-education-post-heading .portal-education-post-vacancies {
+  color: var(--text-secondary, #778397);
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+:root[data-theme="dark"] .portal-education-post-heading .portal-education-post-name {
+  color: var(--text-primary, #f8fafc);
+}
+
+:root[data-theme="dark"] .portal-education-post-heading .portal-education-post-number-label,
+:root[data-theme="dark"] .portal-education-post-heading .portal-education-post-number,
+:root[data-theme="dark"] .portal-education-post-heading .portal-education-post-vacancies {
+  color: var(--text-secondary, #cbd5e1);
+}

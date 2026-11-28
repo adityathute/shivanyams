@@ -20,7 +20,6 @@ const copy = {
     emptyTitle: "No exact matches found",
     emptyDescription: "Try a related search below, use fewer words, or check the spelling.",
     related: "Related searches",
-    popular: "Explore popular topics",
     all: "Search all posts",
   },
   mr: {
@@ -32,7 +31,6 @@ const copy = {
     emptyTitle: "अचूक परिणाम सापडले नाहीत",
     emptyDescription: "खालील संबंधित शोध वापरून पहा, कमी शब्द टाका किंवा स्पेलिंग तपासा.",
     related: "संबंधित शोध",
-    popular: "लोकप्रिय विषय पहा",
     all: "सर्व पोस्ट शोधा",
   },
   hi: {
@@ -44,7 +42,6 @@ const copy = {
     emptyTitle: "कोई सटीक परिणाम नहीं मिला",
     emptyDescription: "नीचे दिए गए संबंधित खोज आज़माएँ, कम शब्द लिखें या वर्तनी जाँचें।",
     related: "संबंधित खोजें",
-    popular: "लोकप्रिय विषय देखें",
     all: "सभी पोस्ट खोजें",
   },
 };
@@ -155,7 +152,6 @@ export function SearchPage() {
               </button>
             ))}
           </div>
-          <h3>{text.popular}</h3>
         </section>
       )}
 

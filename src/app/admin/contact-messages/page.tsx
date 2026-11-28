@@ -16,6 +16,7 @@ type ContactMessage = {
   submission_type: "contact" | "feedback";
   name: string;
   email: string;
+  user_full_name: string;
   category: string;
   rating: string;
   subject: string;
@@ -170,12 +171,14 @@ export default function AdminContactMessagesPage() {
           ) : (
             <div className="admin-table-wrap admin-contact-messages-table-wrap">
               <table className="admin-post-table admin-contact-messages-table">
-                <thead><tr><th>Type</th><th>Sender</th><th>Subject</th><th>Category</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
+                <thead><tr><th>Type</th><th>Sender</th><th>User</th><th>Content</th><th>Subject</th><th>Category</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
                 <tbody>
                   {filteredRows.map((row) => (
                     <tr key={row.id} className={row.status === "new" ? "is-new" : ""}>
                       <td><span className={`admin-contact-type admin-contact-type--${row.submission_type}`}>{row.submission_type}</span></td>
                       <td><strong>{row.name || "Visitor"}</strong><small>{row.email || "No email provided"}</small></td>
+                      <td>{row.user_full_name || "-"}</td>
+                      <td className="admin-contact-content" title={row.message}>{row.message || (row.submission_type === "feedback" ? "Your feedback" : "-")}</td>
                       <td className="admin-contact-subject" title={row.subject}>{row.subject}</td>
                       <td>{row.category}</td>
                       <td><span className={`admin-contact-status admin-contact-status--${row.status}`}>{row.status}</span></td>

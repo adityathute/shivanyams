@@ -1977,11 +1977,23 @@
   overflow-wrap: anywhere;
 }
 
+.portal-education-post-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 0;
+}
+
+.portal-education-post-heading > strong {
+  min-width: 0;
+}
+
 .portal-education-post-heading .portal-education-post-vacancies {
   display: inline-flex;
+  flex: 0 0 auto;
   width: fit-content;
-  margin-top: 0;
-  margin-left: 0;
+  margin: 0;
   padding: 3px 9px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 999px;
@@ -1989,6 +2001,10 @@
   font-size: 0.82em;
   font-weight: 650;
   line-height: 1.4;
+}
+
+.portal-education-post-heading .portal-education-post-department {
+  flex: 0 0 100%;
 }
 
 :root[data-theme="dark"] .portal-education-post-heading .portal-education-post-name {

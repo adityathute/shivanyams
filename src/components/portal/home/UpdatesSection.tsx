@@ -36,7 +36,7 @@ import { createPostSlug } from "../post/PortalPostDetail";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PortalEmptyState } from "../category/PortalEmptyState";
 import { getJobApplicationDeadline, getJobDeadlineStatus, formatJobApplicationDeadline } from "../utils/job-deadline";
-import { matchesPostSearch } from "../search/search-utils";
+import { formatCompactCount, matchesPostSearch } from "../search/search-utils";
 
 type Props = {
   type?: ItemType | "all";
@@ -318,7 +318,7 @@ export function UpdatesSection({
 
         {paginate ? (
           <span className="updates-total-count">
-            {filtered.length} {language === "mr" ? "पोस्ट" : language === "hi" ? "पोस्ट" : "posts"}
+            {formatCompactCount(filtered.length)} {language === "mr" ? "पोस्ट" : language === "hi" ? "पोस्ट" : "posts"}
           </span>
         ) : null}
 

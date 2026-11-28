@@ -1951,7 +1951,7 @@
 }
 
 
-/* Show post number, post name, and vacancy count in per-post qualifications. */
+/* Keep each per-post qualification heading on clear, separate lines. */
 .portal-education-post-heading .portal-education-post-number-label {
   color: var(--text-secondary, #778397);
   font-weight: 600;
@@ -1966,10 +1966,26 @@
   color: var(--text-primary, #172033);
 }
 
-.portal-education-post-heading .portal-education-post-vacancies {
+.portal-education-post-heading .portal-education-post-department {
+  margin-top: 3px;
   color: var(--text-secondary, #778397);
-  font-size: 0.9em;
+  font-size: 0.92em;
   font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.portal-education-post-heading .portal-education-post-vacancies {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 5px;
+  padding: 3px 9px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 999px;
+  color: var(--text-secondary, #778397);
+  font-size: 0.82em;
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 :root[data-theme="dark"] .portal-education-post-heading .portal-education-post-name {

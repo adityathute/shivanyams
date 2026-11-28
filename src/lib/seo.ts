@@ -96,6 +96,30 @@ function metadataForDisabledCategory(path: string): Metadata {
   };
 }
 
+export function getStaticPageMetadata(
+  title: string,
+  description: string,
+  path: string,
+): Metadata {
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      url: path,
+      title,
+      description,
+      siteName: "ShivanyaMS",
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+    },
+  };
+}
+
 export function getCategoryPageMetadata(kind: ContentKind): Metadata {
   const category = categoryDetails[kind];
   if (!isPortalCategoryEnabled(featureKey[kind])) {

@@ -50,7 +50,7 @@ import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadline
 export type CategorySlug =
   | "jobs"
   | "schemes"
-  | "examination"
+  | "exams"
   | "results"
   | "admit-cards"
   | "guides"
@@ -931,7 +931,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     });
   }, [post?.postId, post?.viewsCount, language, previewItem]);
 
-  const categoryApiSlug = category === "examination" ? "exams" : category;
+  const categoryApiSlug = category;
   const categoryRecord = categories.find(
     (entry) => entry.slug === categoryApiSlug,
   );
@@ -940,7 +940,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     : "";
 
   const sidebarCategorySections = useMemo(() => {
-    const orderKey = category === "videos" ? "jobs" : category === "examination" ? "exams" : category;
+    const orderKey = category === "videos" ? "jobs" : category;
     const categoryOrder = POST_DETAIL_SIDEBAR_CATEGORY_ORDER[orderKey];
     return categoryOrder.map((entry) => {
       const type = categoryItemTypes[entry];

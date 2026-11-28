@@ -1,3 +1,11 @@
+import { getStaticPageMetadata } from "../../lib/seo";
+
+export const metadata = getStaticPageMetadata(
+  "Privacy Policy",
+  "Read how ShivanyaMS handles visitor information, account data and privacy.",
+  "/privacy",
+);
+
 /* File Location: shivanyams/src/app/privacy/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

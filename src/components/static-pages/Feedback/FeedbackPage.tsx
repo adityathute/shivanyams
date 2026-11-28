@@ -110,10 +110,22 @@ export function FeedbackPage() {
 
   const messageHasAbusiveLanguage = containsAbusiveLanguage(form.message);
   const subjectHasAbusiveLanguage = containsAbusiveLanguage(form.subject);
+  const isFormValid = Boolean(
+    form.name.trim() &&
+    /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(form.email.trim()) &&
+    form.category.trim() &&
+    form.rating.trim() &&
+    form.subject.trim() &&
+    form.subject.trim().length <= 240 &&
+    form.message.trim() &&
+    form.message.trim().length <= 2000 &&
+    !subjectHasAbusiveLanguage &&
+    !messageHasAbusiveLanguage
+  );
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (subjectHasAbusiveLanguage || messageHasAbusiveLanguage) {
+    if (!isFormValid || subjectHasAbusiveLanguage || messageHasAbusiveLanguage) {
       setSubmitError("Please remove abusive or insulting language from the subject and message before submitting.");
       return;
     }
@@ -388,7 +400,7 @@ export function FeedbackPage() {
 
                 <Button
                   type="submit"
-                  disabled={submitting || subjectHasAbusiveLanguage || messageHasAbusiveLanguage}
+                  disabled={submitting || !isFormValid}
                   variant="primary"
                   size="sm"
                   endIcon={<span>→</span>}

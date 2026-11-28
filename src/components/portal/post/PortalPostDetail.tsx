@@ -449,7 +449,160 @@ function getOrganizationTypeLabel(value: string | undefined, language: string) {
   return labels?.[language] || labels?.en || "";
 }
 
-export function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
+export const REQUIRED_DOCUMENT_CATEGORY_LABELS: Record<string, { en: string; mr: string; hi: string }> = {
+  "identity_proof": {
+    "en": "Identity Proof",
+    "mr": "ओळखपत्र",
+    "hi": "पहचान प्रमाण"
+  },
+  "address_proof": {
+    "en": "Address Proof",
+    "mr": "पत्त्याचा पुरावा",
+    "hi": "पते का प्रमाण"
+  },
+  "dob_proof": {
+    "en": "Date of Birth Proof",
+    "mr": "जन्मतारखेचा पुरावा",
+    "hi": "जन्मतिथि का प्रमाण"
+  },
+  "educational_certificate": {
+    "en": "Educational Certificate",
+    "mr": "शैक्षणिक प्रमाणपत्र",
+    "hi": "शैक्षणिक प्रमाणपत्र"
+  },
+  "school_leaving": {
+    "en": "School Leaving Certificate",
+    "mr": "शाळा सोडल्याचा दाखला",
+    "hi": "स्कूल छोड़ने का प्रमाणपत्र"
+  },
+  "marksheet": {
+    "en": "Marksheet",
+    "mr": "गुणपत्रिका",
+    "hi": "अंकसूची"
+  },
+  "degree_certificate": {
+    "en": "Degree Certificate",
+    "mr": "पदवी प्रमाणपत्र",
+    "hi": "डिग्री प्रमाणपत्र"
+  },
+  "caste_certificate": {
+    "en": "Caste Certificate",
+    "mr": "जात प्रमाणपत्र",
+    "hi": "जाति प्रमाणपत्र"
+  },
+  "caste_validity": {
+    "en": "Caste Validity Certificate",
+    "mr": "जात वैधता प्रमाणपत्र",
+    "hi": "जाति वैधता प्रमाणपत्र"
+  },
+  "non_creamy_layer": {
+    "en": "Non-Creamy Layer Certificate",
+    "mr": "नॉन-क्रीमी लेयर प्रमाणपत्र",
+    "hi": "नॉन-क्रीमी लेयर प्रमाणपत्र"
+  },
+  "ews_certificate": {
+    "en": "EWS Certificate",
+    "mr": "ईडब्ल्यूएस प्रमाणपत्र",
+    "hi": "ईडब्ल्यूएस प्रमाणपत्र"
+  },
+  "income_certificate": {
+    "en": "Income Certificate",
+    "mr": "उत्पन्न प्रमाणपत्र",
+    "hi": "आय प्रमाणपत्र"
+  },
+  "domicile_certificate": {
+    "en": "Domicile Certificate",
+    "mr": "अधिवास प्रमाणपत्र",
+    "hi": "अधिवास प्रमाणपत्र"
+  },
+  "nationality_certificate": {
+    "en": "Nationality Certificate",
+    "mr": "राष्ट्रीयत्व प्रमाणपत्र",
+    "hi": "राष्ट्रीयता प्रमाणपत्र"
+  },
+  "residence_certificate": {
+    "en": "Residence Certificate",
+    "mr": "रहिवासी प्रमाणपत्र",
+    "hi": "निवास प्रमाणपत्र"
+  },
+  "experience_certificate": {
+    "en": "Experience Certificate",
+    "mr": "अनुभव प्रमाणपत्र",
+    "hi": "अनुभव प्रमाणपत्र"
+  },
+  "employment_registration": {
+    "en": "Employment Registration",
+    "mr": "रोजगार नोंदणी",
+    "hi": "रोजगार पंजीकरण"
+  },
+  "disability_certificate": {
+    "en": "Disability Certificate",
+    "mr": "दिव्यांगत्व प्रमाणपत्र",
+    "hi": "दिव्यांगता प्रमाणपत्र"
+  },
+  "medical_fitness": {
+    "en": "Medical Fitness Certificate",
+    "mr": "वैद्यकीय तंदुरुस्ती प्रमाणपत्र",
+    "hi": "चिकित्सा फिटनेस प्रमाणपत्र"
+  },
+  "ex_serviceman": {
+    "en": "Ex-Serviceman Certificate",
+    "mr": "माजी सैनिक प्रमाणपत्र",
+    "hi": "भूतपूर्व सैनिक प्रमाणपत्र"
+  },
+  "sports_certificate": {
+    "en": "Sports Certificate",
+    "mr": "क्रीडा प्रमाणपत्र",
+    "hi": "खेल प्रमाणपत्र"
+  },
+  "orphan_certificate": {
+    "en": "Orphan Certificate",
+    "mr": "अनाथ प्रमाणपत्र",
+    "hi": "अनाथ प्रमाणपत्र"
+  },
+  "aadhaar_document": {
+    "en": "Aadhaar Related Document",
+    "mr": "आधार संबंधित कागदपत्र",
+    "hi": "आधार संबंधित दस्तावेज"
+  },
+  "bank_proof": {
+    "en": "Bank Account Proof",
+    "mr": "बँक खाते पुरावा",
+    "hi": "बैंक खाते का प्रमाण"
+  },
+  "passport": {
+    "en": "Passport",
+    "mr": "पासपोर्ट",
+    "hi": "पासपोर्ट"
+  },
+  "photograph": {
+    "en": "Photograph",
+    "mr": "छायाचित्र",
+    "hi": "फोटो"
+  },
+  "signature": {
+    "en": "Signature",
+    "mr": "स्वाक्षरी",
+    "hi": "हस्ताक्षर"
+  },
+  "affidavit": {
+    "en": "Affidavit / Declaration",
+    "mr": "प्रतिज्ञापत्र / घोषणापत्र",
+    "hi": "शपथपत्र / घोषणा-पत्र"
+  },
+  "noc": {
+    "en": "NOC (No Objection Certificate)",
+    "mr": "ना हरकत प्रमाणपत्र",
+    "hi": "अनापत्ति प्रमाणपत्र"
+  },
+  "other": {
+    "en": "Other Supporting Document",
+    "mr": "इतर सहाय्यक कागदपत्र",
+    "hi": "अन्य सहायक दस्तावेज"
+  }
+};
+
+function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
   const params = useParams<{ slug: string }>();
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();
@@ -1580,7 +1733,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                     <small className="portal-requirement-description">{capitalizeFirst(description)}</small>
                                   ) : null}
                                 </td>
-                                <td>{capitalizeFirst(row.category || "") || "—"}</td>
+                                <td>{row.category ? (REQUIRED_DOCUMENT_CATEGORY_LABELS[row.category]?.[language] || capitalizeFirst(row.category)) : "—"}</td>
                                 <td>
                                   {details.length ? (
                                     <div className="portal-requirement-details-list">

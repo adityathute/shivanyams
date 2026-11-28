@@ -169,16 +169,16 @@ export function RelatedJobsPage() {
   }, [filterType, relatedItems, language, slug]);
 
   return (
-    <div className="saved-page related-saved-page">
-      <header className="saved-page-heading">
+    <div className="tags-directory-page related-saved-page">
+      <header className="portal-page-heading saved-page-heading">
         <span className="saved-eyebrow">{labels.eyebrow}</span>
         <h1>{labels.title}</h1>
         <p>{labels.description}</p>
       </header>
 
       {filterType === "tag" && suggestedTags.length > 0 && (
-        <section className="saved-panel related-tag-suggestions">
-          <div className="saved-section-heading">
+        <section className="updates-panel panel related-tag-suggestions">
+          <div className="section-heading">
             <h2>{labels.more}</h2>
             <Link className="related-tag-view-all" href="/tags">{labels.allTags}</Link>
           </div>
@@ -193,7 +193,7 @@ export function RelatedJobsPage() {
         </section>
       )}
 
-      <section ref={resultsPanelRef} className="saved-panel">
+      <section ref={resultsPanelRef} className="updates-panel panel jobs-updates">
         <div className="saved-section-heading">
           <h2>{filterType === "tag" ? `# ${heading}` : heading}</h2>
           <span>{visibleItems.length} {labels.count}</span>
@@ -229,7 +229,7 @@ export function RelatedJobsPage() {
             {labels.loading}
           </div>
         ) : visibleItems.length ? (
-          <div className="saved-post-list">
+          <div className="update-list">
             {paginatedItems.map((item) => {
               const title = localized({ en: item.title_en || item.title, mr: item.title_mr, hi: item.title_hi }, language);
               const summary = localized({ en: item.summary_en || item.description, mr: item.summary_mr, hi: item.summary_hi }, language);
@@ -240,16 +240,14 @@ export function RelatedJobsPage() {
               };
               const href = `${hrefByType[item.type] || "/"}/${item.slug || slugify(item.title)}`;
               return (
-                <article className="saved-post-row related-job-row" key={`${item.type}-${item.id}`}>
-                  <Link className="saved-post-link" href={href}>
-                    <span className={`update-badge ${item.type}`}>{category}</span>
-                    <span className="saved-post-title">
-                      {title}
-                      {summary ? <small>{summary}</small> : null}
-                    </span>
-                    <time>{formatDate(item.date, language)}</time>
-                  </Link>
-                </article>
+                <Link className="update-row related-job-row" href={href} key={`${item.type}-${item.id}`}>
+                  <span className={`update-badge ${item.type}`}>{category}</span>
+                  <span className="update-title">
+                    {title}
+                    {summary ? <small>{summary}</small> : null}
+                  </span>
+                  <time>{formatDate(item.date, language)}</time>
+                </Link>
               );
             })}
           </div>

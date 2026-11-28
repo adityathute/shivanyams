@@ -161,6 +161,7 @@ export type Item = {
   comments_enabled?: boolean;
   description: string;
   link: string;
+  embedUrl?: string;
   type: ItemType;
   slug?: string;
   body?: string;

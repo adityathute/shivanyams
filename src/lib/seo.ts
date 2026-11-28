@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { isPortalCategoryEnabled } from "../features/category-access";
+import { mapPost } from "./portal-content";
+import type { ApiPost, Item, ItemType } from "../components/portal/data/portal-data";
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com"
@@ -14,26 +16,6 @@ type ContentKind =
   | "guides"
   | "videos"
   | "tools";
-
-type PublicPost = {
-  slug?: string;
-  title_en?: string;
-  title_mr?: string;
-  title_hi?: string;
-  summary_en?: string;
-  summary_mr?: string;
-  summary_hi?: string;
-  meta_title_en?: string;
-  meta_title_mr?: string;
-  meta_title_hi?: string;
-  meta_description_en?: string;
-  meta_description_mr?: string;
-  meta_description_hi?: string;
-  meta_keywords?: unknown;
-  featured_image_url?: string;
-  published_at?: string;
-  updated_at?: string;
-};
 
 const categoryDetails: Record<ContentKind, { title: string; description: string; path: string }> = {
   jobs: {
@@ -157,7 +139,7 @@ function getKeywords(value: unknown): string[] | undefined {
   return keywords.length ? keywords : undefined;
 }
 
-async function fetchPublicPost(kind: ContentKind, slug: string): Promise<PublicPost | null> {
+async function fetchPublicPost(kind: ContentKind, slug: string): Promise<ApiPost | null> {
   const apiBase = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
   if (!apiBase) return null;
 
@@ -165,10 +147,74 @@ async function fetchPublicPost(kind: ContentKind, slug: string): Promise<PublicP
     const url = `${apiBase.replace(/\/+$/, "")}/content/${kind}/${encodeURIComponent(slug)}/`;
     const response = await fetch(url, { next: { revalidate: 300 } });
     if (!response.ok) return null;
-    return (await response.json()) as PublicPost;
+    return (await response.json()) as ApiPost;
   } catch {
     return null;
   }
+}
+
+const itemTypes: Record<ContentKind, ItemType> = {
+  jobs: "job",
+  schemes: "scheme",
+  exams: "examination",
+  "admit-cards": "admit",
+  results: "result",
+  guides: "guide",
+  videos: "video",
+  tools: "tool",
+};
+
+export async function getPublicPostItem(
+  kind: ContentKind,
+  slug: string,
+): Promise<Item | null> {
+  const post = await fetchPublicPost(kind, slug);
+  return post ? mapPost(post, itemTypes[kind]) : null;
+}
+
+export async function getPublicCategoryItems(
+  kind: ContentKind,
+): Promise<Item[] | null> {
+  const apiBase = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
+  if (!apiBase) return null;
+
+  const firstUrl = `${apiBase.replace(/\/+$/, "")}/content/${kind}/`;
+  let origin: string;
+  try {
+    origin = new URL(firstUrl).origin;
+  } catch {
+    return null;
+  }
+
+  const posts: ApiPost[] = [];
+  const visited = new Set<string>();
+  let nextUrl: string | null = firstUrl;
+
+  while (nextUrl && visited.size < 1000 && posts.length < 49000) {
+    if (visited.has(nextUrl)) break;
+    visited.add(nextUrl);
+
+    try {
+      const response = await fetch(nextUrl, { next: { revalidate: 300 } });
+      if (!response.ok) return posts.length ? posts.map((post) => mapPost(post, itemTypes[kind])) : null;
+      const payload = await response.json() as ApiPost[] | { results?: ApiPost[]; next?: string | null };
+      if (Array.isArray(payload)) {
+        posts.push(...payload);
+        break;
+      }
+
+      posts.push(...(payload.results || []));
+      if (!payload.next) break;
+
+      const resolved = new URL(payload.next, firstUrl);
+      if (resolved.origin !== origin) break;
+      nextUrl = resolved.toString();
+    } catch {
+      return posts.length ? posts.map((post) => mapPost(post, itemTypes[kind])) : null;
+    }
+  }
+
+  return posts.map((post) => mapPost(post, itemTypes[kind]));
 }
 
 export async function getPostPageMetadata(

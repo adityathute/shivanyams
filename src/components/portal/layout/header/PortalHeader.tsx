@@ -11,7 +11,7 @@
  */
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   AccountModal,
@@ -35,7 +35,7 @@ export function PortalHeader() {
   const searchPanelRef = useRef<HTMLFormElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const query = searchQuery.trim();
     if (!query) {

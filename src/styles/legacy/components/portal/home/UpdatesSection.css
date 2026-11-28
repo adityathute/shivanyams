@@ -458,15 +458,18 @@
   background: #1c2633;
 }
 
-/* Use one consistent job-style hover background for every update category. */
-.update-row:hover,
-.update-row:focus-visible {
-  background: #f7faff;
+/* Final override: all categories use the same job-style row hover background.
+   !important prevents older category-specific stylesheet rules from winning. */
+.updates-panel .update-list > .update-row:hover,
+.updates-panel .update-list > .update-row:focus-visible {
+  background: #f7faff !important;
+  background-image: none !important;
 }
 
-[data-theme="dark"] .update-row:hover,
-[data-theme="dark"] .update-row:focus-visible {
-  background: #1c2633;
+[data-theme="dark"] .updates-panel .update-list > .update-row:hover,
+[data-theme="dark"] .updates-panel .update-list > .update-row:focus-visible {
+  background: #1c2633 !important;
+  background-image: none !important;
 }
 
 [data-theme="dark"] .filter-row button {

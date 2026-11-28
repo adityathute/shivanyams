@@ -335,7 +335,7 @@ type ApiJobPost = {
   fees?: ApiJobPostFee[];
 };
 
-export export type ApiPost = {
+export type ApiPost = {
   id: number | string;
   title_en?: string;
   title_mr?: string;

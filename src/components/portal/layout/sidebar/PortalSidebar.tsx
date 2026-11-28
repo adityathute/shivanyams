@@ -130,5 +130,5 @@ export function getPortalNavigation(
           },
         ]
       : []),
-  ].filter((item) => !item.href || isPortalCategoryEnabled(item.href.split("/")[1] || ""));
+  ].filter((item) => !item.href || isPortalCategoryEnabled(item.href.split("/")[1] || "", isAdmin));
 }

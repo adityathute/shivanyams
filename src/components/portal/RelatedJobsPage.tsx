@@ -216,8 +216,17 @@ export function RelatedJobsPage() {
         )}
 
         {data.loading ? (
-          <div className="saved-empty-state saved-list-empty" role="status">
-            {labels.loading}
+          <div className="related-post-skeleton-list" role="status" aria-label={labels.loading}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <div className="related-post-skeleton-row" key={index} aria-hidden="true">
+                <span className="related-post-skeleton-badge" />
+                <span className="related-post-skeleton-copy">
+                  <span className="related-post-skeleton-title" />
+                  <span className="related-post-skeleton-summary" />
+                </span>
+                <span className="related-post-skeleton-date" />
+              </div>
+            ))}
           </div>
         ) : visibleItems.length ? (
           <div className="update-list">

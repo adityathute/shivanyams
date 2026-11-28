@@ -2167,3 +2167,69 @@
   .portal-post-related-video-content strong { font-size: 14px; }
   .portal-post-related-video-description { font-size: 12px; }
 }
+
+
+/* Embedded player on individual video detail pages. */
+.portal-post-detail-video {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: 18px 0 22px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 14px;
+  background: #080b10;
+}
+.portal-post-detail-video > iframe,
+.portal-post-detail-video > video,
+.portal-post-detail-video-poster {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.portal-post-detail-video-poster {
+  padding: 0;
+  overflow: hidden;
+  background: #080b10;
+  cursor: pointer;
+}
+.portal-post-detail-video-poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.portal-post-detail-video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 66px;
+  height: 48px;
+  place-items: center;
+  border-radius: 13px;
+  background: #e62117;
+  color: #fff;
+  font-size: 23px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 3px 16px rgb(0 0 0 / 28%);
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+.portal-post-detail-video-poster:hover .portal-post-detail-video-play {
+  background: #c91d14;
+  transform: translate(-50%, -50%) scale(1.06);
+}
+@media (max-width: 600px) {
+  .portal-post-detail-video {
+    border-radius: 10px;
+  }
+  .portal-post-detail-video-play {
+    width: 56px;
+    height: 40px;
+    font-size: 20px;
+  }
+}

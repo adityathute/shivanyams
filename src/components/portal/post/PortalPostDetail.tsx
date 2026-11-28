@@ -31,7 +31,7 @@ import {
 } from "../category/CategoryGrid";
 import { useImportantLinks } from "../utils/useImportantLinks";
 import { getBaseText } from "../../../i18n/dictionaries/base";
-import { LinkIcon, MailIcon } from "shivanya-ui";
+import { ArrowRightIcon, LinkIcon, MailIcon } from "shivanya-ui";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-config";
 import {
@@ -1873,6 +1873,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       {videoTags.map((tag, index) => <span key={`${video.id}-${index}`}>{tag.startsWith("#") ? tag : `#${tag}`}</span>)}
                                     </span>
                                   ) : null}
+                                  <span className="portal-post-related-video-more">
+                                    {getLocalizedText(language, "More details", "अधिक माहिती", "अधिक जानकारी")}
+                                    <ArrowRightIcon size={16} aria-hidden="true" />
+                                  </span>
                                 </span>
                               </Link>
                             );

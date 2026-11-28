@@ -49,9 +49,9 @@ export const baseDictionary = {
   },
 
   contactLocation: {
-    en: "Buldana, Maharashtra, India",
-    mr: "बुलडाणा, महाराष्ट्र, भारत",
-    hi: "बुलडाणा, महाराष्ट्र, भारत",
+    en: "India",
+    mr: "भारत",
+    hi: "भारत",
   },
 
   contactButton: {

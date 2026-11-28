@@ -28,6 +28,7 @@ import { HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-co
 import { createPostSlug } from "../post/PortalPostDetail";
 import { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
 import { POST_DETAIL_SIDEBAR_CATEGORY_ORDER } from "../post/post-sidebar-config";
+import { isPortalCategoryEnabled } from "../../../config/features";
 import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 import "./../../../styles/legacy/components/portal/post/PortalPostDetail.css";
 
@@ -37,7 +38,7 @@ export function HomePage() {
   const [active, setActive] = useState<ItemType | "all">("all");
   const [search, setSearch] = useState("");
   const { data } = usePortalData();
-  const tickerItems = useMemo(() => data.items.slice(0, 20), [data.items]);
+  const tickerItems = useMemo(() => data.items.filter((item) => isPortalCategoryEnabled(getCategorySlugForType(item.type))).slice(0, 20), [data.items]);
   const { links, getLinkTitle } = useImportantLinks();
 
   const sidebarCategorySections = useMemo(() => {
@@ -70,7 +71,7 @@ export function HomePage() {
         posts,
         totalPosts: data.items.filter((item) => item.type === type).length,
       };
-    }).filter((section) => section.posts.length > 0);
+    }).filter((section) => section.posts.length > 0 && isPortalCategoryEnabled(section.slug));
   }, [data.items, selectedLanguage]);
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
@@ -289,7 +290,7 @@ export function HomePage() {
           </aside>
         </div>
 
-        <VideosSection />
+        {isPortalCategoryEnabled("videos") ? <VideosSection /> : null}
       </main>
 
       <PortalFooter />

@@ -978,7 +978,7 @@
 .portal-post-wise-table tbody td { font-weight: 550; }
 
 .portal-post-wise-table .portal-post-wise-number {
-  width: 8%;
+  width: 12%;
   white-space: nowrap;
   padding-left: 6px;
   padding-right: 6px;
@@ -1037,8 +1037,12 @@
   background: var(--surface-muted, #202838);
 }
 
+.portal-post-wise-vacancies-short { display: none; }
+
 @media (max-width: 600px) {
   .portal-post-wise-details { gap: 8px; margin-top: 14px; }
+  .portal-post-wise-vacancies-full { display: none; }
+  .portal-post-wise-vacancies-short { display: inline; }
   .portal-post-wise-details > h2 { margin-left: 2px; font-size: 14px; }
   .portal-post-wise-table-wrap { border-radius: 9px; overflow-x: auto; }
   .portal-post-wise-table { font-size: 11.5px; line-height: 1.3; }

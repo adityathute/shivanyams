@@ -43,6 +43,8 @@ from .views import (
     AdminSharesAnalytics,
     TrackWebsiteView,
     AdminWebsiteAnalytics,
+    PublicContactMessage,
+    AdminContactMessages,
 )
 
 router = DefaultRouter()
@@ -70,6 +72,8 @@ urlpatterns = [
     # Categories
     path("categories/", Categories.as_view(), name="categories"),
     path("newsletter/subscribe/", NewsletterSubscribe.as_view(), name="newsletter-subscribe"),
+    path("contact-messages/", PublicContactMessage.as_view(), name="contact-messages"),
+    path("admin/contact-messages/", AdminContactMessages.as_view(), name="admin-contact-messages"),
     path("content/<int:post_id>/reports/", PostReports.as_view(), name="post-reports"),
     # Important links
     path("important-links/", ImportantLinks.as_view(), name="important-links"),

@@ -47,6 +47,7 @@ const categoryTypeBySlug: Record<string, ItemType> = {
   scheme: "scheme",
   schemes: "scheme",
   examination: "examination",
+  exams: "examination",
   exam: "examination",
   result: "result",
   results: "result",

@@ -797,10 +797,10 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
   const contentKinds: { endpoint: string; type: ItemType }[] = [
     { endpoint: "jobs", type: "job" },
     { endpoint: "schemes", type: "scheme" },
-    { endpoint: "examination", type: "examination" },
-    { endpoint: "admit-card", type: "admit" },
+    { endpoint: "exams", type: "examination" },
+    { endpoint: "admit-cards", type: "admit" },
     { endpoint: "results", type: "result" },
-    { endpoint: "articles", type: "guide" },
+    { endpoint: "guides", type: "guide" },
     { endpoint: "videos", type: "video" },
     { endpoint: "tools", type: "tool" },
   ];

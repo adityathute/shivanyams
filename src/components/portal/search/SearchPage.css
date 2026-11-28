@@ -202,16 +202,16 @@
   display: inline;
   padding: 0 2px;
   border-radius: 3px;
-  background: #fff9db;
-  color: #795b16;
-  font-weight: 700;
+  background: #fff2b8;
+  color: inherit !important;
+  font-weight: inherit;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
 [data-theme="dark"] .search-directory-page .search-query-highlight {
-  background: #4a4028;
-  color: #ffe9ad;
+  background: #51452b;
+  color: inherit !important;
 }
 
 

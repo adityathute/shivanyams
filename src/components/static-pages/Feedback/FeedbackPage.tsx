@@ -252,6 +252,7 @@ export function FeedbackPage() {
               <div className="contact-form-row">
                 <Input
                   label={t("nameOptional")}
+                  required
                   fullWidth
                   size="md"
                   autoComplete="name"

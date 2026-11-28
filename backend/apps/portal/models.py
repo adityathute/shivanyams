@@ -1995,6 +1995,8 @@ class ContactMessage(TimestampedModel):
     submission_type = models.CharField(max_length=12, choices=SubmissionType.choices, db_index=True)
     name = models.CharField(max_length=160, blank=True)
     email = models.EmailField(max_length=254, blank=True)
+    user_auth_id = models.CharField(max_length=128, blank=True, db_index=True)
+    user_full_name = models.CharField(max_length=200, blank=True)
     category = models.CharField(max_length=120)
     rating = models.CharField(max_length=40, blank=True)
     subject = models.CharField(max_length=240)

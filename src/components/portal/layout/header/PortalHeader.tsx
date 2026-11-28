@@ -41,6 +41,7 @@ export function PortalHeader() {
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const searchPanelRef = useRef<HTMLFormElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const desktopSearchInputRef = useRef<HTMLInputElement>(null);
 
   const loadSearchHistory = async () => {
     try {
@@ -227,8 +228,8 @@ export function PortalHeader() {
     <>
       <form ref={desktopSearchRef} className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={submitSearch}>
         <SearchIcon size={17} aria-hidden="true" />
-        <input value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" />
-        {searchQuery && <button type="button" className="portal-search-clear" aria-label="Clear search" onClick={() => { setSearchQuery(""); setSearchDropdownOpen(true); }}><CloseIcon size={16} aria-hidden="true" /></button>}
+        <input ref={desktopSearchInputRef} value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" />
+        {searchQuery && <button type="button" className="portal-search-clear" aria-label="Clear search" onClick={() => { setSearchQuery(""); setSearchDropdownOpen(true); desktopSearchInputRef.current?.focus(); desktopSearchInputRef.current?.setSelectionRange(0, 0); }}><CloseIcon size={16} aria-hidden="true" /></button>}
         <button type="submit">Search</button>
         {renderSearchDropdown()}
       </form>

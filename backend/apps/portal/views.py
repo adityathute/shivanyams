@@ -3017,7 +3017,7 @@ class AdminContactMessages(APIView):
                 "user_full_name": (
                     item.user_full_name
                     or user_names.get(str(item.user_auth_id), "")
-                    or (item.name if item.user_auth_id else "")
+                    or item.name
                 ),
                 "category": item.category,
                 "rating": item.rating,

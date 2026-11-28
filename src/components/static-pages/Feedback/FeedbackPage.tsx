@@ -29,6 +29,7 @@ import {
 } from "../../../i18n/dictionaries/FeedbackPageDictionary";
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
+import { API_URL } from "../../portal/category/CategoryGrid";
 
 import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
 import "./../../../styles/legacy/components/static-pages/Feedback/FeedbackPage.css";
@@ -76,6 +77,10 @@ export function FeedbackPage() {
   const t = (key: FeedbackPageDictionaryKey) =>
     getFeedbackPageText(key, language as Language);
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -85,24 +90,30 @@ export function FeedbackPage() {
     message: "",
   });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const emailSubject = `[ShivanyaMS Feedback] ${form.category}: ${form.subject}`;
-
-    const body = [
-      `Name: ${form.name || "Not provided"}`,
-      `Email: ${form.email || "Not provided"}`,
-      `Feedback Type: ${form.category}`,
-      `Rating: ${form.rating}`,
-      "",
-      "Feedback:",
-      form.message,
-    ].join("\n");
-
-    window.location.href = `mailto:hello@shivanyams.com?subject=${encodeURIComponent(
-      emailSubject,
-    )}&body=${encodeURIComponent(body)}`;
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitSuccess("");
+    setSubmitError("");
+    try {
+      const response = await fetch(`${API_URL}/contact-messages/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          submission_type: "feedback",
+          ...form,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || "Unable to submit your feedback. Please try again.");
+      setSubmitSuccess("Thank you! Your feedback has been submitted successfully.");
+      setForm({ name: "", email: "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to submit your feedback. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -228,6 +239,8 @@ export function FeedbackPage() {
             </div>
 
             <form className="contact-form" onSubmit={handleSubmit}>
+              {submitSuccess ? <div className="contact-form-feedback contact-form-feedback--success" role="status">{submitSuccess}</div> : null}
+              {submitError ? <div className="contact-form-feedback contact-form-feedback--error" role="alert">{submitError}</div> : null}
               <div className="contact-form-row">
                 <Input
                   label={t("nameOptional")}
@@ -246,6 +259,7 @@ export function FeedbackPage() {
 
                 <Input
                   label={t("emailOptional")}
+                  required
                   fullWidth
                   size="md"
                   type="email"
@@ -336,11 +350,12 @@ export function FeedbackPage() {
 
                 <Button
                   type="submit"
+                  disabled={submitting}
                   variant="primary"
                   size="sm"
                   endIcon={<span>→</span>}
                 >
-                  {t("sendFeedbackButton")}
+                  {submitting ? "Submitting..." : t("sendFeedbackButton")}
                 </Button>
               </div>
 

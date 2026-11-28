@@ -19,7 +19,7 @@
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/results/ResultsPage.css";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { Language } from "shivanya-i18n";
 import { ResultsCharacters } from "./ResultsCharacters";
 import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
@@ -27,14 +27,12 @@ import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 
-import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function ResultsPage() {
   useRefreshPortalDataOnMount();
-  const [query, setQuery] = useState("");
 
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -42,8 +40,26 @@ export function ResultsPage() {
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
-  const results = useMemo(() => {
-    const term = query.trim().toLowerCase();
+  const results = useMemo(
+    () => data.items.filter((item) => item.type === "result"),
+    [data.items],
+  );
+
+  const popularTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    results.forEach((item) => {
+      (Array.isArray(item.tags) ? item.tags : []).forEach((tag) => {
+        const cleanTag = String(tag || "").trim();
+        if (!cleanTag) return;
+        const normalized = cleanTag.toLocaleLowerCase();
+        counts.set(normalized, (counts.get(normalized) || 0) + 1);
+      });
+    });
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [results]);
 
     return data.items.filter((item) => {
       if (item.type !== "result") return false;
@@ -76,20 +92,13 @@ export function ResultsPage() {
 
               <p>{t("resultsHeroDescription")}</p>
 
-              <form
-                className="results-search"
-                onSubmit={(event) => event.preventDefault()}
-              >
-                <SearchIcon size={18} />
-
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={t("resultsSearchPlaceholder")}
-                />
-
-                <button type="submit">{t("search")}</button>
-              </form>
+              {popularTags.length > 0 ? (
+                <div className="results-popular-tags portal-post-taxonomy" aria-label="Popular result tags">
+                  {popularTags.map((tag) => (
+                    <a className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>{tag}</a>
+                  ))}
+                </div>
+              ) : null}
             </div>
 
             <div className="results-hero-visual" aria-hidden="true">

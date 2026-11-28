@@ -356,15 +356,15 @@ const KINDS: ContentKind[] = [
     detailKey: "scheme_details",
   },
   {
-    slug: "examination",
-    label: "Examination",
-    api: "examination",
+    slug: "exams",
+    label: "Exams",
+    api: "exams",
     detailKey: "examination_details",
   },
   {
     slug: "admit-cards",
     label: "Admit Cards",
-    api: "admit-card",
+    api: "admit-cards",
     detailKey: "admit_card_details",
   },
   {
@@ -374,9 +374,9 @@ const KINDS: ContentKind[] = [
     detailKey: "result_details",
   },
   {
-    slug: "articles-guides",
-    label: "Articles & Guides",
-    api: "articles",
+    slug: "guides",
+    label: "Guides",
+    api: "guides",
     detailKey: "article_guide_details",
   },
   {
@@ -545,7 +545,7 @@ function detailTemplate(api: string): Record<string, unknown> {
       official_website: "",
       helpline_number: "",
     };
-  if (api === "examination")
+  if (api === "exams")
     return {
       exam_type: "recruitment",
       exam_mode: "other",
@@ -560,7 +560,7 @@ function detailTemplate(api: string): Record<string, unknown> {
       instructions: "",
       official_website: "",
     };
-  if (api === "admit-card")
+  if (api === "admit-cards")
     return {
       issuing_authority: "",
       exam_name: "",
@@ -585,7 +585,7 @@ function detailTemplate(api: string): Record<string, unknown> {
       official_website: "",
       instructions: "",
     };
-  if (api === "articles")
+  if (api === "guides")
     return {
       article_type: "article",
       reading_time_minutes: null,
@@ -1795,7 +1795,7 @@ export default function PostEditor({
               ) : (
                 <span className="post-editor-unpublished-version">Draft · v{Math.max(...postVersions.map((item) => item.version_number))}</span>
               )}
-              <details ref={versionHistoryRef} className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api === "articles" ? "guides" : kind.api === "admit-card" ? "admit-cards" : kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
+              <details ref={versionHistoryRef} className="post-editor-version-history"><summary>Version history ({postVersions.length})</summary><ol>{postVersions.map((version) => <li key={version.id}><button type="button" className="post-editor-version-preview" onClick={() => { const previewKind = kind.api; router.push(`/admin/preview/${previewKind}/${encodeURIComponent(currentSlugRef.current)}?version=${version.id}`); }}><b>Version {version.version_number}</b><span>{version.is_published ? "Published" : postVersions.some((item) => item.is_published && item.version_number > version.version_number) ? "Superseded" : "Unpublished changes"}</span><time>{new Date(version.created_at).toLocaleString()}</time></button></li>)}</ol></details>
             </div>}
             <div className="post-editor-save-status" aria-live="polite">
               <span className={`post-editor-save-dot ${autosaveBusy ? "saving" : autosaveState}`} />

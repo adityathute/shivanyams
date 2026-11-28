@@ -381,6 +381,7 @@ const detailLabels = {
   type: { en: "Type", mr: "प्रकार", hi: "प्रकार" },
   format: { en: "Format", mr: "स्वरूप", hi: "प्रारूप" },
   background: { en: "Background", mr: "पार्श्वभूमी", hi: "पृष्ठभूमि" },
+  otherSpecifications: { en: "Other specifications", mr: "इतर तपशील", hi: "अन्य विवरण" },
   faqs: { en: "Frequently Asked Questions (FAQ)", mr: "वारंवार विचारले जाणारे प्रश्न (FAQ)", hi: "अक्सर पूछे जाने वाले प्रश्न (FAQ)" },
   watchVideo: { en: "Watch video", mr: "व्हिडिओ पाहा", hi: "वीडियो देखें" },
   visitWebsite: {
@@ -1489,14 +1490,24 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 row.photo_size ? `${getDetailLabel("size", language)}: ${row.photo_size}` : "",
                                 row.photo_quantity ? `${getDetailLabel("quantity", language)}: ${row.photo_quantity}` : "",
                                 row.photo_background ? `${getDetailLabel("background", language)}: ${row.photo_background}` : "",
-                                row.other_specifications || "",
+                                row.other_specifications ? `${getDetailLabel("otherSpecifications", language)}: ${row.other_specifications}` : "",
                               ].filter(Boolean);
                               return (
                                 <tr key={row.id || `photo-${index}`}>
                                   <td>{getDetailLabel("photograph", language)}</td>
                                   <td>
-                                    {details.map((value) => capitalizeFirst(value)).join(" · ") || "—"}
-                                    {instructions ? <small className="portal-requirement-note">{capitalizeFirst(instructions)}</small> : null}
+                                    {details.length ? (
+                                      <div className="portal-requirement-details-list">
+                                        {details.map((value, detailIndex) => (
+                                          <div key={detailIndex}>{capitalizeFirst(value)}</div>
+                                        ))}
+                                      </div>
+                                    ) : "—"}
+                                    {instructions ? (
+                                      <small className="portal-requirement-note">
+                                        <strong>{getDetailLabel("instructions", language)}:</strong> {capitalizeFirst(instructions)}
+                                      </small>
+                                    ) : null}
                                   </td>
                                 </tr>
                               );

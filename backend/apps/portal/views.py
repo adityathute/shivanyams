@@ -9,7 +9,7 @@
 
 from django.db import transaction
 from django.core import signing
-from django.core.mail import send_mass_mail
+from django.core.mail import send_mass_mail, send_mail
 import hashlib
 import uuid
 from django.shortcuts import get_object_or_404
@@ -54,6 +54,7 @@ from .models import (
     SavedPost,
     PostOrganizationType,
     SearchHistory,
+    ContactMessage,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
 from .comment_moderation import validate_comment_content
@@ -2908,3 +2909,126 @@ class AdminOrganizationTypes(APIView):
             }
             for value, label in choices
         ])
+
+
+class PublicContactMessage(APIView):
+    """Accept public contact and feedback form submissions."""
+
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        data = request.data
+        submission_type = str(data.get("submission_type", "contact")).strip().lower()
+        if submission_type not in (ContactMessage.SubmissionType.CONTACT, ContactMessage.SubmissionType.FEEDBACK):
+            return Response({"detail": "Invalid submission type."}, status=status.HTTP_400_BAD_REQUEST)
+
+        name = str(data.get("name", "")).strip()
+        email = str(data.get("email", "")).strip().lower()
+        category = str(data.get("category", "")).strip()
+        rating = str(data.get("rating", "")).strip()
+        subject = str(data.get("subject", "")).strip()
+        message = str(data.get("message", "")).strip()
+
+        if not category or not subject or not message:
+            return Response({"detail": "Please complete all required fields."}, status=status.HTTP_400_BAD_REQUEST)
+        if len(subject) > 240 or len(name) > 160 or len(category) > 120:
+            return Response({"detail": "One or more fields are too long."}, status=status.HTTP_400_BAD_REQUEST)
+        if submission_type == ContactMessage.SubmissionType.CONTACT and (not name or not email):
+            return Response({"detail": "Name and email are required for contact enquiries."}, status=status.HTTP_400_BAD_REQUEST)
+        if email:
+            from django.core.validators import validate_email
+            from django.core.exceptions import ValidationError as DjangoValidationError
+            try:
+                validate_email(email)
+            except DjangoValidationError:
+                return Response({"detail": "Please enter a valid email address."}, status=status.HTTP_400_BAD_REQUEST)
+
+        item = ContactMessage.objects.create(
+            submission_type=submission_type,
+            name=name,
+            email=email,
+            category=category,
+            rating=rating,
+            subject=subject,
+            message=message,
+        )
+        return Response({"id": item.id, "detail": "Your message has been received."}, status=status.HTTP_201_CREATED)
+
+
+class AdminContactMessages(APIView):
+    """Admin inbox for contact and feedback messages, including direct email replies."""
+
+    permission_classes = [IsAuthenticated, IsPortalAdmin]
+
+    def get(self, request):
+        rows = ContactMessage.objects.all()
+        submission_type = request.query_params.get("type")
+        if submission_type in ("contact", "feedback"):
+            rows = rows.filter(submission_type=submission_type)
+        return Response([
+            {
+                "id": item.id,
+                "submission_type": item.submission_type,
+                "name": item.name,
+                "email": item.email,
+                "category": item.category,
+                "rating": item.rating,
+                "subject": item.subject,
+                "message": item.message,
+                "status": item.status,
+                "admin_reply": item.admin_reply,
+                "created_at": item.created_at,
+                "replied_at": item.replied_at,
+            }
+            for item in rows
+        ])
+
+    def patch(self, request):
+        message_id = request.data.get("id")
+        action = str(request.data.get("action", "")).strip()
+        item = get_object_or_404(ContactMessage, pk=message_id)
+
+        if action == "read":
+            if item.status == ContactMessage.Status.NEW:
+                item.status = ContactMessage.Status.READ
+                item.save(update_fields=("status", "updated_at"))
+            return Response({"id": item.id, "status": item.status})
+
+        if action != "reply":
+            return Response({"detail": "Unsupported action."}, status=status.HTTP_400_BAD_REQUEST)
+        reply = str(request.data.get("reply", "")).strip()
+        if not reply:
+            return Response({"detail": "Write a reply before sending."}, status=status.HTTP_400_BAD_REQUEST)
+        if not item.email:
+            return Response({"detail": "This submission has no email address to reply to."}, status=status.HTTP_400_BAD_REQUEST)
+
+        subject = f"Re: {item.subject}"
+        body = (
+            f"Hello {item.name or 'there'},\n\n"
+            f"{reply}\n\n"
+            "Regards,\nShivanyaMS Support\nhello@shivanyams.com"
+        )
+        try:
+            sent = send_mail(
+                subject,
+                body,
+                None,
+                [item.email],
+                fail_silently=False,
+            )
+        except Exception:
+            return Response(
+                {"detail": "Email could not be sent. Please check the backend SMTP email settings and try again."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        if not sent:
+            return Response(
+                {"detail": "The email provider did not accept the message. Please check SMTP settings."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        item.admin_reply = reply
+        item.status = ContactMessage.Status.REPLIED
+        item.replied_at = timezone.now()
+        item.save(update_fields=("admin_reply", "status", "replied_at", "updated_at"))
+        return Response({"id": item.id, "status": item.status, "replied_at": item.replied_at})

@@ -54,6 +54,7 @@ type Props = {
   paginate?: boolean;
   searchAllFields?: boolean;
   showJobDeadlines?: boolean;
+  showExtendedJobDeadlinesOnly?: boolean;
 };
 
 interface CategoryApiResponse {
@@ -196,6 +197,7 @@ export function UpdatesSection({
   paginate = false,
   searchAllFields = false,
   showJobDeadlines = false,
+  showExtendedJobDeadlinesOnly = false,
 }: Props) {
   const { data } = usePortalData();
 
@@ -411,8 +413,11 @@ export function UpdatesSection({
             const itemTitle = getItemTitle(item, language);
             const itemDescription = getItemDescription(item, language);
             const itemCategory = getItemCategory(item, language);
+            const hasRevisedDeadline = isJobDeadlineRevised(item);
             const applicationDeadline =
-              (!showDateAndNewBadge || showJobDeadlines) && item.type === "job"
+              (!showDateAndNewBadge || showJobDeadlines) &&
+              item.type === "job" &&
+              (!showExtendedJobDeadlinesOnly || hasRevisedDeadline)
                 ? getJobApplicationDeadline(item)
                 : "";
             const deadlineStatus = applicationDeadline

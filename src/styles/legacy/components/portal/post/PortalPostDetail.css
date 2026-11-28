@@ -1984,3 +1984,54 @@
 :root[data-theme="dark"] .portal-education-post-heading .portal-education-post-vacancies {
   color: var(--text-secondary, #cbd5e1);
 }
+
+
+/* Important Links: enforce two independent columns for every row.
+   Higher specificity prevents legacy/shared styles from flattening rows. */
+.portal-post-detail .portal-important-links .portal-important-links-list {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100%;
+  min-width: 0;
+}
+
+.portal-post-detail .portal-important-links .portal-important-links-list .portal-important-link-item {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  border-bottom: 1px solid var(--border-color, #e7ebf1);
+}
+
+.portal-post-detail .portal-important-links .portal-important-links-list .portal-important-link-item:last-child {
+  border-bottom: 0;
+}
+
+.portal-post-detail .portal-important-links .portal-important-links-list .portal-important-link-item > strong {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: auto;
+  border-right: 1px solid var(--border-color, #e1e7f0);
+  border-bottom: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.portal-post-detail .portal-important-links .portal-important-links-list .portal-important-link-item > .portal-important-link-actions {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  border-bottom: 0;
+}
+
+:root[data-theme="dark"] .portal-post-detail .portal-important-links .portal-important-links-list .portal-important-link-item {
+  border-color: var(--border-color, #303746);
+}
+
+:root[data-theme="dark"] .portal-post-detail .portal-important-links .portal-important-links-list .portal-important-link-item > strong {
+  border-color: var(--border-color, #303746);
+}

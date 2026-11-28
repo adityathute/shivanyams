@@ -1,3 +1,11 @@
+import { getStaticPageMetadata } from "../lib/seo";
+
+export const metadata = getStaticPageMetadata(
+  "ShivanyaMS | Government Jobs, Schemes & Public Updates",
+  "Latest government job notifications, schemes, examination updates, results, admit cards and useful public-service guides.",
+  "/",
+);
+
 /* File Location: shivanyams/src/app/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

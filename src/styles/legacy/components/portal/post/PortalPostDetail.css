@@ -2120,12 +2120,13 @@
 .portal-post-related-video-description { display: -webkit-box; min-width: 0; overflow: hidden; color: var(--text-muted, #64748b); font-size: 14px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .portal-post-related-video-tags {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 5px;
   min-width: 0;
+  max-height: 56px;
   margin-top: 2px;
   overflow: hidden;
-  white-space: nowrap;
 }
 .portal-post-related-video-tags > span {
   display: inline-flex;

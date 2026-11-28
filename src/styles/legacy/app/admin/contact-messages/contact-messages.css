@@ -1,7 +1,8 @@
 .admin-contact-messages-panel { overflow: hidden; }
 .admin-contact-messages-filters { grid-template-columns: minmax(240px, 1fr) 190px 190px; }
 .admin-contact-messages-table-wrap { width: 100%; overflow-x: auto; }
-.admin-contact-messages-table { min-width: 980px; }
+.admin-contact-messages-table { min-width: 1180px; }
+.admin-contact-content { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-contact-messages-table td small { display: block; margin-top: 4px; color: var(--muted-foreground, #9298a2); font-size: 11px; }
 .admin-contact-messages-table tr.is-new td { background: color-mix(in srgb, var(--primary, #2563eb) 3%, transparent); }
 .admin-contact-subject { max-width: 260px; overflow: hidden; text-overflow: ellipsis; }

@@ -14,7 +14,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
-import { BookmarkIcon, Button, CopyIcon, DislikeIcon, FacebookIcon, InstagramIcon, LikeIcon, MailIcon, MoreVerticalIcon, ReportIcon, Select, ShareIcon, TelegramIcon, Textarea, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkedInIcon } from "shivanya-ui";
+import { FavoriteIcon as BookmarkIcon, Button, CopyIcon, AlertCircleIcon as DislikeIcon, FacebookIcon, InstagramIcon, FavoriteIcon as LikeIcon, MailIcon, MoreVerticalIcon, ReportsIcon as ReportIcon, Select, ShareIcon, TelegramIcon, Textarea, ThreadsIcon, TwitterIcon, WhatsappIcon, LinkIcon as LinkedInIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";

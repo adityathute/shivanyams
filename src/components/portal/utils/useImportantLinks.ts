@@ -34,8 +34,9 @@ interface ImportantLinksCache {
   cachedAt: number;
 }
 
-const CACHE_KEY = "shivanyams:important-links:v1";
-const CACHE_TTL = 10 * 60 * 1000;
+const CACHE_KEY = "shivanyams:important-links:v2";
+// Keep links cached for 24 hours across route changes and page reloads.
+const CACHE_TTL = 24 * 60 * 60 * 1000;
 
 let memoryCache: ImportantLinksCache | null = null;
 let requestInFlight: Promise<ImportantLink[]> | null = null;
@@ -44,11 +45,12 @@ function readStoredCache(): ImportantLinksCache | null {
   if (typeof window === "undefined") return null;
 
   try {
-    const raw = window.sessionStorage.getItem(CACHE_KEY);
+    const raw = window.localStorage.getItem(CACHE_KEY) ?? window.sessionStorage.getItem(CACHE_KEY);
     if (!raw) return null;
 
     const parsed = JSON.parse(raw) as Partial<ImportantLinksCache>;
     if (!Array.isArray(parsed.links) || typeof parsed.cachedAt !== "number") {
+      window.localStorage.removeItem(CACHE_KEY);
       window.sessionStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -64,7 +66,9 @@ function writeCache(links: ImportantLink[]) {
   memoryCache = cache;
 
   try {
-    window.sessionStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+    const serialized = JSON.stringify(cache);
+    window.localStorage.setItem(CACHE_KEY, serialized);
+    window.sessionStorage.setItem(CACHE_KEY, serialized);
   } catch {
     // The in-memory cache still works when browser storage is unavailable.
   }

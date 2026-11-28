@@ -441,3 +441,38 @@
   }
 }
 
+/*
+ * Full search pages: when the selected page is filled (for example, 50 rows),
+ * let the page and results list grow. Pagination then follows the final post
+ * with normal spacing, rather than remaining fixed at the viewport bottom.
+ */
+.search-directory-page.related-saved-page:has(.updates-panel-pagination-flow) {
+  height: auto !important;
+  min-height: calc(100dvh - 64px - 16px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel {
+  grid-template-rows: auto auto auto auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel > .update-list {
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  scrollbar-gutter: auto;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel > .updates-admin-pagination {
+  margin-top: 14px !important;
+}
+
+@media (max-width: 760px) {
+  .search-directory-page.related-saved-page:has(.updates-panel-pagination-flow) {
+    min-height: calc(100dvh - 60px - 12px) !important;
+  }
+}

@@ -5,7 +5,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("portal", "0021_rename_portal_faq_post_act_idx_portal_post_post_id_16f132_idx_and_more"),
+        ("portal", "0050_tooldetails_tool_key_optional"),
     ]
 
     operations = [

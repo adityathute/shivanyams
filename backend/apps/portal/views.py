@@ -57,7 +57,7 @@ from .models import (
     ContactMessage,
 )
 from .permissions import IsPortalAdmin, IsPortalIdentity
-from .comment_moderation import validate_comment_content
+from .comment_moderation import contains_abusive_language, validate_comment_content
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -2933,6 +2933,10 @@ class PublicContactMessage(APIView):
             return Response({"detail": "Please complete all required fields."}, status=status.HTTP_400_BAD_REQUEST)
         if len(subject) > 240 or len(name) > 160 or len(category) > 120:
             return Response({"detail": "One or more fields are too long."}, status=status.HTTP_400_BAD_REQUEST)
+        if len(message) > 2000:
+            return Response({"detail": "Message can contain a maximum of 2,000 characters."}, status=status.HTTP_400_BAD_REQUEST)
+        if contains_abusive_language(message):
+            return Response({"detail": "Please remove abusive or insulting language before submitting."}, status=status.HTTP_400_BAD_REQUEST)
         if not email:
             return Response({"detail": "Please provide an email address so our team can reply to you."}, status=status.HTTP_400_BAD_REQUEST)
         if submission_type == ContactMessage.SubmissionType.CONTACT and not name:

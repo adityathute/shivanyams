@@ -1169,7 +1169,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                           href={`/tags/${createPostSlug(tag)}`}
                           key={tag}
                         >
-                          {tag}
+                          {tag.startsWith("#") ? tag : `#${tag}`}
                         </a>
                       ))}
                     </div>
@@ -1760,7 +1760,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 {videoSummary ? <span className="portal-post-related-video-description">{videoSummary}</span> : null}
                                 {videoTags.length ? (
                                   <span className="portal-post-related-video-tags">
-                                    {videoTags.map((tag, index) => <span key={`${video.id}-${index}`}>{tag}</span>)}
+                                    {videoTags.map((tag, index) => <span key={`${video.id}-${index}`}>{tag.startsWith("#") ? tag : `#${tag}`}</span>)}
                                   </span>
                                 ) : null}
                               </span>

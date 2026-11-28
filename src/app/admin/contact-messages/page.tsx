@@ -11,6 +11,7 @@ import "./../../../styles/legacy/app/admin/admin.css";
 import "./../../../styles/legacy/app/admin/comments/comments.css";
 import "./../../../styles/legacy/app/admin/contact-messages/contact-messages.css";
 import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-type-column.css";
+import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-user-column.css";
 
 type ContactMessage = {
   id: number;

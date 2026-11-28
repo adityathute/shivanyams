@@ -623,3 +623,12 @@
     display: none;
   }
 }
+
+
+/* Related pages: match the main Jobs category badge and keep dates visible on mobile. */
+.related-saved-page .update-list > .related-job-row { grid-template-columns: max-content minmax(0, 1fr) max-content; }
+.related-saved-page .related-job-row .portal-post-category-badge { justify-self: start; max-width: 100%; }
+.related-saved-page .related-job-row time { display: block !important; visibility: visible !important; color: #718098; font-size: 10px; text-align: right; white-space: nowrap; }
+[data-theme="dark"] .related-saved-page .related-job-row time { color: #a9b7c8; }
+@media (max-width: 760px) { .related-saved-page .update-list > .related-job-row { grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 7px; } .related-saved-page .related-job-row time { display: block !important; grid-column: 3; align-self: center; font-size: 10px; } .related-saved-page .related-job-row .portal-post-category-badge { min-width: 0; } }
+@media (max-width: 390px) { .related-saved-page .update-list > .related-job-row { grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 5px; } }

@@ -636,7 +636,7 @@ export const REQUIRED_DOCUMENT_CATEGORY_LABELS: Record<string, { en: string; mr:
   }
 };
 
-export function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
+export function PortalPostDetail({ category, previewItem, initialItem }: { category: CategorySlug; previewItem?: Item | null; initialItem?: Item | null }) {
   const params = useParams<{ slug: string }>();
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();
@@ -729,7 +729,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     observer.observe(grid);
     document.fonts?.ready.then(updateLayout);
     return () => observer.disconnect();
-  }, [data.items, language, previewItem]);
+  }, [data.items, language, previewItem, initialItem]);
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);
@@ -737,7 +737,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const categories = STATIC_PORTAL_CATEGORIES;
 
   const post = useMemo(() => {
-    if (category === "videos" && !previewItem) {
+    if (category === "videos" && !previewItem && !initialItem) {
       const video = data.videos.find(
         (entry) =>
           (entry.slug || createPostSlug(entry.title)) === slug ||
@@ -790,7 +790,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     }
 
     const type = category === "videos" ? "video" : categoryTypes[category];
-    const item = previewItem || data.items.find(
+    const item = previewItem || initialItem || data.items.find(
       (entry) =>
         entry.type === type &&
         ((entry.slug || createPostSlug(entry.title)) === slug ||
@@ -874,7 +874,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             : undefined,
         }
       : null;
-  }, [category, data.items, data.videos, slug, language, previewItem]);
+  }, [category, data.items, data.videos, slug, language, previewItem, initialItem]);
 
   const hasPostBeenUpdated = Boolean(
     post?.createdAt &&
@@ -1137,7 +1137,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             className={`content-layout ${data.loading || post || recommendedPosts.length > 0 ? "has-sidebar" : "no-sidebar"}`}
           >
             <div className="post-detail-main">
-              {data.loading ? (
+              {data.loading && !post ? (
                 <div className="portal-post-skeleton" role="status" aria-label="Loading post">
                   <span className="portal-post-skeleton-line portal-post-skeleton-meta" />
                   <span className="portal-post-skeleton-line portal-post-skeleton-title" />

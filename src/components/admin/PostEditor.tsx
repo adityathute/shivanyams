@@ -40,6 +40,32 @@ type LinkInput = {
 
 type FAQInput = { question_en: string; question_mr: string; question_hi: string; answer_en: string; answer_mr: string; answer_hi: string; sort_order: number; is_active: boolean; };
 
+type RequiredDocumentInput = {
+  name_en: string; name_mr: string; name_hi: string;
+  description_en: string; description_mr: string; description_hi: string;
+  category: string; requirement: string;
+  original_required: string; photocopy_required: string;
+  number_of_copies: string; quantity: string;
+  photo_type: string; photo_size: string; photo_quantity: string; photo_background: string;
+  signature_type: string; signature_format: string; signature_size: string;
+  other_specifications: string;
+  instructions_en: string; instructions_mr: string; instructions_hi: string;
+  sort_order: number; is_active: boolean;
+};
+const createEmptyRequiredDocument = (sort_order: number): RequiredDocumentInput => ({
+  name_en: "", name_mr: "", name_hi: "",
+  description_en: "", description_mr: "", description_hi: "",
+  category: "", requirement: "",
+  original_required: "", photocopy_required: "",
+  number_of_copies: "", quantity: "",
+  photo_type: "", photo_size: "", photo_quantity: "", photo_background: "",
+  signature_type: "", signature_format: "", signature_size: "",
+  other_specifications: "",
+  instructions_en: "", instructions_mr: "", instructions_hi: "",
+  sort_order, is_active: true,
+});
+
+
 type DateInput = {
   date_type: string;
   date_format: string;
@@ -292,6 +318,7 @@ type PostRecord = {
   category?: Category;
   important_links?: LinkInput[];
   faqs?: FAQInput[];
+  required_documents?: RequiredDocumentInput[];
   important_dates?: DateInput[];
   job_details?: Record<string, unknown> | null;
   scheme_details?: Record<string, unknown> | null;
@@ -589,6 +616,8 @@ export default function PostEditor({
   );
   const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);
   const [faqs, setFaqs] = useState<FAQInput[]>([]);
+  const [requiredDocuments, setRequiredDocuments] = useState<RequiredDocumentInput[]>([]);
+  const [expandedRequiredDocumentLanguages, setExpandedRequiredDocumentLanguages] = useState<number[]>([]);
   const [expandedFaqQuestionLanguages, setExpandedFaqQuestionLanguages] = useState<number[]>([]);
   const [expandedFaqAnswerLanguages, setExpandedFaqAnswerLanguages] = useState<number[]>([]);
   const [importantDates, setImportantDates] = useState<DateInput[]>([]);
@@ -788,6 +817,24 @@ export default function PostEditor({
           })),
         );
         setFaqs((record.faqs || []).map((item: FAQInput) => ({ ...item, question_en: String(item.question_en ?? ""), question_mr: String(item.question_mr ?? ""), question_hi: String(item.question_hi ?? ""), answer_en: String(item.answer_en ?? ""), answer_mr: String(item.answer_mr ?? ""), answer_hi: String(item.answer_hi ?? ""), sort_order: Number(item.sort_order ?? 0), is_active: item.is_active ?? true })));
+        setRequiredDocuments((record.required_documents || []).map((item: RequiredDocumentInput) => ({
+          ...createEmptyRequiredDocument(Number(item.sort_order ?? 0)),
+          ...item,
+          name_en: String(item.name_en ?? ""), name_mr: String(item.name_mr ?? ""), name_hi: String(item.name_hi ?? ""),
+          description_en: String(item.description_en ?? ""), description_mr: String(item.description_mr ?? ""), description_hi: String(item.description_hi ?? ""),
+          category: String(item.category ?? ""), requirement: String(item.requirement ?? ""),
+          original_required: item.original_required == null ? "" : String(item.original_required),
+          photocopy_required: item.photocopy_required == null ? "" : String(item.photocopy_required),
+          number_of_copies: item.number_of_copies == null ? "" : String(item.number_of_copies),
+          quantity: item.quantity == null ? "" : String(item.quantity),
+          photo_type: String(item.photo_type ?? ""), photo_size: String(item.photo_size ?? ""),
+          photo_quantity: item.photo_quantity == null ? "" : String(item.photo_quantity),
+          photo_background: String(item.photo_background ?? ""),
+          signature_type: String(item.signature_type ?? ""), signature_format: String(item.signature_format ?? ""),
+          signature_size: String(item.signature_size ?? ""), other_specifications: String(item.other_specifications ?? ""),
+          instructions_en: String(item.instructions_en ?? ""), instructions_mr: String(item.instructions_mr ?? ""), instructions_hi: String(item.instructions_hi ?? ""),
+          is_active: item.is_active ?? true,
+        })));
         setImportantDates((record.important_dates || []).map((item) => normalizeDateInput(item)));
         const data = record[
           detailKeyFor(kind.api) as keyof PostRecord
@@ -1331,6 +1378,19 @@ export default function PostEditor({
             action_text_en: item.action_text_en.trim() || "Click Here",
           })),
         faqs: faqs.filter((item) => item.question_en.trim() && item.answer_en.trim()).map((item, index) => ({ ...item, sort_order: index })),
+        required_documents: requiredDocuments
+          .filter((item) => Object.entries(item).some(([key, value]) =>
+            !["sort_order", "is_active"].includes(key) && String(value ?? "").trim() !== ""
+          ))
+          .map((item, index) => ({
+            ...item,
+            sort_order: index,
+            original_required: item.original_required === "" ? null : item.original_required === "true",
+            photocopy_required: item.photocopy_required === "" ? null : item.photocopy_required === "true",
+            number_of_copies: item.number_of_copies === "" ? null : Number(item.number_of_copies),
+            quantity: item.quantity === "" ? null : Number(item.quantity),
+            photo_quantity: item.photo_quantity === "" ? null : Number(item.photo_quantity),
+          })),
         important_dates: importantDates
           .filter((item) => item.label_en.trim())
           .map((item) => ({
@@ -1353,7 +1413,7 @@ export default function PostEditor({
             old_time: item.old_time || null,
             new_time: item.new_time || null,
           })),
-      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, importantDates]);
+      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, requiredDocuments, importantDates]);
 
   const currentTitle = String(form.title_en || "").trim();
   const currentSnapshot = JSON.stringify(payload);
@@ -2861,6 +2921,99 @@ export default function PostEditor({
                       Remove link group
                     </button>
                   </div>
+                </details>
+              );
+            })}
+          </section>
+          <section className="post-editor-required-documents post-editor-faqs">
+            <div className="post-editor-section-heading">
+              <div>
+                <h2>Required Documents</h2>
+                <p className="post-editor-section-description">Add documents, original/photocopy requirements, photo and signature specifications, and instructions in all three languages. All fields are optional.</p>
+              </div>
+              <button type="button" onClick={() => setRequiredDocuments((items) => [...items, createEmptyRequiredDocument(items.length)])}>＋ Add Required Document</button>
+            </div>
+            {requiredDocuments.map((document, index) => {
+              const updateDocument = (changes: Partial<RequiredDocumentInput>) => setRequiredDocuments((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...changes } : item));
+              const showLanguages = expandedRequiredDocumentLanguages.includes(index);
+              const languages: ContentLanguage[] = showLanguages ? ["en", "mr", "hi"] : [activeLanguage];
+              const triState = (value: string) => value === "true" ? "Yes" : value === "false" ? "No" : "Not specified";
+              return (
+                <details className="post-editor-repeat-card post-editor-collapsible post-editor-required-document-card" key={index}>
+                  <summary className="post-editor-card-summary">
+                    <span><strong>{document.name_en || `Required Document ${index + 1}`}</strong><small>{document.category || "Category not selected"} · {document.requirement || "Requirement not selected"}</small></span>
+                  </summary>
+                  <div className="post-editor-faq-fields">
+                    <div className="post-editor-link-translation">
+                      <div className="post-editor-translation-heading">
+                        <span>Document Name</span>
+                        <button type="button" className="post-editor-show-translations" aria-expanded={showLanguages} onClick={() => setExpandedRequiredDocumentLanguages((current) => current.includes(index) ? current.filter((value) => value !== index) : [...current, index])}>
+                          {showLanguages ? "− Hide other languages" : "+ Show other languages"}
+                        </button>
+                      </div>
+                      {languages.map((lang) => <Input key={lang} label={`Document name (${lang.toUpperCase()})`} value={document[`name_${lang}`]} onChange={(event) => updateDocument({ [`name_${lang}`]: event.target.value })} fullWidth size="sm" />)}
+                    </div>
+                    <div className="post-editor-link-translation">
+                      <div className="post-editor-translation-heading"><span>Description</span></div>
+                      {languages.map((lang) => <Textarea key={lang} label={`Description (${lang.toUpperCase()})`} rows={3} value={document[`description_${lang}`]} onChange={(event) => updateDocument({ [`description_${lang}`]: event.target.value })} fullWidth />)}
+                    </div>
+                    <div className="post-editor-grid">
+                      <label>Category
+                        <select value={document.category} onChange={(event) => updateDocument({ category: event.target.value })}>
+                          <option value="">Not specified</option><option value="photo">Photo</option><option value="signature">Signature</option><option value="identity_proof">Identity Proof</option><option value="educational_certificate">Educational Certificate</option><option value="caste_certificate">Caste Certificate</option><option value="experience_certificate">Experience Certificate</option><option value="other">Other</option>
+                        </select>
+                      </label>
+                      <label>Requirement
+                        <select value={document.requirement} onChange={(event) => updateDocument({ requirement: event.target.value })}>
+                          <option value="">Not specified</option><option value="compulsory">Compulsory</option><option value="optional">Optional</option>
+                        </select>
+                      </label>
+                      <label>Original Required
+                        <select value={document.original_required} onChange={(event) => updateDocument({ original_required: event.target.value })}>
+                          <option value="">Not specified</option><option value="true">Yes</option><option value="false">No</option>
+                        </select>
+                      </label>
+                      <label>Photocopy Required
+                        <select value={document.photocopy_required} onChange={(event) => updateDocument({ photocopy_required: event.target.value })}>
+                          <option value="">Not specified</option><option value="true">Yes</option><option value="false">No</option>
+                        </select>
+                      </label>
+                      <Input type="number" label="Number of Copies" min="0" value={document.number_of_copies} onChange={(event) => updateDocument({ number_of_copies: event.target.value })} fullWidth size="sm" />
+                      <Input type="number" label="Quantity" min="0" value={document.quantity} onChange={(event) => updateDocument({ quantity: event.target.value })} fullWidth size="sm" />
+                    </div>
+                    <div className="post-editor-link-translation">
+                      <strong>Photo Details</strong>
+                      <div className="post-editor-grid">
+                        <label>Photo Type
+                          <select value={document.photo_type} onChange={(event) => updateDocument({ photo_type: event.target.value })}>
+                            <option value="">Not specified</option><option value="passport_size">Passport Size</option><option value="live_photo">Live Photo</option><option value="other">Other</option><option value="not_applicable">Not Applicable</option>
+                          </select>
+                        </label>
+                        <Input label="Photo Size" placeholder="e.g. 35 × 45 mm" value={document.photo_size} onChange={(event) => updateDocument({ photo_size: event.target.value })} fullWidth size="sm" />
+                        <Input type="number" label="Photo Quantity" min="0" value={document.photo_quantity} onChange={(event) => updateDocument({ photo_quantity: event.target.value })} fullWidth size="sm" />
+                        <Input label="Photo Background" placeholder="e.g. White" value={document.photo_background} onChange={(event) => updateDocument({ photo_background: event.target.value })} fullWidth size="sm" />
+                      </div>
+                    </div>
+                    <div className="post-editor-link-translation">
+                      <strong>Signature Details</strong>
+                      <div className="post-editor-grid">
+                        <label>Signature Type
+                          <select value={document.signature_type} onChange={(event) => updateDocument({ signature_type: event.target.value })}>
+                            <option value="">Not specified</option><option value="scanned">Scanned</option><option value="physical">Physical</option><option value="other">Other</option><option value="not_applicable">Not Applicable</option>
+                          </select>
+                        </label>
+                        <Input label="Signature Format" placeholder="e.g. JPG, JPEG, PNG" value={document.signature_format} onChange={(event) => updateDocument({ signature_format: event.target.value })} fullWidth size="sm" />
+                        <Input label="Signature Size" placeholder="e.g. 10–20 KB" value={document.signature_size} onChange={(event) => updateDocument({ signature_size: event.target.value })} fullWidth size="sm" />
+                      </div>
+                    </div>
+                    <Textarea label="Other Specifications" rows={3} value={document.other_specifications} onChange={(event) => updateDocument({ other_specifications: event.target.value })} fullWidth />
+                    <div className="post-editor-link-translation">
+                      <div className="post-editor-translation-heading"><span>Additional Instructions</span></div>
+                      {(["en", "mr", "hi"] as ContentLanguage[]).map((lang) => <Textarea key={lang} label={`Additional instructions (${lang.toUpperCase()})`} rows={3} value={document[`instructions_${lang}`]} onChange={(event) => updateDocument({ [`instructions_${lang}`]: event.target.value })} fullWidth />)}
+                    </div>
+                    <label className="post-editor-check"><input type="checkbox" checked={document.is_active} onChange={(event) => updateDocument({ is_active: event.target.checked })} />Show this document on the public post</label>
+                  </div>
+                  <div className="post-editor-card-actions"><button type="button" className="post-editor-remove" onClick={() => setRequiredDocuments((items) => items.filter((_, itemIndex) => itemIndex !== index))}>Remove document</button></div>
                 </details>
               );
             })}

@@ -1,3 +1,11 @@
+import { getStaticPageMetadata } from "../../lib/seo";
+
+export const metadata = getStaticPageMetadata(
+  "Terms of Use",
+  "Read the terms and conditions for using the ShivanyaMS website and services.",
+  "/terms",
+);
+
 /* File Location: shivanyams/src/app/terms/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

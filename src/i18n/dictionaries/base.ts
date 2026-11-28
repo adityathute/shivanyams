@@ -61,7 +61,7 @@ export const baseDictionary = {
   },
 
   footerDescription: {
-    en: "Information about government jobs, schemes, examinations, results, admit cards, articles, guides, and important updates in Marathi, Hindi, and English.",
+    en: "Information about Jobs, Schemes, Exams, Admit Cards, Results, Guides, Videos, Tools and important updates in Marathi, Hindi, and English.",
     mr: "सरकारी नोकरी, योजना, परीक्षा, निकाल, प्रवेशपत्र, लेख, मार्गदर्शक आणि महत्त्वाच्या अपडेट्सची माहिती – मराठी, हिंदी आणि इंग्रजीमध्ये.",
     hi: "सरकारी नौकरी, योजनाओं, परीक्षाओं, परिणामों, प्रवेश पत्रों, लेखों, मार्गदर्शिकाओं और महत्वपूर्ण अपडेट्स की जानकारी – मराठी, हिंदी और अंग्रेज़ी में।",
   },
@@ -277,7 +277,7 @@ export const baseDictionary = {
   },
 
   guidesSearchPlaceholder: {
-    en: "Search articles, guides or topics...",
+    en: "Search guides or topics...",
     mr: "लेख, मार्गदर्शक किंवा विषय शोधा...",
     hi: "लेख, मार्गदर्शिकाएं या विषय खोजें...",
   },
@@ -319,13 +319,13 @@ export const baseDictionary = {
   },
 
   latestGuidesArticles: {
-    en: "Latest Guides & Articles",
+    en: "Latest Guides",
     mr: "नवीनतम मार्गदर्शक आणि लेख",
     hi: "नवीनतम मार्गदर्शिकाएं और लेख",
   },
 
   noGuidesAvailable: {
-    en: "No guides or articles are currently available.",
+    en: "No guides are currently available.",
     mr: "सध्या मार्गदर्शक आणि लेख उपलब्ध नाहीत.",
     hi: "फिलहाल कोई मार्गदर्शिका या लेख उपलब्ध नहीं है।",
   },
@@ -625,7 +625,7 @@ export const baseDictionary = {
   },
 
   examination: {
-    en: "Examination",
+    en: "Exams",
     mr: "परीक्षा",
     hi: "परीक्षा",
   },
@@ -637,13 +637,13 @@ export const baseDictionary = {
   },
 
   latestExaminationUpdates: {
-    en: "Latest Examination Updates",
+    en: "Latest Exams Updates",
     mr: "नवीनतम परीक्षा अपडेट्स",
     hi: "नवीनतम परीक्षा अपडेट्स",
   },
 
   noExaminationUpdates: {
-    en: "No examination updates are currently available.",
+    en: "No exam updates are currently available.",
     mr: "सध्या परीक्षा अपडेट्स उपलब्ध नाहीत.",
     hi: "फिलहाल परीक्षा अपडेट्स उपलब्ध नहीं हैं।",
   },

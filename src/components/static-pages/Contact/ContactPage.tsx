@@ -387,7 +387,7 @@ export function ContactPage() {
               <div className={`contact-message-guidance${subjectHasAbusiveLanguage ? " contact-message-guidance--warning" : ""}`}>
                 {subjectHasAbusiveLanguage
                   ? "Please remove abusive or insulting language from the subject."
-                  : "Maximum 240 characters."}
+                  : null}
               </div>
 
               <Textarea
@@ -407,7 +407,7 @@ export function ContactPage() {
                 }
               />
               <div className={`contact-message-guidance${messageHasAbusiveLanguage ? " contact-message-guidance--warning" : ""}`}>
-                <span>{messageHasAbusiveLanguage ? "Please remove abusive or insulting language before submitting." : "Maximum 2,000 characters."}</span>
+                {messageHasAbusiveLanguage && <span>Please remove abusive or insulting language before submitting.</span>}
                 <span>{form.message.length}/2,000</span>
               </div>
 

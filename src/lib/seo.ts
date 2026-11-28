@@ -4,7 +4,7 @@ import { mapPost } from "./portal-content";
 import type { ApiPost, Item, ItemType, PortalData, Video } from "../components/portal/data/portal-data";
 
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com"
 ).replace(/\/+$/, "");
 
 type ContentKind =

@@ -10,6 +10,7 @@ import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "./../../../styles/legacy/app/admin/admin.css";
 import "./../../../styles/legacy/app/admin/comments/comments.css";
 import "./../../../styles/legacy/app/admin/contact-messages/contact-messages.css";
+import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-type-column.css";
 
 type ContactMessage = {
   id: number;

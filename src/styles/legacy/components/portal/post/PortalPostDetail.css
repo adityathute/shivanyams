@@ -945,7 +945,7 @@
 .portal-post-wise-table {
   width: 100%;
   min-width: 0;
-  table-layout: auto;
+  table-layout: fixed;
   border-collapse: collapse;
   color: var(--text-primary, #172033);
   font-size: 13px;
@@ -978,25 +978,39 @@
 .portal-post-wise-table tbody td { font-weight: 550; }
 
 .portal-post-wise-table .portal-post-wise-number {
-  width: 1%;
+  width: 8%;
   white-space: nowrap;
   padding-left: 6px;
   padding-right: 6px;
 }
 
 .portal-post-wise-table .portal-post-wise-vacancies {
-  width: 1%;
+  width: 12%;
   white-space: nowrap;
   padding-left: 7px;
   padding-right: 7px;
   font-weight: 750;
 }
 
-.portal-post-wise-table tbody .portal-post-wise-name {
+.portal-post-wise-table .portal-post-wise-name {
+  width: 40%;
   min-width: 0;
-  width: auto;
   text-align: left;
   font-weight: 700;
+}
+
+.portal-post-wise-table.has-department .portal-post-wise-name,
+.portal-post-wise-table.has-department .portal-post-wise-department {
+  width: 32%;
+}
+
+.portal-post-wise-table.without-department .portal-post-wise-name {
+  width: 40%;
+}
+
+.portal-post-wise-table .portal-post-wise-department {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .portal-post-wise-table .portal-post-wise-total-label { text-align: left; }
@@ -1030,7 +1044,8 @@
   .portal-post-wise-table { font-size: 11.5px; line-height: 1.3; }
   .portal-post-wise-table th,
   .portal-post-wise-table td { padding: 5px 6px; }
-  .portal-post-wise-table .portal-post-wise-name { min-width: 110px; text-align: left; }
+  .portal-post-wise-table .portal-post-wise-name,
+  .portal-post-wise-table .portal-post-wise-department { min-width: 0; text-align: left; }
   .portal-post-wise-table .portal-post-wise-number,
   .portal-post-wise-table .portal-post-wise-vacancies { padding-left: 4px; padding-right: 4px; }
 }
@@ -1039,13 +1054,10 @@
   .portal-post-wise-table { font-size: 10.5px; }
   .portal-post-wise-table th,
   .portal-post-wise-table td { padding: 4px; }
-  .portal-post-wise-table .portal-post-wise-name { min-width: 95px; }
+  .portal-post-wise-table .portal-post-wise-name,
+  .portal-post-wise-table .portal-post-wise-department { min-width: 0; }
 }
 
-@media (min-width: 1600px) {
-  .portal-post-wise-table th,
-  .portal-post-wise-table td { padding: 8px 12px; }
-}
 
 /* Important Links: grouped titles with a flexible set of destination actions. */
 .portal-important-links {

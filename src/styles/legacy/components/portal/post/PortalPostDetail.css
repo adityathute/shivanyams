@@ -2242,8 +2242,18 @@
   .portal-post-related-video-content { gap: 5px; }
   .portal-post-related-video-content strong { font-size: 14px; }
   .portal-post-related-video-description { font-size: 12px; }
-  .portal-post-related-video-tags { gap: 4px; max-height: 56px; }
-  .portal-post-related-video-tags > span { padding: 2px 7px; font-size: 11px; }
+  .portal-post-related-video-tags {
+    gap: 4px;
+    max-height: 48px; /* Two compact tag rows only on mobile. */
+    align-content: flex-start;
+    overflow: hidden;
+  }
+  .portal-post-related-video-tags > span {
+    box-sizing: border-box;
+    padding: 2px 7px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
 }
 
 /* Also cover narrow mobile viewports when container queries are unavailable. */

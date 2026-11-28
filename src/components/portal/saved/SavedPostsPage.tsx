@@ -379,8 +379,16 @@ export function SavedPostsPage() {
                       {title}
                       {summary && <small>{summary}</small>}
                     </Link>
-                    {Array.isArray(item.tags) && item.tags.length > 0 ? (
+                    {(item.organization || (Array.isArray(item.tags) && item.tags.length > 0)) ? (
                       <div className="portal-post-context portal-post-taxonomy saved-update-tags">
+                        {item.organization ? (
+                          <Link
+                            className="portal-organization-tag"
+                            href={`/jobs/related/organization/${createPostSlug(item.organization_type || item.organization)}`}
+                          >
+                            {item.organization}
+                          </Link>
+                        ) : null}
                         {item.tags.map((tag) => (
                           <Link className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>
                             {tag}

@@ -16,7 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, Avatar, ConfirmDialog, CloseIcon, AlertCircleIcon as AlertCircleIcon as DislikeIcon, IconButton, FavoriteIcon as FavoriteIcon as LikeIcon, MessagesIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, ConfirmDialog, CloseIcon, AlertCircleIcon as DislikeIcon, IconButton, FavoriteIcon as LikeIcon, MessagesIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "./../../../styles/legacy/app/admin/admin.css";

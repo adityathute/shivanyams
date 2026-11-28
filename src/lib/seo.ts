@@ -190,7 +190,7 @@ export async function getPublicCategoryItems(
   const visited = new Set<string>();
   let nextUrl: string | null = firstUrl;
 
-  while (nextUrl && visited.size < 1000 && posts.length < 49000) {
+  while (nextUrl && visited.size < 5 && posts.length < 100) {
     if (visited.has(nextUrl)) break;
     visited.add(nextUrl);
 

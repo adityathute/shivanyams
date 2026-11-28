@@ -36,6 +36,7 @@ import { createPostSlug } from "../post/PortalPostDetail";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PortalEmptyState } from "../category/PortalEmptyState";
 import { getJobApplicationDeadline, getJobDeadlineStatus, formatJobApplicationDeadline } from "../utils/job-deadline";
+import { matchesPostSearch } from "../search/search-utils";
 
 type Props = {
   type?: ItemType | "all";
@@ -50,6 +51,7 @@ type Props = {
   showViewAll?: boolean;
   viewAllHref?: string;
   paginate?: boolean;
+  searchAllFields?: boolean;
 };
 
 interface CategoryApiResponse {
@@ -165,6 +167,7 @@ export function UpdatesSection({
   showViewAll = true,
   viewAllHref = "/updates",
   paginate = false,
+  searchAllFields = false,
 }: Props) {
   const { data } = usePortalData();
 
@@ -244,11 +247,12 @@ export function UpdatesSection({
         const description = getItemDescription(item, language);
         const category = getItemCategory(item, language);
 
-        const matchesQuery =
-          !term ||
-          [title, description, category].some((value) =>
-            value.toLocaleLowerCase().includes(term),
-          );
+        const matchesQuery = searchAllFields
+          ? matchesPostSearch(item, query)
+          : !term ||
+            [title, description, category].some((value) =>
+              value.toLocaleLowerCase().includes(term),
+            );
 
         return matchesType && matchesQuery;
       })
@@ -259,7 +263,7 @@ export function UpdatesSection({
       });
 
     return limit == null ? sorted : sorted.slice(0, limit);
-  }, [data.items, query, type, language, limit]);
+  }, [data.items, query, type, language, limit, searchAllFields]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
   const visibleItems = paginate

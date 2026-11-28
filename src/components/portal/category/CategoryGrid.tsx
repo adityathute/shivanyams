@@ -167,7 +167,9 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
     isPortalCategoryEnabled(category.slug),
   );
 
-  if (enabledCategories.length === 0) return null;
+  if (enabledCategories.length === 0) {
+    return <section className="category-grid category-grid-empty" aria-hidden="true" />;
+  }
 
   return (
     <section

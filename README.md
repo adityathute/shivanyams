@@ -57,6 +57,8 @@ Production environment variables required by the frontend:
 - `NEXT_PUBLIC_SITE_URL=https://shivanyams.com`
 - `NEXT_PUBLIC_PORTAL_API_URL=https://<your-portal-api-host>/api/v1/portal`
 
+These `NEXT_PUBLIC_*` values must be present in the environment used to run `npm run build`, because Next.js embeds public environment values during the build. For self-hosted releases, rebuild the application when changing the public site or API URL.
+
 After deployment:
 1. Open `https://shivanyams.com/robots.txt` and `https://shivanyams.com/sitemap.xml` and confirm both return HTTP 200.
 2. Confirm the sitemap contains only enabled categories and currently published post URLs.
@@ -70,7 +72,7 @@ Sitemap generation depends on the production Portal API being reachable from the
 
 ## Production release checks
 
-Before every release, run `npm run lint` and `npm run build`, verify the production environment variables, and smoke-test the public routes and API from the deployed environment. The current CI workflow validates lint and build on `shiv-v2`; it does not deploy the application. Deployment, hosting, TLS, database backups, monitoring and rollback must be configured and verified separately before calling the site production-ready.
+Before every release, run `npm run lint` and `npm run build`, verify the production environment variables, and smoke-test the public routes and API from the deployed environment. The current CI workflow runs lint and build on `shiv-v2`; lint currently reports existing repository-wide rule violations, and the build must be green before release. CI does not deploy the application. Deployment, hosting, TLS, database backups, monitoring and rollback must be configured and verified separately before calling the site production-ready.
 
 ## Backend setup
 

@@ -594,7 +594,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             endDate: "",
             eventDate: "",
             importantDates: [] as ImportantDate[],
-            faqs: [] as PostFAQ[],\n            requiredDocuments: [],\n            photoRequirements: [],\n            signatureRequirements: [],
+            faqs: [] as PostFAQ[],
+            requiredDocuments: [],
+            photoRequirements: [],
+            signatureRequirements: [],
             importantLinks: [] as {
               group_key: string;
               label_en: string;
@@ -667,7 +670,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
           endDate: item.end_date || "",
           eventDate: item.event_date || "",
           importantDates: item.important_dates || [],
-          faqs: item.faqs || [],\n          requiredDocuments: item.required_documents || [],\n          photoRequirements: item.photo_requirements || [],\n          signatureRequirements: item.signature_requirements || [],
+          faqs: item.faqs || [],
+          requiredDocuments: item.required_documents || [],
+          photoRequirements: item.photo_requirements || [],
+          signatureRequirements: item.signature_requirements || [],
           importantLinks: (() => {
             const groups = new Map<string, { group_key: string; label_en: string; label_mr: string; label_hi: string; actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[] }>();
             (item.important_links || []).filter((entry) => entry.is_active !== false && Boolean(entry.url)).forEach((entry, index) => {

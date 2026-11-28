@@ -32,7 +32,6 @@ import {
   type Item,
   type ItemType,
 } from "../data/portal-data";
-import { createPostSlug } from "../post/PortalPostDetail";
 import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { usePortalAuth } from "../context/PortalAuthContext";
@@ -379,23 +378,6 @@ export function SavedPostsPage() {
                       {title}
                       {summary && <small>{summary}</small>}
                     </Link>
-                    {(item.organization || (Array.isArray(item.tags) && item.tags.length > 0)) ? (
-                      <div className="portal-post-context portal-post-taxonomy saved-update-tags">
-                        {item.organization ? (
-                          <Link
-                            className="portal-organization-tag"
-                            href={`/jobs/related/organization/${createPostSlug(item.organization_type || item.organization)}`}
-                          >
-                            {item.organization}
-                          </Link>
-                        ) : null}
-                        {item.tags.map((tag) => (
-                          <Link className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>
-                            {tag}
-                          </Link>
-                        ))}
-                      </div>
-                    ) : null}
                   </div>
                   {applicationDeadline ? (
                     <span className="update-deadline-group">

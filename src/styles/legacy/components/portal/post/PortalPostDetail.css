@@ -995,7 +995,7 @@
 .portal-post-wise-table .portal-post-wise-name {
   width: 40%;
   min-width: 0;
-  text-align: left;
+  text-align: center;
   font-weight: 700;
 }
 
@@ -1013,7 +1013,7 @@
   overflow-wrap: anywhere;
 }
 
-.portal-post-wise-table .portal-post-wise-total-label { text-align: left; }
+.portal-post-wise-table .portal-post-wise-total-label { text-align: center; }
 
 :root[data-theme="dark"] .portal-post-wise-table-wrap {
   background: var(--surface, #171c28);
@@ -1045,7 +1045,7 @@
   .portal-post-wise-table th,
   .portal-post-wise-table td { padding: 5px 6px; }
   .portal-post-wise-table .portal-post-wise-name,
-  .portal-post-wise-table .portal-post-wise-department { min-width: 0; text-align: left; }
+  .portal-post-wise-table .portal-post-wise-department { min-width: 0; text-align: center; }
   .portal-post-wise-table .portal-post-wise-number,
   .portal-post-wise-table .portal-post-wise-vacancies { padding-left: 4px; padding-right: 4px; }
 }

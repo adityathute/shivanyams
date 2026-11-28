@@ -125,7 +125,7 @@ export function JobsPage() {
                   ))}
                 </div>
               ) : null}
-              {!data.loading && jobs.length === 0 && data.failedTypes?.includes("job") && data.error ? <div className="empty-state empty-job">{data.error}</div> : null}
+              {!data.loading && jobs.length === 0 && data.failedTypes?.includes("job") ? <div className="empty-state empty-job">{language === "mr" ? "नोकऱ्या सध्या लोड करता आल्या नाहीत. कृपया पुन्हा प्रयत्न करा." : language === "hi" ? "नौकरियां अभी लोड नहीं हो सकीं। कृपया फिर से प्रयास करें।" : "Jobs could not be loaded right now. Please try again."}</div> : null}
               {jobs.length ? (
                 jobs.map((item) => {
                   const applicationDeadline = getJobApplicationDeadline(item);

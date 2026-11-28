@@ -320,3 +320,31 @@
     font-size: 12px;
   }
 }
+
+/* Category-tinted popular tags: preserve the existing tag text color. */
+.jobs-popular-tags.portal-post-taxonomy a {
+  color: #596579;
+  background: rgba(37, 99, 235, 0.09);
+  border-color: rgba(37, 99, 235, 0.24);
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.jobs-popular-tags.portal-post-taxonomy a:hover {
+  color: #596579;
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(37, 99, 235, 0.42);
+  box-shadow: 0 2px 7px rgba(37, 99, 235, 0.12);
+}
+
+:root[data-theme="dark"] .jobs-popular-tags.portal-post-taxonomy a {
+  color: #c0c8d4;
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(37, 99, 235, 0.34);
+}
+
+:root[data-theme="dark"] .jobs-popular-tags.portal-post-taxonomy a:hover {
+  color: #c0c8d4;
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.18);
+}

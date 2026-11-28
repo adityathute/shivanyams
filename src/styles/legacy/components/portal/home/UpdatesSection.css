@@ -458,10 +458,15 @@
   background: #1c2633;
 }
 
-/* Keep update rows on their normal background for every category and theme. */
+/* Use one consistent job-style hover background for every update category. */
 .update-row:hover,
 .update-row:focus-visible {
-  background: transparent;
+  background: #f7faff;
+}
+
+[data-theme="dark"] .update-row:hover,
+[data-theme="dark"] .update-row:focus-visible {
+  background: #1c2633;
 }
 
 [data-theme="dark"] .filter-row button {

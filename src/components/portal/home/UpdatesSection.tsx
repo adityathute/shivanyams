@@ -37,6 +37,7 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PortalEmptyState } from "../category/PortalEmptyState";
 import { getJobApplicationDeadline, getJobDeadlineStatus, formatJobApplicationDeadline } from "../utils/job-deadline";
 import { formatCompactCount, matchesPostSearch } from "../search/search-utils";
+import { isPortalCategoryEnabled } from "../../../config/features";
 
 type Props = {
   type?: ItemType | "all";
@@ -203,7 +204,7 @@ export function UpdatesSection({
 }: Props) {
   const { data } = usePortalData();
 
-  const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug)));
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -242,7 +243,7 @@ export function UpdatesSection({
           : (payload.results ?? []);
 
         const activeCategories = result.filter(
-          (category) => category.is_active ?? category.active ?? false,
+          (category) => (category.is_active ?? category.active ?? false) && isPortalCategoryEnabled(category.slug),
         );
 
         if (activeCategories.length) {
@@ -253,7 +254,7 @@ export function UpdatesSection({
             // Category navigation remains available from the local fallback.
           }
         } else {
-          setCategories(STATIC_PORTAL_CATEGORIES);
+          setCategories(STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug)));
         }
       } catch (error) {
         if (!controller.signal.aborted) {
@@ -273,6 +274,7 @@ export function UpdatesSection({
 
     const sorted = data.items
       .filter((item) => {
+        if (!isPortalCategoryEnabled(getCategorySlugForType(item.type))) return false;
         const matchesType = type === "all" || item.type === type;
 
         const title = getItemTitle(item, language);

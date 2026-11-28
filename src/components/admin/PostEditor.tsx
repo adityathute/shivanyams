@@ -2937,7 +2937,6 @@ export default function PostEditor({
               const updateDocument = (changes: Partial<RequiredDocumentInput>) => setRequiredDocuments((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...changes } : item));
               const showLanguages = expandedRequiredDocumentLanguages.includes(index);
               const languages: ContentLanguage[] = showLanguages ? ["en", "mr", "hi"] : [activeLanguage];
-              const triState = (value: string) => value === "true" ? "Yes" : value === "false" ? "No" : "Not specified";
               return (
                 <details className="post-editor-repeat-card post-editor-collapsible post-editor-required-document-card" key={index}>
                   <summary className="post-editor-card-summary">

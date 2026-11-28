@@ -95,6 +95,11 @@ export function getPortalNavigation(
       icon: <ToolsIcon />,
     },
     { label: "", divider: true },
+    {
+      label: translate(language, sidebarTranslations, "tags"),
+      href: "/tags",
+      icon: <TagIcon />,
+    },
     ...(user
       ? [
           {
@@ -105,28 +110,24 @@ export function getPortalNavigation(
         ]
       : []),
     {
-      label: translate(language, sidebarTranslations, "tags"),
-      href: "/tags",
-      icon: <TagIcon />,
+      label: translate(language, sidebarTranslations, "contact"),
+      href: "/contact",
+      icon: <MailIcon />,
     },
     ...(isAdmin
       ? [
-          {
-            label: translate(language, sidebarTranslations, "admin"),
-            href: "/admin",
-            icon: <ShieldCheckIcon />,
-          },
+          { label: "", divider: true },
           {
             label: "Ledger",
             href: "/ledger",
             icon: <ReportIcon />,
           },
+          {
+            label: translate(language, sidebarTranslations, "admin"),
+            href: "/admin",
+            icon: <ShieldCheckIcon />,
+          },
         ]
       : []),
-    {
-      label: translate(language, sidebarTranslations, "contact"),
-      href: "/contact",
-      icon: <MailIcon />,
-    },
   ];
 }

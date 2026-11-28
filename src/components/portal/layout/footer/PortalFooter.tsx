@@ -21,7 +21,7 @@ import {
   type Language,
 } from "../../category/CategoryGrid";
 import { getBaseText } from "../../../../i18n/dictionaries/base";
-import { isPortalCategoryEnabled } from "../../../../config/features";
+import { isPortalCategoryEnabled } from "../../../../features/category-access";
 
 import { usePortalLanguage } from "../../context/PortalLanguageContext";
 import { useImportantLinks } from "../../utils/useImportantLinks";

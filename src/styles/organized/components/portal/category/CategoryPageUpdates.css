@@ -376,3 +376,23 @@
     gap: 5px;
   }
 }
+
+
+/* Non-job posts keep the NEW badge but do not display their published date. */
+.updates-panel .update-row.update-row-no-published-date {
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+}
+
+@media (max-width: 760px) {
+  .updates-panel:not(.updates-panel-home) .update-row.update-row-no-published-date {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 7px;
+  }
+}
+
+@media (max-width: 390px) {
+  .updates-panel:not(.updates-panel-home) .update-row.update-row-no-published-date {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 5px;
+  }
+}

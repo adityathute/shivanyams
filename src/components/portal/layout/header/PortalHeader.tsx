@@ -134,7 +134,7 @@ export function PortalHeader() {
     event.preventDefault();
     const query = searchQuery.trim();
     if (!query) {
-      searchInputRef.current?.focus();
+      event.currentTarget.querySelector("input")?.focus();
       return;
     }
     setSearchOpen(false);

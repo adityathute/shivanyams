@@ -66,7 +66,7 @@ function refreshSessionOnce(): Promise<boolean> {
 }
 
 function isRefreshRequest(request: Request) {
-  return new URL(request.url).pathname.replace(/\\/+$/, "").endsWith("/auth/refresh");
+  return new URL(request.url).pathname.replace(/\/+$/, "").endsWith("/auth/refresh");
 }
 
 /**

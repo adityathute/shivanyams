@@ -15,7 +15,7 @@ import "./../../../styles/legacy/components/portal/layout/PortalShell.css";
 
 import { type ReactNode, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { getDisabledFeatureForPath } from "../../../config/features";
+import { getDisabledFeatureForPath } from "../../../features/category-access";
 import Link from "next/link";
 
 import { DashboardShell } from "shivanya-shell";

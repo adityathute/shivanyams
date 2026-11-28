@@ -160,7 +160,7 @@ function getPostHref(item: Item): string {
 
     case "examination":
     case "exam":
-      return `/examination/${slug}`;
+      return `/exams/${slug}`;
 
     case "admit":
       return `/admit-cards/${slug}`;

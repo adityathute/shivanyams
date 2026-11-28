@@ -9,7 +9,7 @@ import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactCount, getSearchablePostText, matchesPostSearch, normalizeSearchText } from "./search-utils";
-import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../../config/features";
+import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../../features/category-access";
 import "../../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 import "./SearchPage.css";
 

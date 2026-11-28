@@ -186,6 +186,7 @@ export function SearchPage() {
         searchAllFields
         showJobDeadlines
         showExtendedJobDeadlinesOnly
+        showLoadingSkeleton
       />}
     </div>
   );

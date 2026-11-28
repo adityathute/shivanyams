@@ -824,8 +824,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
     items: items.sort((a, b) => b.date.localeCompare(a.date)),
     videos,
     loading: false,
-    error: errors.join("
-"),
+    error: errors.join("\n"),
     failedTypes,
   };
 }

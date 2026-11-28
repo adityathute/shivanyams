@@ -1,7 +1,7 @@
 import { getStaticPageMetadata } from "../lib/seo";
 
 export const metadata = getStaticPageMetadata(
-  "ShivanyaMS | Government Jobs, Schemes & Public Updates",
+  "Government Jobs, Schemes & Public Updates",
   "Latest government job notifications, schemes, examination updates, results, admit cards and useful public-service guides.",
   "/",
 );

@@ -340,3 +340,63 @@
     margin-left: 8px !important;
   }
 }
+
+/*
+ * Row stacking repair:
+ * Do not use flex sizing for post links here. Legacy Jobs styles include
+ * several responsive row rules; an explicit one-column grid gives every
+ * post its own intrinsic-height grid track, so wrapped titles cannot paint
+ * over the next post. Pagination remains an ordinary final grid item.
+ */
+.search-directory-page.related-saved-page.updates-directory-page > .updates-panel.jobs-updates.panelin {
+  grid-template-rows: auto auto auto auto !important;
+  grid-auto-flow: row !important;
+  align-content: start !important;
+}
+
+.search-directory-page.related-saved-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .update-list {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-flow: row !important;
+  grid-auto-rows: min-content !important;
+  align-content: start !important;
+  justify-content: stretch !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page.related-saved-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .update-list > a.update-row {
+  position: static !important;
+  inset: auto !important;
+  display: grid !important;
+  grid-column: 1 / -1 !important;
+  grid-row: auto !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 53px !important;
+  max-height: none !important;
+  margin: 0 !important;
+  transform: none !important;
+  float: none !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+.search-directory-page.related-saved-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .updates-admin-pagination {
+  grid-row: auto !important;
+  position: static !important;
+  inset: auto !important;
+  align-self: stretch !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 14px 0 0 !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+}

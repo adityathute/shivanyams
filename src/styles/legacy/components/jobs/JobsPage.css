@@ -247,13 +247,23 @@
 
 
 /* Popular job tags reuse the exact neutral tag treatment from post details. */
+.jobs-hero-content {
+  max-width: 850px;
+  width: 100%;
+}
+
 .jobs-popular-tags.portal-post-taxonomy {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   align-items: flex-start;
   gap: 8px;
+  width: 100%;
+  max-width: 850px;
+  box-sizing: border-box;
+  padding: 3px 2px 4px;
   margin-top: 14px;
-  max-height: 106px;
+  height: 76px;
   overflow: hidden;
 }
 
@@ -283,7 +293,6 @@
   color: #273449;
   background: #e5e9ef;
   border-color: #cbd3df;
-  transform: translateY(-1px);
 }
 
 :root[data-theme="dark"] .jobs-popular-tags.portal-post-taxonomy a {
@@ -302,7 +311,7 @@
   .jobs-popular-tags.portal-post-taxonomy {
     gap: 7px;
     margin-top: 12px;
-    max-height: 104px;
+    height: 76px;
   }
 
   .jobs-popular-tags.portal-post-taxonomy a {

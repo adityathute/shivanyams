@@ -77,8 +77,8 @@ urlpatterns = [
     path("content/<int:post_id>/reports/", PostReports.as_view(), name="post-reports"),
     # Important links
     path("important-links/", ImportantLinks.as_view(), name="important-links"),
-    # Public content: jobs, schemes, examinations, admit cards,
-    # results, articles, videos and tools.
+    # Public content: jobs, schemes, exams, admit cards,
+    # results, guides, videos and tools.
     path("content/<str:kind>/", content_list, name="content-list"),
 
     # Post-specific endpoints must come before the generic

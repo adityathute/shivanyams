@@ -16,6 +16,10 @@ export function normalizeSearchText(value: string): string {
  * job details, dates, links, FAQs, document requirements and translations.
  */
 export function getSearchablePostText(item: Item): string {
+  // The original API payload is retained during mapping, so this covers every
+  // API field (including fields not currently rendered by the UI) efficiently.
+  if (item.search_index) return normalizeSearchText(item.search_index);
+
   const values: string[] = [];
   const visit = (value: unknown, depth = 0) => {
     if (value == null || depth > 7) return;

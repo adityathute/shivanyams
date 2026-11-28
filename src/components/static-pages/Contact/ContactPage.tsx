@@ -326,7 +326,7 @@ export function ContactPage() {
                   type="email"
                   autoComplete="email"
                   placeholder={t("emailPlaceholder")}
-                  readOnly={Boolean(user?.email)}
+                  disabled={Boolean(user?.email)}
                   value={form.email}
                   onChange={(event) =>
                     setForm({

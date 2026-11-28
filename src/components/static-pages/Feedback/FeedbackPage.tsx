@@ -93,10 +93,12 @@ export function FeedbackPage() {
   });
 
   useEffect(() => {
-    if (user?.email) {
-      setForm((current) => ({ ...current, email: user.email }));
-    }
-  }, [user?.email]);
+    setForm((current) => ({
+      ...current,
+      name: user?.name ?? current.name,
+      email: user?.email ?? current.email,
+    }));
+  }, [user?.name, user?.email]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -116,7 +118,7 @@ export function FeedbackPage() {
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || "Unable to submit your feedback. Please try again.");
       setSubmitSuccess("Thank you! Your feedback has been submitted successfully.");
-      setForm({ name: "", email: user?.email ?? "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
+      setForm({ name: user?.name ?? "", email: user?.email ?? "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to submit your feedback. Please try again.");
     } finally {

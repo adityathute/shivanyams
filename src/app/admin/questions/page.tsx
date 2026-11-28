@@ -255,7 +255,7 @@ export default function AdminQuestionsPage() {
               <div>
                 <span className="admin-eyebrow">SHIVANYAMS COMMUNITY</span>
                 <h2 id="admin-questions-modal-title">{selectedQuestion.answered ? "Edit answer" : "Answer question"}</h2>
-                <p>Your answer will be published in this post's FAQ.</p>
+                <p>Your answer will be published in this post&apos;s FAQ.</p>
               </div>
               <button type="button" onClick={() => setSelectedQuestion(null)} disabled={saving} aria-label="Close answer dialog"><CloseIcon size={18} /></button>
             </div>
@@ -278,7 +278,7 @@ export default function AdminQuestionsPage() {
                 onChange={(event) => setAnswerVisibility(event.target.value as "public" | "private" | "hidden")}
                 aria-label="Answer visibility"
                 options={[
-                  { value: "public", label: "Public — show in this post's FAQ for everyone" },
+                  { value: "public", label: "Public — show in this post&apos;s FAQ for everyone" },
                   { value: "private", label: "Private — show only to the person who asked", disabled: !selectedQuestion.user_auth_id },
                   { value: "hidden", label: "Don't show anyone — keep it in Admin only" },
                 ]}

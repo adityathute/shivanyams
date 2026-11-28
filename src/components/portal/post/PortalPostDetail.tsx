@@ -402,8 +402,11 @@ function detailLabelFallback(value: string) {
 }
 
 function capitalizeFirst(value: string) {
-  const text = String(value || "").trim();
-  return text ? text.charAt(0).toLocaleUpperCase() + text.slice(1) : "";
+  return String(value || "")
+    .replaceAll("_", " ")
+    .trim()
+    .replace(/\s+/g, " ")
+    .replace(/(^|\s)(\p{L})/gu, (_match, space, letter) => space + letter.toLocaleUpperCase());
 }
 
 const organizationTypeLabels: Record<string, Record<string, string>> = {

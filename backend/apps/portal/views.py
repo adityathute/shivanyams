@@ -2957,10 +2957,12 @@ class PublicContactMessage(APIView):
         auth_full_name = get_comment_author_profile(request)[0] if is_authenticated else ""
         auth_email = str(auth_data.get("email") or "").strip().lower() if is_authenticated else ""
 
-        # When a verified Auth session is present, save the canonical Auth
-        # identity and profile details. Never rely on client-supplied identity IDs.
+        # Keep the name entered by the sender (it may intentionally differ
+        # from their Auth profile name). Use the Auth profile only when the
+        # sender leaves the name blank. Identity IDs and account email remain
+        # sourced from the verified Auth session.
         if is_authenticated:
-            name = auth_full_name or name
+            name = name or auth_full_name
             email = auth_email or email
 
         item = ContactMessage.objects.create(

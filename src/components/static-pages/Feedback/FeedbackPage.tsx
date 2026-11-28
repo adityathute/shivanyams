@@ -112,7 +112,7 @@ export function FeedbackPage() {
   const subjectHasAbusiveLanguage = containsAbusiveLanguage(form.subject);
   const isFormValid = Boolean(
     form.name.trim() &&
-    /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(form.email.trim()) &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) &&
     form.category.trim() &&
     form.rating.trim() &&
     form.subject.trim() &&

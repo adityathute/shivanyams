@@ -26,6 +26,8 @@ import {
 } from "shivanya-ui";
 
 import type { ItemType } from "../data/portal-data";
+import { isPortalCategoryEnabled } from "../../../config/features";
+
 import {
   getPortalCategoryDefinition,
   normalizePortalCategorySlug,
@@ -163,7 +165,7 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
 
   return (
     <section className="category-grid">
-      {STATIC_PORTAL_CATEGORIES.map((category) => {
+      {STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug)).map((category) => {
         const config = categoryConfig[category.slug];
         return (
           <button

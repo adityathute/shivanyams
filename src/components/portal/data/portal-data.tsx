@@ -21,6 +21,7 @@ import {
 } from "react";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { getPortalCategoryForType, isPortalCategoryEnabled } from "../../../features/category-access";
 
 export type ItemType =
   | "job"
@@ -805,8 +806,12 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
     { endpoint: "tools", type: "tool" },
   ];
 
+  const enabledContentKinds = contentKinds.filter(({ type }) =>
+    isPortalCategoryEnabled(getPortalCategoryForType(type)),
+  );
+
   const responses = await Promise.allSettled(
-    contentKinds.map(({ endpoint }) =>
+    enabledContentKinds.map(({ endpoint }) =>
       fetchList<ApiPost>(getPortalApiUrl(`content/${endpoint}/`), signal),
     ),
   );
@@ -817,13 +822,13 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
   const failedTypes: ItemType[] = [];
 
   responses.forEach((response, index) => {
-    const { type } = contentKinds[index];
+    const { type } = enabledContentKinds[index];
 
     if (response.status === "rejected") {
       failedTypes.push(type);
       if (!signal.aborted) {
         errors.push(
-          `${contentKinds[index].endpoint}: ${String(response.reason)}`,
+          `${enabledContentKinds[index].endpoint}: ${String(response.reason)}`,
         );
       }
       return;

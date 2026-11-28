@@ -231,7 +231,7 @@ function formatAdminDateTime(value: string | null | undefined) {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleString("en-US", {
+  return date.toLocaleString("en-IN", {
     month: "2-digit",
     day: "2-digit",
     year: "numeric",
@@ -2768,7 +2768,7 @@ export default function AdminPage() {
                 <>
                   <div className="admin-analytics-table-wrap">
                     <table className="admin-analytics-table admin-post-views-table admin-content-status-table">
-                      <thead><tr><th>Post</th><th>Category</th><th>Last updated</th><th>Last changed</th><th>Status</th></tr></thead>
+                      <thead><tr><th>Post</th><th>Category</th><th>Last updated</th><th>Status</th></tr></thead>
                       <tbody>
                         {statusAnalyticsPosts.slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize).map((post) => {
                           const kind = getContentKindForCategory(post.category?.slug);
@@ -2780,7 +2780,6 @@ export default function AdminPage() {
                                   {kind?.label || post.category?.name_en || "—"}
                                 </span>
                               </td>
-                              <td>{post.updated_at ? formatAdminDateTime(post.updated_at) : "—"}</td>
                               <td>{formatAdminDateTime(post.latest_version_updated_at || post.updated_at || post.created_at)}</td>
                               <td>
                                 {analyticsType === "edited" ? (

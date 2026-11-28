@@ -1842,6 +1842,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const videoTitle = getLocalizedText(language, video.title_en, video.title_mr, video.title_hi) || video.title_en || "Watch video";
                             const videoSummary = getLocalizedText(language, video.summary_en, video.summary_mr, video.summary_hi);
                             const videoTags = Array.isArray(video.meta_keywords) ? video.meta_keywords.filter(Boolean) : [];
+                            const videoLanguages = Array.isArray(video.video_details?.available_languages)
+                              ? video.video_details.available_languages.filter(Boolean)
+                              : [];
                             const videoThumbnail = video.featured_image_url || video.video_details?.thumbnail_url || getYouTubeThumbnailUrl(video.video_details?.embed_url || video.video_details?.video_url);
                             return (
                               <Link className="portal-post-related-video" href={`/videos/${video.slug}`} key={video.id}>
@@ -1871,6 +1874,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   {videoTags.length ? (
                                     <span className="portal-post-related-video-tags">
                                       {videoTags.map((tag, index) => <span key={`${video.id}-${index}`}>{tag.startsWith("#") ? tag : `#${tag}`}</span>)}
+                                    </span>
+                                  ) : null}
+                                  {videoLanguages.length ? (
+                                    <span className="portal-post-related-video-languages" aria-label="Available languages">
+                                      {videoLanguages.join(" · ")}
                                     </span>
                                   ) : null}
                                 </span>

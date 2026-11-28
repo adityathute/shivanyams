@@ -28,7 +28,7 @@ import { HOMEPAGE_USEFUL_LINKS_DISPLAY_LIMIT } from "../utils/important-links-co
 import { createPostSlug } from "../post/PortalPostDetail";
 import { NewsletterSubscribeButton } from "../post/NewsletterSubscribeButton";
 import { POST_DETAIL_SIDEBAR_CATEGORY_ORDER } from "../post/post-sidebar-config";
-import { isPortalCategoryEnabled } from "../../../config/features";
+import { isPortalCategoryEnabled } from "../../../features/category-access";
 import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 import "./../../../styles/legacy/components/portal/post/PortalPostDetail.css";
 

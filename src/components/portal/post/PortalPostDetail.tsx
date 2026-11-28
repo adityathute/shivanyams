@@ -1518,14 +1518,24 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 row.signature_type ? `${getDetailLabel("type", language)}: ${row.signature_type}` : "",
                                 row.signature_format ? `${getDetailLabel("format", language)}: ${row.signature_format}` : "",
                                 row.signature_size ? `${getDetailLabel("size", language)}: ${row.signature_size}` : "",
-                                row.other_specifications || "",
+                                row.other_specifications ? `${getDetailLabel("otherSpecifications", language)}: ${row.other_specifications}` : "",
                               ].filter(Boolean);
                               return (
                                 <tr key={row.id || `signature-${index}`}>
                                   <td>{getDetailLabel("signature", language)}</td>
                                   <td>
-                                    {details.map((value) => capitalizeFirst(value)).join(" · ") || "—"}
-                                    {instructions ? <small className="portal-requirement-note">{capitalizeFirst(instructions)}</small> : null}
+                                    {details.length ? (
+                                      <div className="portal-requirement-details-list">
+                                        {details.map((value, detailIndex) => (
+                                          <div key={detailIndex}>{capitalizeFirst(value)}</div>
+                                        ))}
+                                      </div>
+                                    ) : "—"}
+                                    {instructions ? (
+                                      <small className="portal-requirement-note">
+                                        <strong>{getDetailLabel("instructions", language)}:</strong> {capitalizeFirst(instructions)}
+                                      </small>
+                                    ) : null}
                                   </td>
                                 </tr>
                               );
@@ -1547,8 +1557,18 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 <tr key={row.id || `document-${index}`}>
                                   <td>{capitalizeFirst(name) || "—"}</td>
                                   <td>
-                                    {details.map((value) => capitalizeFirst(value)).join(" · ") || "—"}
-                                    {instructions ? <small className="portal-requirement-note">{capitalizeFirst(instructions)}</small> : null}
+                                    {details.length ? (
+                                      <div className="portal-requirement-details-list">
+                                        {details.map((value, detailIndex) => (
+                                          <div key={detailIndex}>{capitalizeFirst(value)}</div>
+                                        ))}
+                                      </div>
+                                    ) : "—"}
+                                    {instructions ? (
+                                      <small className="portal-requirement-note">
+                                        <strong>{getDetailLabel("instructions", language)}:</strong> {capitalizeFirst(instructions)}
+                                      </small>
+                                    ) : null}
                                   </td>
                                 </tr>
                               );

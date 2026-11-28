@@ -1090,7 +1090,7 @@ def get_comment_author_profile(request):
     full_name = " ".join(part for part in (first_name, last_name) if part).strip()
 
     if not full_name:
-        full_name = str(profile_value("name", "username") or "").strip()
+        full_name = str(profile_value("full_name", "name", "username") or "").strip()
 
     full_name = " ".join(
         word[:1].upper() + word[1:].lower() for word in full_name.split()
@@ -2969,17 +2969,45 @@ class AdminContactMessages(APIView):
     permission_classes = [IsAuthenticated, IsPortalAdmin]
 
     def get(self, request):
-        rows = ContactMessage.objects.all()
+        rows = list(ContactMessage.objects.all())
         submission_type = request.query_params.get("type")
         if submission_type in ("contact", "feedback"):
-            rows = rows.filter(submission_type=submission_type)
+            rows = [item for item in rows if item.submission_type == submission_type]
+
+        # Auth owns the user database. Resolve names using the verified Auth
+        # identity ID and the profile snapshots captured by website tracking.
+        auth_ids = {
+            str(item.user_auth_id)
+            for item in rows
+            if item.user_auth_id
+        }
+        user_names = {}
+        if auth_ids:
+            for visitor in WebsiteVisitor.objects.filter(
+                auth_user_id__in=auth_ids
+            ).exclude(full_name="").order_by("-last_seen_at").values(
+                "auth_user_id", "full_name"
+            ):
+                user_names.setdefault(str(visitor["auth_user_id"]), visitor["full_name"])
+
+            for visit in WebsiteView.objects.filter(
+                auth_user_id__in=auth_ids
+            ).exclude(full_name="").order_by("-viewed_at").values(
+                "auth_user_id", "full_name"
+            ):
+                user_names.setdefault(str(visit["auth_user_id"]), visit["full_name"])
+
         return Response([
             {
                 "id": item.id,
                 "submission_type": item.submission_type,
                 "name": item.name,
                 "email": item.email,
-                "user_full_name": item.user_full_name,
+                "user_full_name": (
+                    item.user_full_name
+                    or user_names.get(str(item.user_auth_id), "")
+                    or (item.name if item.user_auth_id else "")
+                ),
                 "category": item.category,
                 "rating": item.rating,
                 "subject": item.subject,

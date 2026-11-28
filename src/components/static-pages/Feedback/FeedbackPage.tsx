@@ -109,13 +109,14 @@ export function FeedbackPage() {
   }, [user?.first_name, user?.last_name, user?.email]);
 
   const messageHasAbusiveLanguage = containsAbusiveLanguage(form.message);
+  const subjectHasAbusiveLanguage = containsAbusiveLanguage(form.subject);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    if (messageHasAbusiveLanguage) {
-      setSubmitError("Please remove abusive or insulting language before submitting.");
+    event.preventDefault();
+    if (subjectHasAbusiveLanguage || messageHasAbusiveLanguage) {
+      setSubmitError("Please remove abusive or insulting language from the subject and message before submitting.");
       return;
     }
-    event.preventDefault();
     if (submitting) return;
     setSubmitting(true);
     setSubmitSuccess("");
@@ -342,6 +343,7 @@ export function FeedbackPage() {
                 required
                 fullWidth
                 size="md"
+                maxLength={240}
                 placeholder={t("subjectPlaceholder")}
                 value={form.subject}
                 onChange={(event) =>
@@ -351,6 +353,11 @@ export function FeedbackPage() {
                   })
                 }
               />
+              <div className={`contact-message-guidance${subjectHasAbusiveLanguage ? " contact-message-guidance--warning" : ""}`}>
+                {subjectHasAbusiveLanguage
+                  ? "Please remove abusive or insulting language from the subject."
+                  : "Maximum 240 characters."}
+              </div>
 
               <Textarea
                 label={t("yourFeedback")}
@@ -381,7 +388,7 @@ export function FeedbackPage() {
 
                 <Button
                   type="submit"
-                  disabled={submitting || messageHasAbusiveLanguage}
+                  disabled={submitting || subjectHasAbusiveLanguage || messageHasAbusiveLanguage}
                   variant="primary"
                   size="sm"
                   endIcon={<span>→</span>}

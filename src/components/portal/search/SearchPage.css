@@ -1,19 +1,5 @@
-/* Fill the complete content viewport below the shared top bar.
-   Keep the page itself full-height; the results panel takes the remaining
-   space after the heading and query summary. */
-.search-directory-page {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-height: calc(100vh - 80px);
-  min-height: calc(100dvh - 80px);
-  box-sizing: border-box;
-}
-
-.search-directory-page > .updates-panel {
-  flex: 1 0 auto;
-  min-height: 0;
-}
+/* Search page additions only. The page shell, result rows and panel layout
+   intentionally inherit the same shared styles as the Tags/Related Content page. */
 
 .search-query-summary {
   display: flex;
@@ -21,13 +7,14 @@
   flex-wrap: wrap;
   gap: 9px;
   min-width: 0;
-  margin: 0 0 2px;
+  margin: 0;
   padding: 13px 16px;
   border: 1px solid #e5ebf3;
   border-radius: 10px;
   background: #fff;
   color: #64748b;
   font-size: 13px;
+  box-sizing: border-box;
 }
 
 .search-query-summary strong {
@@ -115,9 +102,7 @@
   color: #075be8;
 }
 
-.search-suggestion-list button span {
-  color: #7b91ad;
-}
+.search-suggestion-list button span { color: #7b91ad; }
 
 [data-theme="dark"] .search-query-summary,
 [data-theme="dark"] .search-related-panel {
@@ -127,15 +112,11 @@
 }
 
 [data-theme="dark"] .search-query-summary strong,
-[data-theme="dark"] .search-related-panel h2 {
-  color: #e6edf3;
-}
+[data-theme="dark"] .search-related-panel h2 { color: #e6edf3; }
 
 [data-theme="dark"] .search-query-count,
 [data-theme="dark"] .search-related-panel p,
-[data-theme="dark"] .search-related-panel h3 {
-  color: #a9b7c8;
-}
+[data-theme="dark"] .search-related-panel h3 { color: #a9b7c8; }
 
 [data-theme="dark"] .search-suggestion-list button {
   border-color: #354254;
@@ -149,55 +130,13 @@
   color: #93bdff;
 }
 
-@media (max-width: 620px) {
-  .search-directory-page {
-    gap: 10px;
-    min-height: calc(100vh - 76px);
-    min-height: calc(100dvh - 76px);
-  }
-
-  .search-directory-page > .updates-panel {
-    flex: 1 0 auto;
-    min-height: 0;
-  }
-
-  .search-query-summary {
-    gap: 6px;
-    padding: 11px 12px;
-    font-size: 12px;
-  }
-
-  .search-query-summary strong {
-    font-size: 13px;
-  }
-
-  .search-related-panel {
-    gap: 10px;
-    padding: 13px 12px;
-  }
-
-  .search-related-panel h2 {
-    font-size: 15px;
-  }
-
-  .search-suggestion-list {
-    gap: 6px;
-  }
-
-  .search-suggestion-list button {
-    min-height: 32px;
-    padding: 6px 9px;
-    font-size: 11px;
-  }
-}
-
 .search-query-summary:focus-within,
 .search-suggestion-list button:focus-visible {
   outline: 2px solid var(--blue, #2563eb);
   outline-offset: 2px;
 }
 
-/* Emphasize the exact terms entered in the search field. */
+/* Highlight only the matching query text; row layout remains shared with Tags. */
 .search-directory-page .search-query-highlight {
   display: inline;
   padding: 0 2px;
@@ -214,65 +153,11 @@
   color: inherit !important;
 }
 
-/* Search Results shares the exact related-tag post-row styles from SavedPostsPage.css. */
-.search-results-page .updates-panel-search-results .new-pill { display: none !important; }
-.search-results-page .updates-panel-search-results .update-title small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Search-only visibility repair: keep filters above results and pagination
-   directly after the result list. No shared Tags/Jobs styles are changed. */
-.search-results-page .updates-panel-search-results {
-  display: flex !important;
-  flex-direction: column !important;
-  min-width: 0;
+@media (max-width: 620px) {
+  .search-query-summary { gap: 6px; padding: 11px 12px; font-size: 12px; }
+  .search-query-summary strong { font-size: 13px; }
+  .search-related-panel { gap: 10px; padding: 13px 12px; }
+  .search-related-panel h2 { font-size: 15px; }
+  .search-suggestion-list { gap: 6px; }
+  .search-suggestion-list button { min-height: 32px; padding: 6px 9px; font-size: 11px; }
 }
-
-.search-results-page .updates-panel-search-results > .filter-row {
-  display: flex !important;
-  flex: 0 0 auto !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative !important;
-  z-index: 1;
-}
-
-.search-results-page .updates-panel-search-results > .update-list {
-  display: block !important;
-  flex: 0 0 auto !important;
-  min-width: 0;
-}
-
-.search-results-page .updates-panel-search-results > .updates-admin-pagination,
-.search-results-page .updates-panel-search-results > .admin-table-footer {
-  display: flex !important;
-  flex: 0 0 auto !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: static !important;
-  inset: auto !important;
-  float: none !important;
-  clear: both !important;
-  height: auto !important;
-  min-height: 48px;
-  max-height: none !important;
-  overflow: visible !important;
-  clip: auto !important;
-  clip-path: none !important;
-  transform: none !important;
-  margin: 12px 0 0 !important;
-  padding: 12px 0 !important;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.search-results-page .updates-panel-search-results {
-  height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-.search-results-page .updates-panel-search-results .admin-pagination {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-

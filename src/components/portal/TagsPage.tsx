@@ -113,15 +113,15 @@ export function TagsPage() {
   }, [page, pageCount]);
 
   return (
-    <div className="saved-page related-saved-page">
-      <header className="saved-page-heading">
+    <div className="tags-directory-page">
+      <header className="portal-page-heading saved-page-heading">
         <span className="saved-eyebrow">{text.eyebrow}</span>
         <h1>{text.title}</h1>
         <p>{text.description}</p>
       </header>
 
-      <section ref={panelRef} className="saved-panel related-tag-suggestions">
-        <div className="saved-section-heading">
+      <section ref={panelRef} className="updates-panel panel related-tag-suggestions">
+        <div className="section-heading">
           <h2>{text.tags}</h2>
           <span>{tags.length} {text.count}</span>
         </div>

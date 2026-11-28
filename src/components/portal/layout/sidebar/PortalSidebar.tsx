@@ -66,7 +66,7 @@ export function getPortalNavigation(
     },
     {
       label: translate(language, sidebarTranslations, "exams"),
-      href: "/examination",
+      href: "/exams",
       icon: <ExaminationIcon />,
     },
     {

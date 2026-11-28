@@ -2946,15 +2946,29 @@ class PublicContactMessage(APIView):
                 return Response({"detail": "Please enter a valid email address."}, status=status.HTTP_400_BAD_REQUEST)
 
         is_authenticated = bool(getattr(request.user, "is_authenticated", False))
-        auth_user_id = str(getattr(request.user, "auth_user_id", "") or request.user.id) if is_authenticated else ""
+        auth_data = getattr(request.user, "auth_data", {}) if is_authenticated else {}
+        if not isinstance(auth_data, dict):
+            auth_data = {}
+
+        auth_user_id = (
+            str(getattr(request.user, "auth_user_id", "") or request.user.id)
+            if is_authenticated else ""
+        )
         auth_full_name = get_comment_author_profile(request)[0] if is_authenticated else ""
+        auth_email = str(auth_data.get("email") or "").strip().lower() if is_authenticated else ""
+
+        # When a verified Auth session is present, save the canonical Auth
+        # identity and profile details. Never rely on client-supplied identity IDs.
+        if is_authenticated:
+            name = auth_full_name or name
+            email = auth_email or email
 
         item = ContactMessage.objects.create(
             submission_type=submission_type,
             name=name,
             email=email,
             user_auth_id=auth_user_id,
-            user_full_name=auth_full_name,
+            user_full_name=auth_full_name or name if is_authenticated else "",
             category=category,
             rating=rating,
             subject=subject,
@@ -3017,8 +3031,10 @@ class AdminContactMessages(APIView):
                 "user_full_name": (
                     item.user_full_name
                     or user_names.get(str(item.user_auth_id), "")
-                    or item.name
+                    or (item.name if item.user_auth_id else "")
                 ),
+                "user_auth_id": item.user_auth_id,
+                "is_registered_user": bool(item.user_auth_id),
                 "category": item.category,
                 "rating": item.rating,
                 "subject": item.subject,

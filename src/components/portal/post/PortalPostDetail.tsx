@@ -385,6 +385,7 @@ const detailLabels = {
   otherSpecifications: { en: "Other specifications", mr: "इतर तपशील", hi: "अन्य विवरण" },
   faqs: { en: "Frequently Asked Questions (FAQ)", mr: "वारंवार विचारले जाणारे प्रश्न (FAQ)", hi: "अक्सर पूछे जाने वाले प्रश्न (FAQ)" },
   watchVideo: { en: "Watch video", mr: "व्हिडिओ पाहा", hi: "वीडियो देखें" },
+  relatedVideos: { en: "Related Videos", mr: "संबंधित व्हिडिओ", hi: "संबंधित वीडियो" },
   visitWebsite: {
     en: "Visit official website",
     mr: "अधिकृत वेबसाइटला भेट द्या",
@@ -770,6 +771,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
               actions: { action_text_en: string; action_text_mr: string; action_text_hi: string; url: string }[];
             }[],
             jobDetails: undefined,
+            relatedVideos: [],
           }
         : null;
     }
@@ -834,6 +836,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
           endDate: item.end_date || "",
           eventDate: item.event_date || "",
           importantDates: item.important_dates || [],
+          relatedVideos: (item.related_posts || [])
+            .filter((relation) => relation.relation_type === "video" && relation.post?.slug)
+            .map((relation) => relation.post),
           faqs: item.faqs || [],
           requiredDocuments: item.required_documents || [],
           photoRequirements: item.photo_requirements || [],
@@ -1755,6 +1760,23 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </section>
                   ) : null}
 
+                  {post.relatedVideos?.length ? (
+                    <section className="portal-post-related-videos">
+                      <h2>{getDetailLabel("relatedVideos", language)}</h2>
+                      <div className="portal-post-related-videos-grid">
+                        {post.relatedVideos.map((video) => (
+                          <Link className="portal-post-related-video" href={`/videos/${video.slug}`} key={video.id}>
+                            {video.featured_image_url ? (
+                              <img src={video.featured_image_url} alt="" loading="lazy" />
+                            ) : (
+                              <span className="portal-post-related-video-placeholder" aria-hidden="true">▶</span>
+                            )}
+                            <span>{getLocalizedText(language, video.title_en, video.title_mr, video.title_hi) || video.title_en || "Watch video"}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
                   {category === "videos" && post.link ? (
                     <a
                       className="portal-post-action"

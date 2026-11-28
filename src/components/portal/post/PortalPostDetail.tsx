@@ -1491,8 +1491,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                               row.photo_size ? `${getDetailLabel("size", language)}: ${row.photo_size}` : "",
                               row.photo_quantity ? `${getDetailLabel("quantity", language)}: ${row.photo_quantity}` : "",
                               row.photo_background ? `${getDetailLabel("background", language)}: ${row.photo_background}` : "",
-                              row.other_specifications ? `${getDetailLabel("otherSpecifications", language)}: ${row.other_specifications}` : "",
                             ].filter(Boolean);
+                            const otherSpecifications = row.other_specifications
+                              ? `${getDetailLabel("otherSpecifications", language)}: ${row.other_specifications}`
+                              : "";
                             return (
                               <tr key={row.id || `photo-${index}`}>
                                 <td>{getDetailLabel("photograph", language)}</td>
@@ -1502,7 +1504,13 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                     <div className="portal-requirement-details-list">
                                       {details.map((value) => capitalizeFirst(value)).join(" · ")}
                                     </div>
-                                  ) : "—"}
+                                  ) : null}
+                                  {otherSpecifications ? (
+                                    <div className="portal-requirement-details-list">
+                                      {capitalizeFirst(otherSpecifications)}
+                                    </div>
+                                  ) : null}
+                                  {!details.length && !otherSpecifications ? "—" : null}
                                   {instructions ? (
                                     <small className="portal-requirement-note">
                                       <strong>{getDetailLabel("instructions", language)}:</strong> {capitalizeFirst(instructions)}
@@ -1517,8 +1525,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const details = [
                               row.signature_format ? `${getDetailLabel("format", language)}: ${row.signature_format}` : "",
                               row.signature_size ? `${getDetailLabel("size", language)}: ${row.signature_size}` : "",
-                              row.other_specifications ? `${getDetailLabel("otherSpecifications", language)}: ${row.other_specifications}` : "",
                             ].filter(Boolean);
+                            const otherSpecifications = row.other_specifications
+                              ? `${getDetailLabel("otherSpecifications", language)}: ${row.other_specifications}`
+                              : "";
                             return (
                               <tr key={row.id || `signature-${index}`}>
                                 <td>{getDetailLabel("signature", language)}</td>
@@ -1528,7 +1538,13 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                     <div className="portal-requirement-details-list">
                                       {details.map((value) => capitalizeFirst(value)).join(" · ")}
                                     </div>
-                                  ) : "—"}
+                                  ) : null}
+                                  {otherSpecifications ? (
+                                    <div className="portal-requirement-details-list">
+                                      {capitalizeFirst(otherSpecifications)}
+                                    </div>
+                                  ) : null}
+                                  {!details.length && !otherSpecifications ? "—" : null}
                                   {instructions ? (
                                     <small className="portal-requirement-note">
                                       <strong>{getDetailLabel("instructions", language)}:</strong> {capitalizeFirst(instructions)}

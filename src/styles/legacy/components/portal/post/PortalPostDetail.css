@@ -855,11 +855,14 @@
   margin: 0;
   padding: 0 0 0 21px;
   color: var(--text-secondary, #475569);
-  list-style: disc;
+  list-style: none;
 }
 
 .portal-education-post-card li,
 .portal-education-details > .portal-job-detail-row li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   margin: 0;
   padding-left: 2px;
   font-size: 14px;
@@ -868,10 +871,14 @@
   overflow-wrap: anywhere;
 }
 
-.portal-education-post-card li::marker,
-.portal-education-details > .portal-job-detail-row li::marker {
-  color: var(--text-secondary, #8792a3);
-  font-size: 1.5em;
+.portal-education-post-card li::before,
+.portal-education-details > .portal-job-detail-row li::before {
+  content: "";
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-secondary, #8792a3);
 }
 
 :root[data-theme="dark"] .portal-education-details h2,

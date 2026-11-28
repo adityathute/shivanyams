@@ -1,3 +1,9 @@
+import { getCategoryPageMetadata } from "../../lib/seo";
+
+export function generateMetadata() {
+  return getCategoryPageMetadata("videos");
+}
+
 /* File Location: shivanyams/src/app/videos/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

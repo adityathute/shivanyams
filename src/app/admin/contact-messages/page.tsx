@@ -14,6 +14,7 @@ import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-typ
 import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-user-column.css";
 import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-stats.css";
 import "./../../../styles/legacy/app/admin/contact-messages/contact-messages-filters.css";
+import "./../../../styles/legacy/app/admin/contact-messages/contact-message-profile.css";
 
 type ContactMessage = {
   id: number;
@@ -232,6 +233,21 @@ export default function AdminContactMessagesPage() {
               <div><span className="admin-eyebrow">{selected.submission_type === "contact" ? "CONTACT ENQUIRY" : "WEBSITE FEEDBACK"}</span><h2 id="admin-contact-message-title">{selected.subject}</h2><p>Received {new Date(selected.created_at).toLocaleString()}</p></div>
               <IconButton type="button" size="lg" variant="ghost" iconRotateOnHover className="admin-comments-reply-close" onClick={() => setSelected(null)} disabled={busy} aria-label="Close message"><CloseIcon /></IconButton>
             </div>
+            {selected.is_registered_user ? (
+              <div className="admin-contact-user-profile">
+                <Avatar
+                  size="lg"
+                  name={selected.user_full_name || "Member"}
+                  src={selected.user_avatar?.trim() || undefined}
+                />
+                <div className="admin-contact-user-profile-info">
+                  <strong>{selected.user_full_name || "Registered member"}</strong>
+                  <span>Registered ShivanyaMS account</span>
+                  {selected.email ? <small>{selected.email}</small> : null}
+                </div>
+                <span className="admin-contact-user-profile-badge">Member</span>
+              </div>
+            ) : null}
             <div className="admin-contact-message-details">
               <div><span>From</span><strong>{selected.name || "Visitor"}</strong></div>
               <div><span>Email</span><strong>{selected.email || "Not provided"}</strong></div>

@@ -41,10 +41,10 @@ const initialForm: ContentForm = {
 
 const contentKinds: { value: ContentKind; label: string }[] = [
   { value: "scheme", label: "Government Schemes" },
-  { value: "update", label: "Examination" },
+  { value: "update", label: "Exams" },
   { value: "result", label: "Results" },
   { value: "admit_card", label: "Admit Cards" },
-  { value: "guide", label: "Articles & Guides" },
+  { value: "guide", label: "Guides" },
   { value: "video", label: "Videos" },
 ];
 

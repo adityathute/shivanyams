@@ -183,3 +183,24 @@
     font-size: 12px;
   }
 }
+
+
+/* With one enabled category, keep the existing grid on mobile but hide the
+   lone card on desktop until additional categories are enabled. */
+@media (min-width: 761px) {
+  .category-grid-single {
+    display: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .category-grid-single {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .category-grid-single .category-card {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

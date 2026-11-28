@@ -1,3 +1,14 @@
+import { getPostPageMetadata } from "../../../lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return getPostPageMetadata("results", slug);
+}
+
 /* File Location: shivanyams/src/app/results/[slug]/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

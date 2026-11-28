@@ -464,6 +464,30 @@ function getPostLink(post: ApiPost) {
   );
 }
 
+function createPostSearchIndex(value: unknown): string {
+  const searchableValues: string[] = [];
+  const visit = (entry: unknown, depth = 0) => {
+    if (entry == null || depth > 8) return;
+    if (typeof entry === "string" || typeof entry === "number") {
+      searchableValues.push(String(entry));
+      return;
+    }
+    if (Array.isArray(entry)) {
+      entry.forEach((child) => visit(child, depth + 1));
+      return;
+    }
+    if (typeof entry === "object") {
+      Object.entries(entry as Record<string, unknown>).forEach(([key, child]) => {
+        searchableValues.push(key.replace(/_/g, " "));
+        visit(child, depth + 1);
+      });
+    }
+  };
+
+  visit(value);
+  return searchableValues.join(" ");
+}
+
 function normalizeComparable(value: unknown) {
   return value == null ? "" : String(value).trim().toLocaleLowerCase();
 }
@@ -521,7 +545,7 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
   return {
     id: String(post.id),
     slug: post.slug,
-    search_index: JSON.stringify(post),
+    search_index: createPostSearchIndex(post),
 
     // Preserve all database translations
     title_en: post.title_en || "",

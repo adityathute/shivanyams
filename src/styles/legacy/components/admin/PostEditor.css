@@ -100,10 +100,6 @@
   box-shadow: none;
 }
 
-/* Keep the editor's focus state clean without stacking a second focus ring. */
-.post-editor-form .shivanya-input-container:focus-within {
-  box-shadow: none;
-}
 .post-editor-form textarea:not(.shivanya-textarea) {
   resize: vertical;
   line-height: 1.6;

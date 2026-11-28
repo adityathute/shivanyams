@@ -2160,7 +2160,7 @@ padding-right: 24px;
 }
 
 
-/* Reusable video picker inside the admin post editor. */
+/* Compact searchable video selector inside the admin post editor. */
 .post-editor-videos {
   margin: 22px 0;
   padding: 18px;
@@ -2178,27 +2178,120 @@ padding-right: 24px;
   font-size: 11px;
   font-weight: 700;
 }
-.post-editor-video-list { display: grid; gap: 8px; margin-top: 14px; }
-.post-editor-video-option {
+.post-editor-video-selected { display: grid; gap: 7px; margin-top: 14px; }
+.post-editor-video-selected-row {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 11px;
-  padding: 9px 11px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
   border: 1px solid var(--border, #dbe3ed);
-  border-radius: 9px;
+  border-radius: 8px;
+}
+.post-editor-video-selected-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text, #1e293b);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.post-editor-video-remove {
+  flex: 0 0 auto;
+  border: 0;
+  padding: 4px 6px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 650;
   cursor: pointer;
 }
-.post-editor-video-option:hover { border-color: #93c5fd; background: #f8fbff; }
-.post-editor-video-option input { width: 16px; height: 16px; flex: 0 0 auto; accent-color: #2563eb; }
-.post-editor-video-option img,
-.post-editor-video-placeholder { width: 64px; height: 42px; flex: 0 0 auto; border-radius: 6px; object-fit: cover; }
-.post-editor-video-placeholder { display: grid; place-items: center; background: #fee2e2; color: #dc2626; font-size: 17px; }
-.post-editor-video-title { min-width: 0; flex: 1; overflow: hidden; color: var(--text, #1e293b); font-size: 13px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
-.post-editor-video-status { flex: 0 0 auto; color: #64748b; font-size: 11px; }
-.post-editor-video-empty { margin: 14px 0 0; color: #64748b; font-size: 12px; }
+.post-editor-video-picker { position: relative; margin-top: 12px; }
+.post-editor-video-picker-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--text, #334155);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+}
+.post-editor-video-picker-toggle:hover { border-color: #93c5fd; background: #f8fbff; }
+.post-editor-video-dropdown {
+  margin-top: 7px;
+  padding: 10px;
+  border: 1px solid var(--border, #dbe3ed);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  box-shadow: 0 8px 24px rgb(15 23 42 / 8%);
+}
+.post-editor-video-search {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 7px;
+  padding: 9px 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+.post-editor-video-search:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgb(59 130 246 / 12%); }
+.post-editor-video-options { display: grid; max-height: 210px; overflow-y: auto; gap: 3px; }
+.post-editor-video-option {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 6px;
+  padding: 9px 7px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.post-editor-video-option:hover { background: #f1f5f9; }
+.post-editor-video-option.is-selected { background: #eff6ff; }
+.post-editor-video-option-check {
+  display: grid;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+.post-editor-video-option.is-selected .post-editor-video-option-check { border-color: #2563eb; background: #2563eb; }
+.post-editor-video-option-title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--text, #334155);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.post-editor-video-option-state { flex: 0 0 auto; color: #64748b; font-size: 10px; }
+.post-editor-video-empty { margin: 5px 0; color: #64748b; font-size: 12px; }
 @media (max-width: 520px) {
   .post-editor-videos { padding: 13px; }
-  .post-editor-video-option { gap: 8px; padding: 8px; }
-  .post-editor-video-option img, .post-editor-video-placeholder { width: 52px; height: 36px; }
+  .post-editor-video-selected-row { gap: 7px; padding: 8px; }
 }

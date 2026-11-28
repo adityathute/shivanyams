@@ -353,3 +353,23 @@
   border-color: rgba(37, 99, 235, 0.12);
   box-shadow: none;
 }
+
+
+/* Keep popular job tags fully visible and allow them to wrap onto a second line. */
+.jobs-popular-tags.portal-post-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+@media (max-width: 760px) {
+  .jobs-popular-tags.portal-post-taxonomy {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+}

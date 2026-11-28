@@ -634,6 +634,8 @@ export default function PostEditor({
   const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);
   const [availableVideos, setAvailableVideos] = useState<{ id: number; title_en: string; slug: string; featured_image_url?: string }[]>([]);
   const [selectedVideoIds, setSelectedVideoIds] = useState<number[]>([]);
+  const [videoPickerOpen, setVideoPickerOpen] = useState(false);
+  const [videoSearch, setVideoSearch] = useState("");
   const [nonVideoRelations, setNonVideoRelations] = useState<{ target_post_id: number; relation_type: string; sort_order: number }[]>([]);
   const [faqs, setFaqs] = useState<FAQInput[]>([]);
   const [requiredDocuments, setRequiredDocuments] = useState<RequiredDocumentInput[]>([]);
@@ -2915,29 +2917,93 @@ export default function PostEditor({
               </div>
               <span className="post-editor-video-count">{selectedVideoIds.length} selected</span>
             </div>
-            {availableVideos.length ? (
-              <div className="post-editor-video-list">
-                {availableVideos.map((video) => (
-                  <label className="post-editor-video-option" key={video.id}>
-                    <input
-                      type="checkbox"
-                      checked={selectedVideoIds.includes(video.id)}
-                      onChange={(event) => setSelectedVideoIds((current) =>
-                        event.target.checked ? [...current, video.id] : current.filter((id) => id !== video.id)
-                      )}
-                    />
-                    {video.featured_image_url ? <img src={video.featured_image_url} alt="" /> : <span className="post-editor-video-placeholder">▶</span>}
-                    <span className="post-editor-video-title">{video.title_en}</span>
-                    <span className="post-editor-video-status">{selectedVideoIds.includes(video.id) ? "Linked" : "Add"}</span>
-                  </label>
-                ))}
-              </div>
-            ) : (
-              <p className="post-editor-video-empty">No active video posts found. Create a post under Videos first, then return here to link it.</p>
-            )}
+
+            <div className="post-editor-video-selected">
+              {selectedVideoIds.length ? (
+                selectedVideoIds.map((id) => {
+                  const video = availableVideos.find((item) => item.id === id);
+                  return (
+                    <div className="post-editor-video-selected-row" key={id}>
+                      <span className="post-editor-video-selected-title">{video?.title_en || `Video #${id}`}</span>
+                      <button
+                        type="button"
+                        className="post-editor-video-remove"
+                        aria-label={`Remove ${video?.title_en || "selected video"}`}
+                        onClick={() => setSelectedVideoIds((current) => current.filter((videoId) => videoId !== id))}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="post-editor-video-empty">No videos selected yet.</p>
+              )}
+            </div>
+
+            <div className="post-editor-video-picker">
+              <button
+                type="button"
+                className="post-editor-video-picker-toggle"
+                aria-expanded={videoPickerOpen}
+                onClick={() => {
+                  setVideoPickerOpen((open) => !open);
+                  setVideoSearch("");
+                }}
+              >
+                <span>{videoPickerOpen ? "Close video selector" : "＋ Add videos"}</span>
+                <span aria-hidden="true">{videoPickerOpen ? "⌃" : "⌄"}</span>
+              </button>
+
+              {videoPickerOpen && (
+                <div className="post-editor-video-dropdown">
+                  {availableVideos.length ? (
+                    <>
+                      <input
+                        type="search"
+                        className="post-editor-video-search"
+                        value={videoSearch}
+                        onChange={(event) => setVideoSearch(event.target.value)}
+                        placeholder="Search videos..."
+                        aria-label="Search videos"
+                      />
+                      <div className="post-editor-video-options" role="group" aria-label="Available videos">
+                        {availableVideos
+                          .filter((video) => video.title_en.toLowerCase().includes(videoSearch.trim().toLowerCase()))
+                          .map((video) => {
+                            const selected = selectedVideoIds.includes(video.id);
+                            return (
+                              <button
+                                type="button"
+                                className={`post-editor-video-option${selected ? " is-selected" : ""}`}
+                                key={video.id}
+                                aria-pressed={selected}
+                                onClick={() => setSelectedVideoIds((current) =>
+                                  selected
+                                    ? current.filter((id) => id !== video.id)
+                                    : [...current, video.id]
+                                )}
+                              >
+                                <span className="post-editor-video-option-check" aria-hidden="true">{selected ? "✓" : ""}</span>
+                                <span className="post-editor-video-option-title">{video.title_en}</span>
+                                <span className="post-editor-video-option-state">{selected ? "Selected" : "Add"}</span>
+                              </button>
+                            );
+                          })}
+                        {!availableVideos.some((video) => video.title_en.toLowerCase().includes(videoSearch.trim().toLowerCase())) && (
+                          <p className="post-editor-video-empty">No videos match your search.</p>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="post-editor-video-empty">No active video posts found. Create a post under Videos first, then return here to link it.</p>
+                  )}
+                </div>
+              )}
+            </div>
           </section>
         )}
-        <section className="post-editor-important-links">
+                <section className="post-editor-important-links">
             <div className="post-editor-section-heading">
               <div>
                 <h2>Important Links</h2>

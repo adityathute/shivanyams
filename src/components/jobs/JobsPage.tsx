@@ -15,11 +15,11 @@
 
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/jobs/JobsPage.css";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
-import { SearchIcon } from "shivanya-ui";
+
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import type { Language } from "shivanya-i18n";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
@@ -50,27 +50,29 @@ function getExtendedDeadlineLabel(language: string): string {
 
 export function JobsPage() {
   useRefreshPortalDataOnMount();
-  const [query, setQuery] = useState("");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
 
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
-  const jobs = useMemo(() => {
-    const term = query.trim().toLowerCase();
+  const jobs = useMemo(() => data.items.filter((item) => item.type === "job"), [data.items]);
 
-    return data.items.filter((item) => {
-      if (item.type !== "job") return false;
-
-      return (
-        !term ||
-        [item.title, item.title_en, item.title_mr, item.title_hi, item.category, item.description, item.summary_en, item.summary_mr, item.summary_hi].some((value) =>
-          String(value || "").toLowerCase().includes(term),
-        )
-      );
+  const popularTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    jobs.forEach((item) => {
+      (Array.isArray(item.tags) ? item.tags : []).forEach((tag) => {
+        const cleanTag = String(tag || "").trim();
+        if (!cleanTag) return;
+        const normalized = cleanTag.toLocaleLowerCase();
+        counts.set(normalized, (counts.get(normalized) || 0) + 1);
+      });
     });
-  }, [data.items, query]);
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [jobs]);
 
   return (
     <>
@@ -88,20 +90,14 @@ export function JobsPage() {
 
               <p>{t("jobsHeroDescription")}</p>
 
-              <form
-                className="jobs-search"
-                onSubmit={(event) => event.preventDefault()}
-              >
-                <SearchIcon size={18} />
-
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={t("jobsSearchPlaceholder")}
-                />
-
-                <button type="submit">{t("search")}</button>
-              </form>
+              {popularTags.length > 0 ? (
+                <div className="jobs-popular-tags" aria-label="Popular job tags">
+                  <span className="jobs-popular-tags-label">{language === "mr" ? "लोकप्रिय टॅग:" : language === "hi" ? "लोकप्रिय टैग:" : "Popular tags:"}</span>
+                  {popularTags.map((tag) => (
+                    <a href={`/tags/${createPostSlug(tag)}`} key={tag}># {tag}</a>
+                  ))}
+                </div>
+              ) : null}form>
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">

@@ -86,8 +86,8 @@ class PostOrganizationType(models.TextChoices):
 
 class Post(TimestampedModel):
     """
-    Shared content record for Jobs, Schemes, Examination, Admit Card,
-    Results, Articles & Guides, and Videos.
+    Shared content record for Jobs, Schemes, Exams, Admit Cards,
+    Results, Guides, Videos and Tools.
 
     Translation policy:
     - title, summary, body and SEO text can be translated.

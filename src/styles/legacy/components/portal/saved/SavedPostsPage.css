@@ -1519,3 +1519,84 @@
     gap: 5px;
   }
 }
+
+
+/* Five-row loading skeleton shared by tag and organization related pages. */
+.related-post-skeleton-list {
+  display: grid;
+  width: 100%;
+}
+.related-post-skeleton-row {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) 96px;
+  align-items: center;
+  gap: 12px;
+  min-height: 53px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #edf1f6;
+}
+.related-post-skeleton-badge,
+.related-post-skeleton-title,
+.related-post-skeleton-summary,
+.related-post-skeleton-date {
+  display: block;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #edf1f6 25%, #f7f9fc 50%, #edf1f6 75%);
+  background-size: 200% 100%;
+  animation: related-post-skeleton-shimmer 1.35s ease-in-out infinite;
+}
+.related-post-skeleton-badge {
+  width: 76px;
+  height: 22px;
+  border-radius: 6px;
+}
+.related-post-skeleton-copy {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+.related-post-skeleton-title {
+  width: min(72%, 340px);
+  height: 11px;
+}
+.related-post-skeleton-summary {
+  width: min(48%, 230px);
+  height: 8px;
+  opacity: .75;
+}
+.related-post-skeleton-date {
+  width: 76px;
+  height: 9px;
+  justify-self: end;
+}
+@keyframes related-post-skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+[data-theme="dark"] .related-post-skeleton-row {
+  border-color: #293544;
+}
+[data-theme="dark"] .related-post-skeleton-badge,
+[data-theme="dark"] .related-post-skeleton-title,
+[data-theme="dark"] .related-post-skeleton-summary,
+[data-theme="dark"] .related-post-skeleton-date {
+  background: linear-gradient(90deg, #293544 25%, #354255 50%, #293544 75%);
+  background-size: 200% 100%;
+}
+@media (max-width: 760px) {
+  .related-post-skeleton-row {
+    grid-template-columns: 74px minmax(0, 1fr) 76px;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .related-post-skeleton-badge { width: 64px; }
+  .related-post-skeleton-date { width: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .related-post-skeleton-badge,
+  .related-post-skeleton-title,
+  .related-post-skeleton-summary,
+  .related-post-skeleton-date {
+    animation: none;
+  }
+}

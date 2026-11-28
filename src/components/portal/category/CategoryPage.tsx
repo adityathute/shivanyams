@@ -28,6 +28,7 @@ import {
 import { PortalEmptyState } from "./PortalEmptyState";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { PortalFooter } from "../layout/footer/PortalFooter";
 
 const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
@@ -353,13 +354,24 @@ export function CategoryPage({ type }: { type: ItemType }) {
             ) : filtered.length > 0 ? (
               filtered.map((item) => (
                 <a
-                  className="update-row"
+                  className="update-row category-update-row"
                   key={item.id}
                   href={item.link || "#"}
                   target={item.link ? "_blank" : undefined}
                   rel={item.link ? "noreferrer" : undefined}
                 >
-                  <CategoryBadge
+                  {item.image ? (
+                    <span className="category-update-thumbnail">
+                      <img src={item.image} alt="" loading="lazy" />
+                    </span>
+                  ) : (
+                    <span className="category-update-thumbnail category-update-thumbnail-empty" aria-hidden="true">
+                      <span>✦</span>
+                    </span>
+                  )}
+
+                  <span className="category-update-content">
+                    <CategoryBadge
                     category={getCategorySlugForType(item.type)}
                     label={getItemCategory(item, language)}
                   />
@@ -369,6 +381,8 @@ export function CategoryPage({ type }: { type: ItemType }) {
                     {getItemDescription(item, language) && (
                       <small>{getItemDescription(item, language)}</small>
                     )}
+                  </span>
+
                   </span>
 
                   {!hideDateAndNewBadge && (
@@ -390,6 +404,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
           </div>
         </section>
       </main>
+      <PortalFooter />
     </div>
   );
 }

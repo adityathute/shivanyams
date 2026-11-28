@@ -26,6 +26,8 @@ from .models import (
     PostDate,
     PostFAQ,
     PostRequiredDocument,
+    PostPhotoRequirement,
+    PostSignatureRequirement,
     PostLink,
     PostReaction,
     PostRelation,
@@ -97,10 +99,30 @@ class PostRequiredDocumentSerializer(serializers.ModelSerializer):
             "id", "name_en", "name_mr", "name_hi",
             "description_en", "description_mr", "description_hi",
             "category", "requirement", "original_required", "photocopy_required",
-            "number_of_copies", "quantity", "photo_type", "photo_size",
-            "photo_quantity", "photo_background", "signature_type",
-            "signature_format", "signature_size", "other_specifications",
+            "number_of_copies", "quantity",
             "instructions_en", "instructions_mr", "instructions_hi",
+            "sort_order", "is_active",
+        )
+        read_only_fields = ("id",)
+
+
+class PostPhotoRequirementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostPhotoRequirement
+        fields = (
+            "id", "photo_type", "photo_size", "photo_quantity", "photo_background",
+            "other_specifications", "instructions_en", "instructions_mr", "instructions_hi",
+            "sort_order", "is_active",
+        )
+        read_only_fields = ("id",)
+
+
+class PostSignatureRequirementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostSignatureRequirement
+        fields = (
+            "id", "signature_type", "signature_format", "signature_size",
+            "other_specifications", "instructions_en", "instructions_mr", "instructions_hi",
             "sort_order", "is_active",
         )
         read_only_fields = ("id",)
@@ -649,7 +671,9 @@ class PostSerializer(serializers.ModelSerializer):
             "important_links",
             "faqs",
             "required_documents",
-            "important_dates",
+            "photo_requirements",
+            "signature_requirements",
+            "important_dates,
             "resources",
             "related_posts",
             "job_details",
@@ -804,6 +828,8 @@ class PostWriteSerializer(serializers.ModelSerializer):
     important_links = PostLinkSerializer(many=True, required=False)
     faqs = PostFAQSerializer(many=True, required=False)
     required_documents = PostRequiredDocumentSerializer(many=True, required=False)
+    photo_requirements = PostPhotoRequirementSerializer(many=True, required=False)
+    signature_requirements = PostSignatureRequirementSerializer(many=True, required=False)
     important_dates = PostDateSerializer(many=True, required=False)
     resources = PostResourceSerializer(many=True, required=False)
     related_posts = PostRelationSerializer(
@@ -858,6 +884,8 @@ class PostWriteSerializer(serializers.ModelSerializer):
             "important_links",
             "faqs",
             "required_documents",
+            "photo_requirements",
+            "signature_requirements",
             "important_dates",
             "resources",
             "related_posts",
@@ -929,6 +957,8 @@ class PostWriteSerializer(serializers.ModelSerializer):
             "important_links",
             "faqs",
             "required_documents",
+            "photo_requirements",
+            "signature_requirements",
             "important_dates",
             "resources",
             "outgoing_relations",
@@ -964,6 +994,12 @@ class PostWriteSerializer(serializers.ModelSerializer):
 
         if "required_documents" in nested_data:
             cls._replace_many(post.required_documents, nested_data["required_documents"], "post", post)
+
+        if "photo_requirements" in nested_data:
+            cls._replace_many(post.photo_requirements, nested_data["photo_requirements"], "post", post)
+
+        if "signature_requirements" in nested_data:
+            cls._replace_many(post.signature_requirements, nested_data["signature_requirements"], "post", post)
 
         if "important_dates" in nested_data:
             cls._replace_many(

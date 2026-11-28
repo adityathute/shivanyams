@@ -113,7 +113,7 @@ export function TagsPage() {
   }, [page, pageCount]);
 
   return (
-    <div className="tags-directory-page">
+    <div className="saved-page tags-directory-page">
       <header className="portal-page-heading saved-page-heading">
         <span className="saved-eyebrow">{text.eyebrow}</span>
         <h1>{text.title}</h1>

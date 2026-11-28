@@ -74,6 +74,7 @@ SUPPORTED_CONTENT_KINDS = {
     "examination",
     "exams",
     "admit-card",
+    "admit-cards",
     "results",
     "articles",
     "articles-guides",

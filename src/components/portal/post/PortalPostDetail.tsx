@@ -364,7 +364,8 @@ const detailLabels = {
   importantLinks: {
     en: "Important Links", mr: "महत्त्वाच्या लिंक्स", hi: "महत्वपूर्ण लिंक",
   },
-  requiredDocuments: { en: "Required Documents", mr: "आवश्यक कागदपत्रे", hi: "आवश्यक दस्तावेज़" },
+  requirements: { en: "Documents & Upload Requirements", mr: "कागदपत्रे आणि अपलोड आवश्यकता", hi: "दस्तावेज़ और अपलोड आवश्यकताएँ" },
+  requirement: { en: "Requirement", mr: "आवश्यकता", hi: "आवश्यकता" },
   photograph: { en: "Photograph", mr: "फोटो", hi: "फोटोग्राफ" },
   signature: { en: "Signature", mr: "स्वाक्षरी", hi: "हस्ताक्षर" },
   document: { en: "Document", mr: "कागदपत्र", hi: "दस्तावेज़" },
@@ -398,6 +399,11 @@ function detailLabelFallback(value: string) {
   return value
     .replaceAll("_", " ")
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function capitalizeFirst(value: string) {
+  const text = String(value || "").trim();
+  return text ? text.charAt(0).toLocaleUpperCase() + text.slice(1) : "";
 }
 
 const organizationTypeLabels: Record<string, Record<string, string>> = {
@@ -1461,69 +1467,79 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   ) : null}
 
 
-                  {post.requiredDocuments?.length ? (
+                  {post.requiredDocuments?.length || post.photoRequirements?.length || post.signatureRequirements?.length ? (
                     <section className="portal-post-wise-details portal-requirements-section">
-                      <h2>{getDetailLabel("requiredDocuments", language)}</h2>
+                      <h2>{getDetailLabel("requirements", language)}</h2>
                       <div className="portal-post-wise-table-wrap">
                         <table className="portal-post-wise-table">
-                          <thead><tr><th>{getDetailLabel("document", language)}</th><th>{getDetailLabel("details", language)}</th></tr></thead>
-                          <tbody>{post.requiredDocuments.map((row: any, index: number) => {
-                            const name = getLocalizedText(language, row.name_en, row.name_mr, row.name_hi);
-                            const description = getLocalizedText(language, row.description_en, row.description_mr, row.description_hi);
-                            const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
-                            const details = [
-                              row.category || "",
-                              description,
-                              row.requirement ? (row.requirement === "compulsory" ? getDetailLabel("compulsory", language) : getDetailLabel("optional", language)) : "",
-                              row.original_required != null ? `${getDetailLabel("original", language)}: ${row.original_required ? "Yes" : "No"}` : "",
-                              row.photocopy_required != null ? `${getDetailLabel("photocopy", language)}: ${row.photocopy_required ? "Yes" : "No"}` : "",
-                              row.number_of_copies ? `${getDetailLabel("copies", language)}: ${row.number_of_copies}` : "",
-                              row.quantity ? `${getDetailLabel("quantity", language)}: ${row.quantity}` : "",
-                              instructions,
-                            ].filter(Boolean);
-                            return <tr key={row.id || index}><td>{name || "—"}</td><td>{details.join(" · ") || "—"}</td></tr>;
-                          })}</tbody>
-                        </table>
-                      </div>
-                    </section>
-                  ) : null}
-                  {post.photoRequirements?.length ? (
-                    <section className="portal-post-wise-details portal-requirements-section">
-                      <h2>{getDetailLabel("photograph", language)}</h2>
-                      <div className="portal-post-wise-table-wrap">
-                        <table className="portal-post-wise-table">
-                          <thead><tr><th>{getDetailLabel("details", language)}</th><th>{getDetailLabel("instructions", language)}</th></tr></thead>
-                          <tbody>{post.photoRequirements.map((row: any, index: number) => {
-                            const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
-                            const values = [
-                              row.photo_type ? `${getDetailLabel("type", language)}: ${row.photo_type}` : "",
-                              row.photo_size ? `${getDetailLabel("size", language)}: ${row.photo_size}` : "",
-                              row.photo_quantity ? `${getDetailLabel("quantity", language)}: ${row.photo_quantity}` : "",
-                              row.photo_background ? `${getDetailLabel("background", language)}: ${row.photo_background}` : "",
-                              row.other_specifications || "",
-                            ].filter(Boolean);
-                            return <tr key={row.id || index}><td>{values.join(" · ") || "—"}</td><td>{instructions || "—"}</td></tr>;
-                          })}</tbody>
-                        </table>
-                      </div>
-                    </section>
-                  ) : null}
-                  {post.signatureRequirements?.length ? (
-                    <section className="portal-post-wise-details portal-requirements-section">
-                      <h2>{getDetailLabel("signature", language)}</h2>
-                      <div className="portal-post-wise-table-wrap">
-                        <table className="portal-post-wise-table">
-                          <thead><tr><th>{getDetailLabel("details", language)}</th><th>{getDetailLabel("instructions", language)}</th></tr></thead>
-                          <tbody>{post.signatureRequirements.map((row: any, index: number) => {
-                            const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
-                            const values = [
-                              row.signature_type ? `${getDetailLabel("type", language)}: ${row.signature_type}` : "",
-                              row.signature_format ? `${getDetailLabel("format", language)}: ${row.signature_format}` : "",
-                              row.signature_size ? `${getDetailLabel("size", language)}: ${row.signature_size}` : "",
-                              row.other_specifications || "",
-                            ].filter(Boolean);
-                            return <tr key={row.id || index}><td>{values.join(" · ") || "—"}</td><td>{instructions || "—"}</td></tr>;
-                          })}</tbody>
+                          <thead>
+                            <tr>
+                              <th>{getDetailLabel("requirement", language)}</th>
+                              <th>{getDetailLabel("details", language)}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {post.photoRequirements?.map((row: any, index: number) => {
+                              const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
+                              const details = [
+                                row.photo_type ? `${getDetailLabel("type", language)}: ${row.photo_type}` : "",
+                                row.photo_size ? `${getDetailLabel("size", language)}: ${row.photo_size}` : "",
+                                row.photo_quantity ? `${getDetailLabel("quantity", language)}: ${row.photo_quantity}` : "",
+                                row.photo_background ? `${getDetailLabel("background", language)}: ${row.photo_background}` : "",
+                                row.other_specifications || "",
+                              ].filter(Boolean);
+                              return (
+                                <tr key={row.id || `photo-${index}`}>
+                                  <td>{getDetailLabel("photograph", language)}</td>
+                                  <td>
+                                    {details.map((value) => capitalizeFirst(value)).join(" · ") || "—"}
+                                    {instructions ? <small className="portal-requirement-note">{capitalizeFirst(instructions)}</small> : null}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                            {post.signatureRequirements?.map((row: any, index: number) => {
+                              const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
+                              const details = [
+                                row.signature_type ? `${getDetailLabel("type", language)}: ${row.signature_type}` : "",
+                                row.signature_format ? `${getDetailLabel("format", language)}: ${row.signature_format}` : "",
+                                row.signature_size ? `${getDetailLabel("size", language)}: ${row.signature_size}` : "",
+                                row.other_specifications || "",
+                              ].filter(Boolean);
+                              return (
+                                <tr key={row.id || `signature-${index}`}>
+                                  <td>{getDetailLabel("signature", language)}</td>
+                                  <td>
+                                    {details.map((value) => capitalizeFirst(value)).join(" · ") || "—"}
+                                    {instructions ? <small className="portal-requirement-note">{capitalizeFirst(instructions)}</small> : null}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                            {post.requiredDocuments?.map((row: any, index: number) => {
+                              const name = getLocalizedText(language, row.name_en, row.name_mr, row.name_hi);
+                              const description = getLocalizedText(language, row.description_en, row.description_mr, row.description_hi);
+                              const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
+                              const details = [
+                                row.category || "",
+                                description,
+                                row.requirement ? (row.requirement === "compulsory" ? getDetailLabel("compulsory", language) : getDetailLabel("optional", language)) : "",
+                                row.original_required != null ? `${getDetailLabel("original", language)}: ${row.original_required ? "Yes" : "No"}` : "",
+                                row.photocopy_required != null ? `${getDetailLabel("photocopy", language)}: ${row.photocopy_required ? "Yes" : "No"}` : "",
+                                row.number_of_copies ? `${getDetailLabel("copies", language)}: ${row.number_of_copies}` : "",
+                                row.quantity ? `${getDetailLabel("quantity", language)}: ${row.quantity}` : "",
+                              ].filter(Boolean);
+                              return (
+                                <tr key={row.id || `document-${index}`}>
+                                  <td>{capitalizeFirst(name) || "—"}</td>
+                                  <td>
+                                    {details.map((value) => capitalizeFirst(value)).join(" · ") || "—"}
+                                    {instructions ? <small className="portal-requirement-note">{capitalizeFirst(instructions)}</small> : null}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
                         </table>
                       </div>
                     </section>

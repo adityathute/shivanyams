@@ -102,9 +102,10 @@ export function SearchPage() {
     () => query ? data.items.filter((item) => matchesPostSearch(item, query)) : [],
     [data.items, query],
   );
+  const showNoResults = Boolean(query) && !data.loading && matchedItems.length === 0;
   const suggestions = useMemo(
-    () => query && !data.loading && matchedItems.length === 0 ? getSuggestions(data.items, query) : [],
-    [data.items, data.loading, matchedItems.length, query],
+    () => showNoResults ? getSuggestions(data.items, query) : [],
+    [data.items, query, showNoResults],
   );
 
   const searchFor = (value: string) => {
@@ -137,25 +138,25 @@ export function SearchPage() {
         </div>
       )}
 
-      {suggestions.length > 0 && (
+      {showNoResults && (
         <section className="search-related-panel" aria-label={text.related}>
           <div>
             <h2>{text.emptyTitle}</h2>
             <p>{text.emptyDescription}</p>
           </div>
-          <h3>{text.related}</h3>
-          <div className="search-suggestion-list">
+          {suggestions.length > 0 && <h3>{text.related}</h3>}
+          {suggestions.length > 0 && <div className="search-suggestion-list">
             {suggestions.map((suggestion) => (
               <button type="button" key={suggestion} onClick={() => searchFor(suggestion)}>
                 {suggestion}
                 <span aria-hidden="true">↗</span>
               </button>
             ))}
-          </div>
+          </div>}
         </section>
       )}
 
-      <UpdatesSection
+      {!showNoResults && <UpdatesSection
         type={activeCategory}
         title={text.results}
         query={query}
@@ -167,7 +168,7 @@ export function SearchPage() {
         showViewAll={false}
         paginate
         searchAllFields
-      />
+      />}
     </div>
   );
 }

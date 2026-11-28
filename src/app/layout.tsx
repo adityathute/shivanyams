@@ -15,6 +15,7 @@ import { cookies } from "next/headers";
 import type { Language } from "shivanya-i18n";
 
 import { PortalLayout } from "../components/portal/layout/PortalLayout";
+import { getPublicPortalData } from "../lib/seo";
 import { CSS_MODE } from "../styles/css.config";
 import "./../styles/legacy/app/globals.css";
 import "shivanya-ui/styles";
@@ -69,6 +70,7 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   const cookieStore = await cookies();
+  const initialPortalData = await getPublicPortalData();
 
   const savedLanguage = cookieStore.get("shivanya-language")?.value;
   const savedTheme = cookieStore.get("shivanya-theme")?.value;
@@ -95,7 +97,7 @@ export default async function RootLayout({
         <link rel="preload" href="/fonts/Hind-Bold.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body>
-        <PortalLayout initialLanguage={initialLanguage}>
+        <PortalLayout initialLanguage={initialLanguage} initialData={initialPortalData}>
           {children}
         </PortalLayout>
       </body>

@@ -398,7 +398,7 @@ export function UpdatesSection({
 
             return (
               <Link
-                className={`update-row${paginate ? " related-job-row" : ""}${applicationDeadline ? " update-row-has-deadline" : ""}`}
+                className={`update-row${paginate ? " related-job-row" : ""}${applicationDeadline ? " update-row-has-deadline" : ""}${showDateAndNewBadge && item.type !== "job" ? " update-row-no-published-date" : ""}`}
                 key={item.id}
                 href={getPostHref(item)}
               >
@@ -430,18 +430,20 @@ export function UpdatesSection({
                   </span>
                 ) : showDateAndNewBadge ? (
                   <>
-                    <time>
-                      {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            dateLocale,
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : getPortalText("new", language)}
-                    </time>
+                    {item.type === "job" && (
+                      <time>
+                        {item.date
+                          ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
+                              dateLocale,
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
+                          : getPortalText("new", language)}
+                      </time>
+                    )}
                     <span className="new-pill">
                       {getPortalText("new", language)}
                     </span>

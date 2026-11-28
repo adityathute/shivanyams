@@ -103,6 +103,35 @@ function getItemCategory(item: Item, language: Language): string {
   );
 }
 
+function renderSearchHighlight(value: string, query: string) {
+  const terms = [...new Set(query.trim().split(/\s+/).filter(Boolean))].sort(
+    (a, b) => b.length - a.length,
+  );
+  if (!terms.length || !value) return value;
+
+  const escapedTerms = terms.map((term) =>
+    term.replace(/[.*+?^${}()|[\]\\]/g, "\\function getItemCategory(item: Item, language: Language): string {
+  return getLocalizedValue(
+    language,
+    item.category_en,
+    item.category_mr,
+    item.category_hi,
+  );
+}
+"),
+  );
+  const matcher = new RegExp(`(${escapedTerms.join("|")})`, "giu");
+  const parts = value.split(matcher);
+
+  return parts.map((part, index) =>
+    terms.some((term) => part.toLocaleLowerCase() === term.toLocaleLowerCase()) ? (
+      <mark className="search-query-highlight" key={index}>{part}</mark>
+    ) : (
+      <span key={index}>{part}</span>
+    ),
+  );
+}
+
 function isJobDeadlineRevised(item: Item): boolean {
   const applicationEnd = item.important_dates?.find(
     (entry) => entry.date_type === "application_end",
@@ -376,8 +405,16 @@ export function UpdatesSection({
                 <CategoryBadge category={getCategorySlugForType(item.type)} label={itemCategory} />
 
                 <span className="update-title">
-                  {itemTitle}
-                  {itemDescription && <small>{itemDescription}</small>}
+                  {searchAllFields && query
+                    ? renderSearchHighlight(itemTitle, query)
+                    : itemTitle}
+                  {itemDescription && (
+                    <small>
+                      {searchAllFields && query
+                        ? renderSearchHighlight(itemDescription, query)
+                        : itemDescription}
+                    </small>
+                  )}
                 </span>
 
                 {applicationDeadline ? (

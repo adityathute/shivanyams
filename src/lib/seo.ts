@@ -140,7 +140,7 @@ function getKeywords(value: unknown): string[] | undefined {
 }
 
 async function fetchPublicPost(kind: ContentKind, slug: string): Promise<ApiPost | null> {
-  const apiBase = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
+  const apiBase = (process.env.NEXT_PUBLIC_PORTAL_API_URL || process.env.NEXT_PUBLIC_API_URL)?.trim();
   if (!apiBase) return null;
 
   try {

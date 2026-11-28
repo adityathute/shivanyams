@@ -17,7 +17,10 @@ import { useAuth } from "shivanya-auth";
 
 import {
   categoryConfig,
+  CategoryBadge,
+  getCategorySlugForType,
   getCategoryTitle,
+  getLocalizedCategoryLabel,
   getPortalApiUrl,
   normalizeCategorySlug,
   type Category,
@@ -29,6 +32,8 @@ import {
   type Item,
   type ItemType,
 } from "../data/portal-data";
+import { createPostSlug } from "../post/PortalPostDetail";
+import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
@@ -57,8 +62,6 @@ const copy: Record<
     loginTitle: string;
     loginDescription: string;
     login: string;
-    remove: string;
-    removeError: string;
     posts: string;
   }
 > = {
@@ -73,8 +76,6 @@ const copy: Record<
     loginTitle: "Sign in to view your saved posts",
     loginDescription: "Your saved posts are available whenever you sign in to your account.",
     login: "Sign in",
-    remove: "Remove saved post",
-    removeError: "Unable to remove this saved post. Please try again.",
     posts: "saved posts",
   },
   mr: {
@@ -88,8 +89,6 @@ const copy: Record<
     loginTitle: "जतन केलेल्या पोस्ट पाहण्यासाठी लॉगिन करा",
     loginDescription: "लॉगिन केल्यानंतर तुमच्या जतन केलेल्या पोस्ट येथे उपलब्ध असतील.",
     login: "लॉगिन",
-    remove: "जतन केलेली पोस्ट काढा",
-    removeError: "पोस्ट काढता आली नाही. कृपया पुन्हा प्रयत्न करा.",
     posts: "जतन केलेल्या पोस्ट",
   },
   hi: {
@@ -103,8 +102,6 @@ const copy: Record<
     loginTitle: "सेव की गई पोस्ट देखने के लिए लॉगिन करें",
     loginDescription: "लॉगिन करने के बाद आपकी सेव की गई पोस्ट यहाँ उपलब्ध रहेंगी।",
     login: "लॉगिन",
-    remove: "सेव की गई पोस्ट हटाएँ",
-    removeError: "पोस्ट हटाई नहीं जा सकी। कृपया फिर से प्रयास करें।",
     posts: "सेव की गई पोस्ट",
   },
 };
@@ -172,8 +169,9 @@ export function SavedPostsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedType, setSelectedType] = useState<ItemType | "all">("all");
   const [loading, setLoading] = useState(true);
-  const [removingIds, setRemovingIds] = useState<string[]>([]);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
 
   const loadSavedPosts = useCallback(async (signal?: AbortSignal) => {
     if (!user) {
@@ -273,36 +271,18 @@ export function SavedPostsPage() {
   }, [user]);
 
   const filteredItems = useMemo(
-    () =>
-      selectedType === "all"
-        ? items
-        : items.filter((item) => item.type === selectedType),
+    () => (selectedType === "all" ? items : items.filter((item) => item.type === selectedType))
+      .slice()
+      .sort((a, b) => new Date(b.date || "").getTime() - new Date(a.date || "").getTime()),
     [items, selectedType],
   );
+  const pageCount = Math.max(1, Math.ceil(filteredItems.length / pageSize));
+  const visibleItems = filteredItems.slice((page - 1) * pageSize, page * pageSize);
+  const firstItem = filteredItems.length ? (page - 1) * pageSize + 1 : 0;
+  const lastItem = Math.min(page * pageSize, filteredItems.length);
 
-  async function removeSavedPost(postId: string) {
-    setRemovingIds((current) => [...current, postId]);
-
-    try {
-      const response = await authenticatedFetch(
-        getPortalApiUrl(`saved-posts/${postId}/`),
-        { method: "DELETE" },
-      );
-
-      if (!response.ok) {
-        setError(text.removeError);
-        return;
-      }
-
-      setItems((current) => current.filter((item) => item.id !== postId));
-      setError("");
-    } catch (removeError) {
-      console.error("Saved post removal failed:", removeError);
-      setError(text.removeError);
-    } finally {
-      setRemovingIds((current) => current.filter((id) => id !== postId));
-    }
-  }
+  useEffect(() => { setPage(1); }, [selectedType, pageSize]);
+  useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
 
   if (authLoading || (user && loading)) {
     return (
@@ -377,9 +357,9 @@ export function SavedPostsPage() {
 
         {error && <p className="saved-error" role="alert">{error}</p>}
 
-        <div className="saved-post-list">
-          {filteredItems.length > 0 ? (
-            filteredItems.map((item) => {
+        <div className="saved-post-list update-list">
+          {visibleItems.length > 0 ? (
+            visibleItems.map((item) => {
               const title = getLocalized(language, {
                 en: item.title_en,
                 mr: item.title_mr,
@@ -390,32 +370,49 @@ export function SavedPostsPage() {
                 mr: item.summary_mr,
                 hi: item.summary_hi,
               }) || item.description;
-              const category = getLocalized(language, {
-                en: item.category_en,
-                mr: item.category_mr,
-                hi: item.category_hi,
-              }) || item.category;
+              const category = getLocalizedCategoryLabel(item, language);
+              const hasRevisedDeadline = item.important_dates?.some(
+                (entry) => entry.date_type === "application_end" &&
+                  (entry.date_format === "revised" || entry.date_format === "revised_with_time"),
+              ) ?? false;
+              const applicationDeadline = item.type === "job" && hasRevisedDeadline
+                ? getJobApplicationDeadline(item)
+                : "";
+              const deadlineStatus = applicationDeadline
+                ? getJobDeadlineStatus(applicationDeadline)
+                : "";
 
               return (
-                <article className="saved-post-row" key={item.id}>
-                  <Link className="saved-post-link" href={getPostHref(item)}>
-                    <span className={`update-badge ${item.type}`}>{category}</span>
-                    <span className="saved-post-title">
+                <article className="saved-update-row" key={item.id}>
+                  <CategoryBadge
+                    category={getCategorySlugForType(item.type)}
+                    label={category || item.category}
+                  />
+                  <div className="saved-update-content">
+                    <Link className="saved-update-title" href={getPostHref(item)}>
                       {title}
                       {summary && <small>{summary}</small>}
+                    </Link>
+                    {Array.isArray(item.tags) && item.tags.length > 0 ? (
+                      <div className="portal-post-context portal-post-taxonomy saved-update-tags">
+                        {item.tags.map((tag) => (
+                          <Link className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>
+                            {tag}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                  {applicationDeadline ? (
+                    <span className="update-deadline-group">
+                      <span className="update-deadline-extended">
+                        {language === "mr" ? "मुदतवाढ" : language === "hi" ? "तिथि बढ़ाई गई" : "Date Extended"}
+                      </span>
+                      <time className={`update-application-deadline deadline-${deadlineStatus}`}>
+                        {formatJobApplicationDeadline(applicationDeadline)}
+                      </time>
                     </span>
-                    <time>{formatDate(item.date, language)}</time>
-                  </Link>
-                  <button
-                    type="button"
-                    className="saved-remove-button"
-                    aria-label={text.remove}
-                    title={text.remove}
-                    disabled={removingIds.includes(item.id)}
-                    onClick={() => void removeSavedPost(item.id)}
-                  >
-                    {removingIds.includes(item.id) ? "…" : "×"}
-                  </button>
+                  ) : null}
                 </article>
               );
             })
@@ -425,6 +422,27 @@ export function SavedPostsPage() {
             </div>
           )}
         </div>
+
+        {filteredItems.length > 0 ? (
+          <div className="updates-admin-pagination admin-table-footer saved-pagination">
+            <span>
+              Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {filteredItems.length.toLocaleString("en-IN")}
+            </span>
+            <div className="admin-pagination">
+              <label>
+                Rows
+                <select value={pageSize} onChange={(event) => setPageSize(Number(event.target.value))} aria-label="Rows per page">
+                  {[10, 15, 25, 50].map((size) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+              </label>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
+              <span>Page {page} of {pageCount}</span>
+              <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>
+            </div>
+          </div>
+        ) : null}
       </section>
     </div>
   );

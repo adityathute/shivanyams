@@ -889,7 +889,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
       if (!response.ok) {
         throw new Error(`View tracking failed (${response.status}).`);
       }
-      setTrackedViewsCount({ postId, count: (Number(post?.viewsCount) || 0) + 1 });
     }).catch((error) => {
       if (trackedPostIdRef.current === postId) {
         trackedPostIdRef.current = null;

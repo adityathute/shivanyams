@@ -463,7 +463,17 @@
 .updates-panel .update-list > .update-row:hover,
 .updates-panel .update-list > .update-row:focus-visible,
 .schemes-updates .update-list > .update-row:hover,
-.schemes-updates .update-list > .update-row:focus-visible {
+.schemes-updates .update-list > .update-row:focus-visible,
+.admit-updates .update-list > .update-row:hover,
+.admit-updates .update-list > .update-row:focus-visible,
+.results-updates .update-list > .update-row:hover,
+.results-updates .update-list > .update-row:focus-visible,
+.guides-updates .update-list > .update-row:hover,
+.guides-updates .update-list > .update-row:focus-visible,
+.tools-updates .update-list > .update-row:hover,
+.tools-updates .update-list > .update-row:focus-visible,
+.jobs-updates .update-list > .update-row:hover,
+.jobs-updates .update-list > .update-row:focus-visible {
   background: #f7faff !important;
   background-image: none !important;
 }
@@ -471,7 +481,17 @@
 [data-theme="dark"] .updates-panel .update-list > .update-row:hover,
 [data-theme="dark"] .updates-panel .update-list > .update-row:focus-visible,
 [data-theme="dark"] .schemes-updates .update-list > .update-row:hover,
-[data-theme="dark"] .schemes-updates .update-list > .update-row:focus-visible {
+[data-theme="dark"] .schemes-updates .update-list > .update-row:focus-visible,
+[data-theme="dark"] .admit-updates .update-list > .update-row:hover,
+[data-theme="dark"] .admit-updates .update-list > .update-row:focus-visible,
+[data-theme="dark"] .results-updates .update-list > .update-row:hover,
+[data-theme="dark"] .results-updates .update-list > .update-row:focus-visible,
+[data-theme="dark"] .guides-updates .update-list > .update-row:hover,
+[data-theme="dark"] .guides-updates .update-list > .update-row:focus-visible,
+[data-theme="dark"] .tools-updates .update-list > .update-row:hover,
+[data-theme="dark"] .tools-updates .update-list > .update-row:focus-visible,
+[data-theme="dark"] .jobs-updates .update-list > .update-row:hover,
+[data-theme="dark"] .jobs-updates .update-list > .update-row:focus-visible {
   background: #1c2633 !important;
   background-image: none !important;
 }

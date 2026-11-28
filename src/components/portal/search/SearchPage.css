@@ -393,3 +393,23 @@
     font-size: 8px !important;
   }
 }
+
+
+/* Non-job search results show the NEW badge without a published-date column. */
+.search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-no-published-date {
+  grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+}
+
+@media (max-width: 760px) {
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-no-published-date {
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+    gap: 7px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-no-published-date {
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+    gap: 6px !important;
+  }
+}

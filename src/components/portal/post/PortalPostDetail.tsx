@@ -1805,7 +1805,7 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
                               </tr>
                             );
                           })}
-                          {post.signatureRequirements?.map((row: any, index: number) => {
+                          {post.signatureRequirements?.map((row, index) => {
                             const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
                             const details = [
                               row.signature_format ? `${getDetailLabel("format", language)}: ${row.signature_format}` : "",
@@ -1839,7 +1839,7 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
                               </tr>
                             );
                           })}
-                          {post.requiredDocuments?.map((row: any, index: number) => {
+                          {post.requiredDocuments?.map((row, index) => {
                             const name = getLocalizedText(language, row.name_en, row.name_mr, row.name_hi);
                             const description = getLocalizedText(language, row.description_en, row.description_mr, row.description_hi);
                             const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);

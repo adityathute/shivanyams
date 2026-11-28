@@ -66,7 +66,14 @@ export function ToolsPage() {
   const copy = pageCopy[language] ?? pageCopy.mr;
 
   const tools = useMemo(
-    () => data.items.filter((item) => item.type === "tool"),
+    () =>
+      data.items
+        .filter((item) => String(item.type) === "tool")
+        .sort(
+          (a, b) =>
+            new Date(b.date || "").getTime() -
+            new Date(a.date || "").getTime(),
+        ),
     [data.items],
   );
 
@@ -86,23 +93,6 @@ export function ToolsPage() {
       .map(([tag]) => tag);
   }, [tools]);
 
-    return data.items
-      .filter((item) => {
-        if (String(item.type) !== "tool") return false;
-
-        return (
-          !term ||
-          [item.title, item.title_en, item.title_mr, item.title_hi, item.category, item.description, item.summary_en, item.summary_mr, item.summary_hi].some((value) =>
-            String(value || "").toLowerCase().includes(term),
-          )
-        );
-      })
-      .sort(
-        (a, b) =>
-          new Date(b.date || "").getTime() -
-          new Date(a.date || "").getTime(),
-      );
-  }, [data.items, query]);
 
   return (
     <>

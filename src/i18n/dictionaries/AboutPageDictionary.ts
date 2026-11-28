@@ -23,7 +23,7 @@ export const aboutDictionary = {
     hi: "आगे बढ़ने में आपकी मदद करने वाली जानकारी।",
   },
   heroDescription: {
-    en: "ShivanyaMS is an independent information platform helping people discover government jobs, schemes, examination, results, admit cards, and important updates in one place.",
+    en: "ShivanyaMS is an independent information platform helping people discover government Jobs, Schemes, Exams, Results, Admit Cards, Guides and important updates in one place.",
     mr: "ShivanyaMS हे एक स्वतंत्र माहिती व्यासपीठ आहे, जे सरकारी नोकऱ्या, योजना, परीक्षा, निकाल, प्रवेशपत्रे आणि महत्त्वाच्या अपडेट्स एकाच ठिकाणी उपलब्ध करून देते.",
     hi: "ShivanyaMS एक स्वतंत्र सूचना मंच है, जो सरकारी नौकरियों, योजनाओं, परीक्षाओं, परिणामों, प्रवेश पत्रों और महत्वपूर्ण अपडेट्स को एक ही जगह उपलब्ध कराता है।",
   },
@@ -73,7 +73,7 @@ export const aboutDictionary = {
     hi: "ShivanyaMS के बारे में",
   },
   intro1: {
-    en: "ShivanyaMS is designed to make important information easier to find and understand. We bring together updates related to government employment, public schemes, examinations, and other useful opportunities.",
+    en: "ShivanyaMS is designed to make important information easier to find and understand. We bring together updates related to government Jobs, Schemes, Exams, Results, Admit Cards, Guides and other useful opportunities.",
     mr: "महत्त्वाची माहिती शोधणे आणि समजून घेणे सोपे व्हावे यासाठी ShivanyaMS तयार केले आहे. सरकारी रोजगार, सार्वजनिक योजना, परीक्षा आणि इतर उपयुक्त संधींबद्दलची माहिती आम्ही एकत्र आणतो.",
     hi: "ShivanyaMS महत्वपूर्ण जानकारी को आसानी से खोजने और समझने के लिए बनाया गया है। हम सरकारी रोजगार, सार्वजनिक योजनाओं, परीक्षाओं और अन्य उपयोगी अवसरों से संबंधित जानकारी एकत्र करते हैं।",
   },
@@ -103,7 +103,7 @@ export const aboutDictionary = {
     hi: "फुल स्टैक डेवलपर",
   },
   founderDescription1: {
-    en: "ShivanyaMS was founded by Aditya Thute, a Full Stack Developer, in 2026. The platform was created with the goal of making government jobs, schemes, examination, results, admit cards, and important updates easily accessible to everyone.",
+    en: "ShivanyaMS was founded by Aditya Thute, a Full Stack Developer, in 2026. The platform was created with the goal of making government Jobs, Schemes, Exams, Results, Admit Cards, Guides and important updates easily accessible to everyone.",
     mr: "ShivanyaMS ची स्थापना २०२६ मध्ये फुल स्टॅक डेव्हलपर आदित्य थुटे यांनी केली. सरकारी नोकऱ्या, योजना, परीक्षा, निकाल, प्रवेशपत्रे आणि महत्त्वाचे अपडेट्स सर्वांना सहज उपलब्ध करून देणे हे या व्यासपीठाचे उद्दिष्ट आहे.",
     hi: "ShivanyaMS की स्थापना 2026 में फुल स्टैक डेवलपर आदित्य थुटे ने की। इस मंच का उद्देश्य सरकारी नौकरियों, योजनाओं, परीक्षाओं, परिणामों, प्रवेश पत्रों और महत्वपूर्ण अपडेट्स को सभी के लिए आसानी से उपलब्ध कराना है।",
   },
@@ -158,7 +158,7 @@ export const aboutDictionary = {
     hi: "सरकारी योजनाओं, लाभों और संबंधित घोषणाओं की जानकारी प्राप्त करें।",
   },
   resultsTitle: {
-    en: "Examination, Results & Admit Cards",
+    en: "Exams, Results & Admit Cards",
     mr: "परीक्षा, निकाल आणि प्रवेशपत्रे",
     hi: "परीक्षा, परिणाम और प्रवेश पत्र",
   },

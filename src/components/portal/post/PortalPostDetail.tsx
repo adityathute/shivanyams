@@ -1843,11 +1843,24 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const videoTitle = getLocalizedText(language, video.title_en, video.title_mr, video.title_hi) || video.title_en || "Watch video";
                             const videoSummary = getLocalizedText(language, video.summary_en, video.summary_mr, video.summary_hi);
                             const videoTags = Array.isArray(video.meta_keywords) ? video.meta_keywords.filter(Boolean) : [];
+                            const videoThumbnail = video.featured_image_url || video.video_thumbnail_url || getYouTubeThumbnailUrl(video.video_thumbnail_url);
                             return (
                               <Link className="portal-post-related-video" href={`/videos/${video.slug}`} key={video.id}>
                                 <span className="portal-post-related-video-media">
-                                  {video.featured_image_url ? (
-                                    <img src={video.featured_image_url} alt="" loading="lazy" />
+                                  {videoThumbnail ? (
+                                    <img
+                                      src={videoThumbnail}
+                                      alt=""
+                                      loading="lazy"
+                                      onError={(event) => {
+                                        const image = event.currentTarget;
+                                        if (image.src.includes("maxresdefault.jpg")) {
+                                          image.src = image.src.replace("maxresdefault.jpg", "hqdefault.jpg");
+                                        } else {
+                                          image.style.display = "none";
+                                        }
+                                      }}
+                                    />
                                   ) : (
                                     <span className="portal-post-related-video-placeholder" aria-hidden="true">▶</span>
                                   )}

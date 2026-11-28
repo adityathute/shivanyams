@@ -2131,7 +2131,7 @@
 .portal-post-related-video:hover .portal-post-related-video-media,
 .portal-post-related-video:focus-visible .portal-post-related-video-media {
   z-index: 1;
-  transform: scale(1.05);
+  transform: scale(1.02);
   box-shadow: 0 2px 7px rgb(0 0 0 / 12%);
 }
 .portal-post-related-video-media img, .portal-post-related-video-placeholder { display: grid; width: 100%; height: 100%; place-items: center; color: #dc2626; object-fit: cover; }

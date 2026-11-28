@@ -47,6 +47,7 @@ type Props = {
   onTypeChange?: (value: ItemType | "all") => void;
   showFilters?: boolean;
   showDateAndNewBadge?: boolean;
+  showNewBadge?: boolean;
   limit?: number | null;
   showViewAll?: boolean;
   viewAllHref?: string;
@@ -188,6 +189,7 @@ export function UpdatesSection({
   onTypeChange,
   showFilters = true,
   showDateAndNewBadge = true,
+  showNewBadge = true,
   limit = 20,
   showViewAll = true,
   viewAllHref = "/updates",
@@ -467,9 +469,9 @@ export function UpdatesSection({
                           : getPortalText("new", language)}
                       </time>
                     )}
-                    <span className="new-pill">
+                    {showNewBadge && <span className="new-pill">
                       {getPortalText("new", language)}
-                    </span>
+                    </span>}
                   </>
                 ) : null}
               </Link>

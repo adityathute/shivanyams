@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
-import { ArrowLeftIcon, CloseIcon, IconButton, MailIcon, RefreshIcon, Select } from "shivanya-ui";
+import { ArrowLeftIcon, Avatar, CloseIcon, IconButton, MailIcon, RefreshIcon, Select } from "shivanya-ui";
 import { API_URL } from "../../../components/portal/category/CategoryGrid";
 import { adminFetch, formatCompactNumber } from "../admin-utils";
 import "./../../../styles/legacy/app/admin/admin.css";
@@ -17,6 +17,7 @@ type ContactMessage = {
   name: string;
   email: string;
   user_full_name: string;
+  user_avatar: string;
   user_auth_id: string;
   is_registered_user: boolean;
   category: string;
@@ -46,6 +47,8 @@ export default function AdminContactMessagesPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
 
   const loadMessages = useCallback(async () => {
     setLoadingRows(true);
@@ -76,12 +79,17 @@ export default function AdminContactMessagesPage() {
       const matchesType = typeFilter === "all" || row.submission_type === typeFilter;
       const matchesStatus = statusFilter === "all" || row.status === statusFilter;
       const matchesSearch = !query || [
-        row.name, row.email, row.category, row.subject, row.message, row.rating,
-        String(row.id), row.submission_type, row.status,
+        row.name, row.user_full_name, row.user_auth_id, row.email, row.category,
+        row.subject, row.message, row.rating, String(row.id), row.submission_type, row.status,
       ].some((value) => String(value ?? "").toLowerCase().includes(query));
       return matchesType && matchesStatus && matchesSearch;
     });
   }, [rows, search, typeFilter, statusFilter]);
+
+  const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+  const visibleRows = filteredRows.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
 
   const newCount = rows.filter((row) => row.status === "new").length;
   const repliedCount = rows.filter((row) => row.status === "replied").length;
@@ -162,9 +170,9 @@ export default function AdminContactMessagesPage() {
           </div>
 
           <div className="admin-filters admin-contact-messages-filters">
-            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search sender, email, subject or message..." aria-label="Search messages" />
-            <Select size="sm" fullWidth value={typeFilter} onChange={(event) => setTypeFilter(event.target.value as Filter)} aria-label="Filter submission type" options={[{ value: "all", label: "All submissions" }, { value: "contact", label: "Contact enquiries" }, { value: "feedback", label: "Feedback" }]} />
-            <Select size="sm" fullWidth value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as StatusFilter)} aria-label="Filter message status" options={[{ value: "all", label: "All statuses" }, { value: "new", label: "New" }, { value: "read", label: "Read" }, { value: "replied", label: "Replied" }]} />
+            <input type="search" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search sender, email, subject or message..." aria-label="Search messages" />
+            <Select size="sm" fullWidth value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value as Filter); setPage(1); }} aria-label="Filter submission type" options={[{ value: "all", label: "All submissions" }, { value: "contact", label: "Contact enquiries" }, { value: "feedback", label: "Feedback" }]} />
+            <Select size="sm" fullWidth value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value as StatusFilter); setPage(1); }} aria-label="Filter message status" options={[{ value: "all", label: "All statuses" }, { value: "new", label: "New" }, { value: "read", label: "Read" }, { value: "replied", label: "Replied" }]} />
           </div>
 
           {error ? <div className="admin-error" role="alert">{error}</div> : null}
@@ -175,11 +183,18 @@ export default function AdminContactMessagesPage() {
               <table className="admin-post-table admin-contact-messages-table">
                 <thead><tr><th>Type</th><th>Sender</th><th>User</th><th>Content</th><th>Subject</th><th>Category</th><th>Status</th><th>Received</th><th>Action</th></tr></thead>
                 <tbody>
-                  {filteredRows.map((row) => (
+                  {visibleRows.map((row) => (
                     <tr key={row.id} className={row.status === "new" ? "is-new" : ""}>
                       <td><span className={`admin-contact-type admin-contact-type--${row.submission_type}`}>{row.submission_type}</span></td>
                       <td><strong>{row.name || "Visitor"}</strong><small>{row.email || "No email provided"}</small></td>
-                      <td title={row.user_auth_id || undefined}>{row.is_registered_user ? row.user_full_name || "Registered user" : "-"}</td>
+                      <td>
+                        {row.is_registered_user ? (
+                          <div className="admin-comments-author">
+                            <Avatar size="sm" name={row.user_full_name || "Member"} src={row.user_avatar?.trim() || undefined} />
+                            <span>{row.user_full_name || (row.user_auth_id ? `User ${row.user_auth_id}` : "Member")}</span>
+                          </div>
+                        ) : "-"}
+                      </td>
                       <td className="admin-contact-content" title={row.message}>{row.message || (row.submission_type === "feedback" ? "Your feedback" : "-")}</td>
                       <td className="admin-contact-subject" title={row.subject}>{row.subject}</td>
                       <td>{row.category}</td>
@@ -192,7 +207,17 @@ export default function AdminContactMessagesPage() {
               </table>
             </div>
           )}
-          <div className="admin-table-footer"><span>Showing {formatCompactNumber(filteredRows.length)} of {formatCompactNumber(rows.length)} messages</span></div>
+          <div className="admin-table-footer">
+            <span>Showing {filteredRows.length ? (page - 1) * pageSize + 1 : 0}–{Math.min(page * pageSize, filteredRows.length)} of {formatCompactNumber(filteredRows.length)} messages</span>
+            <div className="admin-pagination">
+              <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="Rows per page">
+                <option value={10}>10 rows</option><option value={15}>15 rows</option><option value={25}>25 rows</option><option value={50}>50 rows</option>
+              </select>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button>
+              <span>Page {page} of {pageCount}</span>
+              <button type="button" disabled={page >= pageCount} onClick={() => setPage((value) => value + 1)}>Next</button>
+            </div>
+          </div>
         </section>
       </div>
 

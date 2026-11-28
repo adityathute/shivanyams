@@ -374,6 +374,7 @@ const detailLabels = {
   compulsory: { en: "Compulsory", mr: "आवश्यक", hi: "अनिवार्य" },
   optional: { en: "Optional", mr: "असल्यास", hi: "यदि हो तो" },
   original: { en: "Original", mr: "मूळ प्रत", hi: "मूल प्रति" },
+  originalAndPhotocopyRequired: { en: "Original and photocopy required", mr: "मूळ व छायांकित प्रत आवश्यक", hi: "मूल एवं छायाप्रति आवश्यक" },
   photocopy: { en: "Photocopy", mr: "छायांकित प्रत", hi: "फोटोकॉपी" },
   copies: { en: "Copies", mr: "प्रती", hi: "प्रतियां" },
   quantity: { en: "Quantity", mr: "संख्या", hi: "मात्रा" },
@@ -1498,9 +1499,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   <td>
                                     {details.length ? (
                                       <div className="portal-requirement-details-list">
-                                        {details.map((value, detailIndex) => (
-                                          <div key={detailIndex}>{capitalizeFirst(value)}</div>
-                                        ))}
+                                        {details.map((value) => capitalizeFirst(value)).join(" · ")}
                                       </div>
                                     ) : "—"}
                                     {instructions ? (
@@ -1548,8 +1547,16 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 row.category || "",
                                 description,
                                 row.requirement ? (row.requirement === "compulsory" ? getDetailLabel("compulsory", language) : getDetailLabel("optional", language)) : "",
-                                row.original_required != null ? `${getDetailLabel("original", language)}: ${row.original_required ? "Yes" : "No"}` : "",
-                                row.photocopy_required != null ? `${getDetailLabel("photocopy", language)}: ${row.photocopy_required ? "Yes" : "No"}` : "",
+                                row.original_required === true && row.photocopy_required === true
+                                  ? getDetailLabel("originalAndPhotocopyRequired", language)
+                                  : row.original_required != null
+                                    ? `${getDetailLabel("original", language)}: ${row.original_required ? "Yes" : "No"}`
+                                    : "",
+                                row.original_required === true && row.photocopy_required === true
+                                  ? ""
+                                  : row.photocopy_required != null
+                                    ? `${getDetailLabel("photocopy", language)}: ${row.photocopy_required ? "Yes" : "No"}`
+                                    : "",
                                 row.number_of_copies ? `${getDetailLabel("copies", language)}: ${row.number_of_copies}` : "",
                                 row.quantity ? `${getDetailLabel("quantity", language)}: ${row.quantity}` : "",
                               ].filter(Boolean);

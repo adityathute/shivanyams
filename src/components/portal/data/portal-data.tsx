@@ -85,6 +85,8 @@ export type JobPost = {
 
 export type JobDetails = {
   posts?: JobPost[];
+  department?: string;
+  designation?: string;
   education_mode?: "common" | "per_post";
   education_is_common_field?: boolean;
   age_mode?: "common" | "per_post";

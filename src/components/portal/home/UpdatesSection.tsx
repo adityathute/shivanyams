@@ -37,7 +37,7 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { PortalEmptyState } from "../category/PortalEmptyState";
 import { getJobApplicationDeadline, getJobDeadlineStatus, formatJobApplicationDeadline } from "../utils/job-deadline";
 import { formatCompactCount, matchesPostSearch } from "../search/search-utils";
-import { isPortalCategoryEnabled } from "../../../config/features";
+import { isPortalCategoryEnabled } from "../../../../src/features/category-access";
 
 type Props = {
   type?: ItemType | "all";

@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
-import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../config/features";
+import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../features/category-access";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../portal/utils/job-deadline";
 import "./../../styles/legacy/components/portal/saved/SavedPostsPage.css";

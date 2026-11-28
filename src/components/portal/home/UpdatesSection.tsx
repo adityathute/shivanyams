@@ -303,7 +303,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section ref={resultsPanelRef} className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""} panelin`} id="updates">
+    <section ref={resultsPanelRef} className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 

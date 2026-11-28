@@ -182,6 +182,8 @@ export type Item = {
   photo_requirements?: PhotoRequirement[];
   signature_requirements?: SignatureRequirement[];
   extra?: Record<string, unknown>;
+  /** Complete public API payload retained for exhaustive client-side search. */
+  search_index?: string;
   job_details?: JobDetails;
 };
 
@@ -519,6 +521,7 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
   return {
     id: String(post.id),
     slug: post.slug,
+    search_index: JSON.stringify(post),
 
     // Preserve all database translations
     title_en: post.title_en || "",

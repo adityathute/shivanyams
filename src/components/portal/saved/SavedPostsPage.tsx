@@ -36,6 +36,7 @@ import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadline
 import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { isPortalCategoryEnabled } from "../../../features/category-access";
 
 
 
@@ -142,7 +143,9 @@ export function SavedPostsPage() {
   const text = copy[language];
 
   const [items, setItems] = useState<Item[]>([]);
-  const categories = STATIC_PORTAL_CATEGORIES;
+  const categories = STATIC_PORTAL_CATEGORIES.filter((category) =>
+    isPortalCategoryEnabled(category.slug),
+  );
   const [selectedType, setSelectedType] = useState<ItemType | "all">("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

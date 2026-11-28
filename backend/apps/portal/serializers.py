@@ -89,6 +89,22 @@ class PostFAQSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
 
+class PostRequiredDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostRequiredDocument
+        fields = (
+            "id", "name_en", "name_mr", "name_hi",
+            "description_en", "description_mr", "description_hi",
+            "category", "requirement", "original_required", "photocopy_required",
+            "number_of_copies", "quantity", "photo_type", "photo_size",
+            "photo_quantity", "photo_background", "signature_type",
+            "signature_format", "signature_size", "other_specifications",
+            "instructions_en", "instructions_mr", "instructions_hi",
+            "sort_order", "is_active",
+        )
+        read_only_fields = ("id",)
+
+
 class PostDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostDate
@@ -630,6 +646,7 @@ class PostSerializer(serializers.ModelSerializer):
             "is_active",
             "important_links",
             "faqs",
+            "required_documents",
             "important_dates",
             "resources",
             "related_posts",
@@ -784,6 +801,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
 
     important_links = PostLinkSerializer(many=True, required=False)
     faqs = PostFAQSerializer(many=True, required=False)
+    required_documents = PostRequiredDocumentSerializer(many=True, required=False)
     important_dates = PostDateSerializer(many=True, required=False)
     resources = PostResourceSerializer(many=True, required=False)
     related_posts = PostRelationSerializer(
@@ -837,6 +855,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
             "is_active",
             "important_links",
             "faqs",
+            "required_documents",
             "important_dates",
             "resources",
             "related_posts",
@@ -939,6 +958,9 @@ class PostWriteSerializer(serializers.ModelSerializer):
 
         if "faqs" in nested_data:
             cls._replace_many(post.faqs, nested_data["faqs"], "post", post)
+
+        if "required_documents" in nested_data:
+            cls._replace_many(post.required_documents, nested_data["required_documents"], "post", post)
 
         if "important_dates" in nested_data:
             cls._replace_many(

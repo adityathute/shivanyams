@@ -2933,8 +2933,10 @@ class PublicContactMessage(APIView):
             return Response({"detail": "Please complete all required fields."}, status=status.HTTP_400_BAD_REQUEST)
         if len(subject) > 240 or len(name) > 160 or len(category) > 120:
             return Response({"detail": "One or more fields are too long."}, status=status.HTTP_400_BAD_REQUEST)
-        if submission_type == ContactMessage.SubmissionType.CONTACT and (not name or not email):
-            return Response({"detail": "Name and email are required for contact enquiries."}, status=status.HTTP_400_BAD_REQUEST)
+        if not email:
+            return Response({"detail": "Please provide an email address so our team can reply to you."}, status=status.HTTP_400_BAD_REQUEST)
+        if submission_type == ContactMessage.SubmissionType.CONTACT and not name:
+            return Response({"detail": "Please provide your name."}, status=status.HTTP_400_BAD_REQUEST)
         if email:
             from django.core.validators import validate_email
             from django.core.exceptions import ValidationError as DjangoValidationError

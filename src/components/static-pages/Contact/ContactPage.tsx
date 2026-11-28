@@ -11,7 +11,8 @@
  */
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useAuth } from "shivanya-auth";
 
 import {
   FacebookIcon,
@@ -94,6 +95,7 @@ const queryOptionKeys = [
 ] as const;
 
 export function ContactPage() {
+  const { user } = useAuth();
   const { language } = usePortalLanguage();
 
   const t = (key: Parameters<typeof getContactText>[0]) =>
@@ -116,6 +118,12 @@ export function ContactPage() {
     message: "",
   });
 
+  useEffect(() => {
+    if (user?.email) {
+      setForm((current) => ({ ...current, email: user.email }));
+    }
+  }, [user?.email]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submitting) return;
@@ -134,7 +142,7 @@ export function ContactPage() {
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || "Unable to send your enquiry. Please try again.");
       setSubmitSuccess("Your enquiry has been submitted successfully. Our team will get back to you by email.");
-      setForm({ name: "", email: "", category: "General Inquiry", subject: "", message: "" });
+      setForm({ name: "", email: user?.email ?? "", category: "General Inquiry", subject: "", message: "" });
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to send your enquiry. Please try again.");
     } finally {
@@ -318,6 +326,7 @@ export function ContactPage() {
                   type="email"
                   autoComplete="email"
                   placeholder={t("emailPlaceholder")}
+                  readOnly={Boolean(user?.email)}
                   value={form.email}
                   onChange={(event) =>
                     setForm({

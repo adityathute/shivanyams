@@ -169,6 +169,8 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
       : [],
 
     location: post.location || "",
+    state: post.state || "",
+    country: post.country || "India",
     start_date: getDate(post.start_date),
     end_date: getDate(post.end_date),
     event_date: getDate(post.event_date),

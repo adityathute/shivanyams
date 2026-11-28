@@ -367,6 +367,7 @@ class AdminContent(viewsets.ModelViewSet):
             )
             .prefetch_related(
                 "important_links",
+                "required_documents",
                 Prefetch(
                     "important_dates",
                     queryset=PostDate.objects.order_by("sort_order", "id"),

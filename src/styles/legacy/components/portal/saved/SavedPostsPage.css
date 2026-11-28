@@ -1191,3 +1191,8 @@
     padding: 0 0 24px !important;
   }
 }
+
+/* Remove the global Jobs panel top gap on both related-tag and organization pages. */
+.related-saved-page > .updates-panel.jobs-updates {
+  margin-top: 0 !important;
+}

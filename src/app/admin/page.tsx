@@ -84,6 +84,24 @@ type LikeAnalyticsEvent = {
   comment_id?: number | null;
   parent_id?: number | null;
 };
+type AdminLikeComment = {
+  id: number;
+  parent?: number | null;
+  parent_comment?: AdminLikeComment | null;
+  replies?: AdminLikeComment[];
+  content: string;
+  author_name?: string;
+  created_at?: string;
+  status?: string;
+  edited?: boolean;
+  is_admin_reply?: boolean;
+  likes_count?: number;
+  dislikes_count?: number;
+  report_count?: number;
+  post_title?: string;
+  liked_target?: "comment" | "reply";
+};
+
 type WebsiteVisitorRow = {
   visitor_id: string;
   visitor_type: "user" | "anonymous";
@@ -325,7 +343,7 @@ export default function AdminPage() {
   const [selectedSharePostPage, setSelectedSharePostPage] = useState(1);
   const [selectedReport, setSelectedReport] = useState<ReportAnalyticsEvent | null>(null);
   const [reportsAnalyticsPage, setReportsAnalyticsPage] = useState(1);
-  const [selectedLikeComment, setSelectedLikeComment] = useState<any>(null);
+  const [selectedLikeComment, setSelectedLikeComment] = useState<AdminLikeComment | null>(null);
   const [likeAnalyticsPage, setLikeAnalyticsPage] = useState(1);
   const [commentsAnalyticsPage, setCommentsAnalyticsPage] = useState(1);
   const [repliesAnalyticsPage, setRepliesAnalyticsPage] = useState(1);
@@ -907,7 +925,7 @@ export default function AdminPage() {
   }
 
   function openSavedPostsAnalytics() {
-    setAnalyticsType("saved" as any);
+    setAnalyticsType("saved");
     setSelectedPost(null); setSelectedVisitor(null); setSavedPostsPage(1); setAnalyticsLoading(true);
     adminFetch(API_URL + "/admin/stats/?type=saved", { cache: "no-store" })
       .then(async (response) => { if (!response.ok) throw new Error(`Unable to load saved posts analytics (${response.status}).`); return response.json(); })
@@ -1107,8 +1125,8 @@ export default function AdminPage() {
     try {
       const response = await adminFetch(API_URL + "/admin/comments/?post=" + item.post_id, { cache: "no-store" });
       if (!response.ok) throw new Error("Unable to load comment details (" + response.status + ").");
-      const comments = await response.json();
-      const findComment = (rows: any[], id: number): any => {
+      const comments = (await response.json()) as AdminLikeComment[];
+      const findComment = (rows: AdminLikeComment[], id: number): AdminLikeComment | null => {
         for (const row of rows) {
           if (Number(row.id) === Number(id)) return row;
           const nested = findComment(row.replies || [], id);
@@ -2107,7 +2125,7 @@ export default function AdminPage() {
                   <div className="admin-like-comment-meta"><span>{selectedLikeComment.author_name || "User"}</span><span>{formatAdminDateTime(selectedLikeComment.created_at)}</span><span>Status: {statusLabel(selectedLikeComment.status || "unknown")}</span>{selectedLikeComment.edited ? <span>Edited</span> : null}{selectedLikeComment.is_admin_reply ? <span>Admin reply</span> : null}</div>
                   <div className="admin-like-comment-stats"><span>{formatCompactNumber(selectedLikeComment.likes_count || 0)} likes</span><span>{formatCompactNumber(selectedLikeComment.dislikes_count || 0)} dislikes</span><span>{formatCompactNumber(selectedLikeComment.report_count || 0)} reports</span></div>
                 </section>
-                {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply: any) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{formatAdminDateTime(reply.created_at)}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
+                {!selectedLikeComment.parent && selectedLikeComment.replies?.length ? <section className="admin-like-comment-section"><h3>Replies ({selectedLikeComment.replies.length})</h3><div className="admin-like-comment-replies">{selectedLikeComment.replies.map((reply) => <article key={reply.id}><p>{reply.content}</p><div className="admin-like-comment-meta"><span>{reply.author_name || "User"}</span><span>{formatAdminDateTime(reply.created_at)}</span>{reply.is_admin_reply ? <span>Admin reply</span> : null}</div></article>)}</div></section> : null}
               </div>
              ) : analyticsType === "tags" && !selectedPost && !selectedVisitor ? (
                 analyticsLoading ? (

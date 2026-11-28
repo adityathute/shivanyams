@@ -168,6 +168,7 @@ export function SearchPage() {
         showViewAll={false}
         paginate
         searchAllFields
+        showJobDeadlines
       />}
     </div>
   );

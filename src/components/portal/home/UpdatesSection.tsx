@@ -14,7 +14,7 @@
 import "./../../../styles/legacy/components/portal/home/UpdatesSection.css";
 import Link from "next/link";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   getPortalApiUrl,
@@ -49,6 +49,7 @@ type Props = {
   limit?: number | null;
   showViewAll?: boolean;
   viewAllHref?: string;
+  paginate?: boolean;
 };
 
 interface CategoryApiResponse {
@@ -163,10 +164,14 @@ export function UpdatesSection({
   limit = 20,
   showViewAll = true,
   viewAllHref = "/updates",
+  paginate = false,
 }: Props) {
   const { data } = usePortalData();
 
   const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const resultsPanelRef = useRef<HTMLElement | null>(null);
 
   const sectionTitle = title ?? getPortalText("updatesTitle", language);
 
@@ -257,11 +262,48 @@ export function UpdatesSection({
     return limit == null ? sorted : sorted.slice(0, limit);
   }, [data.items, query, type, language, limit]);
 
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const visibleItems = paginate
+    ? filtered.slice((page - 1) * pageSize, page * pageSize)
+    : filtered;
+  const firstItem = filtered.length ? (page - 1) * pageSize + 1 : 0;
+  const lastItem = Math.min(page * pageSize, filtered.length);
+
+  useEffect(() => {
+    if (!paginate) return;
+    const updatePageSize = () => {
+      const panel = resultsPanelRef.current;
+      if (!panel) return;
+      const top = panel.getBoundingClientRect().top;
+      const availableHeight = Math.max(160, window.innerHeight - top - 155);
+      const rowHeight = window.innerWidth <= 760 ? 94 : 78;
+      setPageSize(Math.max(10, Math.floor(availableHeight / rowHeight)));
+    };
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    const observer = typeof ResizeObserver !== "undefined" && resultsPanelRef.current
+      ? new ResizeObserver(updatePageSize)
+      : null;
+    if (observer && resultsPanelRef.current) observer.observe(resultsPanelRef.current);
+    return () => {
+      window.removeEventListener("resize", updatePageSize);
+      observer?.disconnect();
+    };
+  }, [paginate]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [type, query]);
+
+  useEffect(() => {
+    if (page > pageCount) setPage(pageCount);
+  }, [page, pageCount]);
+
   const dateLocale =
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge ? "" : " updates-panel-home"} panelin`} id="updates">
+    <section ref={resultsPanelRef} className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 
@@ -320,7 +362,7 @@ export function UpdatesSection({
             ))}
           </div>
         ) : filtered.length > 0 ? (
-          filtered.map((item) => {
+          visibleItems.map((item) => {
             const itemTitle = getItemTitle(item, language);
             const itemDescription = getItemDescription(item, language);
             const itemCategory = getItemCategory(item, language);
@@ -335,8 +377,8 @@ export function UpdatesSection({
               applicationDeadline && isJobDeadlineRevised(item);
 
             return (
-              <a
-                className={`update-row${applicationDeadline ? " update-row-has-deadline" : ""}`}
+              <Link
+                className={`update-row${paginate ? " related-job-row" : ""}${applicationDeadline ? " update-row-has-deadline" : ""}`}
                 key={item.id}
                 href={getPostHref(item)}
               >
@@ -377,13 +419,24 @@ export function UpdatesSection({
                     </span>
                   </>
                 ) : null}
-              </a>
+              </Link>
             );
           })
         ) : (
           <PortalEmptyState title={getPortalText("emptyUpdates", language)} description={language === "en" ? "Fresh announcements and updates will appear here." : language === "mr" ? "नवीन घोषणा आणि अपडेट्स येथे दिसतील." : "नई घोषणाएँ और अपडेट यहाँ दिखाई देंगे।"} icon="✦" />
         )}
       </div>
+
+      {paginate && filtered.length > pageSize && (
+        <div className="related-content-pagination">
+          <span>Showing {firstItem}–{lastItem} of {filtered.length} posts</span>
+          <div className="related-content-pagination-controls">
+            <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
+            <span>Page {page} of {pageCount}</span>
+            <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

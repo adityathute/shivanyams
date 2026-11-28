@@ -27,6 +27,7 @@ import {
   PlusIcon,
   GlobeIcon,
   MessagesIcon,
+  MailIcon,
   ReportIcon,
   QuestionMarkCircleIcon,
   TagIcon,
@@ -1378,6 +1379,10 @@ export default function AdminPage() {
             <p>Manage posts, publishing status and website content.</p>
           </div>
           <div className="admin-top-actions admin-dashboard-header-actions">
+            <Link href="/admin/contact-messages" className="admin-secondary-button">
+              <MailIcon size={16} />
+              <span>Contact & Feedback</span>
+            </Link>
             <Link href="/admin/tags" className="admin-secondary-button">
               <TagIcon size={16} />
               <span>Tags</span>

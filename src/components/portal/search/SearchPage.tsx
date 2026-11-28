@@ -163,7 +163,7 @@ export function SearchPage() {
         language={language}
         onTypeChange={setActiveCategory}
         showFilters
-        showDateAndNewBadge={false}
+        showDateAndNewBadge
         limit={null}
         showViewAll={false}
         paginate

@@ -27,7 +27,7 @@ import {
 } from "shivanya-ui";
 
 import type { ItemType } from "../data/portal-data";
-import { isPortalCategoryEnabled } from "../../../config/features";
+import { isPortalCategoryEnabled } from "../../../features/category-access";
 
 import {
   getPortalCategoryDefinition,

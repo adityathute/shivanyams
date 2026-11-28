@@ -13,7 +13,7 @@
 
 import "./../../../styles/legacy/components/portal/layout/PortalShell.css";
 
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
@@ -26,7 +26,7 @@ import { PortalHeader } from "./header/PortalHeader";
 import { getPortalNavigation } from "./sidebar/PortalSidebar";
 import { PortalDataProvider } from "../data/portal-data";
 import { getPortalApiUrl } from "../category/CategoryGrid";
-import { authenticatedFetch, refreshAuthSession } from "../../../lib/authenticated-fetch";
+import { authenticatedFetch, refreshAuthSession, setAuthRefreshHandler } from "../../../lib/authenticated-fetch";
 import { PortalAuthProvider } from "../context/PortalAuthContext";
 import {
   PortalLanguageProvider,
@@ -35,7 +35,14 @@ import {
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user, loading, refreshUser } = useAuth();
+  const { user, loading, refreshUser, client } = useAuth();
+
+  // Register the SDK-owned refresh method before child data effects run.
+  // This makes portal 401 retries share AuthClient.refreshPromise with /auth/me.
+  useLayoutEffect(() => {
+    setAuthRefreshHandler(() => client.refresh());
+    return () => setAuthRefreshHandler(null);
+  }, [client]);
   const { language, setLanguage } = usePortalLanguage();
   const lastTrackedPath = useRef<string | null>(null);
   const lastSessionCheck = useRef(Date.now());

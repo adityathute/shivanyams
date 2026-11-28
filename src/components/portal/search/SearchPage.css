@@ -447,6 +447,7 @@
  * with normal spacing, rather than remaining fixed at the viewport bottom.
  */
 .search-directory-page.related-saved-page:has(.updates-panel-pagination-flow) {
+  grid-template-rows: auto auto auto !important;
   height: auto !important;
   min-height: calc(100dvh - 64px - 16px) !important;
   max-height: none !important;

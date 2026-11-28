@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   description:
     "Find the latest government job notifications, schemes, examination updates, results, admit cards and useful public-service guides.",
   applicationName: "ShivanyaMS",
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/icon.svg" },
   robots: {
     index: true,
     follow: true,

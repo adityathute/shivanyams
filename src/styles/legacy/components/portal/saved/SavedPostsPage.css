@@ -1169,7 +1169,7 @@
   width: auto !important;
   max-width: none !important;
   min-width: 0 !important;
-  margin: 16px !important;
+  margin: 0 16px 16px !important;
   padding: 0 0 24px !important;
   box-sizing: border-box !important;
 }
@@ -1178,7 +1178,7 @@
   .related-saved-page {
     width: auto !important;
     max-width: none !important;
-    margin: 12px 10px !important;
+    margin: 0 10px 12px !important;
     padding: 0 0 24px !important;
   }
 }
@@ -1187,7 +1187,7 @@
   .related-saved-page {
     width: auto !important;
     max-width: none !important;
-    margin: 16px !important;
+    margin: 0 16px 16px !important;
     padding: 0 0 24px !important;
   }
 }

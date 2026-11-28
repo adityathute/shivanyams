@@ -619,9 +619,11 @@
 
 /* All Posts directory follows the Tags page layout and uses the full available width. */
 .updates-directory-page {
+  display: grid;
   width: auto;
   max-width: none;
-  margin: 16px;
+  margin: 0 16px 16px;
+  padding-bottom: 24px;
 }
 
 .updates-directory-page > .updates-panel {
@@ -641,7 +643,7 @@
 @media (max-width: 760px) {
   .updates-directory-page {
     width: auto;
-    margin: 12px 10px;
+    margin: 0 10px 12px;
   }
 
   .updates-directory-page .update-row {

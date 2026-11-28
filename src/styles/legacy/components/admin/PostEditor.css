@@ -2140,28 +2140,6 @@ padding-right: 24px;
 
 
 
-/* Prevent global focus-visible outlines from stacking with the shared UI control focus styles. */
-.post-editor-form .shivanya-input-container:focus-within {
-  border-color: var(--shivanya-color-border, #dbe4f0) !important;
-  box-shadow: 0 0 0 2px rgb(100 116 139 / 10%) !important;
-}
-
-.post-editor-form .shivanya-input:focus-visible,
-.post-editor-form .shivanya-textarea:focus-visible,
-.post-editor-form .shivanya-select:focus-visible,
-.post-editor-form input:not(.shivanya-input):focus-visible,
-.post-editor-form textarea:not(.shivanya-textarea):focus-visible,
-.post-editor-form select:not(.shivanya-select):focus-visible {
-  outline: none;
-  box-shadow: none;
-}
-
-.post-editor-form .shivanya-textarea:focus,
-.post-editor-form .shivanya-select:focus,
-.post-editor-form textarea:not(.shivanya-textarea):focus,
-.post-editor-form select:not(.shivanya-select):focus {
-  box-shadow: none;
-}
 
 /* Keep the common Application Fee amount and category note together on one row. */
 .post-editor-common-fee-fields {

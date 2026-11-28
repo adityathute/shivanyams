@@ -87,7 +87,7 @@ export const PORTAL_CATEGORIES: PortalCategoryDefinition[] = [
     sortOrder: 3,
     slug: "exams",
     legacySlugs: ["examination"],
-    href: "/examination",
+    href: "/exams",
     type: "examination",
     translations: {
       en: {

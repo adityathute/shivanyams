@@ -1979,3 +1979,36 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.user_auth_id}: {self.query}"
+
+class ContactMessage(TimestampedModel):
+    """Contact form and website feedback submissions managed by portal admins."""
+
+    class SubmissionType(models.TextChoices):
+        CONTACT = "contact", "Contact"
+        FEEDBACK = "feedback", "Feedback"
+
+    class Status(models.TextChoices):
+        NEW = "new", "New"
+        READ = "read", "Read"
+        REPLIED = "replied", "Replied"
+
+    submission_type = models.CharField(max_length=12, choices=SubmissionType.choices, db_index=True)
+    name = models.CharField(max_length=160, blank=True)
+    email = models.EmailField(max_length=254, blank=True)
+    category = models.CharField(max_length=120)
+    rating = models.CharField(max_length=40, blank=True)
+    subject = models.CharField(max_length=240)
+    message = models.TextField()
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.NEW, db_index=True)
+    admin_reply = models.TextField(blank=True)
+    replied_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        indexes = [
+            models.Index(fields=("submission_type", "status", "-created_at"), name="portal_contact_type_status_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.get_submission_type_display()}: {self.subject}"
+

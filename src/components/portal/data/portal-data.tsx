@@ -653,8 +653,14 @@ function mergePartialPortalData(current: PortalData, next: PortalData): PortalDa
   };
 }
 
-export function PortalDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<PortalData>(emptyData);
+export function PortalDataProvider({
+  children,
+  initialData,
+}: {
+  children: ReactNode;
+  initialData?: PortalData | null;
+}) {
+  const [data, setData] = useState<PortalData>(() => initialData ?? emptyData);
   const activeLoadRef = useRef<Promise<PortalData> | null>(null);
 
   // Share an in-flight request between the initial page load and a category

@@ -1806,6 +1806,28 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   <div className="subscribe-icon"><MailIcon /></div>
                   <NewsletterSubscribeButton language={language as "en" | "mr" | "hi"} />
                 </section>
+                {links.slice(0, POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT).length > 0 ? (
+                  <section className="panelin important-panel">
+                    <div className="section-heading">
+                      <h2>{t("usefulLinks")}</h2>
+                      <span>{t("usefulLinks")}</span>
+                    </div>
+
+                    {links.slice(0, POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT).map((link) => (
+                      <a
+                        className="important-link"
+                        href={link.url}
+                        key={link.id}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <LinkIcon size={16} />
+                        {getLinkTitle(link, language)}
+                        <b>›</b>
+                      </a>
+                    ))}
+                  </section>
+                ) : null}
                 {sidebarCategorySections.map((section) => (
                   <section className={`panelin post-sidebar-category post-sidebar-category-${section.slug}`} key={section.slug}>
                     <div className="post-sidebar-category-heading">
@@ -1834,28 +1856,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   </section>
                 ))}
 
-                {links.slice(0, POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT).length > 0 ? (
-                  <section className="panelin important-panel">
-                    <div className="section-heading">
-                      <h2>{t("usefulLinks")}</h2>
-                      <span>{t("usefulLinks")}</span>
-                    </div>
-
-                    {links.slice(0, POST_PAGE_USEFUL_LINKS_DISPLAY_LIMIT).map((link) => (
-                      <a
-                        className="important-link"
-                        href={link.url}
-                        key={link.id}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <LinkIcon size={16} />
-                        {getLinkTitle(link, language)}
-                        <b>›</b>
-                      </a>
-                    ))}
-                  </section>
-                ) : null}
                 </>
                 ) : (
                   <section className="panelin not-found-recommendations">

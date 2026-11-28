@@ -1226,10 +1226,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                 <table className="portal-post-wise-table">
                                   <thead>
                                     <tr>
-                                      <th>{getDetailLabel("postNumber", language)}</th>
+                                      <th className="portal-post-wise-number">{getDetailLabel("postNumber", language)}</th>
                                       <th>{getDetailLabel("postName", language)}</th>
                                       {showDepartment ? <th>{getDetailLabel("department", language)}</th> : null}
-                                      <th>{getDetailLabel("vacancies", language)}</th>
+                                      <th className="portal-post-wise-vacancies">{getDetailLabel("vacancies", language)}</th>
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}
@@ -1238,10 +1238,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   <tbody>
                                     {rows.map((row, index) => (
                                       <tr key={row.entry.id || `${row.entry.post_number}-${index}`}>
-                                        <td>{row.entry.post_number ?? index + 1}</td>
+                                        <td className="portal-post-wise-number">{row.entry.post_number ?? index + 1}</td>
                                         <td className="portal-post-wise-name">{row.postName}</td>
                                         {showDepartment ? <td>{row.department || "—"}</td> : null}
-                                        <td>{row.entry.vacancies != null ? Number(row.entry.vacancies).toLocaleString("en-IN") : "—"}</td>
+                                        <td className="portal-post-wise-vacancies">{row.entry.vacancies != null ? Number(row.entry.vacancies).toLocaleString("en-IN") : "—"}</td>
                                         {showAge ? <td>{row.ageValue || "—"}</td> : null}
                                         {showAgeNote ? <td>{row.ageNote || "—"}</td> : null}
                                         {showPostFees ? <td>{row.fees.length ? row.fees.join("; ") : "—"}</td> : null}
@@ -1251,9 +1251,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   <tfoot>
                                     <tr>
                                       <td></td>
-                                      <th>{getDetailLabel("total", language)}</th>
+                                      <th className="portal-post-wise-name portal-post-wise-total-label">{getDetailLabel("total", language)}</th>
                                       {showDepartment ? <td></td> : null}
-                                      <th>{totalVacancies.toLocaleString("en-IN")}</th>
+                                      <th className="portal-post-wise-vacancies">{totalVacancies.toLocaleString("en-IN")}</th>
                                       {showAge ? <td></td> : null}
                                       {showAgeNote ? <td></td> : null}
                                       {showPostFees ? <td></td> : null}

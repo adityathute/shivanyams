@@ -101,7 +101,7 @@ export function PortalHeader() {
         <button ref={searchToggleRef} type="button" className="portal-topbar-search-toggle" aria-label={searchOpen ? "Close search" : "Search"} aria-expanded={searchOpen} onClick={() => setSearchOpen((open) => !open)}>
           {searchOpen ? <CloseIcon size={17} aria-hidden="true" /> : <SearchIcon size={17} aria-hidden="true" />}
         </button>
-        <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={(event) => event.preventDefault()}>
+        <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={submitSearch}>
           <SearchIcon size={17} aria-hidden="true" />
           <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
           <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>

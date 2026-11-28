@@ -272,7 +272,39 @@ export function SavedPostsPage() {
   if (authLoading || (user && loading)) {
     return (
       <div className="saved-page">
-        <div className="saved-empty-state" role="status">{text.loading}</div>
+        <header className="saved-page-heading">
+          <span className="saved-eyebrow">{text.eyebrow}</span>
+          <h1>{text.title}</h1>
+          <p>{text.description}</p>
+        </header>
+
+        <section className="saved-panel" aria-label={text.loading} aria-busy="true">
+          <div className="saved-section-heading">
+            <span className="related-post-skeleton-title" style={{ width: 112, height: 16 }} />
+            <span className="related-post-skeleton-summary" style={{ width: 76, height: 10 }} />
+          </div>
+          <div className="saved-category-tabs" aria-hidden="true">
+            {[72, 88, 94, 82, 76].map((width, index) => (
+              <span
+                key={index}
+                className="related-post-skeleton-badge"
+                style={{ width, height: 28, borderRadius: 18 }}
+              />
+            ))}
+          </div>
+          <div className="saved-post-list update-list related-post-skeleton-list">
+            {Array.from({ length: 5 }, (_, index) => (
+              <div className="related-post-skeleton-row" key={index}>
+                <span className="related-post-skeleton-badge" />
+                <span className="related-post-skeleton-copy">
+                  <span className="related-post-skeleton-title" />
+                  <span className="related-post-skeleton-summary" />
+                </span>
+                <span className="related-post-skeleton-date" />
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     );
   }

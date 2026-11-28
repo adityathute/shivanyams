@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePortalData } from "./data/portal-data";
 import { usePortalLanguage } from "./context/PortalLanguageContext";
-import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../config/features";
+import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../features/category-access";
 import "../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 import "../../styles/legacy/components/portal/tags/TagsPage.css";
 

@@ -112,7 +112,7 @@ function renderSearchHighlight(value: string, query: string) {
   const escapedTerms = terms.map((term) =>
     Array.from(term)
       .map((character) =>
-        "\\^$.*+?()[]{}|".includes(character) ? "\\\\" + character : character,
+        "\\^$.*+?()[]{}|".includes(character) ? "\\" + character : character,
       )
       .join(""),
   );

@@ -871,7 +871,7 @@
 .portal-education-post-card li::marker,
 .portal-education-details > .portal-job-detail-row li::marker {
   color: var(--text-secondary, #8792a3);
-  font-size: 0.9em;
+  font-size: 1.5em;
 }
 
 :root[data-theme="dark"] .portal-education-details h2,

@@ -1472,10 +1472,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             const description = getLocalizedText(language, row.description_en, row.description_mr, row.description_hi);
                             const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
                             const details = [
+                              row.category || "",
                               description,
                               row.requirement ? (row.requirement === "compulsory" ? getDetailLabel("compulsory", language) : getDetailLabel("optional", language)) : "",
-                              row.original_required === true ? getDetailLabel("original", language) : "",
-                              row.photocopy_required === true ? getDetailLabel("photocopy", language) : "",
+                              row.original_required != null ? `${getDetailLabel("original", language)}: ${row.original_required ? "Yes" : "No"}` : "",
+                              row.photocopy_required != null ? `${getDetailLabel("photocopy", language)}: ${row.photocopy_required ? "Yes" : "No"}` : "",
                               row.number_of_copies ? `${getDetailLabel("copies", language)}: ${row.number_of_copies}` : "",
                               row.quantity ? `${getDetailLabel("quantity", language)}: ${row.quantity}` : "",
                               instructions,

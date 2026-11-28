@@ -2355,3 +2355,29 @@
     font-size: 20px;
   }
 }
+
+
+/* Available-language badge sits at the bottom-right of related-video content. */
+.portal-post-related-video-languages {
+  display: inline-flex;
+  align-self: flex-end;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: auto;
+  padding: 3px 8px;
+  border: 1px solid #fecaca;
+  border-radius: 999px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+:root[data-theme="dark"] .portal-post-related-video-languages {
+  border-color: rgb(239 68 68 / 35%);
+  background: rgb(127 29 29 / 22%);
+  color: #fca5a5;
+}

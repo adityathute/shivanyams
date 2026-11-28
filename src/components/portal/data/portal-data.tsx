@@ -701,17 +701,19 @@ export function PortalDataProvider({
   }, [fetchFreshPortalData]);
 
   useLayoutEffect(() => {
-    const cachedData = readPortalDataCache();
-    if (cachedData) {
-      setData({
-        items: cachedData.items,
-        videos: cachedData.videos,
-        loading: false,
-        error: "",
-      });
+    if (!initialData) {
+      const cachedData = readPortalDataCache();
+      if (cachedData) {
+        setData({
+          items: cachedData.items,
+          videos: cachedData.videos,
+          loading: false,
+          error: "",
+        });
+      }
     }
     void applyFreshData();
-  }, [applyFreshData]);
+  }, [applyFreshData, initialData]);
 
   const refresh = useCallback(async () => {
     setData((current) => ({

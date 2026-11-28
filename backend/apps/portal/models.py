@@ -1034,6 +1034,7 @@ class PostPhotoRequirement(TimestampedModel):
         PASSPORT_SIZE = "passport_size", "Passport Size"
         LIVE_PHOTO = "live_photo", "Live Photo"
         OTHER = "other", "Other"
+        NOT_APPLICABLE = "not_applicable", "Not Applicable"
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="photo_requirements")
     photo_type = models.CharField(max_length=20, choices=PhotoType.choices, blank=True, null=True)
@@ -1061,6 +1062,7 @@ class PostSignatureRequirement(TimestampedModel):
         SCANNED = "scanned", "Scanned"
         PHYSICAL = "physical", "Physical"
         OTHER = "other", "Other"
+        NOT_APPLICABLE = "not_applicable", "Not Applicable"
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="signature_requirements")
     signature_type = models.CharField(max_length=20, choices=SignatureType.choices, blank=True, null=True)

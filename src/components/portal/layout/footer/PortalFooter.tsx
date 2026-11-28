@@ -21,6 +21,7 @@ import {
   type Language,
 } from "../../category/CategoryGrid";
 import { getBaseText } from "../../../../i18n/dictionaries/base";
+import { isPortalCategoryEnabled } from "../../../../config/features";
 
 import { usePortalLanguage } from "../../context/PortalLanguageContext";
 import { useImportantLinks } from "../../utils/useImportantLinks";
@@ -43,7 +44,7 @@ export function PortalFooter() {
   const { links, getLinkTitle } = useImportantLinks();
   const router = useRouter();
 
-  const sortedCategories = STATIC_PORTAL_CATEGORIES;
+  const sortedCategories = STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug));
 
   return (
     <div className="portal-footer-area">

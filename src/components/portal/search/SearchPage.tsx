@@ -163,13 +163,14 @@ export function SearchPage() {
         language={language}
         onTypeChange={setActiveCategory}
         showFilters
-        showDateAndNewBadge
+        showDateAndNewBadge={false}
         showNewBadge={false}
         limit={null}
         showViewAll={false}
         paginate
         searchAllFields
         showJobDeadlines
+        showExtendedJobDeadlinesOnly
       />}
     </div>
   );

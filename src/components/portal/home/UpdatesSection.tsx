@@ -52,6 +52,7 @@ type Props = {
   viewAllHref?: string;
   paginate?: boolean;
   searchAllFields?: boolean;
+  showJobDeadlines?: boolean;
 };
 
 interface CategoryApiResponse {
@@ -192,6 +193,7 @@ export function UpdatesSection({
   viewAllHref = "/updates",
   paginate = false,
   searchAllFields = false,
+  showJobDeadlines = false,
 }: Props) {
   const { data } = usePortalData();
 
@@ -385,7 +387,7 @@ export function UpdatesSection({
             const itemDescription = getItemDescription(item, language);
             const itemCategory = getItemCategory(item, language);
             const applicationDeadline =
-              !showDateAndNewBadge && item.type === "job"
+              (!showDateAndNewBadge || showJobDeadlines) && item.type === "job"
                 ? getJobApplicationDeadline(item)
                 : "";
             const deadlineStatus = applicationDeadline

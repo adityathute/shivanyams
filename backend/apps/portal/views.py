@@ -293,9 +293,10 @@ class SearchSuggestions(APIView):
                 if isinstance(keyword, str) and normalized in keyword.casefold():
                     add(keyword)
             add(post.category.name_en if post.category_id else "")
-            if post.job_details_id:
-                add(post.job_details.department)
-                add(post.job_details.designation)
+            job_details = getattr(post, "job_details", None)
+            if job_details:
+                add(job_details.department)
+                add(job_details.designation)
 
             if len(suggestions) >= 10:
                 break

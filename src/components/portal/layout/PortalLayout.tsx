@@ -14,7 +14,8 @@
 import "./../../../styles/legacy/components/portal/layout/PortalShell.css";
 
 import { type ReactNode, useEffect, useLayoutEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { getDisabledFeatureForPath } from "../../../config/features";
 import Link from "next/link";
 
 import { DashboardShell } from "shivanya-shell";
@@ -35,7 +36,13 @@ import {
 
 function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const disabledFeature = getDisabledFeatureForPath(pathname || "");
   const { user, loading, refreshUser, client } = useAuth();
+
+  useEffect(() => {
+    if (disabledFeature) router.replace("/jobs");
+  }, [disabledFeature, router]);
 
   // Register the SDK-owned refresh method before child data effects run.
   // This makes portal 401 retries share AuthClient.refreshPromise with /auth/me.
@@ -159,7 +166,7 @@ function PortalShell({ children }: { children: ReactNode }) {
       sidebarWidth={245}
       contentPadding={0}
     >
-      {children}
+      {disabledFeature ? null : children}
     </DashboardShell>
   );
 }

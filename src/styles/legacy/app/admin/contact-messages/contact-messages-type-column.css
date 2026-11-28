@@ -1,0 +1,8 @@
+.admin-contact-messages-page .admin-contact-messages-table thead th:first-child,
+.admin-contact-messages-page .admin-contact-messages-table tbody td:first-child {
+  width: 86px;
+  min-width: 86px;
+  max-width: 86px;
+  box-sizing: border-box;
+  white-space: nowrap;
+}

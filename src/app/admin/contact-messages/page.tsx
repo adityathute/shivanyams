@@ -17,6 +17,8 @@ type ContactMessage = {
   name: string;
   email: string;
   user_full_name: string;
+  user_auth_id: string;
+  is_registered_user: boolean;
   category: string;
   rating: string;
   subject: string;
@@ -177,7 +179,7 @@ export default function AdminContactMessagesPage() {
                     <tr key={row.id} className={row.status === "new" ? "is-new" : ""}>
                       <td><span className={`admin-contact-type admin-contact-type--${row.submission_type}`}>{row.submission_type}</span></td>
                       <td><strong>{row.name || "Visitor"}</strong><small>{row.email || "No email provided"}</small></td>
-                      <td>{row.user_full_name || row.name || "-"}</td>
+                      <td title={row.user_auth_id || undefined}>{row.is_registered_user ? row.user_full_name || "Registered user" : "-"}</td>
                       <td className="admin-contact-content" title={row.message}>{row.message || (row.submission_type === "feedback" ? "Your feedback" : "-")}</td>
                       <td className="admin-contact-subject" title={row.subject}>{row.subject}</td>
                       <td>{row.category}</td>

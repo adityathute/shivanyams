@@ -138,7 +138,7 @@ export function ContactPage() {
   const subjectHasAbusiveLanguage = containsAbusiveLanguage(form.subject);
   const isFormValid = Boolean(
     form.name.trim() &&
-    /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(form.email.trim()) &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) &&
     form.category.trim() &&
     form.subject.trim() &&
     form.subject.trim().length <= 240 &&

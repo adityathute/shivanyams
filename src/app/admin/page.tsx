@@ -128,12 +128,12 @@ function AnalyticsPagination({
   onPageChange,
   onPageSizeChange,
   className,
-  alwaysShow = false,
+  alwaysShow = true,
   showPageSize = true,
 }: AnalyticsPaginationProps) {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   if (!alwaysShow && total <= pageSize) return null;
-  const firstItem = (page - 1) * pageSize + 1;
+  const firstItem = total > 0 ? (page - 1) * pageSize + 1 : 0;
   const lastItem = Math.min(page * pageSize, total);
   return (
     <div className={`admin-table-footer admin-analytics-pagination ${className || ""}`.trim()}>

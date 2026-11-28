@@ -481,28 +481,34 @@
    viewport size without forcing long content to widen neighboring fields. */
 .portal-job-info-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: stretch;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   margin: 18px 0;
-  gap: 1px;
+  gap: 12px;
+}
+
+/* Recruitment summary, age details, and fees are visually separate groups. */
+.portal-job-info-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  min-width: 0;
   overflow: hidden;
+  gap: 1px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 12px;
   background: var(--border-color, #e5e7eb);
 }
 
-/* Logical groups are measurement-only; their fields share one visual flow. */
-.portal-job-info-group {
-  display: contents;
-}
-
 .portal-job-info-primary-grid,
-.portal-job-info-secondary-grid {
-  display: contents;
+.portal-job-info-age-grid,
+.portal-job-info-fee-grid {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .portal-job-info-item {

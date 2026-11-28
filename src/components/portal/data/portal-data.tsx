@@ -176,6 +176,8 @@ export type Item = {
   organization_type?: string;
   tags: string[];
   location?: string;
+  state?: string;
+  country?: string;
   start_date?: string;
   end_date?: string;
   event_date?: string;

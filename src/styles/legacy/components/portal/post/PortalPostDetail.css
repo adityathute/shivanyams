@@ -1954,16 +1954,18 @@
 /* Keep each per-post qualification heading on clear, separate lines. */
 .portal-education-post-heading .portal-education-post-number-label {
   color: var(--text-secondary, #778397);
-  font-weight: 600;
+  font-weight: 750;
 }
 
 .portal-education-post-heading .portal-education-post-number {
   color: var(--text-secondary, #778397);
+  font-weight: 750;
   font-variant-numeric: tabular-nums;
 }
 
 .portal-education-post-heading .portal-education-post-name {
   color: var(--text-primary, #172033);
+  font-weight: 750;
 }
 
 .portal-education-post-heading .portal-education-post-department {

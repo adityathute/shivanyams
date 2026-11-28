@@ -171,7 +171,6 @@ export function UpdatesSection({
   const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const resultsPanelRef = useRef<HTMLElement | null>(null);
 
   const sectionTitle = title ?? getPortalText("updatesTitle", language);
 
@@ -270,26 +269,8 @@ export function UpdatesSection({
   const lastItem = Math.min(page * pageSize, filtered.length);
 
   useEffect(() => {
-    if (!paginate) return;
-    const updatePageSize = () => {
-      const panel = resultsPanelRef.current;
-      if (!panel) return;
-      const top = panel.getBoundingClientRect().top;
-      const availableHeight = Math.max(160, window.innerHeight - top - 155);
-      const rowHeight = window.innerWidth <= 760 ? 94 : 78;
-      setPageSize(Math.max(10, Math.floor(availableHeight / rowHeight)));
-    };
-    updatePageSize();
-    window.addEventListener("resize", updatePageSize);
-    const observer = typeof ResizeObserver !== "undefined" && resultsPanelRef.current
-      ? new ResizeObserver(updatePageSize)
-      : null;
-    if (observer && resultsPanelRef.current) observer.observe(resultsPanelRef.current);
-    return () => {
-      window.removeEventListener("resize", updatePageSize);
-      observer?.disconnect();
-    };
-  }, [paginate]);
+    setPage(1);
+  }, [pageSize]);
 
   useEffect(() => {
     setPage(1);
@@ -303,7 +284,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section ref={resultsPanelRef} className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""} panelin`} id="updates">
+    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 
@@ -434,9 +415,23 @@ export function UpdatesSection({
       </div>
 
       {paginate && filtered.length > pageSize && (
-        <div className="related-content-pagination">
-          <span>Showing {firstItem}–{lastItem} of {filtered.length} posts</span>
-          <div className="related-content-pagination-controls">
+        <div className="admin-table-footer admin-analytics-pagination updates-admin-pagination">
+          <span>
+            Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {filtered.length.toLocaleString("en-IN")}
+          </span>
+          <div className="admin-pagination">
+            <label>
+              Rows
+              <select
+                value={pageSize}
+                onChange={(event) => setPageSize(Number(event.target.value))}
+                aria-label="Rows per page"
+              >
+                {[10, 15, 25, 50].map((size) => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </label>
             <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
             <span>Page {page} of {pageCount}</span>
             <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>

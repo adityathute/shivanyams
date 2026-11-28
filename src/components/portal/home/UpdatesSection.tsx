@@ -110,17 +110,13 @@ function renderSearchHighlight(value: string, query: string) {
   if (!terms.length || !value) return value;
 
   const escapedTerms = terms.map((term) =>
-    term.replace(/[.*+?^${}()|[\]\\]/g, "\\function getItemCategory(item: Item, language: Language): string {
-  return getLocalizedValue(
-    language,
-    item.category_en,
-    item.category_mr,
-    item.category_hi,
+    Array.from(term)
+      .map((character) =>
+        "\\^$.*+?()[]{}|".includes(character) ? "\\\\" + character : character,
+      )
+      .join(""),
   );
-}
-"),
-  );
-  const matcher = new RegExp(`(${escapedTerms.join("|")})`, "giu");
+  const matcher = new RegExp("(" + escapedTerms.join("|") + ")", "giu");
   const parts = value.split(matcher);
 
   return parts.map((part, index) =>
@@ -131,7 +127,6 @@ function renderSearchHighlight(value: string, query: string) {
     ),
   );
 }
-
 function isJobDeadlineRevised(item: Item): boolean {
   const applicationEnd = item.important_dates?.find(
     (entry) => entry.date_type === "application_end",

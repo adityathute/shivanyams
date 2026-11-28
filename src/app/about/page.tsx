@@ -1,3 +1,11 @@
+import { getStaticPageMetadata } from "../../lib/seo";
+
+export const metadata = getStaticPageMetadata(
+  "About ShivanyaMS",
+  "Learn about ShivanyaMS and our mission to make government job, scheme and public-service information easier to find.",
+  "/about",
+);
+
 /* File Location: shivanyams/src/app/about/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

@@ -632,3 +632,11 @@
 [data-theme="dark"] .related-saved-page .related-job-row time { color: #a9b7c8; }
 @media (max-width: 760px) { .related-saved-page .update-list > .related-job-row { grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 7px; } .related-saved-page .related-job-row time { display: block !important; grid-column: 3; align-self: center; font-size: 10px; } .related-saved-page .related-job-row .portal-post-category-badge { min-width: 0; } }
 @media (max-width: 390px) { .related-saved-page .update-list > .related-job-row { grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 5px; } }
+
+
+/* Revised application deadlines on tag and organization related lists. */
+.related-saved-page .related-job-row .update-deadline-group { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px; justify-self:end; white-space:nowrap; }
+.related-saved-page .related-job-row .update-deadline-extended { display:inline-flex; align-items:center; border-radius:5px; padding:3px 7px; background:#fff0d9; color:#a45b00; font-size:10px; font-weight:700; line-height:1.3; }
+.related-saved-page .related-job-row .update-application-deadline { display:block; font-size:12px; font-weight:700; }
+[data-theme="dark"] .related-saved-page .related-job-row .update-deadline-extended { background:#49351d; color:#ffd18a; }
+@media (max-width:760px) { .related-saved-page .related-job-row .update-deadline-group { grid-column:3; grid-row:1; align-self:center; gap:3px; } .related-saved-page .related-job-row .update-application-deadline { font-size:11px; } .related-saved-page .related-job-row .update-deadline-extended { font-size:9px; padding:2px 5px; } }

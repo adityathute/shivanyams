@@ -1,3 +1,11 @@
+import { getStaticPageMetadata } from "../../lib/seo";
+
+export const metadata = getStaticPageMetadata(
+  "Feedback",
+  "Share feedback and report issues or incorrect information on ShivanyaMS.",
+  "/feedback",
+);
+
 /* File Location: shivanyams/src/app/feedback/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

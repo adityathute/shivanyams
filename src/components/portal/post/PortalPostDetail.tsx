@@ -1555,7 +1555,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   ? `${getDetailLabel("photocopy", language)}: ${row.photocopy_required ? "Yes" : "No"}`
                                   : "",
                               row.number_of_copies ? `${getDetailLabel("copies", language)}: ${row.number_of_copies}` : "",
-                              row.quantity ? `${getDetailLabel("quantity", language)}: ${row.quantity}` : "",
                             ].filter(Boolean);
                             return (
                               <tr key={row.id || `document-${index}`}>

@@ -91,10 +91,9 @@ export function JobsPage() {
               <p>{t("jobsHeroDescription")}</p>
 
               {popularTags.length > 0 ? (
-                <div className="jobs-popular-tags" aria-label="Popular job tags">
-                  <span className="jobs-popular-tags-label">{language === "mr" ? "लोकप्रिय टॅग:" : language === "hi" ? "लोकप्रिय टैग:" : "Popular tags:"}</span>
+                <div className="jobs-popular-tags portal-post-taxonomy" aria-label="Popular job tags">
                   {popularTags.map((tag) => (
-                    <a href={`/tags/${createPostSlug(tag)}`} key={tag}># {tag}</a>
+                    <a className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>{tag}</a>
                   ))}
                 </div>
               ) : null}

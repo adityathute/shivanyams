@@ -78,6 +78,32 @@ const categoryItemTypes: Record<CategorySlug, Item["type"]> = {
   tools: "tool",
 };
 
+function getYouTubeEmbedUrl(url?: string | null): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\\./, "");
+    let id: string | null = null;
+    if (host === "youtu.be") id = parsed.pathname.split("/").filter(Boolean)[0] ?? null;
+    else if (["youtube.com", "m.youtube.com", "youtube-nocookie.com"].includes(host)) {
+      if (parsed.pathname === "/watch") id = parsed.searchParams.get("v");
+      else {
+        const parts = parsed.pathname.split("/").filter(Boolean);
+        if (["embed", "shorts", "live"].includes(parts[0]) && parts[1]) id = parts[1];
+      }
+    }
+    return id && /^[A-Za-z0-9_-]{11}$/.test(id)
+      ? `https://www.youtube-nocookie.com/embed/${id}?rel=0`
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function isDirectVideoUrl(url?: string | null): boolean {
+  return Boolean(url && /\\.(mp4|webm|ogg)(?:$|[?#])/i.test(url));
+}
+
 export function createPostSlug(value: string) {
   return value
     .normalize("NFKD")
@@ -610,6 +636,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const { language } = usePortalLanguage();
   const { links, getLinkTitle } = useImportantLinks();
   const jobInfoGridRef = useRef<HTMLDivElement | null>(null);
+  const [videoStarted, setVideoStarted] = useState(false);
 
   // Measure populated fields and both logical groups, then pack every field
   // inside the information table's existing available width.
@@ -1738,15 +1765,37 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   ) : null}
 
                   {category === "videos" && post.link ? (
-                    <a
-                      className="portal-post-action"
-                      href={post.link}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {getDetailLabel("watchVideo", language)}
-                      <span aria-hidden="true">↗</span>
-                    </a>
+                    <section className="portal-post-detail-video" aria-label={post.title}>
+                      {getYouTubeEmbedUrl(post.link) ? (
+                        videoStarted ? (
+                          <iframe
+                            src={`${getYouTubeEmbedUrl(post.link)}&autoplay=1`}
+                            title={post.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            className="portal-post-detail-video-poster"
+                            onClick={() => setVideoStarted(true)}
+                            aria-label={getDetailLabel("watchVideo", language)}
+                          >
+                            {post.image ? <img src={post.image} alt="" /> : null}
+                            <span className="portal-post-detail-video-play" aria-hidden="true">▶</span>
+                          </button>
+                        )
+                      ) : isDirectVideoUrl(post.link) ? (
+                        <video controls playsInline preload="metadata" poster={post.image || undefined}>
+                          <source src={post.link} />
+                        </video>
+                      ) : (
+                        <a className="portal-post-action" href={post.link} target="_blank" rel="noreferrer">
+                          {getDetailLabel("watchVideo", language)}
+                          <span aria-hidden="true">↗</span>
+                        </a>
+                      )}
+                    </section>
                   ) : null}
                 {!previewItem ? (
                   <div className="portal-post-card-footer">

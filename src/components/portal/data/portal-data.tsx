@@ -120,18 +120,18 @@ export type JobDetails = {
   }[];
 };
 
-export type RequiredDocument = {
+export type RequiredDocument = {\n  id?: number;
   name_en?: string; name_mr?: string; name_hi?: string;
   description_en?: string; description_mr?: string; description_hi?: string;
   category?: string; requirement?: string; original_required?: boolean | null;
   photocopy_required?: boolean | null; number_of_copies?: number | null; quantity?: number | null;
   instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
 };
-export type PhotoRequirement = {
+export type PhotoRequirement = {\n  id?: number;
   photo_type?: string; photo_size?: string; photo_quantity?: number | null; photo_background?: string;
   other_specifications?: string; instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
 };
-export type SignatureRequirement = {
+export type SignatureRequirement = {\n  id?: number;
   signature_type?: string; signature_format?: string; signature_size?: string;
   other_specifications?: string; instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
 };

@@ -70,6 +70,14 @@ After deployment:
 
 Sitemap generation depends on the production Portal API being reachable from the Next.js server. If that API is unavailable, the sitemap still returns its static public URLs but cannot include dynamic posts. Search indexing and ranking are controlled by search engines; technical SEO does not guarantee immediate indexing, approval or a particular position.
 
+### Backend production environment
+
+Copy `backend/.env.example` to `backend/.env` and replace every placeholder. Never commit `backend/.env`. Configure the real database host and credentials, the API hostname in `DJANGO_ALLOWED_HOSTS`, all deployed frontend origins in `CORS_ALLOWED_ORIGINS` and `CSRF_TRUSTED_ORIGINS`, and the production auth-me endpoint in `AUTH_ME_URL`.
+
+The backend supports explicit HTTPS redirect, secure cookies, HSTS and trusted reverse-proxy settings. Set `DJANGO_USE_X_FORWARDED_PROTO=True` only when the trusted proxy overwrites the forwarded protocol header. Keep HSTS at `0` until HTTPS is verified on the API hostname; then enable a suitable max age. Do not enable HSTS for all subdomains until every affected subdomain is HTTPS-ready.
+
+The Next.js app adds baseline security response headers. These do not replace TLS, reverse-proxy hardening, database backups, monitoring, rate limiting, dependency updates or a tested rollback procedure.
+
 ## Production release checks
 
 Before every release, run `npm run lint` and `npm run build`, verify the production environment variables, and smoke-test the public routes and API from the deployed environment. The current CI workflow runs lint and build on `shiv-v2`; lint currently reports existing repository-wide rule violations, and the build must be green before release. CI does not deploy the application. Deployment, hosting, TLS, database backups, monitoring and rollback must be configured and verified separately before calling the site production-ready.

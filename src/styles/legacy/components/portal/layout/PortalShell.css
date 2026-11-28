@@ -1166,7 +1166,7 @@
 
 
 /* Database-backed search suggestions and the signed-in user's recent searches. */
-.portal-topbar-search { position: relative; overflow: visible; }
+.portal-topbar-search { overflow: visible; }
 .portal-search-suggestions {
   position: absolute;
   top: calc(100% + 8px);

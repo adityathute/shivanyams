@@ -116,6 +116,11 @@ def _contains_blocked_language(value):
     return False
 
 
+def contains_abusive_language(value):
+    """Return whether text contains a term from the shared moderation dictionary."""
+    return _contains_blocked_language(value)
+
+
 def validate_comment_content(value):
     """Return an error message when content violates comment safety rules."""
     if _find_external_link(value):

@@ -46,9 +46,6 @@ type RequiredDocumentInput = {
   category: string; requirement: string;
   original_required: string; photocopy_required: string;
   number_of_copies: string; quantity: string;
-  photo_type: string; photo_size: string; photo_quantity: string; photo_background: string;
-  signature_type: string; signature_format: string; signature_size: string;
-  other_specifications: string;
   instructions_en: string; instructions_mr: string; instructions_hi: string;
   sort_order: number; is_active: boolean;
 };
@@ -58,11 +55,28 @@ const createEmptyRequiredDocument = (sort_order: number): RequiredDocumentInput 
   category: "", requirement: "",
   original_required: "", photocopy_required: "",
   number_of_copies: "", quantity: "",
-  photo_type: "", photo_size: "", photo_quantity: "", photo_background: "",
-  signature_type: "", signature_format: "", signature_size: "",
-  other_specifications: "",
   instructions_en: "", instructions_mr: "", instructions_hi: "",
   sort_order, is_active: true,
+});
+
+type PhotoRequirementInput = {
+  photo_type: string; photo_size: string; photo_quantity: string; photo_background: string;
+  other_specifications: string; instructions_en: string; instructions_mr: string; instructions_hi: string;
+  sort_order: number; is_active: boolean;
+};
+const createEmptyPhotoRequirement = (sort_order: number): PhotoRequirementInput => ({
+  photo_type: "", photo_size: "", photo_quantity: "", photo_background: "", other_specifications: "",
+  instructions_en: "", instructions_mr: "", instructions_hi: "", sort_order, is_active: true,
+});
+
+type SignatureRequirementInput = {
+  signature_type: string; signature_format: string; signature_size: string; other_specifications: string;
+  instructions_en: string; instructions_mr: string; instructions_hi: string;
+  sort_order: number; is_active: boolean;
+};
+const createEmptySignatureRequirement = (sort_order: number): SignatureRequirementInput => ({
+  signature_type: "", signature_format: "", signature_size: "", other_specifications: "",
+  instructions_en: "", instructions_mr: "", instructions_hi: "", sort_order, is_active: true,
 });
 
 
@@ -319,6 +333,8 @@ type PostRecord = {
   important_links?: LinkInput[];
   faqs?: FAQInput[];
   required_documents?: RequiredDocumentInput[];
+  photo_requirements?: PhotoRequirementInput[];
+  signature_requirements?: SignatureRequirementInput[];
   important_dates?: DateInput[];
   job_details?: Record<string, unknown> | null;
   scheme_details?: Record<string, unknown> | null;
@@ -617,6 +633,8 @@ export default function PostEditor({
   const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);
   const [faqs, setFaqs] = useState<FAQInput[]>([]);
   const [requiredDocuments, setRequiredDocuments] = useState<RequiredDocumentInput[]>([]);
+  const [photoRequirements, setPhotoRequirements] = useState<PhotoRequirementInput[]>([]);
+  const [signatureRequirements, setSignatureRequirements] = useState<SignatureRequirementInput[]>([]);
   const [expandedRequiredDocumentLanguages, setExpandedRequiredDocumentLanguages] = useState<number[]>([]);
   const [expandedFaqQuestionLanguages, setExpandedFaqQuestionLanguages] = useState<number[]>([]);
   const [expandedFaqAnswerLanguages, setExpandedFaqAnswerLanguages] = useState<number[]>([]);
@@ -827,9 +845,19 @@ export default function PostEditor({
           photocopy_required: item.photocopy_required == null ? "" : String(item.photocopy_required),
           number_of_copies: item.number_of_copies == null ? "" : String(item.number_of_copies),
           quantity: item.quantity == null ? "" : String(item.quantity),
+          instructions_en: String(item.instructions_en ?? ""), instructions_mr: String(item.instructions_mr ?? ""), instructions_hi: String(item.instructions_hi ?? ""),
+          is_active: item.is_active ?? true,
+        })));
+        setPhotoRequirements((record.photo_requirements || []).map((item) => ({
+          ...createEmptyPhotoRequirement(Number(item.sort_order ?? 0)), ...item,
           photo_type: String(item.photo_type ?? ""), photo_size: String(item.photo_size ?? ""),
           photo_quantity: item.photo_quantity == null ? "" : String(item.photo_quantity),
-          photo_background: String(item.photo_background ?? ""),
+          photo_background: String(item.photo_background ?? ""), other_specifications: String(item.other_specifications ?? ""),
+          instructions_en: String(item.instructions_en ?? ""), instructions_mr: String(item.instructions_mr ?? ""), instructions_hi: String(item.instructions_hi ?? ""),
+          is_active: item.is_active ?? true,
+        })));
+        setSignatureRequirements((record.signature_requirements || []).map((item) => ({
+          ...createEmptySignatureRequirement(Number(item.sort_order ?? 0)), ...item,
           signature_type: String(item.signature_type ?? ""), signature_format: String(item.signature_format ?? ""),
           signature_size: String(item.signature_size ?? ""), other_specifications: String(item.other_specifications ?? ""),
           instructions_en: String(item.instructions_en ?? ""), instructions_mr: String(item.instructions_mr ?? ""), instructions_hi: String(item.instructions_hi ?? ""),
@@ -1378,28 +1406,36 @@ export default function PostEditor({
             action_text_en: item.action_text_en.trim() || "Click Here",
           })),
         faqs: faqs.filter((item) => item.question_en.trim() && item.answer_en.trim()).map((item, index) => ({ ...item, sort_order: index })),
-        required_documents: requiredDocuments
-          .filter((item) => Object.entries(item).some(([key, value]) =>
-            !["sort_order", "is_active"].includes(key) && String(value ?? "").trim() !== ""
-          ))
+        photo_requirements: photoRequirements
+          .filter((item) => Object.entries(item).some(([key, value]) => !["sort_order", "is_active"].includes(key) && String(value ?? "").trim() !== ""))
           .map((item, index) => ({
-            ...item,
-            sort_order: index,
-            name_en: item.name_en.trim() || null,
-            name_mr: item.name_mr.trim() || null,
-            name_hi: item.name_hi.trim() || null,
-            description_en: item.description_en.trim() || null,
-            description_mr: item.description_mr.trim() || null,
-            description_hi: item.description_hi.trim() || null,
-            category: item.category || null,
-            requirement: item.requirement || null,
-            photo_type: item.photo_type || null,
+            ...item, sort_order: index, photo_type: item.photo_type || null,
             photo_size: item.photo_size.trim() || null,
+            photo_quantity: item.photo_quantity === "" ? null : Number(item.photo_quantity),
             photo_background: item.photo_background.trim() || null,
-            signature_type: item.signature_type || null,
+            other_specifications: item.other_specifications.trim() || null,
+            instructions_en: item.instructions_en.trim() || null,
+            instructions_mr: item.instructions_mr.trim() || null,
+            instructions_hi: item.instructions_hi.trim() || null,
+          })),
+        signature_requirements: signatureRequirements
+          .filter((item) => Object.entries(item).some(([key, value]) => !["sort_order", "is_active"].includes(key) && String(value ?? "").trim() !== ""))
+          .map((item, index) => ({
+            ...item, sort_order: index, signature_type: item.signature_type || null,
             signature_format: item.signature_format.trim() || null,
             signature_size: item.signature_size.trim() || null,
             other_specifications: item.other_specifications.trim() || null,
+            instructions_en: item.instructions_en.trim() || null,
+            instructions_mr: item.instructions_mr.trim() || null,
+            instructions_hi: item.instructions_hi.trim() || null,
+          })),
+        required_documents: requiredDocuments
+          .filter((item) => Object.entries(item).some(([key, value]) => !["sort_order", "is_active"].includes(key) && String(value ?? "").trim() !== ""))
+          .map((item, index) => ({
+            ...item, sort_order: index,
+            name_en: item.name_en.trim() || null, name_mr: item.name_mr.trim() || null, name_hi: item.name_hi.trim() || null,
+            description_en: item.description_en.trim() || null, description_mr: item.description_mr.trim() || null, description_hi: item.description_hi.trim() || null,
+            category: item.category || null, requirement: item.requirement || null,
             instructions_en: item.instructions_en.trim() || null,
             instructions_mr: item.instructions_mr.trim() || null,
             instructions_hi: item.instructions_hi.trim() || null,
@@ -1407,7 +1443,6 @@ export default function PostEditor({
             photocopy_required: item.photocopy_required === "" ? null : item.photocopy_required === "true",
             number_of_copies: item.number_of_copies === "" ? null : Number(item.number_of_copies),
             quantity: item.quantity === "" ? null : Number(item.quantity),
-            photo_quantity: item.photo_quantity === "" ? null : Number(item.photo_quantity),
           })),
         important_dates: importantDates
           .filter((item) => item.label_en.trim())
@@ -1431,7 +1466,7 @@ export default function PostEditor({
             old_time: item.old_time || null,
             new_time: item.new_time || null,
           })),
-      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, requiredDocuments, importantDates]);
+      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, requiredDocuments, photoRequirements, signatureRequirements, importantDates]);
 
   const currentTitle = String(form.title_en || "").trim();
   const currentSnapshot = JSON.stringify(payload);

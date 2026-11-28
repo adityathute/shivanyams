@@ -187,10 +187,10 @@ type AdminPost = {
 const CONTENT_KINDS = [
   { slug: "jobs", label: "Jobs", api: "jobs" },
   { slug: "schemes", label: "Schemes", api: "schemes" },
-  { slug: "examination", label: "Examination", api: "examination" },
-  { slug: "admit-cards", label: "Admit Cards", api: "admit-card" },
+  { slug: "exams", label: "Exams", api: "exams" },
+  { slug: "admit-cards", label: "Admit Cards", api: "admit-cards" },
   { slug: "results", label: "Results", api: "results" },
-  { slug: "articles-guides", label: "Articles & Guides", api: "articles" },
+  { slug: "guides", label: "Guides", api: "guides" },
   { slug: "videos", label: "Videos", api: "videos" },
   { slug: "tools", label: "Tools", api: "tools" },
 ];
@@ -206,16 +206,9 @@ const STATUS_OPTIONS = [
   "archived",
 ];
 
-// The backend stores these two canonical category slugs, while the admin
-// content-kind configuration keeps the established route slugs.
+// Category slugs match the canonical Django Category records.
 function getContentKindForCategory(categorySlug: string | null | undefined) {
-  const kindSlug =
-    categorySlug === "exams"
-      ? "examination"
-      : categorySlug === "guides"
-        ? "articles-guides"
-        : categorySlug;
-  return CONTENT_KINDS.find((item) => item.slug === kindSlug);
+  return CONTENT_KINDS.find((item) => item.slug === categorySlug);
 }
 
 function formatPersonName(name: string | null | undefined) {
@@ -1742,8 +1735,8 @@ export default function AdminPage() {
                                 post.status === "published" &&
                                 post.is_active !== false &&
                                 Boolean(post.published_at)
-                                  ? `/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}`
-                                  : `/admin/preview/${kind?.slug === "admit-cards" ? "admit-cards" : kind?.slug === "articles-guides" ? "guides" : kind?.slug || "jobs"}/${post.slug}`
+                                  ? `/${kind?.slug || "jobs"}/${post.slug}`
+                                  : `/admin/preview/${kind?.slug || "jobs"}/${post.slug}`
                               }
                               target="_blank"
                             >

@@ -12,7 +12,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   AccountModal,
   type AccountView,
@@ -27,12 +27,24 @@ import "../../../../styles/legacy/components/portal/layout/PortalShell.css";
 export function PortalHeader() {
   const { openLogin, openRegister } = usePortalAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const [accountView, setAccountView] = useState<AccountView | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const searchPanelRef = useRef<HTMLFormElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) {
+      searchInputRef.current?.focus();
+      return;
+    }
+    setSearchOpen(false);
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -79,7 +91,7 @@ export function PortalHeader() {
 
   return (
     <>
-      <form className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={(event) => event.preventDefault()}>
+      <form className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={submitSearch}>
         <SearchIcon size={17} aria-hidden="true" />
         <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" />
         <button type="submit">Search</button>

@@ -3004,9 +3004,15 @@ class AdminContactMessages(APIView):
             for author in Comment.objects.filter(
                 user_auth_id__in=auth_ids
             ).exclude(author_name="").order_by("-created_at").values(
-                "user_auth_id", "author_name"
+                "user_auth_id", "author_name", "author_avatar"
             ):
-                user_names.setdefault(str(author["user_auth_id"]), author["author_name"])
+                user_names.setdefault(
+                    str(author["user_auth_id"]),
+                    {
+                        "name": author["author_name"],
+                        "avatar": author["author_avatar"] or "",
+                    },
+                )
 
             # Keep Portal Users snapshots as fallbacks for accounts that have
             # never posted a comment.
@@ -3015,14 +3021,16 @@ class AdminContactMessages(APIView):
             ).exclude(full_name="").order_by("-last_seen_at").values(
                 "auth_user_id", "full_name"
             ):
-                user_names.setdefault(str(visitor["auth_user_id"]), visitor["full_name"])
+                profile = user_names.setdefault(str(visitor["auth_user_id"]), {})
+                profile.setdefault("name", visitor["full_name"])
 
             for visit in WebsiteView.objects.filter(
                 auth_user_id__in=auth_ids
             ).exclude(full_name="").order_by("-viewed_at").values(
                 "auth_user_id", "full_name"
             ):
-                user_names.setdefault(str(visit["auth_user_id"]), visit["full_name"])
+                profile = user_names.setdefault(str(visit["auth_user_id"]), {})
+                profile.setdefault("name", visit["full_name"])
 
         return Response([
             {
@@ -3031,10 +3039,11 @@ class AdminContactMessages(APIView):
                 "name": item.name,
                 "email": item.email,
                 "user_full_name": (
-                    item.user_full_name
-                    or user_names.get(str(item.user_auth_id), "")
+                    user_names.get(str(item.user_auth_id), {}).get("name")
+                    or item.user_full_name
                     or (item.name if item.user_auth_id else "")
                 ),
+                "user_avatar": user_names.get(str(item.user_auth_id), {}).get("avatar", ""),
                 "user_auth_id": item.user_auth_id,
                 "is_registered_user": bool(item.user_auth_id),
                 "category": item.category,

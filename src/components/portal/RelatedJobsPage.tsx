@@ -184,23 +184,6 @@ export function RelatedJobsPage() {
         <p>{filterType === "organization" ? (language === "mr" ? `${heading} मधील नोकऱ्या आणि अपडेट्स पहा.` : language === "hi" ? `${heading} की नौकरियाँ और अपडेट देखें।` : `Explore jobs and updates from ${heading}.`) : labels.description}</p>
       </header>
 
-      {filterType === "tag" && suggestedTags.length > 0 && (
-        <section className="updates-panel panel related-tag-suggestions">
-          <div className="section-heading">
-            <h2>{labels.more}</h2>
-            <Link className="related-tag-view-all" href="/tags">{labels.allTags}</Link>
-          </div>
-          <div className="related-tag-list">
-            {suggestedTags.map(([tagSlug, tag]) => (
-              <Link className="related-tag-chip" href={`/tags/${tagSlug}`} key={tagSlug}>
-                <span className="related-tag-label">{tag.label}</span>
-                <small>{tag.count}</small>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
       <section ref={resultsPanelRef} className={`updates-panel panel jobs-updates updates-panel-language-${language}`}>
         <div className="section-heading">
           <h2>{filterType === "tag" ? `# ${heading}` : heading}</h2>
@@ -285,6 +268,22 @@ export function RelatedJobsPage() {
         )}
       </section>
 
+      {filterType === "tag" && suggestedTags.length > 0 && (
+        <section className="updates-panel panel related-tag-suggestions">
+          <div className="section-heading">
+            <h2>{labels.more}</h2>
+            <Link className="related-tag-view-all" href="/tags">{labels.allTags}</Link>
+          </div>
+          <div className="related-tag-list">
+            {suggestedTags.map(([tagSlug, tag]) => (
+              <Link className="related-tag-chip" href={`/tags/${tagSlug}`} key={tagSlug}>
+                <span className="related-tag-label">{tag.label}</span>
+                <small>{tag.count}</small>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
     </div>
   );

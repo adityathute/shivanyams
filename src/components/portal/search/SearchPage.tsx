@@ -6,7 +6,7 @@ import { UpdatesSection } from "../home/UpdatesSection";
 import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
-import { getSearchablePostText, matchesPostSearch, normalizeSearchText } from "./search-utils";
+import { formatCompactCount, getSearchablePostText, matchesPostSearch, normalizeSearchText } from "./search-utils";
 import "../../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 import "./SearchPage.css";
 
@@ -128,7 +128,7 @@ export function SearchPage() {
           <span>{text.for}</span>
           <strong>“{query}”</strong>
           <span className="search-query-count">
-            {data.loading ? "…" : matchedItems.length.toLocaleString("en-IN")} {language === "mr" ? "पोस्ट" : language === "hi" ? "पोस्ट" : "posts"}
+            {data.loading ? "…" : formatCompactCount(matchedItems.length)} {language === "mr" ? "पोस्ट" : language === "hi" ? "पोस्ट" : "posts"}
           </span>
         </div>
       ) : (

@@ -617,39 +617,40 @@
 }
 
 
-/* Full Latest Updates page reuses the exact homepage update panel and rows. */
-.updates-all-page {
-  width: min(100% - 32px, 1440px);
-  margin: 20px auto 28px;
+/* All Posts directory follows the Tags page layout and uses the full available width. */
+.updates-directory-page {
+  width: auto;
+  max-width: none;
+  margin: 16px;
 }
 
-.updates-all-page > .updates-panel {
+.updates-directory-page > .updates-panel {
   width: 100%;
 }
 
-.updates-all-page .update-row {
+.updates-directory-page .update-row {
   grid-template-columns: max-content minmax(0, 1fr) 100px 42px;
 }
 
 @media (max-width: 1100px) {
-  .updates-all-page .update-row {
+  .updates-directory-page .update-row {
     grid-template-columns: max-content minmax(0, 1fr) 78px 35px;
   }
 }
 
 @media (max-width: 760px) {
-  .updates-all-page {
-    width: calc(100% - 20px);
-    margin: 12px auto 20px;
+  .updates-directory-page {
+    width: auto;
+    margin: 12px 10px;
   }
 
-  .updates-all-page .update-row {
+  .updates-directory-page .update-row {
     grid-template-columns: max-content minmax(0, 1fr) max-content;
   }
 }
 
 @media (max-width: 390px) {
-  .updates-all-page .update-row {
+  .updates-directory-page .update-row {
     grid-template-columns: max-content minmax(0, 1fr) 31px;
   }
 }

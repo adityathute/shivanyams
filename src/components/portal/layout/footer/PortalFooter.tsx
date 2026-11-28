@@ -162,7 +162,7 @@ export function PortalFooter() {
           <div className="footer-useful-links-col">
             <h3>{getBaseText("usefulLinks", language)}</h3>
 
-            {links.slice(0, 8).map((link) => (
+            {links.slice(0, sortedCategories.length).map((link) => (
               <a
                 key={link.id}
                 href={link.url}

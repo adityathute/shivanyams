@@ -1770,7 +1770,7 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
                           </tr>
                         </thead>
                         <tbody>
-                          {post.photoRequirements?.map((row: any, index: number) => {
+                          {post.photoRequirements?.map((row, index) => {
                             const instructions = getLocalizedText(language, row.instructions_en, row.instructions_mr, row.instructions_hi);
                             const details = [
                               row.photo_size ? `${getDetailLabel("size", language)}: ${row.photo_size}` : "",

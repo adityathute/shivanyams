@@ -934,3 +934,45 @@
   .related-saved-page .jobs-updates .update-list > .related-job-row { grid-template-columns: max-content minmax(0, 1fr) 31px; gap: 5px; }
   .related-saved-page .jobs-updates .related-job-row .update-title { font-size: 12px; }
 }
+
+
+/* Final title override: exact typography and text colors from the /jobs list. */
+.related-saved-page .jobs-updates .update-list > .related-job-row .update-title {
+  color: var(--text, #172b45) !important;
+  font-family: "Outfit", "Hind", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  transition: color 160ms ease;
+}
+.related-saved-page .jobs-updates .update-list > .related-job-row .update-title small {
+  color: #748299 !important;
+  font-family: "Outfit", "Hind", sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  line-height: inherit;
+}
+.related-saved-page .jobs-updates .update-list > .related-job-row:hover .update-title,
+.related-saved-page .jobs-updates .update-list > .related-job-row:focus-visible .update-title {
+  color: var(--blue, #2563eb) !important;
+}
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > .related-job-row .update-title {
+  color: #e6edf3 !important;
+}
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > .related-job-row .update-title small {
+  color: #a9b7c8 !important;
+}
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > .related-job-row:hover .update-title,
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > .related-job-row:focus-visible .update-title {
+  color: var(--blue, #7eabff) !important;
+}
+@media (max-width: 760px) {
+  .related-saved-page .jobs-updates .update-list > .related-job-row .update-title {
+    font-size: 13px !important;
+  }
+}
+@media (max-width: 390px) {
+  .related-saved-page .jobs-updates .update-list > .related-job-row .update-title {
+    font-size: 12px !important;
+  }
+}

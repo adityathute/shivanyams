@@ -156,8 +156,6 @@ export function ToolsPage() {
                         <span className="update-skeleton-title" />
                         <span className="update-skeleton-summary" />
                       </span>
-                      <span className="update-skeleton-date" />
-                      <span className="update-skeleton-pill" />
                     </div>
                   ))}
                 </div>
@@ -180,27 +178,6 @@ export function ToolsPage() {
                     <span className="update-title">
                       {getLocalizedPostTitle(item, language)}
                       <small>{getLocalizedPostSummary(item, language)}</small>
-                    </span>
-
-                    <time>
-                      {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            language === "mr"
-                              ? "mr-IN"
-                              : language === "hi"
-                                ? "hi-IN"
-                                : "en-IN",
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : copy.new}
-                    </time>
-
-                    <span className="new-pill">
-                      {copy.new}
                     </span>
                   </a>
                 ))

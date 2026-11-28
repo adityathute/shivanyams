@@ -11,11 +11,11 @@
  */
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import type { Language } from "shivanya-i18n";
 import { VideosCharacters } from "./VideosCharacters";
-import { SearchIcon, VideoIcon } from "shivanya-ui";
+import { VideoIcon } from "shivanya-ui";
 import { getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
@@ -66,7 +66,6 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
 
 export function VideosPage() {
   useRefreshPortalDataOnMount();
-  const [query, setQuery] = useState("");
 
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -74,17 +73,25 @@ export function VideosPage() {
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
-  const videos = useMemo(() => {
-    const term = query.trim().toLowerCase();
+  const videos = data.videos;
 
-    return data.videos.filter(
-      (video) =>
-        !term ||
-        [video.title, video.title_en, video.title_mr, video.title_hi, video.language].some((value) =>
-          String(value || "").toLowerCase().includes(term),
-        ),
-    );
-  }, [data.videos, query]);
+  const popularTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    data.items
+      .filter((item) => item.type === "video")
+      .forEach((item) => {
+        (Array.isArray(item.tags) ? item.tags : []).forEach((tag) => {
+          const cleanTag = String(tag || "").trim();
+          if (!cleanTag) return;
+          const normalized = cleanTag.toLocaleLowerCase();
+          counts.set(normalized, (counts.get(normalized) || 0) + 1);
+        });
+      });
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [data.items]);
 
   const hasVideos = data.videos.length > 0;
 
@@ -105,21 +112,13 @@ export function VideosPage() {
 
             <p>{t("videosHeroDescription")}</p>
 
-            <form
-              className="videos-search"
-              onSubmit={(event) => event.preventDefault()}
-            >
-              <SearchIcon size={18} />
-
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t("videosSearchPlaceholder")}
-                aria-label={t("videosSearchPlaceholder")}
-              />
-
-              <button type="submit">{t("search")}</button>
-            </form>
+            {popularTags.length > 0 ? (
+              <div className="videos-popular-tags portal-post-taxonomy" aria-label="Popular video tags">
+                {popularTags.map((tag) => (
+                  <Link className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>{tag}</Link>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div className="videos-hero-art" aria-hidden="true">
@@ -225,7 +224,7 @@ export function VideosPage() {
           )}
 
           {!data.loading && videos.length === 0 && !data.failedTypes?.includes("video") && (
-            <PortalEmptyState title={hasVideos ? t("noVideosFound") : (language === "mr" ? "व्हिडिओ उपलब्ध नाहीत" : language === "hi" ? "अभी वीडियो उपलब्ध नहीं हैं" : "No videos available")} description={hasVideos ? t("tryAnotherSearch") : (language === "mr" ? "नवीन व्हिडिओ प्रकाशित झाल्यावर येथे दिसतील." : language === "hi" ? "नए वीडियो प्रकाशित होते ही यहाँ दिखाई देंगे।" : "New videos will appear here as soon as they are published.")} icon="▶" />
+            <PortalEmptyState title={language === "mr" ? "व्हिडिओ उपलब्ध नाहीत" : language === "hi" ? "अभी वीडियो उपलब्ध नहीं हैं" : "No videos available"} description={language === "mr" ? "नवीन व्हिडिओ प्रकाशित झाल्यावर येथे दिसतील." : language === "hi" ? "नए वीडियो प्रकाशित होते ही यहाँ दिखाई देंगे।" : "New videos will appear here as soon as they are published."} icon="▶" />
           )}
         </section>
       </main>

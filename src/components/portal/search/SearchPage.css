@@ -217,3 +217,39 @@
 /* Search Results shares the exact related-tag post-row styles from SavedPostsPage.css. */
 .search-results-page .updates-panel-search-results .new-pill { display: none !important; }
 .search-results-page .updates-panel-search-results .update-title small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Search-only visibility repair: keep filters above results and pagination
+   directly after the result list. No shared Tags/Jobs styles are changed. */
+.search-results-page .updates-panel-search-results {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0;
+}
+
+.search-results-page .updates-panel-search-results > .filter-row {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1;
+}
+
+.search-results-page .updates-panel-search-results > .update-list {
+  display: block !important;
+  flex: 0 0 auto !important;
+  min-width: 0;
+}
+
+.search-results-page .updates-panel-search-results > .updates-admin-pagination {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  inset: auto !important;
+  margin: 0 !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+

@@ -25,7 +25,7 @@ import type { Language } from "shivanya-i18n";
 import SiteMobileFooter from "./footer/SiteMobileFooter";
 import { PortalHeader } from "./header/PortalHeader";
 import { getPortalNavigation } from "./sidebar/PortalSidebar";
-import { PortalDataProvider } from "../data/portal-data";
+import { PortalDataProvider, type PortalData } from "../data/portal-data";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch, refreshAuthSession, setAuthRefreshHandler } from "../../../lib/authenticated-fetch";
 import { PortalAuthProvider } from "../context/PortalAuthContext";
@@ -174,9 +174,11 @@ function PortalShell({ children }: { children: ReactNode }) {
 export function PortalLayout({
   children,
   initialLanguage,
+  initialData,
 }: {
   children: ReactNode;
   initialLanguage: Language;
+  initialData?: PortalData | null;
 }) {
   return (
     <AuthProvider
@@ -187,7 +189,7 @@ export function PortalLayout({
       }}
     >
       <PortalAuthProvider>
-        <PortalDataProvider>
+        <PortalDataProvider initialData={initialData}>
           <PortalLanguageProvider initialLanguage={initialLanguage}>
             <PortalShell>{children}</PortalShell>
           </PortalLanguageProvider>

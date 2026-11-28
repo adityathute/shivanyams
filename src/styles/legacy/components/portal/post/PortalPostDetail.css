@@ -1937,3 +1937,15 @@
     padding: 11px 12px;
   }
 }
+
+
+/* Use the compact Vacancies heading on tablet-sized screens as well. */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .portal-post-wise-vacancies-full {
+    display: none;
+  }
+
+  .portal-post-wise-vacancies-short {
+    display: inline;
+  }
+}

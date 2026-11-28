@@ -1156,3 +1156,38 @@
 [data-theme="dark"] .related-saved-page .jobs-updates .update-list > a.related-job-row:focus-visible {
   background: #1c2633 !important;
 }
+
+
+/*
+ * Page container parity:
+ * /tags is the reference. Related tag and organization pages use the same
+ * saved-page outer margin and never introduce a separate max-width wrapper.
+ * This final rule neutralizes the older 1800px centered container override.
+ */
+.related-saved-page {
+  display: grid !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 16px !important;
+  padding: 0 0 24px !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 760px) {
+  .related-saved-page {
+    width: auto !important;
+    max-width: none !important;
+    margin: 12px 10px !important;
+    padding: 0 0 24px !important;
+  }
+}
+
+@media (min-width: 1600px) {
+  .related-saved-page {
+    width: auto !important;
+    max-width: none !important;
+    margin: 16px !important;
+    padding: 0 0 24px !important;
+  }
+}

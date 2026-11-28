@@ -1977,12 +1977,11 @@
   overflow-wrap: anywhere;
 }
 
+/* Keep the post title and vacancy badge in one natural text flow.
+   The badge only wraps when the remaining inline space is insufficient. */
 .portal-education-post-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 8px;
-  row-gap: 0;
+  display: block;
+  line-height: 1.55;
 }
 
 .portal-education-post-heading > strong {
@@ -1991,7 +1990,6 @@
 
 .portal-education-post-heading .portal-education-post-vacancies {
   display: inline-flex;
-  flex: 0 0 auto;
   width: fit-content;
   margin: 0;
   padding: 3px 9px;
@@ -2001,10 +1999,11 @@
   font-size: 0.82em;
   font-weight: 650;
   line-height: 1.4;
+  vertical-align: middle;
 }
 
 .portal-education-post-heading .portal-education-post-department {
-  flex: 0 0 100%;
+  display: block;
 }
 
 :root[data-theme="dark"] .portal-education-post-heading .portal-education-post-name {

@@ -1,26 +1,11 @@
 import {
-  ADMIN_FEATURE_TESTING,
   FEATURES,
   type PortalFeatureKey,
   type PortalFeatureConfig,
 } from "./config";
 
-function canAdminPreview(isAdmin: boolean): boolean {
-  return (
-    isAdmin &&
-    process.env.NODE_ENV === "development" &&
-    ADMIN_FEATURE_TESTING
-  );
-}
-
-/** Returns the effective switches for the current visitor. */
-export function getPortalFeatureConfig(isAdmin = false): PortalFeatureConfig {
-  if (canAdminPreview(isAdmin)) {
-    return Object.fromEntries(
-      Object.keys(FEATURES.categories).map((key) => [key, true]),
-    ) as PortalFeatureConfig;
-  }
-
+/** Returns the configured category switches for every visitor. */
+export function getPortalFeatureConfig(): PortalFeatureConfig {
   return { ...FEATURES.categories };
 }
 
@@ -52,22 +37,16 @@ const ROUTE_FEATURES: Record<string, PortalFeatureKey> = {
   tools: "tools",
 };
 
-/** Admins can preview disabled categories only when development testing is enabled. */
-export function isPortalCategoryEnabled(
-  slug: string,
-  isAdmin = false,
-): boolean {
-  if (canAdminPreview(isAdmin)) return true;
+/** Checks a category using the same true/false configuration for everyone. */
+export function isPortalCategoryEnabled(slug: string): boolean {
   const key = ROUTE_FEATURES[slug];
   return key ? FEATURES.categories[key] : true;
 }
 
-/** Returns the disabled category key for a URL, or null when the visitor is allowed. */
+/** Returns the disabled category key for a URL, or null when the route is allowed. */
 export function getDisabledFeatureForPath(
   pathname: string,
-  isAdmin = false,
 ): PortalFeatureKey | null {
-  if (canAdminPreview(isAdmin)) return null;
   const segment = pathname.split("/").filter(Boolean)[0];
   if (!segment || segment === "admin" || segment === "api") return null;
   const key = ROUTE_FEATURES[segment];

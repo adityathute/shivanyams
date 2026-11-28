@@ -927,6 +927,7 @@ class PostWriteSerializer(serializers.ModelSerializer):
         nested_names = (
             "important_links",
             "faqs",
+            "required_documents",
             "important_dates",
             "resources",
             "outgoing_relations",

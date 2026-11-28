@@ -55,6 +55,7 @@ type Props = {
   searchAllFields?: boolean;
   showJobDeadlines?: boolean;
   showExtendedJobDeadlinesOnly?: boolean;
+  showLoadingSkeleton?: boolean;
 };
 
 interface CategoryApiResponse {
@@ -198,6 +199,7 @@ export function UpdatesSection({
   searchAllFields = false,
   showJobDeadlines = false,
   showExtendedJobDeadlinesOnly = false,
+  showLoadingSkeleton = false,
 }: Props) {
   const { data } = usePortalData();
 
@@ -369,7 +371,7 @@ export function UpdatesSection({
       )}
 
       <div className="update-list">
-        {data.loading && filtered.length === 0 ? (
+        {data.loading && (showLoadingSkeleton || filtered.length === 0) ? (
           <div className="update-skeleton-list" aria-label="Loading updates" aria-busy="true">
             {Array.from({ length: 5 }, (_, index) => (
               <div className="update-skeleton-row" key={index} aria-hidden="true">

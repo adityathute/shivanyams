@@ -14,11 +14,10 @@
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/tools/ToolsPage.css";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
-import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { ToolsCharacters } from "./ToolsCharacters";
@@ -30,7 +29,6 @@ const pageCopy = {
     title2: "Tools & Calculators",
     description:
       "Explore useful online tools, calculators, and digital resources to simplify your everyday tasks.",
-    search: "Search tools...",
     latest: "Latest Tools",
     count: "tools",
     empty: "No tools are currently available.",
@@ -42,7 +40,6 @@ const pageCopy = {
     title2: "टूल्स आणि कॅल्क्युलेटर",
     description:
       "तुमची दैनंदिन कामे सोपी करण्यासाठी उपयुक्त ऑनलाइन टूल्स, कॅल्क्युलेटर आणि डिजिटल साधने वापरा.",
-    search: "टूल्स शोधा...",
     latest: "नवीनतम टूल्स",
     count: "टूल्स",
     empty: "सध्या कोणतेही टूल्स उपलब्ध नाहीत.",
@@ -54,7 +51,6 @@ const pageCopy = {
     title2: "टूल्स और कैलकुलेटर",
     description:
       "अपने दैनिक कार्यों को आसान बनाने के लिए उपयोगी ऑनलाइन टूल्स, कैलकुलेटर और डिजिटल संसाधनों का उपयोग करें।",
-    search: "टूल्स खोजें...",
     latest: "नवीनतम टूल्स",
     count: "टूल्स",
     empty: "अभी कोई टूल उपलब्ध नहीं है।",
@@ -64,14 +60,31 @@ const pageCopy = {
 
 export function ToolsPage() {
   useRefreshPortalDataOnMount();
-  const [query, setQuery] = useState("");
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
 
   const copy = pageCopy[language] ?? pageCopy.mr;
 
-  const tools = useMemo(() => {
-    const term = query.trim().toLowerCase();
+  const tools = useMemo(
+    () => data.items.filter((item) => item.type === "tool"),
+    [data.items],
+  );
+
+  const popularTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    tools.forEach((item) => {
+      (Array.isArray(item.tags) ? item.tags : []).forEach((tag) => {
+        const cleanTag = String(tag || "").trim();
+        if (!cleanTag) return;
+        const normalized = cleanTag.toLocaleLowerCase();
+        counts.set(normalized, (counts.get(normalized) || 0) + 1);
+      });
+    });
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [tools]);
 
     return data.items
       .filter((item) => {
@@ -109,26 +122,13 @@ export function ToolsPage() {
 
               <p>{copy.description}</p>
 
-              <form
-                className="tools-search"
-                onSubmit={(event) => event.preventDefault()}
-              >
-                <SearchIcon size={18} />
-
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={copy.search}
-                />
-
-                <button type="submit">
-                  {language === "mr"
-                    ? "शोधा"
-                    : language === "hi"
-                      ? "खोजें"
-                      : "Search"}
-                </button>
-              </form>
+              {popularTags.length > 0 ? (
+                <div className="tools-popular-tags portal-post-taxonomy" aria-label="Popular tool tags">
+                  {popularTags.map((tag) => (
+                    <a className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>{tag}</a>
+                  ))}
+                </div>
+              ) : null}
             </div>
 
             <div className="tools-hero-visual" aria-hidden="true">

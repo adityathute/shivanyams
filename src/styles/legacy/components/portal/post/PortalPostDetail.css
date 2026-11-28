@@ -1958,7 +1958,7 @@
 }
 
 .portal-education-post-heading .portal-education-post-number {
-  color: var(--text-secondary, #778397);
+  color: var(--text-primary, #172033);
   font-weight: 750;
   font-variant-numeric: tabular-nums;
 }
@@ -1995,7 +1995,6 @@
 }
 
 :root[data-theme="dark"] .portal-education-post-heading .portal-education-post-number-label,
-:root[data-theme="dark"] .portal-education-post-heading .portal-education-post-number,
 :root[data-theme="dark"] .portal-education-post-heading .portal-education-post-vacancies {
   color: var(--text-secondary, #cbd5e1);
 }

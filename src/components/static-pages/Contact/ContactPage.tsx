@@ -14,6 +14,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "shivanya-auth";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
+import { containsAbusiveLanguage } from "../../../lib/contact-message-moderation";
 
 import {
   FacebookIcon,
@@ -132,7 +133,13 @@ export function ContactPage() {
     }));
   }, [user?.first_name, user?.last_name, user?.email]);
 
+  const messageHasAbusiveLanguage = containsAbusiveLanguage(form.message);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    if (messageHasAbusiveLanguage) {
+      setSubmitError("Please remove abusive or insulting language before submitting.");
+      return;
+    }
     event.preventDefault();
     if (submitting) return;
     setSubmitting(true);
@@ -381,6 +388,7 @@ export function ContactPage() {
                 fullWidth
                 size="md"
                 rows={6}
+                maxLength={2000}
                 placeholder={t("messagePlaceholder")}
                 value={form.message}
                 onChange={(event) =>
@@ -390,6 +398,10 @@ export function ContactPage() {
                   })
                 }
               />
+              <div className={`contact-message-guidance${messageHasAbusiveLanguage ? " contact-message-guidance--warning" : ""}`}>
+                <span>{messageHasAbusiveLanguage ? "Please remove abusive or insulting language before submitting." : "Maximum 2,000 characters."}</span>
+                <span>{form.message.length}/2,000</span>
+              </div>
 
               <div className="contact-form-footer">
                 <p>
@@ -399,7 +411,7 @@ export function ContactPage() {
 
                 <Button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || messageHasAbusiveLanguage || !form.message.trim()}
                   variant="primary"
                   size="sm"
                   endIcon={<span>→</span>}

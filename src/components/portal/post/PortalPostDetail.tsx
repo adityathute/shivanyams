@@ -311,6 +311,7 @@ const detailLabels = {
   },
   total: { en: "Total Posts", mr: "एकूण पदे", hi: "कुल पद" },
   vacancies: { en: "Vacancies", mr: "रिक्त पदे", hi: "रिक्तियां" },
+  vacanciesShort: { en: "Vac.", mr: "रिक्त", hi: "रिक्त" },
   department: { en: "Department", mr: "विभाग", hi: "विभाग" },
   examinationName: {
     en: "Name of the Examination",
@@ -1229,7 +1230,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                       <th className="portal-post-wise-number">{getDetailLabel("postNumber", language)}</th>
                                       <th className="portal-post-wise-name">{getDetailLabel("postName", language)}</th>
                                       {showDepartment ? <th className="portal-post-wise-department">{getDetailLabel("department", language)}</th> : null}
-                                      <th className="portal-post-wise-vacancies">{getDetailLabel("vacancies", language)}</th>
+                                      <th className="portal-post-wise-vacancies"><span className="portal-post-wise-vacancies-full">{getDetailLabel("vacancies", language)}</span><span className="portal-post-wise-vacancies-short">{getDetailLabel("vacanciesShort", language)}</span></th>
                                       {showAge ? <th>{getDetailLabel("ageLimit", language)}</th> : null}
                                       {showAgeNote ? <th>{getDetailLabel("ageNote", language)}</th> : null}
                                       {showPostFees ? <th>{getDetailLabel("fee", language)}</th> : null}

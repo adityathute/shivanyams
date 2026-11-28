@@ -13,6 +13,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "shivanya-auth";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
 import {
   FacebookIcon,
@@ -138,7 +139,7 @@ export function ContactPage() {
     setSubmitSuccess("");
     setSubmitError("");
     try {
-      const response = await fetch(`${API_URL}/contact-messages/`, {
+      const response = await authenticatedFetch(`${API_URL}/contact-messages/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

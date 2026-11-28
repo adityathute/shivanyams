@@ -66,7 +66,7 @@ After deployment:
 4. Submit `https://www.shivanyams.com/sitemap.xml` in Search Console.
 5. Inspect the homepage, Jobs listing and several published job detail URLs with URL Inspection; resolve any blocked resources, canonical mismatch, server errors or indexing exclusions.
 6. Re-submit the sitemap after category activation or major URL changes.
-7. Validate structured data with Google Rich Results Test. The current post pages emit Article structured data. JobPosting rich results require verified job title, hiring organization, physical location, publication date and complete job description; do not emit JobPosting markup until the admin data model consistently supplies those facts. Google recommends the Indexing API for job posting URL changes, which still needs separate Google API credentials and setup.
+7. Validate structured data with Google Rich Results Test. Public post pages emit Article structured data. A single-position Jobs page emits JobPosting structured data only when the title, hiring department, specific location, publication date and full description are present; multi-position notifications or incomplete records fall back to Article markup. Validate real published examples with Google Rich Results Test. Google recommends the Indexing API for job posting URL changes, which still needs separate Google API credentials and setup.
 
 Sitemap generation depends on the production Portal API being reachable from the Next.js server. If that API is unavailable, the sitemap still returns its static public URLs but cannot include dynamic posts. Search indexing and ranking are controlled by search engines; technical SEO does not guarantee immediate indexing, approval or a particular position.
 

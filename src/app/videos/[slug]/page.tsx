@@ -16,6 +16,6 @@ export default async function VideosPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const previewItem = await getPublicPostItem("videos", slug);
-  return <PortalPostDetail category="videos" previewItem={previewItem} />;
+  const initialItem = await getPublicPostItem("videos", slug);
+  return <PortalPostDetail category="videos" initialItem={initialItem} />;
 }

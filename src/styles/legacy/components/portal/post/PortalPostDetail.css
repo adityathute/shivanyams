@@ -2110,8 +2110,9 @@
   text-decoration: none;
   transition: border-color .18s ease;
 }
-.portal-post-related-video:hover {
-  border-color: #dc2626;
+.portal-post-related-video:hover,
+.portal-post-related-video:focus-visible {
+  border-color: color-mix(in srgb, var(--border, #e2e8f0) 55%, var(--text-muted, #64748b) 45%);
   background: var(--surface, #fff);
 }
 .portal-post-related-video-media {
@@ -2142,11 +2143,19 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .2s ease, margin-top .2s ease, opacity .2s ease;
+}
+.portal-post-related-video:hover .portal-post-related-video-tags,
+.portal-post-related-video:focus-visible .portal-post-related-video-tags {
   max-height: 56px;
   margin-top: 2px;
-  overflow: hidden;
+  opacity: 1;
 }
 .portal-post-related-video-tags > span {
   display: inline-flex;
@@ -2157,8 +2166,8 @@
   border-radius: 999px;
   padding: 3px 8px;
   color: var(--text-muted, #64748b);
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 10px;
+  line-height: 1.35;
   white-space: nowrap;
 }
 @media (max-width: 520px) {

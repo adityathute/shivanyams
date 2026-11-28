@@ -242,3 +242,26 @@
     margin: 0 10px 12px !important;
   }
 }
+
+
+/* Keep the Search Results table body the same height even when only a few
+   posts match. The rows stay at the top; the table body fills the remaining
+   panel space and the pagination stays anchored at the bottom. */
+.search-directory-page > .updates-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.search-directory-page > .updates-panel > .update-list {
+  display: flex;
+  flex: 1 1 auto !important;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.search-directory-page > .updates-panel > .updates-admin-pagination {
+  flex: 0 0 auto;
+  margin-top: auto;
+}

@@ -213,3 +213,32 @@
   background: #4a4028;
   color: #ffe9ad;
 }
+
+
+/* Final search-page height correction: count the top bar once and remove
+   the inherited directory panel minimum-height that was making the page
+   taller than the remaining viewport. */
+.search-directory-page {
+  height: calc(100dvh - 64px - 16px);
+  min-height: 0 !important;
+  margin: 0 16px 16px !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.search-directory-page > .updates-panel {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto;
+}
+
+.search-directory-page > .updates-panel > .update-list {
+  flex: 1 0 auto;
+}
+
+@media (max-width: 760px) {
+  .search-directory-page {
+    height: calc(100dvh - 60px - 12px);
+    margin: 0 10px 12px !important;
+  }
+}

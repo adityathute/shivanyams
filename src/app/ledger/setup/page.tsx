@@ -68,7 +68,7 @@ export default function LedgerOpeningSetupPage() {
     <section style={cardStyle}>
       <h2 style={{ margin: "0 0 5px", fontSize: 17 }}>Starting funds</h2><p style={{ margin: "0 0 15px", fontSize: 12, color: "var(--shivanya-color-text-secondary, #7b8491)" }}>Enter your actual figures here. Nothing is pre-filled; you control every amount.</p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 10 }}>
-        <label style={labelStyle}>Brother's contribution<input style={inputStyle} type="number" min="0" value={data.brotherCapital} onChange={e => set("brotherCapital", e.target.value)} /></label>
+        <label style={labelStyle}>Brother&apos;s contribution<input style={inputStyle} type="number" min="0" value={data.brotherCapital} onChange={e => set("brotherCapital", e.target.value)} /></label>
         <label style={labelStyle}>Your contribution<input style={inputStyle} type="number" min="0" value={data.ownerCapital} onChange={e => set("ownerCapital", e.target.value)} /></label>
         <label style={labelStyle}>Loan received<input style={inputStyle} type="number" min="0" value={data.loanReceived} onChange={e => set("loanReceived", e.target.value)} /></label>
         <label style={labelStyle}>Additional money planned<input style={inputStyle} type="number" min="0" value={data.extraPlanned} onChange={e => set("extraPlanned", e.target.value)} /></label>

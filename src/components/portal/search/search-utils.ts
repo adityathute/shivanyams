@@ -50,3 +50,11 @@ export function matchesPostSearch(item: Item, query: string): boolean {
   const terms = normalizedQuery.split(" ").filter(Boolean);
   return terms.every((term) => searchableText.includes(term));
 }
+
+/** Format large post totals compactly (1,000 → 1k, 1,500 → 1.5k). */
+export function formatCompactCount(value: number): string {
+  return new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value).toLowerCase();
+}

@@ -1,0 +1,24 @@
+.contact-page .contact-message-guidance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -12px;
+  color: var(--muted-foreground, #9298a2);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.contact-page .contact-message-guidance--warning {
+  color: #b91c1c;
+  font-weight: 650;
+}
+[data-theme="dark"] .contact-page .contact-message-guidance--warning {
+  color: #fca5a5;
+}
+@media (max-width: 420px) {
+  .contact-page .contact-message-guidance {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+}

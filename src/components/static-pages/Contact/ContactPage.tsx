@@ -33,6 +33,7 @@ import { usePortalLanguage } from "../../portal/context/PortalLanguageContext";
 import { getContactText } from "../../../i18n/dictionaries/ContactPageDictionary";
 
 import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
+import { API_URL } from "../../portal/category/CategoryGrid";
 
 import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
 
@@ -103,6 +104,10 @@ export function ContactPage() {
     value,
   }));
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -111,22 +116,30 @@ export function ContactPage() {
     message: "",
   });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const subject = `[ShivanyaMS Contact] ${form.category}: ${form.subject}`;
-
-    const body = [
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      `Category: ${form.category}`,
-      "",
-      "Message:",
-      form.message,
-    ].join("\n");
-
-    window.location.href =
-      `mailto:hello@shivanyams.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitSuccess("");
+    setSubmitError("");
+    try {
+      const response = await fetch(`${API_URL}/contact-messages/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          submission_type: "contact",
+          ...form,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.detail || "Unable to send your enquiry. Please try again.");
+      setSubmitSuccess("Your enquiry has been submitted successfully. Our team will get back to you by email.");
+      setForm({ name: "", email: "", category: "General Inquiry", subject: "", message: "" });
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to send your enquiry. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -278,6 +291,8 @@ export function ContactPage() {
             </div>
 
             <form className="contact-form" onSubmit={handleSubmit}>
+              {submitSuccess ? <div className="contact-form-feedback contact-form-feedback--success" role="status">{submitSuccess}</div> : null}
+              {submitError ? <div className="contact-form-feedback contact-form-feedback--error" role="alert">{submitError}</div> : null}
               <div className="contact-form-row">
                 <Input
                   label={t("fullName")}
@@ -367,11 +382,12 @@ export function ContactPage() {
 
                 <Button
                   type="submit"
+                  disabled={submitting}
                   variant="primary"
                   size="sm"
                   endIcon={<span>→</span>}
                 >
-                  {t("sendEnquiryButton")}
+                  {submitting ? "Submitting..." : t("sendEnquiryButton")}
                 </Button>
               </div>
 

@@ -7,7 +7,7 @@
  * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
  * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
- * Cleanup Info: Batch 12 post-detail audit. UI Audit: 15 components; SDK: Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportIcon, Select, Textarea, ArrowDownIcon, ArrowUpIcon (13); app-local: CommentThread, CommentItem (2). CSS mapping: PostCommentsSection.css (199 selector blocks; 161 unique; 32 repeated selector names / 38 repeated occurrences). Accessibility, nested-thread and legacy-style cleanup pending.
+ * Cleanup Info: Batch 12 post-detail audit. UI Audit: 15 components; SDK: Avatar, Button, ConfirmDialog, DeleteIcon, AlertCircleIcon as DislikeIcon, EditIcon, FavoriteIcon as LikeIcon, MessagesIcon, ReportsIcon as ReportIcon, Select, Textarea, ArrowDownIcon, ArrowUpIcon (13); app-local: CommentThread, CommentItem (2). CSS mapping: PostCommentsSection.css (199 selector blocks; 161 unique; 32 repeated selector names / 38 repeated occurrences). Accessibility, nested-thread and legacy-style cleanup pending.
  */
 "use client";
 

@@ -44,7 +44,7 @@ export function HomePage() {
     const categoryTypes = {
       jobs: "job",
       schemes: "scheme",
-      examination: "examination",
+      exams: "examination",
       results: "result",
       "admit-cards": "admit",
       guides: "guide",
@@ -57,7 +57,7 @@ export function HomePage() {
         .filter((item) => item.type === type)
         .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
         .slice(0, 5);
-      const categorySlug = slug === "examination" ? "exams" : slug;
+      const categorySlug = slug;
       const categoryDefinition = STATIC_PORTAL_CATEGORIES.find(
         (item) => item.slug === categorySlug,
       );
@@ -169,7 +169,7 @@ export function HomePage() {
                                 ? `/videos/${item.slug || createPostSlug(item.title)}`
                                 : item.type === "guide"
                                   ? `/guides/${item.slug || createPostSlug(item.title)}`
-                                  : `/examinations/${item.slug || createPostSlug(item.title)}`
+                                  : `/exams/${item.slug || createPostSlug(item.title)}`
                     }
                     className="ticker-item"
                   >

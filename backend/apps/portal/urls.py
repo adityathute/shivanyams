@@ -12,6 +12,8 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     Categories,
+    SearchSuggestions,
+    SearchHistoryView,
     ImportantLinks,
     PublicContent,
     AdminContent,
@@ -62,6 +64,9 @@ admin_content_detail = AdminContent.as_view(
 
 urlpatterns = [
     path("", include(router.urls)),
+    # Search suggestions and authenticated search history
+    path("search/suggestions/", SearchSuggestions.as_view(), name="search-suggestions"),
+    path("search/history/", SearchHistoryView.as_view(), name="search-history"),
     # Categories
     path("categories/", Categories.as_view(), name="categories"),
     path("newsletter/subscribe/", NewsletterSubscribe.as_view(), name="newsletter-subscribe"),

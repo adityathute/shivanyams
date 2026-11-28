@@ -167,6 +167,8 @@ export function CategoryGrid({ language = "mr" }: { language?: Language }) {
     isPortalCategoryEnabled(category.slug),
   );
 
+  if (enabledCategories.length === 0) return null;
+
   return (
     <section
       className={`category-grid${enabledCategories.length === 1 ? " category-grid-single" : ""}`}

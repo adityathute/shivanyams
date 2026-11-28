@@ -11,6 +11,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useAuth } from "shivanya-auth";
 import type { ReactNode } from "react";
 import type { Language } from "../../../i18n/types";
 
@@ -162,10 +163,12 @@ export const STATIC_PORTAL_CATEGORIES: Category[] = PORTAL_CATEGORIES.map((categ
 
 export function CategoryGrid({ language = "mr" }: { language?: Language }) {
   const router = useRouter();
+  const { user, loading } = useAuth();
+  const isAdmin = !loading && user?.roles?.includes("admin") === true;
 
   return (
     <section className="category-grid">
-      {STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug)).map((category) => {
+      {STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug, isAdmin)).map((category) => {
         const config = categoryConfig[category.slug];
         return (
           <button

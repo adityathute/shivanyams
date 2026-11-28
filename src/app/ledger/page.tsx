@@ -129,13 +129,13 @@ export default function LedgerPage() {
         </button>
         <button className={styles.dashboardCard} onClick={() => router.push("/ledger/transactions")}>
           <span className={styles.dashboardCardTop}><span className={styles.dashboardIcon}>⇄</span><span className={styles.dashboardArrow}>↗</span></span>
-          <span className={styles.dashboardLabel}>Today's transactions</span>
+          <span className={styles.dashboardLabel}>Today&apos;s transactions</span>
           <strong>{todayEntries.length}</strong>
           <small>{money(todayIncome)} received · {money(todayExpenses)} spent</small>
         </button>
         <article className={styles.dashboardCard + " " + styles.netDashboardCard}>
           <span className={styles.dashboardCardTop}><span className={styles.dashboardIcon}>⌁</span><span className={styles.dashboardPill}>Today</span></span>
-          <span className={styles.dashboardLabel}>Today's net</span>
+          <span className={styles.dashboardLabel}>Today&apos;s net</span>
           <strong>{money(todayIncome - todayExpenses)}</strong>
           <small>Income minus expenses</small>
         </article>

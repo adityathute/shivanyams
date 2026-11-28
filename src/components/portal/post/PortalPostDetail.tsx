@@ -82,7 +82,7 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
   if (!url) return null;
   try {
     const parsed = new URL(url);
-    const host = parsed.hostname.replace(/^www\\./, "");
+    const host = parsed.hostname.replace(/^www\./, "");
     let id: string | null = null;
     if (host === "youtu.be") id = parsed.pathname.split("/").filter(Boolean)[0] ?? null;
     else if (["youtube.com", "m.youtube.com", "youtube-nocookie.com"].includes(host)) {
@@ -101,7 +101,7 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
 }
 
 function isDirectVideoUrl(url?: string | null): boolean {
-  return Boolean(url && /\\.(mp4|webm|ogg)(?:$|[?#])/i.test(url));
+  return Boolean(url && /\.(mp4|webm|ogg)(?:$|[?#])/i.test(url));
 }
 
 export function createPostSlug(value: string) {
@@ -754,6 +754,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             createdAt: "",
             updatedAt: "",
             link: video.url,
+            embedUrl: video.embed_url,
             image: video.thumbnail,
             body: "",
             organization: "",
@@ -1764,14 +1765,15 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </section>
                   ) : null}
 
-                  {category === "videos" && post.link ? (
+                  {category === "videos" && (post.embedUrl || post.link) ? (
                     <section className="portal-post-detail-video" aria-label={post.title}>
-                      {getYouTubeEmbedUrl(post.link) ? (
+                      {getYouTubeEmbedUrl(post.embedUrl || post.link) ? (
                         videoStarted ? (
                           <iframe
-                            src={`${getYouTubeEmbedUrl(post.link)}&autoplay=1`}
+                            src={`${getYouTubeEmbedUrl(post.embedUrl || post.link)}&autoplay=1`}
                             title={post.title}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
                             allowFullScreen
                           />
                         ) : (
@@ -1781,7 +1783,11 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             onClick={() => setVideoStarted(true)}
                             aria-label={getDetailLabel("watchVideo", language)}
                           >
-                            {post.image ? <img src={post.image} alt="" /> : null}
+                            {post.image ? (
+                              <img src={post.image} alt="" />
+                            ) : (
+                              <span className="portal-post-detail-video-fallback" aria-hidden="true">Video</span>
+                            )}
                             <span className="portal-post-detail-video-play" aria-hidden="true">▶</span>
                           </button>
                         )
@@ -1789,6 +1795,14 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         <video controls playsInline preload="metadata" poster={post.image || undefined}>
                           <source src={post.link} />
                         </video>
+                      ) : post.embedUrl ? (
+                        <iframe
+                          src={post.embedUrl}
+                          title={post.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allowFullScreen
+                        />
                       ) : (
                         <a className="portal-post-action" href={post.link} target="_blank" rel="noreferrer">
                           {getDetailLabel("watchVideo", language)}

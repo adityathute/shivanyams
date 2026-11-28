@@ -133,7 +133,6 @@ export function TagsPage() {
               <span
                 className="tags-directory-skeleton-chip"
                 key={index}
-                style={{ "--tag-width": `${[54, 76, 92, 64, 108, 82][index % 6]}px` } as React.CSSProperties}
               />
             ))}
           </div>

@@ -39,6 +39,7 @@ import { PortalFooter } from "../../portal/layout/footer/PortalFooter";
 import { API_URL } from "../../portal/category/CategoryGrid";
 
 import "./../../../styles/legacy/components/static-pages/Contact/ContactPage.css";
+import "./../../../styles/legacy/components/static-pages/Contact/ContactMessageGuidance.css";
 
 const socialLinks = [
   {
@@ -411,7 +412,7 @@ export function ContactPage() {
 
                 <Button
                   type="submit"
-                  disabled={submitting || messageHasAbusiveLanguage || !form.message.trim()}
+                  disabled={submitting || messageHasAbusiveLanguage}
                   variant="primary"
                   size="sm"
                   endIcon={<span>→</span>}

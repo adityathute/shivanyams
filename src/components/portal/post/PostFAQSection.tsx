@@ -14,7 +14,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
-import { CloseIcon, ConfirmDialog, DeleteIcon, LikeIcon, QuestionMarkCircleIcon } from "shivanya-ui";
+import { CloseIcon, ConfirmDialog, DeleteIcon, FavoriteIcon as LikeIcon, QuestionMarkCircleIcon } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { usePortalAuth } from "../context/PortalAuthContext";

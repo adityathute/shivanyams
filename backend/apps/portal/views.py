@@ -2983,6 +2983,17 @@ class AdminContactMessages(APIView):
         }
         user_names = {}
         if auth_ids:
+            # Match the exact source used by the working Comments & Replies
+            # table: Comment.author_name is saved from the Auth /me profile.
+            for author in Comment.objects.filter(
+                user_auth_id__in=auth_ids
+            ).exclude(author_name="").order_by("-created_at").values(
+                "user_auth_id", "author_name"
+            ):
+                user_names.setdefault(str(author["user_auth_id"]), author["author_name"])
+
+            # Keep Portal Users snapshots as fallbacks for accounts that have
+            # never posted a comment.
             for visitor in WebsiteVisitor.objects.filter(
                 auth_user_id__in=auth_ids
             ).exclude(full_name="").order_by("-last_seen_at").values(

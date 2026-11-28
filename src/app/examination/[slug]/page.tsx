@@ -18,5 +18,5 @@
 import { PortalPostDetail } from "../../../components/portal/post/PortalPostDetail";
 
 export default function Page() {
-  return <PortalPostDetail category="examination" />;
+  return <PortalPostDetail category="exams" />;
 }

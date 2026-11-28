@@ -30,6 +30,7 @@ import {
 
 import { translate, type Language } from "shivanya-i18n";
 import { sidebarTranslations } from "@/i18n/organized/dictionaries/sidebar";
+import { isPortalCategoryEnabled } from "@/config/features";
 
 type PortalUser = {
   roles?: string[];
@@ -129,5 +130,5 @@ export function getPortalNavigation(
           },
         ]
       : []),
-  ];
+  ].filter((item) => !item.href || isPortalCategoryEnabled(item.href.split("/")[1] || ""));
 }

@@ -23,9 +23,9 @@ import {
   MailIcon,
   ShieldCheckIcon,
   ToolsIcon,
-  FavoriteIcon as BookmarkIcon,
+  FavoriteIcon as FavoriteIcon as BookmarkIcon,
   TagIcon,
-  ReportsIcon as ReportIcon,
+  ReportsIcon as ReportsIcon as ReportIcon,
 } from "shivanya-ui";
 
 import { translate, type Language } from "shivanya-i18n";

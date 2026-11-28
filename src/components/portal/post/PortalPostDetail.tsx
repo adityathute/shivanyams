@@ -699,30 +699,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
 
   const t = (key: Parameters<typeof getBaseText>[0]) =>
     getBaseText(key, language);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [trackedViewsCount, setTrackedViewsCount] = useState<{ postId: number; count: number } | null>(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    authenticatedFetch(getPortalApiUrl("categories/"), { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error("Unable to load categories.");
-        return response.json();
-      })
-      .then((payload) => {
-        const list: Category[] = Array.isArray(payload)
-          ? payload
-          : (payload.results ?? []);
-        setCategories(
-          list.filter((entry) => entry.is_active ?? entry.active ?? false),
-        );
-      })
-      .catch((error) => {
-        if (!controller.signal.aborted)
-          console.error("Category loading failed:", error);
-      });
-    return () => controller.abort();
-  }, []);
+  // Navigation categories are stable app configuration; avoid a redundant API request.
+  const categories = STATIC_PORTAL_CATEGORIES;
 
   const post = useMemo(() => {
     if (category === "videos" && !previewItem) {

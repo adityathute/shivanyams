@@ -15,8 +15,8 @@ import uuid
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
-from django.db.models import Count, Exists, F, Max, OuterRef, Prefetch, Q, Subquery, Value
-from django.db.models.functions import Greatest
+from django.db.models import Count, Exists, F, Max, OuterRef, Prefetch, Q, Subquery, Value, TextField
+from django.db.models.functions import Cast, Greatest
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -162,6 +162,7 @@ class SearchSuggestions(APIView):
                 is_active=True,
                 published_at__isnull=False,
             )
+            .annotate(meta_keywords_text=Cast("meta_keywords", output_field=TextField()))
             .filter(
                 Q(title_en__icontains=query)
                 | Q(title_mr__icontains=query)
@@ -173,7 +174,7 @@ class SearchSuggestions(APIView):
                 | Q(body_mr__icontains=query)
                 | Q(body_hi__icontains=query)
                 | Q(slug__icontains=query)
-                | Q(meta_keywords__icontains=query)
+                | Q(meta_keywords_text__icontains=query)
                 | Q(meta_title_en__icontains=query)
                 | Q(meta_title_mr__icontains=query)
                 | Q(meta_title_hi__icontains=query)

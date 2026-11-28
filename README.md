@@ -41,6 +41,8 @@ npm run start
 ```
 
 
+See [the eight-day production launch plan](docs/PRODUCTION-LAUNCH.md) for the release order and category-by-category launch gates.
+
 ## SEO and Google Search
 
 The production site URL defaults to `https://www.shivanyams.com`. Set `NEXT_PUBLIC_SITE_URL` explicitly in each deployment environment. For local development, use `http://localhost:3000`.

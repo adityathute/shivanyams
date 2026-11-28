@@ -16,6 +16,6 @@ export default async function JobsPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const previewItem = await getPublicPostItem("jobs", slug);
-  return <PortalPostDetail category="jobs" previewItem={previewItem} />;
+  const initialItem = await getPublicPostItem("jobs", slug);
+  return <PortalPostDetail category="jobs" initialItem={initialItem} />;
 }

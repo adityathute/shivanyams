@@ -100,6 +100,12 @@ function getYouTubeEmbedUrl(url?: string | null): string | null {
   }
 }
 
+function getYouTubeThumbnailUrl(url?: string | null): string | null {
+  const embedUrl = getYouTubeEmbedUrl(url);
+  const videoId = embedUrl?.match(/\/embed\/([A-Za-z0-9_-]{11})/)?.[1];
+  return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+}
+
 function isDirectVideoUrl(url?: string | null): boolean {
   return Boolean(url && /\.(mp4|webm|ogg)(?:$|[?#])/i.test(url));
 }
@@ -755,7 +761,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
             updatedAt: "",
             link: video.url,
             embedUrl: video.embed_url,
-            image: video.thumbnail,
+            image: video.thumbnail || getYouTubeThumbnailUrl(video.embed_url || video.url) || "",
             body: "",
             organization: "",
             organizationType: "",
@@ -1770,7 +1776,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                       {getYouTubeEmbedUrl(post.embedUrl || post.link) ? (
                         videoStarted ? (
                           <iframe
-                            src={`${getYouTubeEmbedUrl(post.embedUrl || post.link)}&autoplay=1`}
+                            src={`${getYouTubeEmbedUrl(post.embedUrl || post.link)}&autoplay=1&mute=1`}
                             title={post.title}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerPolicy="strict-origin-when-cross-origin"
@@ -1784,7 +1790,16 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             aria-label={getDetailLabel("watchVideo", language)}
                           >
                             {post.image ? (
-                              <img src={post.image} alt="" />
+                              <img
+                                src={post.image}
+                                alt=""
+                                onError={(event) => {
+                                  const image = event.currentTarget;
+                                  if (image.src.includes("maxresdefault.jpg")) {
+                                    image.src = image.src.replace("maxresdefault.jpg", "hqdefault.jpg");
+                                  }
+                                }}
+                              />
                             ) : (
                               <span className="portal-post-detail-video-fallback" aria-hidden="true">Video</span>
                             )}

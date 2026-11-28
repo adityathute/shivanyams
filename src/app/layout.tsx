@@ -22,8 +22,42 @@ import "./../styles/legacy/app/portal-base.css";
 import "./../styles/organized/index.css";
 
 export const metadata: Metadata = {
-  title: "ShivanyaMS | Public Updates",
-  description: "सरकारी नोकरी, योजना, निकाल आणि महत्त्वाच्या अपडेट्स.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com",
+  ),
+  title: {
+    default: "ShivanyaMS | Government Jobs, Schemes & Public Updates",
+    template: "%s | ShivanyaMS",
+  },
+  description:
+    "Find the latest government job notifications, schemes, examination updates, results, admit cards and useful public-service guides.",
+  applicationName: "ShivanyaMS",
+  alternates: { canonical: "/" },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    siteName: "ShivanyaMS",
+    title: "ShivanyaMS | Government Jobs, Schemes & Public Updates",
+    description:
+      "Find government jobs, schemes, exam updates, results, admit cards and useful public-service guides.",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ShivanyaMS | Government Jobs, Schemes & Public Updates",
+    description:
+      "Find government jobs, schemes, exam updates, results, admit cards and useful public-service guides.",
+  },
 };
 
 const supportedLanguages: Language[] = ["en", "mr", "hi"];

@@ -30,7 +30,7 @@ import {
 
 import { translate, type Language } from "shivanya-i18n";
 import { sidebarTranslations } from "@/i18n/organized/dictionaries/sidebar";
-import { isPortalCategoryEnabled } from "@/config/features";
+import { isPortalCategoryEnabled } from "@/features/category-access";
 
 type PortalUser = {
   roles?: string[];

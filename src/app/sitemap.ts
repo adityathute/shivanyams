@@ -23,7 +23,12 @@ async function getPublishedPosts(kind: string): Promise<ApiPost[]> {
   if (!apiBase) return [];
 
   const firstUrl = `${apiBase.replace(/\/+$/, "")}/content/${kind}/`;
-  const origin = new URL(firstUrl).origin;
+  let origin: string;
+  try {
+    origin = new URL(firstUrl).origin;
+  } catch {
+    return [];
+  }
   const posts: ApiPost[] = [];
   const visited = new Set<string>();
   let nextUrl: string | null = firstUrl;
@@ -80,11 +85,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const posts = await getPublishedPosts(category.kind);
     for (const post of posts) {
       if (!post.slug) continue;
+      const lastModifiedValue = post.updated_at || post.published_at;
+      const lastModified = lastModifiedValue ? new Date(lastModifiedValue) : undefined;
       entries.push({
         url: `${SITE_URL}${category.path}/${encodeURIComponent(post.slug)}`,
-        ...(post.updated_at || post.published_at
-          ? { lastModified: new Date(post.updated_at || post.published_at!) }
-          : {}),
+        ...(lastModified && !Number.isNaN(lastModified.getTime()) ? { lastModified } : {}),
         changeFrequency: "weekly",
         priority: 0.7,
       });

@@ -28,7 +28,7 @@ import {
   GlobeIcon,
   MessagesIcon,
   MailIcon,
-  ReportIcon,
+  ReportsIcon as ReportIcon,
   QuestionMarkCircleIcon,
   TagIcon,
   AnalyticsIcon,

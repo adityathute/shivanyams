@@ -250,3 +250,79 @@
     animation-iteration-count: 1;
   }
 }
+
+
+/* Popular tags: match the post-details neutral taxonomy design. */
+.admit-hero-content {
+  max-width: 850px;
+  width: 100%;
+}
+
+.admit-popular-tags.portal-post-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  max-width: 850px;
+  box-sizing: border-box;
+  padding: 3px 2px 4px;
+  margin-top: 14px;
+  height: 76px;
+  overflow: hidden;
+}
+
+.admit-popular-tags.portal-post-taxonomy a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid #e2e6ec;
+  border-radius: 999px;
+  color: #596579;
+  background: #f1f3f6;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-decoration: none;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.admit-popular-tags.portal-post-taxonomy a::before {
+  content: "#";
+  margin-right: 2px;
+}
+
+.admit-popular-tags.portal-post-taxonomy a:hover {
+  color: #273449;
+  background: #e5e9ef;
+  border-color: #cbd3df;
+}
+
+:root[data-theme="dark"] .admit-popular-tags.portal-post-taxonomy a {
+  color: #c0c8d4;
+  background: #252c38;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .admit-popular-tags.portal-post-taxonomy a:hover {
+  color: #f8fafc;
+  background: #343e4d;
+  border-color: #526074;
+}
+
+@media (max-width: 760px) {
+  .admit-popular-tags.portal-post-taxonomy {
+    gap: 7px;
+    margin-top: 12px;
+    height: 76px;
+  }
+
+  .admit-popular-tags.portal-post-taxonomy a {
+    min-height: 30px;
+    padding: 5px 11px;
+    font-size: 12px;
+  }
+}

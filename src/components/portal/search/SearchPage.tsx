@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { UpdatesSection } from "../home/UpdatesSection";
 import type { Item, ItemType } from "../data/portal-data";
 import { usePortalData } from "../data/portal-data";
 import { usePortalLanguage } from "../context/PortalLanguageContext";
+import { getPortalApiUrl } from "../category/CategoryGrid";
+import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactCount, getSearchablePostText, matchesPostSearch, normalizeSearchText } from "./search-utils";
 import "../../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 import "./SearchPage.css";
@@ -97,6 +99,19 @@ export function SearchPage() {
   const { data } = usePortalData();
   const [activeCategory, setActiveCategory] = useState<ItemType | "all">("all");
   const text = copy[language];
+
+  // Record every executed search, including related-search clicks and direct
+  // visits to a search URL. The API scopes records to the verified account.
+  useEffect(() => {
+    if (!query) return;
+    void authenticatedFetch(getPortalApiUrl("search/history/"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    }).catch(() => {
+      // Public search remains available if the visitor is signed out.
+    });
+  }, [query]);
 
   const matchedItems = useMemo(
     () => query ? data.items.filter((item) => matchesPostSearch(item, query)) : [],

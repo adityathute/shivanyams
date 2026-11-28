@@ -355,21 +355,23 @@
 }
 
 
-/* Keep popular job tags fully visible and allow them to wrap onto a second line. */
+/* Show at most two rows of popular job tags within the parent width. */
 .jobs-popular-tags.portal-post-taxonomy {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   align-items: flex-start;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  overflow: visible;
+  width: 100%;
+  box-sizing: border-box;
+  height: 75px;
+  max-height: 75px;
+  overflow: hidden;
 }
 
 @media (max-width: 760px) {
   .jobs-popular-tags.portal-post-taxonomy {
-    height: auto;
-    max-height: none;
-    overflow: visible;
+    height: 74px;
+    max-height: 74px;
+    overflow: hidden;
   }
 }

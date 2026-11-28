@@ -1282,3 +1282,28 @@
   font-weight: 400;
 }
 .portal-topbar-search .portal-search-history-delete:hover { background: rgba(239, 68, 68, .1); color: #dc2626; }
+
+/* Clear search control: icon only, aligned at the far right of the input. */
+.portal-topbar-search .portal-search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--shivanya-color-text-secondary, #64748b);
+  box-shadow: none;
+}
+.portal-topbar-search .portal-search-clear:hover {
+  filter: none;
+  background: transparent;
+  color: var(--shivanya-color-text-primary, #172943);
+}
+.portal-topbar-search .portal-search-clear:focus-visible {
+  outline: 2px solid var(--shivanya-color-primary, #2563eb);
+  outline-offset: 1px;
+}

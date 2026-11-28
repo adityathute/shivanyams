@@ -1134,17 +1134,17 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
       structuredImage = undefined;
     }
   }
-  const structuredData = post
+  const structuredData = post && !previewItem
     ? {
         "@context": "https://schema.org",
         "@type": "Article",
         headline: post.title,
         ...(post.description ? { description: post.description } : {}),
-        ...(post.createdAt || post.date
-          ? { datePublished: post.createdAt || post.date }
+        ...(post.date || post.createdAt
+          ? { datePublished: post.date || post.createdAt }
           : {}),
-        ...(post.updatedAt || post.createdAt || post.date
-          ? { dateModified: post.updatedAt || post.createdAt || post.date }
+        ...(post.updatedAt || post.date || post.createdAt
+          ? { dateModified: post.updatedAt || post.date || post.createdAt }
           : {}),
         ...(structuredImage ? { image: [structuredImage] } : {}),
         ...(post.tags.length ? { keywords: post.tags } : {}),

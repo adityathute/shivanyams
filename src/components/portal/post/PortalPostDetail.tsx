@@ -1834,7 +1834,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                 </article>
                 {!previewItem ? (
                   <>
-                    {post.comments_enabled !== false ? <PostCommentsSection postId={post.postId} language={language} /> : null}
                     {post.relatedVideos?.length ? (
                       <section className="portal-post-related-videos">
                         <h2>{getDetailLabel("relatedVideos", language)}</h2>
@@ -1881,7 +1880,8 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         </div>
                       </section>
                     ) : null}
-                    <PostFAQSection postId={post.postId} faqs={post.faqs} language={language} />
+                                        {post.comments_enabled !== false ? <PostCommentsSection postId={post.postId} language={language} /> : null}
+<PostFAQSection postId={post.postId} faqs={post.faqs} language={language} />
                   </>
                 ) : null}
                 </>

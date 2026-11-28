@@ -372,7 +372,7 @@ const detailLabels = {
   details: { en: "Details", mr: "तपशील", hi: "विवरण" },
   instructions: { en: "Instructions", mr: "सूचना", hi: "निर्देश" },
   compulsory: { en: "Compulsory", mr: "आवश्यक", hi: "अनिवार्य" },
-  optional: { en: "Optional", mr: "ऐच्छिक", hi: "वैकल्पिक" },
+  optional: { en: "Optional", mr: "असल्यास", hi: "यदि हो तो" },
   original: { en: "Original", mr: "मूळ प्रत", hi: "मूल प्रति" },
   photocopy: { en: "Photocopy", mr: "छायांकित प्रत", hi: "फोटोकॉपी" },
   copies: { en: "Copies", mr: "प्रती", hi: "प्रतियां" },

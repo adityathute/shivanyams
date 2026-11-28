@@ -1208,19 +1208,34 @@
   grid-template-columns: max-content minmax(0, 1fr) max-content;
   align-items: center;
   gap: 12px;
+  width: 100%;
   min-width: 0;
   min-height: 53px;
+  box-sizing: border-box;
   padding: 8px 16px;
+  border: 0;
   border-bottom: 1px solid #edf1f6;
   background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .saved-panel .saved-update-row:last-child {
   border-bottom: 0;
 }
 
-.saved-panel .saved-update-row:hover {
+.saved-panel .saved-update-row:hover,
+.saved-panel .saved-update-row:focus-visible {
   background: #f7faff;
+  text-decoration: none;
+  outline: none;
+}
+
+.saved-panel .saved-update-row:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--blue, #2563eb);
 }
 
 .saved-update-content {
@@ -1384,7 +1399,8 @@
   color: #e6edf3;
 }
 
-[data-theme="dark"] .saved-panel .saved-update-row:hover {
+[data-theme="dark"] .saved-panel .saved-update-row:hover,
+[data-theme="dark"] .saved-panel .saved-update-row:focus-visible {
   background: #1c2633;
 }
 

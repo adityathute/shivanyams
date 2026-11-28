@@ -16,6 +16,6 @@ export default async function ExamsPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const previewItem = await getPublicPostItem("exams", slug);
-  return <PortalPostDetail category="exams" previewItem={previewItem} />;
+  const initialItem = await getPublicPostItem("exams", slug);
+  return <PortalPostDetail category="exams" initialItem={initialItem} />;
 }

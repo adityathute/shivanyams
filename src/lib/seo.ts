@@ -204,9 +204,14 @@ export async function getPostPageMetadata(
     post.summary_hi,
   ) || categoryDetails[kind].description;
   const keywords = getKeywords(post.meta_keywords);
-  const image = post.featured_image_url
-    ? new URL(post.featured_image_url, SITE_URL).toString()
-    : undefined;
+  let image: string | undefined;
+  if (post.featured_image_url) {
+    try {
+      image = new URL(post.featured_image_url, SITE_URL).toString();
+    } catch {
+      image = undefined;
+    }
+  }
 
   return {
     title,

@@ -527,12 +527,9 @@
   }
 }
 
-/* Batch 29: visible focus for contact links, social actions and form controls. */
+/* Keep keyboard focus visible for links and buttons; form controls use shivanya-ui focus styles. */
 .contact-page a:focus-visible,
-.contact-page button:focus-visible,
-.contact-page input:focus-visible,
-.contact-page textarea:focus-visible,
-.contact-page select:focus-visible {
+.contact-page button:focus-visible {
   outline: 2px solid var(--primary, #2563eb);
   outline-offset: 3px;
 }
@@ -546,19 +543,3 @@
   }
 }
 
-/* Keep Contact and Feedback form fields neutral while focused. */
-.contact-page .shivanya-input-container:focus-within {
-  border-color: var(--border, #e2e8f0) !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-.contact-page .shivanya-input-container:focus-within input:focus,
-.contact-page .shivanya-input-container:focus-within textarea:focus,
-.contact-page .shivanya-input-container:focus-within select:focus,
-.contact-page input:focus-visible,
-.contact-page textarea:focus-visible,
-.contact-page select:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}

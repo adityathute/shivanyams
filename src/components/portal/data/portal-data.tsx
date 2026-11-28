@@ -185,6 +185,7 @@ export type Item = {
   /** Complete public API payload retained for exhaustive client-side search. */
   search_index?: string;
   job_details?: JobDetails;
+  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; slug: string; featured_image_url?: string } }[];
 };
 
 export type Video = {
@@ -360,6 +361,7 @@ export type ApiPost = {
   updated_at?: string | null;
   views_count?: number;
   comments_enabled?: boolean;
+  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; slug: string; featured_image_url?: string } }[];
   important_links?: ApiLink[];
   important_dates?: ImportantDate[];
   faqs?: PostFAQ[];
@@ -546,6 +548,7 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
     id: String(post.id),
     slug: post.slug,
     search_index: createPostSearchIndex(post),
+    related_posts: post.related_posts || [],
 
     // Preserve all database translations
     title_en: post.title_en || "",

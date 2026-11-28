@@ -93,12 +93,17 @@ export function FeedbackPage() {
   });
 
   useEffect(() => {
+    const fullName = [user?.first_name, user?.last_name]
+      .map((part) => part?.trim())
+      .filter(Boolean)
+      .join(" ");
+
     setForm((current) => ({
       ...current,
-      name: user?.name ?? current.name,
+      name: fullName || current.name,
       email: user?.email ?? current.email,
     }));
-  }, [user?.name, user?.email]);
+  }, [user?.first_name, user?.last_name, user?.email]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -118,7 +123,7 @@ export function FeedbackPage() {
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || "Unable to submit your feedback. Please try again.");
       setSubmitSuccess("Thank you! Your feedback has been submitted successfully.");
-      setForm({ name: user?.name ?? "", email: user?.email ?? "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
+      setForm({ name: [user?.first_name, user?.last_name].filter(Boolean).join(" "), email: user?.email ?? "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to submit your feedback. Please try again.");
     } finally {

@@ -218,10 +218,17 @@ class PostResourceSerializer(serializers.ModelSerializer):
 
 class RelatedPostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
+    video_thumbnail_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ("id", "title_en", "title_mr", "title_hi", "summary_en", "summary_mr", "summary_hi", "meta_keywords", "slug", "category", "featured_image_url")
+        fields = ("id", "title_en", "title_mr", "title_hi", "summary_en", "summary_mr", "summary_hi", "meta_keywords", "slug", "category", "featured_image_url", "video_thumbnail_url")
+
+    def get_video_thumbnail_url(self, obj):
+        try:
+            return obj.video_details.thumbnail_url or ""
+        except (AttributeError, VideoDetails.DoesNotExist):
+            return ""
 
 
 class PostRelationSerializer(serializers.ModelSerializer):

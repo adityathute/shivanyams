@@ -1,3 +1,9 @@
+import { getCategoryPageMetadata } from "../../lib/seo";
+
+export function generateMetadata() {
+  return getCategoryPageMetadata("exams");
+}
+
 /* File Location: shivanyams/src/app/exams/page.tsx
  * Reference Repositories:
  *   shivanya-sdk v1.0.0 (branch sdk-v2)

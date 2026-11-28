@@ -19,11 +19,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "shivanya-auth";
 import {
   StocksIcon,
-  FavoriteIcon as BookmarkIcon,
+  FavoriteIcon as FavoriteIcon as BookmarkIcon,
   MessagesIcon,
-  AlertCircleIcon as DislikeIcon,
-  FavoriteIcon as LikeIcon,
-  ReportsIcon as ReportIcon,
+  AlertCircleIcon as AlertCircleIcon as DislikeIcon,
+  FavoriteIcon as FavoriteIcon as LikeIcon,
+  ReportsIcon as ReportsIcon as ReportIcon,
   ShareIcon,
   UsersIcon,
   RefreshIcon,

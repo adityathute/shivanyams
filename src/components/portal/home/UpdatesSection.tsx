@@ -315,7 +315,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""}${paginationFlowsAfterPosts ? " updates-panel-pagination-flow" : ""} panelin`} id="updates">
+    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""}${searchAllFields ? " updates-panel-search-results" : ""}${paginationFlowsAfterPosts ? " updates-panel-pagination-flow" : ""} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 

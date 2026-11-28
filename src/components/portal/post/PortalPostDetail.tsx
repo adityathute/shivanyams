@@ -1123,8 +1123,54 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
     String(value).trim() !== "0"
   );
 
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com"
+  ).replace(/\\/+$/, "");
+  let structuredImage: string | undefined;
+  if (post?.image) {
+    try {
+      structuredImage = new URL(post.image, siteUrl).toString();
+    } catch {
+      structuredImage = undefined;
+    }
+  }
+  const structuredData = post
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: post.title,
+        ...(post.description ? { description: post.description } : {}),
+        ...(post.createdAt || post.date
+          ? { datePublished: post.createdAt || post.date }
+          : {}),
+        ...(post.updatedAt || post.createdAt || post.date
+          ? { dateModified: post.updatedAt || post.createdAt || post.date }
+          : {}),
+        ...(structuredImage ? { image: [structuredImage] } : {}),
+        ...(post.tags.length ? { keywords: post.tags } : {}),
+        articleSection: category,
+        inLanguage: language,
+        publisher: {
+          "@type": "Organization",
+          name: "ShivanyaMS",
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `${siteUrl}/${category}/${encodeURIComponent(slug)}`,
+        },
+      }
+    : null;
+
   return (
     <>
+      {structuredData ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+          }}
+        />
+      ) : null}
       <main className="portal-post-detail">
         {previewItem ? (
           <div className="portal-preview-banner" role="status">

@@ -371,7 +371,7 @@ const detailLabels = {
   document: { en: "Document", mr: "कागदपत्र", hi: "दस्तावेज़" },
   details: { en: "Details", mr: "तपशील", hi: "विवरण" },
   instructions: { en: "Instructions", mr: "सूचना", hi: "निर्देश" },
-  compulsory: { en: "Compulsory", mr: "अनिवार्य", hi: "अनिवार्य" },
+  compulsory: { en: "Compulsory", mr: "आवश्यक", hi: "अनिवार्य" },
   optional: { en: "Optional", mr: "ऐच्छिक", hi: "वैकल्पिक" },
   original: { en: "Original", mr: "मूळ प्रत", hi: "मूल प्रति" },
   photocopy: { en: "Photocopy", mr: "छायांकित प्रत", hi: "फोटोकॉपी" },

@@ -574,6 +574,7 @@ class PostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     important_links = PostLinkSerializer(many=True, read_only=True)
     faqs = serializers.SerializerMethodField()
+    required_documents = PostRequiredDocumentSerializer(many=True, read_only=True)
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()

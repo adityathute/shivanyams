@@ -1196,3 +1196,310 @@
 .related-saved-page > .updates-panel.jobs-updates {
   margin-top: 0 !important;
 }
+
+
+/* Saved posts: use the current portal update-row, category badge and tag design. */
+.saved-panel .saved-post-list.update-list {
+  padding: 0;
+}
+
+.saved-panel .saved-update-row {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #edf1f6;
+  background: transparent;
+}
+
+.saved-panel .saved-update-row:last-child {
+  border-bottom: 0;
+}
+
+.saved-panel .saved-update-row:hover {
+  background: #f7faff;
+}
+
+.saved-update-content {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.saved-update-title {
+  display: block;
+  min-width: 0;
+  color: var(--text, #172b45);
+  font-family: "Outfit", "Hind", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.saved-update-title:hover,
+.saved-update-title:focus-visible {
+  color: var(--blue, #2563eb);
+}
+
+.saved-update-title small {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  color: #748299;
+  font-family: "Outfit", "Hind", sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-update-tags.portal-post-taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-height: 68px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.saved-update-tags.portal-post-taxonomy a {
+  min-height: 26px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.saved-update-row .update-deadline-group {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  justify-content: flex-end;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.saved-update-row .update-deadline-extended {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border: 1px solid #fed7aa;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.saved-update-row .update-application-deadline {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.saved-update-row .update-application-deadline.deadline-urgent { color: #dc2626; }
+.saved-update-row .update-application-deadline.deadline-soon { color: #ea580c; }
+.saved-update-row .update-application-deadline.deadline-open { color: #16a34a; }
+.saved-update-row .update-application-deadline.deadline-expired {
+  color: #718096;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: currentColor;
+}
+
+.saved-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 16px;
+  border-top: 1px solid #edf1f6;
+  background: #fff;
+}
+
+.saved-pagination > span {
+  color: #718098;
+  font-size: 11px;
+}
+
+.saved-pagination .admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.saved-pagination .admin-pagination label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #718098;
+  font-size: 11px;
+}
+
+.saved-pagination .admin-pagination select,
+.saved-pagination .admin-pagination button {
+  min-height: 30px;
+  padding: 4px 9px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #52647b;
+  font: inherit;
+  font-size: 11px;
+}
+
+.saved-pagination .admin-pagination button {
+  cursor: pointer;
+}
+
+.saved-pagination .admin-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.saved-pagination .admin-pagination > span {
+  color: #52647b;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .saved-panel .saved-update-row {
+  border-color: #293544;
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .saved-panel .saved-update-row:hover {
+  background: #1c2633;
+}
+
+[data-theme="dark"] .saved-update-title {
+  color: #e6edf3;
+}
+
+[data-theme="dark"] .saved-update-title small {
+  color: #a9b7c8;
+}
+
+[data-theme="dark"] .saved-update-row .update-deadline-extended {
+  border-color: #7c2d12;
+  background: #431407;
+  color: #fdba74;
+}
+
+[data-theme="dark"] .saved-update-row .update-application-deadline.deadline-urgent { color: #f87171; }
+[data-theme="dark"] .saved-update-row .update-application-deadline.deadline-soon { color: #fb923c; }
+[data-theme="dark"] .saved-update-row .update-application-deadline.deadline-open { color: #4ade80; }
+[data-theme="dark"] .saved-update-row .update-application-deadline.deadline-expired { color: #a9b7c8; }
+
+[data-theme="dark"] .saved-pagination {
+  border-color: #293544;
+  background: #151b23;
+}
+
+[data-theme="dark"] .saved-pagination .admin-pagination select,
+[data-theme="dark"] .saved-pagination .admin-pagination button {
+  border-color: #344154;
+  background: #1c2633;
+  color: #d7e2ef;
+}
+
+[data-theme="dark"] .saved-pagination .admin-pagination > span {
+  color: #a9b7c8;
+}
+
+@media (max-width: 760px) {
+  .saved-panel .saved-update-row {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 7px;
+    min-height: 57px;
+    padding: 8px 10px;
+  }
+
+  .saved-panel .saved-update-row .portal-post-category-badge {
+    justify-content: center;
+    min-width: 30px;
+    max-width: 30px;
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .saved-panel .saved-update-row .portal-post-category-badge > span:not(.portal-post-category-icon) {
+    display: none;
+  }
+
+  .saved-update-title {
+    font-size: 13px;
+  }
+
+  .saved-update-title small {
+    display: none;
+  }
+
+  .saved-update-tags.portal-post-taxonomy {
+    max-height: 58px;
+    gap: 5px;
+  }
+
+  .saved-update-tags.portal-post-taxonomy a {
+    min-height: 24px;
+    padding: 3px 7px;
+    font-size: 10px;
+  }
+
+  .saved-update-row .update-deadline-group {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .saved-update-row .update-application-deadline {
+    font-size: 13px;
+  }
+
+  .saved-update-row .update-deadline-extended {
+    padding: 3px 7px;
+    font-size: 10px;
+  }
+
+  .saved-pagination {
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .saved-pagination .admin-pagination {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 390px) {
+  .saved-panel .saved-update-row {
+    gap: 5px;
+  }
+
+  .saved-update-title {
+    font-size: 12px;
+  }
+
+  .saved-pagination .admin-pagination {
+    gap: 5px;
+  }
+}

@@ -2041,6 +2041,30 @@
 .portal-requirements-section {
   margin-top: 14px;
 }
+.portal-requirements-section .portal-post-wise-table {
+  table-layout: fixed;
+  width: 100%;
+}
+.portal-requirements-section .portal-post-wise-table th:nth-child(1),
+.portal-requirements-section .portal-post-wise-table td:nth-child(1) {
+  width: 27%;
+}
+.portal-requirements-section .portal-post-wise-table th:nth-child(2),
+.portal-requirements-section .portal-post-wise-table td:nth-child(2) {
+  width: 20%;
+}
+.portal-requirements-section .portal-post-wise-table th:nth-child(3),
+.portal-requirements-section .portal-post-wise-table td:nth-child(3) {
+  width: 53%;
+}
+.portal-requirements-section .portal-requirement-description {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-muted, #737b89);
+  font-size: 0.88em;
+  font-weight: 400;
+  line-height: 1.45;
+}
 .portal-requirements-section .portal-post-wise-table th,
 .portal-requirements-section .portal-post-wise-table td {
   vertical-align: top;

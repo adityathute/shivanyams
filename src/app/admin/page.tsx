@@ -205,6 +205,18 @@ const STATUS_OPTIONS = [
   "archived",
 ];
 
+// The backend stores these two canonical category slugs, while the admin
+// content-kind configuration keeps the established route slugs.
+function getContentKindForCategory(categorySlug: string | null | undefined) {
+  const kindSlug =
+    categorySlug === "exams"
+      ? "examination"
+      : categorySlug === "guides"
+        ? "articles-guides"
+        : categorySlug;
+  return CONTENT_KINDS.find((item) => item.slug === kindSlug);
+}
+
 function formatPersonName(name: string | null | undefined) {
   return (name || "")
     .trim()
@@ -661,9 +673,7 @@ export default function AdminPage() {
     [posts],
   );
   const latestUpdatedKind = latestUpdatedPost
-    ? CONTENT_KINDS.find(
-        (item) => item.slug === latestUpdatedPost.category.slug,
-      )
+    ? getContentKindForCategory(latestUpdatedPost.category.slug)
     : undefined;
   const visibleAnalyticsPages = [...analyticsPages]
     .sort((a, b) => b.views - a.views)
@@ -1248,7 +1258,7 @@ export default function AdminPage() {
   async function confirmDeletePost() {
     if (!deleteTarget) return;
     const post = deleteTarget;
-    const kind = CONTENT_KINDS.find((item) => item.slug === post.category.slug);
+    const kind = getContentKindForCategory(post.category.slug);
     if (!kind) return;
 
     setBusyPost(post.id);
@@ -1672,9 +1682,7 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {visiblePosts.map((post) => {
-                    const kind = CONTENT_KINDS.find(
-                      (item) => item.slug === post.category.slug,
-                    );
+                    const kind = getContentKindForCategory(post.category.slug);
                     return (
                       <tr key={post.id}>
                         <td>
@@ -2765,7 +2773,7 @@ export default function AdminPage() {
                       <thead><tr><th>Post</th><th>Category</th><th>Last updated</th><th>Last changed</th><th>Status</th></tr></thead>
                       <tbody>
                         {statusAnalyticsPosts.slice((analyticsPagesPage - 1) * analyticsPageSize, analyticsPagesPage * analyticsPageSize).map((post) => {
-                          const kind = CONTENT_KINDS.find((item) => item.slug === post.category?.slug);
+                          const kind = getContentKindForCategory(post.category?.slug);
                           return (
                             <tr key={post.id}>
                               <td><Link className="admin-analytics-link" href={`/admin/edit-post/${kind?.api || "jobs"}/${post.slug}`} title={post.title_en}>{post.title_en}</Link></td>

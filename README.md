@@ -50,6 +50,7 @@ The Next.js App Router generates:
 - `/sitemap.xml` from `src/app/sitemap.ts`, including public static pages, enabled category pages, and published content returned by the Portal API.
 - Site-wide title, description, canonical base, Open Graph and Twitter defaults from `src/app/layout.tsx`.
 - Category and published-post metadata from the shared `src/lib/seo.ts` helpers. Category visibility follows `src/features/category-access/config.ts`, so disabled categories are not added to the sitemap and their pages receive `noindex`.
+- The root server layout preloads the first 20 published posts for every enabled category. Shared portal pages render this content in the initial HTML; the client provider then refreshes the complete data set. Future categories automatically join this server preload when their feature switch is enabled.
 - Admin, saved-post, ledger and search sections receive `noindex, nofollow` metadata.
 
 Production environment variables required by the frontend:
@@ -63,6 +64,7 @@ After deployment:
 4. Submit `https://shivanyams.com/sitemap.xml` in Search Console.
 5. Inspect the homepage, Jobs listing and several published job detail URLs with URL Inspection; resolve any blocked resources, canonical mismatch, server errors or indexing exclusions.
 6. Re-submit the sitemap after category activation or major URL changes.
+7. Validate structured data with Google Rich Results Test. The current post pages emit Article structured data. JobPosting rich results require verified job title, hiring organization, physical location, publication date and complete job description; do not emit JobPosting markup until the admin data model consistently supplies those facts. Google recommends the Indexing API for job posting URL changes, which still needs separate Google API credentials and setup.
 
 Sitemap generation depends on the production Portal API being reachable from the Next.js server. If that API is unavailable, the sitemap still returns its static public URLs but cannot include dynamic posts. Search indexing and ranking are controlled by search engines; technical SEO does not guarantee immediate indexing, approval or a particular position.
 

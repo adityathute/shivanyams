@@ -1107,7 +1107,7 @@
 .portal-important-link-item > strong {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-width: 0;
   height: 100%;
   padding: 8px 10px;
@@ -1124,7 +1124,7 @@
 .portal-important-link-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 6px;
   min-width: 0;

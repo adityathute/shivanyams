@@ -1086,8 +1086,8 @@
 }
 
 .portal-important-links-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(min(45%, max-content), 1fr));
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--border-color, #dce3ed);
@@ -1097,14 +1097,10 @@
 }
 
 .portal-important-link-item {
-  display: grid;
-  grid-template-columns: clamp(112px, 23%, 210px) minmax(0, 1fr);
-  align-items: center;
-  min-width: 0;
-  border-bottom: 1px solid var(--border-color, #e7ebf1);
+  display: contents;
 }
 
-.portal-important-link-item:last-child {
+.portal-important-link-item:last-child > * {
   border-bottom: 0;
 }
 
@@ -1116,6 +1112,7 @@
   height: 100%;
   padding: 8px 10px;
   border-right: 1px solid var(--border-color, #e1e7f0);
+  border-bottom: 1px solid var(--border-color, #e7ebf1);
   color: #243f70;
   font-size: clamp(11px, 0.25vw + 10px, 13px);
   font-weight: 750;
@@ -1127,11 +1124,12 @@
 .portal-important-link-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 6px;
   min-width: 0;
   padding: 6px 8px;
+  border-bottom: 1px solid var(--border-color, #e7ebf1);
 }
 
 .portal-important-link-action {
@@ -1207,10 +1205,6 @@
 
   .portal-important-links .portal-important-dates-heading h2 {
     margin-bottom: 7px;
-  }
-
-  .portal-important-link-item {
-    grid-template-columns: minmax(96px, 34%) minmax(0, 1fr);
   }
 
   .portal-important-link-item > strong {

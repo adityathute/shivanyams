@@ -116,7 +116,7 @@ export function SearchPage() {
   };
 
   return (
-    <div className="saved-page related-saved-page updates-directory-page search-directory-page">
+    <div className="saved-page updates-directory-page search-directory-page">
       <header className="portal-page-heading saved-page-heading">
         <span className="saved-eyebrow">{text.eyebrow}</span>
         <h1>{text.title}</h1>

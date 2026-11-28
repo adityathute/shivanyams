@@ -1791,14 +1791,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                         </div>
                       </section>
                     ) : null}
-                      </span>
-                      </Link>
-                      );
-                      })}
-                      </div>
-                      </section>
-                      ) : null}
-                    ) : null}
                   </>
                 ) : null}
                 </>

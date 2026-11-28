@@ -307,6 +307,12 @@ export function UpdatesSection({
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 
+        {paginate ? (
+          <span className="updates-total-count">
+            {filtered.length} {language === "mr" ? "पोस्ट" : language === "hi" ? "पोस्ट" : "posts"}
+          </span>
+        ) : null}
+
         {showViewAll ? (
           <Link href={viewAllHref}>
             {getPortalText("viewAll", language)} →

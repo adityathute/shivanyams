@@ -525,3 +525,50 @@
     min-height: calc(100dvh - 60px - 12px) !important;
   }
 }
+
+/* Search results always use the document/page scrollbar.
+   Keep a viewport minimum so short result sets still fill the screen, but
+   never constrain the page or the results list to a fixed/max height. */
+.search-directory-page.related-saved-page {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(min-content, 1fr) !important;
+  height: auto !important;
+  min-height: calc(100dvh - 64px - 16px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page > .updates-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(min-content, 1fr) auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page > .updates-panel > .update-list {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+  overscroll-behavior: auto !important;
+  scrollbar-gutter: auto !important;
+}
+
+.search-directory-page > .updates-panel > .updates-admin-pagination {
+  position: static !important;
+  margin-top: 14px !important;
+}
+
+@media (max-width: 760px) {
+  .search-directory-page.related-saved-page {
+    min-height: calc(100dvh - 60px - 12px) !important;
+  }
+}

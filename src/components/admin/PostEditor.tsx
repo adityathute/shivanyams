@@ -2978,12 +2978,56 @@ export default function PostEditor({
               );
             })}
           </section>
+          <section className="post-editor-required-documents">
+            <div className="post-editor-section-heading">
+              <div><h2>Photo Requirements</h2><p className="post-editor-section-description">Set photo type, size, quantity, background and instructions. All fields are optional.</p></div>
+              <button type="button" onClick={() => setPhotoRequirements((items) => [...items, createEmptyPhotoRequirement(items.length)])}>＋ Add Photo Requirement</button>
+            </div>
+            {photoRequirements.map((photo, index) => {
+              const updatePhoto = (changes: Partial<PhotoRequirementInput>) => setPhotoRequirements((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...changes } : item));
+              return <details className="post-editor-repeat-card post-editor-collapsible post-editor-required-document-card" key={index}>
+                <summary className="post-editor-card-summary"><span><strong>{photo.photo_type ? photo.photo_type.replaceAll("_", " ") : `Photo Requirement ${index + 1}`}</strong><small>{photo.photo_size || "Photo specifications not added"}</small></span></summary>
+                <div className="post-editor-faq-fields">
+                  <div className="post-editor-grid">
+                    <label>Photo Type<select value={photo.photo_type} onChange={(event) => updatePhoto({ photo_type: event.target.value })}><option value="">Not specified</option><option value="passport_size">Passport Size</option><option value="live_photo">Live Photo</option><option value="other">Other</option><option value="not_applicable">Not Applicable</option></select></label>
+                    <Input label="Photo Size" placeholder="e.g. 35 × 45 mm" value={photo.photo_size} onChange={(event) => updatePhoto({ photo_size: event.target.value })} fullWidth size="sm" />
+                    <Input type="number" label="Photo Quantity" min="0" value={photo.photo_quantity} onChange={(event) => updatePhoto({ photo_quantity: event.target.value })} fullWidth size="sm" />
+                    <Input label="Photo Background" placeholder="e.g. White" value={photo.photo_background} onChange={(event) => updatePhoto({ photo_background: event.target.value })} fullWidth size="sm" />
+                  </div>
+                  <Textarea label="Other Specifications" rows={2} value={photo.other_specifications} onChange={(event) => updatePhoto({ other_specifications: event.target.value })} fullWidth />
+                  <div className="post-editor-link-translation"><strong>Instructions</strong>{(["en", "mr", "hi"] as ContentLanguage[]).map((lang) => <Textarea key={lang} label={`Instructions (${lang.toUpperCase()})`} rows={2} value={photo[`instructions_${lang}`]} onChange={(event) => updatePhoto({ [`instructions_${lang}`]: event.target.value })} fullWidth />)}</div>
+                  <label className="post-editor-check"><input type="checkbox" checked={photo.is_active} onChange={(event) => updatePhoto({ is_active: event.target.checked })} />Show this photo requirement on the public post</label>
+                </div>
+                <div className="post-editor-card-actions"><button type="button" className="post-editor-remove" onClick={() => setPhotoRequirements((items) => items.filter((_, itemIndex) => itemIndex !== index))}>Remove photo requirement</button></div>
+              </details>;
+            })}
+          </section>
+          <section className="post-editor-required-documents">
+            <div className="post-editor-section-heading">
+              <div><h2>Signature Requirements</h2><p className="post-editor-section-description">Set signature type, format, size and instructions. All fields are optional.</p></div>
+              <button type="button" onClick={() => setSignatureRequirements((items) => [...items, createEmptySignatureRequirement(items.length)])}>＋ Add Signature Requirement</button>
+            </div>
+            {signatureRequirements.map((signature, index) => {
+              const updateSignature = (changes: Partial<SignatureRequirementInput>) => setSignatureRequirements((items) => items.map((item, itemIndex) => itemIndex === index ? { ...item, ...changes } : item));
+              return <details className="post-editor-repeat-card post-editor-collapsible post-editor-required-document-card" key={index}>
+                <summary className="post-editor-card-summary"><span><strong>{signature.signature_type ? signature.signature_type.replaceAll("_", " ") : `Signature Requirement ${index + 1}`}</strong><small>{signature.signature_format || "Signature specifications not added"}</small></span></summary>
+                <div className="post-editor-faq-fields">
+                  <div className="post-editor-grid">
+                    <label>Signature Type<select value={signature.signature_type} onChange={(event) => updateSignature({ signature_type: event.target.value })}><option value="">Not specified</option><option value="scanned">Scanned</option><option value="physical">Physical</option><option value="other">Other</option><option value="not_applicable">Not Applicable</option></select></label>
+                    <Input label="Signature Format" placeholder="e.g. JPG, JPEG, PNG" value={signature.signature_format} onChange={(event) => updateSignature({ signature_format: event.target.value })} fullWidth size="sm" />
+                    <Input label="Signature Size" placeholder="e.g. 10–20 KB" value={signature.signature_size} onChange={(event) => updateSignature({ signature_size: event.target.value })} fullWidth size="sm" />
+                  </div>
+                  <Textarea label="Other Specifications" rows={2} value={signature.other_specifications} onChange={(event) => updateSignature({ other_specifications: event.target.value })} fullWidth />
+                  <div className="post-editor-link-translation"><strong>Instructions</strong>{(["en", "mr", "hi"] as ContentLanguage[]).map((lang) => <Textarea key={lang} label={`Instructions (${lang.toUpperCase()})`} rows={2} value={signature[`instructions_${lang}`]} onChange={(event) => updateSignature({ [`instructions_${lang}`]: event.target.value })} fullWidth />)}</div>
+                  <label className="post-editor-check"><input type="checkbox" checked={signature.is_active} onChange={(event) => updateSignature({ is_active: event.target.checked })} />Show this signature requirement on the public post</label>
+                </div>
+                <div className="post-editor-card-actions"><button type="button" className="post-editor-remove" onClick={() => setSignatureRequirements((items) => items.filter((_, itemIndex) => itemIndex !== index))}>Remove signature requirement</button></div>
+              </details>;
+            })}
+          </section>
           <section className="post-editor-required-documents post-editor-faqs">
             <div className="post-editor-section-heading">
-              <div>
-                <h2>Required Documents</h2>
-                <p className="post-editor-section-description">Add documents, original/photocopy requirements, photo and signature specifications, and instructions in all three languages. All fields are optional.</p>
-              </div>
+              <div><h2>Required Documents</h2><p className="post-editor-section-description">Add document names, descriptions, compulsory/optional status, original and photocopy requirements, copies and multilingual instructions. All fields are optional.</p></div>
               <button type="button" onClick={() => setRequiredDocuments((items) => [...items, createEmptyRequiredDocument(items.length)])}>＋ Add Required Document</button>
             </div>
             {requiredDocuments.map((document, index) => {
@@ -2992,77 +3036,22 @@ export default function PostEditor({
               const languages: ContentLanguage[] = showLanguages ? ["en", "mr", "hi"] : [activeLanguage];
               return (
                 <details className="post-editor-repeat-card post-editor-collapsible post-editor-required-document-card" key={index}>
-                  <summary className="post-editor-card-summary">
-                    <span><strong>{document.name_en || `Required Document ${index + 1}`}</strong><small>{document.category || "Category not selected"} · {document.requirement || "Requirement not selected"}</small></span>
-                  </summary>
+                  <summary className="post-editor-card-summary"><span><strong>{document.name_en || `Required Document ${index + 1}`}</strong><small>{document.category || "Category not selected"} · {document.requirement || "Requirement not selected"}</small></span></summary>
                   <div className="post-editor-faq-fields">
                     <div className="post-editor-link-translation">
-                      <div className="post-editor-translation-heading">
-                        <span>Document Name</span>
-                        <button type="button" className="post-editor-show-translations" aria-expanded={showLanguages} onClick={() => setExpandedRequiredDocumentLanguages((current) => current.includes(index) ? current.filter((value) => value !== index) : [...current, index])}>
-                          {showLanguages ? "− Hide other languages" : "+ Show other languages"}
-                        </button>
-                      </div>
+                      <div className="post-editor-translation-heading"><span>Document Name</span><button type="button" className="post-editor-show-translations" aria-expanded={showLanguages} onClick={() => setExpandedRequiredDocumentLanguages((current) => current.includes(index) ? current.filter((value) => value !== index) : [...current, index])}>{showLanguages ? "− Hide other languages" : "+ Show other languages"}</button></div>
                       {languages.map((lang) => <Input key={lang} label={`Document name (${lang.toUpperCase()})`} value={document[`name_${lang}`]} onChange={(event) => updateDocument({ [`name_${lang}`]: event.target.value })} fullWidth size="sm" />)}
                     </div>
-                    <div className="post-editor-link-translation">
-                      <div className="post-editor-translation-heading"><span>Description</span></div>
-                      {languages.map((lang) => <Textarea key={lang} label={`Description (${lang.toUpperCase()})`} rows={3} value={document[`description_${lang}`]} onChange={(event) => updateDocument({ [`description_${lang}`]: event.target.value })} fullWidth />)}
-                    </div>
+                    <div className="post-editor-link-translation"><div className="post-editor-translation-heading"><span>Description</span></div>{languages.map((lang) => <Textarea key={lang} label={`Description (${lang.toUpperCase()})`} rows={3} value={document[`description_${lang}`]} onChange={(event) => updateDocument({ [`description_${lang}`]: event.target.value })} fullWidth />)}</div>
                     <div className="post-editor-grid">
-                      <label>Category
-                        <select value={document.category} onChange={(event) => updateDocument({ category: event.target.value })}>
-                          <option value="">Not specified</option><option value="photo">Photo</option><option value="signature">Signature</option><option value="identity_proof">Identity Proof</option><option value="educational_certificate">Educational Certificate</option><option value="caste_certificate">Caste Certificate</option><option value="experience_certificate">Experience Certificate</option><option value="other">Other</option>
-                        </select>
-                      </label>
-                      <label>Requirement
-                        <select value={document.requirement} onChange={(event) => updateDocument({ requirement: event.target.value })}>
-                          <option value="">Not specified</option><option value="compulsory">Compulsory</option><option value="optional">Optional</option>
-                        </select>
-                      </label>
-                      <label>Original Required
-                        <select value={document.original_required} onChange={(event) => updateDocument({ original_required: event.target.value })}>
-                          <option value="">Not specified</option><option value="true">Yes</option><option value="false">No</option>
-                        </select>
-                      </label>
-                      <label>Photocopy Required
-                        <select value={document.photocopy_required} onChange={(event) => updateDocument({ photocopy_required: event.target.value })}>
-                          <option value="">Not specified</option><option value="true">Yes</option><option value="false">No</option>
-                        </select>
-                      </label>
+                      <label>Category<select value={document.category} onChange={(event) => updateDocument({ category: event.target.value })}><option value="">Not specified</option><option value="identity_proof">Identity Proof</option><option value="educational_certificate">Educational Certificate</option><option value="caste_certificate">Caste Certificate</option><option value="experience_certificate">Experience Certificate</option><option value="other">Other</option></select></label>
+                      <label>Requirement<select value={document.requirement} onChange={(event) => updateDocument({ requirement: event.target.value })}><option value="">Not specified</option><option value="compulsory">Compulsory</option><option value="optional">Optional</option></select></label>
+                      <label>Original Required<select value={document.original_required} onChange={(event) => updateDocument({ original_required: event.target.value })}><option value="">Not specified</option><option value="true">Yes</option><option value="false">No</option></select></label>
+                      <label>Photocopy Required<select value={document.photocopy_required} onChange={(event) => updateDocument({ photocopy_required: event.target.value })}><option value="">Not specified</option><option value="true">Yes</option><option value="false">No</option></select></label>
                       <Input type="number" label="Number of Copies" min="0" value={document.number_of_copies} onChange={(event) => updateDocument({ number_of_copies: event.target.value })} fullWidth size="sm" />
                       <Input type="number" label="Quantity" min="0" value={document.quantity} onChange={(event) => updateDocument({ quantity: event.target.value })} fullWidth size="sm" />
                     </div>
-                    <div className="post-editor-link-translation">
-                      <strong>Photo Details</strong>
-                      <div className="post-editor-grid">
-                        <label>Photo Type
-                          <select value={document.photo_type} onChange={(event) => updateDocument({ photo_type: event.target.value })}>
-                            <option value="">Not specified</option><option value="passport_size">Passport Size</option><option value="live_photo">Live Photo</option><option value="other">Other</option><option value="not_applicable">Not Applicable</option>
-                          </select>
-                        </label>
-                        <Input label="Photo Size" placeholder="e.g. 35 × 45 mm" value={document.photo_size} onChange={(event) => updateDocument({ photo_size: event.target.value })} fullWidth size="sm" />
-                        <Input type="number" label="Photo Quantity" min="0" value={document.photo_quantity} onChange={(event) => updateDocument({ photo_quantity: event.target.value })} fullWidth size="sm" />
-                        <Input label="Photo Background" placeholder="e.g. White" value={document.photo_background} onChange={(event) => updateDocument({ photo_background: event.target.value })} fullWidth size="sm" />
-                      </div>
-                    </div>
-                    <div className="post-editor-link-translation">
-                      <strong>Signature Details</strong>
-                      <div className="post-editor-grid">
-                        <label>Signature Type
-                          <select value={document.signature_type} onChange={(event) => updateDocument({ signature_type: event.target.value })}>
-                            <option value="">Not specified</option><option value="scanned">Scanned</option><option value="physical">Physical</option><option value="other">Other</option><option value="not_applicable">Not Applicable</option>
-                          </select>
-                        </label>
-                        <Input label="Signature Format" placeholder="e.g. JPG, JPEG, PNG" value={document.signature_format} onChange={(event) => updateDocument({ signature_format: event.target.value })} fullWidth size="sm" />
-                        <Input label="Signature Size" placeholder="e.g. 10–20 KB" value={document.signature_size} onChange={(event) => updateDocument({ signature_size: event.target.value })} fullWidth size="sm" />
-                      </div>
-                    </div>
-                    <Textarea label="Other Specifications" rows={3} value={document.other_specifications} onChange={(event) => updateDocument({ other_specifications: event.target.value })} fullWidth />
-                    <div className="post-editor-link-translation">
-                      <div className="post-editor-translation-heading"><span>Additional Instructions</span></div>
-                      {(["en", "mr", "hi"] as ContentLanguage[]).map((lang) => <Textarea key={lang} label={`Additional instructions (${lang.toUpperCase()})`} rows={3} value={document[`instructions_${lang}`]} onChange={(event) => updateDocument({ [`instructions_${lang}`]: event.target.value })} fullWidth />)}
-                    </div>
+                    <div className="post-editor-link-translation"><div className="post-editor-translation-heading"><span>Additional Instructions</span></div>{(["en", "mr", "hi"] as ContentLanguage[]).map((lang) => <Textarea key={lang} label={`Additional instructions (${lang.toUpperCase()})`} rows={3} value={document[`instructions_${lang}`]} onChange={(event) => updateDocument({ [`instructions_${lang}`]: event.target.value })} fullWidth />)}</div>
                     <label className="post-editor-check"><input type="checkbox" checked={document.is_active} onChange={(event) => updateDocument({ is_active: event.target.checked })} />Show this document on the public post</label>
                   </div>
                   <div className="post-editor-card-actions"><button type="button" className="post-editor-remove" onClick={() => setRequiredDocuments((items) => items.filter((_, itemIndex) => itemIndex !== index))}>Remove document</button></div>

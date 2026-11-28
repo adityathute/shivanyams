@@ -244,3 +244,55 @@
   outline: 2px solid #1d4ed8;
   outline-offset: 3px;
 }
+
+
+/* Popular job tags replace the hero search field. */
+.jobs-popular-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.jobs-popular-tags-label {
+  color: var(--text-secondary, #64748b);
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 2px;
+}
+.jobs-popular-tags a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border: 1px solid #d5e3fb;
+  border-radius: 999px;
+  background: #e8f0ff;
+  color: #2458a6;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.jobs-popular-tags a:hover {
+  background: #d7e6ff;
+  border-color: #93b8f8;
+  transform: translateY(-1px);
+}
+.jobs-popular-tags a:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+[data-theme="dark"] .jobs-popular-tags-label { color: #a9b7c8; }
+[data-theme="dark"] .jobs-popular-tags a {
+  background: #243b58;
+  border-color: #365475;
+  color: #dbeafe;
+}
+[data-theme="dark"] .jobs-popular-tags a:hover { background: #2d4b70; border-color: #5077a5; }
+@media (max-width: 760px) {
+  .jobs-popular-tags { gap: 6px; margin-top: 12px; }
+  .jobs-popular-tags-label { width: 100%; font-size: 11px; }
+  .jobs-popular-tags a { min-height: 27px; padding: 5px 9px; font-size: 10px; }
+}

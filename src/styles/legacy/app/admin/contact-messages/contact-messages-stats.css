@@ -1,0 +1,63 @@
+.admin-contact-messages-page .admin-comments-totals {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  flex: 0 1 auto;
+  gap: 10px;
+}
+
+.admin-contact-messages-page .admin-comments-total {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  min-width: 104px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 9px;
+  text-align: center;
+}
+
+.admin-contact-messages-page .admin-comments-total strong {
+  color: var(--foreground, #243247);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 750;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-contact-messages-page .admin-comments-total span {
+  color: var(--muted-foreground, #9298a2);
+  font-size: .68rem;
+  font-weight: 650;
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .admin-contact-messages-page .admin-comments-totals {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-contact-messages-page .admin-comments-totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-contact-messages-page .admin-comments-total {
+    min-width: 0;
+  }
+
+  .admin-contact-messages-page .admin-comments-total span {
+    white-space: normal;
+  }
+}
+
+[data-theme="dark"] .admin-contact-messages-page .admin-comments-total {
+  border-color: #344154;
+}

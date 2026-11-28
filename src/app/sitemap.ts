@@ -19,7 +19,9 @@ type ApiPost = { slug?: string; updated_at?: string; published_at?: string };
 type ApiPage = { results?: ApiPost[]; next?: string | null };
 
 async function getPublishedPosts(kind: string): Promise<ApiPost[]> {
-  const apiBase = (process.env.NEXT_PUBLIC_PORTAL_API_URL || process.env.NEXT_PUBLIC_API_URL)?.trim();
+  const apiBase = (
+    process.env.NEXT_PUBLIC_PORTAL_API_URL || process.env.NEXT_PUBLIC_API_URL
+  )?.trim();
   if (!apiBase) return [];
 
   const firstUrl = `${apiBase.replace(/\/+$/, "")}/content/${kind}/`;
@@ -66,8 +68,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about` },
     { url: `${SITE_URL}/contact` },
     { url: `${SITE_URL}/privacy` },
-    { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${SITE_URL}/disclaimer`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${SITE_URL}/terms` },
+    { url: `${SITE_URL}/disclaimer` },
     { url: `${SITE_URL}/feedback` },
     { url: `${SITE_URL}/updates` },
   ];
@@ -84,10 +86,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const post of posts) {
       if (!post.slug) continue;
       const lastModifiedValue = post.updated_at || post.published_at;
-      const lastModified = lastModifiedValue ? new Date(lastModifiedValue) : undefined;
+      const lastModified = lastModifiedValue
+        ? new Date(lastModifiedValue)
+        : undefined;
       entries.push({
         url: `${SITE_URL}${category.path}/${encodeURIComponent(post.slug)}`,
-        ...(lastModified && !Number.isNaN(lastModified.getTime()) ? { lastModified } : {}),
+        ...(lastModified && !Number.isNaN(lastModified.getTime())
+          ? { lastModified }
+          : {}),
       });
       if (entries.length >= 49990) return entries;
     }

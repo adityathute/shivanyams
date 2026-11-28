@@ -221,7 +221,7 @@ class RelatedPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ("id", "title_en", "title_mr", "title_hi", "slug", "category", "featured_image_url")
+        fields = ("id", "title_en", "title_mr", "title_hi", "summary_en", "summary_mr", "summary_hi", "meta_keywords", "slug", "category", "featured_image_url")
 
 
 class PostRelationSerializer(serializers.ModelSerializer):

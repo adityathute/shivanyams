@@ -241,6 +241,18 @@
   padding: 0;
 }
 
+/* The wrapper must not leave an empty margin when the single category is
+   intentionally hidden on desktop, or when no categories are enabled. */
+.portal-post-category-grid:empty {
+  display: none;
+}
+
+@media (min-width: 761px) {
+  .portal-post-category-grid:has(.category-grid-single) {
+    display: none;
+  }
+}
+
 .portal-post-category-grid .category-grid {
   margin: 0;
 }

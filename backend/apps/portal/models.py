@@ -1951,3 +1951,31 @@ class PostReport(TimestampedModel):
 
     def __str__(self):
         return f"{self.post.title_en}: {self.reason}"
+
+
+class SearchHistory(models.Model):
+    """Recent searches owned by one authenticated Shivanya identity."""
+
+    user_auth_id = models.CharField(max_length=128, db_index=True)
+    query = models.CharField(max_length=200)
+    normalized_query = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-updated_at", "-id")
+        constraints = [
+            models.UniqueConstraint(
+                fields=("user_auth_id", "normalized_query"),
+                name="portal_unique_user_search_history",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=("user_auth_id", "-updated_at"),
+                name="portal_search_user_recent_idx",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user_auth_id}: {self.query}"

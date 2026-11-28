@@ -1,13 +1,18 @@
+/* Fill the complete content viewport below the shared top bar.
+   Keep the page itself full-height; the results panel takes the remaining
+   space after the heading and query summary. */
 .search-directory-page {
+  display: flex;
+  flex-direction: column;
   gap: 14px;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+  box-sizing: border-box;
 }
 
-/* The search page has an extra query-summary row above the results panel.
-   Account for it so the panel and pagination finish at the same viewport
-   position as the All Posts directory instead of making the page too tall. */
 .search-directory-page > .updates-panel {
-  min-height: calc(100vh - 315px);
-  min-height: calc(100dvh - 315px);
+  flex: 1 0 auto;
+  min-height: 0;
 }
 
 .search-query-summary {
@@ -147,11 +152,13 @@
 @media (max-width: 620px) {
   .search-directory-page {
     gap: 10px;
+    min-height: calc(100vh - 76px);
+    min-height: calc(100dvh - 76px);
   }
 
   .search-directory-page > .updates-panel {
-    min-height: calc(100vh - 275px);
-    min-height: calc(100dvh - 275px);
+    flex: 1 0 auto;
+    min-height: 0;
   }
 
   .search-query-summary {

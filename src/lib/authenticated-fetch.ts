@@ -7,9 +7,11 @@
  * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
  * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
- * Cleanup Info: Cookie-based fetch utility; UI Components: 0; CSS Selectors: 0. Cookie parsing now tolerates browser cookie separators without spaces; request retry and CSRF integration still require runtime tests.
+ * Cleanup Info: Cookie-based fetch utility; all refresh requests now delegate
+ * to the shared SDK AuthClient refresh lock to prevent competing rotations.
  */
 let refreshInFlight: Promise<boolean> | null = null;
+let authRefreshHandler: (() => Promise<boolean>) | null = null;
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -29,28 +31,25 @@ function readCookie(name: string): string | null {
   }
 }
 
-function getAuthBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_AUTH_BASE_URL?.trim().replace(/\/+$/, "") ||
-    "http://localhost:8000"
-  );
+/**
+ * Register the refresh function owned by the root SDK AuthClient.
+ * Portal requests and SDK requests must share this same refresh lock.
+ */
+export function setAuthRefreshHandler(
+  handler: (() => Promise<boolean>) | null,
+): void {
+  authRefreshHandler = handler;
 }
 
 async function refreshSession(): Promise<boolean> {
-  const authBaseUrl = getAuthBaseUrl();
-  const csrfToken = readCookie("csrftoken");
-  const headers = new Headers({ "Content-Type": "application/json" });
-  if (csrfToken) headers.set("X-CSRFToken", csrfToken);
+  if (!authRefreshHandler) {
+    // Never start an independent refresh request: it could rotate the same
+    // HttpOnly refresh cookie concurrently with the SDK AuthClient.
+    return false;
+  }
 
   try {
-    const response = await fetch(`${authBaseUrl}/api/v1/auth/refresh/`, {
-      method: "POST",
-      credentials: "include",
-      headers,
-      body: "{}",
-      cache: "no-store",
-    });
-    return response.ok;
+    return await authRefreshHandler();
   } catch (error) {
     console.error("Authentication session refresh failed:", error);
     return false;
@@ -67,13 +66,13 @@ function refreshSessionOnce(): Promise<boolean> {
 }
 
 function isRefreshRequest(request: Request) {
-  return new URL(request.url).pathname.replace(/\/+$/, "").endsWith("/auth/refresh");
+  return new URL(request.url).pathname.replace(/\\/+$/, "").endsWith("/auth/refresh");
 }
 
 /**
  * Fetch with the shared HttpOnly-cookie session.
  * Unsafe requests automatically include Django's CSRF cookie.
- * A 401 triggers one shared refresh attempt and at most one request retry.
+ * A 401 delegates refresh to the root SDK AuthClient and retries once.
  */
 export async function authenticatedFetch(
   input: RequestInfo | URL,
@@ -118,7 +117,7 @@ async function fetchWithRefresh(request: Request): Promise<Response> {
   return fetch(request.clone());
 }
 
-/** Proactively refresh the shared cookie session when a user returns to the tab. */
+/** Refresh through the root SDK AuthClient when the user returns to the tab. */
 export function refreshAuthSession(): Promise<boolean> {
   return refreshSessionOnce();
 }

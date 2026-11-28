@@ -2091,3 +2091,14 @@
   font-weight: 400;
   line-height: 1.45;
 }
+
+
+/* Reusable video posts linked from any post detail page. */
+.portal-post-related-videos { margin: 26px 0; padding: 18px; border: 1px solid var(--border, #e2e8f0); border-radius: 12px; background: var(--surface, #fff); }
+.portal-post-related-videos h2 { margin: 0 0 14px; font-size: 18px; font-weight: 750; }
+.portal-post-related-videos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.portal-post-related-video { display: grid; overflow: hidden; gap: 9px; border: 1px solid var(--border, #e2e8f0); border-radius: 9px; color: var(--text, #1e293b); text-decoration: none; transition: border-color .18s ease, transform .18s ease; }
+.portal-post-related-video:hover { border-color: #dc2626; transform: translateY(-2px); }
+.portal-post-related-video img, .portal-post-related-video-placeholder { display: grid; width: 100%; aspect-ratio: 16 / 9; place-items: center; background: #fee2e2; color: #dc2626; object-fit: cover; }
+.portal-post-related-video-placeholder { font-size: 28px; }
+.portal-post-related-video > span:last-child { padding: 0 11px 11px; font-size: 13px; font-weight: 650; line-height: 1.45; }

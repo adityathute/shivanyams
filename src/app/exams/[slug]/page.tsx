@@ -1,4 +1,5 @@
-import { getPostPageMetadata } from "../../../lib/seo";
+import { getPostPageMetadata, getPublicPostItem } from "../../../lib/seo";
+import { PortalPostDetail } from "../../../components/portal/post/PortalPostDetail";
 
 export async function generateMetadata({
   params,
@@ -9,9 +10,12 @@ export async function generateMetadata({
   return getPostPageMetadata("exams", slug);
 }
 
-/* Canonical Exams category detail route. */
-import { PortalPostDetail } from "../../../components/portal/post/PortalPostDetail";
-
-export default function ExamsPostPage() {
-  return <PortalPostDetail category="exams" />;
+export default async function ExamsPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const previewItem = await getPublicPostItem("exams", slug);
+  return <PortalPostDetail category="exams" previewItem={previewItem} />;
 }

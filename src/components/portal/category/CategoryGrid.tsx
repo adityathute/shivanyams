@@ -163,9 +163,15 @@ export const STATIC_PORTAL_CATEGORIES: Category[] = PORTAL_CATEGORIES.map((categ
 export function CategoryGrid({ language = "mr" }: { language?: Language }) {
   const router = useRouter();
 
+  const enabledCategories = STATIC_PORTAL_CATEGORIES.filter((category) =>
+    isPortalCategoryEnabled(category.slug),
+  );
+
   return (
-    <section className="category-grid">
-      {STATIC_PORTAL_CATEGORIES.filter((category) => isPortalCategoryEnabled(category.slug)).map((category) => {
+    <section
+      className={`category-grid${enabledCategories.length === 1 ? " category-grid-single" : ""}`}
+    >
+      {enabledCategories.map((category) => {
         const config = categoryConfig[category.slug];
         return (
           <button

@@ -19,7 +19,7 @@ type ApiPost = { slug?: string; updated_at?: string; published_at?: string };
 type ApiPage = { results?: ApiPost[]; next?: string | null };
 
 async function getPublishedPosts(kind: string): Promise<ApiPost[]> {
-  const apiBase = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
+  const apiBase = (process.env.NEXT_PUBLIC_PORTAL_API_URL || process.env.NEXT_PUBLIC_API_URL)?.trim();
   if (!apiBase) return [];
 
   const firstUrl = `${apiBase.replace(/\/+$/, "")}/content/${kind}/`;

@@ -38,10 +38,7 @@ function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, refreshUser, client } = useAuth();
-  const isAdmin = !loading && user?.roles?.includes("admin") === true;
-  const disabledFeature = loading
-    ? null
-    : getDisabledFeatureForPath(pathname || "", isAdmin);
+  const disabledFeature = getDisabledFeatureForPath(pathname || "");
 
   useEffect(() => {
     if (disabledFeature) router.replace("/jobs");

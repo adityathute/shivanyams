@@ -254,17 +254,22 @@
 
 .jobs-popular-tags.portal-post-taxonomy {
   display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  align-items: flex-start;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: 8px;
   width: 100%;
   max-width: 850px;
   box-sizing: border-box;
   padding: 3px 2px 4px;
   margin-top: 14px;
-  height: 76px;
+  height: 42px;
   overflow: hidden;
+}
+
+.jobs-popular-tags.portal-post-taxonomy a {
+  flex: 0 0 auto;
+  max-width: none;
+  white-space: nowrap;
 }
 
 .jobs-popular-tags.portal-post-taxonomy a {
@@ -311,7 +316,7 @@
   .jobs-popular-tags.portal-post-taxonomy {
     gap: 7px;
     margin-top: 12px;
-    height: 76px;
+    height: 42px;
   }
 
   .jobs-popular-tags.portal-post-taxonomy a {

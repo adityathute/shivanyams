@@ -1125,7 +1125,7 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
 
   const siteUrl = (
     process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com"
-  ).replace(/\\/+$/, "");
+  ).replace(/\/+$/, "");
   let structuredImage: string | undefined;
   if (post?.image) {
     try {

@@ -120,7 +120,7 @@ export function SearchPage() {
   );
   const showNoResults = Boolean(query) && !data.loading && matchedItems.length === 0;
   const suggestions = useMemo(
-    () => showNoResults ? getSuggestions(data.items, query) : [],
+    () => showNoResults ? getSuggestions(data.items.filter((item) => isPortalCategoryEnabled(getPortalCategoryForType(item.type))), query) : [],
     [data.items, query, showNoResults],
   );
 

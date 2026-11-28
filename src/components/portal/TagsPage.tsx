@@ -16,6 +16,7 @@ import Link from "next/link";
 import { usePortalData } from "./data/portal-data";
 import { usePortalLanguage } from "./context/PortalLanguageContext";
 import "../../styles/legacy/components/portal/saved/SavedPostsPage.css";
+import "../../styles/legacy/components/portal/tags/TagsPage.css";
 
 function slugify(value: string) {
   return value.normalize("NFKD").toLowerCase().trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
@@ -120,14 +121,22 @@ export function TagsPage() {
         <p>{text.description}</p>
       </header>
 
-      <section ref={panelRef} className="updates-panel panel related-tag-suggestions">
+      <section ref={panelRef} className="updates-panel panel related-tag-suggestions" aria-busy={data.loading}>
         <div className="section-heading">
           <h2>{text.tags}</h2>
-          <span>{tags.length} {text.count}</span>
+          <span>{data.loading ? <span className="tags-directory-heading-skeleton" aria-hidden="true" /> : `${tags.length} ${text.count}`}</span>
         </div>
 
         {data.loading ? (
-          <div className="saved-empty-state saved-list-empty" role="status">{text.loading}</div>
+          <div className="tags-directory-skeleton" role="status" aria-label={text.loading}>
+            {Array.from({ length: 18 }, (_, index) => (
+              <span
+                className="tags-directory-skeleton-chip"
+                key={index}
+                style={{ "--tag-width": `${[54, 76, 92, 64, 108, 82][index % 6]}px` } as React.CSSProperties}
+              />
+            ))}
+          </div>
         ) : visibleTags.length ? (
           <div className="related-tag-list">
             {visibleTags.map(([slug, tag]) => (

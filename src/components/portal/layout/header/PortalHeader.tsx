@@ -17,7 +17,9 @@ import {
   AccountModal,
   type AccountView,
 } from "shivanya-auth";
-import { CloseIcon, SearchIcon } from "shivanya-ui";
+import { CloseIcon, SearchIcon, HistoryIcon, DeleteIcon } from "shivanya-ui";
+import { getPortalApiUrl } from "../../category/CategoryGrid";
+import { authenticatedFetch } from "../../../../lib/authenticated-fetch";
 
 import { LanguageDropdown } from "../../language/LanguageDropdown";
 import { PortalUserDropdown } from "./PortalUserDropdown";
@@ -31,11 +33,104 @@ export function PortalHeader() {
   const [accountView, setAccountView] = useState<AccountView | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<Array<{ id: number; query: string }>>([]);
+  const [databaseSuggestions, setDatabaseSuggestions] = useState<string[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const desktopSearchRef = useRef<HTMLFormElement>(null);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const searchPanelRef = useRef<HTMLFormElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+  const loadSearchHistory = async () => {
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl("search/history/"));
+      if (!response.ok) return;
+      const payload = await response.json();
+      setSearchHistory(Array.isArray(payload) ? payload.slice(0, 5) : []);
+    } catch {
+      setSearchHistory([]);
+    }
+  };
+
+  const recordSearch = async (query: string) => {
+    try {
+      await authenticatedFetch(getPortalApiUrl("search/history/"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+      await loadSearchHistory();
+    } catch {
+      // Search navigation must continue even if history cannot be saved.
+    }
+  };
+
+  const removeSearchHistory = async (id: number) => {
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl("search/history/?id=" + id), { method: "DELETE" });
+      if (response.ok || response.status === 204) {
+        setSearchHistory((current) => current.filter((entry) => entry.id !== id));
+      }
+    } catch {
+      // Keep the row visible when the server cannot confirm deletion.
+    }
+  };
+
+  const matchingHistory = searchQuery.trim()
+    ? searchHistory.filter((entry) => entry.query.toLocaleLowerCase().includes(searchQuery.trim().toLocaleLowerCase()))
+    : searchHistory;
+  const visibleSuggestions = searchQuery.trim()
+    ? [...matchingHistory.map((entry) => entry.query), ...databaseSuggestions].filter(
+        (value, index, all) => all.findIndex((candidate) => candidate.toLocaleLowerCase() === value.toLocaleLowerCase()) === index,
+      ).slice(0, 8)
+    : [];
+
+  const chooseSearch = async (value: string) => {
+    const nextQuery = value.trim();
+    if (!nextQuery) return;
+    setSearchQuery(nextQuery);
+    setSearchDropdownOpen(false);
+    setSearchOpen(false);
+    await recordSearch(nextQuery);
+    router.push("/search?q=" + encodeURIComponent(nextQuery));
+  };
+
+  const renderSearchDropdown = () => {
+    if (!searchDropdownOpen) return null;
+    if (searchQuery.trim()) {
+      if (visibleSuggestions.length === 0 && !suggestionsLoading) return null;
+      return (
+        <div className="portal-search-suggestions" role="listbox" aria-label="Search suggestions">
+          {suggestionsLoading && visibleSuggestions.length === 0 ? <span className="portal-search-dropdown-empty">Finding suggestions…</span> : visibleSuggestions.map((suggestion) => (
+            <button type="button" role="option" aria-selected="false" key={suggestion} onClick={() => void chooseSearch(suggestion)}>
+              <SearchIcon size={15} aria-hidden="true" />
+              <span>{suggestion}</span>
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if (!searchHistory.length) return null;
+    return (
+      <div className="portal-search-suggestions portal-search-history" aria-label="Recent searches">
+        <div className="portal-search-dropdown-heading">Recent searches</div>
+        {searchHistory.map((entry) => (
+          <div className="portal-search-history-row" key={entry.id}>
+            <button type="button" className="portal-search-history-query" onClick={() => void chooseSearch(entry.query)}>
+              <HistoryIcon size={16} aria-hidden="true" />
+              <span>{entry.query}</span>
+            </button>
+            <button type="button" className="portal-search-history-delete" aria-label={"Remove " + entry.query + " from search history"} onClick={() => void removeSearchHistory(entry.id)}>
+              <DeleteIcon size={16} aria-hidden="true" />
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const submitSearch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const query = searchQuery.trim();
     if (!query) {
@@ -43,8 +138,34 @@ export function PortalHeader() {
       return;
     }
     setSearchOpen(false);
+    setSearchDropdownOpen(false);
+    await recordSearch(query);
     router.push(`/search?q=${encodeURIComponent(query)}`);
   };
+
+  useEffect(() => {
+    const value = searchQuery.trim();
+    if (value.length < 2) {
+      setDatabaseSuggestions([]);
+      setSuggestionsLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      setSuggestionsLoading(true);
+      try {
+        const response = await authenticatedFetch(getPortalApiUrl("search/suggestions/?q=" + encodeURIComponent(value)), { signal: controller.signal });
+        if (!response.ok) throw new Error("Suggestions unavailable");
+        const payload = await response.json();
+        setDatabaseSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions : []);
+      } catch {
+        if (!controller.signal.aborted) setDatabaseSuggestions([]);
+      } finally {
+        if (!controller.signal.aborted) setSuggestionsLoading(false);
+      }
+    }, 180);
+    return () => { window.clearTimeout(timer); controller.abort(); };
+  }, [searchQuery]);
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -66,6 +187,7 @@ export function PortalHeader() {
   // Close the mobile search when navigation changes the current page.
   useEffect(() => {
     setSearchOpen(false);
+    setSearchDropdownOpen(false);
   }, [pathname]);
 
   // Close it when another button is used (for example, the menu, language,
@@ -91,10 +213,11 @@ export function PortalHeader() {
 
   return (
     <>
-      <form className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={submitSearch}>
+      <form ref={desktopSearchRef} className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={submitSearch}>
         <SearchIcon size={17} aria-hidden="true" />
-        <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" />
+        <input value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" />
         <button type="submit">Search</button>
+        {renderSearchDropdown()}
       </form>
 
       <div className="portal-shell-actions portal-header-search-actions">
@@ -103,8 +226,9 @@ export function PortalHeader() {
         </button>
         <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={submitSearch}>
           <SearchIcon size={17} aria-hidden="true" />
-          <input ref={searchInputRef} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
+          <input ref={searchInputRef} value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
           <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
+          {renderSearchDropdown()}
         </form>
         {searchOpen && <div className="portal-search-backdrop" aria-hidden="true" />}
         <LanguageDropdown />

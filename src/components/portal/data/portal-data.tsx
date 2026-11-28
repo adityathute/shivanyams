@@ -120,6 +120,22 @@ export type JobDetails = {
   }[];
 };
 
+export type RequiredDocument = {
+  name_en?: string; name_mr?: string; name_hi?: string;
+  description_en?: string; description_mr?: string; description_hi?: string;
+  category?: string; requirement?: string; original_required?: boolean | null;
+  photocopy_required?: boolean | null; number_of_copies?: number | null; quantity?: number | null;
+  instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
+};
+export type PhotoRequirement = {
+  photo_type?: string; photo_size?: string; photo_quantity?: number | null; photo_background?: string;
+  other_specifications?: string; instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
+};
+export type SignatureRequirement = {
+  signature_type?: string; signature_format?: string; signature_size?: string;
+  other_specifications?: string; instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
+};
+
 export type Item = {
   id: string;
   title: string;
@@ -558,7 +574,7 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
       new_time: entry.new_time || null,
     })),
     important_links: (post.important_links || []).filter((link) => link.is_active !== false && Boolean(link.url)),
-    faqs: (post.faqs || []).filter((faq) => faq.is_active !== false && Boolean(faq.question_en?.trim() && faq.answer_en?.trim())),
+    faqs: (post.faqs || []).filter((faq) => faq.is_active !== false && Boolean(faq.question_en?.trim() && faq.answer_en?.trim())),\n    required_documents: (post.required_documents || []).filter((row) => row.is_active !== false),\n    photo_requirements: (post.photo_requirements || []).filter((row) => row.is_active !== false),\n    signature_requirements: (post.signature_requirements || []).filter((row) => row.is_active !== false),
 
     job_details: job
       ? {

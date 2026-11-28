@@ -193,7 +193,7 @@ export type Item = {
   /** Complete public API payload retained for exhaustive client-side search. */
   search_index?: string;
   job_details?: JobDetails;
-  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; summary_en?: string; summary_mr?: string; summary_hi?: string; meta_keywords?: string[]; slug: string; featured_image_url?: string; video_details?: { video_url?: string; embed_url?: string; thumbnail_url?: string } | null } }[];
+  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; summary_en?: string; summary_mr?: string; summary_hi?: string; meta_keywords?: string[]; slug: string; featured_image_url?: string; video_details?: { video_url?: string; embed_url?: string; thumbnail_url?: string; available_languages?: string[] } | null } }[];
 };
 
 export type Video = {
@@ -359,8 +359,16 @@ export type ApiPost = {
     slug?: string;
   } | null;
   organization_type?: string;
+  meta_title_en?: string;
+  meta_title_mr?: string;
+  meta_title_hi?: string;
+  meta_description_en?: string;
+  meta_description_mr?: string;
+  meta_description_hi?: string;
   meta_keywords?: string[];
   location?: string;
+  state?: string;
+  country?: string;
   start_date?: string | null;
   end_date?: string | null;
   event_date?: string | null;
@@ -370,7 +378,7 @@ export type ApiPost = {
   updated_at?: string | null;
   views_count?: number;
   comments_enabled?: boolean;
-  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; slug: string; featured_image_url?: string; video_thumbnail_url?: string } }[];
+  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; slug: string; featured_image_url?: string; video_thumbnail_url?: string; video_details?: { video_url?: string; embed_url?: string; thumbnail_url?: string; available_languages?: string[] } | null } }[];
   important_links?: ApiLink[];
   important_dates?: ImportantDate[];
   faqs?: PostFAQ[];
@@ -379,6 +387,7 @@ export type ApiPost = {
   signature_requirements?: (SignatureRequirement & { is_active?: boolean })[];
   job_details?: {
     advertisement_no?: string;
+    department?: string;
     education_mode?: "common" | "per_post";
     total_vacancies?: number | null;
     designation?: string;

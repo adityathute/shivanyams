@@ -29,37 +29,107 @@ interface ImportantLinksResponse {
   results?: ImportantLink[];
 }
 
-export function useImportantLinks() {
-  const [links, setLinks] = useState<ImportantLink[]>([]);
+interface ImportantLinksCache {
+  links: ImportantLink[];
+  cachedAt: number;
+}
 
-  useEffect(() => {
-    const controller = new AbortController();
+const CACHE_KEY = "shivanyams:important-links:v1";
+const CACHE_TTL = 10 * 60 * 1000;
 
-    async function fetchLinks() {
-      try {
-        const response = await authenticatedFetch(getPortalApiUrl("important-links/"), {
-          signal: controller.signal,
-        });
+let memoryCache: ImportantLinksCache | null = null;
+let requestInFlight: Promise<ImportantLink[]> | null = null;
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch important links: ${response.status}`);
-        }
+function readStoredCache(): ImportantLinksCache | null {
+  if (typeof window === "undefined") return null;
 
-        const payload: ImportantLink[] | ImportantLinksResponse =
-          await response.json();
+  try {
+    const raw = window.sessionStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
 
-        const data = Array.isArray(payload) ? payload : (payload.results ?? []);
-        setLinks(data.filter((link) => link.is_active ?? link.active ?? false));
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error("Important links loading failed:", error);
-        }
-      }
+    const parsed = JSON.parse(raw) as Partial<ImportantLinksCache>;
+    if (!Array.isArray(parsed.links) || typeof parsed.cachedAt !== "number") {
+      window.sessionStorage.removeItem(CACHE_KEY);
+      return null;
     }
 
-    fetchLinks();
+    return { links: parsed.links as ImportantLink[], cachedAt: parsed.cachedAt };
+  } catch {
+    return null;
+  }
+}
 
-    return () => controller.abort();
+function writeCache(links: ImportantLink[]) {
+  const cache = { links, cachedAt: Date.now() };
+  memoryCache = cache;
+
+  try {
+    window.sessionStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // The in-memory cache still works when browser storage is unavailable.
+  }
+}
+
+function getCachedLinks() {
+  if (memoryCache) return memoryCache;
+  memoryCache = readStoredCache();
+  return memoryCache;
+}
+
+function fetchImportantLinks(): Promise<ImportantLink[]> {
+  if (requestInFlight) return requestInFlight;
+
+  requestInFlight = (async () => {
+    try {
+      const response = await authenticatedFetch(getPortalApiUrl("important-links/"));
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch important links: ${response.status}`);
+      }
+
+      const payload: ImportantLink[] | ImportantLinksResponse = await response.json();
+      const data = Array.isArray(payload) ? payload : (payload.results ?? []);
+      const activeLinks = data.filter((link) => link.is_active ?? link.active ?? false);
+
+      writeCache(activeLinks);
+      return activeLinks;
+    } finally {
+      requestInFlight = null;
+    }
+  })();
+
+  return requestInFlight;
+}
+
+export function useImportantLinks() {
+  const [links, setLinks] = useState<ImportantLink[]>(() => memoryCache?.links ?? []);
+
+  useEffect(() => {
+    let mounted = true;
+    const cached = getCachedLinks();
+
+    if (cached) {
+      setLinks(cached.links);
+    }
+
+    const isFresh = cached && Date.now() - cached.cachedAt < CACHE_TTL;
+    if (isFresh) {
+      return () => {
+        mounted = false;
+      };
+    }
+
+    fetchImportantLinks()
+      .then((nextLinks) => {
+        if (mounted) setLinks(nextLinks);
+      })
+      .catch((error) => {
+        console.error("Important links loading failed:", error);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   function getLinkTitle(link: ImportantLink, language: Language) {

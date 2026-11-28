@@ -1,4 +1,4 @@
-import { getCategoryPageMetadata } from "../../lib/seo";
+import { getCategoryPageMetadata, getPublicCategoryItems } from "../../lib/seo";
 
 export function generateMetadata() {
   return getCategoryPageMetadata("jobs");
@@ -22,6 +22,7 @@ export function generateMetadata() {
 
 import { JobsPage } from "../../components/jobs/JobsPage";
 
-export default function Page() {
-  return <JobsPage />;
+export default async function Page() {
+  const initialJobs = await getPublicCategoryItems("jobs");
+  return <JobsPage initialJobs={initialJobs} />;
 }

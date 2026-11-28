@@ -214,189 +214,123 @@
   color: inherit !important;
 }
 
-/*
- * Search Results page layout
- * This page intentionally uses the document scrollbar. The legacy saved,
- * updates-directory and panel styles used fixed heights/inner scrolling;
- * these scoped rules neutralize those constraints only on Search Results.
- */
-.search-directory-page.updates-directory-page {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) !important;
-  grid-template-rows: auto auto auto !important;
-  align-content: start !important;
-  align-items: stretch !important;
-  gap: 12px !important;
+
+/* Search Results uses ordinary document flow, isolated from legacy directory grids. */
+.search-results-page {
+  display: block !important;
   width: auto !important;
   max-width: none !important;
   min-width: 0 !important;
+  min-height: calc(100dvh - 80px) !important;
   height: auto !important;
-  min-height: calc(100dvh - 64px - 16px) !important;
   max-height: none !important;
   margin: 0 16px 16px !important;
   padding: 0 0 24px !important;
   overflow: visible !important;
   box-sizing: border-box !important;
 }
-
-.search-directory-page.updates-directory-page > .saved-page-heading,
-.search-directory-page.updates-directory-page > .search-query-summary {
-  min-width: 0;
-  max-width: 100%;
+.search-results-page > .saved-page-heading {
+  margin: 0 0 12px !important;
+  padding-bottom: 4px !important;
 }
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) !important;
-  grid-template-rows: auto auto auto auto !important;
-  align-content: start !important;
-  align-items: stretch !important;
+.search-results-page > .search-query-summary,
+.search-results-page > .search-related-panel { margin: 0 0 12px !important; }
+.search-results-page > .updates-panel-search-results {
+  display: block !important;
   width: 100% !important;
-  min-width: 0 !important;
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
   margin: 0 !important;
-  overflow: visible !important;
+  overflow: hidden !important;
   box-sizing: border-box !important;
 }
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .section-heading {
-  grid-row: 1;
-  min-width: 0;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .filter-row {
-  grid-row: 2;
-  min-width: 0;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .update-list {
-  grid-row: 3;
-  display: flex !important;
-  flex: 0 0 auto !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
-  overflow-x: visible !important;
-  overflow-y: visible !important;
-  overscroll-behavior: auto !important;
-  scrollbar-gutter: auto !important;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .update-list > .update-row {
-  position: relative;
-  flex: 0 0 auto !important;
-  min-width: 0;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .updates-admin-pagination {
-  grid-row: 4;
-  position: static !important;
-  min-width: 0;
-  margin: 14px 0 0 !important;
-  flex: 0 0 auto !important;
-}
-
-.search-directory-page .search-query-highlight {
-  overflow-wrap: anywhere;
-}
-
-@media (max-width: 760px) {
-  .search-directory-page.updates-directory-page {
-    grid-template-rows: auto auto auto !important;
-    gap: 10px !important;
-    min-height: calc(100dvh - 60px - 12px) !important;
-    margin: 0 10px 12px !important;
-    padding: 0 0 24px !important;
-  }
-
-  .search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .section-heading {
-    gap: 8px;
-  }
-
-  .search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .filter-row {
-    flex-wrap: nowrap;
-    white-space: nowrap;
-  }
-
-  .search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .updates-admin-pagination {
-    padding: 10px 12px;
-  }
-}
-
-@media (max-width: 390px) {
-  .search-directory-page.updates-directory-page {
-    gap: 8px !important;
-    margin-right: 8px !important;
-    margin-left: 8px !important;
-  }
-}
-
-/*
- * Row stacking repair:
- * Do not use flex sizing for post links here. Legacy Jobs styles include
- * several responsive row rules; an explicit one-column grid gives every
- * post its own intrinsic-height grid track, so wrapped titles cannot paint
- * over the next post. Pagination remains an ordinary final grid item.
- */
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin {
-  grid-template-rows: auto auto auto auto !important;
-  grid-auto-flow: row !important;
-  align-content: start !important;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .update-list {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) !important;
-  grid-auto-flow: row !important;
-  grid-auto-rows: minmax(53px, max-content) !important;
-  align-content: start !important;
-  justify-content: stretch !important;
-  gap: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  flex: none !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .update-list > a.update-row {
+.search-results-page .updates-panel-search-results > .section-heading,
+.search-results-page .updates-panel-search-results > .filter-row,
+.search-results-page .updates-panel-search-results > .update-list,
+.search-results-page .updates-panel-search-results > .updates-admin-pagination {
   position: static !important;
   inset: auto !important;
+  float: none !important;
+  transform: none !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+}
+.search-results-page .updates-panel-search-results > .update-list {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+.search-results-page .updates-panel-search-results > .update-list > a.update-row {
+  position: relative !important;
+  inset: auto !important;
   display: grid !important;
-  grid-column: 1 / -1 !important;
-  grid-row: auto !important;
-  align-self: stretch !important;
+  grid-template-columns: max-content minmax(0, 1fr) !important;
+  align-items: center !important;
   width: 100% !important;
   height: auto !important;
   min-height: 53px !important;
   max-height: none !important;
   margin: 0 !important;
+  padding: 10px 16px !important;
   transform: none !important;
   float: none !important;
-  box-sizing: border-box !important;
   overflow: visible !important;
-}
-
-.search-directory-page.updates-directory-page > .updates-panel.jobs-updates.panelin > .updates-admin-pagination {
-  grid-row: auto !important;
-  position: static !important;
-  inset: auto !important;
-  align-self: stretch !important;
-  width: 100% !important;
-  height: auto !important;
-  margin: 14px 0 0 !important;
-  transform: none !important;
   box-sizing: border-box !important;
+  white-space: normal !important;
+}
+.search-results-page .updates-panel-search-results > .update-list > a.update-row > .update-title {
+  display: block !important;
+  position: static !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+.search-results-page .updates-panel-search-results > .update-list > a.update-row > .update-title small {
+  display: block !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+.search-results-page .updates-panel-search-results > .updates-admin-pagination {
+  display: flex !important;
+  position: static !important;
+  margin: 0 !important;
+  flex: none !important;
+  border-top: 1px solid var(--border, #edf1f6) !important;
+}
+.search-results-page .search-query-highlight { overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .search-results-page {
+    min-height: calc(100dvh - 60px) !important;
+    margin: 0 10px 12px !important;
+    padding-bottom: 20px !important;
+  }
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row {
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+    gap: 8px !important;
+    min-height: 57px !important;
+    padding: 9px 10px !important;
+  }
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row > .update-title {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row > .update-title small {
+    display: none !important;
+  }
+}
+@media (max-width: 390px) {
+  .search-results-page { margin-right: 8px !important; margin-left: 8px !important; }
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row {
+    gap: 6px !important;
+    padding-right: 8px !important;
+    padding-left: 8px !important;
+  }
 }

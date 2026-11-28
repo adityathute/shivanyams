@@ -304,3 +304,75 @@
 [data-theme="dark"] .updates-panel-home .update-application-deadline.deadline-open {
   color: #4ade80;
 }
+
+
+/* Final responsive date/deadline layout.
+   Keep published dates visible on category pages; the homepage intentionally
+   uses its compact layout and shows job deadlines only. */
+.updates-panel .update-row.update-row-has-deadline {
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+}
+
+.updates-panel .update-row.update-row-has-deadline > .update-deadline-group {
+  grid-column: 3;
+  justify-self: end;
+  width: max-content;
+  max-width: 100%;
+}
+
+.updates-panel .update-row.update-row-has-deadline .update-application-deadline {
+  display: block;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  /* Published date and NEW badge are separate, visible columns on phones. */
+  .updates-panel:not(.updates-panel-home) .update-row:not(.update-row-has-deadline) {
+    grid-template-columns: max-content minmax(0, 1fr) max-content max-content;
+    gap: 7px;
+  }
+
+  .updates-panel:not(.updates-panel-home) .update-row:not(.update-row-has-deadline) > time {
+    display: block !important;
+    justify-self: end;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  .updates-panel .update-row.update-row-has-deadline {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 7px;
+  }
+
+  .updates-panel .update-row.update-row-has-deadline > .update-deadline-group {
+    grid-column: 3;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .updates-panel .update-row.update-row-has-deadline .update-application-deadline {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 390px) {
+  .updates-panel:not(.updates-panel-home) .update-row:not(.update-row-has-deadline) {
+    grid-template-columns: max-content minmax(0, 1fr) max-content max-content;
+    gap: 5px;
+  }
+
+  .updates-panel:not(.updates-panel-home) .update-row:not(.update-row-has-deadline) > time {
+    font-size: 8px;
+  }
+
+  .updates-panel .update-row.update-row-has-deadline {
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    gap: 5px;
+  }
+}

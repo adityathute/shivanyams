@@ -454,9 +454,14 @@
   border-color: #293544;
 }
 
-[data-theme="dark"] .update-row:hover,
 [data-theme="dark"] .important-link:hover {
   background: #1c2633;
+}
+
+/* Keep update rows on their normal background for every category and theme. */
+.update-row:hover,
+.update-row:focus-visible {
+  background: transparent;
 }
 
 [data-theme="dark"] .filter-row button {

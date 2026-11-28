@@ -87,10 +87,12 @@ jobs:
           NODE
 
       - name: Install portal dependencies
+        id: install
         run: npm ci
 
       - name: Lint
         run: npm run lint
 
       - name: Build
+        if: always() && steps.install.outcome == 'success'
         run: npm run build

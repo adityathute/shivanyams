@@ -532,6 +532,11 @@ class AdminContent(viewsets.ModelViewSet):
     lookup_field = "slug"
     lookup_url_kwarg = "slug"
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["include_unpublished_relations"] = True
+        return context
+
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return PostSerializer

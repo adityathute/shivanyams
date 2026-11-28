@@ -164,6 +164,7 @@ export function SearchPage() {
         onTypeChange={setActiveCategory}
         showFilters
         showDateAndNewBadge
+        showNewBadge={false}
         limit={null}
         showViewAll={false}
         paginate

@@ -60,7 +60,7 @@ export type CategorySlug =
 const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
   jobs: "job",
   schemes: "scheme",
-  examination: "examination",
+  exams: "examination",
   results: "result",
   "admit-cards": "admit",
   guides: "guide",
@@ -70,7 +70,7 @@ const categoryTypes: Record<Exclude<CategorySlug, "videos">, string> = {
 const categoryItemTypes: Record<CategorySlug, Item["type"]> = {
   jobs: "job",
   schemes: "scheme",
-  examination: "examination",
+  exams: "examination",
   results: "result",
   "admit-cards": "admit",
   guides: "guide",
@@ -931,7 +931,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     });
   }, [post?.postId, post?.viewsCount, language, previewItem]);
 
-  const categoryApiSlug = category === "guides" ? "articles-guides" : category;
+  const categoryApiSlug = category === "examination" ? "exams" : category;
   const categoryRecord = categories.find(
     (entry) => entry.slug === categoryApiSlug,
   );
@@ -940,7 +940,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
     : "";
 
   const sidebarCategorySections = useMemo(() => {
-    const orderKey = category === "videos" ? "jobs" : category;
+    const orderKey = category === "videos" ? "jobs" : category === "examination" ? "exams" : category;
     const categoryOrder = POST_DETAIL_SIDEBAR_CATEGORY_ORDER[orderKey];
     return categoryOrder.map((entry) => {
       const type = categoryItemTypes[entry];
@@ -948,7 +948,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
         .filter((item) => item.type === type && String(item.id) !== String(post?.postId))
         .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
         .slice(0, 5);
-      const categorySlug = entry === "examination" ? "exams" : entry;
+      const categorySlug = entry;
       const categoryDefinition = STATIC_PORTAL_CATEGORIES.find(
         (item) => item.slug === categorySlug,
       );

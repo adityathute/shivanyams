@@ -11,7 +11,8 @@
  */
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useAuth } from "shivanya-auth";
 import {
   MailIcon,
   Input,
@@ -72,6 +73,7 @@ const ratingOptions: {
 ];
 
 export function FeedbackPage() {
+  const { user } = useAuth();
   const { language } = usePortalLanguage();
 
   const t = (key: FeedbackPageDictionaryKey) =>
@@ -89,6 +91,12 @@ export function FeedbackPage() {
     subject: "",
     message: "",
   });
+
+  useEffect(() => {
+    if (user?.email) {
+      setForm((current) => ({ ...current, email: user.email }));
+    }
+  }, [user?.email]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -108,7 +116,7 @@ export function FeedbackPage() {
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.detail || "Unable to submit your feedback. Please try again.");
       setSubmitSuccess("Thank you! Your feedback has been submitted successfully.");
-      setForm({ name: "", email: "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
+      setForm({ name: "", email: user?.email ?? "", category: "General Feedback", rating: "Excellent", subject: "", message: "" });
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to submit your feedback. Please try again.");
     } finally {
@@ -265,6 +273,7 @@ export function FeedbackPage() {
                   type="email"
                   autoComplete="email"
                   placeholder={t("emailPlaceholder")}
+                  readOnly={Boolean(user?.email)}
                   value={form.email}
                   onChange={(event) =>
                     setForm({

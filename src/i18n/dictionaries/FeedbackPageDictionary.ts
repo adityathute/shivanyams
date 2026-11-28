@@ -118,19 +118,19 @@ export const feedbackPageDictionary = {
     hi: "जानकारी भरें और अपने विचार हमारे साथ साझा करें।",
   },
   nameOptional: {
-    en: "Name",
-    mr: "नाव",
-    hi: "नाम",
+    en: "Full name",
+    mr: "पूर्ण नाव",
+    hi: "पूरा नाम",
   },
   namePlaceholder: {
-    en: "Enter your name",
-    mr: "तुमचे नाव टाका",
-    hi: "अपना नाम दर्ज करें",
+    en: "Enter your full name",
+    mr: "तुमचे पूर्ण नाव लिहा",
+    hi: "अपना पूरा नाम दर्ज करें",
   },
   emailOptional: {
-    en: "Email",
-    mr: "ईमेल",
-    hi: "ईमेल",
+    en: "Email address",
+    mr: "ईमेल पत्ता",
+    hi: "ईमेल पता",
   },
   emailPlaceholder: {
     en: "you@example.com",

@@ -1,12 +1,9 @@
 /**
  * Category access feature configuration.
  *
- * Normal visitors always follow FEATURES.categories.
- * ADMIN_FEATURE_TESTING only previews disabled categories for admins in
- * development. It is automatically ignored in production.
+ * Each category is enabled or disabled for every visitor in every environment.
+ * Set a category to true to make it available, or false to keep it disabled.
  */
-export const ADMIN_FEATURE_TESTING = true;
-
 export const FEATURES = {
   categories: {
     jobs: true,

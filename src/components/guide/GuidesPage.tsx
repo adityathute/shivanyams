@@ -16,7 +16,7 @@
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/guide/GuidesPage.css";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { Language } from "shivanya-i18n";
 import { GuidesCharacters } from "./GuidesCharacters";
 import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
@@ -24,14 +24,12 @@ import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 
-import { SearchIcon } from "shivanya-ui";
 import { PortalFooter } from "../portal/layout/footer/PortalFooter";
 
 import { baseDictionary, getBaseText } from "../../i18n/dictionaries/base";
 
 export function GuidesPage() {
   useRefreshPortalDataOnMount();
-  const [query, setQuery] = useState("");
 
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -39,8 +37,26 @@ export function GuidesPage() {
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
-  const guides = useMemo(() => {
-    const term = query.trim().toLowerCase();
+  const guides = useMemo(
+    () => data.items.filter((item) => item.type === "guide"),
+    [data.items],
+  );
+
+  const popularTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    guides.forEach((item) => {
+      (Array.isArray(item.tags) ? item.tags : []).forEach((tag) => {
+        const cleanTag = String(tag || "").trim();
+        if (!cleanTag) return;
+        const normalized = cleanTag.toLocaleLowerCase();
+        counts.set(normalized, (counts.get(normalized) || 0) + 1);
+      });
+    });
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [guides]);
 
     return data.items.filter((item) => {
       if (item.type !== "guide") return false;
@@ -73,20 +89,13 @@ export function GuidesPage() {
 
               <p>{t("guidesHeroDescription")}</p>
 
-              <form
-                className="guides-search"
-                onSubmit={(event) => event.preventDefault()}
-              >
-                <SearchIcon size={18} />
-
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={t("guidesSearchPlaceholder")}
-                />
-
-                <button type="submit">{t("search")}</button>
-              </form>
+              {popularTags.length > 0 ? (
+                <div className="guides-popular-tags portal-post-taxonomy" aria-label="Popular guide tags">
+                  {popularTags.map((tag) => (
+                    <a className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>{tag}</a>
+                  ))}
+                </div>
+              ) : null}
             </div>
 
             <div className="guides-hero-visual" aria-hidden="true">

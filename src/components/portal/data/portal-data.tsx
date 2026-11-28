@@ -363,7 +363,7 @@ export type ApiPost = {
   updated_at?: string | null;
   views_count?: number;
   comments_enabled?: boolean;
-  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; slug: string; featured_image_url?: string } }[];
+  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; slug: string; featured_image_url?: string; video_thumbnail_url?: string } }[];
   important_links?: ApiLink[];
   important_dates?: ImportantDate[];
   faqs?: PostFAQ[];

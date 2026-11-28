@@ -2166,7 +2166,6 @@ padding-right: 24px;
 /* Keep the common Application Fee amount and category note together on one row. */
 .post-editor-common-fee-fields {
   display: grid;
-  grid-template-columns: minmax(180px, 0.75fr) minmax(0, 2fr);
   align-items: start;
   gap: 14px;
   width: 100%;

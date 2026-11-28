@@ -14,7 +14,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuth } from "shivanya-auth";
-import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, DislikeIcon, EditIcon, LikeIcon, MessagesIcon, ReportIcon, Select, Textarea } from "shivanya-ui";
+import { ArrowDownIcon, ArrowUpIcon, Avatar, Button, ConfirmDialog, DeleteIcon, AlertCircleIcon as DislikeIcon, EditIcon, FavoriteIcon as LikeIcon, MessagesIcon, ReportsIcon as ReportIcon, Select, Textarea } from "shivanya-ui";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { formatCompactNumber } from "../../../lib/format-number";
 import { getPortalApiUrl } from "../category/CategoryGrid";

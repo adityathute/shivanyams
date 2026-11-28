@@ -628,6 +628,18 @@
 
 .updates-directory-page > .updates-panel {
   width: 100%;
+  min-height: calc(100vh - 260px);
+  display: flex;
+  flex-direction: column;
+}
+
+.updates-directory-page > .updates-panel > .update-list {
+  flex: 1 0 auto;
+}
+
+.updates-directory-page > .updates-panel > .updates-admin-pagination {
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .updates-directory-page .update-row {
@@ -644,6 +656,10 @@
   .updates-directory-page {
     width: auto;
     margin: 0 10px 12px;
+  }
+
+  .updates-directory-page > .updates-panel {
+    min-height: calc(100vh - 220px);
   }
 
   .updates-directory-page .update-row {

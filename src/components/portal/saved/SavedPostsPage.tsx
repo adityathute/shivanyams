@@ -24,7 +24,6 @@ import {
   getPortalApiUrl,
   normalizeCategorySlug,
   STATIC_PORTAL_CATEGORIES,
-  type Category,
   type Language,
 } from "../category/CategoryGrid";
 import {
@@ -38,16 +37,7 @@ import { usePortalLanguage } from "../context/PortalLanguageContext";
 import { usePortalAuth } from "../context/PortalAuthContext";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 
-const CATEGORY_ORDER = [
-  "jobs",
-  "schemes",
-  "articles-guides",
-  "admit-cards",
-  "examination",
-  "results",
-  "videos",
-  "tools",
-];
+
 
 const copy: Record<
   Language,

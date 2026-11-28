@@ -25,6 +25,7 @@ from .models import (
     Post,
     PostDate,
     PostFAQ,
+    PostRequiredDocument,
     PostLink,
     PostReaction,
     PostRelation,

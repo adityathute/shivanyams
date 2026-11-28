@@ -233,6 +233,7 @@ class RelatedPostSerializer(serializers.ModelSerializer):
             "video_url": detail.video_url or "",
             "embed_url": detail.embed_url or "",
             "thumbnail_url": detail.thumbnail_url or "",
+            "available_languages": detail.available_languages or [],
         }
 
 

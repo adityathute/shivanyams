@@ -7,7 +7,7 @@
  * Repository Commit: a3e802f7ba90b45a1d57fd180d9672e768de93fd
  * Both repositories are read-only references.
  * Cleanup Status: Cleanup Pending
- * Cleanup Info: Batch 12 post-detail audit. UI Audit: 5 SDK components: CloseIcon, ConfirmDialog, DeleteIcon, LikeIcon, QuestionMarkCircleIcon. CSS mapping: PostFAQSection.css (116 selector blocks; 95 unique; 19 repeated selector names / 21 repeated occurrences). Legacy CSS cascade, modal accessibility and moderation-flow verification pending.
+ * Cleanup Info: Batch 12 post-detail audit. UI Audit: 5 SDK components: CloseIcon, ConfirmDialog, DeleteIcon, FavoriteIcon as LikeIcon, QuestionMarkCircleIcon. CSS mapping: PostFAQSection.css (116 selector blocks; 95 unique; 19 repeated selector names / 21 repeated occurrences). Legacy CSS cascade, modal accessibility and moderation-flow verification pending.
  */
 "use client";
 

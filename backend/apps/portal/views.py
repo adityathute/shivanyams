@@ -326,11 +326,20 @@ class SearchHistoryView(APIView):
             raise ValidationError({"query": "Search phrases must be 200 characters or fewer."})
 
         normalized = " ".join(query.casefold().split())
+        user_auth_id = str(request.user.id)
         row, _ = SearchHistory.objects.update_or_create(
-            user_auth_id=str(request.user.id),
+            user_auth_id=user_auth_id,
             normalized_query=normalized,
             defaults={"query": query, "updated_at": timezone.now()},
         )
+        older_ids = list(
+            SearchHistory.objects.filter(user_auth_id=user_auth_id)
+            .exclude(pk=row.pk)
+            .order_by("-updated_at", "-id")
+            .values_list("id", flat=True)[4:]
+        )
+        if older_ids:
+            SearchHistory.objects.filter(id__in=older_ids, user_auth_id=user_auth_id).delete()
         return Response({"id": row.id, "query": row.query}, status=status.HTTP_200_OK)
 
     def delete(self, request):

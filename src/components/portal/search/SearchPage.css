@@ -176,3 +176,20 @@
   outline: 2px solid var(--blue, #2563eb);
   outline-offset: 2px;
 }
+
+/* Emphasize the exact terms entered in the search field. */
+.search-directory-page .search-query-highlight {
+  display: inline;
+  padding: 0 2px;
+  border-radius: 3px;
+  background: #fff0a8;
+  color: #744b00;
+  font-weight: 800;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+[data-theme="dark"] .search-directory-page .search-query-highlight {
+  background: #66501d;
+  color: #ffe29a;
+}

@@ -195,6 +195,7 @@ export type Video = {
   title_mr?: string;
   title_hi?: string;
   url: string;
+  embed_url?: string;
   thumbnail: string;
   language: string;
   slug?: string;
@@ -413,6 +414,7 @@ export type ApiPost = {
   article_guide_details?: { source_url?: string } | null;
   video_details?: {
     video_url?: string;
+    embed_url?: string;
     thumbnail_url?: string;
     available_languages?: string[];
   } | null;
@@ -838,6 +840,7 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
           title_mr: item.title_mr || "",
           title_hi: item.title_hi || "",
           url: post.video_details?.video_url || item.link,
+          embed_url: post.video_details?.embed_url || "",
           thumbnail: post.video_details?.thumbnail_url || item.image || "",
           language: post.video_details?.available_languages?.join(", ") || "",
           views_count: item.views_count,
@@ -866,7 +869,7 @@ type PortalDataContextValue = {
 
 const PortalDataContext = createContext<PortalDataContextValue | null>(null);
 
-const PORTAL_DATA_CACHE_VERSION = 1;
+const PORTAL_DATA_CACHE_VERSION = 2;
 
 type CachedPortalData = {
   version: number;

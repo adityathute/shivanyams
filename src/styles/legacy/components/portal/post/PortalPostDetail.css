@@ -851,7 +851,7 @@
 .portal-education-post-card ul,
 .portal-education-details > .portal-job-detail-row ul {
   display: grid;
-  gap: 7px;
+  gap: 3px;
   margin: 0;
   padding: 0 0 0 21px;
   color: var(--text-secondary, #475569);
@@ -863,7 +863,7 @@
   margin: 0;
   padding-left: 2px;
   font-size: 14px;
-  line-height: 1.75;
+  line-height: 1.5;
   white-space: pre-line;
   overflow-wrap: anywhere;
 }

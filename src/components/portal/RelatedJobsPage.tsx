@@ -45,7 +45,7 @@ const TAG_CATEGORIES = [
 ] as const;
 
 const copy = {
-  en: { eyebrow: "SHIVANYAMS • DISCOVER", title: "Related Content", description: "Explore jobs, schemes and updates matching this tag.", count: "posts found", loading: "Loading related content...", empty: "No published content was found for this selection.", more: "Explore more tags", allTags: "View all tags" },
+  en: { eyebrow: "SHIVANYAMS • DISCOVER", title: "Related Content", description: "Explore jobs, schemes and updates matching this tag.", count: "posts", loading: "Loading related content...", empty: "No published content was found for this selection.", more: "Explore more tags", allTags: "View all tags" },
   mr: { eyebrow: "SHIVANYAMS • शोधा", title: "संबंधित माहिती", description: "या टॅगशी संबंधित नोकऱ्या, योजना आणि अपडेट्स पहा.", count: "पोस्ट मिळाल्या", loading: "संबंधित माहिती लोड होत आहे...", empty: "या टॅगसाठी प्रकाशित माहिती उपलब्ध नाही.", more: "आणखी टॅग शोधा", allTags: "सर्व टॅग पहा" },
   hi: { eyebrow: "SHIVANYAMS • खोजें", title: "संबंधित सामग्री", description: "इस टैग से जुड़ी नौकरियाँ, योजनाएँ और अपडेट देखें।", count: "पोस्ट मिलीं", loading: "संबंधित सामग्री लोड हो रही है...", empty: "इस टैग के लिए कोई प्रकाशित सामग्री नहीं मिली।", more: "और टैग खोजें", allTags: "सभी टैग देखें" },
 };

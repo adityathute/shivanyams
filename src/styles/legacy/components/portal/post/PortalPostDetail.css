@@ -2067,8 +2067,20 @@
 }
 .portal-requirements-section .portal-post-wise-table th,
 .portal-requirements-section .portal-post-wise-table td {
-  vertical-align: top;
   overflow-wrap: anywhere;
+}
+
+/* Vertically center the Requirement and Type columns; keep Details top-aligned. */
+.portal-requirements-section .portal-post-wise-table th:nth-child(1),
+.portal-requirements-section .portal-post-wise-table td:nth-child(1),
+.portal-requirements-section .portal-post-wise-table th:nth-child(2),
+.portal-requirements-section .portal-post-wise-table td:nth-child(2) {
+  vertical-align: middle;
+}
+
+.portal-requirements-section .portal-post-wise-table th:nth-child(3),
+.portal-requirements-section .portal-post-wise-table td:nth-child(3) {
+  vertical-align: top;
 }
 
 .portal-requirements-section .portal-requirement-note {

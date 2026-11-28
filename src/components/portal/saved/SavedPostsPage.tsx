@@ -368,17 +368,17 @@ export function SavedPostsPage() {
                 : "";
 
               return (
-                <article className="saved-update-row" key={item.id}>
+                <Link className="saved-update-row" href={getPostHref(item)} key={item.id}>
                   <CategoryBadge
                     category={getCategorySlugForType(item.type)}
                     label={category || item.category}
                   />
-                  <div className="saved-update-content">
-                    <Link className="saved-update-title" href={getPostHref(item)}>
+                  <span className="saved-update-content">
+                    <span className="saved-update-title">
                       {title}
                       {summary && <small>{summary}</small>}
-                    </Link>
-                  </div>
+                    </span>
+                  </span>
                   {applicationDeadline ? (
                     <span className="update-deadline-group">
                       <span className="update-deadline-extended">
@@ -389,7 +389,7 @@ export function SavedPostsPage() {
                       </time>
                     </span>
                   ) : null}
-                </article>
+                </Link>
               );
             })
           ) : (

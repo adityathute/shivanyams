@@ -1980,7 +1980,8 @@
 .portal-education-post-heading .portal-education-post-vacancies {
   display: inline-flex;
   width: fit-content;
-  margin-top: 5px;
+  margin-top: 0;
+  margin-left: 8px;
   padding: 3px 9px;
   border: 1px solid var(--border-color, #e5e7eb);
   border-radius: 999px;

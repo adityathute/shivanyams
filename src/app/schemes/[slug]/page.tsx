@@ -16,6 +16,6 @@ export default async function SchemesPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const previewItem = await getPublicPostItem("schemes", slug);
-  return <PortalPostDetail category="schemes" previewItem={previewItem} />;
+  const initialItem = await getPublicPostItem("schemes", slug);
+  return <PortalPostDetail category="schemes" initialItem={initialItem} />;
 }

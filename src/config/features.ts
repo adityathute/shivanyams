@@ -14,17 +14,14 @@ export const FEATURES = {
     videos: false,
     tools: false,
   },
-  sections: {
-    search: true,
-    popularTags: true,
-    relatedPosts: true,
-    comments: true,
-    faq: true,
-    newsletter: true,
-  },
 } as const;
 
 export type PortalFeatureKey = keyof typeof FEATURES.categories;
+
+export function getPortalCategoryForType(type: string): string {
+  const types: Record<string, string> = { job: "jobs", scheme: "schemes", examination: "exams", exam: "exams", admit: "admit-cards", result: "results", guide: "guides", video: "videos", tool: "tools" };
+  return types[type] || type;
+}
 
 const ROUTE_FEATURES: Record<string, PortalFeatureKey> = {
   jobs: "jobs",

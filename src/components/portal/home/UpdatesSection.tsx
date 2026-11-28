@@ -12,6 +12,7 @@
 "use client";
 
 import "./../../../styles/legacy/components/portal/home/UpdatesSection.css";
+import Link from "next/link";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -45,6 +46,9 @@ type Props = {
   onTypeChange?: (value: ItemType | "all") => void;
   showFilters?: boolean;
   showDateAndNewBadge?: boolean;
+  limit?: number | null;
+  showViewAll?: boolean;
+  viewAllHref?: string;
 };
 
 interface CategoryApiResponse {
@@ -156,6 +160,9 @@ export function UpdatesSection({
   onTypeChange,
   showFilters = true,
   showDateAndNewBadge = true,
+  limit = 20,
+  showViewAll = true,
+  viewAllHref = "/updates",
 }: Props) {
   const { data } = usePortalData();
 
@@ -225,7 +232,7 @@ export function UpdatesSection({
   const filtered = useMemo(() => {
     const term = query.trim().toLocaleLowerCase();
 
-    return data.items
+    const sorted = data.items
       .filter((item) => {
         const matchesType = type === "all" || item.type === type;
 
@@ -245,9 +252,10 @@ export function UpdatesSection({
         return (
           new Date(b.date || "").getTime() - new Date(a.date || "").getTime()
         );
-      })
-      .slice(0, 20);
-  }, [data.items, query, type, language]);
+      });
+
+    return limit == null ? sorted : sorted.slice(0, limit);
+  }, [data.items, query, type, language, limit]);
 
   const dateLocale =
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
@@ -257,15 +265,11 @@ export function UpdatesSection({
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 
-        <button
-          type="button"
-          onClick={() => {
-            onQueryChange?.("");
-            onTypeChange?.("all");
-          }}
-        >
-          {getPortalText("viewAll", language)} →
-        </button>
+        {showViewAll ? (
+          <Link href={viewAllHref}>
+            {getPortalText("viewAll", language)} →
+          </Link>
+        ) : null}
       </div>
 
       {showFilters && (

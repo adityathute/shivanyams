@@ -1259,3 +1259,26 @@
     max-height: min(330px, 55vh);
   }
 }
+
+/* Keep the history row controls neutral instead of inheriting the blue submit-button style. */
+.portal-topbar-search .portal-search-history-query {
+  height: auto;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+.portal-topbar-search .portal-search-history-delete {
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 400;
+}
+.portal-topbar-search .portal-search-history-delete:hover { background: rgba(239, 68, 68, .1); color: #dc2626; }

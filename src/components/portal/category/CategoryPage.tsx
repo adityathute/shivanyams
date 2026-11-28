@@ -32,11 +32,11 @@ import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 const categorySlugByType: Record<ItemType, string> = {
   job: "jobs",
   scheme: "schemes",
-  examination: "examination",
-  exam: "examination",
+  examination: "exams",
+  exam: "exams",
   result: "results",
   admit: "admit-cards",
-  guide: "articles-guides",
+  guide: "guides",
   video: "videos",
   tool: "tools",
 };
@@ -63,11 +63,12 @@ const categoryTypeBySlug: Record<string, ItemType> = {
 const CATEGORY_ORDER = [
   "jobs",
   "schemes",
-  "articles-guides",
+  "exams",
   "admit-cards",
-  "examination",
   "results",
+  "guides",
   "videos",
+  "tools",
 ];
 
 const pageCopy: Record<
@@ -321,7 +322,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
             <h2>
               {type === "examination"
                 ? language === "en"
-                  ? "Latest Examination Updates"
+                  ? "Latest Exams Updates"
                   : language === "mr"
                     ? "नवीनतम परीक्षा अपडेट्स"
                     : "नवीनतम परीक्षा अपडेट"

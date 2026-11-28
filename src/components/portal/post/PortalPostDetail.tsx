@@ -602,7 +602,7 @@ export const REQUIRED_DOCUMENT_CATEGORY_LABELS: Record<string, { en: string; mr:
   }
 };
 
-function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
+export function PortalPostDetail({ category, previewItem }: { category: CategorySlug; previewItem?: Item | null }) {
   const params = useParams<{ slug: string }>();
   const slug = decodeURIComponent(params.slug ?? "");
   const { data } = usePortalData();

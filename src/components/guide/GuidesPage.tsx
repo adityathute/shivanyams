@@ -119,21 +119,6 @@ export function GuidesPage() {
                       {getLocalizedPostTitle(item, language)}
                       <small>{getLocalizedPostSummary(item, language)}</small>
                     </span>
-
-                    <time>
-                      {item.date
-                        ? new Date(`${item.date}T12:00:00`).toLocaleDateString(
-                            dateLocale,
-                            {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            },
-                          )
-                        : t("new")}
-                    </time>
-
-                    <span className="new-pill">{t("new")}</span>
                   </a>
                 ))
                ) : data.loading ? (
@@ -145,8 +130,6 @@ export function GuidesPage() {
                         <span className="update-skeleton-title" />
                         <span className="update-skeleton-summary" />
                       </span>
-                      <span className="update-skeleton-date" />
-                      <span className="update-skeleton-pill" />
                     </div>
                   ))}
                 </div>

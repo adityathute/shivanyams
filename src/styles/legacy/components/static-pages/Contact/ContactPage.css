@@ -545,3 +545,20 @@
     animation: none;
   }
 }
+
+/* Keep Contact and Feedback form fields neutral while focused. */
+.contact-page .shivanya-input-container:focus-within {
+  border-color: var(--border, #e2e8f0) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.contact-page .shivanya-input-container:focus-within input:focus,
+.contact-page .shivanya-input-container:focus-within textarea:focus,
+.contact-page .shivanya-input-container:focus-within select:focus,
+.contact-page input:focus-visible,
+.contact-page textarea:focus-visible,
+.contact-page select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

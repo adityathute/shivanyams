@@ -1499,7 +1499,9 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   <td>
                                     {details.length ? (
                                       <div className="portal-requirement-details-list">
-                                        {details.map((value) => capitalizeFirst(value)).join(" · ")}
+                                        {details.map((value, detailIndex) => (
+                                          <div key={detailIndex}>{capitalizeFirst(value)}</div>
+                                        ))}
                                       </div>
                                     ) : "—"}
                                     {instructions ? (
@@ -1566,9 +1568,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                   <td>
                                     {details.length ? (
                                       <div className="portal-requirement-details-list">
-                                        {details.map((value, detailIndex) => (
-                                          <div key={detailIndex}>{capitalizeFirst(value)}</div>
-                                        ))}
+                                        {details.map((value) => capitalizeFirst(value)).join(" · ")}
                                       </div>
                                     ) : "—"}
                                     {instructions ? (

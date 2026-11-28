@@ -44,7 +44,7 @@ export function PostEngagementActions({ postId, title, placement = "footer" }: P
   const [message, setMessage] = useState("");
   const [shareMessage, setShareMessage] = useState("");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
-  const shareMenuRef = useRef<HTMLElement | null>(null);
+  const shareMenuRef = useRef<HTMLDivElement | null>(null);
   const messageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const shareMessageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

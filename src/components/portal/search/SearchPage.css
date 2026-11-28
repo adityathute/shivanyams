@@ -2,6 +2,14 @@
   gap: 14px;
 }
 
+/* The search page has an extra query-summary row above the results panel.
+   Account for it so the panel and pagination finish at the same viewport
+   position as the All Posts directory instead of making the page too tall. */
+.search-directory-page > .updates-panel {
+  min-height: calc(100vh - 315px);
+  min-height: calc(100dvh - 315px);
+}
+
 .search-query-summary {
   display: flex;
   align-items: center;
@@ -139,6 +147,11 @@
 @media (max-width: 620px) {
   .search-directory-page {
     gap: 10px;
+  }
+
+  .search-directory-page > .updates-panel {
+    min-height: calc(100vh - 275px);
+    min-height: calc(100dvh - 275px);
   }
 
   .search-query-summary {

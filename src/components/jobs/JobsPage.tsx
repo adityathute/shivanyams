@@ -16,7 +16,7 @@
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/jobs/JobsPage.css";
 import { useMemo } from "react";
-import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount } from "../portal/data/portal-data";
+import { getLocalizedPostSummary, getLocalizedPostTitle, usePortalData, useRefreshPortalDataOnMount, type Item } from "../portal/data/portal-data";
 import { createPostSlug } from "../portal/post/PortalPostDetail";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 
@@ -48,7 +48,7 @@ function getExtendedDeadlineLabel(language: string): string {
   return "Date Extended";
 }
 
-export function JobsPage() {
+export function JobsPage({ initialJobs = null }: { initialJobs?: Item[] | null }) {
   useRefreshPortalDataOnMount();
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
@@ -56,7 +56,12 @@ export function JobsPage() {
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
-  const jobs = useMemo(() => data.items.filter((item) => item.type === "job"), [data.items]);
+  const jobs = useMemo(() => {
+    const currentJobs = data.items.filter((item) => item.type === "job");
+    return data.loading || data.failedTypes?.includes("job")
+      ? initialJobs ?? currentJobs
+      : currentJobs;
+  }, [data.items, data.loading, data.failedTypes, initialJobs]);
 
   const popularTags = useMemo(() => {
     const counts = new Map<string, number>();

@@ -1051,3 +1051,108 @@
   }
 }
 
+
+/*
+ * Mobile cascade repair:
+ * Keep related tag/organization rows in lockstep with the /jobs page.
+ * This is intentionally the final scoped rule so legacy saved-page selectors
+ * and category-specific responsive rules cannot override the shared row UI.
+ */
+@media (max-width: 760px) {
+  .related-saved-page .jobs-updates .update-list > a.related-job-row {
+    display: grid !important;
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+    align-items: center !important;
+    gap: 7px !important;
+    min-height: 57px !important;
+    padding: 8px 10px !important;
+    border-bottom: 1px solid #edf1f6 !important;
+    background: transparent !important;
+    box-sizing: border-box !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > .portal-post-category-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    justify-self: start !important;
+    width: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    padding: 0 7px !important;
+    box-sizing: border-box !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > .portal-post-category-badge > span:not(.portal-post-category-icon) {
+    display: none !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > .update-title {
+    display: block !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    font-family: "Outfit", "Hind", sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.45 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > .update-title small {
+    display: none !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > .update-deadline-group {
+    display: flex !important;
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    flex-direction: column-reverse !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    justify-self: end !important;
+    gap: 4px !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row .update-application-deadline {
+    display: block !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    text-align: right !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row .update-deadline-extended {
+    display: inline-flex !important;
+    padding: 3px 7px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > time {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .related-saved-page .jobs-updates .update-list > a.related-job-row {
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+    gap: 12px !important;
+  }
+
+  .related-saved-page .jobs-updates .update-list > a.related-job-row > .update-title {
+    font-size: 12px !important;
+  }
+}
+
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > a.related-job-row {
+  border-color: #293544 !important;
+  color: #e6edf3 !important;
+}
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > a.related-job-row:hover,
+[data-theme="dark"] .related-saved-page .jobs-updates .update-list > a.related-job-row:focus-visible {
+  background: #1c2633 !important;
+}

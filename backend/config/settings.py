@@ -82,6 +82,35 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv(),
 )
 
+# Production transport and cookie security. If TLS terminates at a trusted
+# reverse proxy, explicitly enable DJANGO_USE_X_FORWARDED_PROTO.
+SECURE_SSL_REDIRECT = config(
+    "DJANGO_SECURE_SSL_REDIRECT", default=not DEBUG, cast=bool
+)
+SECURE_HSTS_SECONDS = config(
+    "DJANGO_SECURE_HSTS_SECONDS", default=0, cast=int
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
+    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False, cast=bool
+)
+SECURE_HSTS_PRELOAD = config(
+    "DJANGO_SECURE_HSTS_PRELOAD", default=False, cast=bool
+)
+SESSION_COOKIE_SECURE = config(
+    "DJANGO_SESSION_COOKIE_SECURE", default=not DEBUG, cast=bool
+)
+CSRF_COOKIE_SECURE = config(
+    "DJANGO_CSRF_COOKIE_SECURE", default=not DEBUG, cast=bool
+)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+X_FRAME_OPTIONS = "DENY"
+SECURE_PROXY_SSL_HEADER = (
+    ("HTTP_X_FORWARDED_PROTO", "https")
+    if config("DJANGO_USE_X_FORWARDED_PROTO", default=False, cast=bool)
+    else None
+)
+
 AUTH_ME_URL = config(
     "AUTH_ME_URL",
     default="http://127.0.0.1:8000/api/v1/auth/me/",

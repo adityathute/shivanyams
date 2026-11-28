@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePortalData } from "./data/portal-data";
 import { usePortalLanguage } from "./context/PortalLanguageContext";
+import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../config/features";
 import "../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 import "../../styles/legacy/components/portal/tags/TagsPage.css";
 
@@ -62,7 +63,7 @@ export function TagsPage() {
 
   const tags = useMemo(() => {
     const counts = new Map<string, { label: string; count: number }>();
-    data.items.forEach((item) => {
+    data.items.filter((item) => isPortalCategoryEnabled(getPortalCategoryForType(item.type))).forEach((item) => {
       const seen = new Set<string>();
       (item.tags || []).forEach((rawTag) => {
         const label = rawTag.trim();

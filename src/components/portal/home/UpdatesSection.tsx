@@ -14,7 +14,7 @@
 import "./../../../styles/legacy/components/portal/home/UpdatesSection.css";
 import Link from "next/link";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   getPortalApiUrl,
@@ -200,6 +200,7 @@ export function UpdatesSection({
   const [categories, setCategories] = useState<Category[]>(STATIC_PORTAL_CATEGORIES);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const panelRef = useRef<HTMLElement | null>(null);
 
   const sectionTitle = title ?? getPortalText("updatesTitle", language);
 
@@ -302,6 +303,28 @@ export function UpdatesSection({
   const paginationFlowsAfterPosts = paginate && visibleItems.length >= pageSize;
 
   useEffect(() => {
+    if (!searchAllFields) return;
+    const updatePageSize = () => {
+      const panel = panelRef.current;
+      if (!panel) return;
+      const top = panel.getBoundingClientRect().top;
+      const availableHeight = Math.max(160, window.innerHeight - top - 155);
+      const rowHeight = window.innerWidth <= 760 ? 94 : 78;
+      setPageSize(Math.max(10, Math.floor(availableHeight / rowHeight)));
+    };
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    const observer = typeof ResizeObserver !== "undefined" && panelRef.current
+      ? new ResizeObserver(updatePageSize)
+      : null;
+    if (observer && panelRef.current) observer.observe(panelRef.current);
+    return () => {
+      window.removeEventListener("resize", updatePageSize);
+      observer?.disconnect();
+    };
+  }, [searchAllFields]);
+
+  useEffect(() => {
     setPage(1);
   }, [pageSize]);
 
@@ -317,7 +340,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""}${searchAllFields ? " updates-panel-search-results" : ""}${paginationFlowsAfterPosts ? " updates-panel-pagination-flow" : ""} panelin`} id="updates">
+    <section ref={searchAllFields ? panelRef : undefined} className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""}${searchAllFields ? " updates-panel-search-results" : ""}${paginationFlowsAfterPosts ? " updates-panel-pagination-flow" : ""} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 
@@ -457,24 +480,10 @@ export function UpdatesSection({
         )}
       </div>
 
-      {paginate && (
-        <div className="admin-table-footer admin-analytics-pagination updates-admin-pagination">
-          <span>
-            Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {filtered.length.toLocaleString("en-IN")}
-          </span>
-          <div className="admin-pagination">
-            <label>
-              Rows
-              <select
-                value={pageSize}
-                onChange={(event) => setPageSize(Number(event.target.value))}
-                aria-label="Rows per page"
-              >
-                {[10, 15, 25, 50].map((size) => (
-                  <option key={size} value={size}>{size}</option>
-                ))}
-              </select>
-            </label>
+      {paginate && filtered.length > pageSize && (
+        <div className="related-content-pagination">
+          <span>Showing {firstItem.toLocaleString("en-IN")}–{lastItem.toLocaleString("en-IN")} of {filtered.length.toLocaleString("en-IN")} posts</span>
+          <div className="related-content-pagination-controls">
             <button type="button" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</button>
             <span>Page {page} of {pageCount}</span>
             <button type="button" disabled={page >= pageCount} onClick={() => setPage((current) => Math.min(pageCount, current + 1))}>Next</button>

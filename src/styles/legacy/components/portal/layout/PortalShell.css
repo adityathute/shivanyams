@@ -1163,3 +1163,99 @@
   outline: 2px solid var(--shivanya-color-primary, #2563eb);
   outline-offset: 3px;
 }
+
+
+/* Database-backed search suggestions and the signed-in user's recent searches. */
+.portal-topbar-search { position: relative; overflow: visible; }
+.portal-search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  max-height: min(360px, 65vh);
+  overflow-y: auto;
+  padding: 7px;
+  border: 1px solid var(--shivanya-color-border, #dce3ec);
+  border-radius: 12px;
+  background: var(--shivanya-color-surface, #fff);
+  color: var(--shivanya-color-text-primary, #172943);
+  box-shadow: 0 16px 38px rgba(15, 23, 42, .16);
+}
+.portal-search-suggestions > button,
+.portal-search-history-query,
+.portal-search-history-delete {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.portal-search-suggestions > button {
+  gap: 11px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+}
+.portal-search-suggestions > button:hover,
+.portal-search-history-row:hover { background: color-mix(in srgb, var(--shivanya-color-primary, #2563eb) 7%, transparent); }
+.portal-search-suggestions > button svg,
+.portal-search-history-row svg { flex: 0 0 auto; color: var(--shivanya-color-text-secondary, #64748b); }
+.portal-search-suggestions > button span,
+.portal-search-history-query span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.portal-search-dropdown-heading {
+  padding: 7px 10px 8px;
+  color: var(--shivanya-color-text-secondary, #64748b);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.portal-search-history-row {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  border-radius: 8px;
+}
+.portal-search-history-query {
+  flex: 1;
+  gap: 11px;
+  min-height: 40px;
+  padding: 8px 10px;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+}
+.portal-search-history-delete {
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 2px;
+  border-radius: 7px;
+  color: #ef4444;
+}
+.portal-search-history-delete:hover { background: rgba(239, 68, 68, .1); color: #dc2626; }
+.portal-search-dropdown-empty { padding: 12px 10px; color: var(--shivanya-color-text-secondary, #64748b); font-size: 12px; }
+[data-theme="dark"] .portal-search-suggestions {
+  border-color: #354254;
+  background: #151f2b;
+  color: #e6edf3;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, .38);
+}
+[data-theme="dark"] .portal-search-suggestions > button:hover,
+[data-theme="dark"] .portal-search-history-row:hover { background: rgba(96, 165, 250, .1); }
+@media (max-width: 767px) {
+  .portal-topbar-search-mobile-panel { overflow: visible; }
+  .portal-topbar-search-mobile-panel .portal-search-suggestions {
+    top: calc(100% + 8px);
+    max-height: min(330px, 55vh);
+  }
+}

@@ -22,6 +22,7 @@ import {
 import { getPortalApiUrl } from "../category/CategoryGrid";
 import { authenticatedFetch } from "../../../lib/authenticated-fetch";
 import { mapPost } from "../../../lib/portal-content";
+export { mapPost };
 import { getPortalCategoryForType, isPortalCategoryEnabled } from "../../../features/category-access";
 
 export type ItemType =

@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
+import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../portal/utils/job-deadline";
 import "./../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 
 const organizationLabels: Record<string, Record<string, string>> = {
@@ -54,6 +55,17 @@ function slugify(value: string) {
 
 function localized(value: { en?: string; mr?: string; hi?: string }, language: string) {
   return value[language as "en" | "mr" | "hi"] || value.en || value.mr || value.hi || "";
+}
+
+function getExtendedDeadlineLabel(language: string) {
+  if (language === "mr") return "मुदतवाढ";
+  if (language === "hi") return "तिथि बढ़ाई गई";
+  return "Date Extended";
+}
+
+function isJobDeadlineRevised(item: import("../portal/data/portal-data").Item) {
+  const applicationEnd = item.important_dates?.find((entry) => entry.date_type === "application_end");
+  return applicationEnd?.date_format === "revised" || applicationEnd?.date_format === "revised_with_time";
 }
 
 function formatDate(value: string, language: string) {
@@ -236,7 +248,10 @@ export function RelatedJobsPage() {
               const summary = localized({ en: item.summary_en || item.description, mr: item.summary_mr, hi: item.summary_hi }, language);
               const categorySlug = getCategorySlugForType(item.type);
               const categoryLabel = getLocalizedCategoryLabel(item, language);
-              const displayDate = item.date || item.updated_date || item.created_at || item.updated_at || "";
+              const applicationDeadline = item.type === "job" ? getJobApplicationDeadline(item) : "";
+              const deadlineStatus = applicationDeadline ? getJobDeadlineStatus(applicationDeadline) : "";
+              const deadlineRevised = Boolean(applicationDeadline && isJobDeadlineRevised(item));
+              const displayDate = applicationDeadline || item.date || item.updated_date || item.created_at || item.updated_at || "";
               const hrefByType: Record<string, string> = {
                 job: "/jobs", scheme: "/schemes", examination: "/examination", exam: "/examination",
                 admit: "/admit-cards", result: "/results", guide: "/guides", video: "/videos", tool: "/tools",
@@ -249,7 +264,14 @@ export function RelatedJobsPage() {
                     {title}
                     {summary ? <small>{summary}</small> : null}
                   </span>
-                  <time dateTime={displayDate || undefined}>{formatDate(displayDate, language)}</time>
+                  {applicationDeadline ? (
+                    <span className="update-deadline-group">
+                      {deadlineRevised ? <span className="update-deadline-extended">{getExtendedDeadlineLabel(language)}</span> : null}
+                      <time className={`update-application-deadline deadline-${deadlineStatus}`} dateTime={applicationDeadline}>{formatJobApplicationDeadline(applicationDeadline)}</time>
+                    </span>
+                  ) : (
+                    <time dateTime={displayDate || undefined}>{formatDate(displayDate, language)}</time>
+                  )}
                 </Link>
               );
             })}

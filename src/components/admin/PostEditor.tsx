@@ -331,6 +331,7 @@ type PostRecord = {
   is_active?: boolean;
   category?: Category;
   important_links?: LinkInput[];
+  related_posts?: { relation_type: string; sort_order?: number; post?: { id: number; title_en?: string; slug?: string } }[];
   faqs?: FAQInput[];
   required_documents?: RequiredDocumentInput[];
   photo_requirements?: PhotoRequirementInput[];
@@ -631,6 +632,9 @@ export default function PostEditor({
     detailTemplate(initialKind),
   );
   const [importantLinks, setImportantLinks] = useState<LinkInput[]>([]);
+  const [availableVideos, setAvailableVideos] = useState<{ id: number; title_en: string; slug: string; featured_image_url?: string }[]>([]);
+  const [selectedVideoIds, setSelectedVideoIds] = useState<number[]>([]);
+  const [nonVideoRelations, setNonVideoRelations] = useState<{ target_post_id: number; relation_type: string; sort_order: number }[]>([]);
   const [faqs, setFaqs] = useState<FAQInput[]>([]);
   const [requiredDocuments, setRequiredDocuments] = useState<RequiredDocumentInput[]>([]);
   const [photoRequirements, setPhotoRequirements] = useState<PhotoRequirementInput[]>([]);
@@ -697,6 +701,31 @@ export default function PostEditor({
   const [organizationTypes, setOrganizationTypes] = useState<
     OrganizationType[]
   >([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadVideos() {
+      try {
+        const response = await adminFetch(`${API_URL}/admin/content/videos/?page_size=100`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Unable to load video posts.");
+        const payload = await response.json();
+        const rows = Array.isArray(payload) ? payload : (payload.results ?? []);
+        setAvailableVideos(rows
+          .filter((item: Record<string, unknown>) => item.is_active !== false)
+          .map((item: Record<string, unknown>) => ({
+            id: Number(item.id),
+            title_en: String(item.title_en || "Untitled video"),
+            slug: String(item.slug || ""),
+            featured_image_url: String(item.featured_image_url || ""),
+          }))
+          .filter((item: { id: number }) => Number.isFinite(item.id) && item.id > 0));
+      } catch (error) {
+        if (!controller.signal.aborted) console.error("Video library error:", error);
+      }
+    }
+    void loadVideos();
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -821,6 +850,17 @@ export default function PostEditor({
         });
         setTags(Array.isArray(record.meta_keywords) ? record.meta_keywords.filter(Boolean) : []);
         setTagInput("");
+        const linkedRelations = record.related_posts || [];
+        setSelectedVideoIds(linkedRelations
+          .filter((item) => item.relation_type === "video" && item.post?.id)
+          .map((item) => Number(item.post!.id)));
+        setNonVideoRelations(linkedRelations
+          .filter((item) => item.relation_type !== "video" && item.post?.id)
+          .map((item) => ({
+            target_post_id: Number(item.post!.id),
+            relation_type: item.relation_type,
+            sort_order: Number(item.sort_order || 0),
+          })));
         setImportantLinks(
           (record.important_links || []).map((item: LinkInput, index) => ({
             ...item,
@@ -1376,6 +1416,14 @@ export default function PostEditor({
         organization_type: organizationType,
         slug: form.slug || slugify(form.title_en),
         meta_keywords: tags,
+        related_posts: [
+          ...nonVideoRelations,
+          ...selectedVideoIds.map((id, index) => ({
+            target_post_id: id,
+            relation_type: "video",
+            sort_order: index,
+          })),
+        ],
 
         [kind.detailKey]:
           kind.api === "jobs"
@@ -1466,7 +1514,7 @@ export default function PostEditor({
             old_time: item.old_time || null,
             new_time: item.new_time || null,
           })),
-      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, requiredDocuments, photoRequirements, signatureRequirements, importantDates]);
+      }), [form, organizationType, tags, kind.detailKey, kind.api, details, importantLinks, faqs, requiredDocuments, photoRequirements, signatureRequirements, importantDates, selectedVideoIds, nonVideoRelations]);
 
   const currentTitle = String(form.title_en || "").trim();
   const currentSnapshot = JSON.stringify(payload);
@@ -2858,7 +2906,38 @@ export default function PostEditor({
               );
             })}
           </section>
-<section className="post-editor-important-links">
+{kind.api !== "videos" && (
+          <section className="post-editor-videos">
+            <div className="post-editor-section-heading">
+              <div>
+                <h2>Videos</h2>
+                <p className="post-editor-section-description">Link existing video posts to this post. The same video can be reused on multiple posts.</p>
+              </div>
+              <span className="post-editor-video-count">{selectedVideoIds.length} selected</span>
+            </div>
+            {availableVideos.length ? (
+              <div className="post-editor-video-list">
+                {availableVideos.map((video) => (
+                  <label className="post-editor-video-option" key={video.id}>
+                    <input
+                      type="checkbox"
+                      checked={selectedVideoIds.includes(video.id)}
+                      onChange={(event) => setSelectedVideoIds((current) =>
+                        event.target.checked ? [...current, video.id] : current.filter((id) => id !== video.id)
+                      )}
+                    />
+                    {video.featured_image_url ? <img src={video.featured_image_url} alt="" /> : <span className="post-editor-video-placeholder">▶</span>}
+                    <span className="post-editor-video-title">{video.title_en}</span>
+                    <span className="post-editor-video-status">{selectedVideoIds.includes(video.id) ? "Linked" : "Add"}</span>
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <p className="post-editor-video-empty">No active video posts found. Create a post under Videos first, then return here to link it.</p>
+            )}
+          </section>
+        )}
+        <section className="post-editor-important-links">
             <div className="post-editor-section-heading">
               <div>
                 <h2>Important Links</h2>

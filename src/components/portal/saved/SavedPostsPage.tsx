@@ -179,7 +179,8 @@ export function SavedPostsPage() {
       const savedItems = posts.flatMap((post) => {
         const slug = normalizeCategorySlug(post.category?.slug || "");
         const config = categoryConfig[slug];
-        return config ? [mapPost(post, config.type)] : [];
+        if (!config || !isPortalCategoryEnabled(slug)) return [];
+        return [mapPost(post, config.type)];
       });
 
       setItems(savedItems);

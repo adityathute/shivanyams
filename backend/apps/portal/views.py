@@ -119,6 +119,7 @@ def public_posts_for_kind(kind):
         )
         .prefetch_related(
             "important_links",
+            "required_documents",
             Prefetch("faqs", queryset=PostFAQ.objects.filter(is_active=True).order_by("sort_order", "id")),
             Prefetch(
                 "questions",

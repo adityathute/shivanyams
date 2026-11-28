@@ -1134,32 +1134,99 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
       structuredImage = undefined;
     }
   }
-  const structuredData = post && !previewItem && category !== "videos"
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: post.title,
-        ...(post.description ? { description: post.description } : {}),
-        ...(post.date || post.createdAt
-          ? { datePublished: post.date || post.createdAt }
-          : {}),
-        ...(post.updatedAt || post.date || post.createdAt
-          ? { dateModified: post.updatedAt || post.date || post.createdAt }
-          : {}),
-        ...(structuredImage ? { image: [structuredImage] } : {}),
-        ...(post.tags.length ? { keywords: post.tags } : {}),
-        articleSection: category,
-        inLanguage: language,
-        publisher: {
-          "@type": "Organization",
-          name: "ShivanyaMS",
-        },
-        mainEntityOfPage: {
-          "@type": "WebPage",
-          "@id": `${siteUrl}/${category}/${encodeURIComponent(slug)}`,
-        },
-      }
-    : null;
+  const jobPosition =
+    category === "jobs" && post?.jobDetails?.posts?.length === 1
+      ? post.jobDetails.posts[0]
+      : null;
+  const jobTitle = (
+    jobPosition?.post_name_en ||
+    post?.jobDetails?.designation ||
+    ""
+  ).trim();
+  const hiringOrganization = (
+    jobPosition?.department_en ||
+    post?.jobDetails?.department ||
+    ""
+  ).trim();
+  const hasSpecificJobLocation = Boolean(
+    post?.state?.trim() ||
+      (post?.location?.trim() &&
+        !["india", "all india", "pan india", "anywhere"].includes(
+          post.location.trim().toLowerCase(),
+        )),
+  );
+
+  const jobPostingData =
+    post &&
+    jobPosition &&
+    jobTitle &&
+    hiringOrganization &&
+    hasSpecificJobLocation &&
+    post.date &&
+    post.body
+      ? {
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          title: jobTitle,
+          description: post.body,
+          datePosted: post.date,
+          ...(post.endDate ? { validThrough: post.endDate } : {}),
+          hiringOrganization: {
+            "@type": "Organization",
+            name: hiringOrganization,
+          },
+          jobLocation: {
+            "@type": "Place",
+            address: {
+              "@type": "PostalAddress",
+              ...(post.location ? { addressLocality: post.location } : {}),
+              ...(post.state ? { addressRegion: post.state } : {}),
+              addressCountry: post.country || "India",
+            },
+          },
+          ...(post.jobDetails?.advertisement_no
+            ? {
+                identifier: {
+                  "@type": "PropertyValue",
+                  name: "ShivanyaMS",
+                  value: post.jobDetails.advertisement_no,
+                },
+              }
+            : {}),
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `${siteUrl}/jobs/${encodeURIComponent(slug)}`,
+          },
+        }
+      : null;
+
+  const structuredData =
+    post && !previewItem && category !== "videos"
+      ? jobPostingData || {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          ...(post.description ? { description: post.description } : {}),
+          ...(post.date || post.createdAt
+            ? { datePublished: post.date || post.createdAt }
+            : {}),
+          ...(post.updatedAt || post.date || post.createdAt
+            ? { dateModified: post.updatedAt || post.date || post.createdAt }
+            : {}),
+          ...(structuredImage ? { image: [structuredImage] } : {}),
+          ...(post.tags.length ? { keywords: post.tags } : {}),
+          articleSection: category,
+          inLanguage: language,
+          publisher: {
+            "@type": "Organization",
+            name: "ShivanyaMS",
+          },
+          mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `${siteUrl}/${category}/${encodeURIComponent(slug)}`,
+          },
+        }
+      : null;
 
   return (
     <>

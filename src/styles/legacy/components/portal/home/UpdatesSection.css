@@ -656,3 +656,69 @@
     grid-template-columns: max-content minmax(0, 1fr) 31px;
   }
 }
+
+/* /updates pagination mirrors the admin table footer and controls. */
+.updates-directory-page .updates-admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  color: var(--muted, #64748b);
+  font-size: 12px;
+}
+.updates-directory-page .updates-admin-pagination .admin-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.updates-directory-page .updates-admin-pagination .admin-pagination label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  font-size: 11px;
+  font-weight: 600;
+}
+.updates-directory-page .updates-admin-pagination .admin-pagination button,
+.updates-directory-page .updates-admin-pagination .admin-pagination select {
+  min-height: 32px;
+  border: 1px solid var(--border, #dbe4f0);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  color: var(--text, #405571);
+  padding: 7px 9px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.updates-directory-page .updates-admin-pagination .admin-pagination button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+[data-theme="dark"] .updates-directory-page .updates-admin-pagination .admin-pagination button,
+[data-theme="dark"] .updates-directory-page .updates-admin-pagination .admin-pagination select {
+  border-color: #354254;
+  background: #172231;
+  color: #dbe5f1;
+}
+@media (max-width: 620px) {
+  .updates-directory-page .updates-admin-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 12px;
+  }
+  .updates-directory-page .updates-admin-pagination .admin-pagination {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .updates-directory-page .updates-admin-pagination .admin-pagination button,
+  .updates-directory-page .updates-admin-pagination .admin-pagination select {
+    padding: 7px;
+  }
+}
+

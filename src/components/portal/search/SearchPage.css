@@ -265,3 +265,179 @@
   flex: 0 0 auto;
   margin-top: auto;
 }
+
+/*
+ * Search directory layout — final cascade.
+ * The shared saved-page stylesheet sets .related-saved-page to display:grid.
+ * Keep that grid, but explicitly define its rows so the results panel always
+ * occupies the remaining viewport instead of being pushed down by its rows.
+ */
+.search-directory-page.related-saved-page {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  align-content: stretch !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  width: auto !important;
+  height: calc(100vh - 64px - 16px) !important;
+  height: calc(100dvh - 64px - 16px) !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 64px - 16px) !important;
+  margin: 0 16px 16px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.search-directory-page > .saved-page-heading {
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 2px;
+}
+
+.search-directory-page .saved-page-heading h1,
+.search-directory-page .saved-page-heading p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.search-directory-page .search-query-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 7px;
+  row-gap: 4px;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.search-directory-page .search-query-summary > span:first-child {
+  flex: 0 0 auto;
+  line-height: 1.45;
+}
+
+.search-directory-page .search-query-summary > strong {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+
+.search-directory-page .search-query-summary .search-query-count {
+  flex: 0 0 auto;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.search-directory-page > .updates-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+  align-content: stretch !important;
+  align-items: stretch !important;
+  width: 100%;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0 !important;
+  max-height: 100%;
+  margin: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.search-directory-page > .updates-panel > .section-heading {
+  grid-row: 1;
+  min-width: 0;
+}
+
+.search-directory-page > .updates-panel > .filter-row {
+  grid-row: 2;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.search-directory-page > .updates-panel > .update-list {
+  grid-row: 3;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 0 !important;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.search-directory-page > .updates-panel > .update-list > .update-row {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.search-directory-page > .updates-panel > .updates-admin-pagination {
+  grid-row: 4;
+  min-width: 0;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+.search-directory-page .search-query-highlight {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .search-directory-page.related-saved-page {
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    gap: 10px !important;
+    height: calc(100vh - 60px - 12px) !important;
+    height: calc(100dvh - 60px - 12px) !important;
+    max-height: calc(100dvh - 60px - 12px) !important;
+    margin: 0 10px 12px !important;
+  }
+
+  .search-directory-page .search-query-summary {
+    padding: 10px 12px;
+  }
+
+  .search-directory-page .search-query-summary .search-query-count {
+    margin-left: auto;
+  }
+
+  .search-directory-page > .updates-panel > .section-heading {
+    gap: 8px;
+  }
+
+  .search-directory-page > .updates-panel > .filter-row {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
+  .search-directory-page > .updates-panel > .updates-admin-pagination {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 390px) {
+  .search-directory-page.related-saved-page {
+    gap: 8px !important;
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+
+  .search-directory-page .search-query-summary {
+    column-gap: 5px;
+    font-size: 11px;
+  }
+
+  .search-directory-page .search-query-summary > strong {
+    font-size: 12px;
+  }
+}
+

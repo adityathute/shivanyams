@@ -201,7 +201,7 @@ export function RelatedJobsPage() {
         </section>
       )}
 
-      <section ref={resultsPanelRef} className="updates-panel panel jobs-updates">
+      <section ref={resultsPanelRef} className={`updates-panel panel jobs-updates updates-panel-language-${language}`}>
         <div className="section-heading">
           <h2>{filterType === "tag" ? `# ${heading}` : heading}</h2>
           <span>{visibleItems.length} {labels.count}</span>

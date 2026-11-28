@@ -2246,3 +2246,51 @@
     font-size: 20px;
   }
 }
+
+
+/* Reveal a subtle More details prompt beneath tags when a related video is hovered. */
+.portal-post-related-video-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: max-height .2s ease, margin-top .2s ease, opacity .2s ease, transform .2s ease;
+}
+
+.portal-post-related-video-more svg {
+  flex: 0 0 auto;
+  transition: transform .22s ease;
+}
+
+.portal-post-related-video:hover .portal-post-related-video-more,
+.portal-post-related-video:focus-visible .portal-post-related-video-more {
+  max-height: 24px;
+  margin-top: 3px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.portal-post-related-video:hover .portal-post-related-video-more svg,
+.portal-post-related-video:focus-visible .portal-post-related-video-more svg {
+  transform: translateX(4px);
+}
+
+:root[data-theme="dark"] .portal-post-related-video-more {
+  color: #60a5fa;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-post-related-video-more,
+  .portal-post-related-video-more svg {
+    transition: none;
+  }
+}

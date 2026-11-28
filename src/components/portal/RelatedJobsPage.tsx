@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
+import { isPortalCategoryEnabled, getPortalCategoryForType } from "../../config/features";
 import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../portal/utils/job-deadline";
 import "./../../styles/legacy/components/portal/saved/SavedPostsPage.css";
@@ -82,7 +83,9 @@ export function RelatedJobsPage() {
   const { language } = usePortalLanguage();
   const labels = copy[language];
 
-  const relatedItems = useMemo(() => data.items.filter((item) => {
+  const enabledItems = data.items.filter((item) => isPortalCategoryEnabled(getPortalCategoryForType(item.type)));
+
+  const relatedItems = useMemo(() => enabledItems.filter((item) => {
     if (filterType === "organization") {
       return item.type === "job" && slugify(item.organization_type || "") === slug;
     }
@@ -90,7 +93,7 @@ export function RelatedJobsPage() {
       return (item.tags || []).some((tag) => slugify(tag) === slug);
     }
     return false;
-  }), [data.items, filterType, slug]);
+  }), [enabledItems, filterType, slug]);
 
   const visibleItems = useMemo(() => {
     if (filterType !== "tag" || selectedCategory === "all") return relatedItems;
@@ -156,7 +159,7 @@ export function RelatedJobsPage() {
 
     // Tags appearing alongside this tag are shown first, followed by popular global tags.
     addTags(relatedItems, true);
-    addTags(data.items, false);
+    addTags(enabledItems, false);
 
     return [...counts.entries()]
       .sort((a, b) =>
@@ -165,7 +168,7 @@ export function RelatedJobsPage() {
         a[1].label.localeCompare(b[1].label),
       )
       .slice(0, 10);
-  }, [data.items, relatedItems, filterType, slug]);
+  }, [enabledItems, relatedItems, filterType, slug]);
 
   const heading = useMemo(() => {
     if (filterType === "organization") {
@@ -199,7 +202,7 @@ export function RelatedJobsPage() {
             >
               All <span>{relatedItems.length}</span>
             </button>
-            {TAG_CATEGORIES.map((category) => {
+            {TAG_CATEGORIES.filter((category) => isPortalCategoryEnabled(getPortalCategoryForType(category.types[0]))).map((category) => {
               const count = relatedItems.filter((item) => (category.types as readonly string[]).includes(item.type)).length;
               return (
                 <button

@@ -212,6 +212,8 @@ export function PortalHeader() {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
+      if (target.closest(".portal-search-clear")) return;
+
       const button = target.closest("button");
       if (!button) return;
       if (searchToggleRef.current?.contains(button)) return;
@@ -241,7 +243,7 @@ export function PortalHeader() {
         <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={submitSearch}>
           <SearchIcon size={17} aria-hidden="true" />
           <input ref={searchInputRef} value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
-          {searchQuery && <button type="button" className="portal-search-clear" aria-label="Clear search" tabIndex={searchOpen ? 0 : -1} onClick={() => { setSearchQuery(""); setSearchDropdownOpen(true); searchInputRef.current?.focus(); }}><CloseIcon size={16} aria-hidden="true" /></button>}
+          {searchQuery && <button type="button" className="portal-search-clear" aria-label="Clear search" tabIndex={searchOpen ? 0 : -1} onClick={(event) => { event.preventDefault(); event.stopPropagation(); setSearchQuery(""); setSearchDropdownOpen(true); requestAnimationFrame(() => { searchInputRef.current?.focus({ preventScroll: true }); searchInputRef.current?.setSelectionRange(0, 0); }); }}><CloseIcon size={16} aria-hidden="true" /></button>}
           <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
           {renderSearchDropdown()}
         </form>

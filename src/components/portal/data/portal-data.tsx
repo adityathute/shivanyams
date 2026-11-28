@@ -120,18 +120,21 @@ export type JobDetails = {
   }[];
 };
 
-export type RequiredDocument = {\n  id?: number;
+export type RequiredDocument = {
+  id?: number;
   name_en?: string; name_mr?: string; name_hi?: string;
   description_en?: string; description_mr?: string; description_hi?: string;
   category?: string; requirement?: string; original_required?: boolean | null;
   photocopy_required?: boolean | null; number_of_copies?: number | null; quantity?: number | null;
   instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
 };
-export type PhotoRequirement = {\n  id?: number;
+export type PhotoRequirement = {
+  id?: number;
   photo_type?: string; photo_size?: string; photo_quantity?: number | null; photo_background?: string;
   other_specifications?: string; instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
 };
-export type SignatureRequirement = {\n  id?: number;
+export type SignatureRequirement = {
+  id?: number;
   signature_type?: string; signature_format?: string; signature_size?: string;
   other_specifications?: string; instructions_en?: string; instructions_mr?: string; instructions_hi?: string;
 };
@@ -175,6 +178,9 @@ export type Item = {
   important_dates?: ImportantDate[];
   important_links?: ApiLink[];
   faqs?: PostFAQ[];
+  required_documents?: RequiredDocument[];
+  photo_requirements?: PhotoRequirement[];
+  signature_requirements?: SignatureRequirement[];
   extra?: Record<string, unknown>;
   job_details?: JobDetails;
 };
@@ -355,6 +361,9 @@ export type ApiPost = {
   important_links?: ApiLink[];
   important_dates?: ImportantDate[];
   faqs?: PostFAQ[];
+  required_documents?: (RequiredDocument & { is_active?: boolean })[];
+  photo_requirements?: (PhotoRequirement & { is_active?: boolean })[];
+  signature_requirements?: (SignatureRequirement & { is_active?: boolean })[];
   job_details?: {
     advertisement_no?: string;
     education_mode?: "common" | "per_post";
@@ -574,7 +583,10 @@ export function mapPost(post: ApiPost, type: ItemType): Item {
       new_time: entry.new_time || null,
     })),
     important_links: (post.important_links || []).filter((link) => link.is_active !== false && Boolean(link.url)),
-    faqs: (post.faqs || []).filter((faq) => faq.is_active !== false && Boolean(faq.question_en?.trim() && faq.answer_en?.trim())),\n    required_documents: (post.required_documents || []).filter((row) => row.is_active !== false),\n    photo_requirements: (post.photo_requirements || []).filter((row) => row.is_active !== false),\n    signature_requirements: (post.signature_requirements || []).filter((row) => row.is_active !== false),
+    faqs: (post.faqs || []).filter((faq) => faq.is_active !== false && Boolean(faq.question_en?.trim() && faq.answer_en?.trim())),
+    required_documents: (post.required_documents || []).filter((row) => row.is_active !== false),
+    photo_requirements: (post.photo_requirements || []).filter((row) => row.is_active !== false),
+    signature_requirements: (post.signature_requirements || []).filter((row) => row.is_active !== false),
 
     job_details: job
       ? {
@@ -812,7 +824,8 @@ async function loadPortalData(signal: AbortSignal): Promise<PortalData> {
     items: items.sort((a, b) => b.date.localeCompare(a.date)),
     videos,
     loading: false,
-    error: errors.join("\n"),
+    error: errors.join("
+"),
     failedTypes,
   };
 }

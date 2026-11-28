@@ -43,6 +43,17 @@ from .models import (
     ImportantLink,
     NewsletterSubscription,
     NewsletterSubscriptionEvent,
+    PostRequiredDocument,
+    PostPhotoRequirement,
+    PostSignatureRequirement,
+    PostQuestion,
+    PostQuestionHelpfulVote,
+    WebsiteVisitor,
+    WebsiteView,
+    PostVersion,
+    PostReport,
+    SearchHistory,
+    ContactMessage,
 )
 
 
@@ -1000,3 +1011,110 @@ class PostStatusHistoryAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+# Additional content, moderation, analytics and inbox models.
+@admin.register(PostRequiredDocument)
+class PostRequiredDocumentAdmin(admin.ModelAdmin):
+    list_display = ("name_en", "post", "category", "requirement", "is_active", "sort_order")
+    list_filter = ("category", "requirement", "is_active")
+    search_fields = ("name_en", "name_mr", "name_hi", "post__title_en")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    ordering = ("post", "sort_order", "id")
+
+
+@admin.register(PostPhotoRequirement)
+class PostPhotoRequirementAdmin(admin.ModelAdmin):
+    list_display = ("post", "photo_type", "photo_size", "photo_quantity", "is_active", "sort_order")
+    list_filter = ("photo_type", "is_active")
+    search_fields = ("post__title_en", "photo_size", "other_specifications")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    ordering = ("post", "sort_order", "id")
+
+
+@admin.register(PostSignatureRequirement)
+class PostSignatureRequirementAdmin(admin.ModelAdmin):
+    list_display = ("post", "signature_type", "signature_format", "signature_size", "is_active", "sort_order")
+    list_filter = ("signature_type", "is_active")
+    search_fields = ("post__title_en", "signature_format", "signature_size", "other_specifications")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    ordering = ("post", "sort_order", "id")
+
+
+@admin.register(PostQuestion)
+class PostQuestionAdmin(admin.ModelAdmin):
+    list_display = ("post", "author_name", "status", "answer_visibility", "answered_at", "created_at")
+    list_filter = ("status", "answer_visibility", "language")
+    search_fields = ("question", "answer", "author_name", "user_auth_id", "post__title_en")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    readonly_fields = ("created_at", "updated_at", "answered_at")
+    ordering = ("-created_at",)
+
+
+@admin.register(PostQuestionHelpfulVote)
+class PostQuestionHelpfulVoteAdmin(ReadOnlyActivityAdmin):
+    list_display = ("question", "visitor_hash", "user_auth_id", "created_at")
+    search_fields = ("visitor_hash", "user_auth_id", "question__question")
+    list_select_related = ("question",)
+
+
+@admin.register(WebsiteVisitor)
+class WebsiteVisitorAdmin(admin.ModelAdmin):
+    list_display = ("visitor_id", "auth_user_id", "full_name", "browser", "first_seen_at", "last_seen_at")
+    search_fields = ("visitor_id", "auth_user_id", "full_name", "ip_address")
+    list_filter = ("browser",)
+    readonly_fields = tuple(field.name for field in WebsiteVisitor._meta.concrete_fields)
+    ordering = ("-last_seen_at",)
+
+    def has_add_permission(self, request):
+        return False
+
+
+@admin.register(WebsiteView)
+class WebsiteViewAdmin(ReadOnlyActivityAdmin):
+    list_display = ("path", "visitor", "auth_user_id", "language", "device", "viewed_at")
+    list_filter = ("language", "device", "browser")
+    search_fields = ("path", "auth_user_id", "full_name", "visitor__visitor_id")
+    list_select_related = ("visitor",)
+    date_hierarchy = "viewed_at"
+
+
+@admin.register(PostVersion)
+class PostVersionAdmin(ReadOnlyActivityAdmin):
+    list_display = ("post", "version_number", "is_published", "created_by_auth_id", "published_at", "created_at")
+    list_filter = ("is_published",)
+    search_fields = ("post__title_en", "post__slug", "created_by_auth_id")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    ordering = ("-created_at",)
+
+
+@admin.register(PostReport)
+class PostReportAdmin(admin.ModelAdmin):
+    list_display = ("post", "reporter_auth_id", "reason", "status", "created_at")
+    list_filter = ("status", "reason")
+    search_fields = ("post__title_en", "post__slug", "reporter_auth_id", "reason", "details")
+    autocomplete_fields = ("post",)
+    list_select_related = ("post",)
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("-created_at",)
+
+
+@admin.register(SearchHistory)
+class SearchHistoryAdmin(ReadOnlyActivityAdmin):
+    list_display = ("query", "normalized_query", "user_auth_id", "updated_at", "created_at")
+    search_fields = ("query", "normalized_query", "user_auth_id")
+    ordering = ("-updated_at",)
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ("subject", "submission_type", "name", "email", "category", "status", "created_at")
+    list_filter = ("submission_type", "status", "category")
+    search_fields = ("subject", "name", "email", "message", "admin_reply")
+    readonly_fields = ("created_at", "updated_at", "replied_at")
+    ordering = ("-created_at",)

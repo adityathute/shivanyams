@@ -186,7 +186,7 @@ export type Item = {
   /** Complete public API payload retained for exhaustive client-side search. */
   search_index?: string;
   job_details?: JobDetails;
-  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; summary_en?: string; summary_mr?: string; summary_hi?: string; meta_keywords?: string[]; slug: string; featured_image_url?: string } }[];
+  related_posts?: { relation_type: string; sort_order?: number; post: { id: number; title_en?: string; title_mr?: string; title_hi?: string; summary_en?: string; summary_mr?: string; summary_hi?: string; meta_keywords?: string[]; slug: string; featured_image_url?: string; video_details?: { video_url?: string; embed_url?: string; thumbnail_url?: string } | null } }[];
 };
 
 export type Video = {

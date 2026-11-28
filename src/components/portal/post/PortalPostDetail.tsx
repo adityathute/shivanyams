@@ -1737,39 +1737,6 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                     </section>
                   ) : null}
 
-                  {post.relatedVideos?.length ? (
-                    <section className="portal-post-related-videos">
-                      <h2>{getDetailLabel("relatedVideos", language)}</h2>
-                      <div className="portal-post-related-videos-list">
-                        {post.relatedVideos.map((video) => {
-                          const videoTitle = getLocalizedText(language, video.title_en, video.title_mr, video.title_hi) || video.title_en || "Watch video";
-                          const videoSummary = getLocalizedText(language, video.summary_en, video.summary_mr, video.summary_hi);
-                          const videoTags = Array.isArray(video.meta_keywords) ? video.meta_keywords.filter(Boolean) : [];
-                          return (
-                            <Link className="portal-post-related-video" href={`/videos/${video.slug}`} key={video.id}>
-                              <span className="portal-post-related-video-media">
-                                {video.featured_image_url ? (
-                                  <img src={video.featured_image_url} alt="" loading="lazy" />
-                                ) : (
-                                  <span className="portal-post-related-video-placeholder" aria-hidden="true">▶</span>
-                                )}
-                                <span className="portal-post-related-video-play" aria-hidden="true">▶</span>
-                              </span>
-                              <span className="portal-post-related-video-content">
-                                <strong>{videoTitle}</strong>
-                                {videoSummary ? <span className="portal-post-related-video-description">{videoSummary}</span> : null}
-                                {videoTags.length ? (
-                                  <span className="portal-post-related-video-tags">
-                                    {videoTags.map((tag, index) => <span key={`${video.id}-${index}`}>{tag.startsWith("#") ? tag : `#${tag}`}</span>)}
-                                  </span>
-                                ) : null}
-                              </span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  ) : null}
                   {category === "videos" && post.link ? (
                     <a
                       className="portal-post-action"
@@ -1791,6 +1758,41 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                   <>
                     {post.comments_enabled !== false ? <PostCommentsSection postId={post.postId} language={language} /> : null}
                     <PostFAQSection postId={post.postId} faqs={post.faqs} language={language} />
+                    {post.relatedVideos?.length ? (
+                      {post.relatedVideos?.length ? (
+                      <section className="portal-post-related-videos">
+                      <h2>{getDetailLabel("relatedVideos", language)}</h2>
+                      <div className="portal-post-related-videos-list">
+                      {post.relatedVideos.map((video) => {
+                      const videoTitle = getLocalizedText(language, video.title_en, video.title_mr, video.title_hi) || video.title_en || "Watch video";
+                      const videoSummary = getLocalizedText(language, video.summary_en, video.summary_mr, video.summary_hi);
+                      const videoTags = Array.isArray(video.meta_keywords) ? video.meta_keywords.filter(Boolean) : [];
+                      return (
+                      <Link className="portal-post-related-video" href={`/videos/${video.slug}`} key={video.id}>
+                      <span className="portal-post-related-video-media">
+                      {video.featured_image_url ? (
+                      <img src={video.featured_image_url} alt="" loading="lazy" />
+                      ) : (
+                      <span className="portal-post-related-video-placeholder" aria-hidden="true">▶</span>
+                      )}
+                      <span className="portal-post-related-video-play" aria-hidden="true">▶</span>
+                      </span>
+                      <span className="portal-post-related-video-content">
+                      <strong>{videoTitle}</strong>
+                      {videoSummary ? <span className="portal-post-related-video-description">{videoSummary}</span> : null}
+                      {videoTags.length ? (
+                      <span className="portal-post-related-video-tags">
+                      {videoTags.map((tag, index) => <span key={`${video.id}-${index}`}>{tag.startsWith("#") ? tag : `#${tag}`}</span>)}
+                      </span>
+                      ) : null}
+                      </span>
+                      </Link>
+                      );
+                      })}
+                      </div>
+                      </section>
+                      ) : null}
+                    ) : null}
                   </>
                 ) : null}
                 </>

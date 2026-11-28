@@ -24,7 +24,7 @@ import "./../styles/organized/index.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com",
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.shivanyams.com",
   ),
   title: {
     default: "ShivanyaMS | Government Jobs, Schemes & Public Updates",

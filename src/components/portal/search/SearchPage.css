@@ -477,3 +477,51 @@
     min-height: calc(100dvh - 60px - 12px) !important;
   }
 }
+
+/* Full result pages must use the document scroll, never an inner table scroll.
+   Keep only the viewport-based minimum height; remove every fixed/max height. */
+.search-directory-page.related-saved-page:has(.updates-panel-pagination-flow) {
+  display: grid !important;
+  grid-template-rows: auto auto auto !important;
+  height: auto !important;
+  min-height: calc(100dvh - 64px - 16px) !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel {
+  display: grid !important;
+  grid-template-rows: auto auto auto auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel > .update-list {
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+  overscroll-behavior: auto !important;
+  scrollbar-gutter: auto !important;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel > .update-list > .update-row {
+  flex: 0 0 auto !important;
+}
+
+.search-directory-page:has(.updates-panel-pagination-flow) > .updates-panel > .updates-admin-pagination {
+  position: static !important;
+  margin-top: 14px !important;
+}
+
+@media (max-width: 760px) {
+  .search-directory-page.related-saved-page:has(.updates-panel-pagination-flow) {
+    min-height: calc(100dvh - 60px - 12px) !important;
+  }
+}

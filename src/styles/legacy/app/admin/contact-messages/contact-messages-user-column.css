@@ -1,0 +1,15 @@
+.admin-contact-messages-page .admin-contact-messages-table tbody td:nth-child(3) {
+  vertical-align: middle;
+}
+
+.admin-contact-messages-page .admin-contact-messages-table tbody td:nth-child(3) .admin-comments-author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.admin-contact-messages-page .admin-contact-messages-table tbody td:nth-child(3) .admin-comments-author > .shivanya-avatar {
+  flex: 0 0 32px;
+}

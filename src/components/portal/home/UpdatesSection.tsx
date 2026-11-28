@@ -295,6 +295,9 @@ export function UpdatesSection({
     : filtered;
   const firstItem = filtered.length ? (page - 1) * pageSize + 1 : 0;
   const lastItem = Math.min(page * pageSize, filtered.length);
+  // When the selected page is full, let the results list grow naturally and
+  // place pagination after the final visible post instead of pinning it.
+  const paginationFlowsAfterPosts = paginate && visibleItems.length >= pageSize;
 
   useEffect(() => {
     setPage(1);
@@ -312,7 +315,7 @@ export function UpdatesSection({
     language === "en" ? "en-IN" : language === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""} panelin`} id="updates">
+    <section className={`updates-panel updates-panel-language-${language}${showDateAndNewBadge || paginate ? "" : " updates-panel-home"}${paginate ? " jobs-updates" : ""}${paginationFlowsAfterPosts ? " updates-panel-pagination-flow" : ""} panelin`} id="updates">
       <div className="section-heading">
         <h2>{sectionTitle}</h2>
 

@@ -23,6 +23,7 @@ import {
   getLocalizedCategoryLabel,
   getPortalApiUrl,
   normalizeCategorySlug,
+  STATIC_PORTAL_CATEGORIES,
   type Category,
   type Language,
 } from "../category/CategoryGrid";
@@ -151,7 +152,7 @@ export function SavedPostsPage() {
   const text = copy[language];
 
   const [items, setItems] = useState<Item[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const categories = STATIC_PORTAL_CATEGORIES;
   const [selectedType, setSelectedType] = useState<ItemType | "all">("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -210,50 +211,6 @@ export function SavedPostsPage() {
     return () => controller.abort();
   }, [authLoading, loadSavedPosts]);
 
-  useEffect(() => {
-    if (!user) {
-      setCategories([]);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    async function loadCategories() {
-      try {
-        const response = await authenticatedFetch(
-          getPortalApiUrl("categories/"),
-          { signal: controller.signal },
-        );
-        if (!response.ok) return;
-
-        const payload: Category[] | { results?: Category[] } =
-          await response.json();
-        const rows = Array.isArray(payload) ? payload : payload.results ?? [];
-
-        const active = rows
-          .filter((category) => category.is_active ?? category.active ?? false)
-          .map((category) => ({
-            ...category,
-            slug: normalizeCategorySlug(category.slug),
-          }))
-          .filter((category) => Boolean(categoryConfig[category.slug]))
-          .sort(
-            (a, b) =>
-              CATEGORY_ORDER.indexOf(a.slug) -
-              CATEGORY_ORDER.indexOf(b.slug),
-          );
-
-        setCategories(active);
-      } catch (categoryError) {
-        if (!controller.signal.aborted) {
-          console.error("Saved post categories loading failed:", categoryError);
-        }
-      }
-    }
-
-    void loadCategories();
-    return () => controller.abort();
-  }, [user]);
 
   const filteredItems = useMemo(
     () => (selectedType === "all" ? items : items.filter((item) => item.type === selectedType))

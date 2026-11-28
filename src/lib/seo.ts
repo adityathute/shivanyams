@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { isPortalCategoryEnabled } from "../features/category-access";
 import { mapPost } from "./portal-content";
-import type { ApiPost, Item, ItemType } from "../components/portal/data/portal-data";
+import type { ApiPost, Item, ItemType, PortalData, Video } from "../components/portal/data/portal-data";
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://shivanyams.com"
@@ -172,9 +172,10 @@ export async function getPublicPostItem(
   return post ? mapPost(post, itemTypes[kind]) : null;
 }
 
-export async function getPublicCategoryItems(
+async function fetchPublicPosts(
   kind: ContentKind,
-): Promise<Item[] | null> {
+  limit: number,
+): Promise<ApiPost[] | null> {
   const apiBase = process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim();
   if (!apiBase) return null;
 
@@ -190,31 +191,108 @@ export async function getPublicCategoryItems(
   const visited = new Set<string>();
   let nextUrl: string | null = firstUrl;
 
-  while (nextUrl && visited.size < 5 && posts.length < 100) {
+  while (nextUrl && visited.size < 20 && posts.length < limit) {
     if (visited.has(nextUrl)) break;
     visited.add(nextUrl);
 
     try {
       const response = await fetch(nextUrl, { next: { revalidate: 300 } });
-      if (!response.ok) return posts.length ? posts.map((post) => mapPost(post, itemTypes[kind])) : null;
+      if (!response.ok) return posts.length ? posts : null;
       const payload = await response.json() as ApiPost[] | { results?: ApiPost[]; next?: string | null };
       if (Array.isArray(payload)) {
-        posts.push(...payload);
+        posts.push(...payload.slice(0, limit - posts.length));
         break;
       }
 
-      posts.push(...(payload.results || []));
-      if (!payload.next) break;
+      posts.push(...(payload.results || []).slice(0, limit - posts.length));
+      if (!payload.next || posts.length >= limit) break;
 
       const resolved = new URL(payload.next, firstUrl);
       if (resolved.origin !== origin) break;
       nextUrl = resolved.toString();
     } catch {
-      return posts.length ? posts.map((post) => mapPost(post, itemTypes[kind])) : null;
+      return posts.length ? posts : null;
     }
   }
 
-  return posts.map((post) => mapPost(post, itemTypes[kind]));
+  return posts;
+}
+
+export async function getPublicCategoryItems(
+  kind: ContentKind,
+): Promise<Item[] | null> {
+  const posts = await fetchPublicPosts(kind, 100);
+  return posts ? posts.map((post) => mapPost(post, itemTypes[kind])) : null;
+}
+
+const portalContentKinds: {
+  kind: ContentKind;
+  type: ItemType;
+}[] = [
+  { kind: "jobs", type: "job" },
+  { kind: "schemes", type: "scheme" },
+  { kind: "exams", type: "examination" },
+  { kind: "admit-cards", type: "admit" },
+  { kind: "results", type: "result" },
+  { kind: "guides", type: "guide" },
+  { kind: "videos", type: "video" },
+  { kind: "tools", type: "tool" },
+];
+
+export async function getPublicPortalData(): Promise<PortalData | null> {
+  if (!process.env.NEXT_PUBLIC_PORTAL_API_URL?.trim()) return null;
+
+  const enabledKinds = portalContentKinds.filter(({ kind }) =>
+    isPortalCategoryEnabled(kind),
+  );
+  const results = await Promise.all(
+    enabledKinds.map(async (entry) => ({
+      ...entry,
+      posts: await fetchPublicPosts(entry.kind, 20),
+    })),
+  );
+
+  const items: Item[] = [];
+  const videos: Video[] = [];
+  const failedTypes: ItemType[] = [];
+
+  results.forEach(({ type, posts }) => {
+    if (!posts) {
+      failedTypes.push(type);
+      return;
+    }
+
+    posts.forEach((post) => {
+      const item = mapPost(post, type);
+      items.push(item);
+
+      if (type === "video") {
+        videos.push({
+          id: item.id,
+          slug: item.slug,
+          title: item.title,
+          title_en: item.title_en || "",
+          title_mr: item.title_mr || "",
+          title_hi: item.title_hi || "",
+          url: post.video_details?.video_url || item.link,
+          embed_url: post.video_details?.embed_url || "",
+          thumbnail: post.video_details?.thumbnail_url || item.image || "",
+          language: post.video_details?.available_languages?.join(", ") || "",
+          views_count: item.views_count,
+          date: item.date,
+          published_at: post.published_at || "",
+        });
+      }
+    });
+  });
+
+  return {
+    items: items.sort((a, b) => b.date.localeCompare(a.date)),
+    videos,
+    loading: false,
+    error: "",
+    failedTypes,
+  };
 }
 
 export async function getPostPageMetadata(

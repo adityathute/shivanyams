@@ -97,7 +97,7 @@ export function JobsPage() {
                     <a href={`/tags/${createPostSlug(tag)}`} key={tag}># {tag}</a>
                   ))}
                 </div>
-              ) : null}form>
+              ) : null}
             </div>
 
             <div className="jobs-hero-visual" aria-hidden="true">

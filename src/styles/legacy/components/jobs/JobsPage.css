@@ -246,53 +246,68 @@
 }
 
 
-/* Popular job tags replace the hero search field. */
-.jobs-popular-tags {
+/* Popular job tags reuse the exact neutral tag treatment from post details. */
+.jobs-popular-tags.portal-post-taxonomy {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 8px;
   margin-top: 14px;
+  max-height: 106px;
+  overflow: hidden;
 }
-.jobs-popular-tags-label {
-  color: var(--text-secondary, #64748b);
-  font-size: 12px;
-  font-weight: 700;
-  margin-right: 2px;
-}
-.jobs-popular-tags a {
+
+.jobs-popular-tags.portal-post-taxonomy a {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 5px 10px;
-  border: 1px solid #d5e3fb;
+  justify-content: center;
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid #e2e6ec;
   border-radius: 999px;
-  background: #e8f0ff;
-  color: #2458a6;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.3;
+  color: #596579;
+  background: #f1f3f6;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
   text-decoration: none;
-  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
-.jobs-popular-tags a:hover {
-  background: #d7e6ff;
-  border-color: #93b8f8;
+
+.jobs-popular-tags.portal-post-taxonomy a::before {
+  content: "#";
+  margin-right: 2px;
+}
+
+.jobs-popular-tags.portal-post-taxonomy a:hover {
+  color: #273449;
+  background: #e5e9ef;
+  border-color: #cbd3df;
   transform: translateY(-1px);
 }
-.jobs-popular-tags a:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
+
+:root[data-theme="dark"] .jobs-popular-tags.portal-post-taxonomy a {
+  color: #c0c8d4;
+  background: #252c38;
+  border-color: #374151;
 }
-[data-theme="dark"] .jobs-popular-tags-label { color: #a9b7c8; }
-[data-theme="dark"] .jobs-popular-tags a {
-  background: #243b58;
-  border-color: #365475;
-  color: #dbeafe;
+
+:root[data-theme="dark"] .jobs-popular-tags.portal-post-taxonomy a:hover {
+  color: #f8fafc;
+  background: #343e4d;
+  border-color: #526074;
 }
-[data-theme="dark"] .jobs-popular-tags a:hover { background: #2d4b70; border-color: #5077a5; }
+
 @media (max-width: 760px) {
-  .jobs-popular-tags { gap: 6px; margin-top: 12px; }
-  .jobs-popular-tags-label { width: 100%; font-size: 11px; }
-  .jobs-popular-tags a { min-height: 27px; padding: 5px 9px; font-size: 10px; }
+  .jobs-popular-tags.portal-post-taxonomy {
+    gap: 7px;
+    margin-top: 12px;
+    max-height: 104px;
+  }
+
+  .jobs-popular-tags.portal-post-taxonomy a {
+    min-height: 30px;
+    padding: 5px 11px;
+    font-size: 12px;
+  }
 }

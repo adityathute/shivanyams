@@ -45,7 +45,7 @@ export function PortalHeader() {
   const loadSearchHistory = async () => {
     try {
       const response = await authenticatedFetch(getPortalApiUrl("search/history/"));
-      if (!response.ok) return;
+      if (!response.ok) { setSearchHistory([]); return; }
       const payload = await response.json();
       setSearchHistory(Array.isArray(payload) ? payload.slice(0, 5) : []);
     } catch {
@@ -183,6 +183,18 @@ export function PortalHeader() {
 
     return () => window.clearTimeout(focusTimer);
   }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchDropdownOpen) return;
+    const closeDropdown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (desktopSearchRef.current?.contains(target) || searchPanelRef.current?.contains(target)) return;
+      setSearchDropdownOpen(false);
+    };
+    document.addEventListener("pointerdown", closeDropdown);
+    return () => document.removeEventListener("pointerdown", closeDropdown);
+  }, [searchDropdownOpen]);
 
   // Close the mobile search when navigation changes the current page.
   useEffect(() => {

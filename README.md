@@ -43,7 +43,7 @@ npm run start
 
 ## SEO and Google Search
 
-The production site URL defaults to `https://shivanyams.com`. Set `NEXT_PUBLIC_SITE_URL` explicitly in each deployment environment. For local development, use `http://localhost:3000`.
+The production site URL defaults to `https://www.shivanyams.com`. Set `NEXT_PUBLIC_SITE_URL` explicitly in each deployment environment. For local development, use `http://localhost:3000`.
 
 The Next.js App Router generates:
 - `/robots.txt` from `src/app/robots.ts`.
@@ -54,16 +54,16 @@ The Next.js App Router generates:
 - Admin, saved-post, ledger and search sections receive `noindex, nofollow` metadata.
 
 Production environment variables required by the frontend:
-- `NEXT_PUBLIC_SITE_URL=https://shivanyams.com`
+- `NEXT_PUBLIC_SITE_URL=https://www.shivanyams.com`
 - `NEXT_PUBLIC_PORTAL_API_URL=https://<your-portal-api-host>/api/v1/portal`
 
-These `NEXT_PUBLIC_*` values must be present in the environment used to run `npm run build`, because Next.js embeds public environment values during the build. For self-hosted releases, rebuild the application when changing the public site or API URL.
+Choose one primary hostname and configure the other hostname to permanently redirect (301) to it. The current default assumes `www.shivanyams.com`; override it if the apex domain is your chosen primary host. These `NEXT_PUBLIC_*` values must be present in the environment used to run `npm run build`, because Next.js embeds public environment values during the build. For self-hosted releases, rebuild the application when changing the public site or API URL.
 
 After deployment:
-1. Open `https://shivanyams.com/robots.txt` and `https://shivanyams.com/sitemap.xml` and confirm both return HTTP 200.
+1. Open `https://www.shivanyams.com/robots.txt` and `https://www.shivanyams.com/sitemap.xml` and confirm both return HTTP 200.
 2. Confirm the sitemap contains only enabled categories and currently published post URLs.
 3. Add and verify the domain property in Google Search Console.
-4. Submit `https://shivanyams.com/sitemap.xml` in Search Console.
+4. Submit `https://www.shivanyams.com/sitemap.xml` in Search Console.
 5. Inspect the homepage, Jobs listing and several published job detail URLs with URL Inspection; resolve any blocked resources, canonical mismatch, server errors or indexing exclusions.
 6. Re-submit the sitemap after category activation or major URL changes.
 7. Validate structured data with Google Rich Results Test. The current post pages emit Article structured data. JobPosting rich results require verified job title, hiring organization, physical location, publication date and complete job description; do not emit JobPosting markup until the admin data model consistently supplies those facts. Google recommends the Indexing API for job posting URL changes, which still needs separate Google API credentials and setup.

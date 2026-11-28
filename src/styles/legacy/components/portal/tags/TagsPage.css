@@ -66,3 +66,10 @@
     animation: none;
   }
 }
+
+.tags-directory-skeleton-chip:nth-child(6n + 1)::before { width: 54px; }
+.tags-directory-skeleton-chip:nth-child(6n + 2)::before { width: 76px; }
+.tags-directory-skeleton-chip:nth-child(6n + 3)::before { width: 92px; }
+.tags-directory-skeleton-chip:nth-child(6n + 4)::before { width: 64px; }
+.tags-directory-skeleton-chip:nth-child(6n + 5)::before { width: 108px; }
+.tags-directory-skeleton-chip:nth-child(6n)::before { width: 82px; }

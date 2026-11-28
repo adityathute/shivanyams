@@ -45,6 +45,7 @@ import { PostFAQSection } from "./PostFAQSection";
 import { PostEngagementActions } from "./PostEngagementActions";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
 import { POST_DETAIL_SIDEBAR_CATEGORY_ORDER } from "./post-sidebar-config";
+import { isPortalCategoryEnabled } from "../../../features/category-access";
 import { formatJobApplicationDeadline, getJobApplicationDeadline, getJobDeadlineStatus } from "../utils/job-deadline";
 
 export type CategorySlug =
@@ -942,7 +943,7 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
   const sidebarCategorySections = useMemo(() => {
     const orderKey = category === "videos" ? "jobs" : category;
     const categoryOrder = POST_DETAIL_SIDEBAR_CATEGORY_ORDER[orderKey];
-    return categoryOrder.map((entry) => {
+    return categoryOrder.filter((entry) => isPortalCategoryEnabled(entry)).map((entry) => {
       const type = categoryItemTypes[entry];
       const posts = data.items
         .filter((item) => item.type === type && String(item.id) !== String(post?.postId))

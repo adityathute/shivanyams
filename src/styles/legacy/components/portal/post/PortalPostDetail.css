@@ -978,10 +978,18 @@
 .portal-post-wise-table tbody td { font-weight: 550; }
 
 .portal-post-wise-table .portal-post-wise-number {
-  width: 12%;
+  width: 14%;
   white-space: nowrap;
   padding-left: 6px;
   padding-right: 6px;
+}
+
+/* Keep the number header inside its own column; only body values stay on one line. */
+.portal-post-wise-table thead .portal-post-wise-number {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  min-width: 0;
 }
 
 .portal-post-wise-table .portal-post-wise-vacancies {
@@ -1001,7 +1009,7 @@
 
 .portal-post-wise-table.has-department .portal-post-wise-name,
 .portal-post-wise-table.has-department .portal-post-wise-department {
-  width: 32%;
+  width: 31%;
 }
 
 .portal-post-wise-table.without-department .portal-post-wise-name {

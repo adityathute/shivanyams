@@ -768,6 +768,8 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
             organizationType: "",
             tags: [] as string[],
             location: "",
+            state: "",
+            country: "India",
             startDate: "",
             endDate: "",
             eventDate: "",

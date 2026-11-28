@@ -186,6 +186,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
   const { data } = usePortalData();
 
   const categorySlug = categorySlugByType[type] ?? type;
+  const hideDateAndNewBadge = ["scheme", "examination", "exam", "admit", "result", "guide", "tool"].includes(type);
 
   // Load categories
   useEffect(() => {
@@ -368,13 +369,17 @@ export function CategoryPage({ type }: { type: ItemType }) {
                     )}
                   </span>
 
-                  <time>
-                    {formatDate(item.date, language)}
-                  </time>
+                  {!hideDateAndNewBadge && (
+                    <>
+                      <time>
+                        {formatDate(item.date, language)}
+                      </time>
 
-                  <span className="new-pill">
-                    {copy.newest}
-                  </span>
+                      <span className="new-pill">
+                        {copy.newest}
+                      </span>
+                    </>
+                  )}
                 </a>
               ))
             ) : (

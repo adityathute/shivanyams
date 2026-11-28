@@ -984,6 +984,81 @@ class PostFAQ(TimestampedModel):
         return self.question_en
 
 
+class PostRequiredDocument(TimestampedModel):
+    """Optional, multilingual document requirements attached to a post."""
+
+    class Category(models.TextChoices):
+        PHOTO = "photo", "Photo"
+        SIGNATURE = "signature", "Signature"
+        IDENTITY_PROOF = "identity_proof", "Identity Proof"
+        EDUCATIONAL_CERTIFICATE = "educational_certificate", "Educational Certificate"
+        CASTE_CERTIFICATE = "caste_certificate", "Caste Certificate"
+        EXPERIENCE_CERTIFICATE = "experience_certificate", "Experience Certificate"
+        OTHER = "other", "Other"
+
+    class Requirement(models.TextChoices):
+        COMPULSORY = "compulsory", "Compulsory"
+        OPTIONAL = "optional", "Optional"
+
+    class PhotoType(models.TextChoices):
+        PASSPORT_SIZE = "passport_size", "Passport Size"
+        LIVE_PHOTO = "live_photo", "Live Photo"
+        OTHER = "other", "Other"
+        NOT_APPLICABLE = "not_applicable", "Not Applicable"
+
+    class SignatureType(models.TextChoices):
+        SCANNED = "scanned", "Scanned"
+        PHYSICAL = "physical", "Physical"
+        OTHER = "other", "Other"
+        NOT_APPLICABLE = "not_applicable", "Not Applicable"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="required_documents",
+    )
+
+    name_en = models.CharField(max_length=240, blank=True, null=True)
+    name_mr = models.CharField(max_length=240, blank=True, null=True)
+    name_hi = models.CharField(max_length=240, blank=True, null=True)
+    description_en = models.TextField(blank=True, null=True)
+    description_mr = models.TextField(blank=True, null=True)
+    description_hi = models.TextField(blank=True, null=True)
+
+    category = models.CharField(max_length=32, choices=Category.choices, blank=True, null=True)
+    requirement = models.CharField(max_length=16, choices=Requirement.choices, blank=True, null=True)
+    original_required = models.BooleanField(blank=True, null=True)
+    photocopy_required = models.BooleanField(blank=True, null=True)
+    number_of_copies = models.PositiveSmallIntegerField(blank=True, null=True)
+    quantity = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    photo_type = models.CharField(max_length=20, choices=PhotoType.choices, blank=True, null=True)
+    photo_size = models.CharField(max_length=120, blank=True, null=True)
+    photo_quantity = models.PositiveSmallIntegerField(blank=True, null=True)
+    photo_background = models.CharField(max_length=120, blank=True, null=True)
+
+    signature_type = models.CharField(max_length=20, choices=SignatureType.choices, blank=True, null=True)
+    signature_format = models.CharField(max_length=120, blank=True, null=True)
+    signature_size = models.CharField(max_length=120, blank=True, null=True)
+    other_specifications = models.TextField(blank=True, null=True)
+
+    instructions_en = models.TextField(blank=True, null=True)
+    instructions_mr = models.TextField(blank=True, null=True)
+    instructions_hi = models.TextField(blank=True, null=True)
+
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("sort_order", "id")
+        indexes = [
+            models.Index(fields=("post", "is_active", "sort_order"), name="portal_reqdoc_post_act_idx"),
+        ]
+
+    def __str__(self):
+        return self.name_en or f"Required document for {self.post.title_en}"
+
+
 class PostQuestion(TimestampedModel):
     """A visitor's question about a post and the official answer from an admin."""
 

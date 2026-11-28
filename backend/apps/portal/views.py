@@ -2945,10 +2945,22 @@ class PublicContactMessage(APIView):
             except DjangoValidationError:
                 return Response({"detail": "Please enter a valid email address."}, status=status.HTTP_400_BAD_REQUEST)
 
+        auth_data = getattr(request.user, "auth_data", {}) if getattr(request.user, "is_authenticated", False) else {}
+        if not isinstance(auth_data, dict):
+            auth_data = {}
+        auth_user_id = str(getattr(request.user, "auth_user_id", "") or "") if getattr(request.user, "is_authenticated", False) else ""
+        auth_first_name = str(auth_data.get("first_name") or "").strip()
+        auth_last_name = str(auth_data.get("last_name") or "").strip()
+        auth_full_name = " ".join(part for part in (auth_first_name, auth_last_name) if part)
+        if not auth_full_name:
+            auth_full_name = str(auth_data.get("full_name") or auth_data.get("name") or "").strip()
+
         item = ContactMessage.objects.create(
             submission_type=submission_type,
             name=name,
             email=email,
+            user_auth_id=auth_user_id,
+            user_full_name=auth_full_name,
             category=category,
             rating=rating,
             subject=subject,
@@ -2973,6 +2985,7 @@ class AdminContactMessages(APIView):
                 "submission_type": item.submission_type,
                 "name": item.name,
                 "email": item.email,
+                "user_full_name": item.user_full_name,
                 "category": item.category,
                 "rating": item.rating,
                 "subject": item.subject,

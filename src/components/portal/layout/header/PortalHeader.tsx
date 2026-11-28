@@ -228,8 +228,8 @@ export function PortalHeader() {
       <form ref={desktopSearchRef} className="portal-topbar-search portal-topbar-search-desktop" role="search" onSubmit={submitSearch}>
         <SearchIcon size={17} aria-hidden="true" />
         <input value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" />
-        <button type="submit">Search</button>
         {searchQuery && <button type="button" className="portal-search-clear" aria-label="Clear search" onClick={() => { setSearchQuery(""); setSearchDropdownOpen(true); }}><CloseIcon size={16} aria-hidden="true" /></button>}
+        <button type="submit">Search</button>
         {renderSearchDropdown()}
       </form>
 
@@ -240,8 +240,8 @@ export function PortalHeader() {
         <form ref={searchPanelRef} className={`portal-topbar-search portal-topbar-search-mobile-panel${searchOpen ? " is-open" : ""}`} role="search" aria-hidden={!searchOpen} onSubmit={submitSearch}>
           <SearchIcon size={17} aria-hidden="true" />
           <input ref={searchInputRef} value={searchQuery} onFocus={() => { setSearchDropdownOpen(true); void loadSearchHistory(); }} onChange={(event) => { setSearchQuery(event.target.value); setSearchDropdownOpen(true); }} placeholder="Search..." aria-label="Search website" tabIndex={searchOpen ? 0 : -1} />
-          <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
           {searchQuery && <button type="button" className="portal-search-clear" aria-label="Clear search" tabIndex={searchOpen ? 0 : -1} onClick={() => { setSearchQuery(""); setSearchDropdownOpen(true); searchInputRef.current?.focus(); }}><CloseIcon size={16} aria-hidden="true" /></button>}
+          <button type="submit" tabIndex={searchOpen ? 0 : -1}>Search</button>
           {renderSearchDropdown()}
         </form>
         {searchOpen && <div className="portal-search-backdrop" aria-hidden="true" />}

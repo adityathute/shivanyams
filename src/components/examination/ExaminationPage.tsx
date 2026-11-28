@@ -10,7 +10,7 @@
 import "./../../styles/legacy/components/portal/home/UpdatesSection.css";
 import "./../../styles/legacy/components/jobs/JobsPage.css";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { Language } from "shivanya-i18n";
 import { ExaminationCharacters } from "./ExaminationCharacters";
 import {
@@ -33,25 +33,14 @@ export function ExaminationPage() {
   useRefreshPortalDataOnMount();
   const { data } = usePortalData();
   const { language } = usePortalLanguage();
-  const [query, setQuery] = useState("");
 
   const t = (key: keyof typeof baseDictionary) =>
     getBaseText(key, language as Language);
 
   const examinations = useMemo(
     () =>
-      data.items.filter((item) => {
-        if (item.type !== "examination") return false;
-        const term = query.trim().toLocaleLowerCase();
-        if (!term) return true;
-        return [
-          getLocalizedPostTitle(item, language),
-          getLocalizedPostSummary(item, language),
-          getLocalizedCategoryLabel(item, language),
-          ...(Array.isArray(item.tags) ? item.tags : []),
-        ].some((value) => String(value || "").toLocaleLowerCase().includes(term));
-      }),
-    [data.items, language, query],
+      data.items.filter((item) => item.type === "examination"),
+    [data.items],
   );
 
   const popularTags = useMemo(() => {
@@ -86,19 +75,18 @@ export function ExaminationPage() {
               </h1>
               <p>{t("examinationHeroDescription")}</p>
 
-              <form className="jobs-search" role="search" onSubmit={(event) => event.preventDefault()}>
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={t("examinationSearchPlaceholder")}
-                  aria-label={t("examinationSearchPlaceholder")}
-                />
-                <button type="submit">{t("search")}</button>
-              </form>
-
               {popularTags.length > 0 ? (
-                <div className="jobs-popular-tags portal-post-taxonomy" aria-label="Popular examination tags">
+                <div
+                  className="jobs-popular-tags portal-post-taxonomy"
+                  aria-label="Popular examination tags"
+                  style={{
+                    flexWrap: "wrap",
+                    alignContent: "flex-start",
+                    height: "auto",
+                    maxHeight: "68px",
+                    overflow: "hidden",
+                  }}
+                >
                   {popularTags.map((tag) => (
                     <a className="portal-custom-tag" href={`/tags/${createPostSlug(tag)}`} key={tag}>
                       {tag}
@@ -153,7 +141,7 @@ export function ExaminationPage() {
                 <div className="empty-state empty-exam">{data.error}</div>
               ) : (
                 <div className="empty-state empty-exam">
-                  {query.trim() ? t("tryAnotherSearch") : t("noExaminationUpdates")}
+                  {t("noExaminationUpdates")}
                 </div>
               )}
             </div>

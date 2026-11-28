@@ -166,6 +166,7 @@
   font-weight: 600;
   line-height: 1.4;
   overflow-wrap: anywhere;
+  text-align: center;
   animation: portal-share-message-in 160ms ease-out;
 }
 

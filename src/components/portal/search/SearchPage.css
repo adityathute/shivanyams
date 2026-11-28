@@ -334,3 +334,62 @@
     padding-left: 8px !important;
   }
 }
+
+
+/* Match the Jobs page three-column layout for deadline rows. The general
+   four-column search row remains in place for published date + NEW badge. */
+.search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline {
+  grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+}
+
+.search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline > .update-deadline-group {
+  grid-column: 3 !important;
+  justify-self: end !important;
+  width: max-content !important;
+  max-width: 100% !important;
+}
+
+.search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline .update-application-deadline {
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  font-variant-numeric: tabular-nums !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 760px) {
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline {
+    grid-template-columns: max-content minmax(0, 1fr) max-content !important;
+    gap: 7px !important;
+  }
+
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline > .update-deadline-group {
+    grid-column: 3 !important;
+    flex-direction: column-reverse !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline .update-application-deadline {
+    font-size: 13px !important;
+  }
+
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row:not(.update-row-has-deadline) > time {
+    display: block !important;
+    justify-self: end !important;
+    font-size: 9px !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row.update-row-has-deadline {
+    gap: 5px !important;
+  }
+
+  .search-results-page .updates-panel-search-results > .update-list > a.update-row:not(.update-row-has-deadline) > time {
+    font-size: 8px !important;
+  }
+}

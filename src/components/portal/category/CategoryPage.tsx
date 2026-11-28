@@ -356,9 +356,7 @@ export function CategoryPage({ type }: { type: ItemType }) {
                 <a
                   className="update-row category-update-row"
                   key={item.id}
-                  href={item.link || "#"}
-                  target={item.link ? "_blank" : undefined}
-                  rel={item.link ? "noreferrer" : undefined}
+                  href={`/${categorySlug}/${item.slug || item.id}`}
                 >
                   {item.image ? (
                     <span className="category-update-thumbnail">

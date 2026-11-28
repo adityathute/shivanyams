@@ -16,6 +16,6 @@ export default async function AdmitCardPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const previewItem = await getPublicPostItem("admit-cards", slug);
-  return <PortalPostDetail category="admit-cards" previewItem={previewItem} />;
+  const initialItem = await getPublicPostItem("admit-cards", slug);
+  return <PortalPostDetail category="admit-cards" initialItem={initialItem} />;
 }

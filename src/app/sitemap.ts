@@ -61,16 +61,15 @@ async function getPublishedPosts(kind: string): Promise<ApiPost[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
   const entries: MetadataRoute.Sitemap = [
-    { url: SITE_URL, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+    { url: SITE_URL },
+    { url: `${SITE_URL}/about` },
+    { url: `${SITE_URL}/contact` },
+    { url: `${SITE_URL}/privacy` },
     { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE_URL}/disclaimer`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${SITE_URL}/feedback`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${SITE_URL}/updates`, changeFrequency: "daily", priority: 0.6 },
+    { url: `${SITE_URL}/feedback` },
+    { url: `${SITE_URL}/updates` },
   ];
 
   const enabled = getPortalFeatureConfig();
@@ -79,8 +78,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const category of activeCategories) {
     entries.push({
       url: `${SITE_URL}${category.path}`,
-      changeFrequency: "daily",
-      priority: 0.8,
     });
 
     const posts = await getPublishedPosts(category.kind);
@@ -91,8 +88,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       entries.push({
         url: `${SITE_URL}${category.path}/${encodeURIComponent(post.slug)}`,
         ...(lastModified && !Number.isNaN(lastModified.getTime()) ? { lastModified } : {}),
-        changeFrequency: "weekly",
-        priority: 0.7,
       });
       if (entries.length >= 49990) return entries;
     }

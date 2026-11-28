@@ -2094,7 +2094,7 @@
 
 
 /* Compact horizontal related-video rows on post detail pages. */
-.portal-post-related-videos { margin: 26px 0; padding: 18px; border: 1px solid var(--border, #e2e8f0); border-radius: 12px; background: var(--surface, #fff); }
+.portal-post-related-videos { margin: 16px 0; padding: 18px; border: 1px solid var(--border, #e2e8f0); border-radius: 12px; background: var(--surface, #fff); }
 .portal-post-related-videos h2 { margin: 0 0 14px; font-size: 18px; font-weight: 750; }
 .portal-post-related-videos-list { display: grid; gap: 10px; }
 .portal-post-related-video {

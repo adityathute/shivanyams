@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePortalData } from "../portal/data/portal-data";
 import { usePortalLanguage } from "../portal/context/PortalLanguageContext";
+import { CategoryBadge, getCategorySlugForType, getLocalizedCategoryLabel } from "../portal/category/CategoryGrid";
 import "./../../styles/legacy/components/portal/saved/SavedPostsPage.css";
 
 const organizationLabels: Record<string, Record<string, string>> = {
@@ -233,7 +234,9 @@ export function RelatedJobsPage() {
             {paginatedItems.map((item) => {
               const title = localized({ en: item.title_en || item.title, mr: item.title_mr, hi: item.title_hi }, language);
               const summary = localized({ en: item.summary_en || item.description, mr: item.summary_mr, hi: item.summary_hi }, language);
-              const category = localized({ en: item.category_en || item.category, mr: item.category_mr, hi: item.category_hi }, language);
+              const categorySlug = getCategorySlugForType(item.type);
+              const categoryLabel = getLocalizedCategoryLabel(item, language);
+              const displayDate = item.date || item.updated_date || item.created_at || item.updated_at || "";
               const hrefByType: Record<string, string> = {
                 job: "/jobs", scheme: "/schemes", examination: "/examination", exam: "/examination",
                 admit: "/admit-cards", result: "/results", guide: "/guides", video: "/videos", tool: "/tools",
@@ -241,12 +244,12 @@ export function RelatedJobsPage() {
               const href = `${hrefByType[item.type] || "/"}/${item.slug || slugify(item.title)}`;
               return (
                 <Link className="update-row related-job-row" href={href} key={`${item.type}-${item.id}`}>
-                  <span className={`update-badge ${item.type}`}>{category}</span>
+                  <CategoryBadge category={categorySlug} label={categoryLabel} />
                   <span className="update-title">
                     {title}
                     {summary ? <small>{summary}</small> : null}
                   </span>
-                  <time>{formatDate(item.date, language)}</time>
+                  <time dateTime={displayDate || undefined}>{formatDate(displayDate, language)}</time>
                 </Link>
               );
             })}

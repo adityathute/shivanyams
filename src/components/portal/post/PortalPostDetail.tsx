@@ -1037,103 +1037,36 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                             })}
                           </div>
                         ) : null}
-                        <div className="portal-job-info-group portal-job-info-secondary-grid">
-                        {[
-                          ...ageInfoRows,
-
-                          // Application Fee
-                          ...(jobDetails?.application_fee
-                            ? [
-                                [
-                                  getDetailLabel("fee", language),
-                                  jobDetails.application_fee,
-                                ] as [string, string],
-                              ]
-                            : []),
-
-                          // Multilingual Application Fee Note
-                          ...(applicationFeeNote
-                            ? [
-                                [
-                                  getDetailLabel("feeNote", language),
-                                  applicationFeeNote,
-                                ] as [string, string],
-                              ]
-                            : []),
-                        ]
-                          .filter(
-                            ([, value]) =>
-                              value !== null &&
-                              value !== undefined &&
-                              String(value).trim() !== "",
-                          )
-                          .map(([name, value]) => {
-                            const shouldCapitalize =
-                              name ===
-                                getDetailLabel("applicationMode", language) ||
-                              name === getDetailLabel("jobLocation", language);
-
-                            const formattedValue = shouldCapitalize
-                              ? String(value).charAt(0).toUpperCase() +
-                                String(value).slice(1)
-                              : value;
-
-                            const isAgeRow = ageInfoRows.some(
-                              ([ageLabel]) => ageLabel === name,
-                            );
-
-                            const isAgeNote =
-                              ageInfoRows.some(
-                                ([ageLabel]) => ageLabel === name,
-                              ) &&
-                              (name === getDetailLabel("ageNote", language) ||
-                                (isTextOnlyAgeCriteria &&
-                                  name ===
-                                    getDetailLabel("ageLimit", language)));
-
-                            const isFeeRow =
-                              name === getDetailLabel("fee", language);
-
-                            const isFeeNoteRow =
-                              name === getDetailLabel("feeNote", language);
-
-                            let rowSpan = "";
-
-                            if (isAgeRow) {
-                              rowSpan =
-                                ageInfoRows.length === 1
-                                  ? "portal-job-info-item-age-full"
-                                  : ageInfoRows.length === 2
-                                    ? "portal-job-info-item-age-half"
-                                    : isAgeNote
-                                      ? "portal-job-info-item-age-note"
-                                      : "portal-job-info-item-age-quarter";
-                            } else if (isFeeRow) {
-                              rowSpan = applicationFeeNote
-                                ? "portal-job-info-item-fee"
-                                : "portal-job-info-item-fee-full";
-                            } else if (isFeeNoteRow) {
-                              rowSpan = jobDetails?.application_fee
-                                ? "portal-job-info-item-fee-note"
-                                : "portal-job-info-item-fee-full";
-                            }
-
-                            return (
-                              <div
-                                className={`portal-job-info-item ${rowSpan}`}
-                                key={name as string}
-                              >
-                                <span className="portal-job-info-label">
-                                  {name}
-                                </span>
-                                <strong className="portal-job-info-value">
-                                  {formattedValue}
-                                </strong>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
+                        {ageInfoRows.length ? (
+  <div className="portal-job-info-group portal-job-info-age-grid">
+    {ageInfoRows.map(([name, value]) => {
+      const isAgeNote = name === getDetailLabel("ageNote", language) || (isTextOnlyAgeCriteria && name === getDetailLabel("ageLimit", language));
+      const rowSpan = ageInfoRows.length === 1 ? "portal-job-info-item-age-full" : ageInfoRows.length === 2 ? "portal-job-info-item-age-half" : isAgeNote ? "portal-job-info-item-age-note" : "portal-job-info-item-age-quarter";
+      return (
+        <div className={`portal-job-info-item ${rowSpan}`} key={name}>
+          <span className="portal-job-info-label">{name}</span>
+          <strong className="portal-job-info-value">{value}</strong>
+        </div>
+      );
+    })}
+  </div>
+) : null}
+{jobDetails?.application_fee || applicationFeeNote ? (
+  <div className="portal-job-info-group portal-job-info-fee-grid">
+    {jobDetails?.application_fee ? (
+      <div className={`portal-job-info-item ${applicationFeeNote ? "portal-job-info-item-fee" : "portal-job-info-item-fee-full"}`}>
+        <span className="portal-job-info-label">{getDetailLabel("fee", language)}</span>
+        <strong className="portal-job-info-value">{jobDetails.application_fee}</strong>
+      </div>
+    ) : null}
+    {applicationFeeNote ? (
+      <div className={`portal-job-info-item ${jobDetails?.application_fee ? "portal-job-info-item-fee-note" : "portal-job-info-item-fee-full"}`}>
+        <span className="portal-job-info-label">{getDetailLabel("feeNote", language)}</span>
+        <strong className="portal-job-info-value">{applicationFeeNote}</strong>
+      </div>
+    ) : null}
+  </div>
+) : null}                      </div>
 
                       {/* {[
                         [

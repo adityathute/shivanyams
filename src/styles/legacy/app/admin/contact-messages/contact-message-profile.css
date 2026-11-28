@@ -1,0 +1,44 @@
+.admin-contact-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 16px 0 4px;
+  padding: 14px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--primary, #2563eb) 4%, var(--surface, #fff));
+}
+.admin-contact-user-profile-info {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+.admin-contact-user-profile-info strong {
+  color: var(--foreground, #243247);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.admin-contact-user-profile-info span {
+  color: var(--primary, #2563eb);
+  font-size: 10px;
+  font-weight: 700;
+}
+.admin-contact-user-profile-info small {
+  color: var(--muted-foreground, #9298a2);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.admin-contact-user-profile-badge {
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--primary, #2563eb) 25%, transparent);
+  border-radius: 999px;
+  color: var(--primary, #2563eb);
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .admin-contact-user-profile { align-items: flex-start; flex-wrap: wrap; }
+  .admin-contact-user-profile-badge { margin-left: 52px; }
+}

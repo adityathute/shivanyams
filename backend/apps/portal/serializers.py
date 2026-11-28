@@ -597,6 +597,8 @@ class PostSerializer(serializers.ModelSerializer):
     important_links = PostLinkSerializer(many=True, read_only=True)
     faqs = serializers.SerializerMethodField()
     required_documents = PostRequiredDocumentSerializer(many=True, read_only=True)
+    photo_requirements = PostPhotoRequirementSerializer(many=True, read_only=True)
+    signature_requirements = PostSignatureRequirementSerializer(many=True, read_only=True)
     important_dates = PostDateSerializer(many=True, read_only=True)
     resources = PostResourceSerializer(many=True, read_only=True)
     related_posts = serializers.SerializerMethodField()
@@ -673,7 +675,7 @@ class PostSerializer(serializers.ModelSerializer):
             "required_documents",
             "photo_requirements",
             "signature_requirements",
-            "important_dates,
+            "important_dates",
             "resources",
             "related_posts",
             "job_details",

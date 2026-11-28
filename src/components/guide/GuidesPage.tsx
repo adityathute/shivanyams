@@ -58,17 +58,6 @@ export function GuidesPage() {
       .map(([tag]) => tag);
   }, [guides]);
 
-    return data.items.filter((item) => {
-      if (item.type !== "guide") return false;
-
-      return (
-        !term ||
-        [item.title, item.title_en, item.title_mr, item.title_hi, item.category, item.description, item.summary_en, item.summary_mr, item.summary_hi].some((value) =>
-          String(value || "").toLowerCase().includes(term),
-        )
-      );
-    });
-  }, [data.items, query]);
 
   const dateLocale =
     language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN";

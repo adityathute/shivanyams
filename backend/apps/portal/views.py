@@ -2935,8 +2935,10 @@ class PublicContactMessage(APIView):
             return Response({"detail": "One or more fields are too long."}, status=status.HTTP_400_BAD_REQUEST)
         if len(message) > 2000:
             return Response({"detail": "Message can contain a maximum of 2,000 characters."}, status=status.HTTP_400_BAD_REQUEST)
+        if contains_abusive_language(subject):
+            return Response({"detail": "Please remove abusive or insulting language from the subject."}, status=status.HTTP_400_BAD_REQUEST)
         if contains_abusive_language(message):
-            return Response({"detail": "Please remove abusive or insulting language before submitting."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Please remove abusive or insulting language from the message."}, status=status.HTTP_400_BAD_REQUEST)
         if not email:
             return Response({"detail": "Please provide an email address so our team can reply to you."}, status=status.HTTP_400_BAD_REQUEST)
         if submission_type == ContactMessage.SubmissionType.CONTACT and not name:

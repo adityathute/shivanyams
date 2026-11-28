@@ -138,6 +138,13 @@
   font-size: 14px;
   font-weight: 500;
   line-height: 1.45;
+  transition: color 160ms ease;
+}
+
+/* On Latest Updates, hover changes only the post title text. */
+.update-row:hover .update-title,
+.update-row:focus-visible .update-title {
+  color: var(--blue);
 }
 
 .update-title small {

@@ -1286,9 +1286,10 @@ export function PortalPostDetail({ category, previewItem }: { category: Category
                                           <span className="portal-education-post-name">{row.postName || "—"}</span>
                                         </strong>
                                         {row.entry.vacancies != null ? (
+                                          <>{" "}
                                           <span className="portal-education-post-vacancies">
                                             {Number(row.entry.vacancies).toLocaleString(language === "mr" ? "mr-IN" : language === "hi" ? "hi-IN" : "en-IN")} {getDetailLabel("vacancies", language)}
-                                          </span>
+                                          </span></>
                                         ) : null}
                                         {row.department ? (
                                           <div className="portal-education-post-department">{row.department}</div>

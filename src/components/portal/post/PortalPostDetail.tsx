@@ -1134,7 +1134,7 @@ export function PortalPostDetail({ category, previewItem, initialItem }: { categ
       structuredImage = undefined;
     }
   }
-  const structuredData = post && !previewItem
+  const structuredData = post && !previewItem && category !== "videos"
     ? {
         "@context": "https://schema.org",
         "@type": "Article",
